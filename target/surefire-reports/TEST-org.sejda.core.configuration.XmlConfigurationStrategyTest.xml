@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.337" errors="0" skipped="0" tests="2" name="org.sejda.core.configuration.XmlConfigurationStrategyTest">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/i386"/>
+    <property name="java.vm.version" value="16.3-b01"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="IT"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/media/LACIE/sejda/workspace/sejda-core"/>
+    <property name="java.runtime.version" value="1.6.0_20-b02"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="basedir" value="/media/LACIE/sejda/workspace/sejda-core"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/endorsed"/>
+    <property name="os.arch" value="i386"/>
+    <property name="surefire.real.class.path" value="/tmp/surefirebooter4348326987130927557.jar"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="os.name" value="Linux"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/i386/server:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/i386:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/../lib/i386:/usr/java/packages/lib/i386:/lib:/usr/lib"/>
+    <property name="surefire.test.class.path" value="/media/LACIE/sejda/workspace/sejda-core/target/test-classes:/media/LACIE/sejda/workspace/sejda-core/target/classes:/home/torakiki/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:/home/torakiki/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:/home/torakiki/.m2/repository/jaxen/jaxen/1.1/jaxen-1.1.jar:/home/torakiki/.m2/repository/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar:/home/torakiki/.m2/repository/commons-lang/commons-lang/2.5/commons-lang-2.5.jar:/home/torakiki/.m2/repository/org/springframework/spring-core/3.0.2.RELEASE/spring-core-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-asm/3.0.2.RELEASE/spring-asm-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/home/torakiki/.m2/repository/org/springframework/spring-context/3.0.2.RELEASE/spring-context-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-aop/3.0.2.RELEASE/spring-aop-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/home/torakiki/.m2/repository/org/springframework/spring-beans/3.0.2.RELEASE/spring-beans-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-expression/3.0.2.RELEASE/spring-expression-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/junit/junit/4.7/junit-4.7.jar:/home/torakiki/.m2/repository/log4j/log4j/1.2.15/log4j-1.2.15.jar:/home/torakiki/.m2/repository/org/mockito/mockito-all/1.8.1/mockito-all-1.8.1.jar:"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="sun.management.compiler" value="HotSpot Tiered Compilers"/>
+    <property name="os.version" value="2.6.31-21-generic"/>
+    <property name="user.home" value="/home/torakiki"/>
+    <property name="user.timezone" value=""/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="user.name" value="torakiki"/>
+    <property name="java.class.path" value="/media/LACIE/sejda/workspace/sejda-core/target/test-classes:/media/LACIE/sejda/workspace/sejda-core/target/classes:/home/torakiki/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:/home/torakiki/.m2/repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:/home/torakiki/.m2/repository/jaxen/jaxen/1.1/jaxen-1.1.jar:/home/torakiki/.m2/repository/xerces/xercesImpl/2.6.2/xercesImpl-2.6.2.jar:/home/torakiki/.m2/repository/commons-lang/commons-lang/2.5/commons-lang-2.5.jar:/home/torakiki/.m2/repository/org/springframework/spring-core/3.0.2.RELEASE/spring-core-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-asm/3.0.2.RELEASE/spring-asm-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/home/torakiki/.m2/repository/org/springframework/spring-context/3.0.2.RELEASE/spring-context-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-aop/3.0.2.RELEASE/spring-aop-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/home/torakiki/.m2/repository/org/springframework/spring-beans/3.0.2.RELEASE/spring-beans-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/org/springframework/spring-expression/3.0.2.RELEASE/spring-expression-3.0.2.RELEASE.jar:/home/torakiki/.m2/repository/junit/junit/4.7/junit-4.7.jar:/home/torakiki/.m2/repository/log4j/log4j/1.2.15/log4j-1.2.15.jar:/home/torakiki/.m2/repository/org/mockito/mockito-all/1.8.1/mockito-all-1.8.1.jar:"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="sun.arch.data.model" value="32"/>
+    <property name="java.home" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.language" value="it"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.6.0_20"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/resources.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/rt.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/jsse.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/jce.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/lib/charsets.jar:/usr/lib/jvm/java-6-sun-1.6.0.20/jre/classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="localRepository" value="/home/torakiki/.m2/repository"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="gnome"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase time="0.329" classname="org.sejda.core.configuration.XmlConfigurationStrategyTest" name="testPositiveConstuctor"/>
+  <testcase time="0.005" classname="org.sejda.core.configuration.XmlConfigurationStrategyTest" name="testNegativeConstuctor"/>
+</testsuite>

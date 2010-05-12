@@ -1,0 +1,48 @@
+/*
+ * Created on 12/mag/2010
+ * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+package org.sejda.core.manipulation;
+
+import org.sejda.core.configuration.GlobalConfiguration;
+import org.sejda.core.context.AbstractApplicationContext;
+import org.sejda.core.exception.TaskException;
+import org.sejda.core.exception.TaskNotFoundException;
+
+/**
+ * @author Andrea Vacondio
+ * 
+ */
+public class DefaultTaskExecutionContext extends AbstractApplicationContext implements TaskExecutionContext {
+
+    @SuppressWarnings("unchecked")
+    public Task<? extends TaskParameters> getTask(Class<? extends TaskParameters> parametersClass) throws TaskException {
+        Class<? extends Task> taskClass = GlobalConfiguration.getInstance().getTask(parametersClass);
+        if (taskClass == null) {
+            throw new TaskNotFoundException(String.format("Unable to find a Task class able to execute %s",
+                    parametersClass));
+        }
+        try {
+            return taskClass.newInstance();
+        } catch (InstantiationException e) {
+            throw new TaskException("Error instantiating the task", e);
+        } catch (IllegalAccessException e) {
+            throw new TaskException("Error instantiating the task", e);
+        }
+    }
+
+}

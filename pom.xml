@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+	<groupId>org.sejda</groupId>
+	<artifactId>sejda-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<relativePath>../sejda-parent/pom.xml</relativePath>
+  </parent>
+
+  <artifactId>sejda-core</artifactId>
+  <packaging>jar</packaging>
+
+  <name>sejda core</name>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License</name>
+      <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+      <distribution>repo</distribution>
+      <comments>GNU LGPL 2.1</comments>
+    </license>
+  </licenses>
+  
+  <dependencies>
+	    <dependency>
+	      <groupId>dom4j</groupId>
+	      <artifactId>dom4j</artifactId>
+	    </dependency>
+	    <dependency>
+	      <groupId>jaxen</groupId>
+	      <artifactId>jaxen</artifactId>
+	    </dependency>
+	    <dependency>
+    	  <groupId>commons-lang</groupId>
+    	  <artifactId>commons-lang</artifactId>
+	    </dependency>
+	    <dependency>
+  			<groupId>org.springframework</groupId>
+  			<artifactId>spring-core</artifactId>
+  			<version>3.0.2.RELEASE</version>
+		</dependency>
+		<dependency>  
+		<groupId>org.springframework</groupId>  
+		<artifactId>spring-context</artifactId>  
+		<version>3.0.2.RELEASE</version> 
+		</dependency>
+	  </dependencies>
+</project>
