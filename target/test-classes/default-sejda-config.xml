@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<sejda>
-	<notification async="false"/>
-	<tasks>
-		<task parameters="org.sejda.core.manipulation.TestTaskParameter" task="org.sejda.core.manipulation.TestTask"/>
-	</tasks>
-</sejda>
