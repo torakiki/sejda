@@ -31,19 +31,16 @@ import org.sejda.core.exception.TaskExecutionException;
 public interface Task<T extends TaskParameters> {
 
     /**
-     * Called before the actual execution of the task. Can be used to perform additional validation and to deny the execution in case some requirements are not met.
-     * <p>
-     * When this method returns false the execution is denied.
-     * </p>
+     * Called before the actual execution of the task. Can be used to perform additional validation or initialization and to deny the execution in case some requirements are not
+     * met throwing a {@link TaskExecutionException}.
      * 
      * @param parameters
      *            the parameters to be executed
-     * @return true if the task can be executed, false otherwise.
      * @throws TaskExecutionException
      *             in case of unexpected errors
      * 
      */
-    boolean before(T parameters) throws TaskExecutionException;
+    void before(T parameters) throws TaskExecutionException;
 
     /**
      * Executes the task with the input parameters
@@ -54,8 +51,8 @@ public interface Task<T extends TaskParameters> {
     void execute(T parameters) throws TaskExecutionException;
 
     /**
-     * Called after the task is executed, can be used to close resources. This method is called in a finally block therefore it's always called even when the task execution throws an
-     * exception.
+     * Called after the task is executed, can be used to close resources. This method is called in a finally block therefore it's always called even when the task execution throws
+     * an exception.
      */
     void after();
 }

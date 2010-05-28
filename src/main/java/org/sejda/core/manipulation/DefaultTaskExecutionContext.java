@@ -22,16 +22,22 @@ import org.sejda.core.configuration.GlobalConfiguration;
 import org.sejda.core.context.AbstractApplicationContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
+import org.sejda.core.manipulation.registry.TasksRegistry;
 
 /**
+ * Default implementation of the {@link TaskExecutionContext}
+ * 
  * @author Andrea Vacondio
  * 
  */
 public class DefaultTaskExecutionContext extends AbstractApplicationContext implements TaskExecutionContext {
 
+    private TasksRegistry registry = GlobalConfiguration.getInstance().getTaskRegistry();
+
     @SuppressWarnings("unchecked")
-    public Task<? extends TaskParameters> getTask(Class<? extends TaskParameters> parametersClass) throws TaskException {
-        Class<? extends Task> taskClass = GlobalConfiguration.getInstance().getTask(parametersClass);
+    public Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException {
+        Class<? extends TaskParameters> parametersClass = parameters.getClass();
+        Class<? extends Task> taskClass = registry.getTask(parametersClass);
         if (taskClass == null) {
             throw new TaskNotFoundException(String.format("Unable to find a Task class able to execute %s",
                     parametersClass));

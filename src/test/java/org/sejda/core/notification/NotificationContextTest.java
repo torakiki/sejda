@@ -39,8 +39,8 @@ public class NotificationContextTest {
 
     @Before
     public void setUp() {
-        contexts.add(GlobalNotificationContext.getInstance());
-        contexts.add(ThreadLocalNotificationContextFactory.getLocalNotificationContext());
+        contexts.add(GlobalNotificationContext.getContext());
+        contexts.add(ThreadLocalNotificationContext.getContext());
     }
 
     @Test

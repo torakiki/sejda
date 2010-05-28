@@ -29,8 +29,10 @@ import org.sejda.core.notification.strategy.NotificationStrategy;
  */
 public abstract class AbstractApplicationContext implements ApplicationContext {
 
+    private NotificationStrategy strategy = GlobalConfiguration.getInstance().getNotificationStrategy();
+    
     public final NotificationStrategy getNotificationStrategy() {
-        return GlobalConfiguration.getInstance().getNotificationStrategy();
+        return strategy;
     }
 
 }

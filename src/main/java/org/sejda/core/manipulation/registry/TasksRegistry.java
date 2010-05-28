@@ -45,4 +45,10 @@ public interface TasksRegistry {
      * @param taskClass
      */
     void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass);
+    
+    /**
+     * Creates a copy of the instance
+     * @return the copy
+     */
+    TasksRegistry clone();
 }

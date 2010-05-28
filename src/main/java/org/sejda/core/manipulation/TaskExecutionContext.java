@@ -32,12 +32,12 @@ public interface TaskExecutionContext extends ApplicationContext {
     /**
      * Search among the configured tasks the implementation that better can execute the input parameters class. Returns an instance of the found class.
      * 
-     * @param parametersClass
+     * @param TaskParameters
      * @return the most suitable {@link Task} instance for the input parameters class.
      * @throws TaskException
      *             if no task able to execute the input parameters class is found, or if an error occur while reflective instantiating the {@link Task}.
      */
-    Task<? extends TaskParameters> getTask(Class<? extends TaskParameters> parametersClass)
+    Task<? extends TaskParameters> getTask(TaskParameters parameters)
             throws TaskException;
 
 }

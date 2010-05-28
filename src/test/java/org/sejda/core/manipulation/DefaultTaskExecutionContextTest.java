@@ -38,13 +38,20 @@ public class DefaultTaskExecutionContextTest {
 
     @Test
     public void testGetTaskPositive() throws TaskException {
-        Task<? extends TaskParameters> task = victim.getTask(TestTaskParameter.class);
+        Task<? extends TaskParameters> task = victim.getTask(new TestTaskParameter());
         Assert.assertNotNull(task);
     }
 
+    @Test
+    public void testGetTaskPositiveNearest() throws TaskException {
+        Task<? extends TaskParameters> task = victim.getTask(new ChildTestTaskParameter());
+        Assert.assertNotNull(task);
+    }
+    
     @Test(expected = TaskNotFoundException.class)
     public void testGetTaskNegative() throws TaskException {
-        Task<? extends TaskParameters> task = victim.getTask(TaskParameters.class);
+        Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
+        });
         Assert.assertNotNull(task);
     }
 }

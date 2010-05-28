@@ -20,7 +20,9 @@ package org.sejda.core.manipulation.registry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
 import org.sejda.core.manipulation.Task;
 import org.sejda.core.manipulation.TaskParameters;
 
@@ -33,6 +35,8 @@ import org.sejda.core.manipulation.TaskParameters;
 @SuppressWarnings("unchecked")
 public class DefaultTasksRegistry implements TasksRegistry {
 
+    private static final Logger LOG = Logger.getLogger(DefaultTasksRegistry.class.getPackage().getName());
+    
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap;
 
     public DefaultTasksRegistry() {
@@ -40,11 +44,38 @@ public class DefaultTasksRegistry implements TasksRegistry {
     }
 
     public Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {
-        return tasksMap.get(parametersClass);
+        Class<? extends Task> retVal = tasksMap.get(parametersClass);
+        if(retVal == null){
+            LOG.info(String.format("Unable to find a match for the input parameter class %s, searching for an assignable one", parametersClass));
+            retVal = findNearestTask(parametersClass);
+        }
+        return retVal;
+    }
+
+    /**
+     * @param parametersClass
+     * @return finds the nearest class able to execute the input parameter
+     */
+    private Class<? extends Task> findNearestTask(Class<? extends TaskParameters> parametersClass) {
+        for(Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()){
+            if(entry.getKey().isAssignableFrom(parametersClass)){
+                return entry.getValue();
+            }
+        }
+        LOG.warn(String.format("Unable to find an assignable match for the input parameter class %s", parametersClass));
+        return null;
     }
 
     public void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass) {
         tasksMap.put(parameterClass, taskClass);
+    }
+    
+    public TasksRegistry clone(){
+        TasksRegistry clone = new DefaultTasksRegistry();
+        for(Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()){
+            clone.addTask(entry.getKey(), entry.getValue());
+        }
+        return clone;
     }
 
 }

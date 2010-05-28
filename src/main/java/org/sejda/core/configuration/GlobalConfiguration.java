@@ -130,7 +130,7 @@ public final class GlobalConfiguration {
     /**
      * @return a new instance of the configured notification strategy
      */
-    public NotificationStrategy getNotificationStrategy() {
+    public synchronized NotificationStrategy getNotificationStrategy() {
             try {
                 return notificationStrategy.newInstance();
             } catch (InstantiationException e) {
@@ -142,12 +142,10 @@ public final class GlobalConfiguration {
     }
 
     /**
-     * @param parametersClass
-     * @return
-     * @see org.sejda.core.manipulation.registry.TasksRegistry#getTask(java.lang.Class)
+     * @return the taskRegistry
      */
-    public synchronized Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {
-        return taskRegistry.getTask(parametersClass);
+    public synchronized TasksRegistry getTaskRegistry() {
+        return taskRegistry.clone();
     }
  
 }

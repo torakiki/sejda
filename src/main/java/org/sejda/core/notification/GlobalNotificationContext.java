@@ -22,7 +22,7 @@ import org.sejda.core.notification.scope.SimpleEventListenerHoldingStrategy;
 
 /**
  * Notification context holding a list of listeners registered globally. Registered listeners on a particular event will
- * be notified about events of that type throw globally in the current VM.
+ * be notified about events of that type thrown globally in the current VM.
  * 
  * @author Andrea Vacondio
  */
@@ -34,7 +34,7 @@ public final class GlobalNotificationContext extends AbstractNotificationContext
         super(new SimpleEventListenerHoldingStrategy());
     }
 
-    public static synchronized GlobalNotificationContext getInstance() {
+    public static synchronized GlobalNotificationContext getContext() {
         if (instance == null) {
             instance = new GlobalNotificationContext();
         }

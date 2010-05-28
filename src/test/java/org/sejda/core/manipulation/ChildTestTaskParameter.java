@@ -1,5 +1,5 @@
 /*
- * Created on 06/mag/2010
+ * Created on 27/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,19 +16,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.notification;
-
-import org.sejda.core.notification.scope.SimpleEventListenerHoldingStrategy;
+package org.sejda.core.manipulation;
 
 /**
- * Simple notification context holding a list of listeners as instance attribute.
+ * Test class
  * @author Andrea Vacondio
  *
  */
-class DefaultNotificationContext extends AbstractNotificationContext {
-
-    DefaultNotificationContext() {
-        super(new SimpleEventListenerHoldingStrategy());
-    }
+public class ChildTestTaskParameter extends TestTaskParameter {
 
 }

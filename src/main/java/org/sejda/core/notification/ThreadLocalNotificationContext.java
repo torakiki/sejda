@@ -26,9 +26,9 @@ package org.sejda.core.notification;
  * @author Andrea Vacondio
  * 
  */
-public final class ThreadLocalNotificationContextFactory {
+public final class ThreadLocalNotificationContext {
 
-    private ThreadLocalNotificationContextFactory() {
+    private ThreadLocalNotificationContext() {
         // hide
     }
 
@@ -38,7 +38,7 @@ public final class ThreadLocalNotificationContextFactory {
         }
     };
 
-    public static NotificationContext getLocalNotificationContext() {
+    public static NotificationContext getContext() {
         return threadLocal.get();
     }
 

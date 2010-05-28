@@ -33,9 +33,8 @@ public class TestTask implements Task<TestTaskParameter> {
     }
 
     
-    public boolean before(TestTaskParameter parameters) throws TaskExecutionException {
+    public void before(TestTaskParameter parameters) throws TaskExecutionException {
         // TODO Auto-generated method stub
-        return false;
     }
 
  
