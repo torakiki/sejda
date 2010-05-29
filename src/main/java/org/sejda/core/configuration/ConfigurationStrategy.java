@@ -20,8 +20,8 @@ package org.sejda.core.configuration;
 
 import java.util.Map;
 
-import org.sejda.core.manipulation.Task;
-import org.sejda.core.manipulation.TaskParameters;
+import org.sejda.core.manipulation.model.Task;
+import org.sejda.core.manipulation.model.TaskParameters;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**

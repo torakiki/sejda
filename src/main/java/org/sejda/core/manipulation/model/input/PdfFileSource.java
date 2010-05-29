@@ -1,5 +1,5 @@
 /*
- * Created on 12/mag/2010
+ * Created on 29/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,32 +16,42 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.model.input;
 
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.Task;
+import java.io.File;
 
 /**
+ * {@link PdfSource} from a {@link File}
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
-public class TestTask implements Task<TestTaskParameter> {
+public class PdfFileSource extends PdfSource {
 
-    
-    public void after() {
-        // TODO Auto-generated method stub
-        
+    private static final long serialVersionUID = 9153473654119405497L;
+
+    private File file;
+
+    public PdfFileSource(File file) {
+        this.file = file;
     }
 
-    
-    public void before(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
+    public PdfFileSource(File file, String password) {
+        super(password);
+        this.file = file;
     }
 
- 
-    public void execute(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
-        
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    @Override
+    public PdfSourceType getSourceType() {
+        return PdfSourceType.FILE_SOURCE;
     }
 
 }

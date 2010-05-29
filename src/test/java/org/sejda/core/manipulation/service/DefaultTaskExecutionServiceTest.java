@@ -18,50 +18,44 @@
  */
 package org.sejda.core.manipulation.service;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.Task;
 import org.sejda.core.manipulation.TaskExecutionContext;
-import org.sejda.core.manipulation.TaskParameters;
 import org.sejda.core.manipulation.TestTaskParameter;
+import org.sejda.core.manipulation.model.Task;
+import org.sejda.core.manipulation.model.TaskParameters;
 
 /**
  * Test unit for the {@link DefaultTaskExecutionService}
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class DefaultTaskExecutionServiceTest {
-    
+
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
     private TestTaskParameter parameters = Mockito.mock(TestTaskParameter.class);
-    private ThreadLocal<TaskExecutionContext> contextHolder = Mockito.mock(ThreadLocal.class);
     private TaskExecutionContext context = Mockito.mock(DefaultTaskExecutionContext.class);
     private Task task = Mockito.mock(Task.class);
-    
+
     @Test
-    public void testExecute() throws TaskException{
+    public void testExecute() throws TaskException {
         victim.execute(parameters);
     }
 
     @Test
-    public void testNegativeBeforeExecution() throws TaskException{
+    public void testNegativeBeforeExecution() throws TaskException {
         Mockito.when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
-        Mockito.when(contextHolder.get()).thenReturn(context);
         Mockito.doThrow(new TaskExecutionException()).when(task).before(Matchers.any(TaskParameters.class));
-        victim.setLocalContext(contextHolder);
-        try {
-            victim.execute(parameters);
-            Assert.fail("Exception not thrown");
-        } catch (TaskException e) {
-            Mockito.verify(task).before(parameters);
-            Mockito.verify(task).after();
-            Mockito.verify(task, Mockito.never()).execute(parameters);
-        }
+        victim.setContext(context);
+        victim.execute(parameters);
+        Mockito.verify(task).before(parameters);
+        Mockito.verify(task).after();
+        Mockito.verify(task, Mockito.never()).execute(parameters);
     }
 }

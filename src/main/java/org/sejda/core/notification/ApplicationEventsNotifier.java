@@ -1,5 +1,5 @@
 /*
- * Created on 17/apr/2010
+ * Created on 29/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -15,46 +15,31 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
  */
 package org.sejda.core.notification;
 
-import org.sejda.core.context.ApplicationContext;
-import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.notification.event.AbstractEvent;
 
 /**
- * Interface providing notification configuration. {@link EventListener} can be registered to be notified.
+ * An helper class that can be used as a shortcut to notify all the global and local listeners about an event. All the listeners registered on the {@link GlobalNotificationContext}
+ * and on the {@link ThreadLocalNotificationContext} will be notified.
  * 
  * @author Andrea Vacondio
+ * @see org.sejda.core.notification.context.NotificationContext#notifyListeners(AbstractEvent)
  * 
  */
-public interface NotificationContext extends ApplicationContext {
+public class ApplicationEventsNotifier {
 
     /**
-     * Adds the input listeners to the context
-     * 
-     * @param listener
-     * @throws NotificationContextException
-     *             if unable to infer the listened {@link AbstractEvent} subclass
-     */
-    void addListener(EventListener<? extends AbstractEvent> listener) throws NotificationContextException;
-
-    /**
-     * Clears the list of listeners for this context
-     */
-    void clearListeners();
-
-    /**
-     * Notifies the listeners about the input event
+     * Notifies all the global and local listeners about the input event.
      * 
      * @param event
      */
-    void notifyListeners(AbstractEvent event);
-
-    /**
-     * @return the number of the registered listeners
-     */
-    int size();
+    public void notifyListeners(AbstractEvent event) {
+        GlobalNotificationContext.getContext().notifyListeners(event);
+        ThreadLocalNotificationContext.getContext().notifyListeners(event);
+    }
 
 }

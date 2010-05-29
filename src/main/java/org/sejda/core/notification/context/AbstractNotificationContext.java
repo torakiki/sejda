@@ -16,10 +16,11 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.notification;
+package org.sejda.core.notification.context;
 
 import org.sejda.core.context.AbstractApplicationContext;
 import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractEvent;
 import org.sejda.core.notification.scope.EventListenerHoldingStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;

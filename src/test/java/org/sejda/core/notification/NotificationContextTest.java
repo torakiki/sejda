@@ -27,6 +27,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.context.NotificationContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 
 /**

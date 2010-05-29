@@ -22,13 +22,22 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskException;
+import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.Task;
 import org.sejda.core.manipulation.TaskExecutionContext;
-import org.sejda.core.manipulation.TaskParameters;
+import org.sejda.core.manipulation.model.Task;
+import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.notification.ApplicationEventsNotifier;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.core.notification.event.TaskExecutionFailedEvent;
 
 /**
- * Default implementation of the {@link TaskExecutionService}
+ * Default implementation of the {@link TaskExecutionService}. <p>This implementation is not synchronized and unpredictable behavior can be experienced if multiple threads try to execute
+ * different tasks on the same service instance.</p>
+ * 
  * @author Andrea Vacondio
  * 
  */
@@ -37,35 +46,85 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
     private static final Logger LOG = Logger.getLogger(DefaultTaskExecutionService.class.getPackage().getName());
 
     private StopWatch stopWatch = new StopWatch();
-    private ThreadLocal<TaskExecutionContext> localContext = new ThreadLocal<TaskExecutionContext>(){
-        protected TaskExecutionContext initialValue() {
-            return new DefaultTaskExecutionContext();
-        }
-    };
+    private TaskExecutionContext context = new DefaultTaskExecutionContext();
+    private ApplicationEventsNotifier notifier = new ApplicationEventsNotifier();
 
     @SuppressWarnings("unchecked")
-    public void execute(TaskParameters parameters) throws TaskException {
+    public void execute(TaskParameters parameters) {
+        preExecution();
+        Task task = null;
+        try {
+            task = context.getTask(parameters);
+            LOG.trace(String.format("Starting task (%s) execution.", task));
+            actualExecution(parameters, task);
+            postExecution();
+            LOG.debug(String.format("Task (%s) executed in %s", task, DurationFormatUtils.formatDurationWords(stopWatch
+                    .getTime(), true, true)));
+        } catch (TaskException e) {
+            failedExecution(e, task);
+        }
+    }
+
+    /**
+     * operations needed when the execution fails
+     * 
+     * @param e
+     *            exception causing the task to fail
+     * @param task
+     */
+    @SuppressWarnings("unchecked")
+    private void failedExecution(TaskException e, Task task) {
+        LOG.error(String.format("Task (%s) execution failed.", task), e);
+        TaskExecutionFailedEvent failedEvent = new TaskExecutionFailedEvent(e);
+        GlobalNotificationContext.getContext().notifyListeners(failedEvent);
+        ThreadLocalNotificationContext.getContext().notifyListeners(failedEvent);
+    }
+
+    /**
+     * operations needed before the actual execution
+     */
+    private void preExecution() {
         stopWatch.reset();
         stopWatch.start();
-        Task task = localContext.get().getTask(parameters);
-        LOG.trace(String.format("Starting task %s execution.", task));
+        // notification of the starting task
+        PercentageOfWorkDoneChangedEvent startingEvent = new PercentageOfWorkDoneChangedEvent();
+        notifier.notifyListeners(startingEvent);
+    }
+
+    /**
+     * operations needed after the actual execution
+     */
+    private void postExecution() {
+        stopWatch.stop();
+        // notification about completion
+        TaskExecutionCompletedEvent endingEvent = new TaskExecutionCompletedEvent();
+        notifier.notifyListeners(endingEvent);
+    }
+
+    /**
+     * actual execution of the task
+     * 
+     * @param parameters
+     * @param task
+     * @throws TaskExecutionException
+     */
+    @SuppressWarnings("unchecked")
+    private void actualExecution(TaskParameters parameters, Task task) throws TaskExecutionException {
         try {
             task.before(parameters);
             task.execute(parameters);
         } finally {
             task.after();
         }
-        stopWatch.stop();
-        LOG.debug(String.format("Task %s executed in %s", task, DurationFormatUtils.formatDurationWords(stopWatch.getTime(), true, true)));
     }
 
-    //Test purpose
+    // Test purpose
     /**
-     * set the thread local context
+     * @param context
+     *            the context to set
      */
-    void setLocalContext(ThreadLocal<TaskExecutionContext> context) {
-        localContext = context;
+    void setContext(TaskExecutionContext context) {
+        this.context = context;
     }
 
-    
 }

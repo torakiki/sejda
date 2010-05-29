@@ -23,6 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
+import org.sejda.core.manipulation.model.Task;
+import org.sejda.core.manipulation.model.TaskParameters;
 
 /**
  * @author Andrea Vacondio

@@ -19,6 +19,7 @@
  */
 package org.sejda.core.notification.event;
 
+
 /**
  * Event thrown when an execution fails
  * 
@@ -27,6 +28,20 @@ package org.sejda.core.notification.event;
  */
 public class TaskExecutionFailedEvent extends AbstractEvent {
 
-    // on purpose
+    private Exception failingCause;
+
+    /**
+     * @param failingCause
+     */
+    public TaskExecutionFailedEvent(Exception failingCause) {
+        this.failingCause = failingCause;
+    }
+
+    /**
+     * @return the failingCause
+     */
+    public Exception getFailingCause() {
+        return failingCause;
+    }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Created on 24/apr/2010
+ * Created on 27/apr/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,30 +16,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.notification;
-
+package org.sejda.core.manipulation.model;
 
 /**
- * Local notification context factory. Contains methods to return the {@link NotificationContext} binded to the local thread. Registered listeners on a particular event will be
- * notified about events of that type thrown by tasks executed by the current thread.
+ * Model for a task parameters used during the task executions
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class ThreadLocalNotificationContext {
-
-    private ThreadLocalNotificationContext() {
-        // hide
-    }
-
-    private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<DefaultNotificationContext>() {
-        protected DefaultNotificationContext initialValue() {
-            return new DefaultNotificationContext();
-        }
-    };
-
-    public static NotificationContext getContext() {
-        return threadLocal.get();
-    }
+public interface TaskParameters {
 
 }

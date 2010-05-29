@@ -18,8 +18,7 @@
  */
 package org.sejda.core.manipulation.service;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.TaskParameters;
+import org.sejda.core.manipulation.model.TaskParameters;
 
 /**
  * Service interface to perform the actual execution of a task.
@@ -29,9 +28,8 @@ import org.sejda.core.manipulation.TaskParameters;
 public interface TaskExecutionService {
 
     /**
-     * Perform the actual execution of a proper {@link org.sejda.core.manipulation.Task} able to execute the input {@link TaskParameters}
+     * Perform the actual execution of a proper {@link org.sejda.core.manipulation.model.Task} able to execute the input {@link TaskParameters}
      * @param parameters task parameters
-     * @throws TaskException
      */
-    void execute(TaskParameters parameters) throws TaskException;
+    void execute(TaskParameters parameters);
 }
