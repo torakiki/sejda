@@ -25,6 +25,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
 import org.sejda.core.manipulation.model.Task;
 import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.output.AbstractOutput;
 
 /**
  * @author Andrea Vacondio
@@ -53,6 +54,11 @@ public class DefaultTaskExecutionContextTest {
     @Test(expected = TaskNotFoundException.class)
     public void testGetTaskNegative() throws TaskException {
         Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
+
+            public AbstractOutput getOutput() {
+                // TODO Auto-generated method stub
+                return null;
+            }
         });
         Assert.assertNotNull(task);
     }

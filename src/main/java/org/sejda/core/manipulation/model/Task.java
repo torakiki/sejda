@@ -18,7 +18,7 @@
  */
 package org.sejda.core.manipulation.model;
 
-import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.exception.TaskException;
 
 /**
  * Model for a task to be executed. Can generically define the {@link TaskParameters} subclass used to parametrize the execution
@@ -32,23 +32,23 @@ public interface Task<T extends TaskParameters> {
 
     /**
      * Called before the actual execution of the task. Can be used to perform additional validation or initialization and to deny the execution in case some requirements are not
-     * met throwing a {@link TaskExecutionException}.
+     * met throwing a {@link TaskException}.
      * 
      * @param parameters
      *            the parameters to be executed
-     * @throws TaskExecutionException
+     * @throws TaskException
      *             in case of unexpected errors
      * 
      */
-    void before(T parameters) throws TaskExecutionException;
+    void before(T parameters) throws TaskException;
 
     /**
      * Executes the task with the input parameters
      * 
      * @param parameters
-     * @throws TaskExecutionException
+     * @throws TaskException
      */
-    void execute(T parameters) throws TaskExecutionException;
+    void execute(T parameters) throws TaskException;
 
     /**
      * Called after the task is executed, can be used to close resources. This method is called in a finally block therefore it's always called even when the task execution throws

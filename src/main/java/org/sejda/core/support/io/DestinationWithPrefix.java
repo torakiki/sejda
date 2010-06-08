@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 04/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,26 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
-
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+package org.sejda.core.support.io;
 
 /**
- * Model for a task parameters used during the task executions
+ * Destination with prefix capabilities
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public interface DestinationWithPrefix extends DestinationWithoutPrefix {
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * sets the prefix to use with this destination
+     * 
+     * @param prefix
+     * @return the destination
      */
-    AbstractOutput getOutput();
-
+    DestinationWithPrefix withPrefix(String prefix);
+    
+    /**
+     * @return the prefix, if configured, for this destination
+     */
+    String getPrefix();
 }

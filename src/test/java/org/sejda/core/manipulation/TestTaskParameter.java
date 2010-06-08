@@ -19,11 +19,20 @@
 package org.sejda.core.manipulation;
 
 import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.output.AbstractOutput;
 
 /**
  * @author Andrea Vacondio
  *
  */
 public class TestTaskParameter implements TaskParameters {
+
+    /* (non-Javadoc)
+     * @see org.sejda.core.manipulation.model.TaskParameters#getOutput()
+     */
+    public AbstractOutput getOutput() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

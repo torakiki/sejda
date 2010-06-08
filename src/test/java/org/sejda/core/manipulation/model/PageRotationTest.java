@@ -18,7 +18,7 @@
  */
 package org.sejda.core.manipulation.model;
 
-import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
 
 import org.junit.Test;
 import org.sejda.core.manipulation.model.rotation.Rotation;
@@ -37,16 +37,16 @@ public class PageRotationTest {
 
     @Test
     public void getRotationTest() {
-        Assert.assertEquals(Rotation.DEGREES_90, Rotation.getRotation(D_90));
-        Assert.assertEquals(Rotation.DEGREES_180, Rotation.getRotation(D_540));
-        Assert.assertEquals(Rotation.DEGREES_0, Rotation.getRotation(D_95));
+        assertEquals(Rotation.DEGREES_90, Rotation.getRotation(D_90));
+        assertEquals(Rotation.DEGREES_180, Rotation.getRotation(D_540));
+        assertEquals(Rotation.DEGREES_0, Rotation.getRotation(D_95));
     }
 
     @Test
     public void rotateTest() {
-        Assert.assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_90.rotateClockwise());
-        Assert.assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_270.rotateAnticlockwise());
-        Assert.assertEquals(Rotation.DEGREES_270, Rotation.DEGREES_0.rotateAnticlockwise());
+        assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_90.rotateClockwise());
+        assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_270.rotateAnticlockwise());
+        assertEquals(Rotation.DEGREES_270, Rotation.DEGREES_0.rotateAnticlockwise());
     }
 
 }

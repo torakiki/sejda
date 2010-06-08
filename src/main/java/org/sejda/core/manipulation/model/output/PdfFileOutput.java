@@ -1,5 +1,5 @@
 /*
- * Created on 29/mag/2010
+ * Created on 30/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,49 +16,49 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model.input;
+package org.sejda.core.manipulation.model.output;
 
-import java.net.URL;
+import java.io.File;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * {@link PdfSource} from a {@link URL}
+ * {@link File} output destination
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfURLSource extends PdfSource {
+public class PdfFileOutput extends AbstractOutput {
 
-    private static final long serialVersionUID = 3076969028015862056L;
+    private static final long serialVersionUID = 8455837002827550634L;
 
-    private URL url;
+    private File file;
 
-    public PdfURLSource(URL url) {
-        this.url = url;
+    public PdfFileOutput() {
+        super();
     }
 
-    public PdfURLSource(URL url, String password) {
-        super(password);
-        this.url = url;
+    public PdfFileOutput(File file) {
+        super();
+        this.file = file;
     }
 
-    public URL getUrl() {
-        return url;
+    public File getFile() {
+        return file;
     }
 
-    public void setUrl(URL url) {
-        this.url = url;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.URL_SOURCE;
+    public OutputType getOutputType() {
+        return OutputType.FILE_OUTPUT;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(url).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(file).toString();
     }
 
 }

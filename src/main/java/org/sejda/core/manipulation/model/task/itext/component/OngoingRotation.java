@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 06/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.manipulation.model.task.itext.component;
 
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import com.itextpdf.text.pdf.PdfReader;
 
 /**
- * Model for a task parameters used during the task executions
+ * Identifies an ongoing rotation exposing methods to finalize it.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public interface OngoingRotation {
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * applies the rotation to the input reader
+     * 
+     * @param reader
      */
-    AbstractOutput getOutput();
-
+    void to(PdfReader reader);
 }

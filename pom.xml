@@ -24,6 +24,13 @@
       <comments>GNU LGPL 2.1</comments>
     </license>
   </licenses>
+  <repositories>
+  	<repository>
+  		<id>iText</id>
+  		<name>iText</name>
+  		<url>http://maven.itextpdf.com/</url>
+  	</repository>
+  </repositories>
   
   <dependencies>
 	    <dependency>
@@ -39,14 +46,13 @@
     	  <artifactId>commons-lang</artifactId>
 	    </dependency>
 	    <dependency>
-  			<groupId>org.springframework</groupId>
-  			<artifactId>spring-core</artifactId>
-  			<version>3.0.2.RELEASE</version>
-		</dependency>
-		<dependency>  
-		<groupId>org.springframework</groupId>  
-		<artifactId>spring-context</artifactId>  
-		<version>3.0.2.RELEASE</version> 
-		</dependency>
+	      <groupId>org.apache.commons</groupId>
+    	  <artifactId>commons-io</artifactId> 
+	    </dependency>
+	    <dependency>
+	    	<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+	    	<version>5.0.2</version>
+	    </dependency>
 	  </dependencies>
 </project>

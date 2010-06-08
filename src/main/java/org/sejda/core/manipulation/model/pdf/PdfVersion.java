@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 30/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,32 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
-
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+package org.sejda.core.manipulation.model.pdf;
 
 /**
- * Model for a task parameters used during the task executions
- * 
+ * pdf versions
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public enum PdfVersion {
 
-    /**
-     * @return output destination where the result of the manipulation is placed
-     */
-    AbstractOutput getOutput();
+    VERSION_1_2(2), VERSION_1_3(3), VERSION_1_4(4), VERSION_1_5(5), VERSION_1_6(6), VERSION_1_7(7);
+    
+    private int version;
 
+    private PdfVersion(int version) {
+        this.version = version;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public String getVersionAsString() {
+        return String.valueOf(version);
+    }
+
+    public char getVersionAsCharacter() {
+        return getVersionAsString().charAt(0);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 01/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.notification.dsl;
 
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import java.math.BigDecimal;
 
 /**
- * Model for a task parameters used during the task executions
+ * DSL interface to complete an ongoing "steps completed" notification.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public interface OngoingNotification {
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * @param total
+     *            the total number of steps
      */
-    AbstractOutput getOutput();
+    void outOf(int total);
 
+    /**
+     * @param total
+     *            the total number of steps
+     */
+    void outOf(BigDecimal total);
 }

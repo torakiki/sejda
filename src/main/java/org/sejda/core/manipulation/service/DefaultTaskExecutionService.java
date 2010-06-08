@@ -18,20 +18,18 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.model.Task;
 import org.sejda.core.manipulation.model.TaskParameters;
-import org.sejda.core.notification.ApplicationEventsNotifier;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
 
 /**
@@ -47,7 +45,6 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
 
     private StopWatch stopWatch = new StopWatch();
     private TaskExecutionContext context = new DefaultTaskExecutionContext();
-    private ApplicationEventsNotifier notifier = new ApplicationEventsNotifier();
 
     @SuppressWarnings("unchecked")
     public void execute(TaskParameters parameters) {
@@ -87,8 +84,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
         stopWatch.reset();
         stopWatch.start();
         // notification of the starting task
-        PercentageOfWorkDoneChangedEvent startingEvent = new PercentageOfWorkDoneChangedEvent();
-        notifier.notifyListeners(startingEvent);
+        notifyEvent().taskStarted();
     }
 
     /**
@@ -97,8 +93,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
     private void postExecution() {
         stopWatch.stop();
         // notification about completion
-        TaskExecutionCompletedEvent endingEvent = new TaskExecutionCompletedEvent();
-        notifier.notifyListeners(endingEvent);
+        notifyEvent().taskCompleted();
     }
 
     /**
@@ -106,10 +101,10 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
      * 
      * @param parameters
      * @param task
-     * @throws TaskExecutionException
+     * @throws TaskException
      */
     @SuppressWarnings("unchecked")
-    private void actualExecution(TaskParameters parameters, Task task) throws TaskExecutionException {
+    private void actualExecution(TaskParameters parameters, Task task) throws TaskException {
         try {
             task.before(parameters);
             task.execute(parameters);

@@ -19,7 +19,7 @@
 package org.sejda.core.manipulation.model.input;
 
 /**
- * Types of sources
+ * Types of pdf sources
  * @author Andrea Vacondio
  * 
  */

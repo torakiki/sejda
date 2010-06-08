@@ -18,9 +18,14 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 import org.mockito.Matchers;
-import org.mockito.Mockito;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
@@ -39,9 +44,9 @@ import org.sejda.core.manipulation.model.TaskParameters;
 public class DefaultTaskExecutionServiceTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-    private TestTaskParameter parameters = Mockito.mock(TestTaskParameter.class);
-    private TaskExecutionContext context = Mockito.mock(DefaultTaskExecutionContext.class);
-    private Task task = Mockito.mock(Task.class);
+    private TestTaskParameter parameters = mock(TestTaskParameter.class);
+    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private Task task = mock(Task.class);
 
     @Test
     public void testExecute() throws TaskException {
@@ -50,12 +55,12 @@ public class DefaultTaskExecutionServiceTest {
 
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
-        Mockito.when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
-        Mockito.doThrow(new TaskExecutionException()).when(task).before(Matchers.any(TaskParameters.class));
+        when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
+        doThrow(new TaskExecutionException()).when(task).before(Matchers.any(TaskParameters.class));
         victim.setContext(context);
         victim.execute(parameters);
-        Mockito.verify(task).before(parameters);
-        Mockito.verify(task).after();
-        Mockito.verify(task, Mockito.never()).execute(parameters);
+        verify(task).before(parameters);
+        verify(task).after();
+        verify(task, never()).execute(parameters);
     }
 }

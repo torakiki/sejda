@@ -26,6 +26,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Model for a page rotation
+ * 
  * @author Andrea Vacondio
  * 
  */
@@ -44,9 +45,7 @@ public class PageRotation implements Serializable {
      * @param rotation
      */
     public PageRotation(int pageNumber, Rotation rotation) {
-        this.pageNumber = pageNumber;
-        this.rotation = rotation;
-        this.rotationType = RotationType.SINGLE_PAGE;
+        this(pageNumber, rotation, RotationType.SINGLE_PAGE);
     }
 
     /**
@@ -81,6 +80,24 @@ public class PageRotation implements Serializable {
      */
     public RotationType getRotationType() {
         return rotationType;
+    }
+
+    /**
+     * @param page
+     * @return true if this rotation accept the given page number
+     */
+    public boolean accept(int page) {
+        if (RotationType.ALL_PAGES.equals(rotationType)) {
+            return true;
+        }
+        if (RotationType.ODD_PAGES.equals(rotationType) && (page % 2 != 0)) {
+            return true;
+        }
+        if (RotationType.EVEN_PAGES.equals(rotationType) && (page % 2 == 0)) {
+            return true;
+        }
+        //single page
+        return page == pageNumber;
     }
 
     @Override

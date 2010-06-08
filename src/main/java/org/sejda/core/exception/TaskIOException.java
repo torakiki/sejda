@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 31/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
-
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+package org.sejda.core.exception;
 
 /**
- * Model for a task parameters used during the task executions
+ * Exception thrown if an IOException is raised during the task execution
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public class TaskIOException extends TaskException {
 
-    /**
-     * @return output destination where the result of the manipulation is placed
-     */
-    AbstractOutput getOutput();
+    private static final long serialVersionUID = 5205172452237197631L;
+
+    public TaskIOException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public TaskIOException(String message) {
+        super(message);
+    }
+
+    public TaskIOException(Throwable cause) {
+        super(cause);
+    }
 
 }

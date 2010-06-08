@@ -18,11 +18,12 @@
  */
 package org.sejda.core.notification;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +35,7 @@ import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class NotificationContextTest {
 
@@ -55,34 +56,34 @@ public class NotificationContextTest {
     }
 
     @Test
-    public void testNotificationContextNotify() throws NotificationContextException{
+    public void testNotificationContextNotify() throws NotificationContextException {
         for (NotificationContext victim : contexts) {
             testNotificationContestNotify(victim);
         }
     }
-    
-    private void testNotificationContestNotify(NotificationContext victim) throws NotificationContextException{
+
+    private void testNotificationContestNotify(NotificationContext victim) throws NotificationContextException {
         TestListenerPercentage listener = new TestListenerPercentage();
         victim.addListener(listener);
         BigDecimal value = new BigDecimal("32");
         PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(value);
-        Assert.assertFalse(event.isUndetermined());
+        assertFalse(event.isUndetermined());
         victim.notifyListeners(event);
-        Assert.assertEquals(value, listener.getPercentage());
+        assertEquals(value, listener.getPercentage());
     }
-    
+
     private void testNotificationContextAddListener(NotificationContext victim) throws NotificationContextException {
         EventListener<PercentageOfWorkDoneChangedEvent> listener = new TestListenerPercentage();
         victim.addListener(listener);
-        Assert.assertEquals(1, victim.size()); 
+        assertEquals(1, victim.size());
     }
 
     /**
      * @param victim
      */
     private void testNotificationContextClear(NotificationContext victim) {
-        Assert.assertFalse(0 == victim.size());
+        assertFalse(0 == victim.size());
         victim.clearListeners();
-        Assert.assertEquals(0, victim.size());
+        assertEquals(0, victim.size());
     }
 }

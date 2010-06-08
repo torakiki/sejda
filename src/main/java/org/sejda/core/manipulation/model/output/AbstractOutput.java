@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 30/mag/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.manipulation.model.output;
 
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import java.io.Serializable;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Model for a task parameters used during the task executions
+ * Abstract implementation of an output destination
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public abstract class AbstractOutput implements Serializable {
+
+    private static final long serialVersionUID = -3597460921220798765L;
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * @return the type of this output
      */
-    AbstractOutput getOutput();
+    public abstract OutputType getOutputType();
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append(getOutputType()).toString();
+    }
 }

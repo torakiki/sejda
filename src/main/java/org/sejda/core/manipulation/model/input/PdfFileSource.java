@@ -20,6 +20,8 @@ package org.sejda.core.manipulation.model.input;
 
 import java.io.File;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * {@link PdfSource} from a {@link File}
  * 
@@ -54,4 +56,8 @@ public class PdfFileSource extends PdfSource {
         return PdfSourceType.FILE_SOURCE;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append(file).toString();
+    }
 }
