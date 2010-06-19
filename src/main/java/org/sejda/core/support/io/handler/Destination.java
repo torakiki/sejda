@@ -1,5 +1,5 @@
 /*
- * Created on 06/giu/2010
+ * Created on 04/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,27 +16,37 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io;
+package org.sejda.core.support.io.handler;
+
+import org.sejda.core.manipulation.model.output.AbstractOutput;
 
 /**
- * DSL interface to allow the user to set the overwrite flag.
+ * Destination where the output will be written
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface OverwriteDestination {
+public interface Destination {
 
     /**
-     * 
-     * @return true if the output destination should be overwritten
+     * @return the {@link AbstractOutput} where the input will be written to
+     */
+    AbstractOutput getOutputDestination();
+
+    /**
+     * @return true if the destination should be overwritten if already exists
      */
     boolean isOverwrite();
 
     /**
-     * set to overwrite the output destination if already exists
+     * DSL interface for a file destination
      * 
-     * @param overwrite
-     * @return the destination writer
+     * @author Andrea Vacondio
+     * 
      */
-    ToDestinationWriter overwriting(boolean overwrite);
+    public static interface FileDestination extends Destination {
+
+        // on purpose
+    }
+
 }

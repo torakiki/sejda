@@ -22,8 +22,8 @@ import org.sejda.core.configuration.GlobalConfiguration;
 import org.sejda.core.context.AbstractApplicationContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
-import org.sejda.core.manipulation.model.Task;
-import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.registry.TasksRegistry;
 
 /**

@@ -20,8 +20,6 @@ package org.sejda.core.manipulation.model.input;
 
 import java.io.InputStream;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
  * {@link PdfSource} from a {@link InputStream}
  * 
@@ -34,12 +32,12 @@ public class PdfStreamSource extends PdfSource {
 
     private InputStream stream;
 
-    public PdfStreamSource(InputStream stream) {
-        this.stream = stream;
+    public PdfStreamSource(InputStream stream, String name) {
+        this(stream, name, null);
     }
 
-    public PdfStreamSource(InputStream stream, String password) {
-        super(password);
+    public PdfStreamSource(InputStream stream, String name, String password) {
+        super(name, password);
         this.stream = stream;
     }
 
@@ -54,10 +52,5 @@ public class PdfStreamSource extends PdfSource {
     @Override
     public PdfSourceType getSourceType() {
         return PdfSourceType.STREAM_SOURCE;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append(stream).toString();
     }
 }

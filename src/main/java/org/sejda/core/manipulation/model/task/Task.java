@@ -16,9 +16,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.manipulation.model.task;
 
 import org.sejda.core.exception.TaskException;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * Model for a task to be executed. Can generically define the {@link TaskParameters} subclass used to parametrize the execution

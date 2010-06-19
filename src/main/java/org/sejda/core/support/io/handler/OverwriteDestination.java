@@ -1,5 +1,5 @@
 /*
- * Created on 04/giu/2010
+ * Created on 06/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,35 +16,40 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io;
+package org.sejda.core.support.io.handler;
 
-import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.support.io.handler.Destination.FileDestination;
 
 /**
- * DSL interface for a destination writer
+ * DSL interface to allow the user to set the overwrite flag.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface ToDestinationWriter {
+public interface OverwriteDestination {
 
     /**
-     * sets the destination where the input pdf source will be written.
+     * set to overwrite or not the output destination if already exists
      * 
-     * @param destination
-     *            with prefix
-     * @throws TaskIOException
-     *             in case of error
+     * @param overwrite
+     * @return the destination
      */
-    void to(DestinationWithPrefix destination) throws TaskIOException;
+    Destination overwriting(boolean overwrite);
 
     /**
-     * sets the destination where the input pdf source will be written.
+     * DSL interface to allow the user to set the overwrite flag for a file destination.
      * 
-     * @param destination
-     *            without prefix
-     * @throws TaskIOException
-     *             in case of error
+     * @author Andrea Vacondio
+     * 
      */
-    void to(DestinationWithoutPrefix destination) throws TaskIOException;
+    public static interface OverwriteFileDestination extends OverwriteDestination {
+
+        /**
+         * set to overwrite or not the output file destination if already exists
+         * 
+         * @param overwrite
+         * @return the destination
+         */
+        FileDestination overwriting(boolean overwrite);
+    }
 }

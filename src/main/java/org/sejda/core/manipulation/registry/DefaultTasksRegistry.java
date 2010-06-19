@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
-import org.sejda.core.manipulation.model.Task;
-import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 
 /**
  * Default implementation holding the tasks information in a Map

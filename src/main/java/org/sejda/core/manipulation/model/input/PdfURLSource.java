@@ -34,12 +34,12 @@ public class PdfURLSource extends PdfSource {
 
     private URL url;
 
-    public PdfURLSource(URL url) {
-        this.url = url;
+    public PdfURLSource(URL url, String name) {
+        this(url, name, null);
     }
 
-    public PdfURLSource(URL url, String password) {
-        super(password);
+    public PdfURLSource(URL url, String name, String password) {
+        super(name, password);
         this.url = url;
     }
 
@@ -58,7 +58,7 @@ public class PdfURLSource extends PdfSource {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(url).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(url).toString();
     }
 
 }

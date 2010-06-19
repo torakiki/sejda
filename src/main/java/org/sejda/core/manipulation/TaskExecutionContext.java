@@ -20,8 +20,8 @@ package org.sejda.core.manipulation;
 
 import org.sejda.core.context.ApplicationContext;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.Task;
-import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 
 /**
  * Interface providing configuration for the tasks executions.

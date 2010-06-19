@@ -1,5 +1,5 @@
 /*
- * Created on 12/mag/2010
+ * Created on 19/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,32 +16,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.support.io;
 
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.task.Task;
+import java.io.File;
 
 /**
+ * DSL interface used to expose getters for the fully populated {@link FileOutput}
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
-public class TestTask implements Task<TestTaskParameter> {
+public interface PopulatedFileOutput {
 
-    
-    public void after() {
-        // TODO Auto-generated method stub
-        
-    }
+    /**
+     * @return the temporary file
+     */
+    File getFile();
 
-    
-    public void before(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
-    }
-
- 
-    public void execute(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
-        
-    }
-
+    /**
+     * @return the new name
+     */
+    String getName();
 }

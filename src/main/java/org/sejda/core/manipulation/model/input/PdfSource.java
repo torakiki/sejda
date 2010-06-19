@@ -21,6 +21,7 @@ package org.sejda.core.manipulation.model.input;
 import java.io.Serializable;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Model for a pdf input source
@@ -33,12 +34,14 @@ public abstract class PdfSource implements Serializable {
     private static final long serialVersionUID = -6780088810823438389L;
 
     private String password;
+    private String name;
 
-    public PdfSource() {
-        super();
+    public PdfSource(String name) {
+        this.name = name;
     }
 
-    public PdfSource(String password) {
+    public PdfSource(String name, String password) {
+        this(name);
         this.password = password;
     }
 
@@ -62,8 +65,20 @@ public abstract class PdfSource implements Serializable {
     }
 
     /**
+     * @return the name of this source
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * @return the type of this source
      */
     public abstract PdfSourceType getSourceType();
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append(name).append(getSourceType()).toString();
+    }
 
 }

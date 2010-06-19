@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 19/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,33 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.configuration;
+package org.sejda.core.support.io;
 
-import java.util.Map;
-
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.notification.strategy.NotificationStrategy;
+import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.manipulation.model.output.AbstractOutput;
 
 /**
- * Strategy used to load the configuration
+ * DSL interface to expose methods a multiple output task needs (tasks generating multiple files as output).
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface ConfigurationStrategy {
+public interface MultipleOutput {
 
     /**
-     * @return the notification strategy class to use
-     */
-    Class<? extends NotificationStrategy> getNotificationStrategy();
-
-    /**
-     * Retrieves all the configured {@link Task} stored in a map. The map key is the subclass of {@link TaskParameters}
-     * that the task can execute.
+     * flush of the multiple outputs added to the output destination
      * 
-     * @return a map containing all the configured {@link Task}
+     * @param output
+     *            manipulation output parameter
+     * @param overwrite
+     *            true if the output should be overwritten if already exists
+     * @throws TaskIOException
+     *             in case of error
      */
-    @SuppressWarnings("unchecked")
-    Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap();
+    void flushOutputs(AbstractOutput output, boolean overwrite) throws TaskIOException;
+
+    /**
+     * Adds the given file output to the multiple outputs collection
+     * 
+     * @param fileOutput
+     */
+    void add(PopulatedFileOutput fileOutput);
 }

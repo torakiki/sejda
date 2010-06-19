@@ -20,23 +20,20 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.OutputDestination.destination;
-import static org.sejda.core.support.io.OutputHandler.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.OutputHandler.write;
+import static org.sejda.core.support.io.FileOutput.file;
+import static org.sejda.core.support.io.handler.OutputHandler.createTemporaryPdfBuffer;
 
 import java.io.File;
 
 import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.Task;
 import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.manipulation.model.parameter.RotationParameter;
+import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
+import org.sejda.core.support.io.OutputWriter;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -46,21 +43,23 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class RotateTask implements Task<RotationParameter> {
+public class RotateTask extends OutputWriter implements Task<RotationParameter> {
 
     private static final Logger LOG = Logger.getLogger(RotateTask.class.getPackage().getName());
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private PdfReaderHandler readerHandler = null;
+    private int totalSteps;
 
     public void before(RotationParameter parameters) throws TaskExecutionException {
         readerHandler = new PdfReaderHandler();
+        totalSteps = parameters.getInputList().size() + 1;
     }
 
     public void execute(RotationParameter parameters) throws TaskException {
         int currentStep = 0;
-        int totalSteps = parameters.getInputList().size();
+
         for (PdfSource source : parameters.getInputList()) {
             currentStep++;
             LOG.debug(String.format("Opening %s ...", source));
@@ -77,19 +76,17 @@ public class RotateTask implements Task<RotationParameter> {
 
             readerHandler.closePdfReader(reader);
             stamperHandler.closePdfStamper();
-            
-            //TODO prefix handling
-            if (OutputType.STREAM_OUTPUT.equals(parameters.getOutput().getOutputType())) {
-                write(tmpFile).overwriting(parameters.isOverwrite()).to(
-                        destination((PdfStreamOutput) parameters.getOutput()));
-            } else {
-                write(tmpFile).overwriting(parameters.isOverwrite()).to(
-                        destination((PdfFileOutput) parameters.getOutput()).withPrefix(parameters.getOutputPrefix()));
-            }
-            LOG.debug(String.format("Input rotated and written to %s", parameters.getOutput()));
+
+            // TODO prefix handling from the source name
+            multipleOutputs().add(file(tmpFile).name("Prefixgenerated"));
+
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
+        multipleOutputs().flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+        
+        LOG.debug(String.format("Input documents rotated and written to %s", parameters.getOutput()));
     }
 
     public void after() {

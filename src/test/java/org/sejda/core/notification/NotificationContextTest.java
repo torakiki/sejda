@@ -58,11 +58,11 @@ public class NotificationContextTest {
     @Test
     public void testNotificationContextNotify() throws NotificationContextException {
         for (NotificationContext victim : contexts) {
-            testNotificationContestNotify(victim);
+            testNotificationContextNotify(victim);
         }
     }
 
-    private void testNotificationContestNotify(NotificationContext victim) throws NotificationContextException {
+    private void testNotificationContextNotify(NotificationContext victim) throws NotificationContextException {
         TestListenerPercentage listener = new TestListenerPercentage();
         victim.addListener(listener);
         BigDecimal value = new BigDecimal("32");
@@ -73,9 +73,10 @@ public class NotificationContextTest {
     }
 
     private void testNotificationContextAddListener(NotificationContext victim) throws NotificationContextException {
-        EventListener<PercentageOfWorkDoneChangedEvent> listener = new TestListenerPercentage();
-        victim.addListener(listener);
+        victim.addListener(new TestListenerPercentage());
         assertEquals(1, victim.size());
+        victim.addListener(new ChildTestListenerPercentage());
+        assertEquals(2, victim.size());
     }
 
     /**

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Map where the elements added to the same key are enqueued in a List.
@@ -71,13 +72,12 @@ public final class ListValueMap<K, V> {
      * @param key
      * @return the list associated to the input key or an empty list of nothing is associated.
      */
-    @SuppressWarnings("unchecked")
     public List<V> get(K key) {
         List<V> list = map.get(key);
         if (list != null) {
             return list;
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
@@ -85,8 +85,8 @@ public final class ListValueMap<K, V> {
      */
     public int size() {
         int retVal = 0;
-        for (K key : map.keySet()) {
-            retVal += map.get(key).size();
+        for (Entry<K, List<V>> entry : map.entrySet()) {
+            retVal += entry.getValue().size();
         }
         return retVal;
     }

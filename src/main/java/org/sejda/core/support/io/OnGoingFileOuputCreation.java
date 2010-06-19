@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 19/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,21 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
-
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+package org.sejda.core.support.io;
 
 /**
- * Model for a task parameters used during the task executions
+ * DSL interface used to expose methods needed to complete the {@link FileOutput} creation
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public interface OnGoingFileOuputCreation {
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * set the name for the current instance
+     * 
+     * @param name
+     * @return
      */
-    AbstractOutput getOutput();
-
+    PopulatedFileOutput name(String name);
 }

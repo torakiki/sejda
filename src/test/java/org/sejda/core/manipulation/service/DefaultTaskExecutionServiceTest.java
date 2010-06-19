@@ -31,8 +31,8 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.Task;
-import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 
 /**
  * Test unit for the {@link DefaultTaskExecutionService}

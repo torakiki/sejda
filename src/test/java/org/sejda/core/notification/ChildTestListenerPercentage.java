@@ -1,5 +1,5 @@
 /*
- * Created on 04/giu/2010
+ * Created on 15/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,26 +16,13 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io;
+package org.sejda.core.notification;
 
 /**
- * Destination with prefix capabilities
- * 
+ * Child listener test class
  * @author Andrea Vacondio
- * 
+ *
  */
-public interface DestinationWithPrefix extends DestinationWithoutPrefix {
+public class ChildTestListenerPercentage extends TestListenerPercentage {
 
-    /**
-     * sets the prefix to use with this destination
-     * 
-     * @param prefix
-     * @return the destination
-     */
-    DestinationWithPrefix withPrefix(String prefix);
-    
-    /**
-     * @return the prefix, if configured, for this destination
-     */
-    String getPrefix();
 }

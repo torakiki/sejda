@@ -18,8 +18,8 @@
  */
 package org.sejda.core.manipulation;
 
-import org.sejda.core.manipulation.model.TaskParameters;
 import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * @author Andrea Vacondio

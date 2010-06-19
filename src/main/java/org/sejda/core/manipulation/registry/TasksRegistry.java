@@ -18,8 +18,8 @@
  */
 package org.sejda.core.manipulation.registry;
 
-import org.sejda.core.manipulation.model.Task;
-import org.sejda.core.manipulation.model.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 
 
 /**

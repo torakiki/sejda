@@ -1,5 +1,5 @@
 /*
- * Created on 12/mag/2010
+ * Created on 27/apr/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,32 +16,21 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.model.parameter;
 
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.output.AbstractOutput;
 
 /**
+ * Model for a task parameters used during the task executions
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
-public class TestTask implements Task<TestTaskParameter> {
+public interface TaskParameters {
 
-    
-    public void after() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    
-    public void before(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
-    }
-
- 
-    public void execute(TestTaskParameter parameters) throws TaskExecutionException {
-        // TODO Auto-generated method stub
-        
-    }
+    /**
+     * @return output destination where the result of the manipulation is placed
+     */
+    AbstractOutput getOutput();
 
 }
