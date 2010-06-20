@@ -28,11 +28,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfStreamOutput extends AbstractOutput {
+public class PdfStreamOutput extends AbstractPdfOutput {
 
     private static final long serialVersionUID = 8655165390857852729L;
 
-    private OutputStream stream;
+    private transient OutputStream stream;
 
     public PdfStreamOutput() {
         super();

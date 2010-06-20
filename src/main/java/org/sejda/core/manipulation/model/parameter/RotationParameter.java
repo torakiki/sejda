@@ -24,7 +24,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 
 /**
@@ -37,16 +37,16 @@ public class RotationParameter extends AbstractParameter {
 
     private static final long serialVersionUID = 8834767589689764537L;
 
-    private AbstractOutput output;
+    private AbstractPdfOutput output;
     private List<PdfSource> inputList;
     private String outputPrefix = "";
     private PageRotation rotation = null;
 
-    public AbstractOutput getOutput() {
+    public AbstractPdfOutput getOutput() {
         return output;
     }
 
-    public void setOutput(AbstractOutput output) {
+    public void setOutput(AbstractPdfOutput output) {
         this.output = output;
     }
 

@@ -18,7 +18,7 @@
  */
 package org.sejda.core.manipulation;
 
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
@@ -30,7 +30,7 @@ public class TestTaskParameter implements TaskParameters {
     /* (non-Javadoc)
      * @see org.sejda.core.manipulation.model.TaskParameters#getOutput()
      */
-    public AbstractOutput getOutput() {
+    public AbstractPdfOutput getOutput() {
         // TODO Auto-generated method stub
         return null;
     }

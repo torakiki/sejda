@@ -19,7 +19,7 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 
 /**
  * DSL interface to expose methods a multiple output task needs (tasks generating multiple files as output).
@@ -27,7 +27,7 @@ import org.sejda.core.manipulation.model.output.AbstractOutput;
  * @author Andrea Vacondio
  * 
  */
-public interface MultipleOutput {
+public interface MultipleOutputSupport {
 
     /**
      * flush of the multiple outputs added to the output destination
@@ -39,7 +39,7 @@ public interface MultipleOutput {
      * @throws TaskIOException
      *             in case of error
      */
-    void flushOutputs(AbstractOutput output, boolean overwrite) throws TaskIOException;
+    void flushOutputs(AbstractPdfOutput output, boolean overwrite) throws TaskIOException;
 
     /**
      * Adds the given file output to the multiple outputs collection

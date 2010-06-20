@@ -30,7 +30,7 @@ public class PdfStreamSource extends PdfSource {
 
     private static final long serialVersionUID = 2581826909753391287L;
 
-    private InputStream stream;
+    private transient InputStream stream;
 
     public PdfStreamSource(InputStream stream, String name) {
         this(stream, name, null);

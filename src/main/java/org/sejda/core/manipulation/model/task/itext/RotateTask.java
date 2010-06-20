@@ -21,7 +21,6 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.FileOutput.file;
-import static org.sejda.core.support.io.handler.OutputHandler.createTemporaryPdfBuffer;
 
 import java.io.File;
 
@@ -33,7 +32,7 @@ import org.sejda.core.manipulation.model.parameter.RotationParameter;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
-import org.sejda.core.support.io.OutputWriter;
+import org.sejda.core.support.io.OutputWriterSupport;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -43,7 +42,7 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class RotateTask extends OutputWriter implements Task<RotationParameter> {
+public class RotateTask extends OutputWriterSupport implements Task<RotationParameter> {
 
     private static final Logger LOG = Logger.getLogger(RotateTask.class.getPackage().getName());
 

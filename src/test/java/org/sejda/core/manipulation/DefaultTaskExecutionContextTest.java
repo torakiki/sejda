@@ -23,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
@@ -55,7 +55,7 @@ public class DefaultTaskExecutionContextTest {
     public void testGetTaskNegative() throws TaskException {
         Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
 
-            public AbstractOutput getOutput() {
+            public AbstractPdfOutput getOutput() {
                 // TODO Auto-generated method stub
                 return null;
             }

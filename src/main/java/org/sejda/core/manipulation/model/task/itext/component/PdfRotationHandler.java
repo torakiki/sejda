@@ -36,6 +36,7 @@ import com.itextpdf.text.pdf.PdfReader;
 public final class PdfRotationHandler implements OngoingRotation {
 
     private static final Logger LOG = Logger.getLogger(PdfRotationHandler.class.getPackage().getName());
+    private static final int DEGREES_360 = 360;
 
     private PdfReader reader;
     private PageRotation rotation;
@@ -85,7 +86,8 @@ public final class PdfRotationHandler implements OngoingRotation {
     private void apply(int pageNmber) {
         if (rotation.accept(pageNmber)) {
             PdfDictionary dictionary = reader.getPageN(pageNmber);
-            int rotationDegrees = (rotation.getRotation().getDegrees() + reader.getPageRotation(pageNmber)) % 360;
+            int rotationDegrees = (rotation.getRotation().getDegrees() + reader.getPageRotation(pageNmber))
+                    % DEGREES_360;
             dictionary.put(PdfName.ROTATE, new PdfNumber(rotationDegrees));
         }
     }

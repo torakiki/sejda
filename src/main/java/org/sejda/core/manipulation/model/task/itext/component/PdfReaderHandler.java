@@ -21,12 +21,14 @@ package org.sejda.core.manipulation.model.task.itext.component;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.exception.TaskWrongPasswordException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.input.PdfURLSource;
 
+import com.itextpdf.text.exceptions.BadPasswordException;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
@@ -45,10 +47,10 @@ public class PdfReaderHandler {
      * @param forceStream
      *            if true and source is a {@link PdfFileSource}, forces the {@link PdfReader} to be opened from a {@link FileInputStream}
      * @return the opened {@link PdfReader}
-     * @throws TaskExecutionException
-     *             if an error occur during the reader creation
+     * @throws TaskIOException
+     *             if an error occur during the reader creation.
      */
-    public PdfReader openReader(PdfSource source, boolean forceStream) throws TaskExecutionException {
+    public PdfReader openReader(PdfSource source, boolean forceStream) throws TaskIOException {
         PdfReader reader = null;
         try {
             switch (source.getSourceType()) {
@@ -65,10 +67,12 @@ public class PdfReaderHandler {
                 reader = openReaderFromURL((PdfURLSource) source);
                 break;
             default:
-                throw new TaskExecutionException("Unable to identify the input pdf source.");
+                throw new TaskIOException("Unable to identify the input pdf source.");
             }
+        } catch (BadPasswordException bpe) {
+            throw new TaskWrongPasswordException("Unable to open the document due to a wrong password.", bpe);
         } catch (IOException e) {
-            throw new TaskExecutionException("An error occurred opening the reader.", e);
+            throw new TaskIOException("An error occurred opening the reader.", e);
         }
         reader.removeUnusedObjects();
         reader.consolidateNamedDestinations();
@@ -81,10 +85,10 @@ public class PdfReaderHandler {
      * @param source
      *            where the {@link PdfReader} will be opened.
      * @return he opened {@link PdfReader}
-     * @throws TaskExecutionException
+     * @throws TaskIOException
      *             if an error occur during the reader creation
      */
-    public PdfReader openReader(PdfSource source) throws TaskExecutionException {
+    public PdfReader openReader(PdfSource source) throws TaskIOException {
         return openReader(source, false);
     }
 

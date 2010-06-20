@@ -18,6 +18,8 @@
  */
 package org.sejda.core.manipulation.model.output;
 
+import java.io.File;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -29,6 +31,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class PdfDirectoryOutput extends PdfFileOutput {
 
     private static final long serialVersionUID = -6236082967739145486L;
+
+    public PdfDirectoryOutput(File file) {
+        super(file);
+    }
 
     @Override
     public OutputType getOutputType() {

@@ -1,5 +1,5 @@
 /*
- * Created on 30/mag/2010
+ * Created on 20/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,29 +16,38 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model.output;
-
-import java.io.Serializable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
+package org.sejda.core.exception;
 
 /**
- * Abstract implementation of an output destination
+ * Exception thrown when a wrong password has been set and it's not possible to open the pdf document (and execute the task)
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractOutput implements Serializable {
+public class TaskWrongPasswordException extends TaskIOException {
 
-    private static final long serialVersionUID = -3597460921220798765L;
+    private static final long serialVersionUID = -5517166148313118559L;
 
     /**
-     * @return the type of this output
+     * @param message
+     * @param cause
      */
-    public abstract OutputType getOutputType();
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).toString();
+    public TaskWrongPasswordException(String message, Throwable cause) {
+        super(message, cause);
     }
+
+    /**
+     * @param message
+     */
+    public TaskWrongPasswordException(String message) {
+        super(message);
+    }
+
+    /**
+     * @param cause
+     */
+    public TaskWrongPasswordException(Throwable cause) {
+        super(cause);
+    }
+
 }

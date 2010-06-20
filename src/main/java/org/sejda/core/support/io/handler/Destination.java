@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.io.handler;
 
-import org.sejda.core.manipulation.model.output.AbstractOutput;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 
 /**
  * Destination where the output will be written
@@ -29,9 +29,9 @@ import org.sejda.core.manipulation.model.output.AbstractOutput;
 public interface Destination {
 
     /**
-     * @return the {@link AbstractOutput} where the input will be written to
+     * @return the {@link AbstractPdfOutput} where the input will be written to
      */
-    AbstractOutput getOutputDestination();
+    AbstractPdfOutput getOutputDestination();
 
     /**
      * @return true if the destination should be overwritten if already exists

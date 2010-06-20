@@ -28,15 +28,11 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileOutput extends AbstractOutput {
+public class PdfFileOutput extends AbstractPdfOutput {
 
     private static final long serialVersionUID = 8455837002827550634L;
 
     private File file;
-
-    public PdfFileOutput() {
-        super();
-    }
 
     public PdfFileOutput(File file) {
         super();
@@ -45,10 +41,6 @@ public class PdfFileOutput extends AbstractOutput {
 
     public File getFile() {
         return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
     }
 
     @Override

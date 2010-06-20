@@ -1,5 +1,5 @@
 /*
- * Created on 04/giu/2010
+ * Created on 19/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,42 +16,32 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.support.io.handler.Destination.FileDestination;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 
 /**
- * DSL interface for a destination writer
+ * DSL interface to expose methods a single output task needs (tasks generating a single file as output).
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface ToDestinationWriter {
+public interface SingleOutputSupport {
 
     /**
-     * sets the destination where the input pdf source will be written.
+     * flush of the given {@link PopulatedFileOutput} to the output destination.
      * 
-     * @param destination
+     * @param fileOutput
+     *            the file that will be written
+     * @param output
+     *            the destination
+     * @param overwrite
+     *            if true overwrite the destination of already exists
      * @throws TaskIOException
      *             in case of error
      */
-    void to(Destination destination) throws TaskIOException;
+    void flushSingleOutput(PopulatedFileOutput fileOutput, AbstractPdfOutput output, boolean overwrite)
+            throws TaskIOException;
 
-    /**
-     * DSL interface for a file destination writer
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    public static interface ToFileDestinationWriter {
-        /**
-         * sets the destination where the input pdf source will be written.
-         * 
-         * @param destination
-         * @throws TaskIOException
-         *             in case of error
-         */
-        void to(FileDestination destination) throws TaskIOException;
-    }
 }
