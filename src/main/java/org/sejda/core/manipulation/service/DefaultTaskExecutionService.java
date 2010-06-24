@@ -22,7 +22,6 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
-import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
@@ -31,6 +30,8 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link TaskExecutionService}. <p>This implementation is not synchronized and unpredictable behavior can be experienced if multiple threads try to execute
@@ -41,7 +42,7 @@ import org.sejda.core.notification.event.TaskExecutionFailedEvent;
  */
 public class DefaultTaskExecutionService implements TaskExecutionService {
 
-    private static final Logger LOG = Logger.getLogger(DefaultTaskExecutionService.class.getPackage().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionService.class);
 
     private StopWatch stopWatch = new StopWatch();
     private TaskExecutionContext context = new DefaultTaskExecutionContext();

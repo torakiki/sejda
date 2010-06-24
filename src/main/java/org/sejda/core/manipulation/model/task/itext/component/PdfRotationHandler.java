@@ -18,9 +18,10 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
-import org.apache.log4j.Logger;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
@@ -35,7 +36,7 @@ import com.itextpdf.text.pdf.PdfReader;
  */
 public final class PdfRotationHandler implements OngoingRotation {
 
-    private static final Logger LOG = Logger.getLogger(PdfRotationHandler.class.getPackage().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(PdfRotationHandler.class);
     private static final int DEGREES_360 = 360;
 
     private PdfReader reader;

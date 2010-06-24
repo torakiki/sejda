@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.FileOutput.file;
 
 import java.io.File;
 
-import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
@@ -33,6 +32,8 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.OutputWriterSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -44,7 +45,7 @@ import com.itextpdf.text.pdf.PdfReader;
  */
 public class RotateTask extends OutputWriterSupport implements Task<RotationParameter> {
 
-    private static final Logger LOG = Logger.getLogger(RotateTask.class.getPackage().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;

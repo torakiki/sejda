@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
@@ -33,6 +32,8 @@ import org.sejda.core.manipulation.registry.DefaultTasksRegistry;
 import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Global configuration singleton. Holds a global configuration obtained as the union of the default configuration and, if available, the one submitted by the user as system property or default
@@ -47,8 +48,8 @@ import org.sejda.core.notification.strategy.SyncNotificationStrategy;
  */
 @SuppressWarnings("unchecked")
 public final class GlobalConfiguration {
-
-    private static final Logger LOG = Logger.getLogger(GlobalConfiguration.class.getPackage().getName());
+    
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
     private static final String DEFAULT_CONFIG_FILE_NAME = "default-sejda-config.xml";
     private static final String USER_CONFIG_FILE_NAME = "sejda-config.xml";

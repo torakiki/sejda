@@ -22,9 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation holding the tasks information in a Map
@@ -35,8 +36,8 @@ import org.sejda.core.manipulation.model.task.Task;
 @SuppressWarnings("unchecked")
 public class DefaultTasksRegistry implements TasksRegistry {
 
-    private static final Logger LOG = Logger.getLogger(DefaultTasksRegistry.class.getPackage().getName());
-    
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTasksRegistry.class);
+
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap;
 
     public DefaultTasksRegistry() {
@@ -45,8 +46,10 @@ public class DefaultTasksRegistry implements TasksRegistry {
 
     public Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {
         Class<? extends Task> retVal = tasksMap.get(parametersClass);
-        if(retVal == null){
-            LOG.info(String.format("Unable to find a match for the input parameter class %s, searching for an assignable one", parametersClass));
+        if (retVal == null) {
+            LOG.info(String.format(
+                    "Unable to find a match for the input parameter class %s, searching for an assignable one",
+                    parametersClass));
             retVal = findNearestTask(parametersClass);
         }
         return retVal;
@@ -57,8 +60,8 @@ public class DefaultTasksRegistry implements TasksRegistry {
      * @return finds the nearest class able to execute the input parameter
      */
     private Class<? extends Task> findNearestTask(Class<? extends TaskParameters> parametersClass) {
-        for(Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()){
-            if(entry.getKey().isAssignableFrom(parametersClass)){
+        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(parametersClass)) {
                 return entry.getValue();
             }
         }
@@ -69,10 +72,10 @@ public class DefaultTasksRegistry implements TasksRegistry {
     public void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass) {
         tasksMap.put(parameterClass, taskClass);
     }
-    
-    public TasksRegistry clone(){
+
+    public TasksRegistry clone() {
         TasksRegistry clone = new DefaultTasksRegistry();
-        for(Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()){
+        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()) {
             clone.addTask(entry.getKey(), entry.getValue());
         }
         return clone;

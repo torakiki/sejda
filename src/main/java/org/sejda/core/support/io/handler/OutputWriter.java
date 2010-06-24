@@ -29,13 +29,14 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component responsible for writing the input files to the output destination
@@ -45,7 +46,7 @@ import org.sejda.core.manipulation.model.output.PdfStreamOutput;
  */
 public class OutputWriter {
 
-    private static final Logger LOG = Logger.getLogger(OutputWriter.class.getPackage().getName());
+    private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class);
 
     public void executeCopy(Map<String, File> files, Destination destination) throws TaskIOException {
         if (destination != null) {
