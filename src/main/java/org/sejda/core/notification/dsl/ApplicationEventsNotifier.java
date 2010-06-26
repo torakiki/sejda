@@ -26,6 +26,8 @@ import org.sejda.core.notification.event.AbstractEvent;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An DSL class that can be used to notify all the global and local listeners about an event. All the listeners registered on the {@link GlobalNotificationContext} and on the
@@ -36,6 +38,8 @@ import org.sejda.core.notification.event.TaskExecutionFailedEvent;
  * 
  */
 public final class ApplicationEventsNotifier implements Notifier, OngoingNotification {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventsNotifier.class);
 
     private BigDecimal percentage = BigDecimal.ZERO;
 
@@ -99,6 +103,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * @param event
      */
     private void notifyListeners(AbstractEvent event) {
+        LOG.debug(String.format("Notifing event %s", event));
         GlobalNotificationContext.getContext().notifyListeners(event);
         ThreadLocalNotificationContext.getContext().notifyListeners(event);
     }

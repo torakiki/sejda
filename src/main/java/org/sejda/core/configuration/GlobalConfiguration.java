@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.sejda.core.Sejda;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
@@ -36,8 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Global configuration singleton. Holds a global configuration obtained as the union of the default configuration and, if available, the one submitted by the user as system property or default
- * expected configuration file in the classpath where the user configuration has precedence.
+ * Global configuration singleton. Holds a global configuration obtained as the union of the default configuration and, if available, the one submitted by the user as system
+ * property or default expected configuration file in the classpath where the user configuration has precedence.
  * <p>
  * A user can submit a custom configuration including a file name "sejda-config.xml" in the classpath or using the system property sejda.config.file where the value of the property
  * is the name of the configuration file available in the classpath. If Both are specified then system property has precedence.
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings("unchecked")
 public final class GlobalConfiguration {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
     private static final String DEFAULT_CONFIG_FILE_NAME = "default-sejda-config.xml";
@@ -56,42 +57,48 @@ public final class GlobalConfiguration {
     private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
 
     private static GlobalConfiguration instance;
-    private Class<?extends NotificationStrategy> notificationStrategy;
+    private Class<? extends NotificationStrategy> notificationStrategy;
     private TasksRegistry taskRegistry;
+    private boolean validation;
 
     private GlobalConfiguration() {
+        LOG.info(String.format("Configuring Sejda %s", Sejda.VERSION));
         initialize();
     }
 
     private void initialize() {
         taskRegistry = new DefaultTasksRegistry();
-        InputStream defaultConfigStream = GlobalConfiguration.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
-        if(defaultConfigStream == null){
-            throw new SejdaRuntimeException(String.format("Unable to find default configuration file %s in classpath.", DEFAULT_CONFIG_FILE_NAME));
+        InputStream defaultConfigStream = GlobalConfiguration.class.getClassLoader().getResourceAsStream(
+                DEFAULT_CONFIG_FILE_NAME);
+        if (defaultConfigStream == null) {
+            throw new SejdaRuntimeException(String.format("Unable to find default configuration file %s in classpath.",
+                    DEFAULT_CONFIG_FILE_NAME));
         }
         LOG.debug("Loading default Sejda configuration.");
         initializeConfigurationFromStream(defaultConfigStream);
-        
+
         String userConfigFileName = getUserConfigFileName();
         InputStream userConfigStream = getClass().getResourceAsStream(userConfigFileName);
-        if(userConfigStream != null){
-            LOG.debug("Loading custom user Sejda configuration form "+userConfigFileName);
+        if (userConfigStream != null) {
+            LOG.debug("Loading custom user Sejda configuration form " + userConfigFileName);
             initializeConfigurationFromStream(userConfigStream);
         }
     }
 
     /**
      * initialize the configuration singleton values from the input stream.
+     * 
      * @param stream
-     * @throws SejdaRuntimeException in case of error loading the configuration
+     * @throws SejdaRuntimeException
+     *             in case of error loading the configuration
      */
-    private void initializeConfigurationFromStream(InputStream stream){
+    private void initializeConfigurationFromStream(InputStream stream) {
         ConfigurationStrategy configStrategy;
         try {
             configStrategy = new XmlConfigurationStrategy(stream);
         } catch (ConfigurationException e) {
             throw new SejdaRuntimeException("Unable to complete Sejda configuration ", e);
-        }finally{
+        } finally {
             try {
                 stream.close();
             } catch (IOException e) {
@@ -99,8 +106,9 @@ public final class GlobalConfiguration {
             }
         }
         notificationStrategy = configStrategy.getNotificationStrategy();
+        validation = configStrategy.isValidation();
         Map<Class<? extends TaskParameters>, Class<? extends Task>> userTasks = configStrategy.getTasksMap();
-        for(Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()){
+        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()) {
             taskRegistry.addTask(entry.getKey(), entry.getValue());
         }
     }
@@ -119,7 +127,8 @@ public final class GlobalConfiguration {
 
     /**
      * @return the global configuration instance
-     * @throws SejdaRuntimeException if an error occur during the configuration loading
+     * @throws SejdaRuntimeException
+     *             if an error occur during the configuration loading
      */
     public static synchronized GlobalConfiguration getInstance() {
         if (instance == null) {
@@ -132,14 +141,20 @@ public final class GlobalConfiguration {
      * @return a new instance of the configured notification strategy
      */
     public synchronized NotificationStrategy getNotificationStrategy() {
-            try {
-                return notificationStrategy.newInstance();
-            } catch (InstantiationException e) {
-                LOG.warn("An error occur while instantiating a new NotificationStrategy. Default strategy will be used.", e);
-            } catch (IllegalAccessException e) {
-                LOG.warn("Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.", e);
-            }
-            return new SyncNotificationStrategy();
+        try {
+            return notificationStrategy.newInstance();
+        } catch (InstantiationException e) {
+            LOG
+                    .warn(
+                            "An error occur while instantiating a new NotificationStrategy. Default strategy will be used.",
+                            e);
+        } catch (IllegalAccessException e) {
+            LOG
+                    .warn(
+                            "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",
+                            e);
+        }
+        return new SyncNotificationStrategy();
     }
 
     /**
@@ -148,5 +163,12 @@ public final class GlobalConfiguration {
     public synchronized TasksRegistry getTaskRegistry() {
         return taskRegistry.clone();
     }
- 
+
+    /**
+     * @return true if validation should be performed or false if incoming parameters instances are already validate externally.
+     */
+    public boolean isValidation() {
+        return validation;
+    }
+
 }

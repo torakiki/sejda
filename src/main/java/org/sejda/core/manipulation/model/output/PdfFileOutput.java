@@ -21,6 +21,7 @@ package org.sejda.core.manipulation.model.output;
 import java.io.File;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.validation.constraint.PdfFile;
 
 /**
  * {@link File} output destination
@@ -32,6 +33,7 @@ public class PdfFileOutput extends AbstractPdfOutput {
 
     private static final long serialVersionUID = 8455837002827550634L;
 
+    @PdfFile
     private File file;
 
     public PdfFileOutput(File file) {

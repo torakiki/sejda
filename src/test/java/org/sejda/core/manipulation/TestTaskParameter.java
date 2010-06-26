@@ -18,21 +18,14 @@
  */
 package org.sejda.core.manipulation;
 
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.AbstractParameter;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
-public class TestTaskParameter implements TaskParameters {
+public class TestTaskParameter extends AbstractParameter {
 
-    /* (non-Javadoc)
-     * @see org.sejda.core.manipulation.model.TaskParameters#getOutput()
-     */
-    public AbstractPdfOutput getOutput() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    private static final long serialVersionUID = -2159355672764604806L;
 
 }

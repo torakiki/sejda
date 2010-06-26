@@ -20,6 +20,8 @@ package org.sejda.core.manipulation.model.output;
 
 import java.io.OutputStream;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -32,6 +34,7 @@ public class PdfStreamOutput extends AbstractPdfOutput {
 
     private static final long serialVersionUID = 8655165390857852729L;
 
+    @NotNull
     private transient OutputStream stream;
 
     public PdfStreamOutput() {

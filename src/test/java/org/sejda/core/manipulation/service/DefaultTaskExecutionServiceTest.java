@@ -24,6 +24,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.sejda.core.exception.TaskException;
@@ -31,6 +32,7 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.TestTaskParameter;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
@@ -44,9 +46,14 @@ import org.sejda.core.manipulation.model.task.Task;
 public class DefaultTaskExecutionServiceTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-    private TestTaskParameter parameters = mock(TestTaskParameter.class);
+    private TestTaskParameter parameters = new TestTaskParameter();
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
     private Task task = mock(Task.class);
+
+    @Before
+    public void setUp() throws TaskException {
+        when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
+    }
 
     @Test
     public void testExecute() throws TaskException {
@@ -55,12 +62,22 @@ public class DefaultTaskExecutionServiceTest {
 
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
-        when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
-        doThrow(new TaskExecutionException()).when(task).before(Matchers.any(TaskParameters.class));
+        doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
+        AbstractPdfOutput output = mock(AbstractPdfOutput.class);
+        parameters.setOutput(output);
         victim.setContext(context);
         victim.execute(parameters);
         verify(task).before(parameters);
         verify(task).after();
+        verify(task, never()).execute(parameters);
+    }
+    
+    @Test
+    public void testNegativeValidationExecution() throws TaskException {
+        victim.setContext(context);
+        victim.execute(parameters);
+        verify(task, never()).before(parameters);
+        verify(task, never()).after();
         verify(task, never()).execute(parameters);
     }
 }

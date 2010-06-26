@@ -20,8 +20,11 @@ package org.sejda.core.manipulation.model.input;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
  * Model for a pdf input source
@@ -34,6 +37,7 @@ public abstract class PdfSource implements Serializable {
     private static final long serialVersionUID = -6780088810823438389L;
 
     private String password;
+    @NotEmpty
     private String name;
 
     public PdfSource(String name) {
@@ -74,6 +78,7 @@ public abstract class PdfSource implements Serializable {
     /**
      * @return the type of this source
      */
+    @NotNull
     public abstract PdfSourceType getSourceType();
 
     @Override

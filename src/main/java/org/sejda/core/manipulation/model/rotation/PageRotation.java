@@ -20,6 +20,8 @@ package org.sejda.core.manipulation.model.rotation;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -35,7 +37,9 @@ public class PageRotation implements Serializable {
     private static final long serialVersionUID = 6335354168386687187L;
 
     private int pageNumber;
+    @NotNull
     private Rotation rotation;
+    @NotNull
     private RotationType rotationType;
 
     /**
@@ -45,18 +49,17 @@ public class PageRotation implements Serializable {
      * @param rotation
      */
     public PageRotation(int pageNumber, Rotation rotation) {
-        this(pageNumber, rotation, RotationType.SINGLE_PAGE);
+        this(rotation, RotationType.SINGLE_PAGE);
+        this.pageNumber = pageNumber;
     }
 
     /**
-     * Full constructor
+     * Non single page rotation constructor
      * 
-     * @param pageNumber
      * @param rotation
      * @param rotationType
      */
-    public PageRotation(int pageNumber, Rotation rotation, RotationType rotationType) {
-        this.pageNumber = pageNumber;
+    public PageRotation(Rotation rotation, RotationType rotationType) {
         this.rotation = rotation;
         this.rotationType = rotationType;
     }

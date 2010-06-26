@@ -1,5 +1,5 @@
 /*
- * Created on 29/mag/2010
+ * Created on 24/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,44 +16,35 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model.input;
+package org.sejda.core.validation.validator;
 
 import java.io.File;
 
-import org.sejda.core.validation.constraint.PdfFile;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.sejda.core.validation.constraint.FileExtension;
 
 /**
- * {@link PdfSource} from a {@link File}
+ * Validates the extension of the a file
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileSource extends PdfSource {
+public class FileExtensionValidator implements ConstraintValidator<FileExtension, File> {
 
-    private static final long serialVersionUID = 9153473654119405497L;
+    private String expectedExtension;
 
-    @PdfFile
-    private File file;
-
-    public PdfFileSource(File file) {
-        this(file, null);
+    public void initialize(FileExtension constraintAnnotation) {
+        expectedExtension = constraintAnnotation.value().toLowerCase();
     }
 
-    public PdfFileSource(File file, String password) {
-        super(file.getName(), password);
-        this.file = file;
+    public boolean isValid(File value, ConstraintValidatorContext context) {
+        if (value != null) {
+            String fileName = value.getName().toLowerCase();
+            return fileName.endsWith("." + expectedExtension) && fileName.length() > (expectedExtension.length() + 1);
+        }
+        return true;
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.FILE_SOURCE;
-    }
 }

@@ -44,6 +44,7 @@ import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 public class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
+    private static final String VALIDATION_XPATH = "/@validation";
     private static final String NOTIFICATION_XPATH = "/notification/@async";
     private static final String TASKS_XPATH = "/tasks/task";
     private static final String TASK_PARAM_XPATH = "@parameters";
@@ -51,6 +52,7 @@ public class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private Class<? extends NotificationStrategy> notificationStrategy;
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasks;
+    private boolean validation = false;
 
     /**
      * Creates an instance initialized with the given input stream. The stream is not closed.
@@ -71,6 +73,7 @@ public class XmlConfigurationStrategy implements ConfigurationStrategy {
             document = reader.read(input);
             notificationStrategy = getNotificationStrategy(document);
             tasks = getTasksMap(document);
+            validation = getBooleanValueFromXPath(ROOT_NODE + VALIDATION_XPATH, document);
         } catch (DocumentException e) {
             throw new ConfigurationException("Error loading the xml input stream", e);
         }
@@ -83,6 +86,10 @@ public class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     public Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap() {
         return tasks;
+    }
+
+    public boolean isValidation() {
+        return validation;
     }
 
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
@@ -139,12 +146,23 @@ public class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @return the class extending {@link NotificationStrategy} configured.
      */
     private Class<? extends NotificationStrategy> getNotificationStrategy(Document document) {
-        Node node = document.selectSingleNode(ROOT_NODE + NOTIFICATION_XPATH);
-        if (node != null) {
-            if (Boolean.parseBoolean(node.getText().trim())) {
-                return AsyncNotificationStrategy.class;
-            }
+        if (getBooleanValueFromXPath(ROOT_NODE + NOTIFICATION_XPATH, document)) {
+            return AsyncNotificationStrategy.class;
         }
         return SyncNotificationStrategy.class;
+    }
+
+    /**
+     * @param XPath
+     * @param document
+     * @return a boolean value from the given xpath that should point to a true/false attribute
+     */
+    private boolean getBooleanValueFromXPath(String xpath, Document document) {
+        boolean retVal = false;
+        Node node = document.selectSingleNode(xpath);
+        if (node != null) {
+            retVal = Boolean.parseBoolean(node.getText().trim());
+        }
+        return retVal;
     }
 }

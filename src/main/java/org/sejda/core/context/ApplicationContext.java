@@ -19,6 +19,7 @@
  */
 package org.sejda.core.context;
 
+import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
@@ -33,4 +34,9 @@ public interface ApplicationContext {
      * @return the configured strategy to use during listeners notification.
      */
     NotificationStrategy getNotificationStrategy();
+    
+    /**
+     * @return the registry of the configured tasks
+     */
+    TasksRegistry getTasksRegistry();
 }

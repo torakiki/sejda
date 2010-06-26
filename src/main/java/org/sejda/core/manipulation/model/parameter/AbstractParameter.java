@@ -20,9 +20,12 @@ package org.sejda.core.manipulation.model.parameter;
 
 import java.io.Serializable;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
@@ -35,6 +38,9 @@ public abstract class AbstractParameter implements Serializable, TaskParameters 
 
     private static final long serialVersionUID = -6100370016710146349L;
 
+    @Valid
+    @NotNull
+    private AbstractPdfOutput output;
     private boolean overwrite = false;
     private boolean compress = false;
     private PdfVersion version = PdfVersion.VERSION_1_2;
@@ -63,14 +69,17 @@ public abstract class AbstractParameter implements Serializable, TaskParameters 
         this.version = version;
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append(overwrite).append(compress).append(version).toString();
+    public AbstractPdfOutput getOutput() {
+        return output;
+    }
+
+    public void setOutput(AbstractPdfOutput output) {
+        this.output = output;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(compress).append(version).toHashCode();
+        return new HashCodeBuilder().append(overwrite).append(compress).append(version).append(output).toHashCode();
     }
 
     @Override
@@ -80,6 +89,6 @@ public abstract class AbstractParameter implements Serializable, TaskParameters 
         }
         AbstractParameter parameter = (AbstractParameter) other;
         return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(compress, parameter.isCompress())
-                .append(version, parameter.getVersion()).isEquals();
+                .append(version, parameter.getVersion()).append(output, parameter.getOutput()).isEquals();
     }
 }

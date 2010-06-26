@@ -73,4 +73,10 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractEvent {
     public boolean isUndetermined() {
         return BigDecimal.ZERO.compareTo(percentage) > 0;
     }
+
+    @Override
+    public String toString() {
+        return "PercentageOfWorkDoneChangedEvent [percentage=" + percentage + "]";
+    }
+
 }

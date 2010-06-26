@@ -20,6 +20,8 @@ package org.sejda.core.manipulation.model.input;
 
 import java.io.InputStream;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * {@link PdfSource} from a {@link InputStream}
  * 
@@ -30,6 +32,7 @@ public class PdfStreamSource extends PdfSource {
 
     private static final long serialVersionUID = 2581826909753391287L;
 
+    @NotNull
     private transient InputStream stream;
 
     public PdfStreamSource(InputStream stream, String name) {

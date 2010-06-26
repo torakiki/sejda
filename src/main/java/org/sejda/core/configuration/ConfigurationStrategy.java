@@ -38,11 +38,16 @@ public interface ConfigurationStrategy {
     Class<? extends NotificationStrategy> getNotificationStrategy();
 
     /**
-     * Retrieves all the configured {@link Task} stored in a map. The map key is the subclass of {@link TaskParameters}
-     * that the task can execute.
+     * Retrieves all the configured {@link Task} stored in a map. The map key is the subclass of {@link TaskParameters} that the task can execute.
      * 
      * @return a map containing all the configured {@link Task}
      */
     @SuppressWarnings("unchecked")
     Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap();
+
+    /**
+     * 
+     * @return true if the validation has to be performed by the framework, false otherwise (incoming requests are already validated externally)
+     */
+    boolean isValidation();
 }

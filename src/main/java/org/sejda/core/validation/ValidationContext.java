@@ -1,5 +1,5 @@
 /*
- * Created on 18/apr/2010
+ * Created on 24/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,25 +16,27 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.context;
+package org.sejda.core.validation;
 
-import org.sejda.core.configuration.GlobalConfiguration;
-import org.sejda.core.manipulation.registry.TasksRegistry;
-import org.sejda.core.notification.strategy.NotificationStrategy;
+import javax.validation.Validator;
 
 /**
- * Abstract implementation of the ApplicationContext. Other contexts can extend this abstract class to access the configuration.
+ * Validation context holding a {@link Validator} instance that can be reused to perform beans validation.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractApplicationContext implements ApplicationContext {
+public interface ValidationContext {
 
-    public final NotificationStrategy getNotificationStrategy() {
-        return GlobalConfiguration.getInstance().getNotificationStrategy();
-    }
-
-    public final TasksRegistry getTasksRegistry() {
-        return GlobalConfiguration.getInstance().getTaskRegistry();
-    }
+    /**
+     * @return the validator instance that can be used to perform validation.
+     */
+    Validator getValidator();
+    
+    /**
+     * @return true if validation should be performed or false if incoming parameters instances are already validate externally.
+     */
+    boolean isValidation();
+    
+    
 }

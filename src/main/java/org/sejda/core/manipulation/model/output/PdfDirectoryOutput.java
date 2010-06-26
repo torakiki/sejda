@@ -21,6 +21,7 @@ package org.sejda.core.manipulation.model.output;
 import java.io.File;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.validation.constraint.Directory;
 
 /**
  * Directory output destination
@@ -28,12 +29,20 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfDirectoryOutput extends PdfFileOutput {
+public class PdfDirectoryOutput extends AbstractPdfOutput {
 
     private static final long serialVersionUID = -6236082967739145486L;
 
+    @Directory
+    private File file;
+
     public PdfDirectoryOutput(File file) {
-        super(file);
+        super();
+        this.file = file;
+    }
+
+    public File getFile() {
+        return file;
     }
 
     @Override

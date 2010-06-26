@@ -6,6 +6,7 @@
         <xs:element ref="notification"/>
         <xs:element ref="tasks"/>
       </xs:sequence>
+      <xs:attribute name="validation" type="xs:boolean"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="notification">

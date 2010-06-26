@@ -1,5 +1,5 @@
 /*
- * Created on 18/apr/2010
+ * Created on 24/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,25 +16,31 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.context;
-
-import org.sejda.core.configuration.GlobalConfiguration;
-import org.sejda.core.manipulation.registry.TasksRegistry;
-import org.sejda.core.notification.strategy.NotificationStrategy;
+package org.sejda.core.exception;
 
 /**
- * Abstract implementation of the ApplicationContext. Other contexts can extend this abstract class to access the configuration.
+ * Exception thrown after validation of the task parameters if the validation fails
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractApplicationContext implements ApplicationContext {
+public class InvalidTaskParametersException extends TaskException {
 
-    public final NotificationStrategy getNotificationStrategy() {
-        return GlobalConfiguration.getInstance().getNotificationStrategy();
+    private static final long serialVersionUID = 1046358680829746043L;
+
+    public InvalidTaskParametersException() {
+        super();
     }
 
-    public final TasksRegistry getTasksRegistry() {
-        return GlobalConfiguration.getInstance().getTaskRegistry();
+    public InvalidTaskParametersException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public InvalidTaskParametersException(String message) {
+        super(message);
+    }
+
+    public InvalidTaskParametersException(Throwable cause) {
+        super(cause);
     }
 }
