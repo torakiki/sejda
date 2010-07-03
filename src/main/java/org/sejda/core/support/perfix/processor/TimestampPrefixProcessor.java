@@ -1,5 +1,5 @@
 /*
- * Created on 31/mag/2010
+ * Created on 01/lug/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,22 +16,28 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core;
+package org.sejda.core.support.perfix.processor;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.sejda.core.support.perfix.NameGenerationRequest;
 
 /**
- * Global constants
+ * Process the input prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class Sejda {
-    
-    private Sejda() {
-        // on purpose
-    }
+public class TimestampPrefixProcessor implements PrefixProcessor {
 
-    public static final String VERSION = "1.0.0-SNAPSHOT";
-    public static final String CREATOR = "Sejda (Ver. " + VERSION + ")";
-    public static final String PDF_EXTENSION = "pdf";
+    private static final String TIMESTAMP_REPLACE_RGX = "\\[TIMESTAMP\\]";
+    private static final String DATE_PATTERN = "yyyyMMdd_HHmmssSS";
+
+    public String process(String inputPrefix, NameGenerationRequest request) {
+        String retVal = inputPrefix;
+        String timestamp = new SimpleDateFormat(DATE_PATTERN).format(new Date());
+        return retVal.replaceAll(TIMESTAMP_REPLACE_RGX, timestamp);
+    }
 
 }

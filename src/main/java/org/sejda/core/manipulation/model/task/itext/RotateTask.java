@@ -21,6 +21,8 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
 
 import java.io.File;
 
@@ -36,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.pdf.PdfReader;
-
 /**
  * Task performing pages rotation
  * 
@@ -77,8 +78,8 @@ public class RotateTask extends OutputWriterSupport implements Task<RotationPara
             readerHandler.closePdfReader(reader);
             stamperHandler.closePdfStamper();
 
-            // TODO prefix handling from the source name
-            multipleOutputs().add(file(tmpFile).name("Prefixgenerated"));
+            String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
+            multipleOutputs().add(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }

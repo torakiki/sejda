@@ -1,5 +1,5 @@
 /*
- * Created on 29/mag/2010
+ * Created on 26/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,45 +16,31 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.validation.validator;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.sejda.core.manipulation.model.Bounds;
+import org.sejda.core.validation.constraint.EndGreaterOrEqualStart;
 
 /**
- * Model for an interval of pages
+ * Validator for the {@link EndGreaterOrEqualStart} constraint
  * 
  * @author Andrea Vacondio
  * 
  */
-public class Bounds {
+public class BoundsValidator implements ConstraintValidator<EndGreaterOrEqualStart, Bounds> {
 
-    private static final long serialVersionUID = 1093984828590806028L;
-
-    private int start;
-    private int end;
-
-    public Bounds(int start, int end) {
-        this.start = start;
-        this.end = end;
+    public void initialize(EndGreaterOrEqualStart constraintAnnotation) {
+        // on purpose
     }
 
-    public int getStart() {
-        return start;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
-    public String toString() {
-        return start + "-" + end;
-    }
-
-    /**
-     * @param bounds
-     * @return <code>true</code> if the input bounds intersect this {@link Bounds} instance
-     */
-    public boolean intersects(Bounds bounds) {
-        return ((bounds.getStart() >= start && bounds.getStart() <= end) || (bounds.getEnd() >= start && bounds
-                .getEnd() <= end));
+    public boolean isValid(Bounds value, ConstraintValidatorContext context) {
+        if (value != null) {
+            return value.getStart() <= value.getEnd();
+        }
+        return true;
     }
 
 }

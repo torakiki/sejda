@@ -32,13 +32,15 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
 
+import org.sejda.core.Sejda;
+
 /**
  * Constraint validating that a File instance is a pdf file.
  * 
  * @author Andrea Vacondio
  * 
  */
-@FileExtension(value = "pdf")
+@FileExtension(value = Sejda.PDF_EXTENSION)
 @Target( { METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
 @Constraint(validatedBy = {})

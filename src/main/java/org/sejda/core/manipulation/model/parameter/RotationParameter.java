@@ -21,6 +21,7 @@ package org.sejda.core.manipulation.model.parameter;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -39,9 +40,11 @@ public class RotationParameter extends AbstractParameter {
     private static final long serialVersionUID = 8834767589689764537L;
 
     @NotEmpty
+    @Valid
     private List<PdfSource> inputList;
     private String outputPrefix = "";
     @Valid
+    @NotNull
     private PageRotation rotation = null;
 
     public List<PdfSource> getInputList() {

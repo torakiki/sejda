@@ -1,5 +1,5 @@
 /*
- * Created on 29/mag/2010
+ * Created on 03/lug/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,45 +16,29 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.support.prefix.processor;
+
+import static junit.framework.Assert.assertEquals;
+import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
+
+import org.junit.Test;
+import org.sejda.core.support.perfix.processor.PrefixProcessor;
 
 /**
- * Model for an interval of pages
- * 
  * @author Andrea Vacondio
- * 
+ *
  */
-public class Bounds {
-
-    private static final long serialVersionUID = 1093984828590806028L;
-
-    private int start;
-    private int end;
-
-    public Bounds(int start, int end) {
-        this.start = start;
-        this.end = end;
-    }
-
-    public int getStart() {
-        return start;
-    }
-
-    public int getEnd() {
-        return end;
-    }
-
-    public String toString() {
-        return start + "-" + end;
-    }
+public abstract class BasePrefixProcessorTest {
 
     /**
-     * @param bounds
-     * @return <code>true</code> if the input bounds intersect this {@link Bounds} instance
+     * Test that the process method returns the input prefix in case of empty request and a simple prefix.
+     * @param prefix
      */
-    public boolean intersects(Bounds bounds) {
-        return ((bounds.getStart() >= start && bounds.getStart() <= end) || (bounds.getEnd() >= start && bounds
-                .getEnd() <= end));
+    @Test
+    public void testEmptyRequestSimplePrefix(){
+        String prefix = "prefix";
+        assertEquals(prefix, getProcessor().process(prefix, nameRequest()));
     }
-
+    
+    public abstract PrefixProcessor getProcessor();
 }
