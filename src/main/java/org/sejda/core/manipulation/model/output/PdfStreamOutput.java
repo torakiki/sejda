@@ -61,7 +61,7 @@ public class PdfStreamOutput extends AbstractPdfOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append(stream).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).toString();
     }
 
 }

@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;

@@ -59,10 +59,10 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
         try {
             validate(parameters);
             task = context.getTask(parameters);
-            LOG.debug(String.format("Starting task (%s) execution.", task));
+            LOG.info(String.format("Starting task (%s) execution.", task));
             actualExecution(parameters, task);
             postExecution();
-            LOG.debug(String.format("Task (%s) executed in %s", task, DurationFormatUtils.formatDurationWords(stopWatch
+            LOG.info(String.format("Task (%s) executed in %s", task, DurationFormatUtils.formatDurationWords(stopWatch
                     .getTime(), true, true)));
         }catch(InvalidTaskParametersException i){
             LOG.info("Task execution failed due to invalid parameters.", i);

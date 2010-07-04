@@ -21,7 +21,7 @@ package org.sejda.core.configuration;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Assert;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sejda.core.exception.ConfigurationException;
@@ -40,8 +40,8 @@ public class XmlConfigurationStrategyTest {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("default-sejda-config.xml");
         XmlConfigurationStrategy victim = new XmlConfigurationStrategy(stream);
         stream.close();
-        Assert.assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
-        Assert.assertTrue(victim.getTasksMap().size() == 1);
+        assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
+        assertTrue(victim.getTasksMap().size() == 1);
     }
 
     @Test(expected = ConfigurationException.class)
@@ -50,7 +50,7 @@ public class XmlConfigurationStrategyTest {
         try {
             XmlConfigurationStrategy victim = new XmlConfigurationStrategy(stream);
             victim.toString();
-            Assert.fail();
+            fail();
         } finally {
             stream.close();
         }

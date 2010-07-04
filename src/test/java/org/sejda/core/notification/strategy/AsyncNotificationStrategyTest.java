@@ -23,7 +23,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.sejda.core.notification.EventListener;
+import org.sejda.core.notification.event.AbstractEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 
 /**
@@ -41,6 +43,8 @@ public class AsyncNotificationStrategyTest {
     public void testNotifyEvent() throws InterruptedException {
         EventListener listener = mock(EventListener.class);
         victim.notifyListener(listener, new TaskExecutionCompletedEvent());
-        verify(listener, times(1));
+        // ugly but needed to give time for the async notification
+        Thread.sleep(1000);
+        verify(listener, times(1)).onEvent(Matchers.any(AbstractEvent.class));
     }
 }

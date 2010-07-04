@@ -25,4 +25,6 @@ package org.sejda.core.manipulation;
  */
 public class ChildTestTaskParameter extends TestTaskParameter {
 
+    private static final long serialVersionUID = 1L;
+
 }

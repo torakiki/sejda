@@ -18,6 +18,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -45,7 +46,7 @@ public class PdfReaderHandler {
      * @param source
      *            where the {@link PdfReader} will be opened.
      * @param forceStream
-     *            if true and source is a {@link PdfFileSource}, forces the {@link PdfReader} to be opened from a {@link FileInputStream}
+     *            if true the {@link PdfReader} is opened from an {@link InputStream}, if false it's openend from a {@link RandomAccessFileOrArray}
      * @return the opened {@link PdfReader}
      * @throws TaskIOException
      *             if an error occur during the reader creation.
@@ -55,16 +56,13 @@ public class PdfReaderHandler {
         try {
             switch (source.getSourceType()) {
             case FILE_SOURCE:
-                if (forceStream) {
-                    reader = openReaderFromFileAsStream((PdfFileSource) source);
-                }
-                reader = openReaderFromFile((PdfFileSource) source);
+                reader = openReaderFromFile((PdfFileSource) source, forceStream);
                 break;
             case STREAM_SOURCE:
-                reader = openReaderFromStream((PdfStreamSource) source);
+                reader = openReaderFromStream((PdfStreamSource) source, forceStream);
                 break;
             case URL_SOURCE:
-                reader = openReaderFromURL((PdfURLSource) source);
+                reader = openReaderFromURL((PdfURLSource) source, forceStream);
                 break;
             default:
                 throw new TaskIOException("Unable to identify the input pdf source.");
@@ -92,30 +90,30 @@ public class PdfReaderHandler {
         return openReader(source, false);
     }
 
-    private PdfReader openReaderFromStream(PdfStreamSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getStream()), source.getPasswordBytes());
-    }
-
-    private PdfReader openReaderFromFile(PdfFileSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getFile().getAbsolutePath()), source.getPasswordBytes());
-    }
-
-    private PdfReader openReaderFromURL(PdfURLSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getUrl()), source.getPasswordBytes());
-    }
-
-    private PdfReader openReaderFromFileAsStream(PdfFileSource source) throws IOException {
-        return new PdfReader(new FileInputStream(source.getFile()), source.getPasswordBytes());
-    }
-
-    /**
-     * Closes the input {@link PdfReader}
-     * 
-     * @param pdfReader
-     */
-    public void closePdfReader(PdfReader pdfReader) {
-        if (pdfReader != null) {
-            pdfReader.close();
+    private PdfReader openReaderFromStream(PdfStreamSource source, boolean forceStream) throws IOException {
+        if (forceStream) {
+            return new PdfReader(new BufferedInputStream(source.getStream()), source.getPasswordBytes());
+        } else {
+            return new PdfReader(new RandomAccessFileOrArray(source.getStream()), source.getPasswordBytes());
         }
     }
+
+    private PdfReader openReaderFromFile(PdfFileSource source, boolean forceStream) throws IOException {
+        if (forceStream) {
+            return new PdfReader(new BufferedInputStream(new FileInputStream(source.getFile())), source
+                    .getPasswordBytes());
+        } else {
+            return new PdfReader(new RandomAccessFileOrArray(source.getFile().getAbsolutePath()), source
+                    .getPasswordBytes());
+        }
+    }
+
+    private PdfReader openReaderFromURL(PdfURLSource source, boolean forceStream) throws IOException {
+        if (forceStream) {
+            return new PdfReader(new BufferedInputStream(source.getUrl().openStream()), source.getPasswordBytes());
+        } else {
+            return new PdfReader(new RandomAccessFileOrArray(source.getUrl()), source.getPasswordBytes());
+        }
+    }
+
 }

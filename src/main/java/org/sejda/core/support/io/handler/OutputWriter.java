@@ -130,7 +130,7 @@ public class OutputWriter {
     private void copyFile(File input, File output, boolean overwrite) throws TaskIOException {
         if (!overwrite && output.exists()) {
             throw new TaskIOException(String.format(
-                    "Unable to overwrite the output file %s with the input %s (overwrite is false)", input, output));
+                    "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
         }
         try {
             LOG.debug(String.format("Copying %s to %s.", input, output));
@@ -165,6 +165,7 @@ public class OutputWriter {
                 delete(entry.getValue());
             }
         }
+        IOUtils.closeQuietly(zipOut);
     }
 
     private void delete(File file) {

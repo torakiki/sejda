@@ -20,6 +20,8 @@ package org.sejda.core.support.perfix;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
@@ -48,7 +50,8 @@ public class PrefixTypesChain {
     public PrefixTypesChain(String prefix) {
         if (StringUtils.isNotBlank(prefix)) {
             for (PrefixType type : PrefixType.values()) {
-                if (prefix.matches(type.getMatchingRegexp())) {
+                Matcher m = Pattern.compile(type.getMatchingRegexp()).matcher(prefix);
+                if (m.find()) {
                     if (type.isEnsureUniqueNames()) {
                         firstLevelPrefixChain.add(type);
                     } else {
@@ -74,9 +77,9 @@ public class PrefixTypesChain {
         // if the first level performed some change
         if (!prefix.equals(retVal)) {
             LOG.debug("Performing prefix processing with second level prefix chain");
-            retVal = processChain(prefix, request, secondLevelPrefixChain);
+            retVal = processChain(retVal, request, secondLevelPrefixChain);
         } else {
-            retVal = fallBackProcessor.process(prefix, request);
+            retVal = fallBackProcessor.process(retVal, request);
 
         }
         return retVal;

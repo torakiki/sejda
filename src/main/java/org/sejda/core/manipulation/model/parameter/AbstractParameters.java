@@ -34,7 +34,7 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractParameter implements Serializable, TaskParameters {
+public abstract class AbstractParameters implements Serializable, TaskParameters {
 
     private static final long serialVersionUID = -6100370016710146349L;
 
@@ -84,10 +84,10 @@ public abstract class AbstractParameter implements Serializable, TaskParameters 
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof AbstractParameter)) {
+        if (!(other instanceof AbstractParameters)) {
             return false;
         }
-        AbstractParameter parameter = (AbstractParameter) other;
+        AbstractParameters parameter = (AbstractParameters) other;
         return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(compress, parameter.isCompress())
                 .append(version, parameter.getVersion()).append(output, parameter.getOutput()).isEquals();
     }

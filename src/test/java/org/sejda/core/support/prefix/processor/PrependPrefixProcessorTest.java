@@ -22,28 +22,31 @@ import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
-import org.sejda.core.support.perfix.processor.BasenamePrefixProcessor;
-import org.sejda.core.support.perfix.processor.PrefixProcessor;
+import org.sejda.core.support.perfix.processor.PrependPrefixProcessor;
 
 /**
- * Test case for BasenamePrefixProcessor
+ * Test unit for the {@link PrependPrefixProcessor}
  * @author Andrea Vacondio
  *
  */
-public class BasenamePrefixProcessorTest extends BasePrefixProcessorTest{
+public class PrependPrefixProcessorTest {
 
-    private BasenamePrefixProcessor victim = new BasenamePrefixProcessor();
+    private PrependPrefixProcessor victim = new PrependPrefixProcessor();
     
     @Test
-    public void testComplexProcess(){
-        String prefix = "prefix_[BASENAME]";
+    public void testComplexProcess() {
+        String prefix = "prefix_";
         String originalName = "name";
         String expected = "prefix_name";
         assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
     }
-
-    @Override
-    public PrefixProcessor getProcessor() {
-        return victim;
+    
+    @Test
+    public void testComplexProcessWithPageNumber() {
+        String prefix = "prefix_";
+        String originalName = "name";
+        Integer page = new Integer("34");
+        String expected = "34_prefix_name";
+        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName).page(page)));
     }
 }
