@@ -63,7 +63,7 @@ public final class SetMetadataParameters extends AbstractParameters {
 
     /**
      * @see Map#entrySet()
-     * @return
+     * @return a set view of map
      */
     public Set<Entry<PdfMetadataKey, String>> entrySet() {
         return metadata.entrySet();
@@ -71,7 +71,7 @@ public final class SetMetadataParameters extends AbstractParameters {
 
     /**
      * @see Map#keySet()
-     * @return
+     * @return a set containing keys of the map
      */
     public Set<PdfMetadataKey> keySet() {
         return metadata.keySet();

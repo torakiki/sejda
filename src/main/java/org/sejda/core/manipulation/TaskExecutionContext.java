@@ -32,14 +32,14 @@ import org.sejda.core.manipulation.model.task.Task;
 public interface TaskExecutionContext extends ApplicationContext {
 
     /**
-     * Search among the configured tasks the implementation that better can execute the input parameters class. Returns an instance of the found class.
+     * Search among the configured tasks the implementation that better can execute the input parameters. Returns an instance of the found class.
      * 
-     * @param TaskParameters
+     * @param parameters
+     *            Input parameters you want to search a task for.
      * @return the most suitable {@link Task} instance for the input parameters class.
      * @throws TaskException
      *             if no task able to execute the input parameters class is found, or if an error occur while reflective instantiating the {@link Task}.
      */
-    Task<? extends TaskParameters> getTask(TaskParameters parameters)
-            throws TaskException;
+    Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException;
 
 }

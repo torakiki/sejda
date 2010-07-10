@@ -46,7 +46,7 @@ public class PdfReaderHandler {
      * @param source
      *            where the {@link PdfReader} will be opened.
      * @param forceStream
-     *            if true the {@link PdfReader} is opened from an {@link InputStream}, if false it's openend from a {@link RandomAccessFileOrArray}
+     *            if true the {@link PdfReader} is opened from an InputStream, if false it's opened from a {@link RandomAccessFileOrArray}
      * @return the opened {@link PdfReader}
      * @throws TaskIOException
      *             if an error occur during the reader creation.

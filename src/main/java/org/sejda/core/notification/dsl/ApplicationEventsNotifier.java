@@ -59,7 +59,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * </code>
      * </p>
      * 
-     * @return
+     * @return the notifier
      */
     public static Notifier notifyEvent() {
         return new ApplicationEventsNotifier();

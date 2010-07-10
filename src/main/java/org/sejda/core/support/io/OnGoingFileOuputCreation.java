@@ -19,18 +19,18 @@
 package org.sejda.core.support.io;
 
 /**
- * DSL interface used to expose methods needed to complete the {@link FileOutput} creation
+ * DSL interface used to expose methods needed to complete the {@link FileOutput} creation.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface OnGoingFileOuputCreation {
+public interface OngoingFileOuputCreation {
 
     /**
      * set the name for the current instance
      * 
      * @param name
-     * @return
+     * @return the fully populated File output.
      */
     PopulatedFileOutput name(String name);
 }

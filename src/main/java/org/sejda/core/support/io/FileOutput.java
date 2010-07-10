@@ -27,7 +27,7 @@ import java.io.File;
  * @author Andrea Vacondio
  * 
  */
-public final class FileOutput implements OnGoingFileOuputCreation, PopulatedFileOutput {
+public final class FileOutput implements OngoingFileOuputCreation, PopulatedFileOutput {
 
     private File file;
     private String name;
@@ -40,9 +40,9 @@ public final class FileOutput implements OnGoingFileOuputCreation, PopulatedFile
      * Entry point to populate the {@link FileOutput}
      * 
      * @param file
-     * @return
+     * @return the not fully populated instance
      */
-    public static OnGoingFileOuputCreation file(File file) {
+    public static OngoingFileOuputCreation file(File file) {
         return new FileOutput(file);
     }
 

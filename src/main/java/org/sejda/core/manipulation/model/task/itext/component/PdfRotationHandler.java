@@ -47,13 +47,13 @@ public final class PdfRotationHandler implements OngoingRotation {
     }
 
     /**
-     * entry point to apply a rotation
+     * DSL entry point to apply a rotation
      * <p>
      * <code>applyRotation(rotation).to(reader);</code>
      * </p>
      * 
      * @param rotation
-     * @return
+     * @return the ongoing apply rotation exposing methods to set the reader you want to apply the rotation to.
      */
     public static OngoingRotation applyRotation(PageRotation rotation) {
         return new PdfRotationHandler(rotation);

@@ -59,7 +59,6 @@ public class PdfStamperHandler {
      *            {@link File} to stamp on
      * @param version
      *            version for the created stamper, if null the version number is taken from the input {@link PdfReader}
-     * @return the created instance
      * @throws TaskException
      *             in case of error
      */
