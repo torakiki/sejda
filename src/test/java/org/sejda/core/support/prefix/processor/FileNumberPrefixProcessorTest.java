@@ -27,13 +27,14 @@ import org.sejda.core.support.perfix.processor.PrefixProcessor;
 
 /**
  * Test unit for the {@link FileNumberPrefixProcessor}
+ * 
  * @author Andrea Vacondio
  * 
  */
 public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
 
     private FileNumberPrefixProcessor victim = new FileNumberPrefixProcessor();
-    private Integer fileNumber = new Integer("5");
+    private Integer fileNumber = Integer.valueOf("5");
 
     @Override
     public PrefixProcessor getProcessor() {

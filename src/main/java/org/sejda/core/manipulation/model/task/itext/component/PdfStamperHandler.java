@@ -27,6 +27,7 @@ import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,7 +112,16 @@ public class PdfStamperHandler {
      */
     public void setCreatorOnStamper(PdfReader reader) {
         HashMap<String, String> meta = reader.getInfo();
-        meta.put("Creator", Sejda.CREATOR);
+        setMetadataOnStamper(meta);
+    }
+
+    /**
+     * Adds the creator to the metadata in input and it sets it to the {@link PdfStamper}
+     * 
+     * @param meta
+     */
+    public void setMetadataOnStamper(HashMap<String, String> meta) {
+        meta.put(PdfMetadataKey.CREATOR.getKey(), Sejda.CREATOR);
         stamper.setMoreInfo(meta);
     }
 

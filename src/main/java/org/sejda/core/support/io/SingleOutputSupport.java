@@ -24,20 +24,29 @@ import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 /**
  * DSL interface to expose methods a single output task needs (tasks generating a single file as output).
  * 
+ * <pre>
+ * {@code
+ * PopulatedFileOutput singleOut = file(tmpFile).name("newName");
+ * AbstractPdfOutput output = ...
+ * boolean overwrite = ...
+ * singleOutput().flushSingleOutput(singleOut, output, overwrite);
+ * }
+ * </pre>
+ * 
  * @author Andrea Vacondio
  * 
  */
 public interface SingleOutputSupport {
 
     /**
-     * flush of the given {@link PopulatedFileOutput} to the output destination.
+     * flush of the given {@link PopulatedFileOutput} to the output destination and deletes it.
      * 
      * @param fileOutput
-     *            the file that will be written
+     *            the input file that will be written to the destination.
      * @param output
-     *            the destination
+     *            the destination.
      * @param overwrite
-     *            if true overwrite the destination of already exists
+     *            if true overwrite the destination of already exists.
      * @throws TaskIOException
      *             in case of error
      */

@@ -29,7 +29,7 @@ import org.sejda.core.notification.event.AbstractEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 
 /**
- * Test unit
+ * Test unit for {@link AsyncNotificationStrategy}
  * 
  * @author Andrea Vacondio
  * 

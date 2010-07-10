@@ -22,17 +22,17 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.sejda.core.manipulation.model.Bounds;
-import org.sejda.core.validation.constraint.EndGreaterOrEqualStart;
+import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
 
 /**
- * Validator for the {@link EndGreaterOrEqualStart} constraint
+ * Validator for the {@link EndGreaterThenOrEqualToStart} constraint
  * 
  * @author Andrea Vacondio
  * 
  */
-public class BoundsValidator implements ConstraintValidator<EndGreaterOrEqualStart, Bounds> {
+public class BoundsValidator implements ConstraintValidator<EndGreaterThenOrEqualToStart, Bounds> {
 
-    public void initialize(EndGreaterOrEqualStart constraintAnnotation) {
+    public void initialize(EndGreaterThenOrEqualToStart constraintAnnotation) {
         // on purpose
     }
 

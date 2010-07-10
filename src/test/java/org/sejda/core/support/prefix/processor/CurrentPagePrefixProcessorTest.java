@@ -32,7 +32,7 @@ import org.sejda.core.support.perfix.processor.PrefixProcessor;
 public class CurrentPagePrefixProcessorTest extends BasePrefixProcessorTest {
 
     private CurrentPagePrefixProcessor victim = new CurrentPagePrefixProcessor();
-    private Integer page = new Integer("5");
+    private Integer page = Integer.valueOf("5");
 
     @Override
     public PrefixProcessor getProcessor() {

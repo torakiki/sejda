@@ -35,7 +35,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class RotationParameters extends AbstractParameters {
+public class RotateParameters extends AbstractParameters {
 
     private static final long serialVersionUID = 8834767589689764537L;
 
@@ -79,10 +79,10 @@ public class RotationParameters extends AbstractParameters {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof RotationParameters)) {
+        if (!(other instanceof RotateParameters)) {
             return false;
         }
-        RotationParameters parameter = (RotationParameters) other;
+        RotateParameters parameter = (RotateParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList()).append(
                 outputPrefix, parameter.getOutputPrefix()).append(rotation, parameter.getRotation()).isEquals();
     }

@@ -29,7 +29,7 @@ import java.io.File;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.parameter.RotationParameters;
+import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
@@ -40,12 +40,12 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
- * Task performing pages rotation
+ * Task performing pages rotation on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateTask extends OutputWriterSupport implements Task<RotationParameters> {
+public class RotateTask extends OutputWriterSupport implements Task<RotateParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
@@ -54,12 +54,12 @@ public class RotateTask extends OutputWriterSupport implements Task<RotationPara
     private PdfReaderHandler readerHandler = null;
     private int totalSteps;
 
-    public void before(RotationParameters parameters) throws TaskExecutionException {
+    public void before(RotateParameters parameters) throws TaskExecutionException {
         readerHandler = new PdfReaderHandler();
         totalSteps = parameters.getInputList().size() + 1;
     }
 
-    public void execute(RotationParameters parameters) throws TaskException {
+    public void execute(RotateParameters parameters) throws TaskException {
         int currentStep = 0;
 
         for (PdfSource source : parameters.getInputList()) {

@@ -33,8 +33,8 @@ public interface ApplicationContext {
     /**
      * @return the configured strategy to use during listeners notification.
      */
-    NotificationStrategy getNotificationStrategy();
-    
+    Class<? extends NotificationStrategy> getNotificationStrategy();
+
     /**
      * @return the registry of the configured tasks
      */

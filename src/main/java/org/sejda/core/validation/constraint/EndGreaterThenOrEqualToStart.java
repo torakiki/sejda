@@ -1,5 +1,5 @@
 /*
- * Created on 24/giu/2010
+ * Created on 26/giu/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -30,28 +30,26 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.FileExtensionValidator;
+import org.sejda.core.validation.validator.BoundsValidator;
 
 /**
- * Constraint on a File object with the given extension
+ * Constraint validating that a Bounds instance is a valid, starting before ending.
  * 
  * @author Andrea Vacondio
  * 
  */
-@ExistingFile
+@NotNull
 @Target( { METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = FileExtensionValidator.class)
+@Constraint(validatedBy = BoundsValidator.class)
 @Documented
-public @interface FileExtension {
+public @interface EndGreaterThenOrEqualToStart {
 
-    String message() default "Invalid extension.";
+    String message() default "Invalid bound,ends before starting.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    String value();
-
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sejda validation="true">
+	<notification async="false"/>
+	<tasks>
+		<task parameters="org.sejda.core.manipulation.model.parameter.RotateParameters" task="org.sejda.core.manipulation.model.task.itext.RotateTask"/>
+		<task parameters="org.sejda.core.manipulation.model.parameter.SetMetadataParameters" task="org.sejda.core.manipulation.model.task.itext.SetMetadataTask"/>
+	</tasks>
+</sejda>

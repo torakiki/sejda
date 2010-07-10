@@ -18,11 +18,11 @@
  */
 package org.sejda.core.configuration;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.ConfigurationException;
@@ -32,7 +32,6 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.registry.DefaultTasksRegistry;
 import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
-import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +55,6 @@ public final class GlobalConfiguration {
     private static final String USER_CONFIG_FILE_NAME = "sejda-config.xml";
     private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
 
-    private static GlobalConfiguration instance;
     private Class<? extends NotificationStrategy> notificationStrategy;
     private TasksRegistry taskRegistry;
     private boolean validation;
@@ -99,11 +97,7 @@ public final class GlobalConfiguration {
         } catch (ConfigurationException e) {
             throw new SejdaRuntimeException("Unable to complete Sejda configuration ", e);
         } finally {
-            try {
-                stream.close();
-            } catch (IOException e) {
-                LOG.error("Unable to close the stream", e);
-            }
+            IOUtils.closeQuietly(stream);
         }
         notificationStrategy = configStrategy.getNotificationStrategy();
         validation = configStrategy.isValidation();
@@ -130,38 +124,22 @@ public final class GlobalConfiguration {
      * @throws SejdaRuntimeException
      *             if an error occur during the configuration loading
      */
-    public static synchronized GlobalConfiguration getInstance() {
-        if (instance == null) {
-            instance = new GlobalConfiguration();
-        }
-        return instance;
+    public static GlobalConfiguration getInstance() {
+        return GlobalConfigurationHolder.CONFIGURATION;
     }
 
     /**
-     * @return a new instance of the configured notification strategy
+     * @return the configured {@link NotificationStrategy}
      */
-    public synchronized NotificationStrategy getNotificationStrategy() {
-        try {
-            return notificationStrategy.newInstance();
-        } catch (InstantiationException e) {
-            LOG
-                    .warn(
-                            "An error occur while instantiating a new NotificationStrategy. Default strategy will be used.",
-                            e);
-        } catch (IllegalAccessException e) {
-            LOG
-                    .warn(
-                            "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",
-                            e);
-        }
-        return new SyncNotificationStrategy();
+    public Class<? extends NotificationStrategy> getNotificationStrategy() {
+        return notificationStrategy;
     }
 
     /**
      * @return the taskRegistry
      */
-    public synchronized TasksRegistry getTaskRegistry() {
-        return taskRegistry.clone();
+    public TasksRegistry getTaskRegistry() {
+        return taskRegistry;
     }
 
     /**
@@ -171,4 +149,18 @@ public final class GlobalConfiguration {
         return validation;
     }
 
+    /**
+     * Lazy initialization holder class idiom (Joshua Bloch, Effective Java second edition, item 71).
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static final class GlobalConfigurationHolder {
+
+        private GlobalConfigurationHolder() {
+            // hide constructor
+        }
+
+        static final GlobalConfiguration CONFIGURATION = new GlobalConfiguration();
+    }
 }

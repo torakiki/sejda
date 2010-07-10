@@ -20,6 +20,7 @@ package org.sejda.core.notification;
 
 import java.math.BigDecimal;
 
+import org.junit.Ignore;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 
 /**
@@ -28,6 +29,7 @@ import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 public class TestListenerPercentage implements EventListener<PercentageOfWorkDoneChangedEvent> {
 
     private BigDecimal percentage;

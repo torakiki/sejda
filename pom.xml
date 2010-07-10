@@ -3,6 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<description>An extendible and configurable PDF manipulation layer library.</description>
+	<url>http://www.sejda.org</url>
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
@@ -14,6 +16,11 @@
 	<packaging>jar</packaging>
 
 	<name>sejda core</name>
+	<issueManagement>
+		<system>MantisBT</system>
+		<url>http://sourceforge.net/apps/mantisbt/sejda</url>
+	</issueManagement>
+
 
 	<licenses>
 		<license>
@@ -23,6 +30,10 @@
 			<comments>GNU LGPL 2.1</comments>
 		</license>
 	</licenses>
+	<scm>
+		<connection>scm:hg:http://sejda.hg.sourceforge.net:8000/hgroot/sejda/sejda-core</connection>
+    	<url>http://sejda.hg.sourceforge.net/hgweb/sejda/</url>		
+	</scm>
 	<repositories>
 		<repository>
 			<id>iText</id>

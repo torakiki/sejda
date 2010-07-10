@@ -1,5 +1,5 @@
 /*
- * Created on 26/giu/2010
+ * Created on 09/lug/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -32,10 +32,10 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.BoundsValidator;
+import org.sejda.core.validation.validator.ExistingFileValidator;
 
 /**
- * Constraint validating that a Bounds instance is a valid, starting before ending.
+ * Constraint on a File object to check existence
  * 
  * @author Andrea Vacondio
  * 
@@ -43,13 +43,14 @@ import org.sejda.core.validation.validator.BoundsValidator;
 @NotNull
 @Target( { METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = BoundsValidator.class)
+@Constraint(validatedBy = ExistingFileValidator.class)
 @Documented
-public @interface EndGreaterOrEqualStart {
+public @interface ExistingFile {
 
-    String message() default "Invalid bound,ends before starting.";
+    String message() default "The given file does not exists.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
 }

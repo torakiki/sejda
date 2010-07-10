@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation holding the tasks information in a Map
+ * Default implementation holding the tasks information in a Map and providing synchronized accessory methods.
  * 
  * @author Andrea Vacondio
  * 
@@ -45,14 +45,16 @@ public class DefaultTasksRegistry implements TasksRegistry {
     }
 
     public Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {
-        Class<? extends Task> retVal = tasksMap.get(parametersClass);
-        if (retVal == null) {
-            LOG.info(String.format(
-                    "Unable to find a match for the input parameter class %s, searching for an assignable one",
-                    parametersClass));
-            retVal = findNearestTask(parametersClass);
+        synchronized (tasksMap) {
+            Class<? extends Task> retVal = tasksMap.get(parametersClass);
+            if (retVal == null) {
+                LOG.info(String.format(
+                        "Unable to find a match for the input parameter class %s, searching for an assignable one",
+                        parametersClass));
+                retVal = findNearestTask(parametersClass);
+            }
+            return retVal;
         }
-        return retVal;
     }
 
     /**
@@ -70,15 +72,9 @@ public class DefaultTasksRegistry implements TasksRegistry {
     }
 
     public void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass) {
-        tasksMap.put(parameterClass, taskClass);
-    }
-
-    public TasksRegistry clone() {
-        TasksRegistry clone = new DefaultTasksRegistry();
-        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksMap.entrySet()) {
-            clone.addTask(entry.getKey(), entry.getValue());
+        synchronized (tasksMap) {
+            tasksMap.put(parameterClass, taskClass);
         }
-        return clone;
     }
 
 }

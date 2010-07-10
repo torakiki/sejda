@@ -24,16 +24,26 @@ import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 /**
  * DSL interface to expose methods a multiple output task needs (tasks generating multiple files as output).
  * 
+ * <pre>
+ * {@code
+ * multipleOutputs().add(file(tmpFile).name("newName"));
+ * ....
+ * AbstractPdfOutput output = ...
+ * boolean overwrite = ...
+ * multipleOutputs().flushOutputs(output, overwrite);
+ * }
+ * </pre>
+ * 
  * @author Andrea Vacondio
  * 
  */
 public interface MultipleOutputSupport {
 
     /**
-     * flush of the multiple outputs added to the output destination
+     * flush of the multiple outputs added to the output destination. Once flushed they are deleted and the collection emptied.
      * 
      * @param output
-     *            manipulation output parameter
+     *            manipulation output parameter where multiple outputs will be written.
      * @param overwrite
      *            true if the output should be overwritten if already exists
      * @throws TaskIOException
@@ -42,7 +52,7 @@ public interface MultipleOutputSupport {
     void flushOutputs(AbstractPdfOutput output, boolean overwrite) throws TaskIOException;
 
     /**
-     * Adds the given file output to the multiple outputs collection
+     * Adds the given file output (typically a temporary file) to the collection of multiple outputs ready to be flushed.
      * 
      * @param fileOutput
      */

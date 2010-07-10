@@ -18,6 +18,7 @@
  */
 package org.sejda.core.manipulation;
 
+import org.junit.Ignore;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.task.Task;
 
@@ -25,6 +26,7 @@ import org.sejda.core.manipulation.model.task.Task;
  * @author Andrea Vacondio
  *
  */
+@Ignore
 public class TestTask implements Task<TestTaskParameter> {
 
     

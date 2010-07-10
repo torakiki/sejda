@@ -24,7 +24,10 @@ import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractEvent;
 import org.sejda.core.notification.scope.EventListenerHoldingStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
+import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.core.support.util.ReflectionUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract notification context implementing common context functionalities.
@@ -34,17 +37,19 @@ import org.sejda.core.support.util.ReflectionUtility;
 @SuppressWarnings("unchecked")
 public abstract class AbstractNotificationContext extends AbstractApplicationContext implements NotificationContext {
 
-    private EventListenerHoldingStrategy holder;
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractNotificationContext.class);
 
+    private final EventListenerHoldingStrategy holder;
+    private final NotificationStrategy strategy;
+    
     protected AbstractNotificationContext(EventListenerHoldingStrategy holder) {
-        super();
         this.holder = holder;
+        this.strategy = getStrategy();
     }
 
     public void notifyListeners(AbstractEvent event) {
         synchronized (holder) {
             if (holder.size() > 0) {
-                NotificationStrategy strategy = getNotificationStrategy();
                 for (EventListener listener : holder.get(event)) {
                     strategy.notifyListener(listener, event);
                 }
@@ -72,4 +77,23 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
         return holder.size();
     }
 
+    /**
+     * @return a new instance of the configured notification strategy
+     */
+    private NotificationStrategy getStrategy() {
+        try {
+            return getNotificationStrategy().newInstance();
+        } catch (InstantiationException e) {
+            LOG
+                    .warn(
+                            "An error occur while instantiating a new NotificationStrategy. Default strategy will be used.",
+                            e);
+        } catch (IllegalAccessException e) {
+            LOG
+                    .warn(
+                            "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",
+                            e);
+        }
+        return new SyncNotificationStrategy();
+    }
 }

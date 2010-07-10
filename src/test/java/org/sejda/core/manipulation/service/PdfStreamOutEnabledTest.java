@@ -18,23 +18,31 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
+import org.sejda.core.Sejda;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 
 import com.itextpdf.text.pdf.PdfReader;
-import static org.junit.Assert.*;
 
 /**
+ * Parent test class with common methods to read results or common asserts.
+ * 
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 public class PdfStreamOutEnabledTest {
 
     private ByteArrayOutputStream out;
@@ -72,5 +80,15 @@ public class PdfStreamOutEnabledTest {
      */
     PdfReader getReaderFromResult() throws IOException {
         return getReaderFromResult(null);
+    }
+
+    /**
+     * Assert the correct creator
+     * 
+     * @param reader
+     */
+    void assertCreator(PdfReader reader) {
+        HashMap<String, String> meta = reader.getInfo();
+        assertEquals(Sejda.CREATOR, meta.get(PdfMetadataKey.CREATOR.getKey()));
     }
 }

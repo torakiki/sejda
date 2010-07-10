@@ -1,5 +1,5 @@
 /*
- * Created on 13/giu/2010
+ * Created on 09/lug/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -32,53 +33,50 @@ import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
-import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
+import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.Rotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.RotateTask;
+import org.sejda.core.manipulation.model.task.itext.SetMetadataTask;
 
 import com.itextpdf.text.pdf.PdfReader;
 
 /**
- * Test unit for the rotate task
+ * Test unit for the set metadata task
  * 
  * @author Andrea Vacondio
  * 
  */
 @SuppressWarnings("unchecked")
-public class RotateTaskTest extends PdfStreamOutEnabledTest {
+public class SetMetadataTaskTest extends PdfStreamOutEnabledTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private RotateParameters parameters = new RotateParameters();
+    private SetMetadataParameters parameters = new SetMetadataParameters();
     private List<Task> tasks = new ArrayList<Task>();
 
     @Before
     public void setUp() throws TaskException {
         setUpParameters();
-        tasks.add(new RotateTask());
+        tasks.add(new SetMetadataTask());
         victim.setContext(context);
     }
 
     /**
-     * Set up of the rotation parameters
+     * Set up of the set metadata parameters
      */
     private void setUpParameters() {
         parameters.setCompress(true);
-        parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setRotation(new PageRotation(Rotation.DEGREES_180, RotationType.ALL_PAGES));
+        parameters.put(PdfMetadataKey.AUTHOR, "test_author");
+        parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");
+        parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
+        parameters.put(PdfMetadataKey.TITLE, "test_title");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
-        List<PdfSource> sourceList = new ArrayList<PdfSource>();
-        sourceList.add(source);
-        parameters.setInputList(sourceList);
+        parameters.setInputSource(source);
         parameters.setOverwrite(true);
     }
 
@@ -88,10 +86,13 @@ public class RotateTaskTest extends PdfStreamOutEnabledTest {
             when(context.getTask(parameters)).thenReturn(task);
             initializeNewStreamOutput(parameters);
             victim.execute(parameters);
-            PdfReader reader = getReaderFromResult("test_prefix_test_file.pdf");
+            PdfReader reader = getReaderFromResult("test_file.pdf");
             assertCreator(reader);
-            assertEquals(4, reader.getNumberOfPages());
-            assertEquals(180, reader.getPageRotation(2));
+            HashMap<String, String> meta = reader.getInfo();
+            assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
+            assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
+            assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
+            assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
             reader.close();
         }
     }

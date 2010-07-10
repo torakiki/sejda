@@ -1,5 +1,5 @@
 /*
- * Created on 12/mag/2010
+ * Created on 09/lug/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,18 +16,32 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.validation.validator;
 
-import org.junit.Ignore;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import java.io.File;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.sejda.core.validation.constraint.ExistingFile;
 
 /**
+ * Validates that the given file exists
+ * 
  * @author Andrea Vacondio
  * 
  */
-@Ignore
-public class TestTaskParameter extends AbstractParameters {
+public class ExistingFileValidator implements ConstraintValidator<ExistingFile, File> {
 
-    private static final long serialVersionUID = -2159355672764604806L;
+    public void initialize(ExistingFile constraintAnnotation) {
+        // on purpose
+    }
+
+    public boolean isValid(File value, ConstraintValidatorContext context) {
+        if (value != null) {
+            return value.exists();
+        }
+        return true;
+    }
 
 }
