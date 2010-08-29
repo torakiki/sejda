@@ -16,9 +16,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io.model;
 
-import org.sejda.core.support.io.handler.Destination.FileDestination;
+import org.sejda.core.support.io.model.Destination.FileDestination;
 
 /**
  * DSL interface to allow the user to set the overwrite flag.

@@ -16,14 +16,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io.model;
 
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.handler.Destination.FileDestination;
-import org.sejda.core.support.io.handler.OverwriteDestination.OverwriteFileDestination;
+import org.sejda.core.support.io.model.Destination.FileDestination;
+import org.sejda.core.support.io.model.OverwriteDestination.OverwriteFileDestination;
 
 /**
  * Concrete implementation of an output destination where an input pdf source will be written to. <br />

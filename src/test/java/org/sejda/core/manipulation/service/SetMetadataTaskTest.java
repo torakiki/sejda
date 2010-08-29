@@ -81,12 +81,29 @@ public class SetMetadataTaskTest extends PdfStreamOutEnabledTest {
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
+    public void testExecuteStream() throws TaskException, IOException {
         for (Task task : tasks) {
             when(context.getTask(parameters)).thenReturn(task);
             initializeNewStreamOutput(parameters);
             victim.execute(parameters);
-            PdfReader reader = getReaderFromResult("test_file.pdf");
+            PdfReader reader = getReaderFromResultStream("test_file.pdf");
+            assertCreator(reader);
+            HashMap<String, String> meta = reader.getInfo();
+            assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
+            assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
+            assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
+            assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
+            reader.close();
+        }
+    }
+
+    @Test
+    public void testExecuteFile() throws TaskException, IOException {
+        for (Task task : tasks) {
+            when(context.getTask(parameters)).thenReturn(task);
+            initializeNewFileOutput(parameters);
+            victim.execute(parameters);
+            PdfReader reader = getReaderFromResultFile();
             assertCreator(reader);
             HashMap<String, String> meta = reader.getInfo();
             assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));

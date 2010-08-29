@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -36,6 +36,8 @@ import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.support.io.OutputWriter;
+import org.sejda.core.support.io.model.OutputDestination;
 
 /**
  * Test unit for the {@link OutputWriter}

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
@@ -30,6 +32,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
+import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
@@ -46,6 +49,7 @@ import com.itextpdf.text.pdf.PdfReader;
 public class PdfStreamOutEnabledTest {
 
     private ByteArrayOutputStream out;
+    private File outFile;
 
     /**
      * Initialize the input parameters with a new {@link PdfStreamOutput}
@@ -59,12 +63,33 @@ public class PdfStreamOutEnabledTest {
     }
 
     /**
+     * Initialize the input parameters with a new {@link PdfFileOutput}
+     * 
+     * @param parameters
+     */
+    void initializeNewFileOutput(AbstractParameters parameters) throws IOException {
+        outFile = File.createTempFile("SejdaTest", ".pdf");
+        outFile.deleteOnExit();
+        PdfFileOutput pdfOut = new PdfFileOutput(outFile);
+        parameters.setOutput(pdfOut);
+    }
+
+    /**
+     * 
+     * @return a {@link PdfReader} opened on temporary output file containing the result of the manipulation.
+     * @throws IOException
+     */
+    PdfReader getReaderFromResultFile() throws IOException {
+        return new PdfReader(new FileInputStream(outFile));
+    }
+
+    /**
      * @param expectedFileName
      *            the expected name of the first file in the ZipInputStream
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResult(String expectedFileName) throws IOException {
+    PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
@@ -79,7 +104,7 @@ public class PdfStreamOutEnabledTest {
      * @throws IOException
      */
     PdfReader getReaderFromResult() throws IOException {
-        return getReaderFromResult(null);
+        return getReaderFromResultStream(null);
     }
 
     /**

@@ -18,7 +18,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.support.io.FileOutput.file;
+import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
-import org.sejda.core.support.io.OutputWriterSupport;
+import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class SetMetadataTask extends OutputWriterSupport implements Task<SetMetadataParameters> {
+public class SetMetadataTask extends SingleOutputWriterSupport implements Task<SetMetadataParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
@@ -77,8 +77,7 @@ public class SetMetadataTask extends OutputWriterSupport implements Task<SetMeta
         ITextUtils.closePdfReader(reader);
         ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
 
-        singleOutput().flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
 
         LOG.debug(String.format("Metadata set on %s", parameters.getOutput()));
 

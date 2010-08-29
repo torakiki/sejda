@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io.model;
 
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 

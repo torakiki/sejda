@@ -88,7 +88,7 @@ public class RotateTaskTest extends PdfStreamOutEnabledTest {
             when(context.getTask(parameters)).thenReturn(task);
             initializeNewStreamOutput(parameters);
             victim.execute(parameters);
-            PdfReader reader = getReaderFromResult("test_prefix_test_file.pdf");
+            PdfReader reader = getReaderFromResultStream("test_prefix_test_file.pdf");
             assertCreator(reader);
             assertEquals(4, reader.getNumberOfPages());
             assertEquals(180, reader.getPageRotation(2));

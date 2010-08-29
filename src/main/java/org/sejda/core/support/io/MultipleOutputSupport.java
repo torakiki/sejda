@@ -20,6 +20,7 @@ package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
  * DSL interface to expose methods a multiple output task needs (tasks generating multiple files as output).
@@ -56,5 +57,5 @@ public interface MultipleOutputSupport {
      * 
      * @param fileOutput
      */
-    void add(PopulatedFileOutput fileOutput);
+    void addOutput(PopulatedFileOutput fileOutput);
 }

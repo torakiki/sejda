@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io.handler;
+package org.sejda.core.support.io;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,19 +35,30 @@ import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.support.io.model.Destination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component responsible for writing the input files to the output destination
+ * Stateless component responsible for writing the input files to the output destination
  * 
  * @author Andrea Vacondio
  * 
  */
-public class OutputWriter {
+class OutputWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class);
 
+    /**
+     * executes the copy of all the files in the input map to the given destination
+     * 
+     * @param files
+     *            map containing the new file names as key and the files as value
+     * @param destination
+     *            destination to copy
+     * @throws TaskIOException
+     *             if an error occur or if there is an inconsistency with the input parameters (Ex. multiple file and a OutputType.FILE_OUTPUT destination)
+     */
     public void executeCopy(Map<String, File> files, Destination destination) throws TaskIOException {
         if (destination != null) {
             AbstractPdfOutput outputDestination = destination.getOutputDestination();

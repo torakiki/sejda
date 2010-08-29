@@ -16,21 +16,25 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.io;
+package org.sejda.core.support.io.model;
+
+import java.io.File;
 
 /**
- * DSL interface used to expose methods needed to complete the {@link FileOutput} creation.
+ * DSL interface used to expose getters for the fully populated {@link FileOutput}
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface OngoingFileOuputCreation {
+public interface PopulatedFileOutput {
 
     /**
-     * set the name for the current instance
-     * 
-     * @param name
-     * @return the fully populated File output.
+     * @return the temporary file
      */
-    PopulatedFileOutput name(String name);
+    File getFile();
+
+    /**
+     * @return the new name
+     */
+    String getName();
 }

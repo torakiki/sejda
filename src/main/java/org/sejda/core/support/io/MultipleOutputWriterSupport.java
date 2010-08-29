@@ -1,5 +1,5 @@
 /*
- * Created on 19/giu/2010
+ * Created on 29/ago/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -20,38 +20,42 @@ package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * DSL interface to expose methods a single output task needs (tasks generating a single file as output).
+ * Provides support methods for the tasks to handle write output. Can hold multiple output temporary files created by a task and write them to the destination when the task
+ * requires to flush. An extending class can call the {@link MultipleOutputSupport} interface methods to add temporary files or flush them.
  * 
  * <pre>
  * {@code
- * PopulatedFileOutput singleOut = file(tmpFile).name("newName");
+ * addOutput(file(tmpFile).name("newName"));
+ * ....
  * AbstractPdfOutput output = ...
  * boolean overwrite = ...
- * singleOutput().flushSingleOutput(singleOut, output, overwrite);
+ * flushOutputs(output, overwrite);
  * }
  * </pre>
+ * 
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface SingleOutputSupport {
+public class MultipleOutputWriterSupport extends OutputWriterSupport implements MultipleOutputSupport {
 
-    /**
-     * flush of the given {@link PopulatedFileOutput} to the output destination and deletes it.
-     * 
-     * @param fileOutput
-     *            the input file that will be written to the destination.
-     * @param output
-     *            the destination.
-     * @param overwrite
-     *            if true overwrite the destination of already exists.
-     * @throws TaskIOException
-     *             in case of error
-     */
-    void flushSingleOutput(PopulatedFileOutput fileOutput, AbstractPdfOutput output, boolean overwrite)
-            throws TaskIOException;
+    public void flushOutputs(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
+        try {
+            if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
+                throw new TaskIOException("Unsupported file ouput for a multiple output task.");
+            } else {
+                writeToNonFileDestination(output, overwrite);
+            }
+        } finally {
+            clear();
+        }
+    }
 
+    public void addOutput(PopulatedFileOutput fileOutput) {
+        add(fileOutput);
+    }
 }

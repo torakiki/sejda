@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.handler.OutputDestination.destination;
+import static org.sejda.core.support.io.model.OutputDestination.destination;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,10 +29,9 @@ import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.handler.Destination;
-import org.sejda.core.support.io.handler.OutputWriter;
+import org.sejda.core.support.io.model.Destination;
+import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
  * Provides support methods for the tasks to handle output files. Can hold one or multiple output files and write them to the destination when the tasks require to flush the
@@ -63,7 +62,7 @@ import org.sejda.core.support.io.handler.OutputWriter;
  * @author Andrea Vacondio
  * 
  */
-public class OutputWriterSupport implements MultipleOutputSupport, SingleOutputSupport {
+class OutputWriterSupport {
 
     private static final String BUFFER_NAME = "SejdaTmpBuffer";
 
@@ -75,27 +74,20 @@ public class OutputWriterSupport implements MultipleOutputSupport, SingleOutputS
         this.outputWriter = new OutputWriter();
     }
 
-    protected MultipleOutputSupport multipleOutputs() {
-        return this;
-    }
-
-    protected SingleOutputSupport singleOutput() {
-        return this;
-    }
-
-    public void flushOutputs(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
-        try {
-            if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-                throw new TaskIOException("Unsupported file ouput for a multiple output task.");
-            } else {
-                if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
-                    write(destination((PdfDirectoryOutput) output).overwriting(overwrite));
-                } else {
-                    write(destination((PdfStreamOutput) output));
-                }
-            }
-        } finally {
-            multipleFiles.clear();
+    /**
+     * writes to the given destination throwing an exception if the given destination is a file destination
+     * 
+     * @param output
+     * @param overwrite
+     * @throws TaskIOException
+     */
+    protected void writeToNonFileDestination(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
+        if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
+            throw new TaskIOException("Unsupported file ouput for a multiple output task.");
+        } else if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
+            write(destination((PdfDirectoryOutput) output).overwriting(overwrite));
+        } else {
+            write(destination((PdfStreamOutput) output));
         }
     }
 
@@ -105,38 +97,34 @@ public class OutputWriterSupport implements MultipleOutputSupport, SingleOutputS
      * @param destination
      * @throws TaskIOException
      */
-    private void write(Destination destination) throws TaskIOException {
+    void write(Destination destination) throws TaskIOException {
         outputWriter.executeCopy(multipleFiles, destination);
     }
 
-    public void add(PopulatedFileOutput fileOutput) {
+    /**
+     * adds the input {@link PopulatedFileOutput} to the collection of files awaiting to be flushed.
+     * 
+     * @param fileOutput
+     */
+    void add(PopulatedFileOutput fileOutput) {
         fileOutput.getFile().deleteOnExit();
         multipleFiles.put(fileOutput.getName(), fileOutput.getFile());
     }
 
-    public void flushSingleOutput(PopulatedFileOutput fileOutput, AbstractPdfOutput output, boolean overwrite)
-            throws TaskIOException {
-        try {
-            if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-                add(fileOutput);
-                outputWriter.executeCopy(multipleFiles, destination((PdfFileOutput) output).overwriting(overwrite));
-            } else {
-                add(fileOutput);
-                flushOutputs(output, overwrite);
-            }
-        } finally {
-            multipleFiles.clear();
-        }
+    /**
+     * clear the collection of files awaiting to be flushed
+     */
+    void clear() {
+        multipleFiles.clear();
     }
 
     /**
      * @return a temporary pdf file
      * @throws TaskIOException
      */
-    public File createTemporaryPdfBuffer() throws TaskIOException {
+    public static File createTemporaryPdfBuffer() throws TaskIOException {
         try {
-            File retVal = File.createTempFile(BUFFER_NAME, ".pdf");
-            return retVal;
+            return File.createTempFile(BUFFER_NAME, ".pdf");
         } catch (IOException e) {
             throw new TaskIOException("Unable to create temporary buffer", e);
         }

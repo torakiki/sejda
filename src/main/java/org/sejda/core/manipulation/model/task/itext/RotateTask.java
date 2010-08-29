@@ -20,7 +20,7 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.FileOutput.file;
+import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
@@ -33,7 +33,7 @@ import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
-import org.sejda.core.support.io.OutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class RotateTask extends OutputWriterSupport implements Task<RotateParameters> {
+public class RotateTask extends MultipleOutputWriterSupport implements Task<RotateParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
@@ -80,12 +80,12 @@ public class RotateTask extends OutputWriterSupport implements Task<RotateParame
             ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            multipleOutputs().add(file(tmpFile).name(outName));
+            addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        multipleOutputs().flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
         LOG.debug(String.format("Input documents rotated and written to %s", parameters.getOutput()));
