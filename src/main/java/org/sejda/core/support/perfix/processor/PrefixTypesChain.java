@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.perfix;
+package org.sejda.core.support.perfix.processor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,8 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.support.perfix.processor.PrefixProcessor;
-import org.sejda.core.support.perfix.processor.PrependPrefixProcessor;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

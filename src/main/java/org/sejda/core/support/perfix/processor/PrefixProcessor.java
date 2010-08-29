@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.perfix.processor;
 
-import org.sejda.core.support.perfix.NameGenerationRequest;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 
 /**
  * A Processor takes a prefix string and applies the transformation it's designed for.

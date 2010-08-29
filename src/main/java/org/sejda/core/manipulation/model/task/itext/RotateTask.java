@@ -21,8 +21,8 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
 import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
 

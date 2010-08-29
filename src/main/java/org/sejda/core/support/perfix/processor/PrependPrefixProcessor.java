@@ -19,7 +19,7 @@
 package org.sejda.core.support.perfix.processor;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.NameGenerationRequest;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 
 /**
  * Simple prefix processor that prepend the input prefix to the original name. If the request contains a page number, the number is prepended to the prefix and to the original name.

@@ -18,16 +18,18 @@
  */
 package org.sejda.core.support.perfix;
 
-import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.perfix.processor.PrefixTypesChain;
 
 /**
  * Component used to generate the output name for a manipulation given the original name and the input prefix (if any);
  * 
  * @author Andrea Vacondio
- * @see PrefixType
+ * @see org.sejda.core.support.perfix.processor.PrefixType
  */
 public final class NameGenerator {
 

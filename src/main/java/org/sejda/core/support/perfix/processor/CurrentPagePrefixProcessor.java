@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.NameGenerationRequest;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [CURRENTPAGE] or [CURRENTPAGE##] occurrences with the input current page number (formatted with the given pattern identified by the

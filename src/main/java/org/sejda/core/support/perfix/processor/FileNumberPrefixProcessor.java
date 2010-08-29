@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.NameGenerationRequest;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [FILENUMBER] or [FILENUMBERE##] or [FILENUMBER##11] or [FILENUMBER11] occurrences with the input file number (formatted with the given

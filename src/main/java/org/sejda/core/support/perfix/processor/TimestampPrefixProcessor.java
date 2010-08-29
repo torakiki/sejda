@@ -21,7 +21,7 @@ package org.sejda.core.support.perfix.processor;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.sejda.core.support.perfix.NameGenerationRequest;
+import org.sejda.core.support.perfix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.

@@ -16,14 +16,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.support.perfix;
+package org.sejda.core.support.perfix.processor;
 
-import org.sejda.core.support.perfix.processor.BasenamePrefixProcessor;
-import org.sejda.core.support.perfix.processor.BookmarkPrefixProcessor;
-import org.sejda.core.support.perfix.processor.CurrentPagePrefixProcessor;
-import org.sejda.core.support.perfix.processor.FileNumberPrefixProcessor;
-import org.sejda.core.support.perfix.processor.PrefixProcessor;
-import org.sejda.core.support.perfix.processor.TimestampPrefixProcessor;
+
 
 /**
  * Enum for the types of prefix. It contains information about the prefix type like:

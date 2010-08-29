@@ -19,7 +19,7 @@
 package org.sejda.core.support.prefix.processor;
 
 import static org.junit.Assert.assertEquals;
-import static org.sejda.core.support.perfix.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
 import org.sejda.core.support.perfix.processor.CurrentPagePrefixProcessor;
