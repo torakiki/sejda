@@ -25,7 +25,7 @@ package org.sejda.core.notification.event;
  * @author Andrea Vacondio
  * 
  */
-public class TaskExecutionCompletedEvent extends AbstractEvent {
+public class TaskExecutionCompletedEvent extends AbstractNotificationEvent {
 
     // empty on purpose
 

@@ -22,7 +22,7 @@ package org.sejda.core.notification.context;
 import org.sejda.core.context.ApplicationContext;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Interface providing notification configuration. {@link EventListener} can be registered to be notified.
@@ -37,9 +37,9 @@ public interface NotificationContext extends ApplicationContext {
      * 
      * @param listener
      * @throws NotificationContextException
-     *             if unable to infer the listened {@link AbstractEvent} subclass
+     *             if unable to infer the listened {@link AbstractNotificationEvent} subclass
      */
-    void addListener(EventListener<? extends AbstractEvent> listener) throws NotificationContextException;
+    void addListener(EventListener<? extends AbstractNotificationEvent> listener) throws NotificationContextException;
 
     /**
      * Clears the list of listeners for this context
@@ -51,7 +51,7 @@ public interface NotificationContext extends ApplicationContext {
      * 
      * @param event
      */
-    void notifyListeners(AbstractEvent event);
+    void notifyListeners(AbstractNotificationEvent event);
 
     /**
      * @return the number of the registered listeners

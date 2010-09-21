@@ -20,7 +20,7 @@
 package org.sejda.core.notification.strategy;
 
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Strategy used to notify all the registered listeners.
@@ -36,5 +36,5 @@ public interface NotificationStrategy {
      * @param event
      */
     @SuppressWarnings("unchecked")
-    void notifyListener(EventListener listener, AbstractEvent event);
+    void notifyListener(EventListener listener, AbstractNotificationEvent event);
 }

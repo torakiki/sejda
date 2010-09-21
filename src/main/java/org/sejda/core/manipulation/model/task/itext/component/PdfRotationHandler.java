@@ -69,7 +69,7 @@ public final class PdfRotationHandler implements OngoingRotation {
      */
     private void executeRotation() {
         RotationType type = rotation.getRotationType();
-        LOG.debug(String.format("Applying rotation of %d to pages %s", rotation.getRotation().getDegrees(), type));
+        LOG.debug("Applying rotation of {} to pages {}", rotation.getRotation().getDegrees(), type);
         if (RotationType.SINGLE_PAGE.equals(type)) {
             apply(rotation.getPageNumber());
         } else {

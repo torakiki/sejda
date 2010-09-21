@@ -1,5 +1,5 @@
 /*
- * Created on 17/apr/2010
+ * Created on 16/set/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -15,26 +15,27 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
  */
-package org.sejda.core.notification.event;
+package org.sejda.core.manipulation.model.pdf;
 
 /**
- * Abstract event that carries the timestamp when it has been created.
+ * Possible encryption algorithm to use during pdf encryption.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractEvent implements Event {
+public enum PdfEncryption implements MinRequiredVersion {
+    STANDARD_ENC_40(PdfVersion.VERSION_1_2),
+    STANDARD_ENC_128(PdfVersion.VERSION_1_2),
+    AES_ENC_128(PdfVersion.VERSION_1_6);
 
-    private Long eventTimestamp;
+    private PdfVersion minVersion;
 
-    public AbstractEvent() {
-        super();
-        this.eventTimestamp = Long.valueOf(System.currentTimeMillis());
+    private PdfEncryption(PdfVersion minVersion) {
+        this.minVersion = minVersion;
     }
 
-    public Long getEventTimestamp() {
-        return eventTimestamp;
+    public PdfVersion getMinVersion() {
+        return minVersion;
     }
 }

@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
-import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
@@ -76,9 +75,7 @@ public class RotateTaskTest extends PdfStreamOutEnabledTest {
         parameters.setRotation(new PageRotation(Rotation.DEGREES_180, RotationType.ALL_PAGES));
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
-        List<PdfSource> sourceList = new ArrayList<PdfSource>();
-        sourceList.add(source);
-        parameters.setInputList(sourceList);
+        parameters.addSource(source);
         parameters.setOverwrite(true);
     }
 

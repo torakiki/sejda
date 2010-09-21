@@ -16,7 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model.task.itext.component;
+package org.sejda.core.manipulation.model.task.itext.util;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -34,12 +34,17 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.RandomAccessFileOrArray;
 
 /**
- * Component responsible for handling operations related to a {@link PdfReader} instance.
+ * Utility responsible for handling operations related to a {@link PdfReader} instance.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfReaderHandler {
+public final class PdfReaderUtils {
+
+    private PdfReaderUtils() {
+        // utility
+    }
+
     /**
      * Open a {@link PdfReader} from the input {@link PdfSource}
      * 
@@ -51,7 +56,7 @@ public class PdfReaderHandler {
      * @throws TaskIOException
      *             if an error occur during the reader creation.
      */
-    public PdfReader openReader(PdfSource source, boolean forceStream) throws TaskIOException {
+    public static PdfReader openReader(PdfSource source, boolean forceStream) throws TaskIOException {
         PdfReader reader = null;
         try {
             switch (source.getSourceType()) {
@@ -86,11 +91,11 @@ public class PdfReaderHandler {
      * @throws TaskIOException
      *             if an error occur during the reader creation
      */
-    public PdfReader openReader(PdfSource source) throws TaskIOException {
+    public static PdfReader openReader(PdfSource source) throws TaskIOException {
         return openReader(source, false);
     }
 
-    private PdfReader openReaderFromStream(PdfStreamSource source, boolean forceStream) throws IOException {
+    private static PdfReader openReaderFromStream(PdfStreamSource source, boolean forceStream) throws IOException {
         if (forceStream) {
             return new PdfReader(new BufferedInputStream(source.getStream()), source.getPasswordBytes());
         } else {
@@ -98,7 +103,7 @@ public class PdfReaderHandler {
         }
     }
 
-    private PdfReader openReaderFromFile(PdfFileSource source, boolean forceStream) throws IOException {
+    private static PdfReader openReaderFromFile(PdfFileSource source, boolean forceStream) throws IOException {
         if (forceStream) {
             return new PdfReader(new BufferedInputStream(new FileInputStream(source.getFile())), source
                     .getPasswordBytes());
@@ -108,7 +113,7 @@ public class PdfReaderHandler {
         }
     }
 
-    private PdfReader openReaderFromURL(PdfURLSource source, boolean forceStream) throws IOException {
+    private static PdfReader openReaderFromURL(PdfURLSource source, boolean forceStream) throws IOException {
         if (forceStream) {
             return new PdfReader(new BufferedInputStream(source.getUrl().openStream()), source.getPasswordBytes());
         } else {

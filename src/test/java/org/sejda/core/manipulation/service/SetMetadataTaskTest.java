@@ -76,7 +76,7 @@ public class SetMetadataTaskTest extends PdfStreamOutEnabledTest {
         parameters.put(PdfMetadataKey.TITLE, "test_title");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
-        parameters.setInputSource(source);
+        parameters.setSource(source);
         parameters.setOverwrite(true);
     }
 

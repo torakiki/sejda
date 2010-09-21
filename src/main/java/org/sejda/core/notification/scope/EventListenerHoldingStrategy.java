@@ -21,7 +21,7 @@ package org.sejda.core.notification.scope;
 import java.util.List;
 
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Strategy used to hold the list of registered listeners.
@@ -38,7 +38,7 @@ public interface EventListenerHoldingStrategy {
      * @param listener
      */
     @SuppressWarnings("unchecked")
-    void add(Class<? extends AbstractEvent> eventClass, EventListener listener);
+    void add(Class<? extends AbstractNotificationEvent> eventClass, EventListener listener);
 
     /**
      * Clears the list of listeners
@@ -47,10 +47,10 @@ public interface EventListenerHoldingStrategy {
 
     /**
      * @param event
-     * @return the list of listeners hold for the given {@link AbstractEvent}
+     * @return the list of listeners hold for the given {@link AbstractNotificationEvent}
      */
     @SuppressWarnings("unchecked")
-    List<EventListener> get(AbstractEvent event);
+    List<EventListener> get(AbstractNotificationEvent event);
 
     /**
      * @return number of hold listener

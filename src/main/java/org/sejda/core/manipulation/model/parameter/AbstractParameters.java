@@ -43,12 +43,18 @@ public abstract class AbstractParameters implements Serializable, TaskParameters
     private AbstractPdfOutput output;
     private boolean overwrite = false;
     private boolean compress = false;
-    private PdfVersion version = PdfVersion.VERSION_1_2;
+    @NotNull
+    private PdfVersion version;
 
     public boolean isOverwrite() {
         return overwrite;
     }
 
+    /**
+     * Set if the output should be overwritten if already exists
+     * 
+     * @param overwrite
+     */
     public void setOverwrite(boolean overwrite) {
         this.overwrite = overwrite;
     }
@@ -65,6 +71,11 @@ public abstract class AbstractParameters implements Serializable, TaskParameters
         return version;
     }
 
+    /**
+     * Set the pdf version for the output document/s
+     * 
+     * @param version
+     */
     public void setVersion(PdfVersion version) {
         this.version = version;
     }

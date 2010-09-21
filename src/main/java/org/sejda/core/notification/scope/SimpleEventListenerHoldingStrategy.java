@@ -21,7 +21,7 @@ package org.sejda.core.notification.scope;
 import java.util.List;
 
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.support.ListValueMap;
 
 /**
@@ -33,13 +33,13 @@ import org.sejda.core.support.ListValueMap;
 @SuppressWarnings("unchecked")
 public class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy {
 
-    private ListValueMap<Class<? extends AbstractEvent>, EventListener> listeners;
+    private ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener> listeners;
 
     public SimpleEventListenerHoldingStrategy() {
-        listeners = new ListValueMap<Class<? extends AbstractEvent>, EventListener>();
+        listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener>();
     }
 
-    public void add(Class<? extends AbstractEvent> eventClass, EventListener listener) {
+    public void add(Class<? extends AbstractNotificationEvent> eventClass, EventListener listener) {
         listeners.put(eventClass, listener);
     }
 
@@ -47,7 +47,7 @@ public class SimpleEventListenerHoldingStrategy implements EventListenerHoldingS
         listeners.clear();
     }
 
-    public List<EventListener> get(AbstractEvent event) {
+    public List<EventListener> get(AbstractNotificationEvent event) {
         return listeners.get(event.getClass());
     }
 

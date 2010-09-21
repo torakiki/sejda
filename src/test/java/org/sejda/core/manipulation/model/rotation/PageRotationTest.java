@@ -18,7 +18,8 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -30,22 +31,25 @@ import org.junit.Test;
  */
 public class PageRotationTest {
 
-    private static final int D_90 = 90;
-    private static final int D_540 = 540;
-    private static final int D_95 = 95;
-
     @Test
-    public void getRotationTest() {
-        assertEquals(Rotation.DEGREES_90, Rotation.getRotation(D_90));
-        assertEquals(Rotation.DEGREES_180, Rotation.getRotation(D_540));
-        assertEquals(Rotation.DEGREES_0, Rotation.getRotation(D_95));
+    public void testAccept() {
+        PageRotation victim = new PageRotation(2, Rotation.DEGREES_180);
+        assertTrue(victim.accept(2));
+        assertFalse(victim.accept(1));
+
+        victim = new PageRotation(Rotation.DEGREES_270, RotationType.EVEN_PAGES);
+        assertTrue(victim.accept(2));
+        assertFalse(victim.accept(1));
+
+        victim = new PageRotation(Rotation.DEGREES_270, RotationType.ODD_PAGES);
+        assertTrue(victim.accept(1));
+        assertFalse(victim.accept(2));
+
+        victim = new PageRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
+        assertTrue(victim.accept(2));
+        assertTrue(victim.accept(1));
+
     }
 
-    @Test
-    public void rotateTest() {
-        assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_90.rotateClockwise());
-        assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_270.rotateAnticlockwise());
-        assertEquals(Rotation.DEGREES_270, Rotation.DEGREES_0.rotateAnticlockwise());
-    }
 
 }

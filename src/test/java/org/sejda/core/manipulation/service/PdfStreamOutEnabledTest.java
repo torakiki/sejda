@@ -66,6 +66,7 @@ public class PdfStreamOutEnabledTest {
      * Initialize the input parameters with a new {@link PdfFileOutput}
      * 
      * @param parameters
+     * @throws IOException
      */
     void initializeNewFileOutput(AbstractParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
@@ -86,17 +87,29 @@ public class PdfStreamOutEnabledTest {
     /**
      * @param expectedFileName
      *            the expected name of the first file in the ZipInputStream
+     * @param ownerPwd
+     *            owner password
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
+    PdfReader getReaderFromResultStream(String expectedFileName, byte[] ownerPwd) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
         if (StringUtils.isNotBlank(expectedFileName)) {
             assertEquals(expectedFileName, entry.getName());
         }
-        return new PdfReader(zip);
+        return new PdfReader(zip, ownerPwd);
+    }
+
+    /**
+     * @param expectedFileName
+     *            the expected name of the first file in the ZipInputStream
+     * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
+     * @throws IOException
+     */
+    PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
+        return getReaderFromResultStream(expectedFileName, null);
     }
 
     /**
@@ -104,8 +117,19 @@ public class PdfStreamOutEnabledTest {
      * @throws IOException
      */
     PdfReader getReaderFromResult() throws IOException {
-        return getReaderFromResultStream(null);
+        return getReaderFromResultStream(null, null);
     }
+
+    /**
+     * @param ownerPwd
+     *            owner password
+     * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
+     * @throws IOException
+     */
+    PdfReader getReaderFromResult(byte[] ownerPwd) throws IOException {
+        return getReaderFromResultStream(null, ownerPwd);
+    }
+
 
     /**
      * Assert the correct creator

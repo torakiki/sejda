@@ -32,7 +32,6 @@ public abstract class BasePrefixProcessorTest {
 
     /**
      * Test that the process method returns the input prefix in case of empty request and a simple prefix.
-     * @param prefix
      */
     @Test
     public void testEmptyRequestSimplePrefix(){

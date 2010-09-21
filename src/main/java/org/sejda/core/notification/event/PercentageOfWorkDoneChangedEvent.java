@@ -27,7 +27,7 @@ import java.math.BigDecimal;
  * @author Andrea Vacondio
  * 
  */
-public class PercentageOfWorkDoneChangedEvent extends AbstractEvent {
+public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent {
 
     public static final BigDecimal UNDETERMINATE = new BigDecimal("-1");
     public static final BigDecimal MAX_PERGENTAGE = new BigDecimal("100");

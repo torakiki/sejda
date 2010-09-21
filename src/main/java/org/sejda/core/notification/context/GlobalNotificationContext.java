@@ -32,7 +32,7 @@ public final class GlobalNotificationContext extends AbstractNotificationContext
         super(new SimpleEventListenerHoldingStrategy());
     }
 
-    public static GlobalNotificationContext getContext() {
+    public static NotificationContext getContext() {
         return GlobalNotificationContextHolder.NOTIFICATION_CONTEXT;
     }
 

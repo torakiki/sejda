@@ -59,17 +59,16 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
         try {
             validate(parameters);
             task = context.getTask(parameters);
-            LOG.info(String.format("Starting task (%s) execution.", task));
+            LOG.info("Starting task ({}) execution.", task);
             actualExecution(parameters, task);
             postExecution();
-            LOG.info(String.format("Task (%s) executed in %s", task, DurationFormatUtils.formatDurationWords(stopWatch
-                    .getTime(), true, true)));
-        }catch(InvalidTaskParametersException i){
-            LOG.info("Task execution failed due to invalid parameters.", i);
+            LOG.info("Task ({}) executed in {}", task, DurationFormatUtils.formatDurationWords(stopWatch.getTime(),
+                    true, true));
+        } catch (InvalidTaskParametersException i) {
+            LOG.warn("Task execution failed due to invalid parameters.", i);
             executionFailed(i);
-        }
-        catch (TaskException e) {
-            LOG.info(String.format("Task (%s) execution failed.", task), e);
+        } catch (TaskException e) {
+            LOG.warn(String.format("Task (%s) execution failed.", task), e);
             executionFailed(e);
         }
     }
@@ -84,7 +83,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
 
     private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
         if (DefaultValidationContext.getContext().isValidation()) {
-            LOG.debug(String.format("Validating parameters (%s).", parameters));
+            LOG.debug("Validating parameters ({}).", parameters);
             Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                     .validate(parameters);
             if (!violations.isEmpty()) {
@@ -96,7 +95,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
                 throw new InvalidTaskParametersException(sb.toString());
             }
         } else {
-            LOG.debug("Validating skipped.");
+            LOG.info("Validation skipped.");
         }
     }
 

@@ -18,6 +18,9 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
@@ -29,7 +32,6 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -49,20 +51,18 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
-    private PdfReaderHandler readerHandler = null;
 
     public void before(SetMetadataParameters parameters) throws TaskException {
-        readerHandler = new PdfReaderHandler();
-
+        // nothing to do
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
-        PdfSource source = parameters.getInputSource();
-        LOG.debug(String.format("Opening %s ...", source));
-        reader = readerHandler.openReader(source);
+        PdfSource source = parameters.getSource();
+        LOG.debug("Opening {} ...", source);
+        reader = openReader(source);
 
         File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug(String.format("Creating output on temporary buffer %s ...", tmpFile));
+        LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
         stamperHandler.setCompressionOnStamper(parameters.isCompress());
@@ -74,18 +74,18 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         }
         stamperHandler.setMetadataOnStamper(actualMeta);
 
-        ITextUtils.closePdfReader(reader);
-        ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
+        closePdfReader(reader);
+        closePdfStamperHandlerQuietly(stamperHandler);
 
         flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
 
-        LOG.debug(String.format("Metadata set on %s", parameters.getOutput()));
+        LOG.debug("Metadata set on {}", parameters.getOutput());
 
     }
 
     public void after() {
-        ITextUtils.closePdfReader(reader);
-        ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
+        closePdfReader(reader);
+        closePdfStamperHandlerQuietly(stamperHandler);
     }
 
 }

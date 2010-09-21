@@ -18,42 +18,27 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
- * Parameter class for the rotation manipulation.
+ * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the {@link PageRotation} will be applied.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateParameters extends AbstractParameters {
+public class RotateParameters extends PdfSourceListParameters {
 
     private static final long serialVersionUID = 8834767589689764537L;
 
-    @NotEmpty
-    @Valid
-    private List<PdfSource> inputList;
     private String outputPrefix = "";
     @Valid
     @NotNull
     private PageRotation rotation = null;
-
-    public List<PdfSource> getInputList() {
-        return inputList;
-    }
-
-    public void setInputList(List<PdfSource> inputList) {
-        this.inputList = inputList;
-    }
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -73,8 +58,7 @@ public class RotateParameters extends AbstractParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(outputPrefix).append(
-                rotation).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(rotation).toHashCode();
     }
 
     @Override
@@ -83,7 +67,7 @@ public class RotateParameters extends AbstractParameters {
             return false;
         }
         RotateParameters parameter = (RotateParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList()).append(
-                outputPrefix, parameter.getOutputPrefix()).append(rotation, parameter.getRotation()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
+                .append(rotation, parameter.getRotation()).isEquals();
     }
 }

@@ -19,7 +19,7 @@
  */
 package org.sejda.core.notification;
 
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Listen for the event. Any listener can generically declare the event it is interested in.
@@ -29,7 +29,7 @@ import org.sejda.core.notification.event.AbstractEvent;
  * @param <T>
  *            event type
  */
-public interface EventListener<T extends AbstractEvent> {
+public interface EventListener<T extends AbstractNotificationEvent> {
 
     /**
      * event notification

@@ -26,7 +26,7 @@ package org.sejda.core.notification.event;
  * @author Andrea Vacondio
  * 
  */
-public class TaskExecutionFailedEvent extends AbstractEvent {
+public class TaskExecutionFailedEvent extends AbstractNotificationEvent {
 
     private Exception failingCause;
 

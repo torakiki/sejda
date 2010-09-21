@@ -21,7 +21,7 @@ package org.sejda.core.notification.strategy;
 
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.ThreadLocalExecutorFactory;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Strategy to notify events asynchronously using a per thread single thread executor.
@@ -32,7 +32,7 @@ import org.sejda.core.notification.event.AbstractEvent;
 public class AsyncNotificationStrategy implements NotificationStrategy {
 
     @SuppressWarnings("unchecked")
-    public void notifyListener(final EventListener listener, final AbstractEvent event) {
+    public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
             ThreadLocalExecutorFactory.getLocalExecutor().execute(new Runnable() {
 

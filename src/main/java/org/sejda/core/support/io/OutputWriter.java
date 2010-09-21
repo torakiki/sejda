@@ -144,7 +144,7 @@ class OutputWriter {
                     "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
         }
         try {
-            LOG.debug(String.format("Copying %s to %s.", input, output));
+            LOG.debug("Copying {} to {}.", input, output);
             FileUtils.copyFile(input, output);
         } catch (IOException e) {
             throw new TaskIOException("Unable to copy the input file to the output file", e);
@@ -167,7 +167,7 @@ class OutputWriter {
             try {
                 input = new FileInputStream(entry.getValue());
                 zipOut.putNextEntry(new ZipEntry(entry.getKey()));
-                LOG.debug(String.format("Copying %s to zip stream.", entry.getValue()));
+                LOG.debug("Copying {} to zip stream.", entry.getValue());
                 IOUtils.copy(input, zipOut);
             } catch (IOException e) {
                 throw new TaskIOException("Unable to copy the temporary file to the zip output stream", e);
@@ -181,7 +181,7 @@ class OutputWriter {
 
     private void delete(File file) {
         if (!file.delete()) {
-            LOG.warn(String.format("Unable to delete temporary file %s", file));
+            LOG.warn("Unable to delete temporary file {}", file);
         }
     }
 }

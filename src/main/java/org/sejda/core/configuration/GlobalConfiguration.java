@@ -60,7 +60,7 @@ public final class GlobalConfiguration {
     private boolean validation;
 
     private GlobalConfiguration() {
-        LOG.info(String.format("Configuring Sejda %s", Sejda.VERSION));
+        LOG.info("Configuring Sejda {}", Sejda.VERSION);
         initialize();
     }
 

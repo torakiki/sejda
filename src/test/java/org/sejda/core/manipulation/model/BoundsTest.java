@@ -1,5 +1,5 @@
 /*
- * Created on 17/apr/2010
+ * Created on 18/set/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -15,20 +15,30 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- * 
  */
-package org.sejda.core.notification.event;
+package org.sejda.core.manipulation.model;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
- * A Notification event. Listeners can register to listen for a specific event.
+ * Test unit for the Bounds class
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface Event {
+public class BoundsTest {
 
-    /**
-     * @return the timestamp when the event has been created
-     */
-    Long getEventTimestamp();
+    @Test
+    public void testIntersect() {
+        Bounds base = new Bounds(0, 10);
+        Bounds noIntersection = new Bounds(11, 12);
+        Bounds intersecion = new Bounds(5, 15);
+        Bounds included = new Bounds(2, 5);
+        assertTrue(base.intersects(intersecion));
+        assertTrue(base.intersects(included));
+        assertFalse(base.intersects(noIntersection));
+    }
 }

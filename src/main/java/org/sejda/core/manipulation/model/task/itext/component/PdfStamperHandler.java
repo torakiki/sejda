@@ -125,6 +125,26 @@ public class PdfStamperHandler {
     }
 
     /**
+     * Sets the encryption for this document delegating encryption to the stamper.
+     * 
+     * @see PdfStamper#setEncryption(int, String, String, int)
+     * @param encryptionType
+     * @param userPassword
+     * @param ownerPassword
+     * @param permissions
+     * @throws TaskException
+     *             wraps the {@link DocumentException} that can be thrown by the stamper
+     */
+    public void setEncryptionOnStamper(int encryptionType, String userPassword, String ownerPassword, int permissions)
+            throws TaskException {
+        try {
+            stamper.setEncryption(encryptionType, userPassword, ownerPassword, permissions);
+        } catch (DocumentException e) {
+            throw new TaskException("An error occured while setting encryption on the document", e);
+        }
+    }
+
+    /**
      * 
      * @return the inner {@link PdfStamper} instance
      */

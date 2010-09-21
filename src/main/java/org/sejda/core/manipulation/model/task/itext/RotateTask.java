@@ -19,6 +19,9 @@
 package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
@@ -31,7 +34,6 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderHandler;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -51,33 +53,31 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
-    private PdfReaderHandler readerHandler = null;
     private int totalSteps;
 
     public void before(RotateParameters parameters) throws TaskExecutionException {
-        readerHandler = new PdfReaderHandler();
-        totalSteps = parameters.getInputList().size() + 1;
+        totalSteps = parameters.getSourceList().size() + 1;
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        for (PdfSource source : parameters.getInputList()) {
+        for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
-            LOG.debug(String.format("Opening %s ...", source));
-            reader = readerHandler.openReader(source, true);
+            LOG.debug("Opening {} ...", source);
+            reader = openReader(source, true);
 
             applyRotation(parameters.getRotation()).to(reader);
 
             File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug(String.format("Creating output on temporary buffer %s ...", tmpFile));
+            LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompress());
             stamperHandler.setCreatorOnStamper(reader);
 
-            ITextUtils.closePdfReader(reader);
-            ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
+            closePdfReader(reader);
+            closePdfStamperHandlerQuietly(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
             addOutput(file(tmpFile).name(outName));
@@ -88,12 +88,12 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
         flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
-        LOG.debug(String.format("Input documents rotated and written to %s", parameters.getOutput()));
+        LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 
     public void after() {
-        ITextUtils.closePdfReader(reader);
-        ITextUtils.closePdfStamperHandlerQuietly(stamperHandler);
+        closePdfReader(reader);
+        closePdfStamperHandlerQuietly(stamperHandler);
     }
 
 }

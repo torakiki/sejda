@@ -20,7 +20,7 @@
 package org.sejda.core.notification.strategy;
 
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 
 /**
  * Strategy to notify events synchronously
@@ -30,7 +30,7 @@ import org.sejda.core.notification.event.AbstractEvent;
 public class SyncNotificationStrategy implements NotificationStrategy {
 
     @SuppressWarnings("unchecked")
-    public void notifyListener(final EventListener listener, final AbstractEvent event) {
+    public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
             listener.onEvent(event);
         }

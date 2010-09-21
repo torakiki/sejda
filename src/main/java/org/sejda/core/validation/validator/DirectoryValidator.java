@@ -26,7 +26,10 @@ import javax.validation.ConstraintValidatorContext;
 import org.sejda.core.validation.constraint.Directory;
 
 /**
- * Validator for the {@link Directory} constraint
+ * Validator for the {@link Directory} constraint.<br>
+ * Note that this constraint validates that the input file exists and is a directory according to the isDirectory method of the File class.
+ * 
+ * @see File#isDirectory()
  * 
  * @author Andrea Vacondio
  * 

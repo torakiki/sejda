@@ -48,9 +48,8 @@ public class DefaultTasksRegistry implements TasksRegistry {
         synchronized (tasksMap) {
             Class<? extends Task> retVal = tasksMap.get(parametersClass);
             if (retVal == null) {
-                LOG.info(String.format(
-                        "Unable to find a match for the input parameter class %s, searching for an assignable one",
-                        parametersClass));
+                LOG.info("Unable to find a match for the input parameter class {}, searching for an assignable one",
+                        parametersClass);
                 retVal = findNearestTask(parametersClass);
             }
             return retVal;
@@ -67,7 +66,7 @@ public class DefaultTasksRegistry implements TasksRegistry {
                 return entry.getValue();
             }
         }
-        LOG.warn(String.format("Unable to find an assignable match for the input parameter class %s", parametersClass));
+        LOG.warn("Unable to find an assignable match for the input parameter class {}", parametersClass);
         return null;
     }
 

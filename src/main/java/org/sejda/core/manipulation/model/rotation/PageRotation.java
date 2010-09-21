@@ -27,7 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Model for a page rotation
+ * Model representing a rotation to be applyed to a single page or to a class of pages (even, odd, all)
  * 
  * @author Andrea Vacondio
  * 

@@ -34,30 +34,7 @@ import org.sejda.core.support.io.model.Destination;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * Provides support methods for the tasks to handle output files. Can hold one or multiple output files and write them to the destination when the tasks require to flush the
- * output. An extending class can call the {@link OutputWriterSupport#multipleOutputs()} method to have access to the {@link MultipleOutputSupport} interface methods or
- * {@link OutputWriterSupport#singleOutput()} to have access to the {@link SingleOutputSupport} interface.
- * 
- * <pre>
- * {@code
- * multipleOutputs().add(file(tmpFile).name("newName"));
- * ....
- * AbstractPdfOutput output = ...
- * boolean overwrite = ...
- * multipleOutputs().flushOutputs(output, overwrite);
- * }
- * </pre>
- * 
- * Or:
- * 
- * <pre>
- * {@code
- * PopulatedFileOutput singleOut = file(tmpFile).name("newName");
- * AbstractPdfOutput output = ...
- * boolean overwrite = ...
- * singleOutput().flushSingleOutput(singleOut, output, overwrite);
- * }
- * </pre>
+ * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.
  * 
  * @author Andrea Vacondio
  * 

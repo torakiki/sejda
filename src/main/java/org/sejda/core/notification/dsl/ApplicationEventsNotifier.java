@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * {@link ThreadLocalNotificationContext} will be notified.
  * 
  * @author Andrea Vacondio
- * @see org.sejda.core.notification.context.NotificationContext#notifyListeners(AbstractEvent)
+ * @see org.sejda.core.notification.context.NotificationContext#notifyListeners(AbstractNotificationEvent)
  * 
  */
 public final class ApplicationEventsNotifier implements Notifier, OngoingNotification {
@@ -102,8 +102,8 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * 
      * @param event
      */
-    private void notifyListeners(AbstractEvent event) {
-        LOG.debug(String.format("Notifing event %s", event));
+    private void notifyListeners(AbstractNotificationEvent event) {
+        LOG.debug("Notifing event {}", event);
         GlobalNotificationContext.getContext().notifyListeners(event);
         ThreadLocalNotificationContext.getContext().notifyListeners(event);
     }

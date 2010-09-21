@@ -23,12 +23,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
 
@@ -38,27 +34,15 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public final class SetMetadataParameters extends AbstractParameters {
+public final class SetMetadataParameters extends SinglePdfSourceParameters {
 
     private static final long serialVersionUID = -9113822216737314063L;
-
-    @Valid
-    @NotNull
-    private PdfSource inputSource;
 
     @NotEmpty
     private Map<PdfMetadataKey, String> metadata;
 
     public SetMetadataParameters() {
         metadata = new HashMap<PdfMetadataKey, String>();
-    }
-
-    public PdfSource getInputSource() {
-        return inputSource;
-    }
-
-    public void setInputSource(PdfSource inputSource) {
-        this.inputSource = inputSource;
     }
 
     /**
@@ -81,7 +65,7 @@ public final class SetMetadataParameters extends AbstractParameters {
      * @see Map#putAll(Map)
      * @param m
      */
-    public void putAll(Map<? extends PdfMetadataKey, ? extends String> m) {
+    public void putAll(Map<PdfMetadataKey, String> m) {
         metadata.putAll(m);
     }
 
@@ -98,7 +82,7 @@ public final class SetMetadataParameters extends AbstractParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputSource).append(metadata).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).toHashCode();
     }
 
     @Override
@@ -107,7 +91,7 @@ public final class SetMetadataParameters extends AbstractParameters {
             return false;
         }
         SetMetadataParameters parameter = (SetMetadataParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputSource, parameter.getInputSource())
-                .append(metadata.entrySet(), parameter.entrySet()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata.entrySet(), parameter.entrySet())
+                .isEquals();
     }
 }

@@ -21,7 +21,7 @@ package org.sejda.core.notification.context;
 import org.sejda.core.context.AbstractApplicationContext;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractEvent;
+import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.scope.EventListenerHoldingStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
@@ -47,7 +47,7 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
         this.strategy = getStrategy();
     }
 
-    public void notifyListeners(AbstractEvent event) {
+    public void notifyListeners(AbstractNotificationEvent event) {
         synchronized (holder) {
             if (holder.size() > 0) {
                 for (EventListener listener : holder.get(event)) {
@@ -57,7 +57,7 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
         }
     }
 
-    public void addListener(EventListener<? extends AbstractEvent> listener) throws NotificationContextException {
+    public void addListener(EventListener<? extends AbstractNotificationEvent> listener) throws NotificationContextException {
         synchronized (holder) {
             Class eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
             if (eventClass == null) {

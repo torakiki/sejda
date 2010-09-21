@@ -35,7 +35,7 @@ public abstract class NumberFormatEnabledPrefixProcessor implements PrefixProces
     private static final Logger LOG = LoggerFactory.getLogger(NumberFormatEnabledPrefixProcessor.class);
 
     /**
-     * @param arg0
+     * @param numberPattern
      *            the input number pattern of the type "####"
      * @return the {@link DecimalFormat} with the applied pattern
      */
@@ -47,7 +47,7 @@ public abstract class NumberFormatEnabledPrefixProcessor implements PrefixProces
                 return retVal;
             }
         } catch (IllegalArgumentException iae) {
-            LOG.error(String.format("Error applying pattern %s", numberPattern));
+            LOG.error(String.format("Error applying pattern %s", numberPattern), iae);
         }
         retVal.applyPattern("00000");
         return retVal;
