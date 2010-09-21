@@ -1,5 +1,5 @@
 /*
- * Created on 30/mag/2010
+ * Created on 20/set/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -19,38 +19,15 @@
 package org.sejda.core.manipulation.model.pdf;
 
 /**
- * pdf versions
+ * Represent a feature/option that requires a minimum required pdf version to be applied.
+ * 
  * @author Andrea Vacondio
  * 
  */
-public enum PdfVersion {
-
-    VERSION_1_2(2), VERSION_1_3(3), VERSION_1_4(4), VERSION_1_5(5), VERSION_1_6(6), VERSION_1_7(7);
-    
-    private int version;
-
-    private PdfVersion(int version) {
-        this.version = version;
-    }
+public interface MinRequiredVersion {
 
     /**
-     * @return an int representation of the version
+     * @return the minimum required version
      */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * @return a String representation of the int version
-     */
-    public String getVersionAsString() {
-        return String.valueOf(version);
-    }
-
-    /**
-     * @return a char representation of the int version
-     */
-    public char getVersionAsCharacter() {
-        return getVersionAsString().charAt(0);
-    }
+    PdfVersion getMinVersion();
 }

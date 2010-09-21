@@ -1,5 +1,5 @@
 /*
- * Created on 30/mag/2010
+ * Created on 20/set/2010
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -16,41 +16,17 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-package org.sejda.core.manipulation.model.pdf;
+package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
 /**
- * pdf versions
+ * Possible values for the document’s page mode, specifying how to display the document on exiting full-screen mode.<br>
+ * According to the reference: <i>This entry is meaningful only if the value of the PageMode entry in the catalog dictionary (see Section 3.6.1, “Document Catalog”) is FullScreen;
+ * it is ignored otherwise. Default value: UseNone.</i><br>
+ * Pdf reference 1.7, TABLE 8.1 Entries in a viewer preferences dictionary
+ * 
  * @author Andrea Vacondio
  * 
  */
-public enum PdfVersion {
-
-    VERSION_1_2(2), VERSION_1_3(3), VERSION_1_4(4), VERSION_1_5(5), VERSION_1_6(6), VERSION_1_7(7);
-    
-    private int version;
-
-    private PdfVersion(int version) {
-        this.version = version;
-    }
-
-    /**
-     * @return an int representation of the version
-     */
-    public int getVersion() {
-        return version;
-    }
-
-    /**
-     * @return a String representation of the int version
-     */
-    public String getVersionAsString() {
-        return String.valueOf(version);
-    }
-
-    /**
-     * @return a char representation of the int version
-     */
-    public char getVersionAsCharacter() {
-        return getVersionAsString().charAt(0);
-    }
+public enum PdfNonFullScreenPageMode {
+    USE_NONE, USE_OUTLINES, USE_THUMNS, USE_OC;
 }
