@@ -18,10 +18,11 @@
  */
 package org.sejda.core.configuration;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.sejda.core.exception.ConfigurationException;
@@ -41,7 +42,7 @@ public class XmlConfigurationStrategyTest {
         XmlConfigurationStrategy victim = new XmlConfigurationStrategy(stream);
         stream.close();
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
-        assertTrue(victim.getTasksMap().size() == 1);
+        assertEquals(6, victim.getTasksMap().size());
     }
 
     @Test(expected = ConfigurationException.class)

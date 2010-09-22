@@ -58,7 +58,7 @@ class OutputWriterSupport {
      * @param overwrite
      * @throws TaskIOException
      */
-    protected void writeToNonFileDestination(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
+    void writeToNonFileDestination(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
         if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
             throw new TaskIOException("Unsupported file ouput for a multiple output task.");
         } else if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {

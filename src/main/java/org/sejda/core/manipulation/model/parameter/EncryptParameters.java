@@ -43,8 +43,8 @@ public class EncryptParameters extends PdfSourceListParameters {
     private String ownerPassword = "";
     private String userPassword = "";
     @NotNull
-    private PdfEncryption encryptionAlgorithm;
-    private Set<PdfAccessPermission> permissions;
+    private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
+    private Set<PdfAccessPermission> permissions = new HashSet<PdfAccessPermission>();
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -89,9 +89,7 @@ public class EncryptParameters extends PdfSourceListParameters {
      * clear permissions
      */
     public void clearPermissions() {
-        if (permissions != null) {
-            permissions.clear();
-        }
+        permissions.clear();
     }
 
     /**
@@ -100,9 +98,6 @@ public class EncryptParameters extends PdfSourceListParameters {
      * @param permission
      */
     public void addPermission(PdfAccessPermission permission) {
-        if (permissions == null) {
-            permissions = new HashSet<PdfAccessPermission>();
-        }
         permissions.add(permission);
     }
 

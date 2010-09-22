@@ -62,6 +62,16 @@ public final class GlobalConfiguration {
     private GlobalConfiguration() {
         LOG.info("Configuring Sejda {}", Sejda.VERSION);
         initialize();
+        if (LOG.isDebugEnabled()) {
+            logConfiguredTasks();
+        }
+    }
+
+    private void logConfiguredTasks() {
+        LOG.debug("Configured tasks:");
+        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
+            LOG.debug(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
+        }
     }
 
     private void initialize() {

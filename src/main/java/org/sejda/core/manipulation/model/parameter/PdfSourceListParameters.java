@@ -41,7 +41,7 @@ public class PdfSourceListParameters extends AbstractParameters {
 
     @NotEmpty
     @Valid
-    private List<PdfSource> sourceList;
+    private List<PdfSource> sourceList = new ArrayList<PdfSource>();
 
     /**
      * adds the input source to the source list.
@@ -49,9 +49,6 @@ public class PdfSourceListParameters extends AbstractParameters {
      * @param input
      */
     public void addSource(PdfSource input) {
-        if (sourceList == null) {
-            sourceList = new ArrayList<PdfSource>();
-        }
         sourceList.add(input);
     }
 
@@ -66,9 +63,7 @@ public class PdfSourceListParameters extends AbstractParameters {
      * Clear the source list
      */
     public void clearSourceList() {
-        if (sourceList != null) {
             sourceList.clear();
-        }
     }
 
     @Override

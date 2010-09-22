@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfName;
+import com.itextpdf.text.pdf.PdfObject;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfStream;
@@ -142,6 +144,27 @@ public class PdfStamperHandler {
         } catch (DocumentException e) {
             throw new TaskException("An error occured while setting encryption on the document", e);
         }
+    }
+
+    /**
+     * Sets the viewer preferences on the stamper
+     * 
+     * @see PdfStamper#setViewerPreferences(int)
+     * @param preferences
+     */
+    public void setViewerPreferencesOnStamper(int preferences) {
+        stamper.setViewerPreferences(preferences);
+    }
+
+    /**
+     * adds the viewer preference to the stamper
+     * 
+     * @see PdfStamper#addViewerPreference(PdfName, PdfObject)
+     * @param key
+     * @param value
+     */
+    public void addViewerPreferenceOnStamper(PdfName key, PdfObject value) {
+        stamper.addViewerPreference(key, value);
     }
 
     /**

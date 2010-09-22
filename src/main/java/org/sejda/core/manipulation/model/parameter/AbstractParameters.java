@@ -43,7 +43,6 @@ public abstract class AbstractParameters implements Serializable, TaskParameters
     private AbstractPdfOutput output;
     private boolean overwrite = false;
     private boolean compress = false;
-    @NotNull
     private PdfVersion version;
 
     public boolean isOverwrite() {

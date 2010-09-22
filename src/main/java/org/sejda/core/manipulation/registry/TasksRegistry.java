@@ -18,6 +18,8 @@
  */
 package org.sejda.core.manipulation.registry;
 
+import java.util.Map;
+
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
@@ -46,4 +48,9 @@ public interface TasksRegistry {
      */
     void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass);
     
+    /**
+     * @return an unmodifiable version of the configured tasks
+     */
+    Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasks();
+
 }

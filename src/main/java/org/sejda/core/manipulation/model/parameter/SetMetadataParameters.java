@@ -18,6 +18,7 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -39,26 +40,22 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
     private static final long serialVersionUID = -9113822216737314063L;
 
     @NotEmpty
-    private Map<PdfMetadataKey, String> metadata;
-
-    public SetMetadataParameters() {
-        metadata = new HashMap<PdfMetadataKey, String>();
-    }
+    private Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
 
     /**
      * @see Map#entrySet()
-     * @return a set view of map
+     * @return an unmodifiable set view of map
      */
     public Set<Entry<PdfMetadataKey, String>> entrySet() {
-        return metadata.entrySet();
+        return Collections.unmodifiableSet(metadata.entrySet());
     }
 
     /**
      * @see Map#keySet()
-     * @return a set containing keys of the map
+     * @return a unmodifiable set containing keys of the map
      */
     public Set<PdfMetadataKey> keySet() {
-        return metadata.keySet();
+        return Collections.unmodifiableSet(metadata.keySet());
     }
 
     /**
@@ -78,6 +75,15 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
      */
     public void put(PdfMetadataKey key, String metadata) {
         this.metadata.put(key, metadata);
+    }
+
+    /**
+     * clear the metadata map
+     * 
+     * @see Map#clear()
+     */
+    public void clear() {
+        metadata.clear();
     }
 
     @Override

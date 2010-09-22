@@ -29,7 +29,6 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * 
  */
 public enum PdfDuplex implements MinRequiredVersion {
-    NONE(PdfVersion.VERSION_1_7),
     SIMPLEX(PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_SHORT_EDGE(PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_LONG_EDGE(PdfVersion.VERSION_1_7);

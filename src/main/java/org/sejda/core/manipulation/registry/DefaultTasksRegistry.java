@@ -18,6 +18,7 @@
  */
 package org.sejda.core.manipulation.registry;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,6 +75,10 @@ public class DefaultTasksRegistry implements TasksRegistry {
         synchronized (tasksMap) {
             tasksMap.put(parameterClass, taskClass);
         }
+    }
+
+    public Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasks() {
+        return Collections.unmodifiableMap(tasksMap);
     }
 
 }
