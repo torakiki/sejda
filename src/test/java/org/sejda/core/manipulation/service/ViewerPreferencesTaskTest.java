@@ -1,20 +1,19 @@
 /*
  * Created on 21/set/2010
- * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License.
+ * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
 package org.sejda.core.manipulation.service;
 
@@ -24,10 +23,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
@@ -43,8 +41,6 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask;
-import org.sejda.core.manipulation.model.task.itext.util.ViewerPreferencesUtils;
 
 import com.itextpdf.text.pdf.PdfBoolean;
 import com.itextpdf.text.pdf.PdfDictionary;
@@ -57,17 +53,17 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest {
+@Ignore
+public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest implements
+        TestableTask<ViewerPreferencesParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
-    private List<Task> tasks = new ArrayList<Task>();
 
     @Before
     public void setUp() throws TaskException {
         setUpParameters();
-        tasks.add(new ViewerPreferencesTask());
         victim.setContext(context);
     }
 
@@ -93,24 +89,20 @@ public class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest {
 
     @Test
     public void testExecuteStream() throws TaskException, IOException {
-        for (Task task : tasks) {
-            when(context.getTask(parameters)).thenReturn(task);
-            initializeNewStreamOutput(parameters);
-            victim.execute(parameters);
-            PdfReader reader = getReaderFromResultStream("test_file.pdf");
-            assertCreator(reader);
-            assertEquals(ViewerPreferencesUtils.getViewerPreferences(PdfPageMode.USE_THUMBS, PdfPageLayout.ONE_COLUMN),
-                    reader.getSimpleViewerPreferences());
-            PdfDictionary catalog = (PdfDictionary) reader.getCatalog().get(PdfName.VIEWERPREFERENCES);
-            assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
-            assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
-            assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
-            assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
-            assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
-            assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));
-            assertEquals(PdfBoolean.PDFFALSE, catalog.getAsBoolean(PdfName.HIDETOOLBAR));
-            reader.close();
-        }
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        assertCreator(reader);
+        PdfDictionary catalog = (PdfDictionary) reader.getCatalog().get(PdfName.VIEWERPREFERENCES);
+        assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
+        assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
+        assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
+        assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
+        assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
+        assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));
+        assertEquals(PdfBoolean.PDFFALSE, catalog.getAsBoolean(PdfName.HIDETOOLBAR));
+        reader.close();
     }
 
 }

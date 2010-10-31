@@ -3,7 +3,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the implementation details. Sejda offers many "ready to go" manipulation implemented using the iText but it can be extended and/or configured to use other implementations.</description>
 	<url>http://www.sejda.org</url>
 	<parent>
 		<groupId>org.sejda</groupId>
@@ -16,25 +15,6 @@
 	<packaging>jar</packaging>
 
 	<name>sejda core</name>
-	<issueManagement>
-		<system>MantisBT</system>
-		<url>http://sourceforge.net/apps/mantisbt/sejda/</url>
-	</issueManagement>
-
-
-	<licenses>
-		<license>
-			<name>GNU Lesser General Public License</name>
-			<url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-			<distribution>repo</distribution>
-			<comments>GNU LGPL 2.1</comments>
-		</license>
-	</licenses>
-
-	<scm>
-		<connection>scm:http://sejda.hg.sourceforge.net:8000/hgroot/sejda/sejda-core</connection>
-		<url>http://sejda.hg.sourceforge.net/hgweb/sejda/</url>
-	</scm>
 
 	<reporting>
 		<plugins>
@@ -110,24 +90,6 @@
 		</plugins>
 	</reporting>
 
-	<repositories>
-		<repository>
-			<id>iText</id>
-			<name>iText</name>
-			<url>http://maven.itextpdf.com/</url>
-		</repository>
-		<repository>
-			<id>jboss</id>
-			<url>http://repository.jboss.com/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -148,12 +110,14 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.0.2.GA</version>
+			<version>4.1.0.Final</version>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.0.2</version>
-		</dependency>
+			<version>5.0.4</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 </project>

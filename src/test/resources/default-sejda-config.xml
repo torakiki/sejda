@@ -3,10 +3,5 @@
 	<notification async="false"/>
 	<tasks>
 		<task parameters="org.sejda.core.manipulation.TestTaskParameter" task="org.sejda.core.manipulation.TestTask"/>
-		<task parameters="org.sejda.core.manipulation.model.parameter.RotateParameters" task="org.sejda.core.manipulation.model.task.itext.RotateTask"/>
-		<task parameters="org.sejda.core.manipulation.model.parameter.SetMetadataParameters" task="org.sejda.core.manipulation.model.task.itext.SetMetadataTask"/>
-		<task parameters="org.sejda.core.manipulation.model.parameter.DecryptParameters" task="org.sejda.core.manipulation.model.task.itext.DecryptTask"/>
-		<task parameters="org.sejda.core.manipulation.model.parameter.EncryptParameters" task="org.sejda.core.manipulation.model.task.itext.EncryptTask"/>
-		<task parameters="org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters" task="org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask"/>		
 	</tasks>
 </sejda>

@@ -1,5 +1,5 @@
 /*
- * Created on 20/set/2010
+ * Created on 30/ott/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
@@ -15,18 +15,20 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.pdf;
+package org.sejda.core.manipulation.service;
+
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 
 /**
- * Represent a feature/option that requires a minimum required pdf version to be applied.
- * 
  * @author Andrea Vacondio
  * 
+ * @param <T>
  */
-public interface MinRequiredVersion {
+public interface TestableTask<T extends TaskParameters> {
 
     /**
-     * @return the minimum required version
+     * @return the task to be tested
      */
-    PdfVersion getMinVersion();
+    Task<T> getTask();
 }

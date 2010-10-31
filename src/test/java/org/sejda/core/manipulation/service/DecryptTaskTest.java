@@ -1,20 +1,19 @@
 /*
  * Created on 15/set/2010
- * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License.
+ * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
  * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
  */
 package org.sejda.core.manipulation.service;
 
@@ -23,10 +22,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
@@ -34,7 +32,6 @@ import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.DecryptTask;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -42,18 +39,17 @@ import com.itextpdf.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 @SuppressWarnings("unchecked")
-public class DecryptTaskTest extends PdfStreamOutEnabledTest {
+public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements TestableTask<DecryptParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
     private DecryptParameters parameters = new DecryptParameters();
-    private List<Task> tasks = new ArrayList<Task>();
 
     @Before
     public void setUp() throws TaskException {
         setUpParameters();
-        tasks.add(new DecryptTask());
         victim.setContext(context);
     }
 
@@ -72,13 +68,11 @@ public class DecryptTaskTest extends PdfStreamOutEnabledTest {
 
     @Test
     public void testExecute() throws TaskException, IOException {
-        for (Task task : tasks) {
-            when(context.getTask(parameters)).thenReturn(task);
-            initializeNewStreamOutput(parameters);
-            victim.execute(parameters);
-            PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
-            assertCreator(reader);
-            reader.close();
-        }
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
+        assertCreator(reader);
+        reader.close();
     }
 }
