@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.RotateTask;
+import org.sejda.core.manipulation.model.task.itext.SetMetadataTask;
+import org.sejda.core.manipulation.service.SetMetadataTaskTest;
 
 /**
- * Rotate task test for the itext implementation
+ * set metadata task test for the itext implementation
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateITextTaskTest extends RotateTaskTest {
+public class SetMetadataITextTaskTest extends SetMetadataTaskTest {
 
-    public Task<RotateParameters> getTask() {
-        return new RotateTask();
+    public Task<SetMetadataParameters> getTask() {
+        return new SetMetadataTask();
     }
 
 }

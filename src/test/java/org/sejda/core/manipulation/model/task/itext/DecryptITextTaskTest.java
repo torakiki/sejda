@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
+import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask;
+import org.sejda.core.manipulation.model.task.itext.DecryptTask;
+import org.sejda.core.manipulation.service.DecryptTaskTest;
 
 /**
- * Viewer preferences task itext implementation test
+ * Test for the decrypt task implemented with iText
  * 
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesITextTest extends ViewerPreferencesTaskTest {
+public class DecryptITextTaskTest extends DecryptTaskTest {
 
-    public Task<ViewerPreferencesParameters> getTask() {
-        return new ViewerPreferencesTask();
+    public Task<DecryptParameters> getTask() {
+        return new DecryptTask();
     }
 
 }

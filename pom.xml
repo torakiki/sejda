@@ -15,7 +15,7 @@
 	<packaging>jar</packaging>
 
 	<name>sejda itext</name>
-
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
@@ -42,5 +42,11 @@
 			<artifactId>itextpdf</artifactId>
 			<version>5.0.4</version>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.1.0.Final</version>
+			<scope>test</scope>
+		</dependency>		
 	</dependencies>
 </project>

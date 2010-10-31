@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.EncryptTask;
+import org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask;
+import org.sejda.core.manipulation.service.ViewerPreferencesTaskTest;
 
 /**
- * Encrypt task test for the itext implementation
+ * Viewer preferences task itext implementation test
  * 
  * @author Andrea Vacondio
  * 
  */
-public class EncryptITextTaskTest extends EncryptTaskTest {
+public class ViewerPreferencesITextTest extends ViewerPreferencesTaskTest {
 
-    public Task<EncryptParameters> getTask() {
-        return new EncryptTask();
+    public Task<ViewerPreferencesParameters> getTask() {
+        return new ViewerPreferencesTask();
     }
 
 }

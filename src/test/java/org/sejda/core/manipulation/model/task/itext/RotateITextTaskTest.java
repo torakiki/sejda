@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.DecryptTask;
+import org.sejda.core.manipulation.model.task.itext.RotateTask;
+import org.sejda.core.manipulation.service.RotateTaskTest;
 
 /**
- * Test for the decrypt task implemented with iText
+ * Rotate task test for the itext implementation
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DecryptITextTaskTest extends DecryptTaskTest {
+public class RotateITextTaskTest extends RotateTaskTest {
 
-    public Task<DecryptParameters> getTask() {
-        return new DecryptTask();
+    public Task<RotateParameters> getTask() {
+        return new RotateTask();
     }
 
 }

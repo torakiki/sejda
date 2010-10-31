@@ -15,22 +15,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
+import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.SetMetadataTask;
+import org.sejda.core.manipulation.model.task.itext.EncryptTask;
+import org.sejda.core.manipulation.service.EncryptTaskTest;
 
 /**
- * set metadata task test for the itext implementation
+ * Encrypt task test for the itext implementation
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SetMetadataITextTaskTest extends SetMetadataTaskTest {
+public class EncryptITextTaskTest extends EncryptTaskTest {
 
-    public Task<SetMetadataParameters> getTask() {
-        return new SetMetadataTask();
+    public Task<EncryptParameters> getTask() {
+        return new EncryptTask();
     }
 
 }
