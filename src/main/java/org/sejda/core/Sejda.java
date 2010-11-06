@@ -29,7 +29,7 @@ public final class Sejda {
         // on purpose
     }
 
-    public static final String VERSION = "1.0.0-SNAPSHOT";
+    public static final String VERSION = "0.0.1-SNAPSHOT";
     public static final String CREATOR = "Sejda (Ver. " + VERSION + ")";
     public static final String PDF_EXTENSION = "pdf";
 
