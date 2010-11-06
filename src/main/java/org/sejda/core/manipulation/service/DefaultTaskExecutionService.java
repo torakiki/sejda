@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -34,6 +32,8 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Default implementation of the {@link TaskExecutionService}.
@@ -69,13 +69,16 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
         } catch (TaskException e) {
             LOG.warn(String.format("Task (%s) execution failed.", task), e);
             executionFailed(e);
+        } catch (RuntimeException e) {
+            executionFailed(e);
+            throw e;
         }
     }
 
     /**
      * @param e
      */
-    private void executionFailed(TaskException e) {
+    private void executionFailed(Exception e) {
         stopWatch.stop();
         notifyEvent().taskFailed(e);
     }
