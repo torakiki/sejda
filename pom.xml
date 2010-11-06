@@ -121,7 +121,7 @@
 			<artifactId>commons-lang</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
+			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
@@ -133,12 +133,6 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>4.1.0.Final</version>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.0.4</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
