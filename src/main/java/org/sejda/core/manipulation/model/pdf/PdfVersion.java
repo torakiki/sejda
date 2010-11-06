@@ -24,12 +24,19 @@ package org.sejda.core.manipulation.model.pdf;
  */
 public enum PdfVersion {
 
-    VERSION_1_2(2), VERSION_1_3(3), VERSION_1_4(4), VERSION_1_5(5), VERSION_1_6(6), VERSION_1_7(7);
+    VERSION_1_2(2, 1.2d),
+    VERSION_1_3(3, 1.3d),
+    VERSION_1_4(4, 1.4d),
+    VERSION_1_5(5, 1.5d),
+    VERSION_1_6(6, 1.6d),
+    VERSION_1_7(7, 1.7d);
     
     private int version;
+    private double versionDouble;
 
-    private PdfVersion(int version) {
+    private PdfVersion(int version, double versionDouble) {
         this.version = version;
+        this.versionDouble = versionDouble;
     }
 
     /**
@@ -40,16 +47,17 @@ public enum PdfVersion {
     }
 
     /**
-     * @return a String representation of the int version
+     * @return a double representation of the version
      */
-    public String getVersionAsString() {
-        return String.valueOf(version);
+    public double getVersionAsDouble() {
+        return versionDouble;
     }
+
 
     /**
      * @return a char representation of the int version
      */
     public char getVersionAsCharacter() {
-        return getVersionAsString().charAt(0);
+        return String.valueOf(version).charAt(0);
     }
 }
