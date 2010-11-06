@@ -70,9 +70,8 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
     /**
      * Set up of the set metadata parameters
      * 
-     * @return the populated parameters instance
      */
-    protected ViewerPreferencesParameters setUpParameters() {
+    private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
@@ -87,7 +86,6 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
-        return parameters;
     }
 
     @Test
@@ -106,6 +104,10 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));
         assertEquals(PdfBoolean.PDFFALSE, catalog.getAsBoolean(PdfName.HIDETOOLBAR));
         reader.close();
+    }
+
+    protected ViewerPreferencesParameters getParameters() {
+        return parameters;
     }
 
 }

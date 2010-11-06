@@ -64,9 +64,8 @@ public abstract class RotateTaskTest extends PdfStreamOutEnabledTest implements 
     /**
      * Set up of the rotation parameters
      * 
-     * @return the populated parameters instance
      */
-    protected RotateParameters setUpParameters() {
+    private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -75,7 +74,6 @@ public abstract class RotateTaskTest extends PdfStreamOutEnabledTest implements 
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
-        return parameters;
     }
 
     @Test
@@ -89,4 +87,9 @@ public abstract class RotateTaskTest extends PdfStreamOutEnabledTest implements 
         assertEquals(180, reader.getPageRotation(2));
         reader.close();
     }
+
+    protected RotateParameters getParameters() {
+        return parameters;
+    }
+
 }

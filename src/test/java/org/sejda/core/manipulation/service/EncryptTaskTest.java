@@ -64,9 +64,8 @@ public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements
     /**
      * Set up of the encrypt parameters
      * 
-     * @return the populated parameters instance
      */
-    protected EncryptParameters setUpParameters() {
+    private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -76,7 +75,6 @@ public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements
         parameters.setEncryptionAlgorithm(PdfEncryption.AES_ENC_128);
         parameters.addSource(source);
         parameters.setOverwrite(true);
-        return parameters;
     }
 
     @Test
@@ -93,4 +91,9 @@ public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements
         assertFalse((reader.getPermissions() & PdfWriter.ALLOW_ASSEMBLY) == PdfWriter.ALLOW_ASSEMBLY);
         reader.close();
     }
+
+    protected EncryptParameters getParameters() {
+        return parameters;
+    }
+
 }

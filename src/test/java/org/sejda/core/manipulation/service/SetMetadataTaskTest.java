@@ -64,9 +64,8 @@ public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implem
     /**
      * Set up of the set metadata parameters
      * 
-     * @return the populated parameters instance
      */
-    protected SetMetadataParameters setUpParameters() {
+    private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.put(PdfMetadataKey.AUTHOR, "test_author");
@@ -77,7 +76,6 @@ public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implem
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
-        return parameters;
     }
 
     @Test
@@ -109,4 +107,9 @@ public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implem
         assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
         reader.close();
     }
+
+    protected SetMetadataParameters getParameters() {
+        return parameters;
+    }
+
 }

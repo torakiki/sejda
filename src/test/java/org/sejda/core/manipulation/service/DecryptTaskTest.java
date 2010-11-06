@@ -56,9 +56,8 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
     /**
      * Set up of the decrypt parameters
      * 
-     * @return the populated parameters instance
      */
-    protected DecryptParameters setUpParameters() {
+    private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
@@ -66,7 +65,6 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
         source.setPassword("test");
         parameters.addSource(source);
         parameters.setOverwrite(true);
-        return parameters;
     }
 
     @Test
@@ -78,4 +76,13 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
         assertCreator(reader);
         reader.close();
     }
+
+    /**
+     * 
+     * @return the parameters
+     */
+    protected DecryptParameters getParameters() {
+        return parameters;
+    }
+
 }
