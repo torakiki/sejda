@@ -17,10 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -47,6 +43,10 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * test unit for the viewer preferences task
  * 
@@ -69,8 +69,10 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
 
     /**
      * Set up of the set metadata parameters
+     * 
+     * @return the populated parameters instance
      */
-    private void setUpParameters() {
+    protected ViewerPreferencesParameters setUpParameters() {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
@@ -85,6 +87,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test

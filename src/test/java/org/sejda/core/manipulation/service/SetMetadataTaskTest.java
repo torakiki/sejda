@@ -17,10 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -38,6 +34,10 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the set metadata task
@@ -63,8 +63,10 @@ public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implem
 
     /**
      * Set up of the set metadata parameters
+     * 
+     * @return the populated parameters instance
      */
-    private void setUpParameters() {
+    protected SetMetadataParameters setUpParameters() {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.put(PdfMetadataKey.AUTHOR, "test_author");
@@ -75,6 +77,7 @@ public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implem
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test

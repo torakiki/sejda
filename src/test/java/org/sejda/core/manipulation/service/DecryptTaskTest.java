@@ -17,9 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,6 +31,9 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -54,9 +54,11 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
     }
 
     /**
-     * Set up of the rotation parameters
+     * Set up of the decrypt parameters
+     * 
+     * @return the populated parameters instance
      */
-    private void setUpParameters() {
+    protected DecryptParameters setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
@@ -64,6 +66,7 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
         source.setPassword("test");
         parameters.addSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test

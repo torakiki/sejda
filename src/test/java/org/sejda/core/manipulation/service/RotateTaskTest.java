@@ -17,10 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,6 +35,10 @@ import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the rotate task
@@ -63,8 +63,10 @@ public abstract class RotateTaskTest extends PdfStreamOutEnabledTest implements 
 
     /**
      * Set up of the rotation parameters
+     * 
+     * @return the populated parameters instance
      */
-    private void setUpParameters() {
+    protected RotateParameters setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -73,6 +75,7 @@ public abstract class RotateTaskTest extends PdfStreamOutEnabledTest implements 
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test

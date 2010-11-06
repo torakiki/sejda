@@ -17,11 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -40,6 +35,11 @@ import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the encrypt task
@@ -62,9 +62,11 @@ public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements
     }
 
     /**
-     * Set up of the rotation parameters
+     * Set up of the encrypt parameters
+     * 
+     * @return the populated parameters instance
      */
-    private void setUpParameters() {
+    protected EncryptParameters setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -74,6 +76,7 @@ public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements
         parameters.setEncryptionAlgorithm(PdfEncryption.AES_ENC_128);
         parameters.addSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test
