@@ -70,7 +70,7 @@
 		<dom4j.version>1.6.1</dom4j.version>
 		<jaxen.version>1.1.1</jaxen.version>
 		<commons.lang.version>2.5</commons.lang.version>
-		<commons.io.version>1.3.2</commons.io.version>
+		<commons.io.version>2.0</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
 	</properties>
 
@@ -87,7 +87,7 @@
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>false</enabled>
+				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -105,7 +105,7 @@
 				<version>${validation.api.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.commons</groupId>
+				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons.io.version}</version>
 			</dependency>
@@ -156,6 +156,11 @@
 			<version>1.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.0.4</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
