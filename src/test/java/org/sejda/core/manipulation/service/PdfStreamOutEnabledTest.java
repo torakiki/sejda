@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -35,8 +33,11 @@ import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 import com.itextpdf.text.pdf.PdfReader;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Parent test class with common methods to read results or common asserts.
@@ -79,7 +80,7 @@ public class PdfStreamOutEnabledTest {
      * @return a {@link PdfReader} opened on temporary output file containing the result of the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResultFile() throws IOException {
+    protected PdfReader getReaderFromResultFile() throws IOException {
         return new PdfReader(new FileInputStream(outFile));
     }
 
@@ -91,7 +92,7 @@ public class PdfStreamOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResultStream(String expectedFileName, byte[] ownerPwd) throws IOException {
+    protected PdfReader getReaderFromResultStream(String expectedFileName, byte[] ownerPwd) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
@@ -107,7 +108,7 @@ public class PdfStreamOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
+    protected PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
         return getReaderFromResultStream(expectedFileName, null);
     }
 
@@ -115,7 +116,7 @@ public class PdfStreamOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResult() throws IOException {
+    protected PdfReader getReaderFromResult() throws IOException {
         return getReaderFromResultStream(null, null);
     }
 
@@ -125,7 +126,7 @@ public class PdfStreamOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    PdfReader getReaderFromResult(byte[] ownerPwd) throws IOException {
+    protected PdfReader getReaderFromResult(byte[] ownerPwd) throws IOException {
         return getReaderFromResultStream(null, ownerPwd);
     }
 
@@ -135,8 +136,18 @@ public class PdfStreamOutEnabledTest {
      * 
      * @param reader
      */
-    void assertCreator(PdfReader reader) {
+    protected void assertCreator(PdfReader reader) {
         HashMap<String, String> meta = reader.getInfo();
         assertEquals(Sejda.CREATOR, meta.get(PdfMetadataKey.CREATOR.getKey()));
+    }
+
+    /**
+     * Assert that the version on the read document is the same as the input one
+     * 
+     * @param reader
+     * @param version
+     */
+    protected void assertVersion(PdfReader reader, PdfVersion version) {
+        assertEquals(version.getVersionAsCharacter(), reader.getPdfVersion());
     }
 }

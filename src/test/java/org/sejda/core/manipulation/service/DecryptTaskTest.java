@@ -28,6 +28,7 @@ import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
@@ -65,6 +66,7 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
         source.setPassword("test");
         parameters.addSource(source);
         parameters.setOverwrite(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
     }
 
     @Test
@@ -74,6 +76,7 @@ public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         reader.close();
     }
 
