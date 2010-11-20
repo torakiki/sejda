@@ -23,8 +23,9 @@ import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * Provides support methods for the tasks to handle write output. Can hold multiple output temporary files created by a task and write them to the destination when the task
- * requires to flush. An extending class can call the {@link MultipleOutputSupport} interface methods to add temporary files or flush them.
+ * Provides support methods to write multiple output {@link AbstractPdfOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task
+ * and write them to the destination when the task requires to flush. An extending class can call the {@link MultipleOutputSupport} interface methods to add temporary files or
+ * flush them.
  * 
  * <pre>
  * {@code

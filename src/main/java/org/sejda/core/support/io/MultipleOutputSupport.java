@@ -22,7 +22,7 @@ import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * DSL interface to expose methods a multiple output task needs (tasks generating multiple files as output).
+ * DSL interface to expose methods a multiple output task (tasks generating multiple files as output) needs to write its output.
  * 
  * <pre>
  * {@code

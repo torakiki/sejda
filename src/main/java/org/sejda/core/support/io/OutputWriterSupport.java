@@ -17,8 +17,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.model.OutputDestination.destination;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,6 +30,8 @@ import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.support.io.model.Destination;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
+import static org.sejda.core.support.io.model.OutputDestination.destination;
+
 /**
  * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.
  * 
@@ -43,11 +43,9 @@ class OutputWriterSupport {
     private static final String BUFFER_NAME = "SejdaTmpBuffer";
 
     private Map<String, File> multipleFiles;
-    private OutputWriter outputWriter;
 
     public OutputWriterSupport() {
         this.multipleFiles = new HashMap<String, File>();
-        this.outputWriter = new OutputWriter();
     }
 
     /**
@@ -60,7 +58,9 @@ class OutputWriterSupport {
     void writeToNonFileDestination(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
         if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
             throw new TaskIOException("Unsupported file ouput for a multiple output task.");
-        } else if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
+        }
+
+        if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
             write(destination((PdfDirectoryOutput) output).overwriting(overwrite));
         } else {
             write(destination((PdfStreamOutput) output));
@@ -74,7 +74,7 @@ class OutputWriterSupport {
      * @throws TaskIOException
      */
     void write(Destination destination) throws TaskIOException {
-        outputWriter.executeCopy(multipleFiles, destination);
+        OutputWriter.executeCopyAndDelete(multipleFiles, destination);
     }
 
     /**

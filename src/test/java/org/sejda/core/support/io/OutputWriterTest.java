@@ -17,12 +17,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +29,11 @@ import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.OutputWriter;
 import org.sejda.core.support.io.model.OutputDestination;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the {@link OutputWriter}
@@ -46,12 +43,10 @@ import org.sejda.core.support.io.model.OutputDestination;
  */
 public class OutputWriterTest {
 
-    private OutputWriter victim;
     private File tempFile;
 
     @Before
     public void setUp() throws IOException {
-        victim = new OutputWriter();
         tempFile = File.createTempFile("srcTest", "");
     }
 
@@ -63,7 +58,7 @@ public class OutputWriterTest {
         File outFile = File.createTempFile("outTemp", "");
         PdfFileOutput output = new PdfFileOutput(outFile);
 
-        victim.executeCopy(files, OutputDestination.destination(output).overwriting(true));
+        OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
         assertFalse("temporary file not deleted", tempFile.exists());
     }
     @Test
@@ -72,7 +67,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         PdfStreamOutput output = new PdfStreamOutput(new ByteArrayOutputStream());
-        victim.executeCopy(files, OutputDestination.destination(output));
+        OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output));
         assertFalse("temporary file not deleted", tempFile.exists());
     }
 
@@ -85,7 +80,7 @@ public class OutputWriterTest {
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
 
         try {
-            victim.executeCopy(files, OutputDestination.destination(output).overwriting(true));
+            OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
             fail("Exception expected");
         } catch (TaskIOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
@@ -102,7 +97,7 @@ public class OutputWriterTest {
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
 
         try {
-            victim.executeCopy(files, OutputDestination.destination(output).overwriting(true));
+            OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
             fail("Exception expected");
         } catch (TaskIOException e) {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
@@ -120,7 +115,7 @@ public class OutputWriterTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
         
         try {
-            victim.executeCopy(files, OutputDestination.destination(output).overwriting(false));
+            OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(false));
             fail("Exception expected");
         } catch (TaskIOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to overwrite the"));
@@ -137,7 +132,7 @@ public class OutputWriterTest {
         when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
 
         try {
-            victim.executeCopy(files, OutputDestination.destination(output).overwriting(true));
+            OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
             fail("Exception expected");
         } catch (TaskIOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
@@ -156,7 +151,7 @@ public class OutputWriterTest {
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
 
         try {
-            victim.executeCopy(files, OutputDestination.destination(output).overwriting(true));
+            OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
             fail("Exception expected");
         } catch (TaskIOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));

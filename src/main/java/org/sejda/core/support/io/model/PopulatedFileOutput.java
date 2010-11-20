@@ -22,6 +22,7 @@ import java.io.File;
 /**
  * DSL interface used to expose getters for the fully populated {@link FileOutput}
  * 
+ * @see FileOutput
  * @author Andrea Vacondio
  * 
  */

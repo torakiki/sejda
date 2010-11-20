@@ -25,12 +25,4 @@ package org.sejda.core.manipulation.model.output;
  */
 public enum OutputType {
     FILE_OUTPUT(), DIRECTORY_OUTPUT(), STREAM_OUTPUT();
-
-    /**
-     * 
-     * @return true if its a file type
-     */
-    public boolean isFileType() {
-        return FILE_OUTPUT.equals(this);
-    }
 }

@@ -39,17 +39,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Stateless component responsible for writing the input files to the output destination
+ * Utility class responsible for writing the input files to the output destination
  * 
  * @author Andrea Vacondio
  * 
  */
-class OutputWriter {
+final class OutputWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class);
 
+    private OutputWriter() {
+        // util class
+    }
+
     /**
-     * executes the copy of all the files in the input map to the given destination
+     * Executes the copy of all the files in the input map to the given destination and deletes the input files once copied.
      * 
      * @param files
      *            map containing the new file names as key and the files as value
@@ -58,7 +62,7 @@ class OutputWriter {
      * @throws TaskIOException
      *             if an error occur or if there is an inconsistency with the input parameters (Ex. multiple file and a OutputType.FILE_OUTPUT destination)
      */
-    public void executeCopy(Map<String, File> files, Destination destination) throws TaskIOException {
+    public static void executeCopyAndDelete(Map<String, File> files, Destination destination) throws TaskIOException {
         if (destination != null) {
             AbstractPdfOutput outputDestination = destination.getOutputDestination();
             OutputType type = destination.getOutputDestination().getOutputType();
@@ -83,7 +87,7 @@ class OutputWriter {
      *            true to overwrite if already exists
      * @throws TaskIOException
      */
-    private void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
+    private static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
         if (outputFile.isFile()) {
             if (files.size() == 1) {
                 for (Entry<String, File> entry : files.entrySet()) {
@@ -108,7 +112,7 @@ class OutputWriter {
      *            true to overwrite if already exists
      * @throws TaskIOException
      */
-    private void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
+    private static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
             throws TaskIOException {
         if (outputDirectory.isDirectory()) {
             if (!outputDirectory.exists()) {
@@ -137,7 +141,7 @@ class OutputWriter {
      *            true to overwrite if already exists
      * @throws TaskIOException
      */
-    private void copyFile(File input, File output, boolean overwrite) throws TaskIOException {
+    private static void copyFile(File input, File output, boolean overwrite) throws TaskIOException {
         if (!overwrite && output.exists()) {
             throw new TaskIOException(String.format(
                     "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
@@ -159,7 +163,7 @@ class OutputWriter {
      * @param out
      * @throws TaskIOException
      */
-    private void copyToStream(Map<String, File> files, OutputStream out) throws TaskIOException {
+    private static void copyToStream(Map<String, File> files, OutputStream out) throws TaskIOException {
         ZipOutputStream zipOut = new ZipOutputStream(out);
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;
@@ -178,7 +182,7 @@ class OutputWriter {
         IOUtils.closeQuietly(zipOut);
     }
 
-    private void delete(File file) {
+    private static void delete(File file) {
         if (!file.delete()) {
             LOG.warn("Unable to delete temporary file {}", file);
         }
