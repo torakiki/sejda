@@ -17,7 +17,6 @@
  */
 package org.sejda.core.support.perfix.model;
 
-import java.io.Serializable;
 
 /**
  * Request for a new name generation.
@@ -25,9 +24,7 @@ import java.io.Serializable;
  * @author Andrea Vacondio
  * 
  */
-public final class NameGenerationRequest implements Serializable {
-
-    private static final long serialVersionUID = -7262824895395860407L;
+public final class NameGenerationRequest {
 
     private Integer page = null;
     private Integer fileNumber = null;

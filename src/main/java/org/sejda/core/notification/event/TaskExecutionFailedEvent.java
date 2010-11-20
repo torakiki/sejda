@@ -28,6 +28,8 @@ package org.sejda.core.notification.event;
  */
 public class TaskExecutionFailedEvent extends AbstractNotificationEvent {
 
+    private static final long serialVersionUID = -8919940675758916451L;
+
     private Exception failingCause;
 
     /**

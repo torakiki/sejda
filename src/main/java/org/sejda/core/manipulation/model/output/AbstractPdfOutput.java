@@ -29,8 +29,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public abstract class AbstractPdfOutput implements Serializable {
 
-    private static final long serialVersionUID = -3597460921220798765L;
-
     /**
      * @return the type of this output
      */

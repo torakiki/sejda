@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.model.input;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,9 +29,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public abstract class PdfSource implements Serializable {
-
-    private static final long serialVersionUID = -6780088810823438389L;
+public abstract class PdfSource {
 
     private String password;
     @NotEmpty

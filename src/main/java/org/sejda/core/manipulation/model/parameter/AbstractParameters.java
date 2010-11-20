@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import java.io.Serializable;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -33,9 +31,7 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractParameters implements Serializable, TaskParameters {
-
-    private static final long serialVersionUID = -6100370016710146349L;
+public abstract class AbstractParameters implements TaskParameters {
 
     @Valid
     @NotNull

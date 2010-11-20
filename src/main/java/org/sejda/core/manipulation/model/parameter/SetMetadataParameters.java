@@ -36,8 +36,6 @@ import org.sejda.core.validation.constraint.NotEmpty;
  */
 public final class SetMetadataParameters extends SinglePdfSourceParameters {
 
-    private static final long serialVersionUID = -9113822216737314063L;
-
     @NotEmpty
     private Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
 

@@ -33,8 +33,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class PageRotation implements Serializable {
 
-    private static final long serialVersionUID = 6335354168386687187L;
-
     private int pageNumber;
     @NotNull
     private Rotation rotation;

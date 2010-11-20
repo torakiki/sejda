@@ -42,8 +42,6 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
  */
 public class ViewerPreferencesParameters extends PdfSourceListParameters {
 
-    private static final long serialVersionUID = 7732070350985819758L;
-
     private String outputPrefix = "";
     @NotNull
     private PdfPageMode pageMode = PdfPageMode.USE_NONE;

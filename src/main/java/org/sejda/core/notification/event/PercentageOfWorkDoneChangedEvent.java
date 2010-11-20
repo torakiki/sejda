@@ -29,6 +29,8 @@ import java.math.BigDecimal;
  */
 public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent {
 
+    private static final long serialVersionUID = -9123790950056705713L;
+
     public static final BigDecimal UNDETERMINATE = new BigDecimal("-1");
     public static final BigDecimal MAX_PERGENTAGE = new BigDecimal("100");
 

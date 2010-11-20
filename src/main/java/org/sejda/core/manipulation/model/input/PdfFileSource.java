@@ -29,8 +29,6 @@ import org.sejda.core.validation.constraint.PdfFile;
  */
 public class PdfFileSource extends PdfSource {
 
-    private static final long serialVersionUID = 9153473654119405497L;
-
     @PdfFile
     private File file;
 

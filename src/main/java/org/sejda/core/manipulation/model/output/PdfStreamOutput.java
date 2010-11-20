@@ -31,8 +31,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class PdfStreamOutput extends AbstractPdfOutput {
 
-    private static final long serialVersionUID = 8655165390857852729L;
-
     @NotNull
     private transient OutputStream stream;
 

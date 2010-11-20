@@ -19,18 +19,21 @@
  */
 package org.sejda.core.notification.event;
 
+import java.io.Serializable;
+
 /**
  * Abstract event that carries the timestamp when it has been created.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractNotificationEvent implements NotificationEvent {
+public abstract class AbstractNotificationEvent implements NotificationEvent, Serializable {
+
+    private static final long serialVersionUID = 3392179202226082364L;
 
     private Long eventTimestamp;
 
     public AbstractNotificationEvent() {
-        super();
         this.eventTimestamp = Long.valueOf(System.currentTimeMillis());
     }
 

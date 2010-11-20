@@ -27,6 +27,8 @@ package org.sejda.core.notification.event;
  */
 public class TaskExecutionCompletedEvent extends AbstractNotificationEvent {
 
+    private static final long serialVersionUID = -2839444329684682481L;
+
     // empty on purpose
 
 }

@@ -30,8 +30,6 @@ import org.sejda.core.validation.constraint.Directory;
  */
 public class PdfDirectoryOutput extends AbstractPdfOutput {
 
-    private static final long serialVersionUID = -6236082967739145486L;
-
     @Directory
     private File file;
 

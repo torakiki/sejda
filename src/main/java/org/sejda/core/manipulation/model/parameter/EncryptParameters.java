@@ -36,8 +36,6 @@ import org.sejda.core.manipulation.model.pdf.PdfEncryption;
  */
 public class EncryptParameters extends PdfSourceListParameters {
 
-    private static final long serialVersionUID = 611696382902461114L;
-
     private String outputPrefix = "";
     private String ownerPassword = "";
     private String userPassword = "";

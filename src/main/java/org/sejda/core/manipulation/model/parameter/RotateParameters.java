@@ -32,8 +32,6 @@ import org.sejda.core.manipulation.model.rotation.PageRotation;
  */
 public class RotateParameters extends PdfSourceListParameters {
 
-    private static final long serialVersionUID = 8834767589689764537L;
-
     private String outputPrefix = "";
     @Valid
     @NotNull

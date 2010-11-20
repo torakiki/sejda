@@ -27,6 +27,4 @@ import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 @Ignore
 public class TestTaskParameter extends AbstractParameters {
 
-    private static final long serialVersionUID = -2159355672764604806L;
-
 }

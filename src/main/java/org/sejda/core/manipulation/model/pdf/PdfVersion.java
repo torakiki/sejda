@@ -24,19 +24,23 @@ package org.sejda.core.manipulation.model.pdf;
  */
 public enum PdfVersion {
 
-    VERSION_1_2(2, 1.2d),
-    VERSION_1_3(3, 1.3d),
-    VERSION_1_4(4, 1.4d),
-    VERSION_1_5(5, 1.5d),
-    VERSION_1_6(6, 1.6d),
-    VERSION_1_7(7, 1.7d);
+    VERSION_1_0(0, 1.0d, "%PDF-1.0"),
+    VERSION_1_1(1, 1.1d, "%PDF-1.1"),
+    VERSION_1_2(2, 1.2d, "%PDF-1.2"),
+    VERSION_1_3(3, 1.3d, "%PDF-1.3"),
+    VERSION_1_4(4, 1.4d, "%PDF-1.4"),
+    VERSION_1_5(5, 1.5d, "%PDF-1.5"),
+    VERSION_1_6(6, 1.6d, "%PDF-1.6"),
+    VERSION_1_7(7, 1.7d, "%PDF-1.7");
     
     private int version;
     private double versionDouble;
+    private String versionHeader;
 
-    private PdfVersion(int version, double versionDouble) {
+    private PdfVersion(int version, double versionDouble, String versionHeader) {
         this.version = version;
         this.versionDouble = versionDouble;
+        this.versionHeader = versionHeader;
     }
 
     /**
@@ -60,4 +64,13 @@ public enum PdfVersion {
     public char getVersionAsCharacter() {
         return String.valueOf(version).charAt(0);
     }
+
+    /**
+     * @return the PDF header for this version<br>
+     *         Pdf reference 1.7, 3.4.1 File Header
+     */
+    public String getVersionHeader() {
+        return versionHeader;
+    }
+
 }

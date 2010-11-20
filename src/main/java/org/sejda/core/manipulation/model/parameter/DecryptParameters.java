@@ -28,8 +28,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  */
 public class DecryptParameters extends PdfSourceListParameters {
 
-    private static final long serialVersionUID = -4931534013734436940L;
-
     private String outputPrefix = "";
 
     public String getOutputPrefix() {

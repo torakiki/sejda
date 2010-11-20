@@ -31,8 +31,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  */
 public class PdfURLSource extends PdfSource {
 
-    private static final long serialVersionUID = 3076969028015862056L;
-
     @NotNull
     private URL url;
 

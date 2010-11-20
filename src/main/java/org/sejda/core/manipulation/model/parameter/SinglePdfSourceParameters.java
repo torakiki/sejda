@@ -32,8 +32,6 @@ import org.sejda.core.manipulation.model.input.PdfSource;
  */
 public class SinglePdfSourceParameters extends AbstractParameters {
 
-    private static final long serialVersionUID = 5169993669392616684L;
-
     @Valid
     @NotNull
     private PdfSource source;

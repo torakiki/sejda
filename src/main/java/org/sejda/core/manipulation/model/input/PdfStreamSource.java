@@ -29,8 +29,6 @@ import javax.validation.constraints.NotNull;
  */
 public class PdfStreamSource extends PdfSource {
 
-    private static final long serialVersionUID = 2581826909753391287L;
-
     @NotNull
     private transient InputStream stream;
 

@@ -36,8 +36,6 @@ import org.sejda.core.validation.constraint.NotEmpty;
  */
 public class PdfSourceListParameters extends AbstractParameters {
 
-    private static final long serialVersionUID = 7613603633574140437L;
-
     @NotEmpty
     @Valid
     private List<PdfSource> sourceList = new ArrayList<PdfSource>();

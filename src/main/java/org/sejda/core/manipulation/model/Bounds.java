@@ -25,8 +25,6 @@ package org.sejda.core.manipulation.model;
  */
 public class Bounds {
 
-    private static final long serialVersionUID = 1093984828590806028L;
-
     private int start;
     private int end;
 
