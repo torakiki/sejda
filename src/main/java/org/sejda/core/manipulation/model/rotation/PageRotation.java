@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -31,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PageRotation implements Serializable {
+public class PageRotation {
 
     private int pageNumber;
     @NotNull

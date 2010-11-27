@@ -17,8 +17,6 @@
  */
 package org.sejda.core.manipulation.model.output;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -27,7 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfOutput implements Serializable {
+public abstract class AbstractPdfOutput {
 
     /**
      * @return the type of this output

@@ -1,6 +1,5 @@
 /*
- * Created on 29/mag/2010
- *
+ * Created on 06/nov/2010
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -15,38 +14,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.input;
-
-import java.io.InputStream;
-
-import javax.validation.constraints.NotNull;
+package org.sejda.core.exception;
 
 /**
- * {@link PdfSource} from a {@link InputStream}
+ * Exception used for permissions related errors
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfStreamSource extends PdfSource {
+public class TaskPermissionsException extends TaskException {
 
-    @NotNull
-    private transient InputStream stream;
+    private static final long serialVersionUID = 7718735277835799179L;
 
-    public PdfStreamSource(InputStream stream, String name) {
-        this(stream, name, null);
+    public TaskPermissionsException() {
+        super();
     }
 
-    public PdfStreamSource(InputStream stream, String name, String password) {
-        super(name, password);
-        this.stream = stream;
+    public TaskPermissionsException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public InputStream getStream() {
-        return stream;
+    public TaskPermissionsException(String message) {
+        super(message);
     }
 
-    @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.STREAM_SOURCE;
+    public TaskPermissionsException(Throwable cause) {
+        super(cause);
     }
 }

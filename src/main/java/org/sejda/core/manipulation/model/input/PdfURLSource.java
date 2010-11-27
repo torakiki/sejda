@@ -47,10 +47,6 @@ public class PdfURLSource extends PdfSource {
         return url;
     }
 
-    public void setUrl(URL url) {
-        this.url = url;
-    }
-
     @Override
     public PdfSourceType getSourceType() {
         return PdfSourceType.URL_SOURCE;
