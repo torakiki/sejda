@@ -29,13 +29,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfStreamOutput extends AbstractPdfOutput {
+public class PdfStreamOutput extends PdfOutput {
 
     @NotNull
     private transient OutputStream stream;
 
     public PdfStreamOutput() {
-        super();
     }
 
     public PdfStreamOutput(OutputStream stream) {

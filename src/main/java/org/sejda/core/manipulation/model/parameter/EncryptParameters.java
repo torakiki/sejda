@@ -27,6 +27,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.PdfEncryption;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.support.util.PdfVersionUtility;
 
 /**
  * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be encrypted using the same parameters.
@@ -96,6 +98,11 @@ public class EncryptParameters extends PdfSourceListParameters {
      */
     public void addPermission(PdfAccessPermission permission) {
         permissions.add(permission);
+    }
+
+    @Override
+    public PdfVersion getMinRequiredPdfVersion() {
+        return PdfVersionUtility.getMax(super.getMinRequiredPdfVersion(), encryptionAlgorithm.getMinVersion());
     }
 
     @Override

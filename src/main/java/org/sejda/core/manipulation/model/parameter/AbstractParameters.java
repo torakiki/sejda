@@ -22,8 +22,9 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.validation.constraint.ValidPdfVersion;
 
 /**
  * Abstract parameter implementation with attributes commonly used by all the parameters implementation
@@ -31,13 +32,14 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
+@ValidPdfVersion
 public abstract class AbstractParameters implements TaskParameters {
 
     @Valid
     @NotNull
-    private AbstractPdfOutput output;
+    private PdfOutput output;
     private boolean overwrite = false;
-    private boolean compress = false;
+    private boolean compressXref = false;
     private PdfVersion version;
 
     public boolean isOverwrite() {
@@ -53,12 +55,12 @@ public abstract class AbstractParameters implements TaskParameters {
         this.overwrite = overwrite;
     }
 
-    public boolean isCompress() {
-        return compress;
+    public boolean isCompressXref() {
+        return compressXref;
     }
 
-    public void setCompress(boolean compress) {
-        this.compress = compress;
+    public void setCompress(boolean compressXref) {
+        this.compressXref = compressXref;
     }
 
     public PdfVersion getVersion() {
@@ -74,17 +76,24 @@ public abstract class AbstractParameters implements TaskParameters {
         this.version = version;
     }
 
-    public AbstractPdfOutput getOutput() {
+    public PdfOutput getOutput() {
         return output;
     }
 
-    public void setOutput(AbstractPdfOutput output) {
+    public void setOutput(PdfOutput output) {
         this.output = output;
+    }
+
+    /**
+     * @return the min output pdf version required by this parameter object depending on its attributes. Each extending class is responsible for the implementation of this method.
+     */
+    public PdfVersion getMinRequiredPdfVersion() {
+        return isCompressXref() ? PdfVersion.VERSION_1_5 : PdfVersion.VERSION_1_0;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(compress).append(version).append(output).toHashCode();
+        return new HashCodeBuilder().append(overwrite).append(compressXref).append(version).append(output).toHashCode();
     }
 
     @Override
@@ -93,7 +102,7 @@ public abstract class AbstractParameters implements TaskParameters {
             return false;
         }
         AbstractParameters parameter = (AbstractParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(compress, parameter.isCompress())
+        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(compressXref, parameter.isCompressXref())
                 .append(version, parameter.getVersion()).append(output, parameter.getOutput()).isEquals();
     }
 }

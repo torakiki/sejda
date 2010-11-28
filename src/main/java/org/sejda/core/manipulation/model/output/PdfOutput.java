@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfOutput {
+public abstract class PdfOutput {
 
     /**
      * @return the type of this output

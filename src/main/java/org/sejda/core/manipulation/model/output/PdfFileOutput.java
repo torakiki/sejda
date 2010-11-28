@@ -28,13 +28,12 @@ import org.sejda.core.validation.constraint.PdfFile;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileOutput extends AbstractPdfOutput {
+public class PdfFileOutput extends PdfOutput {
 
     @PdfFile
     private File file;
 
     public PdfFileOutput(File file) {
-        super();
         this.file = file;
     }
 

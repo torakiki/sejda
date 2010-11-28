@@ -17,12 +17,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -31,9 +25,12 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.DefaultTaskExecutionContext;
 import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Test unit for the {@link DefaultTaskExecutionService}
@@ -60,9 +57,17 @@ public class DefaultTaskExecutionServiceTest {
     }
 
     @Test
+    public void testInvalidParameters() throws TaskException {
+        parameters.setVersion(PdfVersion.VERSION_1_4);
+        parameters.setCompress(true);
+        victim.execute(parameters);
+        verify(task, never()).before(parameters);
+    }
+
+    @Test
     public void testNegativeBeforeExecution() throws TaskException {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
-        AbstractPdfOutput output = mock(AbstractPdfOutput.class);
+        PdfOutput output = mock(PdfOutput.class);
         parameters.setOutput(output);
         victim.setContext(context);
         victim.execute(parameters);

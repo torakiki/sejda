@@ -18,7 +18,7 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
@@ -49,7 +49,7 @@ public interface MultipleOutputSupport {
      * @throws TaskIOException
      *             in case of error
      */
-    void flushOutputs(AbstractPdfOutput output, boolean overwrite) throws TaskIOException;
+    void flushOutputs(PdfOutput output, boolean overwrite) throws TaskIOException;
 
     /**
      * Adds the given file output (typically a temporary file) to the collection of multiple outputs ready to be flushed.

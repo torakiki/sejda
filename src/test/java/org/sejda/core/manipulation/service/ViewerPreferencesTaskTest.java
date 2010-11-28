@@ -73,7 +73,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest 
      */
     private void setUpParameters() {
         parameters.setCompress(true);
-        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
         parameters.setDuplex(PdfDuplex.SIMPLEX);
         parameters.setNfsMode(PdfNonFullScreenPageMode.USE_THUMNS);

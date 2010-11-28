@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.io.model;
 
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
@@ -49,10 +49,10 @@ import org.sejda.core.support.io.model.OverwriteDestination.OverwriteFileDestina
  */
 public final class OutputDestination implements OverwriteFileDestination, FileDestination {
 
-    private AbstractPdfOutput outputDestination;
+    private PdfOutput outputDestination;
     private boolean overwrite = false;
 
-    private OutputDestination(AbstractPdfOutput outputDestination) {
+    private OutputDestination(PdfOutput outputDestination) {
         this.outputDestination = outputDestination;
     }
 
@@ -89,7 +89,7 @@ public final class OutputDestination implements OverwriteFileDestination, FileDe
         return new OutputDestination(output);
     }
 
-    public AbstractPdfOutput getOutputDestination() {
+    public PdfOutput getOutputDestination() {
         return outputDestination;
     }
 

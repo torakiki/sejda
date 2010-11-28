@@ -40,7 +40,7 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
 
     private final EventListenerHoldingStrategy holder;
     private final NotificationStrategy strategy;
-    
+
     protected AbstractNotificationContext(EventListenerHoldingStrategy holder) {
         this.holder = holder;
         this.strategy = getStrategy();
@@ -56,7 +56,8 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
         }
     }
 
-    public void addListener(EventListener<? extends AbstractNotificationEvent> listener) throws NotificationContextException {
+    public void addListener(EventListener<? extends AbstractNotificationEvent> listener)
+            throws NotificationContextException {
         synchronized (holder) {
             Class eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
             if (eventClass == null) {

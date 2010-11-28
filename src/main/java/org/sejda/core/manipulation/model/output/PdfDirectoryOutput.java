@@ -28,13 +28,12 @@ import org.sejda.core.validation.constraint.Directory;
  * @author Andrea Vacondio
  * 
  */
-public class PdfDirectoryOutput extends AbstractPdfOutput {
+public class PdfDirectoryOutput extends PdfOutput {
 
     @Directory
     private File file;
 
     public PdfDirectoryOutput(File file) {
-        super();
         this.file = file;
     }
 

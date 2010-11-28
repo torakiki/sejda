@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
@@ -55,7 +55,7 @@ class OutputWriterSupport {
      * @param overwrite
      * @throws TaskIOException
      */
-    void writeToNonFileDestination(AbstractPdfOutput output, boolean overwrite) throws TaskIOException {
+    void writeToNonFileDestination(PdfOutput output, boolean overwrite) throws TaskIOException {
         if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
             throw new TaskIOException("Unsupported file ouput for a multiple output task.");
         }

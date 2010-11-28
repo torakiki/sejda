@@ -29,7 +29,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.AbstractPdfOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
@@ -64,7 +64,7 @@ final class OutputWriter {
      */
     public static void executeCopyAndDelete(Map<String, File> files, Destination destination) throws TaskIOException {
         if (destination != null) {
-            AbstractPdfOutput outputDestination = destination.getOutputDestination();
+            PdfOutput outputDestination = destination.getOutputDestination();
             OutputType type = destination.getOutputDestination().getOutputType();
             if (OutputType.STREAM_OUTPUT.equals(type)) {
                 copyToStream(files, ((PdfStreamOutput) outputDestination).getStream());

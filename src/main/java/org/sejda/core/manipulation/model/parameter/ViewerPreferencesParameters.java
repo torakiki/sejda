@@ -25,6 +25,8 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
@@ -33,6 +35,7 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 
+import static org.sejda.core.support.util.PdfVersionUtility.getMax;
 /**
  * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the view preferences will be
  * applied.
@@ -123,6 +126,12 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
      */
     public Set<PdfBooleanPreference> getActivePreferences() {
         return Collections.unmodifiableSet(activeBooleanPreferences);
+    }
+
+    @Override
+    public PdfVersion getMinRequiredPdfVersion() {
+        return getMax(super.getMinRequiredPdfVersion(), getMax(printScaling, direction, duplex, pageLayout, pageMode),
+                getMax(activeBooleanPreferences.toArray(new MinRequiredVersion[activeBooleanPreferences.size()])));
     }
 
     @Override
