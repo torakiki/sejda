@@ -72,7 +72,7 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-            stamperHandler.setCompressionOnStamper(parameters.isCompress());
+            stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
             stamperHandler.setCreatorOnStamper(reader);
 
             closePdfReader(reader);

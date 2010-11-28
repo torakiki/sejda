@@ -90,7 +90,7 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
             LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-            stamperHandler.setCompressionOnStamper(parameters.isCompress());
+            stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
             stamperHandler.setCreatorOnStamper(reader);
             // set mode and layout
             stamperHandler.setViewerPreferencesOnStamper(preferences);

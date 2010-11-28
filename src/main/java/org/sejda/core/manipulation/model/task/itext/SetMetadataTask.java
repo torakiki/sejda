@@ -64,7 +64,7 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-        stamperHandler.setCompressionOnStamper(parameters.isCompress());
+        stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
 
         LOG.debug("Setting metadata on temporary document.");
         HashMap<String, String> actualMeta = reader.getInfo();

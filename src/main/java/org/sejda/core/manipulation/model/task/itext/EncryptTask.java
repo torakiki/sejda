@@ -75,7 +75,7 @@ public class EncryptTask extends MultipleOutputWriterSupport implements Task<Enc
             LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-            stamperHandler.setCompressionOnStamper(parameters.isCompress());
+            stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
             stamperHandler.setCreatorOnStamper(reader);
             stamperHandler.setEncryptionOnStamper(getEncryptionAlgorithm(parameters.getEncryptionAlgorithm()),
                     parameters.getUserPassword(), parameters.getOwnerPassword(), permissions);
