@@ -33,7 +33,6 @@ public final class DefaultValidationContext implements ValidationContext {
 
     private Validator validator;
     private boolean validation = false;
-    private static ValidationContext instance = null;
 
     private DefaultValidationContext() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -41,11 +40,8 @@ public final class DefaultValidationContext implements ValidationContext {
         validation = GlobalConfiguration.getInstance().isValidation();
     }
 
-    public static synchronized ValidationContext getContext() {
-        if (instance == null) {
-            instance = new DefaultValidationContext();
-        }
-        return instance;
+    public static ValidationContext getContext() {
+        return DefaultValidationContextHolder.VALIDATION_CONTEXT;
     }
 
     public Validator getValidator() {
@@ -56,4 +52,18 @@ public final class DefaultValidationContext implements ValidationContext {
         return validation;
     }
 
+    /**
+     * Lazy initialization holder class
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static final class DefaultValidationContextHolder {
+
+        private DefaultValidationContextHolder() {
+            // hide constructor
+        }
+
+        static final DefaultValidationContext VALIDATION_CONTEXT = new DefaultValidationContext();
+    }
 }
