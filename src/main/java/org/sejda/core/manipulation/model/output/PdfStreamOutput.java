@@ -32,10 +32,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class PdfStreamOutput extends PdfOutput {
 
     @NotNull
-    private transient OutputStream stream;
-
-    public PdfStreamOutput() {
-    }
+    private final OutputStream stream;
 
     public PdfStreamOutput(OutputStream stream) {
         super();
@@ -44,10 +41,6 @@ public class PdfStreamOutput extends PdfOutput {
 
     public OutputStream getStream() {
         return stream;
-    }
-
-    public void setStream(OutputStream stream) {
-        this.stream = stream;
     }
 
     @Override

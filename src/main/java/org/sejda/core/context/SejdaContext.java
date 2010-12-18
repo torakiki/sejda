@@ -1,5 +1,5 @@
 /*
- * Created on 27/apr/2010
+ * Created on 18/apr/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
@@ -15,38 +15,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.configuration;
+package org.sejda.core.context;
 
-import java.util.Map;
-
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
- * Strategy used to load the configuration
+ * Parent Context interface. Provides a configuration for the application.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface ConfigurationStrategy {
+public interface SejdaContext {
 
     /**
-     * @return the notification strategy class to use
+     * @return the configured strategy to use during listeners notification.
      */
     Class<? extends NotificationStrategy> getNotificationStrategy();
 
     /**
-     * Retrieves all the configured {@link Task} stored in a map. The map key is the subclass of {@link TaskParameters} that the task can execute.
-     * 
-     * @return a map containing all the configured {@link Task}
+     * @return the registry of the configured tasks
      */
-    @SuppressWarnings("unchecked")
-    Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap();
+    TasksRegistry getTasksRegistry();
 
     /**
-     * 
-     * @return true if the validation has to be performed by the framework, false otherwise (incoming requests are already validated externally)
+     * @return true if validation should be performed on parameters instance during the task execution or false if incoming parameters instances are already validate externally.
      */
     boolean isValidation();
 }

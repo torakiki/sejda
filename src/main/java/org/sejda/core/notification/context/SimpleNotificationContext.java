@@ -1,5 +1,5 @@
 /*
- * Created on 18/apr/2010
+ * Created on 06/mag/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
@@ -15,26 +15,18 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.context;
+package org.sejda.core.notification.context;
 
-import org.sejda.core.manipulation.registry.TasksRegistry;
-import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
- * Parent Context interface. Provides a configuration for the application.
- * 
+ * Simple notification context holding a list of listeners as instance attribute.
  * @author Andrea Vacondio
- * 
+ *
  */
-public interface ApplicationContext {
+class SimpleNotificationContext extends AbstractNotificationContext {
 
-    /**
-     * @return the configured strategy to use during listeners notification.
-     */
-    Class<? extends NotificationStrategy> getNotificationStrategy();
+    SimpleNotificationContext() {
+        super(new SimpleEventListenerHoldingStrategy());
+    }
 
-    /**
-     * @return the registry of the configured tasks
-     */
-    TasksRegistry getTasksRegistry();
 }

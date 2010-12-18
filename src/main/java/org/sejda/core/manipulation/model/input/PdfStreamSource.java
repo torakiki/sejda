@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 public class PdfStreamSource extends PdfSource {
 
     @NotNull
-    private transient InputStream stream;
+    private final InputStream stream;
 
     public PdfStreamSource(InputStream stream, String name) {
         this(stream, name, null);

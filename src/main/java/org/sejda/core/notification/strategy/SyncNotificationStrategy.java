@@ -27,14 +27,13 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  * 
  * @author Andrea Vacondio
  */
-public class SyncNotificationStrategy implements NotificationStrategy {
+public final class SyncNotificationStrategy implements NotificationStrategy {
 
     @SuppressWarnings("unchecked")
     public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
             listener.onEvent(event);
         }
-
     }
 
 }

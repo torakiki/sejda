@@ -23,10 +23,10 @@ import javax.validation.ConstraintViolation;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang.time.StopWatch;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.InvalidTaskParametersException;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.validation.DefaultValidationContext;
@@ -37,30 +37,27 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 
 /**
  * Default implementation of the {@link TaskExecutionService}.
- * <p>
- * This implementation is not synchronized and unpredictable behavior can be experienced if multiple threads try to execute different tasks on the same service instance.
- * </p>
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DefaultTaskExecutionService implements TaskExecutionService {
+public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionService.class);
 
-    private StopWatch stopWatch = new StopWatch();
     private TaskExecutionContext context = new DefaultTaskExecutionContext();
+    private SejdaContext sejdaContext = new DefaultSejdaContext();
 
-    @SuppressWarnings("unchecked")
     public void execute(TaskParameters parameters) {
-        preExecution();
-        Task task = null;
+        StopWatch stopWatch = new StopWatch();
+        preExecution(stopWatch);
+        Task<? extends TaskParameters> task = null;
         try {
             validate(parameters);
             task = context.getTask(parameters);
             LOG.info("Starting task ({}) execution.", task);
             actualExecution(parameters, task);
-            postExecution();
+            postExecution(stopWatch);
             LOG.info("Task ({}) executed in {}", task, DurationFormatUtils.formatDurationWords(stopWatch.getTime(),
                     true, true));
         } catch (InvalidTaskParametersException i) {
@@ -79,12 +76,11 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
      * @param e
      */
     private void executionFailed(Exception e) {
-        stopWatch.stop();
         notifyEvent().taskFailed(e);
     }
 
     private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
-        if (DefaultValidationContext.getContext().isValidation()) {
+        if (sejdaContext.isValidation()) {
             LOG.debug("Validating parameters ({}).", parameters);
             Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                     .validate(parameters);
@@ -104,8 +100,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
     /**
      * operations needed before the actual execution
      */
-    private void preExecution() {
-        stopWatch.reset();
+    private void preExecution(StopWatch stopWatch) {
         stopWatch.start();
         // notification of the starting task
         notifyEvent().taskStarted();
@@ -114,7 +109,7 @@ public class DefaultTaskExecutionService implements TaskExecutionService {
     /**
      * operations needed after the actual execution
      */
-    private void postExecution() {
+    private void postExecution(StopWatch stopWatch) {
         stopWatch.stop();
         // notification about completion
         notifyEvent().taskCompleted();

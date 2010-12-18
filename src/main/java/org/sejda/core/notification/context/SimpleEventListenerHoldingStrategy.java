@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.notification.scope;
+package org.sejda.core.notification.context;
 
 import java.util.List;
 
@@ -29,16 +29,16 @@ import org.sejda.core.support.ListValueMap;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
-public class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy {
+class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy {
 
-    private ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener> listeners;
+    private final ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>> listeners;
 
-    public SimpleEventListenerHoldingStrategy() {
-        listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener>();
+    SimpleEventListenerHoldingStrategy() {
+        listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
     }
 
-    public void add(Class<? extends AbstractNotificationEvent> eventClass, EventListener listener) {
+    public void add(Class<? extends AbstractNotificationEvent> eventClass,
+            EventListener<? extends AbstractNotificationEvent> listener) {
         listeners.put(eventClass, listener);
     }
 
@@ -46,7 +46,7 @@ public class SimpleEventListenerHoldingStrategy implements EventListenerHoldingS
         listeners.clear();
     }
 
-    public List<EventListener> get(AbstractNotificationEvent event) {
+    public List<EventListener<? extends AbstractNotificationEvent>> get(AbstractNotificationEvent event) {
         return listeners.get(event.getClass());
     }
 

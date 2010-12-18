@@ -22,8 +22,6 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.TestTaskParameter;
 import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;

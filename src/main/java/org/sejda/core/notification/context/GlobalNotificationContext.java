@@ -17,7 +17,6 @@
  */
 package org.sejda.core.notification.context;
 
-import org.sejda.core.notification.scope.SimpleEventListenerHoldingStrategy;
 
 /**
  * Notification context holding a list of listeners registered globally. Registered listeners on a particular event will be notified about events of that type thrown globally in

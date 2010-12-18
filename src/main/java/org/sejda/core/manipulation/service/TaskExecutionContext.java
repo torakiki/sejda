@@ -15,9 +15,8 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.service;
 
-import org.sejda.core.context.ApplicationContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
@@ -28,7 +27,7 @@ import org.sejda.core.manipulation.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public interface TaskExecutionContext extends ApplicationContext {
+interface TaskExecutionContext {
 
     /**
      * Search among the configured tasks the implementation that better can execute the input parameters. Returns an instance of the found class.

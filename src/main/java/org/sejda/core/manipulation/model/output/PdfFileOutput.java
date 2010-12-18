@@ -31,7 +31,7 @@ import org.sejda.core.validation.constraint.PdfFile;
 public class PdfFileOutput extends PdfOutput {
 
     @PdfFile
-    private File file;
+    private final File file;
 
     public PdfFileOutput(File file) {
         this.file = file;

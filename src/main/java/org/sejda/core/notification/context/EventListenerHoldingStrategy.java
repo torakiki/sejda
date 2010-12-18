@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.notification.scope;
+package org.sejda.core.notification.context;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  * @author Andrea Vacondio
  * 
  */
-public interface EventListenerHoldingStrategy {
+interface EventListenerHoldingStrategy {
     /**
      * Adds the input listeners on the input event
      * 
@@ -36,8 +36,8 @@ public interface EventListenerHoldingStrategy {
      *            event class listened
      * @param listener
      */
-    @SuppressWarnings("unchecked")
-    void add(Class<? extends AbstractNotificationEvent> eventClass, EventListener listener);
+    void add(Class<? extends AbstractNotificationEvent> eventClass,
+            EventListener<? extends AbstractNotificationEvent> listener);
 
     /**
      * Clears the list of listeners
@@ -48,8 +48,7 @@ public interface EventListenerHoldingStrategy {
      * @param event
      * @return the list of listeners hold for the given {@link AbstractNotificationEvent}
      */
-    @SuppressWarnings("unchecked")
-    List<EventListener> get(AbstractNotificationEvent event);
+    List<EventListener<? extends AbstractNotificationEvent>> get(AbstractNotificationEvent event);
 
     /**
      * @return number of hold listener

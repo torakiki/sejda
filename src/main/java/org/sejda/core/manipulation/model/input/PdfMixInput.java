@@ -32,7 +32,7 @@ public class PdfMixInput {
 
     @NotNull
     @Valid
-    private PdfSource source;
+    private final PdfSource source;
     private boolean reverse = false;
     private int step = 1;
 

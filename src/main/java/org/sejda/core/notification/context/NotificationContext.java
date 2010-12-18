@@ -19,7 +19,6 @@
  */
 package org.sejda.core.notification.context;
 
-import org.sejda.core.context.ApplicationContext;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
@@ -30,7 +29,7 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  * @author Andrea Vacondio
  * 
  */
-public interface NotificationContext extends ApplicationContext {
+public interface NotificationContext {
 
     /**
      * Adds the input listeners to the context

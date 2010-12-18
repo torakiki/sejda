@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.configuration;
+package org.sejda.core.context;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
-public final class GlobalConfiguration {
+final class GlobalConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
@@ -66,6 +65,7 @@ public final class GlobalConfiguration {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void logConfiguredTasks() {
         LOG.debug("Configured tasks:");
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
@@ -93,12 +93,13 @@ public final class GlobalConfiguration {
     }
 
     /**
-     * initialize the configuration singleton values from the input stream.
+     * initialize the configuration values from the input stream.
      * 
      * @param stream
      * @throws SejdaRuntimeException
      *             in case of error loading the configuration
      */
+    @SuppressWarnings("unchecked")
     private void initializeConfigurationFromStream(InputStream stream) {
         ConfigurationStrategy configStrategy;
         try {
@@ -133,28 +134,28 @@ public final class GlobalConfiguration {
      * @throws SejdaRuntimeException
      *             if an error occur during the configuration loading
      */
-    public static GlobalConfiguration getInstance() {
+    static GlobalConfiguration getInstance() {
         return GlobalConfigurationHolder.CONFIGURATION;
     }
 
     /**
      * @return the configured {@link NotificationStrategy}
      */
-    public Class<? extends NotificationStrategy> getNotificationStrategy() {
+    Class<? extends NotificationStrategy> getNotificationStrategy() {
         return notificationStrategy;
     }
 
     /**
      * @return the taskRegistry
      */
-    public TasksRegistry getTaskRegistry() {
+    TasksRegistry getTaskRegistry() {
         return taskRegistry;
     }
 
     /**
      * @return true if validation should be performed or false if incoming parameters instances are already validate externally.
      */
-    public boolean isValidation() {
+    boolean isValidation() {
         return validation;
     }
 

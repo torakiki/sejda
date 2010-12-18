@@ -31,9 +31,9 @@ public final class ThreadLocalNotificationContext {
         // hide
     }
 
-    private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<DefaultNotificationContext>() {
-        protected DefaultNotificationContext initialValue() {
-            return new DefaultNotificationContext();
+    private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<SimpleNotificationContext>() {
+        protected SimpleNotificationContext initialValue() {
+            return new SimpleNotificationContext();
         }
     };
 

@@ -21,8 +21,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.sejda.core.configuration.GlobalConfiguration;
-
 /**
  * Default implementation of {@link ValidationContext}
  * 
@@ -32,12 +30,10 @@ import org.sejda.core.configuration.GlobalConfiguration;
 public final class DefaultValidationContext implements ValidationContext {
 
     private Validator validator;
-    private boolean validation = false;
 
     private DefaultValidationContext() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
-        validation = GlobalConfiguration.getInstance().isValidation();
     }
 
     public static ValidationContext getContext() {
@@ -46,10 +42,6 @@ public final class DefaultValidationContext implements ValidationContext {
 
     public Validator getValidator() {
         return validator;
-    }
-
-    public boolean isValidation() {
-        return validation;
     }
 
     /**

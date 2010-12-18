@@ -31,11 +31,4 @@ public interface ValidationContext {
      * @return the validator instance that can be used to perform validation.
      */
     Validator getValidator();
-    
-    /**
-     * @return true if validation should be performed or false if incoming parameters instances are already validate externally.
-     */
-    boolean isValidation();
-    
-    
 }

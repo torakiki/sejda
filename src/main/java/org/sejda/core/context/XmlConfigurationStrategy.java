@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.configuration;
+package org.sejda.core.context;
 
 import java.io.InputStream;
 import java.util.List;
@@ -40,7 +40,7 @@ import org.sejda.core.notification.strategy.SyncNotificationStrategy;
  * 
  */
 @SuppressWarnings("unchecked")
-public class XmlConfigurationStrategy implements ConfigurationStrategy {
+class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
     private static final String VALIDATION_XPATH = "/@validation";
@@ -61,7 +61,7 @@ public class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @throws ConfigurationException
      *             in case of error parsing the input stream
      */
-    public XmlConfigurationStrategy(InputStream input) throws ConfigurationException {
+    XmlConfigurationStrategy(InputStream input) throws ConfigurationException {
         initializeFromInputStream(input);
     }
 

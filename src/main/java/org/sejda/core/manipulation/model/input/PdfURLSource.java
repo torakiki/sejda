@@ -32,7 +32,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class PdfURLSource extends PdfSource {
 
     @NotNull
-    private URL url;
+    private final URL url;
 
     public PdfURLSource(URL url, String name) {
         this(url, name, null);

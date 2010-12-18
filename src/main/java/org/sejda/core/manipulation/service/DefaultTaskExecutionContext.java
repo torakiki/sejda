@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.service;
 
-import org.sejda.core.context.AbstractApplicationContext;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
@@ -29,12 +30,18 @@ import org.sejda.core.manipulation.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public class DefaultTaskExecutionContext extends AbstractApplicationContext implements TaskExecutionContext {
+class DefaultTaskExecutionContext implements TaskExecutionContext {
+
+    private SejdaContext context;
+
+    public DefaultTaskExecutionContext() {
+        context = new DefaultSejdaContext();
+    }
 
     @SuppressWarnings("unchecked")
     public Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException {
         Class<? extends TaskParameters> parametersClass = parameters.getClass();
-        Class<? extends Task> taskClass = getTasksRegistry().getTask(parametersClass);
+        Class<? extends Task> taskClass = context.getTasksRegistry().getTask(parametersClass);
         if (taskClass == null) {
             throw new TaskNotFoundException(String.format("Unable to find a Task class able to execute %s",
                     parametersClass));

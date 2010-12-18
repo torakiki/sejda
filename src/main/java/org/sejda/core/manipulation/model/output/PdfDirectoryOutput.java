@@ -31,7 +31,7 @@ import org.sejda.core.validation.constraint.Directory;
 public class PdfDirectoryOutput extends PdfOutput {
 
     @Directory
-    private File file;
+    private final File file;
 
     public PdfDirectoryOutput(File file) {
         this.file = file;

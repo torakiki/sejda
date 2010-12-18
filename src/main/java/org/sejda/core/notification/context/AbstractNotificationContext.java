@@ -17,11 +17,10 @@
  */
 package org.sejda.core.notification.context;
 
-import org.sejda.core.context.AbstractApplicationContext;
+import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
-import org.sejda.core.notification.scope.EventListenerHoldingStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.core.support.util.ReflectionUtility;
@@ -33,8 +32,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrea Vacondio
  */
-@SuppressWarnings("unchecked")
-public abstract class AbstractNotificationContext extends AbstractApplicationContext implements NotificationContext {
+public abstract class AbstractNotificationContext implements NotificationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNotificationContext.class);
 
@@ -49,17 +47,20 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
     public void notifyListeners(AbstractNotificationEvent event) {
         synchronized (holder) {
             if (holder.size() > 0) {
-                for (EventListener listener : holder.get(event)) {
+                for (EventListener<? extends AbstractNotificationEvent> listener : holder.get(event)) {
                     strategy.notifyListener(listener, event);
                 }
             }
         }
     }
 
+    
     public void addListener(EventListener<? extends AbstractNotificationEvent> listener)
             throws NotificationContextException {
         synchronized (holder) {
-            Class eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
+            //inferring the event class on the event listener 
+            @SuppressWarnings("unchecked")
+            Class<? extends AbstractNotificationEvent> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
             if (eventClass == null) {
                 throw new NotificationContextException("Unable to infer the listened event class.");
             }
@@ -82,7 +83,7 @@ public abstract class AbstractNotificationContext extends AbstractApplicationCon
      */
     private NotificationStrategy getStrategy() {
         try {
-            return getNotificationStrategy().newInstance();
+            return new DefaultSejdaContext().getNotificationStrategy().newInstance();
         } catch (InstantiationException e) {
             LOG
                     .warn(

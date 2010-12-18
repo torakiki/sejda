@@ -48,7 +48,7 @@ public interface Notifier {
     /**
      * Notifies about a certain amount of steps completed: <br />
      * <code>
-     * notifyEvent().stepsCompleted(2).on(10);
+     * notifyEvent().stepsCompleted(2).outOf(10);
      * </code>
      * 
      * @param completed
@@ -60,7 +60,7 @@ public interface Notifier {
     /**
      * Notifies about a certain amount of steps completed: <br />
      * <code>
-     * notifyEvent().stepsCompleted(new BigDecimal("2").on(10);
+     * notifyEvent().stepsCompleted(new BigDecimal("2").outOf(10);
      * </code>
      * 
      * @param completed

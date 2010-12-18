@@ -15,16 +15,20 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.service;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
+import org.sejda.core.manipulation.ChildTestTaskParameter;
+import org.sejda.core.manipulation.TestTaskParameter;
 import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.service.DefaultTaskExecutionContext;
+import org.sejda.core.manipulation.service.TaskExecutionContext;
 
 /**
  * @author Andrea Vacondio

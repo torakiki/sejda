@@ -33,7 +33,7 @@ public abstract class PdfSource {
 
     private String password;
     @NotEmpty
-    private String name;
+    private final String name;
 
     public PdfSource(String name) {
         this.name = name;

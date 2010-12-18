@@ -29,7 +29,7 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  * @author Andrea Vacondio
  * 
  */
-public class AsyncNotificationStrategy implements NotificationStrategy {
+public final class AsyncNotificationStrategy implements NotificationStrategy {
 
     @SuppressWarnings("unchecked")
     public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {

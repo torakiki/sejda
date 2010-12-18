@@ -33,9 +33,9 @@ public class PageRotation {
 
     private int pageNumber;
     @NotNull
-    private Rotation rotation;
+    private final Rotation rotation;
     @NotNull
-    private RotationType rotationType;
+    private final RotationType rotationType;
 
     /**
      * Single page rotation for the given pageNumber and the given {@link Rotation}

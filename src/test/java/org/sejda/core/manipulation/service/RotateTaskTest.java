@@ -24,8 +24,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.TaskExecutionContext;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;

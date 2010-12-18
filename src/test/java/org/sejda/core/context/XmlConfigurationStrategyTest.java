@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.configuration;
+package org.sejda.core.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.sejda.core.context.XmlConfigurationStrategy;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 

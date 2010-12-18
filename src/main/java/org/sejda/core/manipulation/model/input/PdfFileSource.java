@@ -30,7 +30,7 @@ import org.sejda.core.validation.constraint.PdfFile;
 public class PdfFileSource extends PdfSource {
 
     @PdfFile
-    private File file;
+    private final File file;
 
     public PdfFileSource(File file) {
         this(file, null);
@@ -43,10 +43,6 @@ public class PdfFileSource extends PdfSource {
 
     public File getFile() {
         return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
     }
 
     @Override

@@ -17,17 +17,16 @@
  */
 package org.sejda.core.context;
 
-import org.sejda.core.configuration.GlobalConfiguration;
 import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
- * Abstract implementation of the ApplicationContext. Other contexts can extend this abstract class to access the configuration.
+ * Default implementation of the {@link SejdaContext}. Other contexts can extend it or use composition to access the configuration.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractApplicationContext implements ApplicationContext {
+public class DefaultSejdaContext implements SejdaContext {
 
     public final Class<? extends NotificationStrategy> getNotificationStrategy() {
         return GlobalConfiguration.getInstance().getNotificationStrategy();
@@ -35,5 +34,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     public final TasksRegistry getTasksRegistry() {
         return GlobalConfiguration.getInstance().getTaskRegistry();
+    }
+
+    public boolean isValidation() {
+        return GlobalConfiguration.getInstance().isValidation();
     }
 }
