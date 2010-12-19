@@ -17,15 +17,13 @@
  */
 package org.sejda.core.notification.strategy;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Test unit for {@link AsyncNotificationStrategy}
@@ -38,7 +36,7 @@ public class AsyncNotificationStrategyTest {
     private AsyncNotificationStrategy victim = new AsyncNotificationStrategy();
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void testNotifyEvent() throws InterruptedException {
         EventListener listener = mock(EventListener.class);
         victim.notifyListener(listener, new TaskExecutionCompletedEvent());

@@ -41,7 +41,7 @@ interface ConfigurationStrategy {
      * 
      * @return a map containing all the configured {@link Task}
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap();
 
     /**

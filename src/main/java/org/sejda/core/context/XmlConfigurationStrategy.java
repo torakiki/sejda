@@ -39,7 +39,7 @@ import org.sejda.core.notification.strategy.SyncNotificationStrategy;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
+
 class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
@@ -50,6 +50,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
     private static final String TASK_VALUE_XPATH = "@task";
 
     private Class<? extends NotificationStrategy> notificationStrategy;
+    @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasks;
     private boolean validation = false;
 
@@ -83,6 +84,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
         return notificationStrategy;
     }
 
+    @SuppressWarnings("rawtypes")
     public Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap() {
         return tasks;
     }
@@ -91,9 +93,11 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
         return validation;
     }
 
+    @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
             throws ConfigurationException {
         Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new ConcurrentHashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
+        @SuppressWarnings("unchecked")
         List<Node> nodes = document.selectNodes(ROOT_NODE + TASKS_XPATH);
         for (Node node : nodes) {
             Class<? extends TaskParameters> paramClass = getClassFromNode(node, TASK_PARAM_XPATH, TaskParameters.class);
@@ -116,6 +120,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @return the retrieved class.
      * @throws ConfigurationException
      */
+    @SuppressWarnings("unchecked")
     private <T> Class<? extends T> getClassFromNode(Node node, String xpath, Class<? extends T> assignableInterface)
             throws ConfigurationException {
         Node paramsClassNode = node.selectSingleNode(xpath);

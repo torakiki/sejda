@@ -39,7 +39,7 @@ public final class ReflectionUtility {
      * @param methodName
      * @return the class or null if nothing found
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Class inferParameterClass(Class clazz, String methodName) {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {

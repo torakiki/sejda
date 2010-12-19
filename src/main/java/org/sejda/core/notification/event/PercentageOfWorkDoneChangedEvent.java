@@ -78,7 +78,7 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
 
     @Override
     public String toString() {
-        return "PercentageOfWorkDoneChangedEvent [percentage=" + percentage + "]";
+        return String.format("%s [percentage=%s]", this.getClass(), percentage);
     }
 
 }

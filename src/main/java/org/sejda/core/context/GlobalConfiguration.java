@@ -35,11 +35,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Global configuration singleton. Holds a global configuration obtained as the union of the default configuration and, if available, the one submitted by the user as system
- * property or default expected configuration file in the classpath where the user configuration has precedence.
+ * Global configuration singleton.
  * <p>
- * A user can submit a custom configuration including a file name "sejda-config.xml" in the classpath or using the system property sejda.config.file where the value of the property
- * is the name of the configuration file available in the classpath. If Both are specified then system property has precedence.
+ * A user can submit a configuration including a file named "sejda.xml" in the classpath or using the system property sejda.config.file where the value of the property is the name
+ * of the configuration file available in the classpath. If Both are specified then system property has precedence.
  * </p>
  * 
  * @author Andrea Vacondio
@@ -49,8 +48,7 @@ final class GlobalConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
-    private static final String DEFAULT_CONFIG_FILE_NAME = "default-sejda-config.xml";
-    private static final String USER_CONFIG_FILE_NAME = "sejda-config.xml";
+    private static final String USER_CONFIG_FILE_NAME = "/sejda.xml";
     private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
 
     private Class<? extends NotificationStrategy> notificationStrategy;
@@ -65,7 +63,7 @@ final class GlobalConfiguration {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private void logConfiguredTasks() {
         LOG.debug("Configured tasks:");
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
@@ -75,20 +73,14 @@ final class GlobalConfiguration {
 
     private void initialize() {
         taskRegistry = new DefaultTasksRegistry();
-        InputStream defaultConfigStream = GlobalConfiguration.class.getClassLoader().getResourceAsStream(
-                DEFAULT_CONFIG_FILE_NAME);
-        if (defaultConfigStream == null) {
-            throw new SejdaRuntimeException(String.format("Unable to find default configuration file %s in classpath.",
-                    DEFAULT_CONFIG_FILE_NAME));
-        }
-        LOG.debug("Loading default Sejda configuration.");
-        initializeConfigurationFromStream(defaultConfigStream);
-
         String userConfigFileName = getUserConfigFileName();
         InputStream userConfigStream = getClass().getResourceAsStream(userConfigFileName);
         if (userConfigStream != null) {
-            LOG.debug("Loading custom user Sejda configuration form " + userConfigFileName);
+            LOG.debug("Loading Sejda configuration form " + userConfigFileName);
             initializeConfigurationFromStream(userConfigStream);
+        } else {
+            throw new SejdaRuntimeException(String.format("Unable to find configuration file [%s] in classpath.",
+                    userConfigFileName));
         }
     }
 
@@ -99,7 +91,7 @@ final class GlobalConfiguration {
      * @throws SejdaRuntimeException
      *             in case of error loading the configuration
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private void initializeConfigurationFromStream(InputStream stream) {
         ConfigurationStrategy configStrategy;
         try {

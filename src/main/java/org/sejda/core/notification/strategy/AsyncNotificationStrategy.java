@@ -31,11 +31,13 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  */
 public final class AsyncNotificationStrategy implements NotificationStrategy {
 
-    @SuppressWarnings("unchecked")
-    public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
+    @SuppressWarnings("rawtypes")
+    public void notifyListener(final EventListener listener,
+            final AbstractNotificationEvent event) {
         if (listener != null) {
             ThreadLocalExecutorFactory.getLocalExecutor().execute(new Runnable() {
 
+                @SuppressWarnings("unchecked")
                 public void run() {
                     listener.onEvent(event);
                 }

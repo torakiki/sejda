@@ -38,7 +38,7 @@ class DefaultTaskExecutionContext implements TaskExecutionContext {
         context = new DefaultSejdaContext();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException {
         Class<? extends TaskParameters> parametersClass = parameters.getClass();
         Class<? extends Task> taskClass = context.getTasksRegistry().getTask(parametersClass);

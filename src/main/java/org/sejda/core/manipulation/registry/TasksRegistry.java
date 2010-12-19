@@ -29,7 +29,7 @@ import org.sejda.core.manipulation.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public interface TasksRegistry {
 
     /**
@@ -38,6 +38,7 @@ public interface TasksRegistry {
      * @param parametersClass
      * @return the most suitable {@link Task} class for the input parameters class or null if nothing can be found.
      */
+
     Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass);
     
     /**

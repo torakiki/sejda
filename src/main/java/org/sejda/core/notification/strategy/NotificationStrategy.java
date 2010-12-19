@@ -35,6 +35,5 @@ public interface NotificationStrategy {
      * @param listener
      * @param event
      */
-    @SuppressWarnings("unchecked")
-    void notifyListener(EventListener listener, AbstractNotificationEvent event);
+    void notifyListener(@SuppressWarnings("rawtypes") EventListener listener, AbstractNotificationEvent event);
 }

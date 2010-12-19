@@ -122,7 +122,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
      * @param task
      * @throws TaskException
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private void actualExecution(TaskParameters parameters, Task task) throws TaskException {
         try {
             task.before(parameters);

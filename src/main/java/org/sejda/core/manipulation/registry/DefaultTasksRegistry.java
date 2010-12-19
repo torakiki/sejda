@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class DefaultTasksRegistry implements TasksRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTasksRegistry.class);

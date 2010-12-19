@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 public class DefaultTaskExecutionServiceTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();

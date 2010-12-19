@@ -40,4 +40,10 @@ public abstract class AbstractNotificationEvent implements NotificationEvent, Se
     public Long getEventTimestamp() {
         return eventTimestamp;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s [eventTimestamp=%d]", this.getClass(), eventTimestamp);
+    }
+
 }

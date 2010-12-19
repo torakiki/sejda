@@ -17,16 +17,15 @@
  */
 package org.sejda.core.context;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
-import org.sejda.core.context.XmlConfigurationStrategy;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Test unit
@@ -38,7 +37,7 @@ public class XmlConfigurationStrategyTest {
 
     @Test
     public void testPositiveConstuctor() throws ConfigurationException, IOException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("default-sejda-config.xml");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("sejda.xml");
         XmlConfigurationStrategy victim = new XmlConfigurationStrategy(stream);
         stream.close();
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());

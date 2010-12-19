@@ -38,20 +38,17 @@ public class AlternateMixParameters extends AbstractParameters {
     @Valid
     private PdfMixInput secondInput;
 
+    public AlternateMixParameters(PdfMixInput firstInput, PdfMixInput secondInput) {
+        this.firstInput = firstInput;
+        this.secondInput = secondInput;
+    }
+
     public PdfMixInput getFirstInput() {
         return firstInput;
     }
 
-    public void setFirstInput(PdfMixInput firstInput) {
-        this.firstInput = firstInput;
-    }
-
     public PdfMixInput getSecondInput() {
         return secondInput;
-    }
-
-    public void setSecondInput(PdfMixInput secondInput) {
-        this.secondInput = secondInput;
     }
 
     @Override
