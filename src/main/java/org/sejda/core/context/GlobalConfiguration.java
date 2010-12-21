@@ -28,8 +28,6 @@ import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.registry.DefaultTasksRegistry;
-import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +61,11 @@ final class GlobalConfiguration {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private void logConfiguredTasks() {
         LOG.debug("Configured tasks:");
-        for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
+        for (@SuppressWarnings("rawtypes")
+        Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks()
+                .entrySet()) {
             LOG.debug(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
         }
     }

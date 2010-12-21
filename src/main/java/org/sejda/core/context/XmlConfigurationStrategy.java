@@ -18,9 +18,9 @@
 package org.sejda.core.context;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -96,7 +96,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
             throws ConfigurationException {
-        Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new ConcurrentHashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
+        Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
         @SuppressWarnings("unchecked")
         List<Node> nodes = document.selectNodes(ROOT_NODE + TASKS_XPATH);
         for (Node node : nodes) {
@@ -121,7 +121,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @throws ConfigurationException
      */
     @SuppressWarnings("unchecked")
-    private <T> Class<? extends T> getClassFromNode(Node node, String xpath, Class<? extends T> assignableInterface)
+    private <T> Class<? extends T> getClassFromNode(Node node, String xpath, Class<T> assignableInterface)
             throws ConfigurationException {
         Node paramsClassNode = node.selectSingleNode(xpath);
         if (paramsClassNode != null) {

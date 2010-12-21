@@ -15,13 +15,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.registry;
+package org.sejda.core.context;
 
 import java.util.Map;
 
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
-
 
 /**
  * Registry of the configured tasks
@@ -40,14 +39,15 @@ public interface TasksRegistry {
      */
 
     Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass);
-    
+
     /**
      * add to the registry the input task class responsible for carrying out the parameter class.
+     * 
      * @param parameterClass
      * @param taskClass
      */
     void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass);
-    
+
     /**
      * @return an unmodifiable version of the configured tasks
      */

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.registry;
+package org.sejda.core.context;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @SuppressWarnings("rawtypes")
-public class DefaultTasksRegistry implements TasksRegistry {
+class DefaultTasksRegistry implements TasksRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTasksRegistry.class);
 
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap;
 
-    public DefaultTasksRegistry() {
+    DefaultTasksRegistry() {
         this.tasksMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
     }
 

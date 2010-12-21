@@ -17,7 +17,6 @@
  */
 package org.sejda.core.context;
 
-import org.sejda.core.manipulation.registry.TasksRegistry;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
