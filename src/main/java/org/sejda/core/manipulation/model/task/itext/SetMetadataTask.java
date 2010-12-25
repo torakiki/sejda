@@ -17,11 +17,6 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-import static org.sejda.core.support.io.model.FileOutput.file;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -36,7 +31,13 @@ import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfReader;
+
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+
+import static org.sejda.core.support.io.model.FileOutput.file;
 
 /**
  * Task setting metadata on an input {@link PdfSource}
@@ -67,6 +68,7 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
 
         LOG.debug("Setting metadata on temporary document.");
+        @SuppressWarnings("unchecked")
         HashMap<String, String> actualMeta = reader.getInfo();
         for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
             actualMeta.put(meta.getKey().getKey(), meta.getValue());

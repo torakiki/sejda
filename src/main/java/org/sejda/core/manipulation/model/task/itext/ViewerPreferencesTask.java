@@ -17,19 +17,11 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
@@ -43,10 +35,19 @@ import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.text.pdf.PdfBoolean;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfObject;
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfBoolean;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
+import com.lowagie.text.pdf.PdfReader;
+
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Task setting viewer preferences on a list of {@link PdfSource}.

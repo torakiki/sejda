@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * Identifies an ongoing rotation exposing methods to finalize it.

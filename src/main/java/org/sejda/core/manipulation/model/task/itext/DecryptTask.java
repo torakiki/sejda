@@ -17,14 +17,6 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
-
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
@@ -36,7 +28,16 @@ import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfReader;
+
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Task performing decrypt of a list of encrypted {@link PdfSource}

@@ -17,17 +17,16 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
-import org.sejda.core.manipulation.model.task.itext.util.ViewerPreferencesUtils;
 
-import com.itextpdf.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfName;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Andrea Vacondio
@@ -43,7 +42,8 @@ public class ViewerPreferencesUtilsTest {
 
     @Test
     public void testGetDuplex() {
-        assertEquals(PdfName.SIMPLEX, ViewerPreferencesUtils.getDuplex(PdfDuplex.SIMPLEX));
+        PdfName duplex = ViewerPreferencesUtils.getDuplex(PdfDuplex.SIMPLEX);
+        assertEquals(PdfName.SIMPLEX, duplex);
         assertEquals(PdfName.DUPLEXFLIPLONGEDGE, ViewerPreferencesUtils.getDuplex(PdfDuplex.DUPLEX_FLIP_LONG_EDGE));
         assertEquals(PdfName.DUPLEXFLIPSHORTEDGE, ViewerPreferencesUtils.getDuplex(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE));
     }

@@ -28,8 +28,8 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Utility methods related to the viewer preferences functionalities

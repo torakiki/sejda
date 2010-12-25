@@ -23,7 +23,7 @@ import java.util.Map;
 import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.PdfEncryption;
 
-import com.itextpdf.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Utility methods related to the encryption functionalities

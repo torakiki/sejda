@@ -28,9 +28,9 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.input.PdfURLSource;
 
-import com.itextpdf.text.exceptions.BadPasswordException;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
+import com.lowagie.text.exceptions.BadPasswordException;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.RandomAccessFileOrArray;
 
 /**
  * Utility responsible for handling operations related to a {@link PdfReader} instance.
