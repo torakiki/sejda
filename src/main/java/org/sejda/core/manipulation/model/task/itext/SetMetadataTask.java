@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -75,8 +75,8 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         }
         stamperHandler.setMetadataOnStamper(actualMeta);
 
-        closePdfReader(reader);
-        closePdfStamperHandlerQuietly(stamperHandler);
+        nullSafeClosePdfReader(reader);
+        nullSafeClosePdfStamperHandler(stamperHandler);
 
         flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
 
@@ -85,8 +85,8 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
     }
 
     public void after() {
-        closePdfReader(reader);
-        closePdfStamperHandlerQuietly(stamperHandler);
+        nullSafeClosePdfReader(reader);
+        nullSafeClosePdfStamperHandler(stamperHandler);
     }
 
 }

@@ -32,8 +32,8 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -76,8 +76,8 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
             stamperHandler.setCreatorOnStamper(reader);
 
-            closePdfReader(reader);
-            closePdfStamperHandlerQuietly(stamperHandler);
+            nullSafeClosePdfReader(reader);
+            nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
             addOutput(file(tmpFile).name(outName));
@@ -92,8 +92,8 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
     }
 
     public void after() {
-        closePdfReader(reader);
-        closePdfStamperHandlerQuietly(stamperHandler);
+        nullSafeClosePdfReader(reader);
+        nullSafeClosePdfStamperHandler(stamperHandler);
     }
 
 }

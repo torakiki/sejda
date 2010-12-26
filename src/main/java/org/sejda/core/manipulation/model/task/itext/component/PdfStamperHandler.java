@@ -74,7 +74,7 @@ public class PdfStamperHandler {
         } catch (DocumentException e) {
             throw new TaskException("An error occurred opening the PdfStamper.", e);
         } catch (IOException e) {
-            throw new TaskIOException("An error occurred opening the PdfStamper.", e);
+            throw new TaskIOException("An IO error occurred opening the PdfStamper.", e);
         }
     }
 
@@ -111,6 +111,7 @@ public class PdfStamperHandler {
      * @param reader
      */
     public void setCreatorOnStamper(PdfReader reader) {
+        @SuppressWarnings("unchecked")
         HashMap<String, String> meta = reader.getInfo();
         setMetadataOnStamper(meta);
     }

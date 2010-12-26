@@ -40,8 +40,8 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.closePdfStamperHandlerQuietly;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -101,8 +101,8 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
                 stamperHandler.addViewerPreferenceOnStamper(entry.getKey(), entry.getValue());
             }
 
-            closePdfReader(reader);
-            closePdfStamperHandlerQuietly(stamperHandler);
+            nullSafeClosePdfReader(reader);
+            nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
             addOutput(file(tmpFile).name(outName));
@@ -118,8 +118,8 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
     }
 
     public void after() {
-        closePdfReader(reader);
-        closePdfStamperHandlerQuietly(stamperHandler);
+        nullSafeClosePdfReader(reader);
+        nullSafeClosePdfStamperHandler(stamperHandler);
     }
 
     /**
