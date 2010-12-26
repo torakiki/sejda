@@ -120,7 +120,6 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @return the retrieved class.
      * @throws ConfigurationException
      */
-    @SuppressWarnings("unchecked")
     private <T> Class<? extends T> getClassFromNode(Node node, String xpath, Class<T> assignableInterface)
             throws ConfigurationException {
         Node paramsClassNode = node.selectSingleNode(xpath);
@@ -133,7 +132,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
                 throw new ConfigurationException(String.format("Unable to find the configured class %s", paramClass), e);
             }
             if (assignableInterface.isAssignableFrom(clazz)) {
-                return (Class<? extends T>) clazz;
+                return clazz.asSubclass(assignableInterface);
             } else {
                 throw new ConfigurationException(String.format("The configured class %s is not a subtype of %s", clazz,
                         assignableInterface));

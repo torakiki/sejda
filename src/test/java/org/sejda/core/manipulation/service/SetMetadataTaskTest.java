@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
  */
 @Ignore
 @SuppressWarnings("unchecked")
-public abstract class SetMetadataTaskTest extends PdfStreamOutEnabledTest implements
+public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements
         TestableTask<SetMetadataParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();

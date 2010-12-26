@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
  * 
  */
 @Ignore
-public abstract class ViewerPreferencesTaskTest extends PdfStreamOutEnabledTest implements
+public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implements
         TestableTask<ViewerPreferencesParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 

@@ -17,6 +17,7 @@
 package org.sejda.core.manipulation.model.input;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -34,6 +35,7 @@ public class PdfMixInput {
     @Valid
     private final PdfSource source;
     private boolean reverse = false;
+    @Min(value = 1)
     private int step = 1;
 
     public PdfMixInput(PdfSource source, boolean reverse, int step) {

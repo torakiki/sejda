@@ -37,10 +37,20 @@ public class AlternateMixParameters extends AbstractParameters {
     @NotNull
     @Valid
     private PdfMixInput secondInput;
+    private String outputName;
 
-    public AlternateMixParameters(PdfMixInput firstInput, PdfMixInput secondInput) {
+    /**
+     * Constructor for an alternate mix parameter instance.
+     * 
+     * @param firstInput
+     * @param secondInput
+     * @param outputName
+     *            output name to be used only when the output is written to a non file destination
+     */
+    public AlternateMixParameters(PdfMixInput firstInput, PdfMixInput secondInput, String outputName) {
         this.firstInput = firstInput;
         this.secondInput = secondInput;
+        this.outputName = outputName;
     }
 
     public PdfMixInput getFirstInput() {
@@ -51,9 +61,14 @@ public class AlternateMixParameters extends AbstractParameters {
         return secondInput;
     }
 
+    public String getOutputName() {
+        return outputName;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(firstInput).append(secondInput).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(firstInput).append(secondInput)
+                .append(outputName).toHashCode();
     }
 
     @Override
@@ -63,7 +78,8 @@ public class AlternateMixParameters extends AbstractParameters {
         }
         AlternateMixParameters parameter = (AlternateMixParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(firstInput, parameter.getFirstInput())
-                .append(firstInput, parameter.getSecondInput()).isEquals();
+                .append(secondInput, parameter.getSecondInput()).append(outputName, parameter.getOutputName())
+                .isEquals();
     }
 
 }

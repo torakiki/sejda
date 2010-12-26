@@ -35,12 +35,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
+ * Abstract test unit for the decrypt task
+ * 
  * @author Andrea Vacondio
  * 
  */
 @Ignore
 @SuppressWarnings("unchecked")
-public abstract class DecryptTaskTest extends PdfStreamOutEnabledTest implements TestableTask<DecryptParameters> {
+public abstract class DecryptTaskTest extends PdfOutEnabledTest implements TestableTask<DecryptParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);

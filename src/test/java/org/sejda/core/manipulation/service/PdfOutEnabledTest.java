@@ -46,7 +46,7 @@ import static org.junit.Assert.assertEquals;
  * 
  */
 @Ignore
-public class PdfStreamOutEnabledTest {
+public class PdfOutEnabledTest {
 
     private ByteArrayOutputStream out;
     private File outFile;

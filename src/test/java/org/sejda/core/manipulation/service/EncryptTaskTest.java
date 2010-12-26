@@ -47,7 +47,7 @@ import static org.mockito.Mockito.when;
  */
 @Ignore
 @SuppressWarnings("unchecked")
-public abstract class EncryptTaskTest extends PdfStreamOutEnabledTest implements TestableTask<EncryptParameters> {
+public abstract class EncryptTaskTest extends PdfOutEnabledTest implements TestableTask<EncryptParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
