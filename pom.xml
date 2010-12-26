@@ -72,6 +72,8 @@
 		<commons.lang.version>2.5</commons.lang.version>
 		<commons.io.version>2.0</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
+		<mockito.version>1.8.5</mockito.version>
+		<itextpdf.version>5.0.5</itextpdf.version>
 	</properties>
 
 	<repositories>
@@ -153,14 +155,14 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.8.1</version>
+			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
-			<version>5.0.4</version>
+			<version>${itextpdf.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency>	
 	</dependencies>
 </project>
