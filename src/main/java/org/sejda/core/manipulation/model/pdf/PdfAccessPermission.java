@@ -25,5 +25,12 @@ package org.sejda.core.manipulation.model.pdf;
  * 
  */
 public enum PdfAccessPermission {
-    MODIFY, COPY, ANNOTATION, PRINT, FILL_FORMS, ASSEMBLE, DEGRADATED_PRINT, EXTRACTION_FOR_DISABLES;
+    MODIFY,
+    COPY,
+    ANNOTATION,
+    PRINT,
+    FILL_FORMS,
+    ASSEMBLE,
+    DEGRADATED_PRINT,
+    EXTRACTION_FOR_DISABLES;
 }

@@ -24,7 +24,7 @@ package org.sejda.core;
  * 
  */
 public final class Sejda {
-    
+
     private Sejda() {
         // on purpose
     }

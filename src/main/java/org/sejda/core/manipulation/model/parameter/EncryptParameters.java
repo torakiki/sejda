@@ -107,8 +107,8 @@ public class EncryptParameters extends PdfSourceListParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(userPassword).append(
-                ownerPassword).append(encryptionAlgorithm).append(permissions).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(userPassword)
+                .append(ownerPassword).append(encryptionAlgorithm).append(permissions).toHashCode();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class EncryptParameters extends PdfSourceListParameters {
         EncryptParameters parameter = (EncryptParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
                 .append(userPassword, parameter.getUserPassword()).append(ownerPassword, parameter.getOwnerPassword())
-                .append(encryptionAlgorithm, parameter.getEncryptionAlgorithm()).append(permissions,
-                        parameter.getPermissions()).isEquals();
+                .append(encryptionAlgorithm, parameter.getEncryptionAlgorithm())
+                .append(permissions, parameter.getPermissions()).isEquals();
     }
 }

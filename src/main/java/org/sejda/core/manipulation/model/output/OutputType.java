@@ -24,5 +24,7 @@ package org.sejda.core.manipulation.model.output;
  * 
  */
 public enum OutputType {
-    FILE_OUTPUT(), DIRECTORY_OUTPUT(), STREAM_OUTPUT();
+    FILE_OUTPUT(),
+    DIRECTORY_OUTPUT(),
+    STREAM_OUTPUT();
 }

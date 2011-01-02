@@ -19,9 +19,12 @@ package org.sejda.core.manipulation.model.input;
 
 /**
  * Types of pdf sources
+ * 
  * @author Andrea Vacondio
  * 
  */
 public enum PdfSourceType {
-    FILE_SOURCE(), STREAM_SOURCE(), URL_SOURCE();
+    FILE_SOURCE(),
+    STREAM_SOURCE(),
+    URL_SOURCE();
 }

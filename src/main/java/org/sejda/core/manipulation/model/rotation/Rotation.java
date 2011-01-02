@@ -24,7 +24,10 @@ package org.sejda.core.manipulation.model.rotation;
  * 
  */
 public enum Rotation {
-    DEGREES_0(0), DEGREES_90(90), DEGREES_180(180), DEGREES_270(270);
+    DEGREES_0(0),
+    DEGREES_90(90),
+    DEGREES_180(180),
+    DEGREES_270(270);
 
     private static final int D_360 = 360;
     private static final int D_90 = 90;

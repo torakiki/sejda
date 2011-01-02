@@ -60,7 +60,7 @@ public class PdfSourceListParameters extends AbstractParameters {
      * Clear the source list
      */
     public void clearSourceList() {
-            sourceList.clear();
+        sourceList.clear();
     }
 
     @Override

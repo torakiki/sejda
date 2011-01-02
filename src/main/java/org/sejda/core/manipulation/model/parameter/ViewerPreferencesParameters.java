@@ -36,6 +36,7 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 
 import static org.sejda.core.support.util.PdfVersionUtility.getMax;
+
 /**
  * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the view preferences will be
  * applied.
@@ -136,9 +137,9 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(printScaling).append(
-                direction).append(duplex).append(pageLayout).append(pageMode).append(nfsMode).append(
-                activeBooleanPreferences).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(printScaling)
+                .append(direction).append(duplex).append(pageLayout).append(pageMode).append(nfsMode)
+                .append(activeBooleanPreferences).toHashCode();
     }
 
     @Override
@@ -148,9 +149,9 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
         }
         ViewerPreferencesParameters parameter = (ViewerPreferencesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .append(printScaling, parameter.getPrintScaling()).append(direction, parameter.getDirection()).append(
-                        duplex, parameter.getDuplex()).append(pageLayout, parameter.getPageLayout()).append(pageMode,
-                        parameter.getPageMode()).append(nfsMode, parameter.getNfsMode()).append(
-                        activeBooleanPreferences, parameter.getActivePreferences()).isEquals();
+                .append(printScaling, parameter.getPrintScaling()).append(direction, parameter.getDirection())
+                .append(duplex, parameter.getDuplex()).append(pageLayout, parameter.getPageLayout())
+                .append(pageMode, parameter.getPageMode()).append(nfsMode, parameter.getNfsMode())
+                .append(activeBooleanPreferences, parameter.getActivePreferences()).isEquals();
     }
 }

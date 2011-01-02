@@ -94,7 +94,7 @@ public class PageRotation {
         if (RotationType.EVEN_PAGES.equals(rotationType) && (page % 2 == 0)) {
             return true;
         }
-        //single page
+        // single page
         return page == pageNumber;
     }
 
@@ -115,8 +115,8 @@ public class PageRotation {
             return false;
         }
         PageRotation oRotation = (PageRotation) other;
-        return new EqualsBuilder().append(pageNumber, oRotation.getPageNumber()).append(rotation,
-                oRotation.getRotation()).append(rotationType, oRotation.getRotationType()).isEquals();
+        return new EqualsBuilder().append(pageNumber, oRotation.getPageNumber())
+                .append(rotation, oRotation.getRotation()).append(rotationType, oRotation.getRotationType()).isEquals();
     }
 
 }

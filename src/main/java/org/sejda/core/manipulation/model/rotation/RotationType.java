@@ -24,5 +24,8 @@ package org.sejda.core.manipulation.model.rotation;
  * 
  */
 public enum RotationType {
-    SINGLE_PAGE(), ODD_PAGES(), EVEN_PAGES(), ALL_PAGES();
+    SINGLE_PAGE(),
+    ODD_PAGES(),
+    EVEN_PAGES(),
+    ALL_PAGES();
 }

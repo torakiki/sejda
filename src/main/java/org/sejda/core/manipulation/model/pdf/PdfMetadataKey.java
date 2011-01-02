@@ -24,7 +24,11 @@ package org.sejda.core.manipulation.model.pdf;
  * 
  */
 public enum PdfMetadataKey {
-    TITLE("Title"), AUTHOR("Author"), SUBJECT("Subject"), KEYWORDS("Keywords"), CREATOR("Creator");
+    TITLE("Title"),
+    AUTHOR("Author"),
+    SUBJECT("Subject"),
+    KEYWORDS("Keywords"),
+    CREATOR("Creator");
 
     private PdfMetadataKey(String key) {
         this.key = key;

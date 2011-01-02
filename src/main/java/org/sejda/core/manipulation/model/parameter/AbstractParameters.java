@@ -102,7 +102,8 @@ public abstract class AbstractParameters implements TaskParameters {
             return false;
         }
         AbstractParameters parameter = (AbstractParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(compressXref, parameter.isCompressXref())
-                .append(version, parameter.getVersion()).append(output, parameter.getOutput()).isEquals();
+        return new EqualsBuilder().append(overwrite, parameter.isOverwrite())
+                .append(compressXref, parameter.isCompressXref()).append(version, parameter.getVersion())
+                .append(output, parameter.getOutput()).isEquals();
     }
 }

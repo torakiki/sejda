@@ -17,9 +17,9 @@
  */
 package org.sejda.core.manipulation.model.pdf;
 
-
 /**
  * pdf versions
+ * 
  * @author Andrea Vacondio
  * 
  */
@@ -33,7 +33,7 @@ public enum PdfVersion {
     VERSION_1_5(5, 1.5d, "%PDF-1.5"),
     VERSION_1_6(6, 1.6d, "%PDF-1.6"),
     VERSION_1_7(7, 1.7d, "%PDF-1.7");
-    
+
     private int version;
     private double versionDouble;
     private String versionHeader;
@@ -57,7 +57,6 @@ public enum PdfVersion {
     public double getVersionAsDouble() {
         return versionDouble;
     }
-
 
     /**
      * @return a char representation of the int version

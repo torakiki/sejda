@@ -27,5 +27,8 @@ package org.sejda.core.manipulation.model.pdf.viewerpreferences;
  * 
  */
 public enum PdfNonFullScreenPageMode {
-    USE_NONE, USE_OUTLINES, USE_THUMNS, USE_OC;
+    USE_NONE,
+    USE_OUTLINES,
+    USE_THUMNS,
+    USE_OC;
 }
