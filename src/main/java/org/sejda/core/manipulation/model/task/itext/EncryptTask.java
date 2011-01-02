@@ -22,7 +22,7 @@ import java.io.File;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;

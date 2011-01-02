@@ -23,8 +23,8 @@ import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.
 import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getEncryptionAlgorithm;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.PdfEncryption;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 
 import com.itextpdf.text.pdf.PdfWriter;
 

@@ -20,8 +20,8 @@ package org.sejda.core.manipulation.model.task.itext.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.PdfEncryption;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 
 import com.lowagie.text.pdf.PdfWriter;
 
