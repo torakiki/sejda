@@ -25,9 +25,9 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.PdfEncryption;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.support.util.PdfVersionUtility;
 
 /**

@@ -29,7 +29,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PageRotation {
+public final class PageRotation {
 
     private int pageNumber;
     @NotNull
@@ -37,24 +37,9 @@ public class PageRotation {
     @NotNull
     private final RotationType rotationType;
 
-    /**
-     * Single page rotation for the given pageNumber and the given {@link Rotation}
-     * 
-     * @param pageNumber
-     * @param rotation
-     */
-    public PageRotation(int pageNumber, Rotation rotation) {
-        this(rotation, RotationType.SINGLE_PAGE);
-        this.pageNumber = pageNumber;
-    }
 
-    /**
-     * Non single page rotation constructor
-     * 
-     * @param rotation
-     * @param rotationType
-     */
-    public PageRotation(Rotation rotation, RotationType rotationType) {
+    private PageRotation(int pageNumber, Rotation rotation, RotationType rotationType) {
+        this.pageNumber = pageNumber;
         this.rotation = rotation;
         this.rotationType = rotationType;
     }
@@ -119,4 +104,35 @@ public class PageRotation {
                 .append(rotation, oRotation.getRotation()).append(rotationType, oRotation.getRotationType()).isEquals();
     }
 
+    /**
+     * Creates a single page rotation for the given pageNumber and the given {@link Rotation}
+     * 
+     * @param pageNumber
+     * @param rotation
+     * @return the created instance
+     * @throws IllegalStateException
+     *             if the page number is not positive.
+     */
+    public static PageRotation createSinglePageRotation(int pageNumber, Rotation rotation) {
+        if (pageNumber <= 0) {
+            throw new IllegalStateException("Page number must be positive.");
+        }
+        return new PageRotation(pageNumber, rotation, RotationType.SINGLE_PAGE);
+    }
+
+    /**
+     * Creates a non single page rotation
+     * 
+     * @param rotation
+     * @param rotationType
+     * @return the created instance
+     * @throws IllegalStateException
+     *             if the rotation type is single page rotation.
+     */
+    public static PageRotation createMultiplePagesRotation(Rotation rotation, RotationType rotationType) {
+        if (RotationType.SINGLE_PAGE.equals(rotationType)) {
+            throw new IllegalStateException("Rotation type cannot be single page.");
+        }
+        return new PageRotation(0, rotation, rotationType);
+    }
 }

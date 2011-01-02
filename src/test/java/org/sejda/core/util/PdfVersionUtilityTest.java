@@ -17,8 +17,8 @@
 package org.sejda.core.util;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.pdf.PdfEncryption;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.support.util.PdfVersionUtility;

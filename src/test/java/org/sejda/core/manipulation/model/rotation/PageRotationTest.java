@@ -17,10 +17,10 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
 
 /**
  * Test unit for the page rotation
@@ -32,23 +32,31 @@ public class PageRotationTest {
 
     @Test
     public void testAccept() {
-        PageRotation victim = new PageRotation(2, Rotation.DEGREES_180);
+        PageRotation victim = PageRotation.createSinglePageRotation(2, Rotation.DEGREES_180);
         assertTrue(victim.accept(2));
         assertFalse(victim.accept(1));
 
-        victim = new PageRotation(Rotation.DEGREES_270, RotationType.EVEN_PAGES);
+        victim = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.EVEN_PAGES);
         assertTrue(victim.accept(2));
         assertFalse(victim.accept(1));
 
-        victim = new PageRotation(Rotation.DEGREES_270, RotationType.ODD_PAGES);
+        victim = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.ODD_PAGES);
         assertTrue(victim.accept(1));
         assertFalse(victim.accept(2));
 
-        victim = new PageRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
+        victim = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
         assertTrue(victim.accept(2));
         assertTrue(victim.accept(1));
-
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testIllegalNegativePageNumber() {
+        PageRotation.createSinglePageRotation(-1, Rotation.DEGREES_180);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testIllegalRotationType() {
+        PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.SINGLE_PAGE);
+    }
 
 }

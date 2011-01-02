@@ -15,7 +15,10 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.pdf;
+package org.sejda.core.manipulation.model.pdf.encryption;
+
+import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
  * Possible encryption algorithm to use during pdf encryption.

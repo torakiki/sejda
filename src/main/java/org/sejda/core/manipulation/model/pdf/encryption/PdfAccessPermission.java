@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.pdf;
+package org.sejda.core.manipulation.model.pdf.encryption;
 
 /**
  * Access permissions correspond to various operations that can be allowed/disallowed when encrypting a pdf document.<br>

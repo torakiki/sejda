@@ -67,7 +67,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setRotation(new PageRotation(Rotation.DEGREES_180, RotationType.ALL_PAGES));
+        parameters.setRotation(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_180, RotationType.ALL_PAGES));
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
         parameters.addSource(source);

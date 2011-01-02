@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.pdf.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.PdfEncryption;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
