@@ -18,6 +18,7 @@
 package org.sejda.core.manipulation.model.output;
 
 import java.io.File;
+import java.security.InvalidParameterException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.validation.constraint.PdfFile;
@@ -28,27 +29,44 @@ import org.sejda.core.validation.constraint.PdfFile;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileOutput extends PdfOutput {
+public class PdfFileOutput implements PdfOutput {
 
     @PdfFile
     private final File file;
+    private final OutputType type;
 
-    public PdfFileOutput(File file) {
+    PdfFileOutput(File file, OutputType type) {
         this.file = file;
+        this.type = type;
     }
 
     public File getFile() {
         return file;
     }
 
-    @Override
     public OutputType getOutputType() {
-        return OutputType.FILE_OUTPUT;
+        return type;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append(file).toString();
+        return new ToStringBuilder(this).append(getOutputType()).append(file)
+                .append(Integer.toHexString(System.identityHashCode(this))).toString();
+    }
+
+    /**
+     * Creates a new instance of a PdfFileOutput using the input file
+     * 
+     * @param file
+     * @return the newly created instance
+     * @throws InvalidParameterException
+     *             if the input file is null or not a file
+     */
+    public static PdfFileOutput newInstance(File file) {
+        if (file == null || !file.isFile()) {
+            throw new InvalidParameterException("A not null file instance is expected.");
+        }
+        return new PdfFileOutput(file, OutputType.FILE_OUTPUT);
     }
 
 }

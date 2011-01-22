@@ -17,7 +17,6 @@
  */
 package org.sejda.core.manipulation.model.output;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * Abstract implementation of a pdf output destination where the results of a manipulation will be written.
@@ -25,15 +24,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public abstract class PdfOutput {
+public interface PdfOutput {
 
     /**
      * @return the type of this output
      */
-    public abstract OutputType getOutputType();
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).toString();
-    }
+    OutputType getOutputType();
 }

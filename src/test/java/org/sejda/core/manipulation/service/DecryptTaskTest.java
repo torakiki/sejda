@@ -62,8 +62,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = new PdfStreamSource(stream, "enc_test_test_file.pdf");
-        source.setPassword("test");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
         parameters.addSource(source);
         parameters.setOverwrite(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);

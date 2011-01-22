@@ -81,7 +81,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         parameters.addActivePreference(PdfBooleanPreference.CENTER_WINDOW);
         parameters.addActivePreference(PdfBooleanPreference.HIDE_MENUBAR);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
     }

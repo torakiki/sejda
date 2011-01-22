@@ -24,18 +24,17 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * {@link OutputStream} output destination
+ * {@link OutputStream} output destination for a task.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfStreamOutput extends PdfOutput {
+public final class PdfStreamOutput implements PdfOutput {
 
     @NotNull
     private final OutputStream stream;
 
-    public PdfStreamOutput(OutputStream stream) {
-        super();
+    private PdfStreamOutput(OutputStream stream) {
         this.stream = stream;
     }
 
@@ -43,14 +42,28 @@ public class PdfStreamOutput extends PdfOutput {
         return stream;
     }
 
-    @Override
     public OutputType getOutputType() {
         return OutputType.STREAM_OUTPUT;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).toString();
+        return new ToStringBuilder(this).append(getOutputType())
+                .append(Integer.toHexString(System.identityHashCode(this))).toString();
     }
 
+    /**
+     * Creates a new instance of a PdfOutput using the input stream
+     * 
+     * @param stream
+     * @return the newly created instance
+     * @throws NullPointerException
+     *             if the input stream is null
+     */
+    public static PdfStreamOutput newInstance(OutputStream stream) {
+        if (stream == null) {
+            throw new NullPointerException("A not null stream instance is expected.");
+        }
+        return new PdfStreamOutput(stream);
+    }
 }

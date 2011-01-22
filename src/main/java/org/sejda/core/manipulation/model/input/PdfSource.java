@@ -35,11 +35,11 @@ public abstract class PdfSource {
     @NotEmpty
     private final String name;
 
-    public PdfSource(String name) {
+    PdfSource(String name) {
         this.name = name;
     }
 
-    public PdfSource(String name, String password) {
+    PdfSource(String name, String password) {
         this(name);
         this.password = password;
     }
@@ -57,10 +57,6 @@ public abstract class PdfSource {
             retVal = password.getBytes();
         }
         return retVal;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**

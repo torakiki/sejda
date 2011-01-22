@@ -71,7 +71,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements
         parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
         parameters.put(PdfMetadataKey.TITLE, "test_title");
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
     }

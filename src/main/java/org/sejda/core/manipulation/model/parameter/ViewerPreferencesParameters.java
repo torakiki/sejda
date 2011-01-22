@@ -18,7 +18,7 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -56,7 +56,7 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     private PdfDuplex duplex;
     private PdfDirection direction;
     private PdfPrintScaling printScaling;
-    private Set<PdfBooleanPreference> activeBooleanPreferences = new HashSet<PdfBooleanPreference>();
+    private Set<PdfBooleanPreference> activeBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
 
     public String getOutputPrefix() {
         return outputPrefix;

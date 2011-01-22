@@ -39,7 +39,7 @@ public class FileExtensionValidator implements ConstraintValidator<FileExtension
     }
 
     public boolean isValid(File value, ConstraintValidatorContext context) {
-        if (value != null) {
+        if (value != null && value.isFile()) {
             String fileName = value.getName().toLowerCase();
             return fileName.endsWith("." + expectedExtension) && fileName.length() > (expectedExtension.length() + 1);
         }

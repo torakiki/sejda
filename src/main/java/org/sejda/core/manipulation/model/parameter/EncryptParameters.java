@@ -18,7 +18,7 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -43,7 +43,7 @@ public class EncryptParameters extends PdfSourceListParameters {
     private String userPassword = "";
     @NotNull
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
-    private Set<PdfAccessPermission> permissions = new HashSet<PdfAccessPermission>();
+    private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
 
     public String getOutputPrefix() {
         return outputPrefix;

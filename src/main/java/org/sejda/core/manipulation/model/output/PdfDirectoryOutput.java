@@ -18,9 +18,7 @@
 package org.sejda.core.manipulation.model.output;
 
 import java.io.File;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.sejda.core.validation.constraint.Directory;
+import java.security.InvalidParameterException;
 
 /**
  * Directory output destination
@@ -28,26 +26,28 @@ import org.sejda.core.validation.constraint.Directory;
  * @author Andrea Vacondio
  * 
  */
-public class PdfDirectoryOutput extends PdfOutput {
+public final class PdfDirectoryOutput extends PdfFileOutput {
 
-    @Directory
-    private final File file;
-
-    public PdfDirectoryOutput(File file) {
-        this.file = file;
+    /**
+     * @param file
+     * @param type
+     */
+    private PdfDirectoryOutput(File file, OutputType type) {
+        super(file, type);
     }
 
-    public File getFile() {
-        return file;
-    }
-
-    @Override
-    public OutputType getOutputType() {
-        return OutputType.DIRECTORY_OUTPUT;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).toString();
+    /**
+     * Creates a new instance of a PdfOutput using the input directory
+     * 
+     * @param file
+     * @return the newly created instance
+     * @throws InvalidParameterException
+     *             if the input file is null or not a directory
+     */
+    public static PdfDirectoryOutput newInstance(File file) {
+        if (file == null || !file.isDirectory()) {
+            throw new InvalidParameterException("A not null directory instance is expected.");
+        }
+        return new PdfDirectoryOutput(file, OutputType.DIRECTORY_OUTPUT);
     }
 }

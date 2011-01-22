@@ -56,7 +56,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = File.createTempFile("outTemp", "");
-        PdfFileOutput output = new PdfFileOutput(outFile);
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
 
         OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
         assertFalse("temporary file not deleted", tempFile.exists());
@@ -66,7 +66,7 @@ public class OutputWriterTest {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
-        PdfStreamOutput output = new PdfStreamOutput(new ByteArrayOutputStream());
+        PdfStreamOutput output = PdfStreamOutput.newInstance(new ByteArrayOutputStream());
         OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output));
         assertFalse("temporary file not deleted", tempFile.exists());
     }
@@ -76,7 +76,7 @@ public class OutputWriterTest {
         Map<String, File> files = new HashMap<String, File>();
 
         File outFile = mock(File.class);
-        PdfFileOutput output = new PdfFileOutput(outFile);
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
 
         try {
@@ -93,7 +93,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfFileOutput output = new PdfFileOutput(outFile);
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
 
         try {
@@ -110,7 +110,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfFileOutput output = new PdfFileOutput(outFile);
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
         
@@ -128,7 +128,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfDirectoryOutput output = new PdfDirectoryOutput(outFile);
+        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
         when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
 
         try {
@@ -145,7 +145,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfDirectoryOutput output = new PdfDirectoryOutput(outFile);
+        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
         when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.FALSE);
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);

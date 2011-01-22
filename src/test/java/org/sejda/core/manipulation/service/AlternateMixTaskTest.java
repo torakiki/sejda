@@ -62,10 +62,10 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements
      */
     private void setUpParameters() {
         InputStream firstStream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource firstSource = new PdfStreamSource(firstStream, "first_test_file.pdf");
+        PdfStreamSource firstSource = PdfStreamSource.newInstanceNoPassword(firstStream, "first_test_file.pdf");
         PdfMixInput firstInput = new PdfMixInput(firstSource);
         InputStream secondStream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource secondSource = new PdfStreamSource(secondStream, "first_test_file.pdf");
+        PdfStreamSource secondSource = PdfStreamSource.newInstanceNoPassword(secondStream, "first_test_file.pdf");
         PdfMixInput secondInput = new PdfMixInput(secondSource, true, 3);
         parameters = new AlternateMixParameters(firstInput, secondInput, "outName.pdf");
         parameters.setOverwrite(true);

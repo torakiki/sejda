@@ -27,16 +27,12 @@ import org.sejda.core.validation.constraint.PdfFile;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileSource extends PdfSource {
+public final class PdfFileSource extends PdfSource {
 
     @PdfFile
     private final File file;
 
-    public PdfFileSource(File file) {
-        this(file, null);
-    }
-
-    public PdfFileSource(File file, String password) {
+    private PdfFileSource(File file, String password) {
         super(file.getName(), password);
         this.file = file;
     }
@@ -48,5 +44,28 @@ public class PdfFileSource extends PdfSource {
     @Override
     public PdfSourceType getSourceType() {
         return PdfSourceType.FILE_SOURCE;
+    }
+
+    /**
+     * Creates a new instance of the pdf source where a password is NOT required to open the source.
+     * 
+     * @param file
+     *            input pdf file
+     * @return a newly created instance
+     */
+    public static PdfFileSource newInstanceNoPassword(File file) {
+        return new PdfFileSource(file, null);
+    }
+
+    /**
+     * Creates a new instance of the pdf source where a password is required to open the source.
+     * 
+     * @param file
+     *            input pdf file
+     * @param password
+     * @return a newly created instance
+     */
+    public static PdfFileSource newInstanceWithPassword(File file, String password) {
+        return new PdfFileSource(file, password);
     }
 }

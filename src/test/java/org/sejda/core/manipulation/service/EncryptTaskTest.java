@@ -68,8 +68,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = new PdfStreamSource(stream, "test_file.pdf");
-        source.setPassword("test");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
         parameters.setEncryptionAlgorithm(PdfEncryption.AES_ENC_128);
         parameters.addSource(source);
         parameters.setOverwrite(true);

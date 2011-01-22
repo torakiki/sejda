@@ -29,16 +29,13 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfURLSource extends PdfSource {
+public final class PdfURLSource extends PdfSource {
 
     @NotNull
     private final URL url;
 
-    public PdfURLSource(URL url, String name) {
-        this(url, name, null);
-    }
 
-    public PdfURLSource(URL url, String name, String password) {
+    private PdfURLSource(URL url, String name, String password) {
         super(name, password);
         this.url = url;
     }
@@ -57,4 +54,28 @@ public class PdfURLSource extends PdfSource {
         return new ToStringBuilder(this).appendSuper(super.toString()).append(url).toString();
     }
 
+    /**
+     * Creates a new instance of the pdf source where a password is NOT required to open the source.
+     * 
+     * @param url
+     *            input URL to a pdf document
+     * @param name
+     * @return a newly created instance
+     */
+    public static PdfURLSource newInstanceNoPassword(URL url, String name) {
+        return new PdfURLSource(url, name, null);
+    }
+
+    /**
+     * Creates a new instance of the pdf source where a password is required to open the source.
+     * 
+     * @param url
+     *            input URL to a pdf document
+     * @param name
+     * @param password
+     * @return a newly created instance
+     */
+    public static PdfURLSource newInstanceWithPassword(URL url, String name, String password) {
+        return new PdfURLSource(url, name, password);
+    }
 }

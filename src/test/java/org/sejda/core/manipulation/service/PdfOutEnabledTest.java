@@ -58,7 +58,7 @@ public class PdfOutEnabledTest {
      */
     void initializeNewStreamOutput(AbstractParameters parameters) {
         out = new ByteArrayOutputStream();
-        PdfStreamOutput pdfOut = new PdfStreamOutput(out);
+        PdfStreamOutput pdfOut = PdfStreamOutput.newInstance(out);
         parameters.setOutput(pdfOut);
     }
 
@@ -71,7 +71,7 @@ public class PdfOutEnabledTest {
     void initializeNewFileOutput(AbstractParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
         outFile.deleteOnExit();
-        PdfFileOutput pdfOut = new PdfFileOutput(outFile);
+        PdfFileOutput pdfOut = PdfFileOutput.newInstance(outFile);
         parameters.setOutput(pdfOut);
     }
 

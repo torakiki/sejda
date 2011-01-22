@@ -27,16 +27,12 @@ import javax.validation.constraints.NotNull;
  * @author Andrea Vacondio
  * 
  */
-public class PdfStreamSource extends PdfSource {
+public final class PdfStreamSource extends PdfSource {
 
     @NotNull
     private final InputStream stream;
 
-    public PdfStreamSource(InputStream stream, String name) {
-        this(stream, name, null);
-    }
-
-    public PdfStreamSource(InputStream stream, String name, String password) {
+    private PdfStreamSource(InputStream stream, String name, String password) {
         super(name, password);
         this.stream = stream;
     }
@@ -48,5 +44,30 @@ public class PdfStreamSource extends PdfSource {
     @Override
     public PdfSourceType getSourceType() {
         return PdfSourceType.STREAM_SOURCE;
+    }
+
+    /**
+     * Creates a new instance of the pdf source where a password is NOT required to open the source.
+     * 
+     * @param stream
+     *            input pdf stream
+     * @param name
+     * @return a newly created instance
+     */
+    public static PdfStreamSource newInstanceNoPassword(InputStream stream, String name) {
+        return new PdfStreamSource(stream, name, null);
+    }
+
+    /**
+     * Creates a new instance of the pdf source where a password is required to open the source.
+     * 
+     * @param stream
+     *            input pdf stream
+     * @param name
+     * @param password
+     * @return a newly created instance
+     */
+    public static PdfStreamSource newInstanceWithPassword(InputStream stream, String name, String password) {
+        return new PdfStreamSource(stream, name, password);
     }
 }
