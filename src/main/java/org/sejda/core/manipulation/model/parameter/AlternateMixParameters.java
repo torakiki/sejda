@@ -73,6 +73,9 @@ public class AlternateMixParameters extends AbstractParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof AlternateMixParameters)) {
             return false;
         }

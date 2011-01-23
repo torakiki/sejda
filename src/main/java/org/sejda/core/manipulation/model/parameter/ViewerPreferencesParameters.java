@@ -144,6 +144,9 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof ViewerPreferencesParameters)) {
             return false;
         }

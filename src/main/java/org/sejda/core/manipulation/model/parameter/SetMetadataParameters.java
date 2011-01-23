@@ -20,8 +20,8 @@ package org.sejda.core.manipulation.model.parameter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -29,7 +29,7 @@ import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
- * Parameter class for the set metadata manipulation
+ * Parameter class for the set metadata manipulation.
  * 
  * @author Andrea Vacondio
  * 
@@ -37,7 +37,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
 public final class SetMetadataParameters extends SinglePdfSourceParameters {
 
     @NotEmpty
-    private Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
+    private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
 
     /**
      * @see Map#entrySet()
@@ -90,6 +90,9 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof SetMetadataParameters)) {
             return false;
         }

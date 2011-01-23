@@ -45,6 +45,9 @@ public class DecryptParameters extends PdfSourceListParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof DecryptParameters)) {
             return false;
         }
