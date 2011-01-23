@@ -48,8 +48,7 @@ public final class PdfStreamOutput implements PdfOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType())
-                .append(Integer.toHexString(System.identityHashCode(this))).toString();
+        return new ToStringBuilder(this).append(getOutputType()).toString();
     }
 
     /**

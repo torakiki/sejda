@@ -29,10 +29,14 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Model for a page label. <br>
  * Pdf reference 1.7, Chap. 8.3.1
  * 
+ * <p>
+ * This class implements {@link Comparable} to provide ordering based on the physical page number however compareTo implementation is not consistent with equals and two instances
+ * where compareTo returns 0 (same physical page number) might not be equals if compared with the equals method.
+ * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfPageLabel {
+public final class PdfPageLabel implements Comparable<PdfPageLabel> {
 
     @NotNull
     private String labelPrefix;
@@ -165,6 +169,10 @@ public final class PdfPageLabel {
             throw new IllegalArgumentException("Input numbering style cannot be null.");
         }
         return new PdfPageLabel(label, numberingStyle, logicalPageNumber, physicalPageNumber);
+    }
+
+    public int compareTo(PdfPageLabel other) {
+        return this.getPhysicalPageNumber() - other.getPhysicalPageNumber();
     }
 
 }

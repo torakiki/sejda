@@ -49,8 +49,7 @@ public class PdfFileOutput implements PdfOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).append(file)
-                .append(Integer.toHexString(System.identityHashCode(this))).toString();
+        return new ToStringBuilder(this).append(getOutputType()).append(file).toString();
     }
 
     /**
