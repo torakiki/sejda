@@ -13,7 +13,6 @@
 
 	<artifactId>sejda-core</artifactId>
 	<packaging>jar</packaging>
-
 	<name>sejda core</name>
 
 	<build>

@@ -57,12 +57,12 @@ public final class PdfStreamOutput implements PdfOutput {
      * 
      * @param stream
      * @return the newly created instance
-     * @throws NullPointerException
+     * @throws IllegalArgumentException
      *             if the input stream is null
      */
     public static PdfStreamOutput newInstance(OutputStream stream) {
         if (stream == null) {
-            throw new NullPointerException("A not null stream instance is expected.");
+            throw new IllegalArgumentException("A not null stream instance is expected.");
         }
         return new PdfStreamOutput(stream);
     }

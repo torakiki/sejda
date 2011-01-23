@@ -18,7 +18,6 @@
 package org.sejda.core.manipulation.model.output;
 
 import java.io.File;
-import java.security.InvalidParameterException;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.validation.constraint.PdfFile;
@@ -59,12 +58,12 @@ public class PdfFileOutput implements PdfOutput {
      * 
      * @param file
      * @return the newly created instance
-     * @throws InvalidParameterException
+     * @throws IllegalArgumentException
      *             if the input file is null or not a file
      */
     public static PdfFileOutput newInstance(File file) {
         if (file == null || !file.isFile()) {
-            throw new InvalidParameterException("A not null file instance is expected.");
+            throw new IllegalArgumentException("A valid instance is expected (not null && isFile).");
         }
         return new PdfFileOutput(file, OutputType.FILE_OUTPUT);
     }

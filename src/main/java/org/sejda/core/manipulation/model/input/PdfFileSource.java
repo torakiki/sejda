@@ -54,7 +54,7 @@ public final class PdfFileSource extends PdfSource {
      * @return a newly created instance
      */
     public static PdfFileSource newInstanceNoPassword(File file) {
-        return new PdfFileSource(file, null);
+        return PdfFileSource.newInstanceWithPassword(file, null);
     }
 
     /**
@@ -66,6 +66,9 @@ public final class PdfFileSource extends PdfSource {
      * @return a newly created instance
      */
     public static PdfFileSource newInstanceWithPassword(File file, String password) {
+        if (file == null || !file.isFile()) {
+            throw new IllegalArgumentException("A not null File instance that isFile is expected.");
+        }
         return new PdfFileSource(file, password);
     }
 }

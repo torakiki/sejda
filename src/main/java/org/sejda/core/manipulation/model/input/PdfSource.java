@@ -35,10 +35,28 @@ public abstract class PdfSource {
     @NotEmpty
     private final String name;
 
+    /**
+     * Creates a source with the given name.
+     * 
+     * @param name
+     * @throws IllegalArgumentException
+     *             if the name is blank
+     */
     PdfSource(String name) {
+        if (StringUtils.isBlank(name)) {
+            throw new IllegalArgumentException("A not blank name are expected.");
+        }
         this.name = name;
     }
 
+    /**
+     * Creates a source with the given name and password.
+     * 
+     * @param name
+     * @param password
+     * @throws IllegalArgumentException
+     *             if the name is blank
+     */
     PdfSource(String name, String password) {
         this(name);
         this.password = password;

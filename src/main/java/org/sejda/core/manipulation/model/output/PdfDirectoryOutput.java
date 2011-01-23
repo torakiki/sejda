@@ -18,7 +18,6 @@
 package org.sejda.core.manipulation.model.output;
 
 import java.io.File;
-import java.security.InvalidParameterException;
 
 /**
  * Directory output destination
@@ -41,12 +40,12 @@ public final class PdfDirectoryOutput extends PdfFileOutput {
      * 
      * @param file
      * @return the newly created instance
-     * @throws InvalidParameterException
+     * @throws IllegalArgumentException
      *             if the input file is null or not a directory
      */
     public static PdfDirectoryOutput newInstance(File file) {
         if (file == null || !file.isDirectory()) {
-            throw new InvalidParameterException("A not null directory instance is expected.");
+            throw new IllegalArgumentException("A not null directory instance is expected.");
         }
         return new PdfDirectoryOutput(file, OutputType.DIRECTORY_OUTPUT);
     }

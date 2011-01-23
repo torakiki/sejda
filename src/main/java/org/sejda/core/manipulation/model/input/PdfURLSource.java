@@ -34,7 +34,6 @@ public final class PdfURLSource extends PdfSource {
     @NotNull
     private final URL url;
 
-
     private PdfURLSource(URL url, String name, String password) {
         super(name, password);
         this.url = url;
@@ -63,7 +62,7 @@ public final class PdfURLSource extends PdfSource {
      * @return a newly created instance
      */
     public static PdfURLSource newInstanceNoPassword(URL url, String name) {
-        return new PdfURLSource(url, name, null);
+        return PdfURLSource.newInstanceWithPassword(url, name, null);
     }
 
     /**
@@ -74,8 +73,13 @@ public final class PdfURLSource extends PdfSource {
      * @param name
      * @param password
      * @return a newly created instance
+     * @throws IllegalArgumentException
+     *             if the input stream or the input name are blank.
      */
     public static PdfURLSource newInstanceWithPassword(URL url, String name, String password) {
+        if (url == null) {
+            throw new IllegalArgumentException("A not null url instance and a not blank name are expected.");
+        }
         return new PdfURLSource(url, name, password);
     }
 }

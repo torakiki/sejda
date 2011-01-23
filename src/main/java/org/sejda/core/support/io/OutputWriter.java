@@ -29,10 +29,10 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.support.io.model.Destination;
 import org.slf4j.Logger;
@@ -115,11 +115,9 @@ final class OutputWriter {
     private static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
             throws TaskIOException {
         if (outputDirectory.isDirectory()) {
-            if (!outputDirectory.exists()) {
-                if (!outputDirectory.mkdirs()) {
-                    throw new TaskIOException(String.format("Unable to make destination directory tree %s.",
-                            outputDirectory));
-                }
+            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                throw new TaskIOException(String.format("Unable to make destination directory tree %s.",
+                        outputDirectory));
             }
             for (Entry<String, File> entry : files.entrySet()) {
                 copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);

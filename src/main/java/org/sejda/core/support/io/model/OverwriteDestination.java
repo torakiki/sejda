@@ -41,7 +41,7 @@ public interface OverwriteDestination {
      * @author Andrea Vacondio
      * 
      */
-    public static interface OverwriteFileDestination extends OverwriteDestination {
+    interface OverwriteFileDestination extends OverwriteDestination {
 
         /**
          * set to overwrite or not the output file destination if already exists

@@ -55,7 +55,7 @@ public final class PdfStreamSource extends PdfSource {
      * @return a newly created instance
      */
     public static PdfStreamSource newInstanceNoPassword(InputStream stream, String name) {
-        return new PdfStreamSource(stream, name, null);
+        return PdfStreamSource.newInstanceWithPassword(stream, name, null);
     }
 
     /**
@@ -66,8 +66,13 @@ public final class PdfStreamSource extends PdfSource {
      * @param name
      * @param password
      * @return a newly created instance
+     * @throws IllegalArgumentException
+     *             if the input stream or the input name are blank.
      */
     public static PdfStreamSource newInstanceWithPassword(InputStream stream, String name, String password) {
+        if (stream == null) {
+            throw new IllegalArgumentException("A not null stream instance and a not blank name are expected.");
+        }
         return new PdfStreamSource(stream, name, password);
     }
 }

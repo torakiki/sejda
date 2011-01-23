@@ -61,6 +61,7 @@ public class OutputWriterTest {
         OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
         assertFalse("temporary file not deleted", tempFile.exists());
     }
+
     @Test
     public void testExecuteCopyStream() throws TaskIOException, IOException {
         Map<String, File> files = new HashMap<String, File>();
@@ -76,8 +77,8 @@ public class OutputWriterTest {
         Map<String, File> files = new HashMap<String, File>();
 
         File outFile = mock(File.class);
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
@@ -93,6 +94,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
+        when(outFile.isFile()).thenReturn(Boolean.TRUE);
         PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
 
@@ -103,17 +105,17 @@ public class OutputWriterTest {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
         }
     }
-    
+
     @Test
     public void testExecuteCopyFailsOverwrite() {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
-        
+        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
+
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(false));
             fail("Exception expected");
@@ -121,13 +123,14 @@ public class OutputWriterTest {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to overwrite the"));
         }
     }
-    
+
     @Test
     public void testExecuteCopyFailsDirectoryType() {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
+        when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
         PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
         when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
 
@@ -138,17 +141,17 @@ public class OutputWriterTest {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
         }
     }
-    
+
     @Test
     public void testExecuteCopyFailsDirectoryMkdirs() {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
         File outFile = mock(File.class);
-        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
         when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.FALSE);
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
+        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));

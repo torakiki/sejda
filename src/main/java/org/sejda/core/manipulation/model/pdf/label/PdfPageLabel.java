@@ -98,6 +98,8 @@ public final class PdfPageLabel {
      * @return the newly created instance
      * @throws InvalidParameterException
      *             if the input page number is not positive
+     * @throws NullPointerException
+     *             if the input numbering style is null
      */
     public static PdfPageLabel newInstance(PdfLabelNumberingStyle numberingStyle, int physicalPageNumber) {
         return PdfPageLabel.newInstanceWithLabelAndLogicalNumber("", numberingStyle, physicalPageNumber,
@@ -113,6 +115,8 @@ public final class PdfPageLabel {
      * @return the newly created instance
      * @throws InvalidParameterException
      *             if the input physical or logical page number is not positive
+     * @throws NullPointerException
+     *             if the input numbering style is null
      */
     public static PdfPageLabel newInstanceWithLogicalNumber(PdfLabelNumberingStyle numberingStyle,
             int physicalPageNumber, int logicalPageNumber) {
@@ -130,7 +134,7 @@ public final class PdfPageLabel {
      * @throws InvalidParameterException
      *             if the input physical or logical page number is not positive
      * @throws NullPointerException
-     *             if the input label is null
+     *             if the input label or numbering style are null
      */
     public static PdfPageLabel newInstanceWithLabel(String label, PdfLabelNumberingStyle numberingStyle,
             int physicalPageNumber) {
@@ -147,9 +151,7 @@ public final class PdfPageLabel {
      * @param logicalPageNumber
      * @return the newly created instance
      * @throws InvalidParameterException
-     *             if the input physical or logical page number is not positive
-     * @throws NullPointerException
-     *             if the input label is null
+     *             if the input physical or logical page number is not positive. if the input label or numbering style are null.
      */
     public static PdfPageLabel newInstanceWithLabelAndLogicalNumber(String label,
             PdfLabelNumberingStyle numberingStyle, int physicalPageNumber, int logicalPageNumber) {
@@ -157,7 +159,10 @@ public final class PdfPageLabel {
             throw new InvalidParameterException("Input page number must be positive.");
         }
         if (label == null) {
-            throw new NullPointerException("Input label cannot be null.");
+            throw new IllegalArgumentException("Input label cannot be null.");
+        }
+        if (numberingStyle == null) {
+            throw new IllegalArgumentException("Input numbering style cannot be null.");
         }
         return new PdfPageLabel(label, numberingStyle, logicalPageNumber, physicalPageNumber);
     }

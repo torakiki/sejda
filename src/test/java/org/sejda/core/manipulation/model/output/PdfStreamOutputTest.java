@@ -1,6 +1,5 @@
 /*
- * Created on 04/giu/2010
- *
+ * Created on 23/gen/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -15,37 +14,30 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.io.model;
+package org.sejda.core.manipulation.model.output;
 
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import java.io.OutputStream;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
- * Destination where the output will be written
- * 
  * @author Andrea Vacondio
- * 
+ *
  */
-public interface Destination {
+public class PdfStreamOutputTest {
 
-    /**
-     * @return the {@link PdfOutput} where the input will be written to
-     */
-    PdfOutput getOutputDestination();
-
-    /**
-     * @return true if the destination should be overwritten if already exists
-     */
-    boolean isOverwrite();
-
-    /**
-     * DSL interface for a file destination
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    interface FileDestination extends Destination {
-
-        // on purpose
+    @Test(expected = IllegalArgumentException.class)
+    public void testNullStream() {
+        PdfStreamOutput.newInstance(null);
     }
 
+    @Test
+    public void testValidStream() {
+        OutputStream stream = mock(OutputStream.class);
+        PdfStreamOutput instance = PdfStreamOutput.newInstance(stream);
+        assertNotNull(instance);
+    }
 }
