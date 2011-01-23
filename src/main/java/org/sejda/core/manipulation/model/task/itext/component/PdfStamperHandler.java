@@ -44,7 +44,7 @@ import com.lowagie.text.pdf.PdfStream;
  * @author Andrea Vacondio
  * 
  */
-public class PdfStamperHandler {
+public final class PdfStamperHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfStamperHandler.class);
 

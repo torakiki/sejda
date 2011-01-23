@@ -30,6 +30,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BadPdfFormatException;
 import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStream;
 
@@ -97,6 +98,18 @@ public class PdfCopyHandler {
     }
 
     /**
+     * Adds to the {@link PdfCopy} all the pages from the input reader
+     * 
+     * @param reader
+     * @throws TaskException
+     */
+    public void addAllPages(PdfReader reader) throws TaskException {
+        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+            addPage(reader, i);
+        }
+    }
+
+    /**
      * Enables compression if compress is true
      * 
      * @param compress
@@ -108,12 +121,27 @@ public class PdfCopyHandler {
         }
     }
 
+    /**
+     * Frees the reader on the underlying pdf copy.
+     * 
+     * @param reader
+     * @throws TaskIOException
+     */
     public void freeReader(PdfReader reader) throws TaskIOException {
         try {
             pdfCopy.freeReader(reader);
         } catch (IOException e) {
             throw new TaskIOException("An IO error occurred adding page %d to the PdfCopy.", e);
         }
+    }
+
+    /**
+     * sets the input page labels to the underlying pdf copy.
+     * 
+     * @param labels
+     */
+    public void setPageLabels(PdfPageLabels labels) {
+        pdfCopy.setPageLabels(labels);
     }
 
     /**

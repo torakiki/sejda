@@ -1,6 +1,5 @@
 /*
- * Created on 09/lug/2010
- *
+ * Created on 23/gen/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -18,75 +17,69 @@
 package org.sejda.core.manipulation.model.task.itext;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
+import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
+import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 /**
- * Task setting metadata on an input {@link PdfSource}.
+ * Task that apply page labels to a input pdf.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SetMetadataTask extends SingleOutputWriterSupport implements Task<SetMetadataParameters> {
+public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task<SetPagesLabelParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelParameters.class);
 
     private PdfReader reader = null;
-    private PdfStamperHandler stamperHandler = null;
+    private PdfCopyHandler copyHandler = null;
 
-    public void before(SetMetadataParameters parameters) throws TaskException {
+    public void before(SetPagesLabelParameters parameters) throws TaskException {
         // nothing to do
     }
 
-    public void execute(SetMetadataParameters parameters) throws TaskException {
+    public void execute(SetPagesLabelParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
         reader = openReader(source);
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
-        stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-        stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
+        copyHandler = new PdfCopyHandler(reader, tmpFile, parameters.getVersion());
+        copyHandler.setCompressionOnCopier(parameters.isCompressXref());
 
-        LOG.debug("Setting metadata on temporary document.");
-        @SuppressWarnings("unchecked")
-        HashMap<String, String> actualMeta = reader.getInfo();
-        for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
-            actualMeta.put(meta.getKey().getKey(), meta.getValue());
-        }
-        stamperHandler.setMetadataOnStamper(actualMeta);
+        copyHandler.addAllPages(reader);
 
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+
+        LOG.debug("Applying labels {} ...");
+        copyHandler.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
+
+        nullSafeClosePdfCopyHandler(copyHandler);
 
         flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
-
-        LOG.debug("Metadata set on {}", parameters.getOutput());
-
+        LOG.debug("Labels applied to {}", parameters.getOutput());
     }
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClosePdfCopyHandler(copyHandler);
     }
 
 }

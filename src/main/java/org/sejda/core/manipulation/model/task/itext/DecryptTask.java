@@ -65,7 +65,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
             reader = openReader(source, true);
 
             File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());

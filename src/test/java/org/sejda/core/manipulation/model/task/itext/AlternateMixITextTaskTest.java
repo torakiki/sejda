@@ -1,3 +1,4 @@
+package org.sejda.core.manipulation.model.task.itext;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.AlternateMixTask;

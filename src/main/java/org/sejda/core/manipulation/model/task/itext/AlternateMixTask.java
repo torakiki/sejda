@@ -60,7 +60,7 @@ public class AlternateMixTask extends SingleOutputWriterSupport implements Task<
         secondReader = openReader(parameters.getSecondInput().getSource());
 
         File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
         copyHandler = new PdfCopyHandler(firstReader, tmpFile, parameters.getVersion());
 
         copyHandler.setCompressionOnCopier(parameters.isCompressXref());

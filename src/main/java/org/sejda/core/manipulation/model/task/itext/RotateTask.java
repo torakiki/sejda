@@ -67,10 +67,11 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             LOG.debug("Opening {} ...", source);
             reader = openReader(source, true);
 
+            LOG.debug("Aplpying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(reader);
 
             File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());

@@ -73,7 +73,7 @@ public class EncryptTask extends MultipleOutputWriterSupport implements Task<Enc
             reader = openReader(source, true);
 
             File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
