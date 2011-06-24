@@ -1,0 +1,5 @@
+
+syntax: regexp
+^target$
+syntax: glob
+target/**
