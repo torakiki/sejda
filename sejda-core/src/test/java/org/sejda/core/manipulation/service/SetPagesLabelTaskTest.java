@@ -52,7 +52,7 @@ public abstract class SetPagesLabelTaskTest extends PdfOutEnabledTest implements
     private SetPagesLabelParameters parameters;
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

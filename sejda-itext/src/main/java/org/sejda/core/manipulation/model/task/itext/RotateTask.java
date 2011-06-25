@@ -29,7 +29,6 @@ import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequ
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
@@ -55,7 +54,7 @@ public class RotateTask implements Task<RotateParameters> {
     private int totalSteps;
     private MultipleOutputWriterSupport outputWriter;
 
-    public void before(RotateParameters parameters) throws TaskExecutionException {
+    public void before(RotateParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
     }

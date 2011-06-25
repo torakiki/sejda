@@ -54,7 +54,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     private SetMetadataParameters parameters = new SetMetadataParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

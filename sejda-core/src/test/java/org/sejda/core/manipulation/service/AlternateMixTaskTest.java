@@ -51,7 +51,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
     private AlternateMixParameters parameters;
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

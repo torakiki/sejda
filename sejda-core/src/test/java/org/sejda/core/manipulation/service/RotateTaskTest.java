@@ -55,7 +55,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
     private RotateParameters parameters = new RotateParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

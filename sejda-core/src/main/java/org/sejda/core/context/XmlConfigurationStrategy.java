@@ -133,13 +133,11 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
             }
             if (assignableInterface.isAssignableFrom(clazz)) {
                 return clazz.asSubclass(assignableInterface);
-            } else {
-                throw new ConfigurationException(String.format("The configured class %s is not a subtype of %s", clazz,
-                        assignableInterface));
             }
-        } else {
-            throw new ConfigurationException(String.format("Missing %s configuration parameter.", xpath));
+            throw new ConfigurationException(String.format("The configured class %s is not a subtype of %s", clazz,
+                    assignableInterface));
         }
+        throw new ConfigurationException(String.format("Missing %s configuration parameter.", xpath));
     }
 
     /**

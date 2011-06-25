@@ -17,6 +17,12 @@
  */
 package org.sejda.core.support.io;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,10 +36,6 @@ import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.support.io.model.OutputDestination;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the {@link OutputWriter}
@@ -63,7 +65,7 @@ public class OutputWriterTest {
     }
 
     @Test
-    public void testExecuteCopyStream() throws TaskIOException, IOException {
+    public void testExecuteCopyStream() throws TaskIOException {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 

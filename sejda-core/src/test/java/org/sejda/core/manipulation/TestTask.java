@@ -18,31 +18,27 @@
 package org.sejda.core.manipulation;
 
 import org.junit.Ignore;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.task.Task;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 @Ignore
 public class TestTask implements Task<TestTaskParameter> {
 
-    
     public void after() {
         // TODO Auto-generated method stub
-        
+
     }
 
-    
-    public void before(TestTaskParameter parameters) throws TaskExecutionException {
+    public void before(TestTaskParameter parameters) {
         // TODO Auto-generated method stub
     }
 
- 
-    public void execute(TestTaskParameter parameters) throws TaskExecutionException {
+    public void execute(TestTaskParameter parameters) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

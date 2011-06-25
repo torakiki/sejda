@@ -53,7 +53,7 @@ public class DecryptTask implements Task<DecryptParameters> {
     private int totalSteps;
     private MultipleOutputWriterSupport outputWriter;
 
-    public void before(DecryptParameters parameters) throws TaskException {
+    public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size() + 1;
         outputWriter = new MultipleOutputWriterSupport();
     }

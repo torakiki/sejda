@@ -55,7 +55,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
     private EncryptParameters parameters = new EncryptParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

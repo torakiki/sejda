@@ -58,7 +58,7 @@ public class EncryptTask implements Task<EncryptParameters> {
     private int permissions = 0;
     private MultipleOutputWriterSupport outputWriter;
 
-    public void before(EncryptParameters parameters) throws TaskException {
+    public void before(EncryptParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         for (PdfAccessPermission permission : parameters.getPermissions()) {

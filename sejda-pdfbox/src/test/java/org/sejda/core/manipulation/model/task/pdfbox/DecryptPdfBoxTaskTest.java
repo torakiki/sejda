@@ -19,7 +19,6 @@ package org.sejda.core.manipulation.model.task.pdfbox;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
@@ -27,12 +26,12 @@ import org.sejda.core.manipulation.service.DecryptTaskTest;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class DecryptPdfBoxTaskTest extends DecryptTaskTest {
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         super.setUp();
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");

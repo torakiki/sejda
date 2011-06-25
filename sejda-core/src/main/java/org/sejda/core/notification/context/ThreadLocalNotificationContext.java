@@ -31,6 +31,7 @@ public final class ThreadLocalNotificationContext {
     }
 
     private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<SimpleNotificationContext>() {
+        @Override
         protected SimpleNotificationContext initialValue() {
             return new ThreadLocalNotificationContext.SimpleNotificationContext();
         }

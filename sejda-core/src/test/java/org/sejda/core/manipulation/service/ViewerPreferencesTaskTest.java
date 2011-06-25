@@ -61,7 +61,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

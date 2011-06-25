@@ -49,7 +49,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     private PdfCopyHandler copyHandler = null;
     private SingleOutputWriterSupport outputWriter;
 
-    public void before(AlternateMixParameters parameters) throws TaskException {
+    public void before(AlternateMixParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
     }
 

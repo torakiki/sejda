@@ -60,7 +60,7 @@ public class DefaultTaskExecutionServiceTest {
     }
 
     @Test
-    public void testExecute() throws TaskException, NotificationContextException {
+    public void testExecute() throws NotificationContextException {
         TestListenerStart listener = TestListenerFactory.newStartListener();
         GlobalNotificationContext.getContext().addListener(listener);
         victim.execute(parameters);

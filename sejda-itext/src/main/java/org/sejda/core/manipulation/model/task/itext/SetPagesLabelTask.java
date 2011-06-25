@@ -49,7 +49,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
     private PdfCopyHandler copyHandler = null;
     private SingleOutputWriterSupport outputWriter;
 
-    public void before(SetPagesLabelParameters parameters) throws TaskException {
+    public void before(SetPagesLabelParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
     }
 

@@ -52,7 +52,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
     private PdfStamperHandler stamperHandler = null;
     private SingleOutputWriterSupport outputWriter;
 
-    public void before(SetMetadataParameters parameters) throws TaskException {
+    public void before(SetMetadataParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
     }
 

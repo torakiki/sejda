@@ -50,7 +50,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     private DecryptParameters parameters = new DecryptParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }

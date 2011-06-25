@@ -32,7 +32,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
@@ -65,7 +64,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
     private Map<PdfName, PdfObject> configuredPreferences;
     private MultipleOutputWriterSupport outputWriter;
 
-    public void before(ViewerPreferencesParameters parameters) throws TaskExecutionException {
+    public void before(ViewerPreferencesParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
