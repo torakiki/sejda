@@ -19,6 +19,8 @@ package org.sejda.core.notification;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.sejda.core.TestListenerFactory.newPercentageListener;
+import static org.sejda.core.TestListenerFactory.newStartListener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sejda.core.TestListenerFactory.TestListenerPercentage;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.NotificationContext;
@@ -49,6 +52,8 @@ public class NotificationContextTest {
     @Test
     public void testAddAndClear() throws NotificationContextException {
         for (NotificationContext victim : contexts) {
+            victim.clearListeners();
+            assertEquals(0, victim.size());
             testNotificationContextAddListener(victim);
             testNotificationContextClear(victim);
         }
@@ -62,7 +67,7 @@ public class NotificationContextTest {
     }
 
     private void testNotificationContextNotify(NotificationContext victim) throws NotificationContextException {
-        TestListenerPercentage listener = new TestListenerPercentage();
+        TestListenerPercentage listener = newPercentageListener();
         victim.addListener(listener);
         BigDecimal value = new BigDecimal("32");
         PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(value);
@@ -72,9 +77,9 @@ public class NotificationContextTest {
     }
 
     private void testNotificationContextAddListener(NotificationContext victim) throws NotificationContextException {
-        victim.addListener(new TestListenerPercentage());
+        victim.addListener(newStartListener());
         assertEquals(1, victim.size());
-        victim.addListener(new ChildTestListenerPercentage());
+        victim.addListener(newPercentageListener());
         assertEquals(2, victim.size());
     }
 

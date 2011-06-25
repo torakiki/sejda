@@ -16,7 +16,7 @@
 		<module>../sejda-itext</module>
 		<module>../sejda-pdfbox</module>
 	</modules>
-	
+
 	<issueManagement>
 		<system>MantisBT</system>
 		<url>http://sourceforge.net/apps/mantisbt/sejda/</url>
@@ -80,6 +80,7 @@
 		<validation.api.version>1.0.0.GA</validation.api.version>
 		<mockito.version>1.8.5</mockito.version>
 		<itextpdf.version>5.0.5</itextpdf.version>
+		<logback.version>0.9.29</logback.version>
 	</properties>
 
 	<repositories>
@@ -148,9 +149,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>[${slf4j.version},]</version>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>[${logback.version},]</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -169,6 +170,6 @@
 			<artifactId>itextpdf</artifactId>
 			<version>${itextpdf.version}</version>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>
 	</dependencies>
 </project>

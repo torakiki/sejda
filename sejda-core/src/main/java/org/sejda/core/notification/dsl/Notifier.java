@@ -37,8 +37,11 @@ public interface Notifier {
 
     /**
      * Notifies about a completed task
+     * 
+     * @param the
+     *            number of millis from the task to complete
      */
-    void taskCompleted();
+    void taskCompleted(long executionTime);
 
     /**
      * Notifies about a started task

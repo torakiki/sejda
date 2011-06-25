@@ -17,7 +17,6 @@
  */
 package org.sejda.core.notification.context;
 
-
 /**
  * Local notification context factory. Contains methods to return the {@link NotificationContext} binded to the local thread. Registered listeners on a particular event will be
  * notified about events of that type thrown by tasks executed by the current thread.
@@ -33,7 +32,7 @@ public final class ThreadLocalNotificationContext {
 
     private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<SimpleNotificationContext>() {
         protected SimpleNotificationContext initialValue() {
-            return new SimpleNotificationContext();
+            return new ThreadLocalNotificationContext.SimpleNotificationContext();
         }
     };
 
@@ -41,4 +40,17 @@ public final class ThreadLocalNotificationContext {
         return threadLocal.get();
     }
 
+    /**
+     * Simple notification context holding a list of listeners as instance attribute.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static class SimpleNotificationContext extends AbstractNotificationContext {
+
+        SimpleNotificationContext() {
+            super(new SimpleEventListenerHoldingStrategy());
+        }
+
+    }
 }

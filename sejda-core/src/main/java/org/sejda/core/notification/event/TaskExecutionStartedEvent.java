@@ -1,5 +1,5 @@
 /*
- * Created on 17/apr/2010
+ * Created on 25/jun/2011
  * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This library is free software; you can redistribute it and/or
@@ -19,33 +19,16 @@
  */
 package org.sejda.core.notification.event;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-
 /**
- * Abstract event that carries the timestamp when it has been created.
+ * Events notified when a task execution starts.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractNotificationEvent implements NotificationEvent, Serializable {
+public class TaskExecutionStartedEvent extends AbstractNotificationEvent {
 
-    private static final long serialVersionUID = 3392179202226082364L;
+    private static final long serialVersionUID = -8143994205216959322L;
 
-    private Long eventTimestamp;
-
-    public AbstractNotificationEvent() {
-        this.eventTimestamp = Long.valueOf(System.currentTimeMillis());
-    }
-
-    public Long getEventTimestamp() {
-        return eventTimestamp;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("eventTimestamp", eventTimestamp).toString();
-    }
+    // define specific properties
 
 }

@@ -25,6 +25,7 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.sejda.core.notification.event.TaskExecutionStartedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,12 +69,12 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
         notifyListeners(new TaskExecutionFailedEvent(e));
     }
 
-    public void taskCompleted() {
-        notifyListeners(new TaskExecutionCompletedEvent());
+    public void taskCompleted(long executionTime) {
+        notifyListeners(new TaskExecutionCompletedEvent(executionTime));
     }
 
     public void taskStarted() {
-        notifyListeners(new PercentageOfWorkDoneChangedEvent());
+        notifyListeners(new TaskExecutionStartedEvent());
     }
 
     public OngoingNotification stepsCompleted(int completed) {
