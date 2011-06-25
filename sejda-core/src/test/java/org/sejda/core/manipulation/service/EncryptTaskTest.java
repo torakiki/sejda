@@ -17,12 +17,18 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
@@ -33,11 +39,6 @@ import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the encrypt task
@@ -56,7 +57,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
     @Before
     public void setUp() throws TaskException {
         setUpParameters();
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
     }
 
     /**

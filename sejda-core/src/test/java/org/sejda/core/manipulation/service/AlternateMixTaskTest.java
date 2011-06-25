@@ -16,12 +16,17 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
@@ -31,10 +36,6 @@ import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * Abstract test unit for the alternate mix task
  * 
@@ -42,8 +43,7 @@ import static org.mockito.Mockito.when;
  * 
  */
 @Ignore
-public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements
-        TestableTask<AlternateMixParameters> {
+public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements TestableTask<AlternateMixParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
@@ -53,7 +53,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements
     @Before
     public void setUp() throws TaskException {
         setUpParameters();
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
     }
 
     /**

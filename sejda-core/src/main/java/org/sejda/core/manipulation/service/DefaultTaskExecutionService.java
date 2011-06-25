@@ -131,14 +131,4 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             task.after();
         }
     }
-
-    // Test purpose
-    /**
-     * @param context
-     *            the context to set
-     */
-    void setContext(TaskExecutionContext context) {
-        this.context = context;
-    }
-
 }

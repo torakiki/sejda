@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
+import org.sejda.core.TestUtils;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
@@ -79,7 +80,7 @@ public class DefaultTaskExecutionServiceTest {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
         PdfOutput output = mock(PdfOutput.class);
         parameters.setOutput(output);
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
         verify(task).before(parameters);
         verify(task).after();
@@ -88,7 +89,7 @@ public class DefaultTaskExecutionServiceTest {
 
     @Test
     public void testNegativeValidationExecution() throws TaskException {
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
         verify(task, never()).before(parameters);
         verify(task, never()).after();
