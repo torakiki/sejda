@@ -16,6 +16,12 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.support.io.model.FileOutput.file;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
@@ -29,28 +35,22 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.support.io.model.FileOutput.file;
-
 /**
  * Task that apply page labels to a input pdf.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task<SetPagesLabelParameters> {
+public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelParameters.class);
 
     private PdfReader reader = null;
     private PdfCopyHandler copyHandler = null;
+    private SingleOutputWriterSupport outputWriter;
 
     public void before(SetPagesLabelParameters parameters) throws TaskException {
-        // nothing to do
+        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
@@ -58,7 +58,7 @@ public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task
         LOG.debug("Opening {} ...", source);
         reader = openReader(source);
 
-        File tmpFile = createTemporaryPdfBuffer();
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
         copyHandler = new PdfCopyHandler(reader, tmpFile, parameters.getVersion());
@@ -73,7 +73,8 @@ public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task
 
         nullSafeClosePdfCopyHandler(copyHandler);
 
-        flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+                parameters.isOverwrite());
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }
 

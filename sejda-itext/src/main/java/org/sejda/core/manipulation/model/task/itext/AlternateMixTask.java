@@ -16,6 +16,11 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.support.io.model.FileOutput.file;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
@@ -29,28 +34,23 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.support.io.model.FileOutput.file;
-
 /**
  * iText implementation for the alternate mix task
  * 
  * @author Andrea Vacondio
  * 
  */
-public class AlternateMixTask extends SingleOutputWriterSupport implements Task<AlternateMixParameters> {
+public class AlternateMixTask implements Task<AlternateMixParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
     private PdfReader firstReader = null;
     private PdfReader secondReader = null;
     private PdfCopyHandler copyHandler = null;
+    private SingleOutputWriterSupport outputWriter;
 
     public void before(AlternateMixParameters parameters) throws TaskException {
-        // nothing to do
+        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
@@ -59,7 +59,7 @@ public class AlternateMixTask extends SingleOutputWriterSupport implements Task<
         LOG.debug("Opening second input {} ...", parameters.getSecondInput().getSource());
         secondReader = openReader(parameters.getSecondInput().getSource());
 
-        File tmpFile = createTemporaryPdfBuffer();
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
         copyHandler = new PdfCopyHandler(firstReader, tmpFile, parameters.getVersion());
 
@@ -81,7 +81,7 @@ public class AlternateMixTask extends SingleOutputWriterSupport implements Task<
 
         closeResources();
 
-        flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
+        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
 
         LOG.debug("Alternate mix with step first document {} and step second document {} completed.", parameters

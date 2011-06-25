@@ -17,6 +17,16 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getAccessPermission;
+import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getEncryptionAlgorithm;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
@@ -32,23 +42,13 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getAccessPermission;
-import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getEncryptionAlgorithm;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 /**
  * Perform encryption of the input {@link PdfSource} list using input parameters.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class EncryptTask extends MultipleOutputWriterSupport implements Task<EncryptParameters> {
+public class EncryptTask implements Task<EncryptParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EncryptTask.class);
 
@@ -56,14 +56,15 @@ public class EncryptTask extends MultipleOutputWriterSupport implements Task<Enc
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
     private int permissions = 0;
+    private MultipleOutputWriterSupport outputWriter;
 
     public void before(EncryptParameters parameters) throws TaskException {
+        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         for (PdfAccessPermission permission : parameters.getPermissions()) {
             permissions |= getAccessPermission(permission);
         }
     }
-
 
     public void execute(EncryptParameters parameters) throws TaskException {
         int currentStep = 0;
@@ -72,7 +73,7 @@ public class EncryptTask extends MultipleOutputWriterSupport implements Task<Enc
             LOG.debug("Opening {} ...", source);
             reader = openReader(source, true);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
@@ -85,18 +86,17 @@ public class EncryptTask extends MultipleOutputWriterSupport implements Task<Enc
             nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
         LOG.debug("Input documents encrypted and written to {}", parameters.getOutput());
         LOG.debug("Permissions {}", PdfEncryptor.getPermissionsVerbose(permissions));
     }
-
 
     public void after() {
         nullSafeClosePdfReader(reader);

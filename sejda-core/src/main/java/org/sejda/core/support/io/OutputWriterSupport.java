@@ -17,20 +17,20 @@
  */
 package org.sejda.core.support.io;
 
+import static org.sejda.core.support.io.model.OutputDestination.destination;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
 import org.sejda.core.support.io.model.Destination;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-
-import static org.sejda.core.support.io.model.OutputDestination.destination;
 
 /**
  * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.
@@ -98,7 +98,7 @@ class OutputWriterSupport {
      * @return a temporary pdf file
      * @throws TaskIOException
      */
-    public static File createTemporaryPdfBuffer() throws TaskIOException {
+    public File createTemporaryPdfBuffer() throws TaskIOException {
         try {
             return File.createTempFile(BUFFER_NAME, ".pdf");
         } catch (IOException e) {

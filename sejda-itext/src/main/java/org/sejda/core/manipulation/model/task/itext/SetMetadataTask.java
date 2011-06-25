@@ -17,6 +17,11 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.support.io.model.FileOutput.file;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -33,27 +38,22 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.support.io.model.FileOutput.file;
-
 /**
  * Task setting metadata on an input {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SetMetadataTask extends SingleOutputWriterSupport implements Task<SetMetadataParameters> {
+public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
+    private SingleOutputWriterSupport outputWriter;
 
     public void before(SetMetadataParameters parameters) throws TaskException {
-        // nothing to do
+        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
@@ -61,7 +61,7 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         LOG.debug("Opening {} ...", source);
         reader = openReader(source);
 
-        File tmpFile = createTemporaryPdfBuffer();
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
@@ -78,7 +78,8 @@ public class SetMetadataTask extends SingleOutputWriterSupport implements Task<S
         nullSafeClosePdfReader(reader);
         nullSafeClosePdfStamperHandler(stamperHandler);
 
-        flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+                parameters.isOverwrite());
 
         LOG.debug("Metadata set on {}", parameters.getOutput());
 
