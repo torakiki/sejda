@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
@@ -70,12 +71,16 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
         PdfMixProcessStatus secondDocStatus = new PdfMixProcessStatus(parameters.getSecondInput(),
                 secondReader.getNumberOfPages());
 
+        int currentStep = 0;
+        int totalSteps = firstReader.getNumberOfPages() + secondReader.getNumberOfPages();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < parameters.getFirstInput().getStep() && firstDocStatus.hasNextPage(); i++) {
                 copyHandler.addPage(firstReader, firstDocStatus.nextPage());
+                notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < parameters.getSecondInput().getStep() && secondDocStatus.hasNextPage(); i++) {
                 copyHandler.addPage(secondReader, secondDocStatus.nextPage());
+                notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
 
