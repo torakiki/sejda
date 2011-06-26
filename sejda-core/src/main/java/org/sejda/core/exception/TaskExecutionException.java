@@ -18,7 +18,7 @@
 package org.sejda.core.exception;
 
 /**
- * Exception in the task execution process
+ * Exception in the task execution process.
  * 
  * @author Andrea Vacondio
  * 

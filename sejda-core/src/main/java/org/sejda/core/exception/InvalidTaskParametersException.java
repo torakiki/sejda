@@ -18,7 +18,7 @@
 package org.sejda.core.exception;
 
 /**
- * Exception thrown after validation of the task parameters if the validation fails
+ * Exception thrown after validation of the task parameters if the validation fails.
  * 
  * @author Andrea Vacondio
  * 
