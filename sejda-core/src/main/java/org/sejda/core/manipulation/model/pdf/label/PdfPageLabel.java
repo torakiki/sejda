@@ -84,6 +84,9 @@ public final class PdfPageLabel implements Comparable<PdfPageLabel> {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof PdfPageLabel)) {
             return false;
         }
