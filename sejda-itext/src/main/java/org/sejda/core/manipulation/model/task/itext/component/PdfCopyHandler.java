@@ -29,25 +29,25 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BadPdfFormatException;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSmartCopy;
 import com.lowagie.text.pdf.PdfStream;
 
 /**
- * Component responsible for handling operations related to a {@link PdfCopy} instance.
+ * Component responsible for handling operations related to a {@link PdfSmartCopy} instance.
  * 
  * @author Andrea Vacondio
  * 
  */
 public class PdfCopyHandler {
 
-    private PdfCopy pdfCopy = null;
+    private PdfSmartCopy pdfCopy = null;
     private FileOutputStream ouputStream = null;
     private Document pdfDocument = null;
 
     /**
-     * Creates a new instance initializing the inner {@link PdfCopy} instance.
+     * Creates a new instance initializing the inner {@link PdfSmartCopy} instance.
      * 
      * @param reader
      *            input reader
@@ -63,10 +63,10 @@ public class PdfCopyHandler {
             ouputStream = new FileOutputStream(ouputFile);
             pdfDocument = new Document(reader.getPageSizeWithRotation(1));
             if (version == null) {
-                pdfCopy = new PdfCopy(pdfDocument, ouputStream);
+                pdfCopy = new PdfSmartCopy(pdfDocument, ouputStream);
                 pdfCopy.setPdfVersion(reader.getPdfVersion());
             } else {
-                pdfCopy = new PdfCopy(pdfDocument, ouputStream);
+                pdfCopy = new PdfSmartCopy(pdfDocument, ouputStream);
                 pdfCopy.setPdfVersion(version.getVersionAsCharacter());
             }
             pdfDocument.addCreator(Sejda.CREATOR);
@@ -79,7 +79,7 @@ public class PdfCopyHandler {
     }
 
     /**
-     * Adds to the {@link PdfCopy} the given page extracted from the input reader
+     * Adds to the {@link PdfSmartCopy} the given page extracted from the input reader
      * 
      * @param reader
      * @param pageNumber
@@ -98,7 +98,7 @@ public class PdfCopyHandler {
     }
 
     /**
-     * Adds to the {@link PdfCopy} all the pages from the input reader
+     * Adds to the {@link PdfSmartCopy} all the pages from the input reader
      * 
      * @param reader
      * @throws TaskException
