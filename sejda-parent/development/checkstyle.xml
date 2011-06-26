@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: sejda
+    Checkstyle-Configuration: Sejda
     Description: none
 -->
 <module name="Checker">
@@ -121,4 +121,7 @@
   </module>
   <module name="SuppressionCommentFilter"/>
   <module name="FileLength"/>
+  <module name="SuppressionFilter">
+    <property name="file" value="/media/LACIE/sejda-repo/sejda/sejda-parent/development/suppression.xml"/>
+  </module>
 </module>
