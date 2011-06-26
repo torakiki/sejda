@@ -24,16 +24,16 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
  * Provides support methods to write multiple output {@link PdfOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task and
- * write them to the destination when the task requires to flush. An extending class can call the {@link MultipleOutputSupport} interface methods to add temporary files or flush
- * them.
+ * write them to the destination when the task requires to flush.
  * 
  * <pre>
  * {@code
- * addOutput(file(tmpFile).name("newName"));
+ * MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
+ * outputWriter.addOutput(file(tmpFile).name("newName"));
  * ....
  * AbstractPdfOutput output = ...
  * boolean overwrite = ...
- * flushOutputs(output, overwrite);
+ * outputWriter.flushOutputs(output, overwrite);
  * }
  * </pre>
  * 

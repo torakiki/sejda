@@ -26,11 +26,12 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
  * 
  * <pre>
  * {@code
- * multipleOutputs().add(file(tmpFile).name("newName"));
+ * MultipleOutputSupport outputWriter = ....
+ * outputWriter.addOutput(file(tmpFile).name("newName"));
  * ....
  * AbstractPdfOutput output = ...
  * boolean overwrite = ...
- * multipleOutputs().flushOutputs(output, overwrite);
+ * outputWriter.flushOutputs(output, overwrite);
  * }
  * </pre>
  * 
