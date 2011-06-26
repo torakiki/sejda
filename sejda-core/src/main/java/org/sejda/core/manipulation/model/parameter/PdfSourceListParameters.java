@@ -70,6 +70,9 @@ public class PdfSourceListParameters extends AbstractParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof PdfSourceListParameters)) {
             return false;
         }

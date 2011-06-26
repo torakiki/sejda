@@ -37,7 +37,6 @@ public final class PageRotation {
     @NotNull
     private final RotationType rotationType;
 
-
     private PageRotation(int pageNumber, Rotation rotation, RotationType rotationType) {
         this.pageNumber = pageNumber;
         this.rotation = rotation;
@@ -96,6 +95,9 @@ public final class PageRotation {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof PageRotation)) {
             return false;
         }
