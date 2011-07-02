@@ -17,20 +17,22 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
+import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 
 import com.lowagie.text.pdf.PdfName;
-
-import static org.junit.Assert.assertEquals;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class ViewerPreferencesUtilsTest {
 
@@ -64,16 +66,26 @@ public class ViewerPreferencesUtilsTest {
 
     @Test
     public void testGetBooleanPref() {
-        assertEquals(PdfName.CENTERWINDOW, ViewerPreferencesUtils
-                .getBooleanPreference(PdfBooleanPreference.CENTER_WINDOW));
-        assertEquals(PdfName.DISPLAYDOCTITLE, ViewerPreferencesUtils
-                .getBooleanPreference(PdfBooleanPreference.DISPLAY_DOC_TITLE));
+        assertEquals(PdfName.CENTERWINDOW,
+                ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.CENTER_WINDOW));
+        assertEquals(PdfName.DISPLAYDOCTITLE,
+                ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.DISPLAY_DOC_TITLE));
         assertEquals(PdfName.FITWINDOW, ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.FIT_WINDOW));
-        assertEquals(PdfName.HIDEMENUBAR, ViewerPreferencesUtils
-                .getBooleanPreference(PdfBooleanPreference.HIDE_MENUBAR));
-        assertEquals(PdfName.HIDETOOLBAR, ViewerPreferencesUtils
-                .getBooleanPreference(PdfBooleanPreference.HIDE_TOOLBAR));
-        assertEquals(PdfName.HIDEWINDOWUI, ViewerPreferencesUtils
-                .getBooleanPreference(PdfBooleanPreference.HIDE_WINDOW_UI));
+        assertEquals(PdfName.HIDEMENUBAR,
+                ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.HIDE_MENUBAR));
+        assertEquals(PdfName.HIDETOOLBAR,
+                ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.HIDE_TOOLBAR));
+        assertEquals(PdfName.HIDEWINDOWUI,
+                ViewerPreferencesUtils.getBooleanPreference(PdfBooleanPreference.HIDE_WINDOW_UI));
+    }
+
+    @Test
+    public void testGetPageMode() {
+        assertEquals(PdfWriter.PageModeFullScreen, ViewerPreferencesUtils.getPageMode(PdfPageMode.FULLSCREEN));
+        assertEquals(PdfWriter.PageModeUseAttachments, ViewerPreferencesUtils.getPageMode(PdfPageMode.USE_ATTACHMENTS));
+        assertEquals(PdfWriter.PageModeUseNone, ViewerPreferencesUtils.getPageMode(PdfPageMode.USE_NONE));
+        assertEquals(PdfWriter.PageModeUseOC, ViewerPreferencesUtils.getPageMode(PdfPageMode.USE_OC));
+        assertEquals(PdfWriter.PageModeUseOutlines, ViewerPreferencesUtils.getPageMode(PdfPageMode.USE_OUTLINES));
+        assertEquals(PdfWriter.PageModeUseThumbs, ViewerPreferencesUtils.getPageMode(PdfPageMode.USE_THUMBS));
     }
 }

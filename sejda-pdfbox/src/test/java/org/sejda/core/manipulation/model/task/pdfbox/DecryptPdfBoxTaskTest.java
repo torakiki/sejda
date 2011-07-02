@@ -30,6 +30,7 @@ import org.sejda.core.manipulation.service.DecryptTaskTest;
  */
 public class DecryptPdfBoxTaskTest extends DecryptTaskTest {
 
+    @Override
     @Before
     public void setUp() {
         super.setUp();

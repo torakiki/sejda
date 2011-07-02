@@ -149,10 +149,30 @@ public final class ViewerPreferencesUtils {
      * Mapping between Sejda and iText boolean preferences constants
      * 
      * @param booleanPref
-     * @return the iText boolean preferencese constant
+     * @return the iText boolean preferences constant
      */
     public static PdfName getBooleanPreference(PdfBooleanPreference booleanPref) {
         return BOOLEAN_PREF_CACHE.get(booleanPref);
+    }
+
+    /**
+     * Mapping between Sejda and iText page mode constants
+     * 
+     * @param mode
+     * @return the iText page mode int
+     */
+    public static int getPageMode(PdfPageMode mode) {
+        return PAGE_MODE_CACHE.get(mode);
+    }
+
+    /**
+     * Mapping between Sejda and iText page layout constants
+     * 
+     * @param layout
+     * @return the iText page layout int
+     */
+    public static int getPageLayout(PdfPageLayout layout) {
+        return LAYOUT_CACHE.get(layout);
     }
 
     /**
@@ -161,6 +181,6 @@ public final class ViewerPreferencesUtils {
      * @return the int representing the ORed layout|mode that can be used to set the vewer preferences in the pdf stamper.
      */
     public static int getViewerPreferences(PdfPageMode mode, PdfPageLayout layout) {
-        return PAGE_MODE_CACHE.get(mode) | LAYOUT_CACHE.get(layout);
+        return getPageMode(mode) | getPageLayout(layout);
     }
 }

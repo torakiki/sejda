@@ -16,9 +16,9 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler.nullSafeClosePdfCopyHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
+import static org.sejda.core.manipulation.model.task.itext.util.PageLabelUtils.getLabels;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
@@ -43,7 +43,7 @@ import com.lowagie.text.pdf.PdfReader;
  */
 public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelParameters.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelTask.class);
 
     private PdfReader reader = null;
     private PdfCopyHandler copyHandler = null;

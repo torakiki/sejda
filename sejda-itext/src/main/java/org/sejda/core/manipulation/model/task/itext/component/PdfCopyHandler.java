@@ -153,4 +153,15 @@ public final class PdfCopyHandler {
         pdfCopy.close();
         IOUtils.closeQuietly(ouputStream);
     }
+
+    /**
+     * Null safe close of the {@link PdfCopyHandler}
+     * 
+     * @param copyHandler
+     */
+    public static void nullSafeClosePdfCopyHandler(PdfCopyHandler copyHandler) {
+        if (copyHandler != null) {
+            copyHandler.closePdfCopier();
+        }
+    }
 }

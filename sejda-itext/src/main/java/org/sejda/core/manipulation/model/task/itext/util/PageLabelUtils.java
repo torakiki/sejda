@@ -34,9 +34,9 @@ import com.lowagie.text.pdf.PdfPageLabels;
  * @author Andrea Vacondio
  * 
  */
-public final class PageLabelsUtil {
+public final class PageLabelUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PageLabelsUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PageLabelUtils.class);
 
     private static final Map<PdfLabelNumberingStyle, Integer> PAGE_NUMBERS_STYLES;
     static {
@@ -50,7 +50,7 @@ public final class PageLabelsUtil {
         PAGE_NUMBERS_STYLES = Collections.unmodifiableMap(pageNumberStyles);
     }
 
-    private PageLabelsUtil() {
+    private PageLabelUtils() {
         // utility
     }
 

@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
+import static org.sejda.core.manipulation.model.task.itext.util.TransitionUtils.getTransition;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +40,7 @@ import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfStream;
+import com.lowagie.text.pdf.PdfTransition;
 
 /**
  * Component responsible for handling operations related to a {@link PdfStamper} instance.
@@ -147,6 +151,22 @@ public final class PdfStamperHandler {
     }
 
     /**
+     * Applies the given transition to the given page.
+     * 
+     * @param page
+     * @param transition
+     */
+    public void setTransitionOnStamper(Integer page, PdfPageTransition transition) {
+        Integer transitionStyle = getTransition(transition.getStyle());
+        if (transitionStyle != null) {
+            stamper.setDuration(transition.getDisplayDuration(), page);
+            stamper.setTransition(new PdfTransition(transitionStyle, transition.getTransitionDuration()), page);
+        } else {
+            LOG.warn("Transition {} not applied to page {}. Not supported by iText.", transition.getStyle(), page);
+        }
+    }
+
+    /**
      * Sets the viewer preferences on the stamper
      * 
      * @see PdfStamper#setViewerPreferences(int)
@@ -175,4 +195,14 @@ public final class PdfStamperHandler {
         return stamper;
     }
 
+    /**
+     * Null safe close of the {@link PdfStamperHandler}
+     * 
+     * @param stamperHandler
+     */
+    public static void nullSafeClosePdfStamperHandler(PdfStamperHandler stamperHandler) {
+        if (stamperHandler != null) {
+            stamperHandler.closePdfStamper();
+        }
+    }
 }
