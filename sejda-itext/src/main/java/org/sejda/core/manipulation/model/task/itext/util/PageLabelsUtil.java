@@ -17,6 +17,7 @@
 package org.sejda.core.manipulation.model.task.itext.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,14 +38,16 @@ public final class PageLabelsUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageLabelsUtil.class);
 
-    private static Map<PdfLabelNumberingStyle, Integer> pageNumberStyles = new HashMap<PdfLabelNumberingStyle, Integer>();
+    private static final Map<PdfLabelNumberingStyle, Integer> PAGE_NUMBERS_STYLES;
     static {
+        Map<PdfLabelNumberingStyle, Integer> pageNumberStyles = new HashMap<PdfLabelNumberingStyle, Integer>();
         pageNumberStyles.put(PdfLabelNumberingStyle.ARABIC, PdfPageLabels.DECIMAL_ARABIC_NUMERALS);
         pageNumberStyles.put(PdfLabelNumberingStyle.EMPTY, PdfPageLabels.EMPTY);
         pageNumberStyles.put(PdfLabelNumberingStyle.LOWERCASE_LETTERS, PdfPageLabels.LOWERCASE_LETTERS);
         pageNumberStyles.put(PdfLabelNumberingStyle.LOWERCASE_ROMANS, PdfPageLabels.LOWERCASE_ROMAN_NUMERALS);
         pageNumberStyles.put(PdfLabelNumberingStyle.UPPERCASE_LETTERS, PdfPageLabels.UPPERCASE_LETTERS);
         pageNumberStyles.put(PdfLabelNumberingStyle.UPPERCASE_ROMANS, PdfPageLabels.UPPERCASE_ROMAN_NUMERALS);
+        PAGE_NUMBERS_STYLES = Collections.unmodifiableMap(pageNumberStyles);
     }
 
     private PageLabelsUtil() {
@@ -62,9 +65,8 @@ public final class PageLabelsUtil {
         PdfPageLabels retVal = new PdfPageLabels();
         for (PdfPageLabel label : labels) {
             if (label.getPhysicalPageNumber() <= totalPages) {
-                retVal.addPageLabel(label.getPhysicalPageNumber(), pageNumberStyles.get(label.getNumberingStyle()),
-                        label.getLabelPrefix(),
-                        label.getLogicalPageNumber());
+                retVal.addPageLabel(label.getPhysicalPageNumber(), PAGE_NUMBERS_STYLES.get(label.getNumberingStyle()),
+                        label.getLabelPrefix(), label.getLogicalPageNumber());
             } else {
                 LOG.warn("Page number out of rage, {} will be ignored.", label);
             }
