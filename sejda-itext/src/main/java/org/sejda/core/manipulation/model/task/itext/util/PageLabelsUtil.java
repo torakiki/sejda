@@ -16,10 +16,10 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
@@ -55,20 +55,22 @@ public final class PageLabelsUtil {
     }
 
     /**
-     * Maps a collection of {@link PdfPageLabel} to a {@link PdfPageLabels} instance that can be used as input for the PdfCopy.
+     * Maps a map of {@link PdfPageLabel} to a {@link PdfPageLabels} instance that can be used as input for the PdfCopy.
      * 
      * @param labels
      * @param totalPages
      * @return the resulting {@link PdfPageLabels}
      */
-    public static PdfPageLabels getLabels(Collection<PdfPageLabel> labels, int totalPages) {
+    public static PdfPageLabels getLabels(Map<Integer, PdfPageLabel> labels, int totalPages) {
         PdfPageLabels retVal = new PdfPageLabels();
-        for (PdfPageLabel label : labels) {
-            if (label.getPhysicalPageNumber() <= totalPages) {
-                retVal.addPageLabel(label.getPhysicalPageNumber(), PAGE_NUMBERS_STYLES.get(label.getNumberingStyle()),
+        for (Entry<Integer, PdfPageLabel> entry : labels.entrySet()) {
+            PdfPageLabel label;
+            if (entry.getKey() <= totalPages) {
+                label = entry.getValue();
+                retVal.addPageLabel(entry.getKey(), PAGE_NUMBERS_STYLES.get(label.getNumberingStyle()),
                         label.getLabelPrefix(), label.getLogicalPageNumber());
             } else {
-                LOG.warn("Page number out of rage, {} will be ignored.", label);
+                LOG.warn("Page number out of rage, {} will be ignored.", entry.getValue());
             }
         }
         return retVal;

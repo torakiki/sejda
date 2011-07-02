@@ -43,7 +43,7 @@ public class Bounds {
 
     @Override
     public String toString() {
-        return start + "-" + end;
+        return String.format("%s-%s", start, end);
     }
 
     /**

@@ -17,10 +17,11 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.sejda.core.TestUtils;
 
 /**
  * Test unit for the page rotation
@@ -57,6 +58,15 @@ public class PageRotationTest {
     @Test(expected = IllegalStateException.class)
     public void testIllegalRotationType() {
         PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.SINGLE_PAGE);
+    }
+
+    @Test
+    public void testEqualsAndHashcode() {
+        PageRotation victim1 = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
+        PageRotation victim2 = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
+        PageRotation victim3 = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_270, RotationType.ALL_PAGES);
+        PageRotation victim4 = PageRotation.createMultiplePagesRotation(Rotation.DEGREES_180, RotationType.ALL_PAGES);
+        TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 
 }

@@ -16,57 +16,45 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import org.junit.Assert;
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 
-import static org.junit.Assert.*;
-
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class SetPagesLabelParametersTest {
 
     @Test
     public void testEquals() {
-        SetPagesLabelParameters first = new SetPagesLabelParameters();
-        SetPagesLabelParameters second = new SetPagesLabelParameters();
+        SetPagesLabelParameters victim1 = new SetPagesLabelParameters();
+        SetPagesLabelParameters victim2 = new SetPagesLabelParameters();
+        SetPagesLabelParameters victim3 = new SetPagesLabelParameters();
+        SetPagesLabelParameters victim4 = new SetPagesLabelParameters();
 
-        PdfPageLabel label = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("label", PdfLabelNumberingStyle.ARABIC,
-                2, 1);
+        PdfPageLabel label = PdfPageLabel.newInstanceWithLabel("label", PdfLabelNumberingStyle.ARABIC, 2);
+        PdfPageLabel diffLabel = PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.ARABIC, 2);
 
-        first.add(label);
-        second.add(label);
-
-        assertTrue(first.equals(second));
+        victim1.putLabel(1, label);
+        victim2.putLabel(1, label);
+        victim3.putLabel(1, label);
+        victim4.putLabel(1, diffLabel);
+        TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 
     @Test
-    public void testAddSameLabel() {
-        SetPagesLabelParameters params = new SetPagesLabelParameters();
-
-        PdfPageLabel label1 = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("label1",
-                PdfLabelNumberingStyle.ARABIC, 2, 1);
-        PdfPageLabel label2 = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("label2",
-                PdfLabelNumberingStyle.LOWERCASE_ROMANS, 2, 1);
-        assertTrue(params.add(label1));
-        assertFalse(params.add(label2));
+    public void testPutLabel() {
+        SetPagesLabelParameters victim = new SetPagesLabelParameters();
+        PdfPageLabel firstLabel = PdfPageLabel.newInstanceWithLabel("label1", PdfLabelNumberingStyle.ARABIC, 2);
+        victim.putLabel(3, firstLabel);
+        Assert.assertEquals(1, victim.getLabels().size());
+        PdfPageLabel secondLabel = PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 2);
+        PdfPageLabel result = victim.putLabel(3, secondLabel);
+        Assert.assertEquals(firstLabel, result);
+        Assert.assertEquals(1, victim.getLabels().size());
     }
 
-    @Test
-    public void testLabelsAreSorted() {
-        SetPagesLabelParameters params = new SetPagesLabelParameters();
-        PdfPageLabel label1 = PdfPageLabel.newInstance(PdfLabelNumberingStyle.ARABIC, 10);
-        PdfPageLabel label2 = PdfPageLabel.newInstance(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1);
-
-        params.add(label1);
-        params.add(label2);
-
-        // check the first element is label2
-        for (PdfPageLabel label : params.getLabels()) {
-            assertEquals(label2, label);
-            break;
-        }
-    }
 }

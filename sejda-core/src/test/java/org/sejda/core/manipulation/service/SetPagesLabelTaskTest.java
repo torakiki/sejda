@@ -65,8 +65,8 @@ public abstract class SetPagesLabelTaskTest extends PdfOutEnabledTest implements
         parameters = new SetPagesLabelParameters();
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.add(PdfPageLabel.newInstance(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1));
-        parameters.add(PdfPageLabel.newInstanceWithLabelAndLogicalNumber("Test", PdfLabelNumberingStyle.ARABIC, 3, 1));
+        parameters.putLabel(1, PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1));
+        parameters.putLabel(3, PdfPageLabel.newInstanceWithLabel("Test", PdfLabelNumberingStyle.ARABIC, 1));
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);

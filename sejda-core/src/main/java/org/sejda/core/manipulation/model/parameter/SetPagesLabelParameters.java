@@ -17,8 +17,10 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Collections;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -37,42 +39,32 @@ import org.sejda.core.validation.constraint.NotEmpty;
 public class SetPagesLabelParameters extends SinglePdfSourceParameters {
 
     @NotEmpty
-    private final Set<PdfPageLabel> labels = new TreeSet<PdfPageLabel>();
+    @Valid
+    private final Map<Integer, PdfPageLabel> labels = new HashMap<Integer, PdfPageLabel>();
 
     /**
-     * Adds a label to the set of labels if a label for the same physical page is not already in the set.
+     * Associates the given label to the given page number. If a label was already associated to the given page, it is replaced with the new one.
      * 
+     * @param page
      * @param label
-     * @see Set#add(Object)
-     * @return true if this set did not already contain the specified element.
+     * @return the previously associated label or null.
      */
-    public boolean add(PdfPageLabel label) {
-        return labels.add(label);
+    public PdfPageLabel putLabel(Integer page, PdfPageLabel label) {
+        return labels.put(page, label);
     }
 
     /**
-     * @param label
-     * @see Set#remove(Object)
-     * @return true if this set contained the specified element
+     * Clears the collection of labels stored in this parameter instance.
      */
-    public boolean remove(PdfPageLabel label) {
-        return labels.remove(label);
-    }
-
-    /**
-     * clear the labels set.
-     * 
-     * @see Set#clear()
-     */
-    public void clear() {
+    public void clearLabels() {
         labels.clear();
     }
 
     /**
      * @return an unmodifiable view of the labels in this parameter.
      */
-    public Set<PdfPageLabel> getLabels() {
-        return Collections.unmodifiableSet(labels);
+    public Map<Integer, PdfPageLabel> getLabels() {
+        return Collections.unmodifiableMap(labels);
     }
 
     @Override
@@ -92,4 +84,5 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters {
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getLabels(), parameter.getLabels())
                 .isEquals();
     }
+
 }

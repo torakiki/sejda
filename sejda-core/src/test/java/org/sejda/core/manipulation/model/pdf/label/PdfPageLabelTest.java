@@ -40,21 +40,12 @@ public class PdfPageLabelTest {
         PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, -1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativelogicalNumb() {
-        PdfPageLabel.newInstanceWithLabelAndLogicalNumber("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1, -1);
-    }
-
     @Test
     public void testEqualsAndHasCode() {
-        PdfPageLabel victim1 = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("dsdsadsa",
-                PdfLabelNumberingStyle.ARABIC, 1, 1);
-        PdfPageLabel victim2 = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("dsdsadsa",
-                PdfLabelNumberingStyle.ARABIC, 1, 1);
-        PdfPageLabel victim3 = PdfPageLabel.newInstanceWithLabelAndLogicalNumber("dsdsadsa",
-                PdfLabelNumberingStyle.ARABIC, 1, 1);
-        PdfPageLabel victim4 = PdfPageLabel
-                .newInstanceWithLogicalNumber(PdfLabelNumberingStyle.LOWERCASE_LETTERS, 1, 2);
+        PdfPageLabel victim1 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim2 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim3 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim4 = PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_LETTERS, 1);
         TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 }

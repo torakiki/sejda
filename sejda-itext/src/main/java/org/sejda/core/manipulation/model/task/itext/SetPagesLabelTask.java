@@ -68,7 +68,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
         nullSafeClosePdfReader(reader);
 
-        LOG.debug("Applying labels {} ...");
+        LOG.debug("Applying {} labels ...", parameters.getLabels().size());
         copyHandler.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
 
         nullSafeClosePdfCopyHandler(copyHandler);
