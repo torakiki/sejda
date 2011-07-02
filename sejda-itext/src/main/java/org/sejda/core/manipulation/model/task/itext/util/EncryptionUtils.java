@@ -27,7 +27,7 @@ import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Utility methods related to the encryption functionalities
+ * Utility methods related to the encryption functionalities.
  * 
  * @author Andrea Vacondio
  * 

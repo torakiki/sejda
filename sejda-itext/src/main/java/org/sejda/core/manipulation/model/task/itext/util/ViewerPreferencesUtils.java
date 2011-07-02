@@ -33,7 +33,7 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Utility methods related to the viewer preferences functionalities
+ * Utility methods related to the viewer preferences functionalities.
  * 
  * @author Andrea Vacondio
  * 

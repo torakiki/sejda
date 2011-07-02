@@ -23,7 +23,7 @@ import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Provides utility methods to handle iText related components
+ * Provides utility methods to handle iText related components.
  * 
  * @author Andrea Vacondio
  * 
