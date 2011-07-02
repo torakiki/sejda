@@ -40,7 +40,7 @@ import com.lowagie.text.pdf.PdfStream;
  * @author Andrea Vacondio
  * 
  */
-public class PdfCopyHandler {
+public final class PdfCopyHandler {
 
     private PdfSmartCopy pdfCopy = null;
     private FileOutputStream ouputStream = null;

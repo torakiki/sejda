@@ -83,6 +83,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
         flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
+        LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
     }
 
     public void after() {
