@@ -1,6 +1,6 @@
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopy;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
@@ -13,7 +13,7 @@ import java.util.Map;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
-import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
+import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class PdfSplitter {
 
     public void split(Collection<Integer> pages) throws TaskException {
         setPages(pages);
-        PdfCopyHandler copyHandler = null;
+        DefaultPdfCopier copyHandler = null;
         // TODO try finally to close the handler
         for (int page = 1; page <= totalPages; page++) {
             if (splitPages.isOpening(page)) {
@@ -75,18 +75,18 @@ public class PdfSplitter {
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
     }
 
-    private void close(PdfCopyHandler copyHandler) {
+    private void close(DefaultPdfCopier copyHandler) {
         LOG.debug("Adding bookmarks to the temporary buffer ...");
         // TODO take care of bookmarks
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copyHandler);
     }
 
-    private PdfCopyHandler open(Integer page) throws TaskException {
+    private DefaultPdfCopier open(Integer page) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-        PdfCopyHandler copyHandler = new PdfCopyHandler(reader, tmpFile, parameters.getVersion());
-        copyHandler.setCompressionOnCopier(parameters.isCompressXref());
+        DefaultPdfCopier copyHandler = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
+        copyHandler.setCompression(parameters.isCompressXref());
 
         // TODO name request using file number, bookmarks etc
         bookmarksMap.get(page);
@@ -138,7 +138,7 @@ public class PdfSplitter {
     }
 
     /**
-     * Sets the bookmarksMap to use during the split process. No mandatory, it's used during the output file name generation in case the the bookmark name is needed.
+     * Sets the bookmarksMap to use during the split process. Not mandatory, it's used during the output file name generation in case the the bookmark name is needed.
      * 
      * @param bookmarksMap
      * @return the splitter instance with the bookmarksMap set.

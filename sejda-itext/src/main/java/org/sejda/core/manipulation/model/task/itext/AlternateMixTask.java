@@ -16,7 +16,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -28,7 +28,8 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
+import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
+import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
 
     private PdfReader firstReader = null;
     private PdfReader secondReader = null;
-    private PdfCopyHandler copyHandler = null;
+    private PdfCopier copier = null;
     private SingleOutputWriterSupport outputWriter;
 
     public void before(AlternateMixParameters parameters) {
@@ -62,9 +63,9 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
-        copyHandler = new PdfCopyHandler(firstReader, tmpFile, parameters.getVersion());
+        copier = new DefaultPdfCopier(firstReader, tmpFile, parameters.getVersion());
 
-        copyHandler.setCompressionOnCopier(parameters.isCompressXref());
+        copier.setCompression(parameters.isCompressXref());
 
         PdfMixProcessStatus firstDocStatus = new PdfMixProcessStatus(parameters.getFirstInput(),
                 firstReader.getNumberOfPages());
@@ -75,11 +76,11 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
         int totalSteps = firstReader.getNumberOfPages() + secondReader.getNumberOfPages();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < parameters.getFirstInput().getStep() && firstDocStatus.hasNextPage(); i++) {
-                copyHandler.addPage(firstReader, firstDocStatus.nextPage());
+                copier.addPage(firstReader, firstDocStatus.nextPage());
                 notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < parameters.getSecondInput().getStep() && secondDocStatus.hasNextPage(); i++) {
-                copyHandler.addPage(secondReader, secondDocStatus.nextPage());
+                copier.addPage(secondReader, secondDocStatus.nextPage());
                 notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
@@ -103,7 +104,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     private void closeResources() {
         nullSafeClosePdfReader(firstReader);
         nullSafeClosePdfReader(secondReader);
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copier);
     }
 
     /**

@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
-import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
+import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 
 import com.lowagie.text.pdf.PdfReader;
@@ -46,13 +46,13 @@ public final class ITextUtils {
     }
 
     /**
-     * Null safe close of the {@link PdfCopyHandler}
+     * Null safe close of the {@link PdfCopier}
      * 
      * @param copyHandler
      */
-    public static void nullSafeClosePdfCopyHandler(PdfCopyHandler copyHandler) {
-        if (copyHandler != null) {
-            copyHandler.closePdfCopier();
+    public static void nullSafeClosePdfCopy(PdfCopier copier) {
+        if (copier != null) {
+            copier.close();
         }
     }
 

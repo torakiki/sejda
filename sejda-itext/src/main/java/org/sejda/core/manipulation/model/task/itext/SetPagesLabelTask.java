@@ -16,7 +16,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
@@ -28,7 +28,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
+import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelParameters.class);
 
     private PdfReader reader = null;
-    private PdfCopyHandler copyHandler = null;
+    private DefaultPdfCopier copier = null;
     private SingleOutputWriterSupport outputWriter;
 
     public void before(SetPagesLabelParameters parameters) {
@@ -61,17 +61,17 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-        copyHandler = new PdfCopyHandler(reader, tmpFile, parameters.getVersion());
-        copyHandler.setCompressionOnCopier(parameters.isCompressXref());
+        copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
+        copier.setCompression(parameters.isCompressXref());
 
-        copyHandler.addAllPages(reader);
+        copier.addAllPages(reader);
 
         nullSafeClosePdfReader(reader);
 
         LOG.debug("Applying labels {} ...");
-        copyHandler.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
+        copier.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
 
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copier);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
                 parameters.isOverwrite());
@@ -80,7 +80,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copier);
     }
 
 }
