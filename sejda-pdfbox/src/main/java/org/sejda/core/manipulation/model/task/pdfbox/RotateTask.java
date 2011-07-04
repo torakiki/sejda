@@ -20,10 +20,10 @@ import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfRotatio
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.ensureOwnerPermissions;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
@@ -42,31 +42,33 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Task performing pages rotation on a list of {@link PdfSource}.
- *
+ * 
  * @author Nero Couvalli
- *
+ * 
  */
-public class RotateTask extends MultipleOutputWriterSupport implements Task<RotateParameters>{
+public class RotateTask implements Task<RotateParameters> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
-	private int totalSteps;
-	private PDDocument document = null;
+    private int totalSteps;
+    private PDDocument document = null;
+    private MultipleOutputWriterSupport outputWriter;
 
-	public void before(RotateParameters parameters) throws TaskException {
-        totalSteps = parameters.getSourceList().size() + 1;
-	}
+    public void before(RotateParameters parameters) {
+        outputWriter = new MultipleOutputWriterSupport();
+        totalSteps = parameters.getSourceList().size();
+    }
 
-	public void execute(RotateParameters parameters) throws TaskException {
-		int currentStep = 0;
+    public void execute(RotateParameters parameters) throws TaskException {
+        int currentStep = 0;
 
-		for (PdfSource source : parameters.getSourceList()) {
+        for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
             document = loadPDDocument(source);
             ensureOwnerPermissions(document);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
 
             LOG.debug("Applying rotation {} ...", parameters.getRotation());
@@ -78,21 +80,19 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             savePDDocument(document, tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             closePDDocumentQuitely(document);
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
-		}
+        }
 
-		flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
+    }
 
-	}
-
-	public void after() {
-		closePDDocumentQuitely(document);
-	}
-
+    public void after() {
+        closePDDocumentQuitely(document);
+    }
 
 }

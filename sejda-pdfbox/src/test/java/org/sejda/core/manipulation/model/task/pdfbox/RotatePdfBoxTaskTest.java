@@ -18,16 +18,15 @@ package org.sejda.core.manipulation.model.task.pdfbox;
 
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.pdfbox.RotateTask;
 import org.sejda.core.manipulation.service.RotateTaskTest;
 
 /**
  * @author Nero Couvalli
- *
+ * 
  */
-public class RotatePdfBoxTaskTest extends RotateTaskTest{
+public class RotatePdfBoxTaskTest extends RotateTaskTest {
 
-	public Task<RotateParameters> getTask() {
+    public Task<RotateParameters> getTask() {
         return new RotateTask();
     }
 
