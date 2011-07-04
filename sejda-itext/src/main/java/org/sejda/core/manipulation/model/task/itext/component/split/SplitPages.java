@@ -1,10 +1,10 @@
-package org.sejda.core.manipulation.model.task.itext;
+package org.sejda.core.manipulation.model.task.itext.component.split;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.task.itext.PdfSplitter.NextOutputStrategy;
+import org.sejda.core.manipulation.model.task.itext.component.split.AbstractPdfSplitter.NextOutputStrategy;
 
 /**
  * Strategy that holds the page numbers where the split process has to split.
