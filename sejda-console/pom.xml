@@ -7,7 +7,7 @@
 	<artifactId>sejda-console</artifactId>
 	<packaging>jar</packaging>
 	<name>sejda console</name>
-	
+
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
@@ -47,6 +47,11 @@
 			<version>${version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-itext</artifactId>
+			<version>${version}</version>
+		</dependency>
+		<dependency>
 			<groupId>uk.co.flamingpenguin.jewelcli</groupId>
 			<artifactId>jewelcli</artifactId>
 			<version>0.6</version>
@@ -58,6 +63,20 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<!-- test dependencies -->
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-core</artifactId>
+			<version>${version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.1.0.Final</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

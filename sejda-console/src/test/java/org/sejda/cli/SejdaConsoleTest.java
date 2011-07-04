@@ -16,23 +16,17 @@
  */
 package org.sejda.cli;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
  * @author Eduard Weissmann
  * 
  */
-public class SejdaConsoleTest {
+public class SejdaConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testExecuteWithoutArgs() {
-        assertOutput(
+        assertConsoleOutputIs(
                 "",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
                 "[--help -h] : prints usage to stdout; exits (optional)");
@@ -40,40 +34,19 @@ public class SejdaConsoleTest {
 
     @Test
     public void testExecuteHelp() {
-        assertOutput(
+        assertConsoleOutputIs(
                 "-h",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
                 "[--help -h] : prints usage to stdout; exits (optional)");
     }
 
     @Test
-    public void testExecuteCommandHelp() {
-        assertOutput("-h decrypt", "Usage: sejda-console decrypt [options]",
-                "[--compressed] : compress output file (optional)",
-                "[--help -?] : prints usage to stdout; exits (optional)");
-    }
-
-    @Test
-    public void testExecuteKnownCommand() {
-        assertOutput("decrypt", "Executing command <decrypt>");
+    public void testExecuteUnknownCommandHelp() {
+        assertConsoleOutputIs("-h unknownCommand", "Unknown command: unknownCommand");
     }
 
     @Test
     public void testExecuteUnknownCommand() {
-        assertOutput("-h unknownCommand", "Unknown command: unknownCommand");
-    }
-
-    private void assertOutput(String commandLine, String... expectedOutputLines) {
-        assertEquals(StringUtils.join(expectedOutputLines, "\n"),
-                StringUtils.join(invokeConsoleAndReturnSystemOut(commandLine), "\n"));
-    }
-
-    private String[] invokeConsoleAndReturnSystemOut(String command) {
-        ByteArrayOutputStream capturedSystemOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(capturedSystemOut));
-
-        SejdaConsole.main(StringUtils.splitPreserveAllTokens(command));
-
-        return StringUtils.stripAll(StringUtils.split(capturedSystemOut.toString(), "\n"));
+        assertConsoleOutputIs("unknownCommand", "Unknown command: unknownCommand");
     }
 }

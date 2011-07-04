@@ -16,10 +16,15 @@
  */
 package org.sejda.cli;
 
+import java.util.List;
+
+import org.sejda.cli.adapters.PdfDirectoryOutputAdapter;
+import org.sejda.cli.adapters.PdfFileSourceAdapter;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
+
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
-//TODO: EW: review javadoc
 /**
  * @author Eduard Weissmann
  * 
@@ -28,8 +33,25 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface DecryptCommandOptions extends CommandOptions {
 
     @Option(description = "compress output file (optional)")
-    boolean isCompressed();
+    boolean getCompressed();
 
     @Option(shortName = "?", description = "prints usage to stdout; exits (optional)")
     boolean isHelp();
+
+    @Option(description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
+    PdfVersion getPdfVersion();
+
+    @Option(shortName = "o", longName = "output", description = "output directory (required)", defaultValue = ".")
+    PdfDirectoryOutputAdapter getOutput();
+
+    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "prefix_")
+    String getOutputPrefix();
+
+    @Option(shortName = "f", description = "pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
+    List<PdfFileSourceAdapter> getFiles();
+
+    @Option(description = "overwrite existing output file (optional)")
+    boolean getOverwrite();
+
+    // TODO: command version, licence and verbose help
 }
