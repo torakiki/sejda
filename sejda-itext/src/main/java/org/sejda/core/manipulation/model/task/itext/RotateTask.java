@@ -56,7 +56,7 @@ public class RotateTask implements Task<RotateParameters> {
 
     public void before(RotateParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
-        totalSteps = parameters.getSourceList().size() + 1;
+        totalSteps = parameters.getSourceList().size();
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
@@ -87,8 +87,6 @@ public class RotateTask implements Task<RotateParameters> {
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
-
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 
