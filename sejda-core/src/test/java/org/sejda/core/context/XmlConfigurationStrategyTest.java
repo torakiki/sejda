@@ -17,15 +17,17 @@
  */
 package org.sejda.core.context;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.internal.matchers.Contains;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * Test unit
@@ -34,6 +36,9 @@ import static org.junit.Assert.fail;
  * 
  */
 public class XmlConfigurationStrategyTest {
+
+    @Rule
+    public ExpectedException expected = ExpectedException.none();
 
     @Test
     public void testPositiveConstuctor() throws ConfigurationException, IOException {
@@ -44,16 +49,38 @@ public class XmlConfigurationStrategyTest {
         assertEquals(1, victim.getTasksMap().size());
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void testNegativeConstuctor() throws IOException, ConfigurationException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-sejda-config.xml");
+    @Test
+    public void testNegativeConstuctorWrongTask() throws IOException, ConfigurationException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-task-sejda-config.xml");
+        expected.expectMessage(new Contains(
+                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.task.Task"));
         try {
-            XmlConfigurationStrategy victim = new XmlConfigurationStrategy(stream);
-            victim.toString();
-            fail();
+            new XmlConfigurationStrategy(stream);
         } finally {
             stream.close();
         }
+    }
 
+    @Test
+    public void testNegativeConstuctorWrongParam() throws IOException, ConfigurationException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-param-sejda-config.xml");
+        expected.expectMessage(new Contains(
+                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.parameter.TaskParameters"));
+        try {
+            new XmlConfigurationStrategy(stream);
+        } finally {
+            stream.close();
+        }
+    }
+
+    @Test
+    public void testNegativeNotFoundClassParam() throws IOException, ConfigurationException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-no-param-class-sejda-config.xml");
+        expected.expectMessage(new Contains("Unable to find the configured bla.bla.not.existing.Class"));
+        try {
+            new XmlConfigurationStrategy(stream);
+        } finally {
+            stream.close();
+        }
     }
 }

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
@@ -46,7 +45,7 @@ final class GlobalConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
-    private static final String USER_CONFIG_FILE_NAME = "/sejda.xml";
+    private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
     private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
 
     private Class<? extends NotificationStrategy> notificationStrategy;
@@ -64,16 +63,15 @@ final class GlobalConfiguration {
     private void logConfiguredTasks() {
         LOG.debug("Configured tasks:");
         for (@SuppressWarnings("rawtypes")
-        Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks()
-                .entrySet()) {
+        Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
             LOG.debug(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
         }
     }
 
     private void initialize() {
         taskRegistry = new DefaultTasksRegistry();
-        String userConfigFileName = getUserConfigFileName();
-        InputStream userConfigStream = getClass().getResourceAsStream(userConfigFileName);
+        String userConfigFileName = System.getProperty(USER_CONFIG_FILE_PROPERTY, USER_CONFIG_FILE_NAME);
+        InputStream userConfigStream = ClassLoader.getSystemResourceAsStream(userConfigFileName);
         if (userConfigStream != null) {
             LOG.debug("Loading Sejda configuration form " + userConfigFileName);
             initializeConfigurationFromStream(userConfigStream);
@@ -106,18 +104,6 @@ final class GlobalConfiguration {
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()) {
             taskRegistry.addTask(entry.getKey(), entry.getValue());
         }
-    }
-
-    /**
-     * 
-     * @return file name of the configuration file submitted by the user
-     */
-    private String getUserConfigFileName() {
-        String userConfigFileName = System.getProperty(USER_CONFIG_FILE_PROPERTY);
-        if (StringUtils.isEmpty(userConfigFileName)) {
-            userConfigFileName = USER_CONFIG_FILE_NAME;
-        }
-        return userConfigFileName;
     }
 
     /**
