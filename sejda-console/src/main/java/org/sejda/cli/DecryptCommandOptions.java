@@ -1,6 +1,6 @@
 /*
  * Created on Jun 30, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -26,6 +26,8 @@ import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
+ * Specifications for command line options of the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask}
+ * 
  * @author Eduard Weissmann
  * 
  */
@@ -35,13 +37,10 @@ public interface DecryptCommandOptions extends CommandOptions {
     @Option(description = "compress output file (optional)")
     boolean getCompressed();
 
-    @Option(shortName = "?", description = "prints usage to stdout; exits (optional)")
-    boolean isHelp();
-
-    @Option(description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
+    @Option(shortName = "v", description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
     PdfVersion getPdfVersion();
 
-    @Option(shortName = "o", longName = "output", description = "output directory (required)", defaultValue = ".")
+    @Option(shortName = "o", description = "output directory (required)")
     PdfDirectoryOutputAdapter getOutput();
 
     @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "prefix_")
@@ -52,6 +51,4 @@ public interface DecryptCommandOptions extends CommandOptions {
 
     @Option(description = "overwrite existing output file (optional)")
     boolean getOverwrite();
-
-    // TODO: command version, licence and verbose help
 }

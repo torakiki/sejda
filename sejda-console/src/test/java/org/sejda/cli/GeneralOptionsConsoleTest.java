@@ -1,6 +1,6 @@
 /*
  * Created on Jun 30, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,10 +19,12 @@ package org.sejda.cli;
 import org.junit.Test;
 
 /**
+ * Tests for the command line's general options
+ * 
  * @author Eduard Weissmann
  * 
  */
-public class SejdaConsoleTest extends BaseConsoleTest {
+public class GeneralOptionsConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testExecuteWithoutArgs() {
@@ -42,11 +44,11 @@ public class SejdaConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testExecuteUnknownCommandHelp() {
-        assertConsoleOutputIs("-h unknownCommand", "Unknown command: unknownCommand");
+        assertConsoleOutputIs("-h unknownCommand", "Unknown command: 'unknownCommand'");
     }
 
     @Test
     public void testExecuteUnknownCommand() {
-        assertConsoleOutputIs("unknownCommand", "Unknown command: unknownCommand");
+        assertConsoleOutputIs("unknownCommand", "Unknown command: 'unknownCommand'");
     }
 }

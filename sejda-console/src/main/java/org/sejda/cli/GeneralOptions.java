@@ -1,6 +1,6 @@
 /*
  * Created on Jun 30, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,12 +20,19 @@ import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
-// TODO: EW: review javadoc
 /**
+ * Specification for the general options of the command line interface<br/>
+ * In a nutshell, those are:
+ * <ul>
+ * <li>print general help, detailing all possible commands supported, Eg: {@code sejda-console -h} or simply {@code sejda-console}</li>
+ * <li>execute specific command help. Eg: {@code sejda-console -h command_name}</li>
+ * <li>execute specific command. Eg: {@code sejda-console command_name command_options}</li>
+ * </ul>
+ * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = "sejda-console")
+@CommandLineInterface(application = SejdaConsole.NAME)
 public interface GeneralOptions {
 
     @Unparsed(name = "command to execute {[concat], [split],"

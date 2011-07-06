@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -20,24 +20,30 @@ import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
 import org.sejda.core.manipulation.service.TaskExecutionService;
-import org.sejda.core.support.util.ReflectionUtility;
 
 /**
+ * Default implementation of {@link CommandExecutionService}
+ * 
  * @author Eduard Weissmann
  * 
  */
-public class DefaultTaskExecutionFacade implements TaskExecutionFacade {
+public class DefaultCommandExecutionService implements CommandExecutionService {
 
     private final TaskExecutionService taskExecutionService = new DefaultTaskExecutionService();
 
     /**
+     * Finds a {@link CommandOptionsTransformer} for the specified command<br/>
+     * Uses reflection.<br/>
+     * Eg: for "decrypt" command it will return a new instance of a {@link DecryptOptionsTransformer}
+     * 
      * @param commandName
+     *            name of the command
      * @return
      */
-    private static CommandOptionsTransformer createTransformer(String commandName) {
-        String transformerClazzName = DefaultTaskExecutionFacade.class.getPackage().getName() + "."
+    private CommandOptionsTransformer findTransformer(String commandName) {
+        String transformerClazzName = DefaultCommandExecutionService.class.getPackage().getName() + "."
                 + StringUtils.capitalize(commandName) + "OptionsTransformer";
-        CommandOptionsTransformer localTransformer = ReflectionUtility.newInstanceSilently(transformerClazzName);
+        CommandOptionsTransformer localTransformer = newInstanceSilently(transformerClazzName);
         if (localTransformer == null) {
             throw new SejdaRuntimeException("No transformer found for command " + commandName + ". Does class "
                     + transformerClazzName + " exist?");
@@ -47,10 +53,29 @@ public class DefaultTaskExecutionFacade implements TaskExecutionFacade {
 
     @Override
     public void executeCommand(CommandOptions commandOptions, String commandName) {
-        getTaskExecutionService().execute(createTransformer(commandName).toParameters(commandOptions));
+        getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(commandOptions));
     }
 
     TaskExecutionService getTaskExecutionService() {
         return taskExecutionService;
+    }
+
+    /**
+     * Creates a new instance of the specified class (by name). Silently returns null if an exception occurs
+     * 
+     * @param <T>
+     *            expected return type
+     * @param className
+     *            fully qualified class name
+     * @return an instance of the class specified
+     */
+    // TODO: EW: Make ReflectionUtils class, or move to ReflectionUtility in sejda-core, or just use dependency injection (guice?)
+    @SuppressWarnings("unchecked")
+    private static <T> T newInstanceSilently(String className) {
+        try {
+            return (T) Class.forName(className).newInstance();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

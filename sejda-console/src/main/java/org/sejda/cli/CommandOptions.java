@@ -1,6 +1,6 @@
 /*
  * Created on Jun 30, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,10 +16,15 @@
  */
 package org.sejda.cli;
 
+
 /**
+ * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
+ * 
+ * @see GeneralOptions for the specifications of the general options of the command line interface
+ * 
  * @author Eduard Weissmann
  * 
  */
 public interface CommandOptions {
-    // marker interface for command options
+    // marker interface for now
 }

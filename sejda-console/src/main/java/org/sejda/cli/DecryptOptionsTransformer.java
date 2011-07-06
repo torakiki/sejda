@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,13 +21,20 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
+ * {@link CommandOptionsTransformer} for the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask} command line interface
+ * 
  * @author Eduard Weissmann
  * 
  */
-public class DecryptOptionsTransformer implements CommandOptionsTransformer<DecryptCommandOptions> {
+public class DecryptOptionsTransformer implements CommandOptionsTransformer {
 
-    @Override
-    public TaskParameters toParameters(DecryptCommandOptions options) {
+    /**
+     * Transforms {@link DecryptCommandOptions} to {@link DecryptParameters}
+     * 
+     * @param options
+     * @return
+     */
+    public TaskParameters toTaskParameters(DecryptCommandOptions options) {
         DecryptParameters parameters = new DecryptParameters();
         parameters.setCompress(options.getCompressed());
         parameters.setVersion(options.getPdfVersion());
@@ -38,5 +45,15 @@ public class DecryptOptionsTransformer implements CommandOptionsTransformer<Decr
         }
         parameters.setOverwrite(options.getOverwrite());
         return parameters;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.sejda.cli.CommandOptionsTransformer#toTaskParameters(org.sejda.cli.CommandOptions)
+     */
+    @Override
+    public TaskParameters toTaskParameters(CommandOptions commandOptions) {
+        return toTaskParameters((DecryptCommandOptions) commandOptions);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -18,10 +18,11 @@ package org.sejda.cli.adapters;
 
 import java.io.File;
 
-import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 
 /**
+ * Adapter for {@link PdfDirectoryOutput}. Required due to missing String based constructor in the model object (see http://jewelcli.sourceforge.net/usage.html#Class)
+ * 
  * @author Eduard Weissmann
  * 
  */
@@ -33,7 +34,7 @@ public class PdfDirectoryOutputAdapter {
         File directory = new File(directoryPath);
 
         if (!directory.exists()) {
-            throw new SejdaRuntimeException("Path '" + directoryPath + "' does not exist");
+            throw new IllegalArgumentException("Path '" + directoryPath + "' does not exist");
         }
 
         this.pdfDirectoryOutput = PdfDirectoryOutput.newInstance(new File(directoryPath));

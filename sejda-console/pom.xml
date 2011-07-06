@@ -7,6 +7,7 @@
 	<artifactId>sejda-console</artifactId>
 	<packaging>jar</packaging>
 	<name>sejda console</name>
+	<description>Command line interface to the Sejda PDF manipulation layer library.</description>
 
 	<parent>
 		<groupId>org.sejda</groupId>

@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -34,11 +34,17 @@ import org.mockito.ArgumentCaptor;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
+import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
 
 /**
+ * Base class for test that execute the console<br/>
+ * Contains helper methods such as {@link #invokeConsoleAndReturnSystemOut(String)}, {@link #invokeConsoleAndReturnTaskParameters(String)}
+ * 
  * @author Eduard Weissmann
  * 
  */
@@ -47,8 +53,8 @@ public class BaseConsoleTest {
 
     protected SejdaConsole console = new SejdaConsole() {
         @Override
-        TaskExecutionFacade getTaskExecutionFacade() {
-            return new DefaultTaskExecutionFacade() {
+        CommandExecutionService getTaskExecutionFacade() {
+            return new DefaultCommandExecutionService() {
                 @Override
                 TaskExecutionService getTaskExecutionService() {
                     return taskExecutionService;
@@ -121,5 +127,13 @@ public class BaseConsoleTest {
 
         assertTrue("File '" + file + "'"
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
+    }
+
+    /**
+     * @param result
+     */
+    protected void assertOutputFolder(DecryptParameters result, File outputFolder) {
+        assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
+        assertEquals(((PdfDirectoryOutput) result.getOutput()).getFile(), outputFolder);
     }
 }

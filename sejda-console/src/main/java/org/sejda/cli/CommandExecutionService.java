@@ -1,6 +1,6 @@
 /*
  * Created on Jul 4, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,11 +16,23 @@
  */
 package org.sejda.cli;
 
+
 /**
+ * Service that executes command line commands, translating {@link CommandOptions} to {@link org.sejda.core.manipulation.model.parameter.TaskParameters}, and executing the
+ * corresponding {@link org.sejda.core.manipulation.model.task.Task}
+ * 
  * @author Eduard Weissmann
  * 
  */
-public interface TaskExecutionFacade {
+public interface CommandExecutionService {
 
+    /**
+     * Executes a given command, using the specified options
+     * 
+     * @param commandOptions
+     *            command line options (translated to arguments)
+     * @param commandName
+     *            name of the command
+     */
     void executeCommand(CommandOptions commandOptions, String commandName);
 }

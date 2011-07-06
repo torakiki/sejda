@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -19,10 +19,19 @@ package org.sejda.cli;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
+ * Transformation component that knows how to transform command line arguments {@link CommandOptions} into task parameters {@link TaskParameters}
+ * 
  * @author Eduard Weissmann
  * 
  */
-public interface CommandOptionsTransformer<CO extends CommandOptions> {
+public interface CommandOptionsTransformer {
 
-    TaskParameters toParameters(CO commandOptions);
+    /**
+     * Transforms the specified command line arguments into task parameters
+     * 
+     * @param commandOptions
+     *            command line arguments
+     * @return translated task parameters
+     */
+    TaskParameters toTaskParameters(CommandOptions commandOptions);
 }
