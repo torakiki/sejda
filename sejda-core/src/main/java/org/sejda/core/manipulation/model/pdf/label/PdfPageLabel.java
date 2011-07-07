@@ -29,29 +29,21 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * Model for a page label. <br>
  * Pdf reference 1.7, Chap. 8.3.1
  * 
- * <p>
- * This class implements {@link Comparable} to provide ordering based on the physical page number however compareTo implementation is not consistent with equals and two instances
- * where compareTo returns 0 (same physical page number) might not be equals if compared with the equals method.
- * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfPageLabel implements Comparable<PdfPageLabel> {
+public final class PdfPageLabel {
 
     @NotNull
     private String labelPrefix;
     private PdfLabelNumberingStyle numberingStyle;
     @Min(value = 1)
     private int logicalPageNumber;
-    @Min(value = 1)
-    private int physicalPageNumber;
 
-    private PdfPageLabel(String labelPrefix, PdfLabelNumberingStyle numberingStyle, int logicalPageNumber,
-            int physicalPageNumber) {
+    private PdfPageLabel(String labelPrefix, PdfLabelNumberingStyle numberingStyle, int logicalPageNumber) {
         this.labelPrefix = labelPrefix;
         this.numberingStyle = numberingStyle;
         this.logicalPageNumber = logicalPageNumber;
-        this.physicalPageNumber = physicalPageNumber;
     }
 
     public String getLabelPrefix() {
@@ -66,113 +58,66 @@ public final class PdfPageLabel implements Comparable<PdfPageLabel> {
         return logicalPageNumber;
     }
 
-    public int getPhysicalPageNumber() {
-        return physicalPageNumber;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(labelPrefix).append(numberingStyle).append(logicalPageNumber)
-                .append(physicalPageNumber).toString();
+        return new ToStringBuilder(this).append(labelPrefix).append(numberingStyle)
+                .append("logicalPageNumber", logicalPageNumber).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(labelPrefix).append(numberingStyle).append(logicalPageNumber)
-                .append(physicalPageNumber).toHashCode();
+        return new HashCodeBuilder().append(labelPrefix).append(numberingStyle).append(logicalPageNumber).toHashCode();
     }
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof PdfPageLabel)) {
             return false;
         }
         PdfPageLabel pageLabel = (PdfPageLabel) other;
         return new EqualsBuilder().append(labelPrefix, pageLabel.getLabelPrefix())
                 .append(numberingStyle, pageLabel.getNumberingStyle())
-                .append(logicalPageNumber, pageLabel.getLogicalPageNumber())
-                .append(physicalPageNumber, pageLabel.getPhysicalPageNumber()).isEquals();
+                .append(logicalPageNumber, pageLabel.getLogicalPageNumber()).isEquals();
     }
 
     /**
-     * Creates an empty label with the given number style for the given page number.
+     * Creates an empty label with the given style for the given logical page number.
      * 
      * @param numberingStyle
-     * @param physicalPageNumber
-     * @return the newly created instance
-     * @throws InvalidParameterException
-     *             if the input page number is not positive
-     * @throws NullPointerException
-     *             if the input numbering style is null
-     */
-    public static PdfPageLabel newInstance(PdfLabelNumberingStyle numberingStyle, int physicalPageNumber) {
-        return PdfPageLabel.newInstanceWithLabelAndLogicalNumber("", numberingStyle, physicalPageNumber,
-                physicalPageNumber);
-    }
-
-    /**
-     * Creates an empty label with the given number style for the given physical page number associated to the given logical page number.
-     * 
-     * @param numberingStyle
-     * @param physicalPageNumber
      * @param logicalPageNumber
      * @return the newly created instance
      * @throws InvalidParameterException
-     *             if the input physical or logical page number is not positive
-     * @throws NullPointerException
-     *             if the input numbering style is null
+     *             if the input logical page number is not positive. if the input numbering style is null.
      */
-    public static PdfPageLabel newInstanceWithLogicalNumber(PdfLabelNumberingStyle numberingStyle,
-            int physicalPageNumber, int logicalPageNumber) {
-        return PdfPageLabel.newInstanceWithLabelAndLogicalNumber("", numberingStyle, physicalPageNumber,
-                logicalPageNumber);
+    public static PdfPageLabel newInstanceWithoutLabel(PdfLabelNumberingStyle numberingStyle, int logicalPageNumber) {
+        return PdfPageLabel.newInstanceWithLabel("", numberingStyle, logicalPageNumber);
     }
 
     /**
-     * Creates a label with the given number style for the given physical page number.
+     * Creates a label with given label and given style for the given logical page number.
      * 
      * @param label
      * @param numberingStyle
-     * @param physicalPageNumber
+     * @param logicalPageNumber
      * @return the newly created instance
      * @throws InvalidParameterException
-     *             if the input physical or logical page number is not positive
-     * @throws NullPointerException
-     *             if the input label or numbering style are null
+     *             if the input logical page number is not positive. if the input label or numbering style are null.
      */
     public static PdfPageLabel newInstanceWithLabel(String label, PdfLabelNumberingStyle numberingStyle,
-            int physicalPageNumber) {
-        return PdfPageLabel.newInstanceWithLabelAndLogicalNumber(label, numberingStyle, physicalPageNumber,
-                physicalPageNumber);
-    }
-
-    /**
-     * Creates a label with the given number style for the given physical page number associated to the given logical page number.
-     * 
-     * @param label
-     * @param numberingStyle
-     * @param physicalPageNumber
-     * @param logicalPageNumber
-     * @return the newly created instance
-     * @throws InvalidParameterException
-     *             if the input physical or logical page number is not positive. if the input label or numbering style are null.
-     */
-    public static PdfPageLabel newInstanceWithLabelAndLogicalNumber(String label,
-            PdfLabelNumberingStyle numberingStyle, int physicalPageNumber, int logicalPageNumber) {
-        if (physicalPageNumber < 1 || logicalPageNumber < 1) {
+            int logicalPageNumber) {
+        if (logicalPageNumber < 1) {
             throw new InvalidParameterException("Input page number must be positive.");
         }
         if (label == null) {
-            throw new IllegalArgumentException("Input label cannot be null.");
+            throw new InvalidParameterException("Input label cannot be null.");
         }
         if (numberingStyle == null) {
-            throw new IllegalArgumentException("Input numbering style cannot be null.");
+            throw new InvalidParameterException("Input numbering style cannot be null.");
         }
-        return new PdfPageLabel(label, numberingStyle, logicalPageNumber, physicalPageNumber);
-    }
-
-    public int compareTo(PdfPageLabel other) {
-        return this.getPhysicalPageNumber() - other.getPhysicalPageNumber();
+        return new PdfPageLabel(label, numberingStyle, logicalPageNumber);
     }
 
 }

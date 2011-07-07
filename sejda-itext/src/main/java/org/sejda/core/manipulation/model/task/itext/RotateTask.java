@@ -17,10 +17,18 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
+import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
@@ -31,32 +39,24 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
-
 /**
  * Task performing pages rotation on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateTask extends MultipleOutputWriterSupport implements Task<RotateParameters> {
+public class RotateTask implements Task<RotateParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
+    private MultipleOutputWriterSupport outputWriter;
 
-    public void before(RotateParameters parameters) throws TaskExecutionException {
-        totalSteps = parameters.getSourceList().size() + 1;
+    public void before(RotateParameters parameters) {
+        outputWriter = new MultipleOutputWriterSupport();
+        totalSteps = parameters.getSourceList().size();
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
@@ -67,10 +67,10 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             LOG.debug("Opening {} ...", source);
             reader = openReader(source, true);
 
-            LOG.debug("Aplpying rotation {} ...", parameters.getRotation());
+            LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(reader);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
@@ -81,14 +81,12 @@ public class RotateTask extends MultipleOutputWriterSupport implements Task<Rota
             nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
-
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 

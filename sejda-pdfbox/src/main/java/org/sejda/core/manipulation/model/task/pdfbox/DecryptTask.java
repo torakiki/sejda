@@ -16,6 +16,18 @@
  */
 package org.sejda.core.manipulation.model.task.pdfbox;
 
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.saveDecryptedPDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.ensureOwnerPermissions;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+
 import java.io.File;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -26,14 +38,6 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.*;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.*;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Task performing decrypt of a list of encrypted {@link PdfSource}
@@ -48,7 +52,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
     private int totalSteps;
     private PDDocument document = null;
 
-    public void before(DecryptParameters parameters) throws TaskException {
+    public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size() + 1;
     }
 
@@ -79,6 +83,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
         flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
+        LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
     }
 
     public void after() {

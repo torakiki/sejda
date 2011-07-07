@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation holding the tasks information in a Map and providing synchronized accessory methods.
+ * Default implementation holding the tasks information providing accessory methods.
  * 
  * @author Andrea Vacondio
  * 

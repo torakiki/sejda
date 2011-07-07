@@ -16,11 +16,9 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
@@ -29,62 +27,48 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.BadPdfFormatException;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfSmartCopy;
 import com.lowagie.text.pdf.PdfStream;
 
 /**
- * Component responsible for handling operations related to a {@link PdfCopy} instance.
+ * Abstract implementation using an underlying {@link PdfSmartCopy} instance.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfCopyHandler {
+abstract class AbstractPdfCopier implements PdfCopier {
 
-    private PdfCopy pdfCopy = null;
-    private FileOutputStream ouputStream = null;
+    private PdfSmartCopy pdfCopy = null;
     private Document pdfDocument = null;
 
     /**
-     * Creates a new instance initializing the inner {@link PdfCopy} instance.
+     * Opens the copier using the given reader and the given output version.
      * 
      * @param reader
-     *            input reader
-     * @param ouputFile
-     *            {@link File} to copy on
+     * @param outputStream
+     *            the output stream to write to.
      * @param version
-     *            version for the created pod copy, if null the version number is taken from the input {@link PdfReader}
-     * @throws TaskException
-     *             in case of error
+     *            version for the created pdf copy, if null the version number is taken from the input {@link PdfReader}
      */
-    public PdfCopyHandler(PdfReader reader, File ouputFile, PdfVersion version) throws TaskException {
+    void open(PdfReader reader, OutputStream outputStream, PdfVersion version) throws TaskException {
         try {
-            ouputStream = new FileOutputStream(ouputFile);
             pdfDocument = new Document(reader.getPageSizeWithRotation(1));
             if (version == null) {
-                pdfCopy = new PdfCopy(pdfDocument, ouputStream);
+                pdfCopy = new PdfSmartCopy(pdfDocument, outputStream);
                 pdfCopy.setPdfVersion(reader.getPdfVersion());
             } else {
-                pdfCopy = new PdfCopy(pdfDocument, ouputStream);
+                pdfCopy = new PdfSmartCopy(pdfDocument, outputStream);
                 pdfCopy.setPdfVersion(version.getVersionAsCharacter());
             }
             pdfDocument.addCreator(Sejda.CREATOR);
             pdfDocument.open();
         } catch (DocumentException e) {
             throw new TaskException("An error occurred opening the PdfCopy.", e);
-        } catch (IOException e) {
-            throw new TaskIOException("An IO error occurred opening the PdfCopy.", e);
         }
     }
 
-    /**
-     * Adds to the {@link PdfCopy} the given page extracted from the input reader
-     * 
-     * @param reader
-     * @param pageNumber
-     * @throws TaskException
-     */
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addPage(pdfCopy.getImportedPage(reader, pageNumber));
@@ -98,7 +82,7 @@ public class PdfCopyHandler {
     }
 
     /**
-     * Adds to the {@link PdfCopy} all the pages from the input reader
+     * Adds to the {@link PdfSmartCopy} all the pages from the input reader
      * 
      * @param reader
      * @throws TaskException
@@ -109,24 +93,13 @@ public class PdfCopyHandler {
         }
     }
 
-    /**
-     * Enables compression if compress is true
-     * 
-     * @param compress
-     */
-    public void setCompressionOnCopier(boolean compress) {
+    public void setCompression(boolean compress) {
         if (compress) {
             pdfCopy.setFullCompression();
             pdfCopy.setCompressionLevel(PdfStream.BEST_COMPRESSION);
         }
     }
 
-    /**
-     * Frees the reader on the underlying pdf copy.
-     * 
-     * @param reader
-     * @throws TaskIOException
-     */
     public void freeReader(PdfReader reader) throws TaskIOException {
         try {
             pdfCopy.freeReader(reader);
@@ -135,22 +108,13 @@ public class PdfCopyHandler {
         }
     }
 
-    /**
-     * sets the input page labels to the underlying pdf copy.
-     * 
-     * @param labels
-     */
     public void setPageLabels(PdfPageLabels labels) {
         pdfCopy.setPageLabels(labels);
     }
 
-    /**
-     * Closes the copier suppressing the exception.
-     * 
-     */
-    public void closePdfCopier() {
+    public void close() {
         pdfDocument.close();
         pdfCopy.close();
-        IOUtils.closeQuietly(ouputStream);
     }
+
 }

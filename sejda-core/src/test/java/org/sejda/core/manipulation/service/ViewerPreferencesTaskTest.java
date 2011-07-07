@@ -17,12 +17,17 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
@@ -41,10 +46,6 @@ import com.itextpdf.text.pdf.PdfDictionary;
 import com.itextpdf.text.pdf.PdfName;
 import com.itextpdf.text.pdf.PdfReader;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * test unit for the viewer preferences task
  * 
@@ -60,9 +61,9 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
     @Before
-    public void setUp() throws TaskException {
+    public void setUp() {
         setUpParameters();
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
     }
 
     /**

@@ -22,6 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -32,6 +38,7 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.xml.sax.SAXException;
 
 /**
  * Retrieves the configuration from the input xml stream
@@ -48,6 +55,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
     private static final String TASKS_XPATH = "/tasks/task";
     private static final String TASK_PARAM_XPATH = "@parameters";
     private static final String TASK_VALUE_XPATH = "@task";
+    private static final String DEFAULT_SEJDA_CONFIG = "sejda.xsd";
 
     private Class<? extends NotificationStrategy> notificationStrategy;
     @SuppressWarnings("rawtypes")
@@ -67,15 +75,27 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
     }
 
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
-        SAXReader reader = new SAXReader();
-        Document document;
+        SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
-            document = reader.read(input);
+            SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(ClassLoader
+                    .getSystemResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
+
+            SAXReader reader = new SAXReader(factory.newSAXParser().getXMLReader());
+            reader.setValidation(false);
+
+            Document document = reader.read(input);
+
             notificationStrategy = getNotificationStrategy(document);
             tasks = getTasksMap(document);
             validation = getBooleanValueFromXPath(ROOT_NODE + VALIDATION_XPATH, document);
         } catch (DocumentException e) {
-            throw new ConfigurationException("Error loading the xml input stream", e);
+            throw new ConfigurationException("Error loading the xml input stream.", e);
+        } catch (SAXException e) {
+            throw new ConfigurationException("Error processing the xml schema input stream.", e);
+        } catch (ParserConfigurationException e) {
+            throw new ConfigurationException("Unable to create SAX parser.", e);
         }
 
     }
@@ -129,17 +149,15 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
             try {
                 clazz = Class.forName(paramClass);
             } catch (ClassNotFoundException e) {
-                throw new ConfigurationException(String.format("Unable to find the configured class %s", paramClass), e);
+                throw new ConfigurationException(String.format("Unable to find the configured %s", paramClass), e);
             }
             if (assignableInterface.isAssignableFrom(clazz)) {
                 return clazz.asSubclass(assignableInterface);
-            } else {
-                throw new ConfigurationException(String.format("The configured class %s is not a subtype of %s", clazz,
-                        assignableInterface));
             }
-        } else {
-            throw new ConfigurationException(String.format("Missing %s configuration parameter.", xpath));
+            throw new ConfigurationException(String.format("The configured %s is not a subtype of %s", clazz,
+                    assignableInterface));
         }
+        throw new ConfigurationException(String.format("Missing %s configuration parameter.", xpath));
     }
 
     /**

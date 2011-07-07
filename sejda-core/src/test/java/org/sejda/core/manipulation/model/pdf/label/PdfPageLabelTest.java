@@ -17,10 +17,11 @@
 package org.sejda.core.manipulation.model.pdf.label;
 
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class PdfPageLabelTest {
 
@@ -39,8 +40,12 @@ public class PdfPageLabelTest {
         PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, -1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativelogicalNumb() {
-        PdfPageLabel.newInstanceWithLabelAndLogicalNumber("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1, -1);
+    @Test
+    public void testEqualsAndHasCode() {
+        PdfPageLabel victim1 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim2 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim3 = PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 1);
+        PdfPageLabel victim4 = PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_LETTERS, 1);
+        TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 }

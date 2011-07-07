@@ -19,9 +19,13 @@
  */
 package org.sejda.core.notification.strategy;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.ThreadLocalExecutorFactory;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Strategy to notify events asynchronously using a per thread single thread executor.
@@ -31,17 +35,33 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
  */
 public final class AsyncNotificationStrategy implements NotificationStrategy {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncNotificationStrategy.class);
+
+    /**
+     * ThreadLocal returning a {@link ExecutorService} (the same instance for the same thread).
+     */
+    private static final ThreadLocal<ExecutorService> THREAD_LOCAL = new ThreadLocal<ExecutorService>() {
+        @Override
+        protected ExecutorService initialValue() {
+            return Executors.newSingleThreadExecutor();
+        }
+    };
+
     @SuppressWarnings("rawtypes")
-    public void notifyListener(final EventListener listener,
-            final AbstractNotificationEvent event) {
+    public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
-            ThreadLocalExecutorFactory.getLocalExecutor().execute(new Runnable() {
+            THREAD_LOCAL.get().execute(new Runnable() {
 
                 @SuppressWarnings("unchecked")
                 public void run() {
-                    listener.onEvent(event);
+                    try {
+                        listener.onEvent(event);
+                    } catch (RuntimeException e) {
+                        LOG.error(String.format("An error occurred notifying event %s", event), e);
+                        throw e;
+                    }
                 }
-                
+
             });
         }
     }

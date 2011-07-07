@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,15 +27,16 @@ import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Utility methods related to the encryption functionalities
+ * Utility methods related to the encryption functionalities.
  * 
  * @author Andrea Vacondio
  * 
  */
 public final class EncryptionUtils {
 
-    private static Map<PdfAccessPermission, Integer> permissionsCache = new HashMap<PdfAccessPermission, Integer>();
+    private static final Map<PdfAccessPermission, Integer> PERMISSIONS_CACHE;
     static {
+        Map<PdfAccessPermission, Integer> permissionsCache = new HashMap<PdfAccessPermission, Integer>();
         permissionsCache.put(PdfAccessPermission.ANNOTATION, PdfWriter.ALLOW_MODIFY_ANNOTATIONS);
         permissionsCache.put(PdfAccessPermission.ASSEMBLE, PdfWriter.ALLOW_ASSEMBLY);
         permissionsCache.put(PdfAccessPermission.COPY, PdfWriter.ALLOW_COPY);
@@ -43,6 +45,7 @@ public final class EncryptionUtils {
         permissionsCache.put(PdfAccessPermission.FILL_FORMS, PdfWriter.ALLOW_FILL_IN);
         permissionsCache.put(PdfAccessPermission.MODIFY, PdfWriter.ALLOW_MODIFY_CONTENTS);
         permissionsCache.put(PdfAccessPermission.PRINT, PdfWriter.ALLOW_PRINTING);
+        PERMISSIONS_CACHE = Collections.unmodifiableMap(permissionsCache);
     }
 
     private EncryptionUtils() {
@@ -73,6 +76,6 @@ public final class EncryptionUtils {
      * @return the iText access permission constant
      */
     public static Integer getAccessPermission(PdfAccessPermission permission) {
-        return permissionsCache.get(permission);
+        return PERMISSIONS_CACHE.get(permission);
     }
 }

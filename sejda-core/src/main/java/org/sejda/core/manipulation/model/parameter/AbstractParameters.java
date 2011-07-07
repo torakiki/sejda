@@ -27,7 +27,7 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.validation.constraint.ValidPdfVersion;
 
 /**
- * Abstract parameter implementation with attributes commonly used by all the parameters implementation
+ * Abstract parameter implementation with attributes commonly used by all the parameters implementation.
  * 
  * @author Andrea Vacondio
  * 
@@ -98,6 +98,9 @@ public abstract class AbstractParameters implements TaskParameters {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof AbstractParameters)) {
             return false;
         }

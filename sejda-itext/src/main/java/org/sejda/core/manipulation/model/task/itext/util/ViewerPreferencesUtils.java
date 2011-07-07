@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.util;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,56 +33,66 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * Utility methods related to the viewer preferences functionalities
+ * Utility methods related to the viewer preferences functionalities.
  * 
  * @author Andrea Vacondio
  * 
  */
 public final class ViewerPreferencesUtils {
 
-    private static Map<PdfDuplex, PdfName> duplexCache = new HashMap<PdfDuplex, PdfName>();
+    private static final Map<PdfDuplex, PdfName> DUPLEX_CACHE;
     static {
+        Map<PdfDuplex, PdfName> duplexCache = new HashMap<PdfDuplex, PdfName>();
         duplexCache.put(PdfDuplex.SIMPLEX, PdfName.SIMPLEX);
         duplexCache.put(PdfDuplex.DUPLEX_FLIP_LONG_EDGE, PdfName.DUPLEXFLIPLONGEDGE);
         duplexCache.put(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE, PdfName.DUPLEXFLIPSHORTEDGE);
+        DUPLEX_CACHE = Collections.unmodifiableMap(duplexCache);
     }
 
-    private static Map<PdfNonFullScreenPageMode, PdfName> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, PdfName>();
+    private static final Map<PdfNonFullScreenPageMode, PdfName> NSF_MODE_CACHE;
     static {
+        Map<PdfNonFullScreenPageMode, PdfName> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, PdfName>();
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_NONE, PdfName.USENONE);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OC, PdfName.USEOC);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OUTLINES, PdfName.USEOUTLINES);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_THUMNS, PdfName.USETHUMBS);
+        NSF_MODE_CACHE = Collections.unmodifiableMap(nfsModeCache);
     }
 
-    private static Map<PdfPageLayout, Integer> layoutCache = new HashMap<PdfPageLayout, Integer>();
+    private static final Map<PdfPageLayout, Integer> LAYOUT_CACHE;
     static {
+        Map<PdfPageLayout, Integer> layoutCache = new HashMap<PdfPageLayout, Integer>();
         layoutCache.put(PdfPageLayout.SINGLE_PAGE, PdfWriter.PageLayoutSinglePage);
         layoutCache.put(PdfPageLayout.ONE_COLUMN, PdfWriter.PageLayoutOneColumn);
         layoutCache.put(PdfPageLayout.TWO_COLUMN_LEFT, PdfWriter.PageLayoutTwoColumnLeft);
         layoutCache.put(PdfPageLayout.TWO_COLUMN_RIGHT, PdfWriter.PageLayoutTwoColumnRight);
         layoutCache.put(PdfPageLayout.TWO_PAGE_LEFT, PdfWriter.PageLayoutTwoPageLeft);
         layoutCache.put(PdfPageLayout.TWO_PAGE_RIGHT, PdfWriter.PageLayoutTwoPageRight);
+        LAYOUT_CACHE = Collections.unmodifiableMap(layoutCache);
     }
 
-    private static Map<PdfPageMode, Integer> pageModeCache = new HashMap<PdfPageMode, Integer>();
+    private static final Map<PdfPageMode, Integer> PAGE_MODE_CACHE;
     static {
+        Map<PdfPageMode, Integer> pageModeCache = new HashMap<PdfPageMode, Integer>();
         pageModeCache.put(PdfPageMode.USE_NONE, PdfWriter.PageModeUseNone);
         pageModeCache.put(PdfPageMode.USE_THUMBS, PdfWriter.PageModeUseThumbs);
         pageModeCache.put(PdfPageMode.USE_OUTLINES, PdfWriter.PageModeUseOutlines);
         pageModeCache.put(PdfPageMode.FULLSCREEN, PdfWriter.PageModeFullScreen);
         pageModeCache.put(PdfPageMode.USE_OC, PdfWriter.PageModeUseOC);
         pageModeCache.put(PdfPageMode.USE_ATTACHMENTS, PdfWriter.PageModeUseAttachments);
+        PAGE_MODE_CACHE = Collections.unmodifiableMap(pageModeCache);
     }
 
-    private static Map<PdfBooleanPreference, PdfName> booleanPrefCache = new HashMap<PdfBooleanPreference, PdfName>();
+    private static final Map<PdfBooleanPreference, PdfName> BOOLEAN_PREF_CACHE;
     static {
+        Map<PdfBooleanPreference, PdfName> booleanPrefCache = new HashMap<PdfBooleanPreference, PdfName>();
         booleanPrefCache.put(PdfBooleanPreference.HIDE_TOOLBAR, PdfName.HIDETOOLBAR);
         booleanPrefCache.put(PdfBooleanPreference.CENTER_WINDOW, PdfName.CENTERWINDOW);
         booleanPrefCache.put(PdfBooleanPreference.DISPLAY_DOC_TITLE, PdfName.DISPLAYDOCTITLE);
         booleanPrefCache.put(PdfBooleanPreference.FIT_WINDOW, PdfName.FITWINDOW);
         booleanPrefCache.put(PdfBooleanPreference.HIDE_MENUBAR, PdfName.HIDEMENUBAR);
         booleanPrefCache.put(PdfBooleanPreference.HIDE_WINDOW_UI, PdfName.HIDEWINDOWUI);
+        BOOLEAN_PREF_CACHE = Collections.unmodifiableMap(booleanPrefCache);
     }
 
     private ViewerPreferencesUtils() {
@@ -121,7 +132,7 @@ public final class ViewerPreferencesUtils {
      * @return the iText duplex constant
      */
     public static PdfName getDuplex(PdfDuplex duplex) {
-        return duplexCache.get(duplex);
+        return DUPLEX_CACHE.get(duplex);
     }
 
     /**
@@ -131,17 +142,37 @@ public final class ViewerPreferencesUtils {
      * @return the iText non full screen mode constant
      */
     public static PdfName getNFSMode(PdfNonFullScreenPageMode nfsMode) {
-        return nfsModeCache.get(nfsMode);
+        return NSF_MODE_CACHE.get(nfsMode);
     }
 
     /**
      * Mapping between Sejda and iText boolean preferences constants
      * 
      * @param booleanPref
-     * @return the iText boolean preferencese constant
+     * @return the iText boolean preferences constant
      */
     public static PdfName getBooleanPreference(PdfBooleanPreference booleanPref) {
-        return booleanPrefCache.get(booleanPref);
+        return BOOLEAN_PREF_CACHE.get(booleanPref);
+    }
+
+    /**
+     * Mapping between Sejda and iText page mode constants
+     * 
+     * @param mode
+     * @return the iText page mode int
+     */
+    public static int getPageMode(PdfPageMode mode) {
+        return PAGE_MODE_CACHE.get(mode);
+    }
+
+    /**
+     * Mapping between Sejda and iText page layout constants
+     * 
+     * @param layout
+     * @return the iText page layout int
+     */
+    public static int getPageLayout(PdfPageLayout layout) {
+        return LAYOUT_CACHE.get(layout);
     }
 
     /**
@@ -150,6 +181,6 @@ public final class ViewerPreferencesUtils {
      * @return the int representing the ORed layout|mode that can be used to set the vewer preferences in the pdf stamper.
      */
     public static int getViewerPreferences(PdfPageMode mode, PdfPageLayout layout) {
-        return pageModeCache.get(mode) | layoutCache.get(layout);
+        return getPageMode(mode) | getPageLayout(layout);
     }
 }

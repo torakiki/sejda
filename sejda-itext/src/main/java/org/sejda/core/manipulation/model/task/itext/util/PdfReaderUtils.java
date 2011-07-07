@@ -97,27 +97,23 @@ public final class PdfReaderUtils {
     private static PdfReader openReaderFromStream(PdfStreamSource source, boolean forceStream) throws IOException {
         if (forceStream) {
             return new PdfReader(new BufferedInputStream(source.getStream()), source.getPasswordBytes());
-        } else {
-            return new PdfReader(new RandomAccessFileOrArray(source.getStream()), source.getPasswordBytes());
         }
+        return new PdfReader(new RandomAccessFileOrArray(source.getStream()), source.getPasswordBytes());
     }
 
     private static PdfReader openReaderFromFile(PdfFileSource source, boolean forceStream) throws IOException {
         if (forceStream) {
-            return new PdfReader(new BufferedInputStream(new FileInputStream(source.getFile())), source
-                    .getPasswordBytes());
-        } else {
-            return new PdfReader(new RandomAccessFileOrArray(source.getFile().getAbsolutePath()), source
-                    .getPasswordBytes());
+            return new PdfReader(new BufferedInputStream(new FileInputStream(source.getFile())),
+                    source.getPasswordBytes());
         }
+        return new PdfReader(new RandomAccessFileOrArray(source.getFile().getAbsolutePath()), source.getPasswordBytes());
     }
 
     private static PdfReader openReaderFromURL(PdfURLSource source, boolean forceStream) throws IOException {
         if (forceStream) {
             return new PdfReader(new BufferedInputStream(source.getUrl().openStream()), source.getPasswordBytes());
-        } else {
-            return new PdfReader(new RandomAccessFileOrArray(source.getUrl()), source.getPasswordBytes());
         }
+        return new PdfReader(new RandomAccessFileOrArray(source.getUrl()), source.getPasswordBytes());
     }
 
 }

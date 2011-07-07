@@ -17,9 +17,20 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerStart;
+import org.sejda.core.TestUtils;
+import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.TestTaskParameter;
@@ -27,8 +38,7 @@ import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
-
-import static org.mockito.Mockito.*;
+import org.sejda.core.notification.context.GlobalNotificationContext;
 
 /**
  * Test unit for the {@link DefaultTaskExecutionService}
@@ -36,7 +46,7 @@ import static org.mockito.Mockito.*;
  * @author Andrea Vacondio
  * 
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class DefaultTaskExecutionServiceTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
@@ -50,8 +60,11 @@ public class DefaultTaskExecutionServiceTest {
     }
 
     @Test
-    public void testExecute() throws TaskException {
+    public void testExecute() throws NotificationContextException {
+        TestListenerStart listener = TestListenerFactory.newStartListener();
+        GlobalNotificationContext.getContext().addListener(listener);
         victim.execute(parameters);
+        assertTrue(listener.isStarted());
     }
 
     @Test
@@ -67,16 +80,16 @@ public class DefaultTaskExecutionServiceTest {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
         PdfOutput output = mock(PdfOutput.class);
         parameters.setOutput(output);
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
         verify(task).before(parameters);
         verify(task).after();
         verify(task, never()).execute(parameters);
     }
-    
+
     @Test
     public void testNegativeValidationExecution() throws TaskException {
-        victim.setContext(context);
+        TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
         verify(task, never()).before(parameters);
         verify(task, never()).after();

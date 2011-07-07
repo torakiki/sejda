@@ -21,6 +21,8 @@ package org.sejda.core.notification.event;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Abstract event that carries the timestamp when it has been created.
  * 
@@ -43,7 +45,7 @@ public abstract class AbstractNotificationEvent implements NotificationEvent, Se
 
     @Override
     public String toString() {
-        return String.format("%s [eventTimestamp=%d]", this.getClass(), eventTimestamp);
+        return new ToStringBuilder(this).append("eventTimestamp", eventTimestamp).toString();
     }
 
 }

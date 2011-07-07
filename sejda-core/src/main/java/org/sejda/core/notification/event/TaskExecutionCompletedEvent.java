@@ -19,6 +19,8 @@
  */
 package org.sejda.core.notification.event;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Event thrown when an execution completes without errors.
  * 
@@ -29,6 +31,35 @@ public class TaskExecutionCompletedEvent extends AbstractNotificationEvent {
 
     private static final long serialVersionUID = -2839444329684682481L;
 
-    // empty on purpose
+    private long executionTime = -1;
+
+    /**
+     * Creates an instance without specifying the execution time.
+     */
+    public TaskExecutionCompletedEvent() {
+        super();
+    }
+
+    /**
+     * Creates an instance specifying the execution time, the number of millis from the task to complete.
+     * 
+     * @param executionTime
+     */
+    public TaskExecutionCompletedEvent(long executionTime) {
+        this.executionTime = executionTime;
+    }
+
+    /**
+     * 
+     * @return the number of millis from the task to complete or -1 if not specified.
+     */
+    public long getExecutionTime() {
+        return executionTime;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("executionTime", executionTime).toString();
+    }
 
 }

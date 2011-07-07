@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -32,8 +34,6 @@ import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Default implementation of the {@link TaskExecutionService}.
@@ -58,8 +58,8 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             LOG.info("Starting task ({}) execution.", task);
             actualExecution(parameters, task);
             postExecution(stopWatch);
-            LOG.info("Task ({}) executed in {}", task, DurationFormatUtils.formatDurationWords(stopWatch.getTime(),
-                    true, true));
+            LOG.info("Task ({}) executed in {}", task,
+                    DurationFormatUtils.formatDurationWords(stopWatch.getTime(), true, true));
         } catch (InvalidTaskParametersException i) {
             LOG.warn("Task execution failed due to invalid parameters.", i);
             executionFailed(i);
@@ -112,7 +112,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     private void postExecution(StopWatch stopWatch) {
         stopWatch.stop();
         // notification about completion
-        notifyEvent().taskCompleted();
+        notifyEvent().taskCompleted(stopWatch.getTime());
     }
 
     /**
@@ -131,14 +131,4 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             task.after();
         }
     }
-
-    // Test purpose
-    /**
-     * @param context
-     *            the context to set
-     */
-    void setContext(TaskExecutionContext context) {
-        this.context = context;
-    }
-
 }

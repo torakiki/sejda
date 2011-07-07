@@ -41,8 +41,9 @@ public class Bounds {
         return end;
     }
 
+    @Override
     public String toString() {
-        return start + "-" + end;
+        return String.format("%s-%s", start, end);
     }
 
     /**

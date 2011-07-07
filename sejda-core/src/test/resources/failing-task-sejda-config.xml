@@ -2,6 +2,6 @@
 <sejda>
 	<notification async="false"/>
 	<tasks>
-		<task parameters="org.sejda.core.manipulation.TaskParameter" task="java.lang.String" />
+		<task parameters="org.sejda.core.manipulation.TestTaskParameter" task="java.lang.String" />
 	</tasks>
 </sejda>

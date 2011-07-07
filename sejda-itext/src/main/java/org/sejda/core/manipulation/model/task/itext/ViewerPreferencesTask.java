@@ -17,6 +17,14 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +32,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
@@ -40,22 +47,13 @@ import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
-
 /**
  * Task setting viewer preferences on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesTask extends MultipleOutputWriterSupport implements Task<ViewerPreferencesParameters> {
+public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewerPreferencesTask.class);
 
@@ -64,8 +62,10 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
     private int totalSteps;
     private int preferences;
     private Map<PdfName, PdfObject> configuredPreferences;
+    private MultipleOutputWriterSupport outputWriter;
 
-    public void before(ViewerPreferencesParameters parameters) throws TaskExecutionException {
+    public void before(ViewerPreferencesParameters parameters) {
+        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
         configuredPreferences = getConfiguredViewerPreferencesMap(parameters);
@@ -87,7 +87,7 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
             LOG.debug("Opening {} ...", source);
             reader = openReader(source, true);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
@@ -105,12 +105,12 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
             nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
         LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
@@ -136,8 +136,8 @@ public class ViewerPreferencesTask extends MultipleOutputWriterSupport implement
             confPreferences.put(PdfName.DUPLEX, ViewerPreferencesUtils.getDuplex(parameters.getDuplex()));
         }
         if (parameters.getPrintScaling() != null) {
-            confPreferences.put(PdfName.PRINTSCALING, ViewerPreferencesUtils.getPrintScaling(parameters
-                    .getPrintScaling()));
+            confPreferences.put(PdfName.PRINTSCALING,
+                    ViewerPreferencesUtils.getPrintScaling(parameters.getPrintScaling()));
         }
         confPreferences.put(PdfName.NONFULLSCREENPAGEMODE, ViewerPreferencesUtils.getNFSMode(parameters.getNfsMode()));
 

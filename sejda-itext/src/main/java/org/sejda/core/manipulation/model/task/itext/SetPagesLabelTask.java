@@ -16,25 +16,24 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier.nullSafeClosePdfCopy;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PageLabelUtils.getLabels;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.support.io.model.FileOutput.file;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfCopyHandler;
+import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
-
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfCopyHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PageLabelsUtil.getLabels;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.support.io.model.FileOutput.file;
 
 /**
  * Task that apply page labels to a input pdf.
@@ -42,15 +41,16 @@ import static org.sejda.core.support.io.model.FileOutput.file;
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task<SetPagesLabelParameters> {
+public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelParameters.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelTask.class);
 
     private PdfReader reader = null;
-    private PdfCopyHandler copyHandler = null;
+    private DefaultPdfCopier copier = null;
+    private SingleOutputWriterSupport outputWriter;
 
-    public void before(SetPagesLabelParameters parameters) throws TaskException {
-        // nothing to do
+    public void before(SetPagesLabelParameters parameters) {
+        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
@@ -58,28 +58,29 @@ public class SetPagesLabelTask extends SingleOutputWriterSupport implements Task
         LOG.debug("Opening {} ...", source);
         reader = openReader(source);
 
-        File tmpFile = createTemporaryPdfBuffer();
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-        copyHandler = new PdfCopyHandler(reader, tmpFile, parameters.getVersion());
-        copyHandler.setCompressionOnCopier(parameters.isCompressXref());
+        copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
+        copier.setCompression(parameters.isCompressXref());
 
-        copyHandler.addAllPages(reader);
+        copier.addAllPages(reader);
 
         nullSafeClosePdfReader(reader);
 
-        LOG.debug("Applying labels {} ...");
-        copyHandler.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
+        LOG.debug("Applying {} labels ...", parameters.getLabels().size());
+        copier.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
 
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copier);
 
-        flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+                parameters.isOverwrite());
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfCopyHandler(copyHandler);
+        nullSafeClosePdfCopy(copier);
     }
 
 }

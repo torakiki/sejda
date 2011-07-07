@@ -26,7 +26,6 @@ import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.exception.TaskPermissionsException;
 import org.sejda.core.exception.TaskWrongPasswordException;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
@@ -110,9 +109,8 @@ public final class PDDocumentUtil {
      * Set compression of the XRef table on the document
      * 
      * @param document
-     * @throws TaskIOException
      */
-    public static void compressXrefStream(PDDocument document) throws TaskIOException {
+    public static void compressXrefStream(PDDocument document) {
         LOG.warn("Compression not yet supported by PDFbox");
     }
 

@@ -18,22 +18,22 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * Provides support methods to write multiple output {@link PdfOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task
- * and write them to the destination when the task requires to flush. An extending class can call the {@link MultipleOutputSupport} interface methods to add temporary files or
- * flush them.
+ * Provides support methods to write multiple output {@link PdfOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task and
+ * write them to the destination when the task requires to flush.
  * 
  * <pre>
  * {@code
- * addOutput(file(tmpFile).name("newName"));
+ * MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
+ * outputWriter.addOutput(file(tmpFile).name("newName"));
  * ....
  * AbstractPdfOutput output = ...
  * boolean overwrite = ...
- * flushOutputs(output, overwrite);
+ * outputWriter.flushOutputs(output, overwrite);
  * }
  * </pre>
  * 
@@ -47,9 +47,8 @@ public class MultipleOutputWriterSupport extends OutputWriterSupport implements 
         try {
             if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
                 throw new TaskIOException("Unsupported file ouput for a multiple output task.");
-            } else {
-                writeToNonFileDestination(output, overwrite);
             }
+            writeToNonFileDestination(output, overwrite);
         } finally {
             clear();
         }

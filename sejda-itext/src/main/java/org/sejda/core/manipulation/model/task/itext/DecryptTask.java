@@ -17,6 +17,14 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
+import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
@@ -30,31 +38,24 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfStamperHandler;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
-
 /**
  * Task performing decrypt of a list of encrypted {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DecryptTask extends MultipleOutputWriterSupport implements Task<DecryptParameters> {
+public class DecryptTask implements Task<DecryptParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DecryptTask.class);
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
+    private MultipleOutputWriterSupport outputWriter;
 
-    public void before(DecryptParameters parameters) throws TaskException {
+    public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size() + 1;
+        outputWriter = new MultipleOutputWriterSupport();
     }
 
     public void execute(DecryptParameters parameters) throws TaskException {
@@ -64,7 +65,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
             LOG.debug("Opening {} ...", source);
             reader = openReader(source, true);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
@@ -75,12 +76,12 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
             nullSafeClosePdfStamperHandler(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
         LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());

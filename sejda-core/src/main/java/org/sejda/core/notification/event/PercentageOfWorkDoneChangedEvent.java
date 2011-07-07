@@ -21,6 +21,8 @@ package org.sejda.core.notification.event;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 /**
  * Event used to notify about the increasing percentage of work executed by the task.
  * 
@@ -78,7 +80,7 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
 
     @Override
     public String toString() {
-        return String.format("%s [percentage=%s]", this.getClass(), percentage);
+        return new ToStringBuilder(this).append("percentage", percentage).toString();
     }
 
 }
