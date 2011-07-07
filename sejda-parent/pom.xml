@@ -15,6 +15,7 @@
 		<module>../sejda-core</module>
 		<module>../sejda-itext</module>
 		<module>../sejda-pdfbox</module>
+		<module>../sejda-console</module>
 	</modules>
 
 	<issueManagement>

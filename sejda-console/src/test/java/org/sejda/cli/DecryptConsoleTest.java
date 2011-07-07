@@ -53,7 +53,7 @@ public class DecryptConsoleTest extends BaseConsoleTest {
                 "--output -o value : output directory (required)",
                 "--outputPrefix -p value : prefix for the output files name (optional)",
                 "[--overwrite] : overwrite existing output file (optional)",
-                "--pdfVersion value : pdf version of the output document/s. (optional)");
+                "--pdfVersion -v value : pdf version of the output document/s. (optional)");
     }
 
     @Test
