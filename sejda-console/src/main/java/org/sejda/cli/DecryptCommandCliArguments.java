@@ -32,7 +32,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = "sejda-console decrypt")
-public interface DecryptCommandOptions extends CommandOptions {
+public interface DecryptCommandCliArguments extends CommandCliArguments {
 
     @Option(description = "compress output file (optional)")
     boolean getCompressed();

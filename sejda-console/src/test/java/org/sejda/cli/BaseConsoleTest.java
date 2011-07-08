@@ -51,7 +51,7 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
 public class BaseConsoleTest {
     protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
 
-    protected SejdaConsole console = new SejdaConsole() {
+    protected SejdaConsoleMain console = new SejdaConsoleMain() {
         @Override
         CommandExecutionService getTaskExecutionFacade() {
             return new DefaultCommandExecutionService() {

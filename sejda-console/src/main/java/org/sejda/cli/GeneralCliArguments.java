@@ -32,8 +32,8 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.NAME)
-public interface GeneralOptions {
+@CommandLineInterface(application = SejdaConsoleMain.NAME)
+public interface GeneralCliArguments {
 
     @Unparsed(name = "command to execute {[concat], [split],"
             + " [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}")

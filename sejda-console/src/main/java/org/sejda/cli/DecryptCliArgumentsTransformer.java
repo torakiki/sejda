@@ -21,20 +21,20 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
- * {@link CommandOptionsTransformer} for the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask} command line interface
+ * {@link CommandCliArgumentsTransformer} for the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask} command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class DecryptOptionsTransformer implements CommandOptionsTransformer {
+public class DecryptCliArgumentsTransformer implements CommandCliArgumentsTransformer {
 
     /**
-     * Transforms {@link DecryptCommandOptions} to {@link DecryptParameters}
+     * Transforms {@link DecryptCommandCliArguments} to {@link DecryptParameters}
      * 
      * @param options
      * @return
      */
-    public TaskParameters toTaskParameters(DecryptCommandOptions options) {
+    public TaskParameters toTaskParameters(DecryptCommandCliArguments options) {
         DecryptParameters parameters = new DecryptParameters();
         parameters.setCompress(options.getCompressed());
         parameters.setVersion(options.getPdfVersion());
@@ -50,10 +50,10 @@ public class DecryptOptionsTransformer implements CommandOptionsTransformer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.sejda.cli.CommandOptionsTransformer#toTaskParameters(org.sejda.cli.CommandOptions)
+     * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.CommandCliArguments)
      */
     @Override
-    public TaskParameters toTaskParameters(CommandOptions commandOptions) {
-        return toTaskParameters((DecryptCommandOptions) commandOptions);
+    public TaskParameters toTaskParameters(CommandCliArguments commandCliArguments) {
+        return toTaskParameters((DecryptCommandCliArguments) commandCliArguments);
     }
 }

@@ -20,11 +20,11 @@ package org.sejda.cli;
 /**
  * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
  * 
- * @see GeneralOptions for the specifications of the general options of the command line interface
+ * @see GeneralCliArguments for the specifications of the general options of the command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CommandOptions {
+public interface CommandCliArguments {
     // marker interface for now
 }
