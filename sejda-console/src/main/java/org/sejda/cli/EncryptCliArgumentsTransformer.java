@@ -16,29 +16,32 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
- * {@link CommandCliArgumentsTransformer} for the Decrypt task command line interface
+ * {@link CommandCliArgumentsTransformer} for the Encrypt task command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
+public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer {
 
     /**
-     * Transforms {@link DecryptTaskCliArguments} to {@link DecryptParameters}
+     * Transforms {@link EncryptTaskCliArguments} to {@link EncryptParameters}
      * 
      * @param taskCliArguments
      * @return
      */
-    public TaskParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
-        DecryptParameters parameters = new DecryptParameters();
+    public TaskParameters toTaskParameters(EncryptTaskCliArguments taskCliArguments) {
+        EncryptParameters parameters = new EncryptParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
+        parameters.setOwnerPassword(taskCliArguments.getAdminstratorPassword());
+        parameters.setUserPassword(taskCliArguments.getUserPassword());
+        parameters.setEncryptionAlgorithm(taskCliArguments.getEncryptionType());
         return parameters;
     }
 
@@ -49,6 +52,6 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      */
     @Override
     public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
-        return toTaskParameters((DecryptTaskCliArguments) taskCliArguments);
+        return toTaskParameters((EncryptTaskCliArguments) taskCliArguments);
     }
 }

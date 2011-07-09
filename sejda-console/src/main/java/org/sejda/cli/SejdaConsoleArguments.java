@@ -28,7 +28,7 @@ class SejdaConsoleArguments {
 
     /**
      * @return only arguments relevant for the {@link GeneralCliArguments}
-     * @see GeneralCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link CommandCliArguments}
+     * @see GeneralCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link TaskCliArguments}
      */
     String[] getGeneralOptionsArguments() {
         int min = Math.min(isHelpRequest() ? 2 : 1, arguments.length);
@@ -36,8 +36,8 @@ class SejdaConsoleArguments {
     }
 
     /**
-     * @return only arguments relevant for the {@link CommandCliArguments}
-     * @see CommandCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link CommandCliArguments}
+     * @return only arguments relevant for the {@link TaskCliArguments}
+     * @see TaskCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link TaskCliArguments}
      */
     String[] getCommandOptionArguments() {
         return (String[]) ArrayUtils.subarray(arguments, 1, arguments.length);

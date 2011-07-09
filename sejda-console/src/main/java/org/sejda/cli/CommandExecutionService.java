@@ -18,7 +18,7 @@ package org.sejda.cli;
 
 
 /**
- * Service that executes command line commands, translating {@link CommandCliArguments} to {@link org.sejda.core.manipulation.model.parameter.TaskParameters}, and executing the
+ * Service that executes command line commands, translating {@link TaskCliArguments} to {@link org.sejda.core.manipulation.model.parameter.TaskParameters}, and executing the
  * corresponding {@link org.sejda.core.manipulation.model.task.Task}
  * 
  * @author Eduard Weissmann
@@ -29,10 +29,10 @@ public interface CommandExecutionService {
     /**
      * Executes a given command, using the specified options
      * 
-     * @param commandCliArguments
+     * @param taskCliArguments
      *            command line options (translated to arguments)
      * @param commandName
      *            name of the command
      */
-    void executeCommand(CommandCliArguments commandCliArguments, String commandName);
+    void executeCommand(TaskCliArguments taskCliArguments, String commandName);
 }

@@ -22,18 +22,17 @@ import org.sejda.cli.adapters.PdfDirectoryOutputAdapter;
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Specifications for command line options of the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask}
+ * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
+ * 
+ * @see GeneralCliArguments for the specifications of the general options of the command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = "sejda-console decrypt")
-public interface DecryptCommandCliArguments extends CommandCliArguments {
-
+public interface TaskCliArguments {
     @Option(description = "compress output file (optional)")
     boolean getCompressed();
 
@@ -43,12 +42,10 @@ public interface DecryptCommandCliArguments extends CommandCliArguments {
     @Option(shortName = "o", description = "output directory (required)")
     PdfDirectoryOutputAdapter getOutput();
 
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "prefix_")
-    String getOutputPrefix();
-
     @Option(shortName = "f", description = "pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
     List<PdfFileSourceAdapter> getFiles();
 
     @Option(description = "overwrite existing output file (optional)")
     boolean getOverwrite();
+
 }

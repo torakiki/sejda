@@ -69,7 +69,7 @@ public final class SejdaCli<T> {
      * @return
      * @throws ArgumentValidationException
      */
-    public static <C extends CommandCliArguments> SejdaCli<C> newCommandOptions(SejdaConsoleArguments arguments,
+    public static <C extends TaskCliArguments> SejdaCli<C> newCommandOptions(SejdaConsoleArguments arguments,
             String commandName) throws ArgumentValidationException {
         // find interface defining the options accepted by command
         Class<C> commandCliArgumentsClazz = getCommandCliArgumentsClassByCommandName(commandName);
@@ -95,22 +95,22 @@ public final class SejdaCli<T> {
         return cli.getHelpMessage();
     }
 
-    private static final String COMMAND_OPTIONS_CLAZZ_SUFFIX = CommandCliArguments.class.getSimpleName();
+    private static final String COMMAND_OPTIONS_CLAZZ_SUFFIX = TaskCliArguments.class.getSimpleName();
 
     /**
-     * Each command has a corresponding interface implementing {@link CommandCliArguments} and configuring specific CLI options<br/>
-     * This method retrieves the {@link CommandCliArguments} extending class corresponding to the command name specified<br/>
-     * Eg: for command "decrypt" this method will return {@link DecryptCommandCliArguments} class
+     * Each command has a corresponding interface implementing {@link TaskCliArguments} and configuring specific CLI options<br/>
+     * This method retrieves the {@link TaskCliArguments} extending class corresponding to the command name specified<br/>
+     * Eg: for command "decrypt" this method will return {@link DecryptTaskCliArguments} class
      * 
      * @param commandName
      *            the command name
      * @return an interface defining the command line options for the specified command
      */
     @SuppressWarnings("unchecked")
-    private static <P extends CommandCliArguments> Class<P> getCommandCliArgumentsClassByCommandName(String commandName) {
+    private static <P extends TaskCliArguments> Class<P> getCommandCliArgumentsClassByCommandName(String commandName) {
         try {
-            return (Class<P>) Class.forName("org.sejda.cli." + StringUtils.capitalize(commandName)
-                    + COMMAND_OPTIONS_CLAZZ_SUFFIX);
+            return (Class<P>) Class.forName(TaskCliArguments.class.getPackage().getName() + "."
+                    + StringUtils.capitalize(commandName) + COMMAND_OPTIONS_CLAZZ_SUFFIX);
         } catch (Exception e) {
             throw new SejdaRuntimeException("Unknown command: '" + commandName + "'", e);
         }

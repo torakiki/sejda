@@ -54,8 +54,8 @@ public class DefaultCommandExecutionService implements CommandExecutionService {
     }
 
     @Override
-    public void executeCommand(CommandCliArguments commandCliArguments, String commandName) {
-        getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(commandCliArguments));
+    public void executeCommand(TaskCliArguments taskCliArguments, String commandName) {
+        getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(taskCliArguments));
     }
 
     TaskExecutionService getTaskExecutionService() {

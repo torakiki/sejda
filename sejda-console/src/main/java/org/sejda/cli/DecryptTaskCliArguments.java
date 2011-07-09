@@ -16,15 +16,17 @@
  */
 package org.sejda.cli;
 
+import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
+import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
- * 
- * @see GeneralCliArguments for the specifications of the general options of the command line interface
+ * Specifications for command line options of the Decrypt task
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CommandCliArguments {
-    // marker interface for now
+@CommandLineInterface(application = SejdaConsoleMain.NAME + " decrypt")
+public interface DecryptTaskCliArguments extends TaskCliArguments {
+    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "decrypted_")
+    String getOutputPrefix();
 }

@@ -61,7 +61,7 @@ public class SejdaConsoleMain {
             }
 
             String commandName = generalCli.getParsedArguments().getCommand();
-            SejdaCli<? extends CommandCliArguments> commandCli = SejdaCli.newCommandOptions(arguments, commandName);
+            SejdaCli<? extends TaskCliArguments> commandCli = SejdaCli.newCommandOptions(arguments, commandName);
 
             // print command specific help
             if (generalCli.getParsedArguments().isHelp()) {

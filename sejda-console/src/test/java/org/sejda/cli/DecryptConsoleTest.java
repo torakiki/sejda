@@ -17,36 +17,27 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.task.itext.DecryptTask;
 
 /**
- * Tests for the {@link DecryptTask} command line interface
+ * Tests for the DecryptTask command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class DecryptConsoleTest extends BaseConsoleTest {
+public class DecryptConsoleTest extends BaseCommandConsoleTest {
 
-    @Before
-    public void setUp() {
-        createTestFile("./inputs/input.pdf");
-        createTestFile("./inputs/input-protected.pdf");
-        createTestFolder("./outputs");
+    @Override
+    String getCommandName() {
+        return "decrypt";
     }
 
     @Test
     public void testExecuteCommandHelp() {
         assertConsoleOutputContains(
-                "-h decrypt",
+                "-h " + getCommandName(),
                 "Usage: sejda-console decrypt options",
                 "[--compressed] : compress output file (optional)",
                 "--files -f value... : pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)",
@@ -57,60 +48,15 @@ public class DecryptConsoleTest extends BaseConsoleTest {
     }
 
     @Test
-    public void testMandatoryOptions() {
-        assertConsoleOutputContains("decrypt", "Option is mandatory: --files -f");
-        assertConsoleOutputContains("decrypt --files inputs/input.pdf", "Option is mandatory: --output");
+    public void testOutputPrefix_Specified() {
+        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getBaseCommandWithDefaults()
+                + " -p fooPrefix");
+        assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
-    public void testSourceFileNotFound() {
-        assertConsoleOutputContains("decrypt --compressed --files input-doesntexist.pdf --output .",
-                "File 'input-doesntexist.pdf' does not exist");
-    }
-
-    @Test
-    public void testOutputDirectoryNotFound() {
-        assertConsoleOutputContains("decrypt --compressed --files inputs/input.pdf -o output-doesntexist",
-                "Path 'output-doesntexist' does not exist");
-    }
-
-    @Test
-    public void testSourceFileNoPassword() {
-        DecryptParameters result = invokeConsoleAndReturnTaskParameters("decrypt --files inputs/input.pdf --o ./outputs");
-
-        assertEquals(1, result.getSourceList().size());
-        assertHasFileSource(result, new File("inputs/input.pdf"), null);
-    }
-
-    @Test
-    public void testSourceFileWithPassword() {
-        DecryptParameters result = invokeConsoleAndReturnTaskParameters("decrypt --files inputs/input-protected.pdf;secret123 --o ./outputs");
-
-        assertEquals(1, result.getSourceList().size());
-        assertHasFileSource(result, new File("inputs/input-protected.pdf"), "secret123");
-    }
-
-    @Test
-    public void testBaseParameters_AllOn() {
-        DecryptParameters result = invokeConsoleAndReturnTaskParameters("decrypt --pdfVersion VERSION_1_2 --overwrite --compressed --files inputs/input.pdf --o ./outputs");
-        assertTrue(result.isCompressXref());
-        assertOutputFolder(result, new File("./outputs"));
-
-        assertEquals(1, result.getSourceList().size());
-        assertHasFileSource(result, new File("inputs/input.pdf"), null);
-        assertEquals(PdfVersion.VERSION_1_2, result.getVersion());
-        assertTrue(result.isOverwrite());
-    }
-
-    @Test
-    public void testBaseParameters_AllOff() {
-        DecryptParameters result = invokeConsoleAndReturnTaskParameters("decrypt --files inputs/input.pdf --o ./outputs");
-        assertFalse(result.isCompressXref());
-        assertOutputFolder(result, new File("./outputs"));
-
-        assertEquals(1, result.getSourceList().size());
-        assertHasFileSource(result, new File("inputs/input.pdf"), null);
-        assertEquals(PdfVersion.VERSION_1_6, result.getVersion());
-        assertFalse(result.isOverwrite());
+    public void testOutputPrefix_Default() {
+        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getBaseCommandWithDefaults());
+        assertEquals("decrypted_", parameters.getOutputPrefix());
     }
 }
