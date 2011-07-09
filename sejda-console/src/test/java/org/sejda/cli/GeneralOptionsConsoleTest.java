@@ -31,7 +31,7 @@ public class GeneralOptionsConsoleTest extends BaseConsoleTest {
         assertConsoleOutputIs(
                 "",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
-                "[--help -h] : prints usage to stdout; exits (optional)");
+                "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
     }
 
     @Test
@@ -39,7 +39,7 @@ public class GeneralOptionsConsoleTest extends BaseConsoleTest {
         assertConsoleOutputIs(
                 "-h",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
-                "[--help -h] : prints usage to stdout; exits (optional)");
+                "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
     }
 
     @Test

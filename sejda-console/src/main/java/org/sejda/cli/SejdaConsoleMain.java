@@ -18,7 +18,10 @@ package org.sejda.cli;
 
 import java.io.PrintStream;
 
+import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 
@@ -29,6 +32,7 @@ import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
  * 
  */
 public class SejdaConsoleMain {
+    private static final Logger LOG = LoggerFactory.getLogger(SejdaConsoleMain.class);
     /**
      * Executable binary name
      */
@@ -45,6 +49,7 @@ public class SejdaConsoleMain {
      *            command line arguments as strings
      */
     public void execute(final String[] args) {
+        LOG.debug("Starting execution with arguments: " + StringUtils.join(args));
         try {
             final SejdaConsoleArguments arguments = new SejdaConsoleArguments(args);
             final SejdaCli<GeneralCliArguments> generalCli = SejdaCli.newGeneralOptionsCli(arguments);
@@ -66,26 +71,14 @@ public class SejdaConsoleMain {
 
             // execute command
             getTaskExecutionFacade().executeCommand(commandCli.getParsedArguments(), commandName);
+            LOG.debug("Completed execution");
         } catch (ArgumentValidationException e) {
-            printError(e);
+            LOG.error(e.getMessage(), e);
             println(e.getMessage());
         } catch (SejdaRuntimeException e) {
-            printError(e);
+            LOG.error(e.getMessage(), e);
             println(e.getMessage());
         }
-    }
-
-    /**
-     * Prints the specified error to default err print stream
-     * 
-     * @param e
-     */
-    private void printError(Exception e) {
-        e.printStackTrace(getDefaultErrorPrintStream());
-    }
-
-    private PrintStream getDefaultErrorPrintStream() {
-        return System.err;
     }
 
     private PrintStream getDefaultOutPrintStream() {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sejda validation="true">
+	<notification async="false"/>
+	<tasks>
+		<task parameters="org.sejda.core.manipulation.model.parameter.DecryptParameters" task="org.sejda.core.manipulation.model.task.itext.DecryptTask"/>
+	</tasks>
+</sejda>

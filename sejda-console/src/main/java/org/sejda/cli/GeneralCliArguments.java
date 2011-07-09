@@ -41,6 +41,6 @@ public interface GeneralCliArguments {
 
     boolean isCommand();
 
-    @Option(shortName = "h", description = "prints usage to stdout; exits (optional)")
+    @Option(shortName = "h", description = "prints this usage information. Can be used to detail options for a command '-h command' (optional)")
     boolean isHelp();
 }
