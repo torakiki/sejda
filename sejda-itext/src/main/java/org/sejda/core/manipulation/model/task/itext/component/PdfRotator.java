@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
+import static org.sejda.core.manipulation.model.rotation.Rotation.getRotation;
+
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.slf4j.Logger;
@@ -33,15 +35,14 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfRotationHandler implements OngoingRotation {
+public final class PdfRotator implements OngoingRotation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfRotationHandler.class);
-    private static final int DEGREES_360 = 360;
+    private static final Logger LOG = LoggerFactory.getLogger(PdfRotator.class);
 
     private PdfReader reader;
     private PageRotation rotation;
 
-    private PdfRotationHandler(PageRotation rotation) {
+    private PdfRotator(PageRotation rotation) {
         this.rotation = rotation;
     }
 
@@ -55,7 +56,7 @@ public final class PdfRotationHandler implements OngoingRotation {
      * @return the ongoing apply rotation exposing methods to set the reader you want to apply the rotation to.
      */
     public static OngoingRotation applyRotation(PageRotation rotation) {
-        return new PdfRotationHandler(rotation);
+        return new PdfRotator(rotation);
     }
 
     public void to(PdfReader reader) {
@@ -86,9 +87,9 @@ public final class PdfRotationHandler implements OngoingRotation {
     private void apply(int pageNmber) {
         if (rotation.accept(pageNmber)) {
             PdfDictionary dictionary = reader.getPageN(pageNmber);
-            int rotationDegrees = (rotation.getRotation().getDegrees() + reader.getPageRotation(pageNmber))
-                    % DEGREES_360;
-            dictionary.put(PdfName.ROTATE, new PdfNumber(rotationDegrees));
+            dictionary.put(PdfName.ROTATE,
+                    new PdfNumber(rotation.getRotation().addRotation(getRotation(reader.getPageRotation(pageNmber)))
+                            .getDegrees()));
         }
     }
 }

@@ -23,14 +23,13 @@ import com.lowagie.text.pdf.PdfReader;
  * Identifies an ongoing rotation exposing methods to finalize it.
  * 
  * @author Andrea Vacondio
- * 
  */
 public interface OngoingRotation {
 
     /**
-     * applies the rotation to the input reader
+     * applies the rotation to the input target
      * 
      * @param reader
      */
-    void to(PdfReader reader);
+    void to(PdfReader target);
 }

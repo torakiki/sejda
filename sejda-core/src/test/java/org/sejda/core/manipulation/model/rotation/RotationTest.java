@@ -46,4 +46,9 @@ public class RotationTest {
         assertEquals(Rotation.DEGREES_180, Rotation.DEGREES_270.rotateAnticlockwise());
         assertEquals(Rotation.DEGREES_270, Rotation.DEGREES_0.rotateAnticlockwise());
     }
+
+    @Test
+    public void addRotationTest() {
+        assertEquals(Rotation.DEGREES_90, Rotation.DEGREES_270.addRotation(Rotation.DEGREES_180));
+    }
 }
