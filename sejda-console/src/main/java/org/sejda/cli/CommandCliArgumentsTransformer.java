@@ -19,22 +19,22 @@ package org.sejda.cli;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
- * Transformation component that knows how to transform command line arguments {@link CommandOptions} into task parameters {@link TaskParameters}
+ * Transformation component that knows how to transform command line arguments {@link TaskCliArguments} into task parameters {@link TaskParameters}
  * 
  * @author Eduard Weissmann
- * @param <C>
- *            the {@link CommandOptions} type transformed.
- * @param <T>
- *            the {@link TaskParameters} type the command is transformed to.
+ * @param <A>
+ *            the {@link TaskCliArguments} type transformed.
+ * @param <P>
+ *            the {@link TaskParameters} type the arguments are transformed to.
  */
-public interface CommandOptionsTransformer<C extends CommandOptions, T extends TaskParameters> {
+public interface CommandCliArgumentsTransformer <A extends TaskCliArguments, P extends TaskParameters> {
 
     /**
      * Transforms the specified command line arguments into task parameters
      * 
-     * @param commandOptions
+     * @param taskCliArguments
      *            command line arguments
      * @return translated task parameters
      */
-    T toTaskParameters(C commandOptions);
+    P toTaskParameters(A taskCliArguments);
 }

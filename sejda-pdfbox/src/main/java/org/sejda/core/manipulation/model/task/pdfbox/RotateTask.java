@@ -16,7 +16,7 @@
  */
 package org.sejda.core.manipulation.model.task.pdfbox;
 
-import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfRotationHandler.applyRotation;
+import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfRotator.applyRotation;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;

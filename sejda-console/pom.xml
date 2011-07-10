@@ -38,6 +38,39 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- plugin that assembles an executable form for the application -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- make the lib folder look nicer -->
+					<repositoryLayout>flat</repositoryLayout>
+					<repositoryName>lib</repositoryName>
+					<!-- set alternative assemble directory -->
+					<assembleDirectory>${project.build.directory}/assembled</assembleDirectory>
+					<!-- Copy the contents from "/src/main/config" to the target configuration 
+						directory in the assembled application -->
+					<copyConfigurationDirectory>true</copyConfigurationDirectory>
+					<!-- Include the target configuration directory in the beginning of 
+						the classpath declaration in the bin scripts -->
+					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
+					<programs>
+						<program>
+							<mainClass>org.sejda.cli.SejdaConsoleMain</mainClass>
+							<name>sejda-console</name>
+						</program>
+					</programs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -65,6 +98,17 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>[${logback.version},]</version>
+		</dependency>
+		<!-- sejda-core needs an implementation of javax.validation -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>4.1.0.Final</version>
+		</dependency>
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>org.sejda</groupId>
@@ -74,9 +118,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>4.1.0.Final</version>
+			<groupId>jdepend</groupId>
+			<artifactId>jdepend</artifactId>
 		</dependency>
 	</dependencies>
 </project>

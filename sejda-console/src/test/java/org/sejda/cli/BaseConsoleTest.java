@@ -36,7 +36,7 @@ import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
@@ -51,7 +51,7 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
 public class BaseConsoleTest {
     protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
 
-    protected SejdaConsole console = new SejdaConsole() {
+    protected SejdaConsoleMain console = new SejdaConsoleMain() {
         @Override
         CommandExecutionService getTaskExecutionFacade() {
             return new DefaultCommandExecutionService() {
@@ -132,7 +132,7 @@ public class BaseConsoleTest {
     /**
      * @param result
      */
-    protected void assertOutputFolder(DecryptParameters result, File outputFolder) {
+    protected void assertOutputFolder(AbstractParameters result, File outputFolder) {
         assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
         assertEquals(((PdfDirectoryOutput) result.getOutput()).getFile(), outputFolder);
     }

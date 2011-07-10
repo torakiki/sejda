@@ -1,0 +1,7 @@
+<configuration>
+
+	<!-- This is the test sejda-console logging configuration -->
+	<!-- this config provides no logging -->
+	
+	<root level="OFF"/>
+</configuration>

@@ -31,19 +31,21 @@ public class DefaultCommandExecutionService implements CommandExecutionService {
 
     private final TaskExecutionService taskExecutionService = new DefaultTaskExecutionService();
 
+    private static final String TRANSFORMER_CLASS_SUFFIX = "CliArgumentsTransformer";
+
     /**
-     * Finds a {@link CommandOptionsTransformer} for the specified command<br/>
+     * Finds a {@link CommandCliArgumentsTransformer} for the specified command<br/>
      * Uses reflection.<br/>
-     * Eg: for "decrypt" command it will return a new instance of a {@link DecryptOptionsTransformer}
+     * Eg: for "decrypt" command it will return a new instance of a {@link DecryptCliArgumentsTransformer}
      * 
      * @param commandName
      *            name of the command
      * @return
      */
-    private CommandOptionsTransformer findTransformer(String commandName) {
+    private CommandCliArgumentsTransformer findTransformer(String commandName) {
         String transformerClazzName = DefaultCommandExecutionService.class.getPackage().getName() + "."
-                + StringUtils.capitalize(commandName) + "OptionsTransformer";
-        CommandOptionsTransformer localTransformer = newInstanceSilently(transformerClazzName);
+                + StringUtils.capitalize(commandName) + TRANSFORMER_CLASS_SUFFIX;
+        CommandCliArgumentsTransformer localTransformer = newInstanceSilently(transformerClazzName);
         if (localTransformer == null) {
             throw new SejdaRuntimeException("No transformer found for command " + commandName + ". Does class "
                     + transformerClazzName + " exist?");
@@ -52,8 +54,8 @@ public class DefaultCommandExecutionService implements CommandExecutionService {
     }
 
     @Override
-    public void executeCommand(CommandOptions commandOptions, String commandName) {
-        getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(commandOptions));
+    public void executeCommand(TaskCliArguments taskCliArguments, String commandName) {
+        getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(taskCliArguments));
     }
 
     TaskExecutionService getTaskExecutionService() {

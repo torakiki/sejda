@@ -29,7 +29,7 @@ public enum Rotation {
     DEGREES_180(180),
     DEGREES_270(270);
 
-    private static final int D_360 = 360;
+    public static final int D_360 = 360;
     private static final int D_90 = 90;
     private static final int D_270 = 270;
 
@@ -47,11 +47,10 @@ public enum Rotation {
     }
 
     /**
-     * Only multiple of 90 degrees are recognized.
-     * 
      * @param degrees
      *            rotation degrees
-     * @return corresponding rotation. If not a multiple of 90 degrees, a zero degrees rotation is returned.
+     * @return the rotation corresponding to the input degrees module 360. Only multiple of 90 degrees are recognized as valid rotations otherwise a zero degrees rotation is
+     *         returned.
      */
     public static Rotation getRotation(int degrees) {
         int actualRotation = (degrees % D_360);
@@ -61,6 +60,15 @@ public enum Rotation {
             }
         }
         return DEGREES_0;
+    }
+
+    /**
+     * 
+     * @param rotation
+     * @return the rotation obtained adding the input rotation to the current rotation.
+     */
+    public Rotation addRotation(Rotation rotation) {
+        return getRotation(getDegrees() + rotation.getDegrees());
     }
 
     /**

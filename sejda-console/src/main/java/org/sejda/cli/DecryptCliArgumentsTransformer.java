@@ -16,34 +16,29 @@
  */
 package org.sejda.cli;
 
-import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 
 /**
- * {@link CommandOptionsTransformer} for the {@link org.sejda.core.manipulation.model.task.itext.DecryptTask} command line interface
+ * {@link CommandCliArgumentsTransformer} for the Decrypt task command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class DecryptOptionsTransformer implements CommandOptionsTransformer<DecryptCommandOptions, DecryptParameters> {
+public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
+        CommandCliArgumentsTransformer<DecryptTaskCliArguments, DecryptParameters> {
 
     /**
-     * Transforms {@link DecryptCommandOptions} to {@link DecryptParameters}
+     * Transforms {@link DecryptTaskCliArguments} to {@link DecryptParameters}
      * 
-     * @param options
+     * @param taskCliArguments
      * @return
      */
-    @Override
-    public DecryptParameters toTaskParameters(DecryptCommandOptions options) {
+    public DecryptParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
         DecryptParameters parameters = new DecryptParameters();
-        parameters.setCompress(options.getCompressed());
-        parameters.setVersion(options.getPdfVersion());
-        parameters.setOutput(options.getOutput().getPdfDirectoryOutput());
-        parameters.setOutputPrefix(options.getOutputPrefix());
-        for (PdfFileSourceAdapter eachAdapter : options.getFiles()) {
-            parameters.addSource(eachAdapter.getPdfFileSource());
-        }
-        parameters.setOverwrite(options.getOverwrite());
+        populateAbstractParameters(parameters, taskCliArguments);
+        populateSourceParameters(parameters, taskCliArguments);
+        parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
         return parameters;
     }
+
 }
