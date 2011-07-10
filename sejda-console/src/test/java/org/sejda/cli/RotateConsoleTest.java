@@ -19,7 +19,9 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.rotation.PageRotation;
+import org.sejda.core.manipulation.model.rotation.Rotation;
 
 /**
  * Tests for the DecryptTask command line interface
@@ -27,42 +29,41 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
  * @author Eduard Weissmann
  * 
  */
-public class DecryptConsoleTest extends BaseTaskConsoleTest {
+public class RotateConsoleTest extends BaseTaskConsoleTest {
 
     @Override
     String getTaskName() {
-        return "decrypt";
+        return "rotate";
     }
 
     @Override
     protected CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults() {
-        return new CommandLineTestBuilder(getTaskName());
+        return new CommandLineTestBuilder(getTaskName()).with("-r", "1:DEGREES_90");
     }
 
     @Test
     public void testExecuteCommandHelp() {
-        assertConsoleOutputContains(
-                "-h " + getTaskName(),
-                "Usage: sejda-console decrypt options",
-                "[--compressed] : compress output file (optional)",
-                "--files -f value... : pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)",
-                "--output -o value : output directory (required)",
-                "--outputPrefix -p value : prefix for the output files name (optional)",
-                "[--overwrite] : overwrite existing output file (optional)",
-                "--pdfVersion -v value : pdf version of the output document/s. (optional)");
+        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console rotate options");
     }
 
     @Test
     public void testOutputPrefix_Specified() {
-        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
                 .with("-p", "fooPrefix").toString());
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
     public void testOutputPrefix_Default() {
-        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
                 .toString());
-        assertEquals("decrypted_", parameters.getOutputPrefix());
+        assertEquals("", parameters.getOutputPrefix());
+    }
+
+    @Test
+    public void testPageRotation() {
+        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+                .with("-r", "34:DEGREES_90").toString());
+        assertEquals(PageRotation.createSinglePageRotation(34, Rotation.DEGREES_90), parameters.getRotation());
     }
 }

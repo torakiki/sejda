@@ -25,7 +25,9 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.apache.commons.io.FileUtils;
@@ -63,25 +65,53 @@ public class BaseConsoleTest {
         }
     };
 
-    protected void assertConsoleOutputIs(String commandLineArguments, String... expectedOutputLines) {
-        assertEquals(StringUtils.join(expectedOutputLines, "\n"),
-                StringUtils.join(invokeConsoleAndReturnSystemOut(commandLineArguments), "\n"));
-    }
-
     protected void assertConsoleOutputContains(String commandLineArguments, String... expectedOutputContainedLines) {
-        String consoleOutput = StringUtils.join(invokeConsoleAndReturnSystemOut(commandLineArguments), "\n");
+        String consoleOutput = invokeConsoleAndReturnSystemOut(commandLineArguments);
         for (String eachExpected : expectedOutputContainedLines) {
             assertThat(consoleOutput, containsString(eachExpected));
         }
     }
 
-    private String[] invokeConsoleAndReturnSystemOut(String command) {
-        ByteArrayOutputStream capturedSystemOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(capturedSystemOut));
+    private String invokeConsoleAndReturnSystemOut(String command) {
+        SystemOutRecordingStream newSystemOut = new SystemOutRecordingStream(System.out);
+        System.setOut(new PrintStream(newSystemOut));
 
         console.execute(StringUtils.stripAll(StringUtils.splitPreserveAllTokens(command)));
 
-        return StringUtils.stripAll(StringUtils.split(capturedSystemOut.toString(), "\n"));
+        return newSystemOut.getCapturedSystemOut();
+    }
+
+    /**
+     * Records the contents of System.out, leaving the original stream untouched
+     * 
+     * @author Eduard Weissmann
+     * 
+     */
+    class SystemOutRecordingStream extends FilterOutputStream {
+        private final ByteArrayOutputStream capturedSystemOut = new ByteArrayOutputStream();
+
+        public SystemOutRecordingStream(OutputStream underlyingSystemOut) {
+            super(underlyingSystemOut);
+        }
+
+        @Override
+        public void write(byte b[]) throws IOException {
+            super.write(b);
+            capturedSystemOut.write(b);
+        }
+
+        @Override
+        public void write(byte b[], int off, int len) throws IOException {
+            super.write(b, off, len);
+            capturedSystemOut.write(b, off, len);
+        }
+
+        /**
+         * @return the capturedSystemOut
+         */
+        public String getCapturedSystemOut() {
+            return capturedSystemOut.toString();
+        }
     }
 
     protected <T extends TaskParameters> T invokeConsoleAndReturnTaskParameters(String command) {

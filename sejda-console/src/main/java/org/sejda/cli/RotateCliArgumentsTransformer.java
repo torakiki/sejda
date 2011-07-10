@@ -16,32 +16,30 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
- * {@link CommandCliArgumentsTransformer} for the Encrypt task command line interface
+ * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
+public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer {
 
     /**
-     * Transforms {@link EncryptTaskCliArguments} to {@link EncryptParameters}
+     * Transforms {@link RotateTaskCliArguments} to {@link RotateParameters}
      * 
      * @param taskCliArguments
      * @return
      */
-    public TaskParameters toTaskParameters(EncryptTaskCliArguments taskCliArguments) {
-        EncryptParameters parameters = new EncryptParameters();
+    public TaskParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
+        RotateParameters parameters = new RotateParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
-        parameters.setOwnerPassword(taskCliArguments.getAdminstratorPassword());
-        parameters.setUserPassword(taskCliArguments.getUserPassword());
-        parameters.setEncryptionAlgorithm(taskCliArguments.getEncryptionType());
+        parameters.setRotation(taskCliArguments.getPageRotation().getPageRotation());
         return parameters;
     }
 
@@ -51,6 +49,6 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.TaskCliArguments)
      */
     public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
-        return toTaskParameters((EncryptTaskCliArguments) taskCliArguments);
+        return toTaskParameters((RotateTaskCliArguments) taskCliArguments);
     }
 }

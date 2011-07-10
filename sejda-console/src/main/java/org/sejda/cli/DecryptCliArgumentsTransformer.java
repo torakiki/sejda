@@ -47,7 +47,6 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * 
      * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.TaskCliArguments)
      */
-    @Override
     public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
         return toTaskParameters((DecryptTaskCliArguments) taskCliArguments);
     }
