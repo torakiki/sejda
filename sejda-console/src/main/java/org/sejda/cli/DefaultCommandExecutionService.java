@@ -53,7 +53,6 @@ public class DefaultCommandExecutionService implements CommandExecutionService {
         return localTransformer;
     }
 
-    @Override
     public void executeCommand(TaskCliArguments taskCliArguments, String commandName) {
         getTaskExecutionService().execute(findTransformer(commandName).toTaskParameters(taskCliArguments));
     }

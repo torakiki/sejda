@@ -28,4 +28,8 @@ public enum RotationType {
     ODD_PAGES(),
     EVEN_PAGES(),
     ALL_PAGES();
+
+    public boolean isSinglePage() {
+        return SINGLE_PAGE.equals(this);
+    }
 }

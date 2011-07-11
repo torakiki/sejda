@@ -21,7 +21,7 @@ import java.io.File;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 
 /**
- * Adapter for {@link PdfDirectoryOutput}. Required due to missing String based constructor in the model object (see http://jewelcli.sourceforge.net/usage.html#Class)
+ * Adapter for {@link PdfDirectoryOutput}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 

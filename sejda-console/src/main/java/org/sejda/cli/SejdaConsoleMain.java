@@ -16,8 +16,6 @@
  */
 package org.sejda.cli;
 
-import java.io.PrintStream;
-
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
@@ -49,14 +47,14 @@ public class SejdaConsoleMain {
      *            command line arguments as strings
      */
     public void execute(final String[] args) {
-        LOG.debug("Starting execution with arguments: " + StringUtils.join(args));
+        LOG.debug("Starting execution with arguments: " + StringUtils.join(args, " "));
         try {
             final SejdaConsoleArguments arguments = new SejdaConsoleArguments(args);
             final SejdaCli<GeneralCliArguments> generalCli = SejdaCli.newGeneralOptionsCli(arguments);
 
             // no command specified, print general Help
             if (!generalCli.getParsedArguments().isCommand()) {
-                println(generalCli.getHelpMessage());
+                LOG.info(generalCli.getHelpMessage());
                 return;
             }
 
@@ -65,7 +63,7 @@ public class SejdaConsoleMain {
 
             // print command specific help
             if (generalCli.getParsedArguments().isHelp()) {
-                println(commandCli.getHelpMessage());
+                LOG.info(commandCli.getHelpMessage());
                 return;
             }
 
@@ -73,25 +71,10 @@ public class SejdaConsoleMain {
             getTaskExecutionFacade().executeCommand(commandCli.getParsedArguments(), commandName);
             LOG.debug("Completed execution");
         } catch (ArgumentValidationException e) {
-            LOG.error(e.getMessage(), e);
-            println(e.getMessage());
+            LOG.info(e.getMessage());
         } catch (SejdaRuntimeException e) {
             LOG.error(e.getMessage(), e);
-            println(e.getMessage());
         }
-    }
-
-    private PrintStream getDefaultOutPrintStream() {
-        return System.out;
-    }
-
-    /**
-     * Prints the specified line to the default out print stream
-     * 
-     * @param line
-     */
-    private void println(String line) {
-        getDefaultOutPrintStream().println(line);
     }
 
     private final CommandExecutionService taskExecutionFacade = new DefaultCommandExecutionService();

@@ -31,9 +31,17 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Eduard Weissmann
  * 
  */
-public abstract class BaseCommandConsoleTest extends BaseConsoleTest {
+public abstract class BaseTaskConsoleTest extends BaseConsoleTest {
 
-    abstract String getCommandName();
+    /**
+     * @return task name
+     */
+    abstract String getTaskName();
+
+    /**
+     * @return the minimum command line arguments that covers the mandatory arguments with reasonable defaults
+     */
+    abstract CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults();
 
     @Before
     public void setUp() {
@@ -45,26 +53,26 @@ public abstract class BaseCommandConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testMandatoryOptions() {
-        assertConsoleOutputContains(getCommandName(), "Option is mandatory: --files -f");
-        assertConsoleOutputContains(getCommandName() + " --files inputs/input.pdf", "Option is mandatory: --output");
+        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --files -f");
+        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --output");
     }
 
     @Test
     public void testSourceFileNotFound() {
-        assertConsoleOutputContains(getCommandName() + " --compressed --files input-doesntexist.pdf --output .",
-                "File 'input-doesntexist.pdf' does not exist");
+        assertConsoleOutputContains(getMandatoryCommandLineArgumentsWithDefaults().with("-f", "input-doesntexist.pdf")
+                .toString(), "File 'input-doesntexist.pdf' does not exist");
     }
 
     @Test
     public void testOutputDirectoryNotFound() {
-        assertConsoleOutputContains(getCommandName() + " --compressed --files inputs/input.pdf -o output-doesntexist",
-                "Path 'output-doesntexist' does not exist");
+        assertConsoleOutputContains(getMandatoryCommandLineArgumentsWithDefaults().with("-o", "output-doesntexist")
+                .toString(), "Path 'output-doesntexist' does not exist");
     }
 
     @Test
     public void testSourceFileNoPassword() {
-        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getCommandName()
-                + " --files inputs/input.pdf --o ./outputs");
+        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+                .with("-f", "inputs/input.pdf").toString());
 
         assertEquals(1, result.getSourceList().size());
         assertHasFileSource(result, new File("inputs/input.pdf"), null);
@@ -72,21 +80,18 @@ public abstract class BaseCommandConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testSourceFileWithPassword() {
-        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getCommandName()
-                + " --files inputs/input-protected.pdf;secret123 --o ./outputs");
+        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+                .with("-f", "inputs/input-protected.pdf;secret123").toString());
 
         assertEquals(1, result.getSourceList().size());
         assertHasFileSource(result, new File("inputs/input-protected.pdf"), "secret123");
     }
 
-    protected String getBaseCommandWithDefaults() {
-        return getCommandName() + " --files inputs/input.pdf --o ./outputs";
-    }
-
     @Test
     public void testBaseParameters_AllOn() {
-        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getCommandName()
-                + " --pdfVersion VERSION_1_2 --overwrite --compressed --files inputs/input.pdf --o ./outputs");
+        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+                .with("--pdfVersion", "VERSION_1_2").with("--overwrite").with("--compressed")
+                .with("-f", "inputs/input.pdf").with("-o", "./outputs").toString());
         assertTrue(result.isCompressXref());
         assertOutputFolder(result, new File("./outputs"));
 
@@ -98,8 +103,8 @@ public abstract class BaseCommandConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testBaseParameters_AllOff() {
-        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getCommandName()
-                + " --files inputs/input.pdf --o ./outputs");
+        PdfSourceListParameters result = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
+                .toString());
         assertFalse(result.isCompressXref());
         assertOutputFolder(result, new File("./outputs"));
 
