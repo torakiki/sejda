@@ -17,7 +17,6 @@
 package org.sejda.cli;
 
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Decrypt task command line interface
@@ -26,7 +25,7 @@ import org.sejda.core.manipulation.model.parameter.TaskParameters;
  * 
  */
 public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer {
+        CommandCliArgumentsTransformer<DecryptTaskCliArguments, DecryptParameters> {
 
     /**
      * Transforms {@link DecryptTaskCliArguments} to {@link DecryptParameters}
@@ -34,7 +33,7 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * @param taskCliArguments
      * @return
      */
-    public TaskParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
+    public DecryptParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
         DecryptParameters parameters = new DecryptParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
@@ -42,12 +41,4 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         return parameters;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.TaskCliArguments)
-     */
-    public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
-        return toTaskParameters((DecryptTaskCliArguments) taskCliArguments);
-    }
 }

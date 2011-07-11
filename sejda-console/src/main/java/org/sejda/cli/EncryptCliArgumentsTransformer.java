@@ -17,7 +17,6 @@
 package org.sejda.cli;
 
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Encrypt task command line interface
@@ -26,7 +25,7 @@ import org.sejda.core.manipulation.model.parameter.TaskParameters;
  * 
  */
 public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer {
+        CommandCliArgumentsTransformer<EncryptTaskCliArguments, EncryptParameters> {
 
     /**
      * Transforms {@link EncryptTaskCliArguments} to {@link EncryptParameters}
@@ -34,7 +33,7 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * @param taskCliArguments
      * @return
      */
-    public TaskParameters toTaskParameters(EncryptTaskCliArguments taskCliArguments) {
+    public EncryptParameters toTaskParameters(EncryptTaskCliArguments taskCliArguments) {
         EncryptParameters parameters = new EncryptParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
@@ -43,14 +42,5 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         parameters.setUserPassword(taskCliArguments.getUserPassword());
         parameters.setEncryptionAlgorithm(taskCliArguments.getEncryptionType());
         return parameters;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.TaskCliArguments)
-     */
-    public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
-        return toTaskParameters((EncryptTaskCliArguments) taskCliArguments);
     }
 }

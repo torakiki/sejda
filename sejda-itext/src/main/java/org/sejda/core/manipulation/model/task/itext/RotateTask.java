@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.sejda.core.manipulation.model.task.itext.component.PdfRotationHandler.applyRotation;
+import static org.sejda.core.manipulation.model.task.itext.component.PdfRotator.applyRotation;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;

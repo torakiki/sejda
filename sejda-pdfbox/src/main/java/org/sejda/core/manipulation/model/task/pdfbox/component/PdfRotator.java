@@ -16,6 +16,7 @@
  */
 package org.sejda.core.manipulation.model.task.pdfbox.component;
 
+import static org.sejda.core.manipulation.model.rotation.Rotation.getRotation;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -24,26 +25,22 @@ import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import com.lowagie.text.pdf.PdfDictionary;
-//import com.lowagie.text.pdf.PdfName;
-//import com.lowagie.text.pdf.PdfNumber;
-//import com.lowagie.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfReader;
 
 /**
  * Handles rotations on a given PDDocument.
- *
+ * 
  * @author Nero Couvalli
- *
+ * 
  */
-public final class PdfRotationHandler implements OngoingRotation {
+public final class PdfRotator implements OngoingRotation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfRotationHandler.class);
-    private static final int DEGREES_360 = 360;
+    private static final Logger LOG = LoggerFactory.getLogger(PdfRotator.class);
 
     private PDDocument document;
     private PageRotation rotation;
 
-    private PdfRotationHandler(PageRotation rotation) {
+    private PdfRotator(PageRotation rotation) {
         this.rotation = rotation;
     }
 
@@ -52,12 +49,12 @@ public final class PdfRotationHandler implements OngoingRotation {
      * <p>
      * <code>applyRotation(rotation).to(reader);</code>
      * </p>
-     *
+     * 
      * @param rotation
      * @return the ongoing apply rotation exposing methods to set the document you want to apply the rotation to.
      */
     public static OngoingRotation applyRotation(PageRotation rotation) {
-        return new PdfRotationHandler(rotation);
+        return new PdfRotator(rotation);
     }
 
     public void to(PDDocument document) {
@@ -82,15 +79,13 @@ public final class PdfRotationHandler implements OngoingRotation {
 
     /**
      * apply the rotation to the given page if necessary
-     *
+     * 
      * @param pageNmber
      */
     private void apply(int pageNmber) {
         if (rotation.accept(pageNmber)) {
-            PDPage page = (PDPage) document.getDocumentCatalog().getAllPages().get(pageNmber-1);
-            int rotationDegrees = (rotation.getRotation().getDegrees() + page.findRotation())
-                    % DEGREES_360;
-            page.setRotation(rotationDegrees);
+            PDPage page = (PDPage) document.getDocumentCatalog().getAllPages().get(pageNmber - 1);
+            page.setRotation(rotation.getRotation().addRotation(getRotation(page.findRotation())).getDegrees());
         }
     }
 }
