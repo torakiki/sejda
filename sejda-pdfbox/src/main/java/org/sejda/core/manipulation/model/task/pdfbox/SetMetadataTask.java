@@ -18,7 +18,11 @@ package org.sejda.core.manipulation.model.task.pdfbox;
 
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
-
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
+import static org.sejda.core.support.io.model.FileOutput.file;
 import java.util.Map.Entry;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -30,8 +34,12 @@ import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sejda.core.support.io.SingleOutputWriterSupport;
+import java.io.File;
 
 /**
+ * Task setting metadata on an input {@link PdfSource}.
+ *
  * @author Nero Couvalli
  *
  */
@@ -40,15 +48,18 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
     private PDDocument document = null;
+    private SingleOutputWriterSupport outputWriter;
 
     public void before(SetMetadataParameters parameters) {
+        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
         document = loadPDDocument(source);
-
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
         LOG.debug("Setting metadata on temporary document.");
 
         PDDocumentInformation actualMeta = document.getDocumentInformation();
@@ -56,7 +67,15 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
             actualMeta.setCustomMetadataValue(meta.getKey().getKey(), meta.getValue());
         }
 
+        setVersionOnPDDocument(document, parameters.getVersion());
+
+        compressXrefStream(document);
+        setCreatorOnPDDocument(document);
+        savePDDocument(document, tmpFile);
         closePDDocumentQuitely(document);
+
+        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+                parameters.isOverwrite());
 
         LOG.debug("Metadata set on {}", parameters.getOutput());
 
