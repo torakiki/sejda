@@ -111,7 +111,7 @@ public final class PDDocumentUtil {
      * @param document
      */
     public static void compressXrefStream(PDDocument document) {
-        LOG.warn("Compression not yet supported by PDFbox");
+        LOG.warn("Xref Compression not yet supported by PDFBox");
     }
 
 }
