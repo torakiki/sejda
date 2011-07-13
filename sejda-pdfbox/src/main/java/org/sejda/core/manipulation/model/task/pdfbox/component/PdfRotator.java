@@ -25,8 +25,6 @@ import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.text.pdf.PdfReader;
-
 /**
  * Handles rotations on a given PDDocument.
  * 
@@ -63,7 +61,7 @@ public final class PdfRotator implements OngoingRotation {
     }
 
     /**
-     * Apply the rotation to the dictionary of the given {@link PdfReader}
+     * Apply the rotation to the dictionary of the given {@link PDDocument}
      */
     private void executeRotation() {
         RotationType type = rotation.getRotationType();
