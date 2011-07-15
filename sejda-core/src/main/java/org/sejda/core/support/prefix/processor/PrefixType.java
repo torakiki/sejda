@@ -15,9 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
-
-
+package org.sejda.core.support.prefix.processor;
 
 /**
  * Enum for the types of prefix. It contains information about the prefix type like:
@@ -31,7 +29,7 @@ package org.sejda.core.support.perfix.processor;
  * @see PrefixProcessor
  * 
  */
-public enum PrefixType {
+enum PrefixType {
 
     BASENAME(false, "\\[BASENAME\\]", BasenamePrefixProcessor.class),
     CURRENTPAGE(true, "\\[CURRENTPAGE(#*)\\]", CurrentPagePrefixProcessor.class),

@@ -18,11 +18,9 @@
 package org.sejda.core.support.prefix.processor;
 
 import static org.junit.Assert.*;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
-import org.sejda.core.support.perfix.processor.PrefixProcessor;
-import org.sejda.core.support.perfix.processor.TimestampPrefixProcessor;
 
 /**
  * Test unit for {@link TimestampPrefixProcessor}

@@ -18,14 +18,13 @@
 package org.sejda.core.support.prefix.processor;
 
 import static org.junit.Assert.assertEquals;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
-import org.sejda.core.support.perfix.processor.PrefixProcessor;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public abstract class BasePrefixProcessorTest {
 
@@ -33,10 +32,10 @@ public abstract class BasePrefixProcessorTest {
      * Test that the process method returns the input prefix in case of empty request and a simple prefix.
      */
     @Test
-    public void testEmptyRequestSimplePrefix(){
+    public void testEmptyRequestSimplePrefix() {
         String prefix = "prefix";
         assertEquals(prefix, getProcessor().process(prefix, nameRequest()));
     }
-    
-    public abstract PrefixProcessor getProcessor();
+
+    abstract PrefixProcessor getProcessor();
 }

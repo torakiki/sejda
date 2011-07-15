@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [CURRENTPAGE] or [CURRENTPAGE##] occurrences with the input current page number (formatted with the given pattern identified by the
@@ -33,7 +33,7 @@ import org.sejda.core.support.perfix.model.NameGenerationRequest;
  * @author Andrea Vacondio
  * 
  */
-public class CurrentPagePrefixProcessor extends NumberFormatEnabledPrefixProcessor {
+class CurrentPagePrefixProcessor extends NumberFormatEnabledPrefixProcessor {
 
     private static final String FIND_REGEXP = "\\[CURRENTPAGE(#*)\\]";
 

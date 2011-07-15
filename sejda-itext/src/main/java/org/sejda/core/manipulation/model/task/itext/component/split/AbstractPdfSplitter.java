@@ -3,8 +3,8 @@ package org.sejda.core.manipulation.model.task.itext.component.split;
 import static org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier.nullSafeClosePdfCopy;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
 import java.util.Map;

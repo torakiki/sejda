@@ -15,16 +15,16 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
  * A Processor takes a prefix string and applies the transformation it's designed for.
  * 
  * @author Andrea Vacondio
  */
-public interface PrefixProcessor {
+interface PrefixProcessor {
 
     /**
      * Process the input prefix String based on the input request returning the processed String

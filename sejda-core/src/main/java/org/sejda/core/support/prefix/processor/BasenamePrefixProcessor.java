@@ -15,10 +15,10 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [BASENAME] occurrences with the input original file name if any.
@@ -26,7 +26,7 @@ import org.sejda.core.support.perfix.model.NameGenerationRequest;
  * @author Andrea Vacondio
  * 
  */
-public class BasenamePrefixProcessor implements PrefixProcessor {
+class BasenamePrefixProcessor implements PrefixProcessor {
 
     private static final String BASENAME_REPLACE_REGX = "\\[BASENAME\\]";
 

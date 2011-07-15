@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [FILENUMBER] or [FILENUMBERE##] or [FILENUMBER##11] or [FILENUMBER11] occurrences with the input file number (formatted with the given
@@ -33,7 +33,7 @@ import org.sejda.core.support.perfix.model.NameGenerationRequest;
  * @author Andrea Vacondio
  * 
  */
-public class FileNumberPrefixProcessor extends NumberFormatEnabledPrefixProcessor {
+class FileNumberPrefixProcessor extends NumberFormatEnabledPrefixProcessor {
 
     private static final String FIND_REGX = "\\[FILENUMBER(#*)(\\d*)\\]";
 

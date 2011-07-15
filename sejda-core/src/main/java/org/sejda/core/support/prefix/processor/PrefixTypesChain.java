@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -24,12 +24,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Holds information about the {@link PrefixType}s contained in the input prefix string. Expose methods to apply the processors {@link PrefixType} chain to an input prefix and request.  
+ * Holds information about the {@link PrefixType}s contained in the input prefix string. Expose methods to apply the processors {@link PrefixType} chain to an input prefix and
+ * request.
  * 
  * @author Andrea Vacondio
  * 
@@ -90,11 +91,11 @@ public class PrefixTypesChain {
             try {
                 processor = type.getProcessor().newInstance();
             } catch (InstantiationException e) {
-                throw new SejdaRuntimeException(String
-                        .format("Unable to instantiate processor %s", type.getProcessor()), e);
+                throw new SejdaRuntimeException(
+                        String.format("Unable to instantiate processor %s", type.getProcessor()), e);
             } catch (IllegalAccessException e) {
-                throw new SejdaRuntimeException(String
-                        .format("Unable to instantiate processor %s", type.getProcessor()), e);
+                throw new SejdaRuntimeException(
+                        String.format("Unable to instantiate processor %s", type.getProcessor()), e);
             }
             retVal = processor.process(retVal, request);
         }

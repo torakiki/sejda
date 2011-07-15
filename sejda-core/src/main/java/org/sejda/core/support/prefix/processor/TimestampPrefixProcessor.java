@@ -1,5 +1,5 @@
 /*
- * Created on 03/lug/2010
+ * Created on 01/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
@@ -15,28 +15,28 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang.StringUtils;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
- * Simple prefix processor that prepend the input prefix to the original name. If the request contains a page number, the number is prepended to the prefix and to the original name.
+ * Process the input prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PrependPrefixProcessor implements PrefixProcessor {
+class TimestampPrefixProcessor implements PrefixProcessor {
+
+    private static final String TIMESTAMP_REPLACE_RGX = "\\[TIMESTAMP\\]";
+    private static final String DATE_PATTERN = "yyyyMMdd_HHmmssSS";
 
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = inputPrefix;
-        if (request != null && StringUtils.isNotBlank(request.getOriginalName())) {
-            retVal += request.getOriginalName();
-            if (request.getPage() != null) {
-                retVal = String.format("%d_%s", request.getPage(), retVal);
-            }
-        }
-        return retVal;
+        String timestamp = new SimpleDateFormat(DATE_PATTERN).format(new Date());
+        return retVal.replaceAll(TIMESTAMP_REPLACE_RGX, timestamp);
     }
 
 }

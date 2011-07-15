@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix;
+package org.sejda.core.support.prefix;
 
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
-import org.sejda.core.support.perfix.model.NameGenerationRequest;
-import org.sejda.core.support.perfix.processor.PrefixTypesChain;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 
 /**
  * Component used to generate the output name for a manipulation given the original name and the input prefix (if any);
  * 
  * @author Andrea Vacondio
- * @see org.sejda.core.support.perfix.processor.PrefixType
+ * @see org.sejda.core.support.prefix.processor.PrefixType
  */
 public final class NameGenerator {
 

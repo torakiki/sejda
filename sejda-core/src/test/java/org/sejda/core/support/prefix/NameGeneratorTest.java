@@ -18,8 +18,8 @@
 package org.sejda.core.support.prefix;
 
 import static org.junit.Assert.assertEquals;
-import static org.sejda.core.support.perfix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.perfix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
 

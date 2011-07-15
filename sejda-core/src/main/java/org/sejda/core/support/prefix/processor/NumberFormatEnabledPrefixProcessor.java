@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.perfix.processor;
+package org.sejda.core.support.prefix.processor;
 
 import java.text.DecimalFormat;
 
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public abstract class NumberFormatEnabledPrefixProcessor implements PrefixProcessor {
+abstract class NumberFormatEnabledPrefixProcessor implements PrefixProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(NumberFormatEnabledPrefixProcessor.class);
 
