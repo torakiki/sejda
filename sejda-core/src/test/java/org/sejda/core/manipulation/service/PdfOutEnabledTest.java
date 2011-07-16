@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,8 +38,6 @@ import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 import com.itextpdf.text.pdf.PdfReader;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Parent test class with common methods to read results or common asserts.
@@ -129,7 +129,6 @@ public class PdfOutEnabledTest {
     protected PdfReader getReaderFromResult(byte[] ownerPwd) throws IOException {
         return getReaderFromResultStream(null, ownerPwd);
     }
-
 
     /**
      * Assert the correct creator

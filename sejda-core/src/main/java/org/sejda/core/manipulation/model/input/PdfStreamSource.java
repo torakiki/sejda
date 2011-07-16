@@ -21,6 +21,8 @@ import java.io.InputStream;
 
 import javax.validation.constraints.NotNull;
 
+import org.sejda.core.exception.TaskIOException;
+
 /**
  * {@link PdfSource} from a {@link InputStream}
  * 
@@ -42,8 +44,8 @@ public final class PdfStreamSource extends PdfSource {
     }
 
     @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.STREAM_SOURCE;
+    public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
+        return opener.open(this);
     }
 
     /**

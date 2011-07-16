@@ -21,7 +21,6 @@ import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperH
 import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getAccessPermission;
 import static org.sejda.core.manipulation.model.task.itext.util.EncryptionUtils.getEncryptionAlgorithm;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -31,9 +30,11 @@ import java.io.File;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -57,10 +58,12 @@ public class EncryptTask implements Task<EncryptParameters> {
     private int totalSteps;
     private int permissions = 0;
     private MultipleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(EncryptParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
+        sourceOpener = new PdfReaderPartialLoader();
         for (PdfAccessPermission permission : parameters.getPermissions()) {
             permissions |= getAccessPermission(permission);
         }
@@ -71,7 +74,7 @@ public class EncryptTask implements Task<EncryptParameters> {
         for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
-            reader = openReader(source, true);
+            reader = source.open(sourceOpener);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);

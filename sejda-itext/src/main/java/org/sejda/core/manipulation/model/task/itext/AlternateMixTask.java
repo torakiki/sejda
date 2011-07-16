@@ -18,7 +18,6 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
@@ -26,10 +25,12 @@ import java.io.File;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +51,18 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     private PdfReader secondReader = null;
     private PdfCopier copier = null;
     private SingleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(AlternateMixParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
+        sourceOpener = new PdfReaderPartialLoader();
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
         LOG.debug("Opening first input {} ...", parameters.getFirstInput().getSource());
-        firstReader = openReader(parameters.getFirstInput().getSource());
+        firstReader = parameters.getFirstInput().getSource().open(sourceOpener);
         LOG.debug("Opening second input {} ...", parameters.getSecondInput().getSource());
-        secondReader = openReader(parameters.getSecondInput().getSource());
+        secondReader = parameters.getSecondInput().getSource().open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);

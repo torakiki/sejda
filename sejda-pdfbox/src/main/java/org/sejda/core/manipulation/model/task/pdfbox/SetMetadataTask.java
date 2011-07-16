@@ -17,31 +17,33 @@
 package org.sejda.core.manipulation.model.task.pdfbox;
 
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
 import static org.sejda.core.support.io.model.FileOutput.file;
+
+import java.io.File;
 import java.util.Map.Entry;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentLoader;
+import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
-import java.io.File;
 
 /**
  * Task setting metadata on an input {@link PdfSource}.
- *
+ * 
  * @author Nero Couvalli
- *
+ * 
  */
 public class SetMetadataTask implements Task<SetMetadataParameters> {
 
@@ -49,19 +51,21 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     private PDDocument document = null;
     private SingleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PDDocument> documentLoader;
 
     public void before(SetMetadataParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
+        documentLoader = new PDDocumentLoader();
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
-        document = loadPDDocument(source);
+        document = source.open(documentLoader);
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
-        LOG.debug("Setting metadata on temporary document.");
 
+        LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = document.getDocumentInformation();
         for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
             actualMeta.setCustomMetadataValue(meta.getKey().getKey(), meta.getValue());

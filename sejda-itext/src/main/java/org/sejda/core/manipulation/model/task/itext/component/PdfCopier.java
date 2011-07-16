@@ -1,5 +1,7 @@
 package org.sejda.core.manipulation.model.task.itext.component;
 
+import java.util.List;
+
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 
@@ -57,5 +59,12 @@ public interface PdfCopier {
      * @throws TaskIOException
      */
     void freeReader(PdfReader reader) throws TaskIOException;
+
+    /**
+     * Sets the input list of bookmarks to the copier.
+     * 
+     * @param bookmarks
+     */
+    void setBookmarks(List<?> bookmarks);
 
 }

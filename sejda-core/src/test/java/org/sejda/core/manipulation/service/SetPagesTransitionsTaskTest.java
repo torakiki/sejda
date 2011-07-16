@@ -60,6 +60,7 @@ public abstract class SetPagesTransitionsTaskTest extends PdfOutEnabledTest impl
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         assertEquals(4, reader.getNumberOfPages());
         PdfDictionary dictionary = reader.getPageN(1).getAsDict(PdfName.TRANS);
         assertEquals(PdfName.BOX, dictionary.get(PdfName.S));

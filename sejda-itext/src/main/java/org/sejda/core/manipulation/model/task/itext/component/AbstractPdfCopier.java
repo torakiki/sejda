@@ -18,6 +18,7 @@ package org.sejda.core.manipulation.model.task.itext.component;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
@@ -117,4 +118,9 @@ abstract class AbstractPdfCopier implements PdfCopier {
         pdfCopy.close();
     }
 
+    public void setBookmarks(List<?> bookmarks) {
+        if (bookmarks != null) {
+            pdfCopy.setOutlines(bookmarks);
+        }
+    }
 }

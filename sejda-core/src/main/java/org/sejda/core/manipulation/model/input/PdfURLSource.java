@@ -22,6 +22,7 @@ import java.net.URL;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.exception.TaskIOException;
 
 /**
  * {@link PdfSource} from a {@link URL}
@@ -44,8 +45,8 @@ public final class PdfURLSource extends PdfSource {
     }
 
     @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.URL_SOURCE;
+    public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
+        return opener.open(this);
     }
 
     @Override

@@ -82,6 +82,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_test_file.pdf");
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         assertEquals(4, reader.getNumberOfPages());
         assertEquals(180, reader.getPageRotation(2));
         reader.close();

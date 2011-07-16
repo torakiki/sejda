@@ -19,7 +19,6 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
@@ -28,9 +27,11 @@ import java.util.Map.Entry;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -51,15 +52,17 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private SingleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(SetMetadataParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
+        sourceOpener = new PdfReaderPartialLoader();
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
-        reader = openReader(source);
+        reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);

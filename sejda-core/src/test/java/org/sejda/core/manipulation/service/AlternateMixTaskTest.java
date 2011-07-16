@@ -80,6 +80,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         assertEquals(8, reader.getNumberOfPages());
         reader.close();
     }

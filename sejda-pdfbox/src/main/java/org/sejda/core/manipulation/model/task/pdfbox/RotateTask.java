@@ -18,7 +18,6 @@ package org.sejda.core.manipulation.model.task.pdfbox;
 
 import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfRotator.applyRotation;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.loadPDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.ensureOwnerPermissions;
@@ -34,8 +33,10 @@ import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentLoader;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,12 @@ public class RotateTask implements Task<RotateParameters> {
     private int totalSteps;
     private PDDocument document = null;
     private MultipleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PDDocument> documentLoader;
 
     public void before(RotateParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
+        documentLoader = new PDDocumentLoader();
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
@@ -65,7 +68,7 @@ public class RotateTask implements Task<RotateParameters> {
         for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
-            document = loadPDDocument(source);
+            document = source.open(documentLoader);
             ensureOwnerPermissions(document);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();

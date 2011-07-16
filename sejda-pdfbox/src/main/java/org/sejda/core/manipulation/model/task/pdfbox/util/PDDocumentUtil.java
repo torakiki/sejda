@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.sejda.core.Sejda;
+import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.exception.TaskPermissionsException;
 import org.sejda.core.exception.TaskWrongPasswordException;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
@@ -56,12 +57,19 @@ public final class PDDocumentUtil {
      * @throws CryptographyException
      * @throws TaskWrongPasswordException
      */
-    public static void decryptPDDocumentIfNeeded(PDDocument document, String password)
-            throws BadSecurityHandlerException, IOException, CryptographyException, TaskWrongPasswordException {
+    public static void decryptPDDocumentIfNeeded(PDDocument document, String password) throws TaskIOException {
         if (document.isEncrypted()) {
             if (StringUtils.isNotBlank(password)) {
                 DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
-                document.openProtection(decryptionMaterial);
+                try {
+                    document.openProtection(decryptionMaterial);
+                } catch (IOException e) {
+                    throw new TaskIOException("An error occurred opening the reader.", e);
+                } catch (BadSecurityHandlerException e) {
+                    throw new TaskIOException("Unable to decrypt the document.", e);
+                } catch (CryptographyException e) {
+                    throw new TaskIOException("Unable to decrypt the document.", e);
+                }
             } else {
                 throw new TaskWrongPasswordException("Unable to open the document due to an empty password.");
             }

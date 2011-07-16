@@ -83,6 +83,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_file.pdf");
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         HashMap<String, String> meta = reader.getInfo();
         assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
         assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
@@ -98,6 +99,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         HashMap<String, String> meta = reader.getInfo();
         assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
         assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));

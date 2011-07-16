@@ -19,7 +19,6 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -33,9 +32,11 @@ import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.manipulation.model.task.itext.util.ViewerPreferencesUtils;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
@@ -63,12 +64,14 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
     private int preferences;
     private Map<PdfName, PdfObject> configuredPreferences;
     private MultipleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(ViewerPreferencesParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
         configuredPreferences = getConfiguredViewerPreferencesMap(parameters);
+        sourceOpener = new PdfReaderPartialLoader();
         if (LOG.isDebugEnabled()) {
             LOG.debug("The following preferences will be set on the input pdf sources:");
             for (Entry<PdfName, PdfObject> entry : configuredPreferences.entrySet()) {
@@ -85,7 +88,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
-            reader = openReader(source, true);
+            reader = source.open(sourceOpener);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);

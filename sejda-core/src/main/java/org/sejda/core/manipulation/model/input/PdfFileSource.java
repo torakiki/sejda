@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.input;
 
 import java.io.File;
 
+import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.validation.constraint.PdfFile;
 
 /**
@@ -42,8 +43,8 @@ public final class PdfFileSource extends PdfSource {
     }
 
     @Override
-    public PdfSourceType getSourceType() {
-        return PdfSourceType.FILE_SOURCE;
+    public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
+        return opener.open(this);
     }
 
     /**
@@ -71,4 +72,5 @@ public final class PdfFileSource extends PdfSource {
         }
         return new PdfFileSource(file, password);
     }
+
 }

@@ -20,7 +20,6 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfRotator.applyRotation;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -30,8 +29,10 @@ import java.io.File;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -53,10 +54,12 @@ public class RotateTask implements Task<RotateParameters> {
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
     private MultipleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(RotateParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
+        sourceOpener = new PdfReaderLoader();
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
@@ -65,7 +68,7 @@ public class RotateTask implements Task<RotateParameters> {
         for (PdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
-            reader = openReader(source, true);
+            reader = source.open(sourceOpener);
 
             LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(reader);

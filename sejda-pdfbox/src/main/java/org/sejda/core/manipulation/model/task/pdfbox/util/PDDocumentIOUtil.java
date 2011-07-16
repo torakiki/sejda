@@ -20,23 +20,20 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.input.PdfURLSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Utility class providing IO helper methods to deal with a {@link PDDocument}.
+ * 
  * @author Andrea Vacondio
  * 
  */
 public final class PDDocumentIOUtil {
+
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentIOUtil.class);
 
     private PDDocumentIOUtil() {
@@ -93,41 +90,5 @@ public final class PDDocumentIOUtil {
                 throw new TaskIOException("Unable to save to temporary file.", e);
             }
         }
-    }
-
-    /**
-     * Loads a {@link PDDocument} from the input {@link PdfSource}
-     * 
-     * @param source
-     *            from where the {@link PDDocument} will be loaded.
-     * @return the loaded {@link PDDocument}
-     * @throws TaskIOException
-     *             if an error occur during document load.
-     */
-    public static PDDocument loadPDDocument(PdfSource source) throws TaskIOException {
-        PDDocument document = null;
-        try {
-            switch (source.getSourceType()) {
-            case FILE_SOURCE:
-                document = PDDocument.load(((PdfFileSource) source).getFile());
-                break;
-            case STREAM_SOURCE:
-                document = PDDocument.load(((PdfStreamSource) source).getStream());
-                break;
-            case URL_SOURCE:
-                document = PDDocument.load(((PdfURLSource) source).getUrl());
-                break;
-            default:
-                throw new TaskIOException("Unable to identify the input pdf source.");
-            }
-            PDDocumentUtil.decryptPDDocumentIfNeeded(document, source.getPassword());
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred opening the reader.", e);
-        } catch (BadSecurityHandlerException e) {
-            throw new TaskIOException("Unable to open the document.", e);
-        } catch (CryptographyException e) {
-            throw new TaskIOException("Unable to open the document.", e);
-        }
-        return document;
     }
 }

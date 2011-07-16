@@ -80,6 +80,7 @@ public abstract class SetPagesLabelTaskTest extends PdfOutEnabledTest implements
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_6);
         assertEquals(4, reader.getNumberOfPages());
         PdfPageLabelFormat[] formats = PdfPageLabels.getPageLabelFormats(reader);
         assertEquals(1, formats[0].logicalPage);

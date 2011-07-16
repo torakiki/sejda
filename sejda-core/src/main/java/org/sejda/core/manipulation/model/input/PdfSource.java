@@ -17,10 +17,9 @@
  */
 package org.sejda.core.manipulation.model.input;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
@@ -85,14 +84,20 @@ public abstract class PdfSource {
     }
 
     /**
-     * @return the type of this source
+     * Dispatch method to open the source.
+     * 
+     * @param <T>
+     *            generic type as result of the open action.
+     * @param opener
+     * @return result of the open action as a type defined by the dispatcher.
+     * @throws TaskIOException
+     *             in case of error opening the source.
      */
-    @NotNull
-    public abstract PdfSourceType getSourceType();
+    public abstract <T> T open(PdfSourceOpener<T> opener) throws TaskIOException;
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(name).append(getSourceType()).toString();
+        return new ToStringBuilder(this).append(name).toString();
     }
 
 }

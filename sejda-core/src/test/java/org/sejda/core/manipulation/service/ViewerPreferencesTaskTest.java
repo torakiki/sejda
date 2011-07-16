@@ -94,6 +94,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_file.pdf");
         assertCreator(reader);
+        assertVersion(reader, PdfVersion.VERSION_1_7);
         PdfDictionary catalog = (PdfDictionary) reader.getCatalog().get(PdfName.VIEWERPREFERENCES);
         assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
         assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));

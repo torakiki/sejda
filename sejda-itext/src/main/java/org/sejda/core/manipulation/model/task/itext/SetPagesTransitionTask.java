@@ -2,7 +2,6 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.manipulation.model.task.itext.util.ViewerPreferencesUtils.getPageMode;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -14,10 +13,12 @@ import java.util.Map.Entry;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -38,15 +39,17 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private SingleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(SetPagesTransitionParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
+        sourceOpener = new PdfReaderPartialLoader();
     }
 
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
-        reader = openReader(source);
+        reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);

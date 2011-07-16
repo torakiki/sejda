@@ -19,16 +19,17 @@ package org.sejda.core.manipulation.model.task.itext;
 import static org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.core.manipulation.model.task.itext.util.PageLabelUtils.getLabels;
-import static org.sejda.core.manipulation.model.task.itext.util.PdfReaderUtils.openReader;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
+import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +49,17 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
     private PdfReader reader = null;
     private DefaultPdfCopier copier = null;
     private SingleOutputWriterSupport outputWriter;
+    private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(SetPagesLabelParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
+        sourceOpener = new PdfReaderPartialLoader();
     }
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
-        reader = openReader(source);
+        reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
