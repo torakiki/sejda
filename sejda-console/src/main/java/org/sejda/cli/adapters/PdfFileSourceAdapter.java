@@ -8,7 +8,7 @@ import org.sejda.core.manipulation.model.input.PdfFileSource;
 
 /**
  * 
- * Adapter for {@link PdfFileSourceAdapter}. Required due to missing String based constructor in the model object (see http://jewelcli.sourceforge.net/usage.html#Class)<br/>
+ * Adapter for {@link PdfFileSourceAdapter}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 

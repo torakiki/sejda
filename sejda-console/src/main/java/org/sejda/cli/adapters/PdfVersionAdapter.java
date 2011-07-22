@@ -19,7 +19,7 @@ package org.sejda.cli.adapters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Adapter for {@link PdfVersion}. Required due to missing String based constructor in the model object (see http://jewelcli.sourceforge.net/usage.html#Class)
+ * Adapter for {@link PdfVersion}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
