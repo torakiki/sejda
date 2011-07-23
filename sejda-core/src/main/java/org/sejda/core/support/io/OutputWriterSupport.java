@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.model.OutputDestination.destination;
+import static org.sejda.core.support.io.OutputDestination.destination;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,6 @@ import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.model.Destination;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**

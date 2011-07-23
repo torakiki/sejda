@@ -34,7 +34,6 @@ import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.model.Destination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,19 +87,18 @@ final class OutputWriter {
      * @throws TaskIOException
      */
     private static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
-        if (outputFile.isFile()) {
-            if (files.size() == 1) {
-                for (Entry<String, File> entry : files.entrySet()) {
-                    copyFile(entry.getValue(), outputFile, overwrite);
-                }
-            } else {
-                throw new TaskIOException(String.format(
-                        "Wrong files map size %d, must be 1 to copy to the selected destination %s", files.size(),
-                        outputFile));
-            }
-        } else {
+        if (!outputFile.isFile()) {
             throw new TaskIOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
+        if (files.size() != 1) {
+            throw new TaskIOException(String.format(
+                    "Wrong files map size %d, must be 1 to copy to the selected destination %s", files.size(),
+                    outputFile));
+        }
+        for (Entry<String, File> entry : files.entrySet()) {
+            copyFile(entry.getValue(), outputFile, overwrite);
+        }
+
     }
 
     /**
@@ -114,17 +112,15 @@ final class OutputWriter {
      */
     private static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
             throws TaskIOException {
-        if (outputDirectory.isDirectory()) {
-            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
-                throw new TaskIOException(String.format("Unable to make destination directory tree %s.",
-                        outputDirectory));
-            }
-            for (Entry<String, File> entry : files.entrySet()) {
-                copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
-            }
-        } else {
+        if (!outputDirectory.isDirectory()) {
             throw new TaskIOException(String.format("Wrong output destination %s, must be a directory.",
                     outputDirectory));
+        }
+        if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+            throw new TaskIOException(String.format("Unable to make destination directory tree %s.", outputDirectory));
+        }
+        for (Entry<String, File> entry : files.entrySet()) {
+            copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
         }
     }
 

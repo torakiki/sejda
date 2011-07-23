@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.model.OutputDestination.destination;
+import static org.sejda.core.support.io.OutputDestination.destination;
 
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.OutputType;

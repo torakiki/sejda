@@ -35,7 +35,6 @@ import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.PdfStreamOutput;
-import org.sejda.core.support.io.model.OutputDestination;
 
 /**
  * Test unit for the {@link OutputWriter}
