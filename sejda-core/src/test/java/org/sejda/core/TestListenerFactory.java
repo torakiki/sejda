@@ -2,6 +2,7 @@ package org.sejda.core;
 
 import java.math.BigDecimal;
 
+import org.junit.Ignore;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.core.notification.event.TaskExecutionStartedEvent;
@@ -12,6 +13,7 @@ import org.sejda.core.notification.event.TaskExecutionStartedEvent;
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 public final class TestListenerFactory {
 
     private TestListenerFactory() {

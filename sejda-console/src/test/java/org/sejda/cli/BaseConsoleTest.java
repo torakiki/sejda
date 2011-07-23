@@ -30,6 +30,7 @@ import java.io.PrintStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
@@ -48,6 +49,7 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
  * @author Eduard Weissmann
  * 
  */
+@Ignore
 public class BaseConsoleTest {
     protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
 

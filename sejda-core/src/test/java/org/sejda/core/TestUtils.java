@@ -5,12 +5,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 
+import org.junit.Ignore;
+
 /**
  * Test utilitites
  * 
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 public final class TestUtils {
 
     private TestUtils() {
