@@ -35,7 +35,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentLoader;
+import org.sejda.core.manipulation.model.task.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
 
     public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size() + 1;
-        documentLoader = new PDDocumentLoader();
+        documentLoader = new DefaultPdfSourceOpener();
     }
 
     public void execute(DecryptParameters parameters) throws TaskException {

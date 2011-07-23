@@ -31,8 +31,8 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
+import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class DecryptTask implements Task<DecryptParameters> {
     public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size() + 1;
         outputWriter = new MultipleOutputWriterSupport();
-        sourceOpener = new PdfReaderPartialLoader();
+        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
     public void execute(DecryptParameters parameters) throws TaskException {

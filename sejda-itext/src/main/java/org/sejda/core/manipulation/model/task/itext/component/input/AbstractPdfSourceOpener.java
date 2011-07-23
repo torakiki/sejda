@@ -1,4 +1,4 @@
-package org.sejda.core.manipulation.model.task.itext.component;
+package org.sejda.core.manipulation.model.task.itext.component.input;
 
 import java.io.IOException;
 
@@ -13,12 +13,12 @@ import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Abstract implementation for a PdfSourceOpener returning a {@link PdfReader}. Extending classes can provide how the {@link PdfReader} is created.
+ * Abstract implementation for a PdfSourceOpener returning a {@link PdfReader}. Subclasses have to provide implementation of the actual source open creating a {@link PdfReader}.
  * 
  * @author Andrea Vacondio
  * 
  */
-abstract class AbstractPdfReaderLoader implements PdfSourceOpener<PdfReader> {
+abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
 
     public PdfReader open(PdfURLSource source) throws TaskIOException {
         PdfReader reader;

@@ -11,12 +11,12 @@ import org.sejda.core.manipulation.model.input.PdfURLSource;
 import org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil;
 
 /**
- * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocument}
+ * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocument}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class PDDocumentLoader implements PdfSourceOpener<PDDocument> {
+public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocument> {
 
     public PDDocument open(PdfURLSource source) throws TaskIOException {
         PDDocument document = null;

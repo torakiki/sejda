@@ -36,8 +36,8 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
+import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.manipulation.model.task.itext.util.ViewerPreferencesUtils;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         totalSteps = parameters.getSourceList().size() + 1;
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
         configuredPreferences = getConfiguredViewerPreferencesMap(parameters);
-        sourceOpener = new PdfReaderPartialLoader();
+        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         if (LOG.isDebugEnabled()) {
             LOG.debug("The following preferences will be set on the input pdf sources:");
             for (Entry<PdfName, PdfObject> entry : configuredPreferences.entrySet()) {

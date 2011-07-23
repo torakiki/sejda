@@ -1,4 +1,4 @@
-package org.sejda.core.manipulation.model.task.itext.component;
+package org.sejda.core.manipulation.model.task.itext.component.input;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import com.lowagie.text.pdf.RandomAccessFileOrArray;
  * @author Andrea Vacondio
  * 
  */
-public class PdfReaderPartialLoader extends AbstractPdfReaderLoader {
+class PartialReadPdfSourceOpener extends AbstractPdfSourceOpener {
 
     @Override
     PdfReader openSource(PdfURLSource source) throws IOException {

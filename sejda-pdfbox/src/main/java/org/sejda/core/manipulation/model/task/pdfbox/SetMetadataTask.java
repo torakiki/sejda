@@ -34,7 +34,7 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentLoader;
+import org.sejda.core.manipulation.model.task.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     public void before(SetMetadataParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
-        documentLoader = new PDDocumentLoader();
+        documentLoader = new DefaultPdfSourceOpener();
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {

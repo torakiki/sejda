@@ -30,7 +30,7 @@ import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
+import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
 
     public void before(AlternateMixParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
-        sourceOpener = new PdfReaderPartialLoader();
+        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {

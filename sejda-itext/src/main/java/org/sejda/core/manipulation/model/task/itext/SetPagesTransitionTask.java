@@ -18,8 +18,8 @@ import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.model.task.itext.component.PdfReaderPartialLoader;
 import org.sejda.core.manipulation.model.task.itext.component.PdfStamperHandler;
+import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
 
     public void before(SetPagesTransitionParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
-        sourceOpener = new PdfReaderPartialLoader();
+        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
