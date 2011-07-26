@@ -1,6 +1,6 @@
 /*
- * Created on Jul 1, 2011
- * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Created on Jul 22, 2011
+ * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -14,28 +14,26 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.adapters;
+package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Adapter for {@link PdfVersion}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link CliCommand}. Allows instantiation via string-based constructor
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfVersionAdapter {
+public class CliCommandAdapter {
+    private final CliCommand command;
 
-    private final PdfVersion pdfVersion;
-
-    public PdfVersionAdapter(String version) {
-        this.pdfVersion = PdfVersion.valueOf(version);
+    public CliCommandAdapter(String commandName) {
+        this.command = CliCommand.findByDisplayName(commandName);
     }
 
     /**
-     * @return the pdfVersion
+     * @return the command
      */
-    public PdfVersion getPdfVersion() {
-        return pdfVersion;
+    public CliCommand getCommand() {
+        return command;
     }
 }

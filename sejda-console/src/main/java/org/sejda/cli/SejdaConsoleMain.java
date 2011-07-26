@@ -16,14 +16,15 @@
  */
 package org.sejda.cli;
 
-import java.io.PrintStream;
-
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.Cli;
+import uk.co.flamingpenguin.jewel.cli.CliFactory;
 
 /**
  * Main entry point for the sejda command line interface
@@ -39,64 +40,68 @@ public class SejdaConsoleMain {
     public static final String NAME = "sejda-console";
 
     public static void main(String[] args) {
-        new SejdaConsoleMain().execute(args);
+        SejdaConsoleMain sejdaConsoleMain = new SejdaConsoleMain();
+
+        wireDependencies(sejdaConsoleMain);
+
+        sejdaConsoleMain.execute(args);
     }
+
+    /**
+     * @param sejdaConsoleMain
+     */
+    private static void wireDependencies(SejdaConsoleMain sejdaConsoleMain) {
+        // wire executor service and adapter
+        DefaultTaskExecutionAdapter taskExecutionAdapter = new DefaultTaskExecutionAdapter();
+        taskExecutionAdapter.setTaskExecutionService(new DefaultTaskExecutionService());
+        sejdaConsoleMain.setTaskExecutionAdapter(taskExecutionAdapter);
+    }
+
+    private TaskExecutionAdapter taskExecutionAdapter;
 
     /**
      * Executes the sejda command line interface, using specified parameters as input
      * 
-     * @param args
+     * @param rawArguments
      *            command line arguments as strings
      */
-    public void execute(final String[] args) {
-        LOG.debug("Starting execution with arguments: " + StringUtils.join(args));
+    public void execute(final String[] rawArguments) {
+        LOG.debug("Starting execution with arguments: " + StringUtils.join(rawArguments, " "));
         try {
-            final SejdaConsoleArguments arguments = new SejdaConsoleArguments(args);
-            final SejdaCli<GeneralCliArguments> generalCli = SejdaCli.newGeneralOptionsCli(arguments);
+            final SejdaConsoleArguments arguments = new SejdaConsoleArguments(rawArguments);
+            final Cli<GeneralCliArguments> generalCli = CliFactory.createCli(GeneralCliArguments.class);
+            final GeneralCliArguments generalCliArguments = generalCli.parseArguments(arguments.getGeneralArguments());
 
             // no command specified, print general Help
-            if (!generalCli.getParsedArguments().isCommand()) {
-                println(generalCli.getHelpMessage());
+            if (!generalCliArguments.isCommand()) {
+                LOG.info(generalCli.getHelpMessage());
                 return;
             }
 
-            String commandName = generalCli.getParsedArguments().getCommand();
-            SejdaCli<? extends TaskCliArguments> commandCli = SejdaCli.newCommandOptions(arguments, commandName);
+            CliCommand command = generalCliArguments.getCommand().getCommand();
 
             // print command specific help
-            if (generalCli.getParsedArguments().isHelp()) {
-                println(commandCli.getHelpMessage());
+            if (generalCliArguments.isHelp()) {
+                LOG.info(command.getHelpMessage());
                 return;
             }
 
             // execute command
-            getTaskExecutionFacade().executeCommand(commandCli.getParsedArguments(), commandName);
+            getTaskExecutionAdapter().execute(command.parseTaskParameters(arguments.getCommandArguments()));
             LOG.debug("Completed execution");
         } catch (ArgumentValidationException e) {
-            LOG.error(e.getMessage(), e);
-            println(e.getMessage());
+            LOG.info(e.getMessage());
         } catch (SejdaRuntimeException e) {
             LOG.error(e.getMessage(), e);
-            println(e.getMessage());
         }
     }
 
-    private PrintStream getDefaultOutPrintStream() {
-        return System.out;
+    TaskExecutionAdapter getTaskExecutionAdapter() {
+        return taskExecutionAdapter;
     }
 
-    /**
-     * Prints the specified line to the default out print stream
-     * 
-     * @param line
-     */
-    private void println(String line) {
-        getDefaultOutPrintStream().println(line);
+    void setTaskExecutionAdapter(TaskExecutionAdapter taskExecutionAdapter) {
+        this.taskExecutionAdapter = taskExecutionAdapter;
     }
 
-    private final CommandExecutionService taskExecutionFacade = new DefaultCommandExecutionService();
-
-    CommandExecutionService getTaskExecutionFacade() {
-        return taskExecutionFacade;
-    }
 };

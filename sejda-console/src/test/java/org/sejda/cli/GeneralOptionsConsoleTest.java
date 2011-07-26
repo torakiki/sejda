@@ -24,11 +24,11 @@ import org.junit.Test;
  * @author Eduard Weissmann
  * 
  */
-public class GeneralOptionsConsoleTest extends BaseConsoleTest {
+public class GeneralOptionsConsoleTest extends ConsoleTestBase {
 
     @Test
     public void testExecuteWithoutArgs() {
-        assertConsoleOutputIs(
+        assertConsoleOutputContains(
                 "",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
                 "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
@@ -36,7 +36,7 @@ public class GeneralOptionsConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testExecuteHelp() {
-        assertConsoleOutputIs(
+        assertConsoleOutputContains(
                 "-h",
                 "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
                 "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
@@ -44,11 +44,11 @@ public class GeneralOptionsConsoleTest extends BaseConsoleTest {
 
     @Test
     public void testExecuteUnknownCommandHelp() {
-        assertConsoleOutputIs("-h unknownCommand", "Unknown command: 'unknownCommand'");
+        assertConsoleOutputContains("-h unknownCommand", "Unknown command: 'unknownCommand'");
     }
 
     @Test
     public void testExecuteUnknownCommand() {
-        assertConsoleOutputIs("unknownCommand", "Unknown command: 'unknownCommand'");
+        assertConsoleOutputContains("unknownCommand", "Unknown command: 'unknownCommand'");
     }
 }
