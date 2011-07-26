@@ -24,7 +24,7 @@ import org.junit.Test;
  * @author Eduard Weissmann
  * 
  */
-public class GeneralOptionsConsoleTest extends BaseConsoleTest {
+public class GeneralOptionsConsoleTest extends ConsoleTestBase {
 
     @Test
     public void testExecuteWithoutArgs() {

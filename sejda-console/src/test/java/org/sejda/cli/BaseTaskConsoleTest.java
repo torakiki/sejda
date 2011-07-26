@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Eduard Weissmann
  * 
  */
-public abstract class BaseTaskConsoleTest extends BaseConsoleTest {
+public abstract class BaseTaskConsoleTest extends ConsoleTestBase {
 
     /**
      * @return task name

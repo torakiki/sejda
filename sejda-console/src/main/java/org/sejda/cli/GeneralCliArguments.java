@@ -35,9 +35,10 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 @CommandLineInterface(application = SejdaConsoleMain.NAME)
 public interface GeneralCliArguments {
 
+    // TODO: find a way to derive the commands supported from the CliCommand enumeration
     @Unparsed(name = "command to execute {[concat], [split],"
             + " [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}")
-    String getCommand();
+    CliCommandAdapter getCommand();
 
     boolean isCommand();
 

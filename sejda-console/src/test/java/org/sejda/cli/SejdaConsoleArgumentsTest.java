@@ -48,12 +48,12 @@ public class SejdaConsoleArgumentsTest {
     }
 
     private void assertGeneralOptionsArguments(String[] expected, String[] input) {
-        String[] actual = new SejdaConsoleArguments(input).getGeneralOptionsArguments();
+        String[] actual = new SejdaConsoleArguments(input).getGeneralArguments();
         assertArrayEquals("For input: '" + StringUtils.join(input, " ") + "'", expected, actual);
     }
 
     private void assertCommandOptionsArguments(String[] expected, String[] input) {
-        String[] actual = new SejdaConsoleArguments(input).getCommandOptionArguments();
+        String[] actual = new SejdaConsoleArguments(input).getCommandArguments();
         assertArrayEquals("For input: '" + StringUtils.join(input, " ") + "'", expected, actual);
     }
 }

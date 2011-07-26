@@ -17,7 +17,6 @@
 package org.sejda.cli;
 
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface
@@ -26,7 +25,7 @@ import org.sejda.core.manipulation.model.parameter.TaskParameters;
  * 
  */
 public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer {
+        CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> {
 
     /**
      * Transforms {@link RotateTaskCliArguments} to {@link RotateParameters}
@@ -34,21 +33,12 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
      * @param taskCliArguments
      * @return
      */
-    public TaskParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
+    public RotateParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
         RotateParameters parameters = new RotateParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
         parameters.setRotation(taskCliArguments.getPageRotation().getPageRotation());
         return parameters;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.sejda.cli.CommandCliArgumentsTransformer#toTaskParameters(org.sejda.cli.TaskCliArguments)
-     */
-    public TaskParameters toTaskParameters(TaskCliArguments taskCliArguments) {
-        return toTaskParameters((RotateTaskCliArguments) taskCliArguments);
     }
 }
