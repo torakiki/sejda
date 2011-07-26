@@ -75,7 +75,8 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
             setCreatorOnPDDocument(document);
             saveDecryptedPDDocument(document, tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest().originalName(source.getName()));
             addOutput(file(tmpFile).name(outName));
 
             closePDDocumentQuitely(document);

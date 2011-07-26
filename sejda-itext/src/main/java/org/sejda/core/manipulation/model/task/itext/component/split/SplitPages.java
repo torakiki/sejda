@@ -18,6 +18,9 @@ class SplitPages implements NextOutputStrategy {
     private Set<Integer> openingPages = new HashSet<Integer>();
 
     SplitPages(Integer totalPages) {
+        if (totalPages < 1) {
+            throw new IllegalArgumentException(String.format("Total number of pages %d must be positive", totalPages));
+        }
         closingPages.add(totalPages);
         openingPages.add(1);
     }
@@ -30,7 +33,7 @@ class SplitPages implements NextOutputStrategy {
     void add(Integer page) {
         closingPages.add(page);
         if (page > 1) {
-            openingPages.add(page - 1);
+            openingPages.add(page + 1);
         }
     }
 
