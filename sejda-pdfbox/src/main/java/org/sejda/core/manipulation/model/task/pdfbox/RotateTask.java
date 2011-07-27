@@ -82,7 +82,8 @@ public class RotateTask implements Task<RotateParameters> {
             setCreatorOnPDDocument(document);
             savePDDocument(document, tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closePDDocumentQuitely(document);

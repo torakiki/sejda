@@ -19,13 +19,12 @@ package org.sejda.core.support.prefix;
 
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 
 /**
- * Component used to generate the output name for a manipulation given the original name and the input prefix (if any);
+ * Component used to generate the output name for a manipulation given the input prefix (if any);
  * 
  * @author Andrea Vacondio
  * @see org.sejda.core.support.prefix.processor.PrefixType
@@ -33,47 +32,31 @@ import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 public final class NameGenerator {
 
     private String prefix;
-    private String originalName;
     private PrefixTypesChain prefixTypesChain;
 
-    private NameGenerator(String prefix, String originalName) {
+    private NameGenerator(String prefix) {
         this.prefix = prefix;
         this.prefixTypesChain = new PrefixTypesChain(prefix);
-        originalName(originalName);
 
     }
 
     /**
      * @param prefix
-     * @param originalName
-     * @return a new instance of a NameGenrator
+     * @return a new instance of a NameGenerator
      */
-    public static NameGenerator nameGenerator(String prefix, String originalName) {
-        return new NameGenerator(prefix, originalName);
-    }
-
-    /**
-     * Sets the original name
-     * 
-     * @param originalName
-     */
-    private void originalName(String originalName) {
-        if (StringUtils.isNotBlank(originalName)) {
-            // check if the filename contains '.' and it's at least in second position (Ex. a.pdf)
-            if (originalName.lastIndexOf('.') > 1) {
-                this.originalName = originalName.substring(0, originalName.lastIndexOf('.'));
-            } else {
-                this.originalName = originalName;
-            }
-        }
+    public static NameGenerator nameGenerator(String prefix) {
+        return new NameGenerator(prefix);
     }
 
     /**
      * @param request
-     *            parameters used to generate the name. It can be null.
+     *            parameters used to generate the name. It cannot be null.
      * @return generates a new name from the given request
      */
     public String generate(NameGenerationRequest request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Unable to generate a name for a null request.");
+        }
         String generatedName = prefixTypesChain.process(prefix, preProcessRequest(request));
         return ensurePdfExtension(generatedName);
     }
@@ -82,14 +65,14 @@ public final class NameGenerator {
      * pre process the request ensuring a not null request is returned
      * 
      * @param request
-     * @return a not null request with the originalName parameter populated
+     * @return a not null request.
      */
     private NameGenerationRequest preProcessRequest(NameGenerationRequest request) {
         NameGenerationRequest retVal = request;
         if (request == null) {
             retVal = nameRequest();
         }
-        return retVal.originalName(originalName);
+        return retVal;
     }
 
     private String ensurePdfExtension(String name) {

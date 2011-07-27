@@ -7,13 +7,15 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
+import org.sejda.core.manipulation.model.task.OutlineSubsetProvider;
+import org.sejda.core.manipulation.model.task.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
@@ -41,8 +43,8 @@ abstract class AbstractPdfSplitter {
     private PdfReader reader;
     private String outputPrefix;
     private SinglePdfSourceParameters parameters;
-    private Map<Integer, String> bookmarksMap;
     private int totalPages;
+    private OutlineSubsetProvider<Map<String, Object>> bookmarksProvider;
     private MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
 
     /**
@@ -53,7 +55,7 @@ abstract class AbstractPdfSplitter {
     public AbstractPdfSplitter(PdfReader reader) {
         this.reader = reader;
         this.totalPages = reader.getNumberOfPages();
-
+        this.bookmarksProvider = new ITextOutlineSubsetProvider(reader);
     }
 
     int getTotalNumberOfPages() {
@@ -61,47 +63,53 @@ abstract class AbstractPdfSplitter {
     }
 
     public void split() throws TaskException {
-        DefaultPdfCopier copyHandler = null;
-        // TODO try finally to close the handler
-        for (int page = 1; page <= totalPages; page++) {
-            if (nextOutputStrategy().isOpening(page)) {
-                LOG.debug("Starting split at page {} of the original document...", page);
-                copyHandler = open(page);
+        PdfCopier pdfCopier = null;
+        try {
+            for (int page = 1; page <= totalPages; page++) {
+                if (nextOutputStrategy().isOpening(page)) {
+                    LOG.debug("Starting split at page {} of the original document...", page);
+                    pdfCopier = open(page);
+                }
+                pdfCopier.addPage(reader, page);
+                notifyEvent().stepsCompleted(page).outOf(totalPages);
+                if (nextOutputStrategy().isClosing(page)) {
+                    LOG.debug("Adding bookmarks to the temporary buffer ...");
+                    pdfCopier.setBookmarks(new ArrayList<Map<String, Object>>(bookmarksProvider
+                            .getOutlineUntillPage(page)));
+                    close(pdfCopier);
+                    LOG.debug("Ending split at page {} of the original document...", page);
+                }
             }
-            copyHandler.addPage(reader, page);
-            notifyEvent().stepsCompleted(page).outOf(totalPages);
-            if (nextOutputStrategy().isClosing(page)) {
-                close(copyHandler);
-                LOG.debug("Ending split at page {} of the original document...", page);
-            }
+        } finally {
+            close(pdfCopier);
         }
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
     }
 
-    private void close(DefaultPdfCopier copyHandler) {
-        LOG.debug("Adding bookmarks to the temporary buffer ...");
-        // TODO take care of bookmarks
-        nullSafeClosePdfCopy(copyHandler);
+    private void close(PdfCopier pdfCopier) {
+        nullSafeClosePdfCopy(pdfCopier);
     }
 
-    private DefaultPdfCopier open(Integer page) throws TaskException {
+    private PdfCopier open(Integer page) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-        DefaultPdfCopier copyHandler = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-        copyHandler.setCompression(parameters.isCompressXref());
+        PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
+        pdfCopier.setCompression(parameters.isCompressXref());
 
         // TODO name request using file number, bookmarks etc
-        bookmarksMap.get(page);
-        String outName = nameGenerator(outputPrefix, parameters.getSource().getName()).generate(
-                nameRequest().page(page));
+        String outName = nameGenerator(outputPrefix).generate(
+                nameRequest().page(page).originalName(parameters.getSource().getName()));
         outputWriter.addOutput(file(tmpFile).name(outName));
-
-        return copyHandler;
+        bookmarksProvider.startPage(page);
+        return pdfCopier;
     }
 
     abstract PdfCopier openCopier(PdfReader reader, File outputFile, PdfVersion version) throws TaskException;
 
+    /**
+     * @return the strategy to use to know if it's time to open a new document or close the current one.
+     */
     abstract NextOutputStrategy nextOutputStrategy();
 
     /**
@@ -126,16 +134,16 @@ abstract class AbstractPdfSplitter {
         return this;
     }
 
-    /**
-     * Sets the bookmarksMap to use during the split process. Not mandatory, it's used during the output file name generation in case the the bookmark name is needed.
-     * 
-     * @param bookmarksMap
-     * @return the splitter instance with the bookmarksMap set.
-     */
-    public AbstractPdfSplitter usingBookmarks(Map<Integer, String> bookmarksMap) {
-        this.bookmarksMap = bookmarksMap;
-        return this;
-    }
+    // /**
+    // * Sets the bookmarksMap to use during the split process. Not mandatory, it's used during the output file name generation in case the the bookmark name is needed.
+    // *
+    // * @param bookmarksMap
+    // * @return the splitter instance with the bookmarksMap set.
+    // */
+    // public AbstractPdfSplitter usingBookmarks(Map<Integer, String> bookmarksMap) {
+    // this.bookmarksMap = bookmarksMap;
+    // return this;
+    // }
 
     /**
      * Strategy used by the {@link AbstractPdfSplitter} to know when it's time to close the ongoing output and open a new one.

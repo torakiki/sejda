@@ -107,7 +107,8 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
             nullSafeClosePdfReader(reader);
             nullSafeClosePdfStamperHandler(stamperHandler);
 
-            String outName = nameGenerator(parameters.getOutputPrefix(), source.getName()).generate(nameRequest());
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);

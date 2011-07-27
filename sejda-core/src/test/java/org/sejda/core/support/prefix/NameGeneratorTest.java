@@ -36,7 +36,8 @@ public class NameGeneratorTest {
         String prefix = "BLA_[CURRENTPAGE###]_[BASENAME]";
         String originalName = "Original";
         String expected = "BLA_002_Original.pdf";
-        assertEquals(expected, nameGenerator(prefix, originalName).generate(nameRequest().page(Integer.valueOf("2"))));
+        assertEquals(expected,
+                nameGenerator(prefix).generate(nameRequest().page(Integer.valueOf("2")).originalName(originalName)));
     }
 
     @Test
@@ -44,7 +45,7 @@ public class NameGeneratorTest {
         String prefix = "BLA_";
         String originalName = "Original";
         String expected = "BLA_Original.pdf";
-        assertEquals(expected, nameGenerator(prefix, originalName).generate(nameRequest()));
+        assertEquals(expected, nameGenerator(prefix).generate(nameRequest().originalName(originalName)));
     }
 
     @Test
@@ -52,7 +53,8 @@ public class NameGeneratorTest {
         String prefix = "BLA_";
         String originalName = "Original";
         String expected = "1_BLA_Original.pdf";
-        assertEquals(expected, nameGenerator(prefix, originalName).generate(nameRequest().page(Integer.valueOf(1))));
+        assertEquals(expected,
+                nameGenerator(prefix).generate(nameRequest().page(Integer.valueOf(1)).originalName(originalName)));
     }
 
     @Test
@@ -60,14 +62,13 @@ public class NameGeneratorTest {
         String prefix = "BLA_[CURRENTPAGE###]_[BASENAME]";
         String originalName = "Original";
         String expected = "BLA_[CURRENTPAGE###]_[BASENAME]Original.pdf";
-        assertEquals(expected, nameGenerator(prefix, originalName).generate(nameRequest()));
+        assertEquals(expected, nameGenerator(prefix).generate(nameRequest().originalName(originalName)));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testNullRequest() {
         String prefix = "BLA_";
-        String originalName = "Original";
         String expected = "BLA_Original.pdf";
-        assertEquals(expected, nameGenerator(prefix, originalName).generate(null));
+        nameGenerator(prefix).generate(null);
     }
 }

@@ -17,6 +17,7 @@
  */
 package org.sejda.core.support.prefix.model;
 
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Request for a new name generation.
@@ -82,6 +83,15 @@ public final class NameGenerationRequest {
      * @return the current instance
      */
     public NameGenerationRequest originalName(String originalName) {
+        if (StringUtils.isBlank(originalName)) {
+            throw new IllegalArgumentException("Original name cannot be blank");
+        }
+        // check if the filename contains '.' and it's at least in second position (Ex. a.pdf)
+        if (originalName.lastIndexOf('.') > 1) {
+            this.originalName = originalName.substring(0, originalName.lastIndexOf('.'));
+        } else {
+            this.originalName = originalName;
+        }
         this.originalName = originalName;
         return this;
     }
