@@ -103,6 +103,22 @@ public class PdfOutEnabledTest {
     }
 
     /**
+     * Assert the the generated output zip stream contains the given number of entries.
+     * 
+     * @param expectedNumberOfDocuments
+     * @throws IOException
+     */
+    protected void assertOutputContainsDocuments(int expectedNumberOfDocuments) throws IOException {
+        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+        ZipInputStream zip = new ZipInputStream(input);
+        int counter = 0;
+        while (zip.getNextEntry() != null) {
+            counter++;
+        }
+        assertEquals(expectedNumberOfDocuments, counter);
+    }
+
+    /**
      * @param expectedFileName
      *            the expected name of the first file in the ZipInputStream
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
