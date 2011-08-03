@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component.split;
 
-import static org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier.nullSafeClosePdfCopy;
+import static org.sejda.core.manipulation.model.task.itext.component.PdfCopiers.nullSafeClosePdfCopy;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.AbstractSplitParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.OutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.ITextOutlineSubsetProvider;
@@ -52,15 +52,15 @@ import com.lowagie.text.pdf.PdfReader;
  * </pre>
  * 
  * @author Andrea Vacondio
- * 
+ * @param <T>
+ *            the type of parameters the splitter needs to have all the information necessary to perform the split.
  */
-abstract class AbstractPdfSplitter {
+abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);
 
     private PdfReader reader;
-    private String outputPrefix;
-    private SinglePdfSourceParameters parameters;
+    private T parameters;
     private int totalPages;
     private OutlineSubsetProvider<Map<String, Object>> outlineSubsetProvider;
     private MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
@@ -81,6 +81,7 @@ abstract class AbstractPdfSplitter {
     }
 
     public void split() throws TaskException {
+        nextOutputStrategy().ensureIsValid();
         PdfCopier pdfCopier = null;
         try {
             int outputDocumentsCounter = 0;
@@ -92,22 +93,18 @@ abstract class AbstractPdfSplitter {
                 }
                 pdfCopier.addPage(reader, page);
                 notifyEvent().stepsCompleted(page).outOf(totalPages);
-                if (nextOutputStrategy().isClosing(page)) {
+                if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     LOG.debug("Adding bookmarks to the temporary buffer ...");
                     pdfCopier.setBookmarks(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
-                    close(pdfCopier);
+                    closeCopier(pdfCopier);
                     LOG.debug("Ending split at page {} of the original document...", page);
                 }
             }
         } finally {
-            close(pdfCopier);
+            closeCopier(pdfCopier);
         }
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-    }
-
-    private void close(PdfCopier pdfCopier) {
-        nullSafeClosePdfCopy(pdfCopier);
     }
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
@@ -117,7 +114,7 @@ abstract class AbstractPdfSplitter {
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
         pdfCopier.setCompression(parameters.isCompressXref());
 
-        String outName = nameGenerator(outputPrefix).generate(
+        String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                 enrichNameGenerationRequest(nameRequest().page(page).originalName(parameters.getSource().getName())
                         .fileNumber(outputDocumentsCounter)));
         outputWriter.addOutput(file(tmpFile).name(outName));
@@ -133,26 +130,21 @@ abstract class AbstractPdfSplitter {
 
     abstract PdfCopier openCopier(PdfReader reader, File outputFile, PdfVersion version) throws TaskException;
 
+    private void closeCopier(PdfCopier pdfCopier) {
+        nullSafeClosePdfCopy(pdfCopier);
+    }
+
     /**
      * @return the strategy to use to know if it's time to open a new document or close the current one.
      */
     abstract NextOutputStrategy nextOutputStrategy();
 
     /**
-     * Sets the outputPrefix to use during the split process.
-     * 
-     * @param outputPrefix
-     */
-    void setPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
-    }
-
-    /**
      * Sets the parameters to use during the split process. Parameters are mandatory to be able to perform the split.
      * 
      * @param parameters
      */
-    void setParameters(SinglePdfSourceParameters parameters) {
+    void setParameters(T parameters) {
         this.parameters = parameters;
     }
 

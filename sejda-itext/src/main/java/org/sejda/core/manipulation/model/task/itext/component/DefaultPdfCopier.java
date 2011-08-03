@@ -62,15 +62,4 @@ public class DefaultPdfCopier extends AbstractPdfCopier {
         super.close();
         IOUtils.closeQuietly(outputStream);
     }
-
-    /**
-     * Null safe close of the {@link PdfCopier}
-     * 
-     * @param stamperHandler
-     */
-    public static void nullSafeClosePdfCopy(PdfCopier pdfCopier) {
-        if (pdfCopier != null) {
-            pdfCopier.close();
-        }
-    }
 }

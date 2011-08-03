@@ -34,11 +34,10 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
      * @return
      */
     public RotateParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
-        RotateParameters parameters = new RotateParameters();
+        RotateParameters parameters = new RotateParameters(taskCliArguments.getPageRotation().getPageRotation());
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
-        parameters.setRotation(taskCliArguments.getPageRotation().getPageRotation());
         return parameters;
     }
 }

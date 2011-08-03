@@ -37,6 +37,7 @@ import com.lowagie.text.pdf.PdfReader;
 public class CountingPdfCopier extends AbstractPdfCopier {
 
     private CountingOutputStream outputStream;
+    private long numberOfWrittenPages = 0;
 
     /**
      * Creates a copier that writes to the given output file counting the written bytes.
@@ -58,16 +59,32 @@ public class CountingPdfCopier extends AbstractPdfCopier {
     }
 
     @Override
+    public void addPage(PdfReader reader, int pageNumber) throws TaskException {
+        super.addPage(reader, pageNumber);
+        numberOfWrittenPages++;
+    }
+
+    @Override
     public void close() {
         super.close();
         IOUtils.closeQuietly(outputStream);
     }
 
     /**
-     * @return The number of bytes that have been copied.
+     * @return The number of bytes that have been copied. Unfortunately is not really accurate because iText underlying uses a BufferedOutputStream that is written only when the
+     *         buffer size is reached so it can happen that you write some pages but this method always return the same number because the bytes didn't actually passed yet through
+     *         the {@link CountingOutputStream}.
      */
     public long getByteCount() {
         return outputStream.getByteCount();
     }
 
+    /**
+     * Tries to estimate the size of the output document once added a new page. This estimation can be little accurate when the number of written pages is low.
+     * 
+     * @return an estimation of the size of the output document if a new pages is added.
+     */
+    public long getEstimatedSizeAfterNextPage() {
+        return getByteCount() + (getByteCount() / numberOfWrittenPages);
+    }
 }

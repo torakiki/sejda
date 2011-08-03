@@ -1,26 +1,25 @@
 package org.sejda.core.manipulation.model.task.itext.component.split;
 
+import java.util.ArrayList;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.manipulation.model.task.itext.component.split.PagesPdfSplitter.SplitPages;
 
 public class SplitPagesTest {
 
     @Test(expected = TaskExecutionException.class)
     public void testFailingEnsureIsValid() throws TaskExecutionException {
-        new SplitPages(10).ensureIsValid();
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructor() {
-        new SplitPages(-0);
+        new SplitPages(new ArrayList<Integer>()).ensureIsValid();
     }
 
     @Test
     public void testStatus() {
-        SplitPages victim = new SplitPages(10);
-        victim.add(1);
-        victim.add(5);
+        ArrayList<Integer> pages = new ArrayList<Integer>();
+        pages.add(1);
+        pages.add(5);
+        SplitPages victim = new SplitPages(pages);
         Assert.assertTrue(victim.isClosing(5));
         Assert.assertFalse(victim.isClosing(6));
         Assert.assertTrue(victim.isOpening(6));

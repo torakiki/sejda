@@ -1,5 +1,5 @@
 /*
- * Created on 28/lug/2011
+ * Created on 03/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -20,40 +20,39 @@ import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullS
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.AbstractSplitByPageParameters;
+import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
-import org.sejda.core.manipulation.model.task.itext.component.split.PagesPdfSplitter;
+import org.sejda.core.manipulation.model.task.itext.component.split.SizePdfSplitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task splitting an input pdf document on a set of pages defined in the input parameter object.
+ * Task splitting an input pdf document when the generated document reaches a given size.
  * 
  * @author Andrea Vacondio
- * @param <T>
- *            the type of the parameters.
+ * 
  */
-public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> implements Task<T> {
+public class SplitBySizeTask implements Task<SplitBySizeParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplitByPageNumbersTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplitBySizeTask.class);
 
     private PdfReader reader = null;
     private PdfSourceOpener<PdfReader> sourceOpener;
-    private PagesPdfSplitter<T> splitter;
+    private SizePdfSplitter splitter;
 
-    public void before(T parameters) {
+    public void before(SplitBySizeParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
-    public void execute(T parameters) throws TaskException {
+    public void execute(SplitBySizeParameters parameters) throws TaskException {
         LOG.debug("Opening {} ...", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
-        splitter = new PagesPdfSplitter<T>(reader, parameters);
-        LOG.debug("Starting split by page numbers for {} ...", parameters);
+        splitter = new SizePdfSplitter(reader, parameters);
+        LOG.debug("Starting split by size {} bytes...", parameters.getSizeToSplitAt());
         splitter.split();
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
@@ -63,5 +62,4 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> imp
         nullSafeClosePdfReader(reader);
         splitter = null;
     }
-
 }

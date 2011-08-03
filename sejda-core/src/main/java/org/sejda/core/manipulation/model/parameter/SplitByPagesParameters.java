@@ -31,7 +31,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByPagesParameters extends AbstractSplitByPagesParameters {
+public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @NotEmpty
     private final Set<Integer> pages = new HashSet<Integer>();
@@ -49,7 +49,7 @@ public class SplitByPagesParameters extends AbstractSplitByPagesParameters {
     public Set<Integer> getPages(int upperLimit) {
         Set<Integer> filteredSet = new HashSet<Integer>();
         for (Integer page : pages) {
-            if (page != null && page <= upperLimit) {
+            if (page != null && page <= upperLimit && page > 0) {
                 filteredSet.add(page);
             }
         }

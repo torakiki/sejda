@@ -19,32 +19,34 @@ package org.sejda.core.manipulation.model.task.itext.component.split;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
+import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.manipulation.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Splitter implementation that split at a given set ofpage numbers.
+ * Splitter implementation that split at a given set of page numbers.
  * 
  * @author Andrea Vacondio
- * 
+ * @param <T>
+ *            type of the parameter the splitter needs to perform the split.
  */
-public class PagesPdfSplitter extends AbstractPdfSplitter {
-    private static final Logger LOG = LoggerFactory.getLogger(PagesPdfSplitter.class);
+public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends AbstractPdfSplitter<T> {
 
     private SplitPages splitPages;
 
-    public PagesPdfSplitter(PdfReader reader) {
+    public PagesPdfSplitter(PdfReader reader, T parameters) {
         super(reader);
-        this.splitPages = new SplitPages(super.getTotalNumberOfPages());
+        setParameters(parameters);
+        this.splitPages = new SplitPages(parameters.getPages(super.getTotalNumberOfPages()));
     }
 
     @Override
@@ -57,45 +59,54 @@ public class PagesPdfSplitter extends AbstractPdfSplitter {
         return splitPages;
     }
 
-    /**
-     * @throws TaskException
-     *             if no set of pages to split at is given.
-     */
-    @Override
-    public void split() throws TaskException {
-        splitPages.ensureIsValid();
-        super.split();
-    }
-
-    public PagesPdfSplitter parameters(SinglePdfSourceParameters parameters) {
-        setParameters(parameters);
-        return this;
-    }
-
-    public PagesPdfSplitter prefix(String outputPrefix) {
-        setPrefix(outputPrefix);
-        return this;
-    }
-
-    /**
-     * Stores the pages the splitter should split at removing those pages that are not in the input document.
-     * 
-     * @param pages
-     * @return the splitter
-     */
-    public PagesPdfSplitter pages(Collection<Integer> pages) {
-        for (Integer page : pages) {
-            if (page > 0 && page <= super.getTotalNumberOfPages()) {
-                splitPages.add(page);
-            } else {
-                LOG.warn("Cannot split at page {}. Page not found in the input document.");
-            }
-        }
-        return this;
-    }
-
     @Override
     NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request;
+    }
+
+    /**
+     * Strategy that holds the page numbers where the split process has to split.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    static class SplitPages implements NextOutputStrategy {
+
+        private Set<Integer> closingPages = new HashSet<Integer>();
+        private Set<Integer> openingPages = new HashSet<Integer>();
+
+        SplitPages(Collection<Integer> pages) {
+            openingPages.add(1);
+            for (Integer page : pages) {
+                add(page);
+            }
+        }
+
+        private void add(Integer page) {
+            closingPages.add(page);
+            openingPages.add(page + 1);
+        }
+
+        public void ensureIsValid() throws TaskExecutionException {
+            if (closingPages.size() <= 0) {
+                throw new TaskExecutionException("Unable to split, no page number given.");
+            }
+        }
+
+        /**
+         * @param page
+         * @return true if the given page is an opening page (a page where the split process should start a new document).
+         */
+        public boolean isOpening(Integer page) {
+            return openingPages.contains(page);
+        }
+
+        /**
+         * @param page
+         * @return true if the given page is an closing page (a page where the split process should close the document).
+         */
+        public boolean isClosing(Integer page) {
+            return closingPages.contains(page);
+        }
     }
 }

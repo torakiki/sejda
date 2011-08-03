@@ -16,39 +16,33 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import java.util.Set;
+import javax.validation.constraints.Min;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
+ * Parameter class for a split by size task.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitByPagesParameters extends SinglePdfSourceParameters {
+public class SplitBySizeParameters extends AbstractSplitParameters {
 
-    private String outputPrefix = "";
+    @Min(1)
+    private long sizeToSplitAt;
 
-    public String getOutputPrefix() {
-        return outputPrefix;
+    public SplitBySizeParameters(long sizeToSplitAt) {
+        this.sizeToSplitAt = sizeToSplitAt;
     }
 
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
+    public long getSizeToSplitAt() {
+        return sizeToSplitAt;
     }
-
-    /**
-     * @param upperLimit
-     *            upper limit for the pages set.
-     * @return the set of pages to split at.
-     */
-    public abstract Set<Integer> getPages(int upperLimit);
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(sizeToSplitAt).toHashCode();
     }
 
     @Override
@@ -56,11 +50,11 @@ public abstract class AbstractSplitByPagesParameters extends SinglePdfSourcePara
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractSplitByPagesParameters)) {
+        if (!(other instanceof SplitBySizeParameters)) {
             return false;
         }
-        AbstractSplitByPagesParameters parameter = (AbstractSplitByPagesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
+        SplitBySizeParameters parameter = (SplitBySizeParameters) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(sizeToSplitAt, parameter.getSizeToSplitAt())
                 .isEquals();
     }
 }

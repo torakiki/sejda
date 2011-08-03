@@ -43,6 +43,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
 
     private PdfSmartCopy pdfCopy = null;
     private Document pdfDocument = null;
+    private boolean closed = false;
 
     /**
      * Opens the copier using the given reader and the given output version.
@@ -56,11 +57,10 @@ abstract class AbstractPdfCopier implements PdfCopier {
     void open(PdfReader reader, OutputStream outputStream, PdfVersion version) throws TaskException {
         try {
             pdfDocument = new Document(reader.getPageSizeWithRotation(1));
+            pdfCopy = new PdfSmartCopy(pdfDocument, outputStream);
             if (version == null) {
-                pdfCopy = new PdfSmartCopy(pdfDocument, outputStream);
                 pdfCopy.setPdfVersion(reader.getPdfVersion());
             } else {
-                pdfCopy = new PdfSmartCopy(pdfDocument, outputStream);
                 pdfCopy.setPdfVersion(version.getVersionAsCharacter());
             }
             pdfDocument.addCreator(Sejda.CREATOR);
@@ -116,11 +116,16 @@ abstract class AbstractPdfCopier implements PdfCopier {
     public void close() {
         pdfDocument.close();
         pdfCopy.close();
+        closed = true;
     }
 
     public void setBookmarks(List<?> bookmarks) {
         if (bookmarks != null) {
             pdfCopy.setOutlines(bookmarks);
         }
+    }
+
+    public boolean isClosed() {
+        return closed;
     }
 }

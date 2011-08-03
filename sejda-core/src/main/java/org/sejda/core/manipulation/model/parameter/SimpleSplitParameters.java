@@ -31,7 +31,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class SimpleSplitParameters extends AbstractSplitByPagesParameters {
+public class SimpleSplitParameters extends AbstractSplitByPageParameters {
 
     @NotNull
     private SimpleSplitType splitType;
