@@ -117,7 +117,6 @@ abstract class AbstractPdfSplitter {
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
         pdfCopier.setCompression(parameters.isCompressXref());
 
-        // TODO name request using file number, bookmarks etc
         String outName = nameGenerator(outputPrefix).generate(
                 enrichNameGenerationRequest(nameRequest().page(page).originalName(parameters.getSource().getName())
                         .fileNumber(outputDocumentsCounter)));
@@ -127,10 +126,8 @@ abstract class AbstractPdfSplitter {
     }
 
     /**
-     * Extending class can enrich the name generation request with splitter specific values.
-     * 
      * @param request
-     * @return
+     * @return the input request enriched by an splitter extending class with specific values.
      */
     abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);
 

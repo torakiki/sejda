@@ -20,7 +20,7 @@ import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullS
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
+import org.sejda.core.manipulation.model.parameter.AbstractSplitByPagesParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.manipulation.model.task.itext.component.split.PagesPdfSplitter;
@@ -30,30 +30,31 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task splitting an input pdf document on a predefined set of pages defined in the type of split associated to the input parameter object.
+ * Task splitting an input pdf document on a set of pages defined in the input parameter object.
  * 
  * @author Andrea Vacondio
- * 
+ * @param <T>
+ *            the type of the parameters.
  */
-public class SimpleSplitTask implements Task<SimpleSplitParameters> {
+public class SplitByPageNumbersTask<T extends AbstractSplitByPagesParameters> implements Task<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SimpleSplitTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SplitByPageNumbersTask.class);
 
     private PdfReader reader = null;
     private PdfSourceOpener<PdfReader> sourceOpener;
     private PagesPdfSplitter splitter;
 
-    public void before(SimpleSplitParameters parameters) {
+    public void before(T parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
-    public void execute(SimpleSplitParameters parameters) throws TaskException {
+    public void execute(T parameters) throws TaskException {
         LOG.debug("Opening {} ...", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
         splitter = new PagesPdfSplitter(reader).parameters(parameters).prefix(parameters.getOutputPrefix());
-        LOG.debug("Starting simple split of type {} ...", parameters.getSplitType());
-        splitter.pages(parameters.getSplitType().getPages(reader.getNumberOfPages())).split();
+        LOG.debug("Starting split by page numbers for {} ...", parameters);
+        splitter.pages(parameters.getPages(reader.getNumberOfPages())).split();
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }

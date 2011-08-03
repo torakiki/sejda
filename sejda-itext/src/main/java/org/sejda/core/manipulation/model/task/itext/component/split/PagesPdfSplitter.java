@@ -31,10 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-//TODO javadoc
-
 /**
- * Split by page numbers
+ * Splitter implementation that split at a given set ofpage numbers.
  * 
  * @author Andrea Vacondio
  * 
@@ -61,7 +59,7 @@ public class PagesPdfSplitter extends AbstractPdfSplitter {
 
     /**
      * @throws TaskException
-     *             if the resulting collection of pages is empty.
+     *             if no set of pages to split at is given.
      */
     @Override
     public void split() throws TaskException {
@@ -69,32 +67,21 @@ public class PagesPdfSplitter extends AbstractPdfSplitter {
         super.split();
     }
 
-    /**
-     * Sets the parameters to use on this splitter.
-     * 
-     * @param parameters
-     * @return the splitter.
-     */
     public PagesPdfSplitter parameters(SinglePdfSourceParameters parameters) {
         setParameters(parameters);
         return this;
     }
 
-    /**
-     * Sets the prefix to use for this splitter.
-     * 
-     * @param outputPrefix
-     * @return the splitter.
-     */
     public PagesPdfSplitter prefix(String outputPrefix) {
         setPrefix(outputPrefix);
         return this;
     }
 
     /**
-     * Stores the pages in a sorted set removing those pages that are not in the input document.
+     * Stores the pages the splitter should split at removing those pages that are not in the input document.
      * 
      * @param pages
+     * @return the splitter
      */
     public PagesPdfSplitter pages(Collection<Integer> pages) {
         for (Integer page : pages) {
