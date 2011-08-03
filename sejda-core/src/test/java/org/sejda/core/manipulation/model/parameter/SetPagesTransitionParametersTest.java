@@ -28,6 +28,5 @@ public class SetPagesTransitionParametersTest {
         PdfPageTransition result = victim.putTransition(3, secondTransition);
         Assert.assertEquals(firstTransition, result);
         Assert.assertEquals(1, victim.getTransitions().size());
-
     }
 }

@@ -18,14 +18,15 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class EncryptParametersTest {
 
@@ -54,10 +55,15 @@ public class EncryptParametersTest {
 
     @Test
     public void testEqual() {
-        EncryptParameters victim = new EncryptParameters();
-        victim.addPermission(PdfAccessPermission.COPY);
-        EncryptParameters other = new EncryptParameters();
-        other.addPermission(PdfAccessPermission.COPY);
-        assertTrue(victim.equals(other));
+        EncryptParameters eq1 = new EncryptParameters();
+        eq1.addPermission(PdfAccessPermission.COPY);
+        EncryptParameters eq2 = new EncryptParameters();
+        eq2.addPermission(PdfAccessPermission.COPY);
+        EncryptParameters eq3 = new EncryptParameters();
+        eq3.addPermission(PdfAccessPermission.COPY);
+        EncryptParameters diff = new EncryptParameters();
+        diff.addPermission(PdfAccessPermission.ASSEMBLE);
+        diff.setVersion(PdfVersion.VERSION_1_2);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

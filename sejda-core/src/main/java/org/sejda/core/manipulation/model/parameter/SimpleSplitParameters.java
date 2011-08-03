@@ -17,20 +17,22 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Parameter class for a simple split task. Used to perform split types which are not requiring a collection of pages to split at.
+ * Parameter class for a simple split task. Used to perform split types which have a predefined set of pages based on the selected split type.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SimpleSplitParameters extends SinglePdfSourceParameters {
+public class SimpleSplitParameters extends AbstractSplitByPagesParameters {
 
-    private String outputPrefix = "";
     @NotNull
     private SimpleSplitType splitType;
 
@@ -39,21 +41,19 @@ public class SimpleSplitParameters extends SinglePdfSourceParameters {
         this.splitType = splitType;
     }
 
-    public String getOutputPrefix() {
-        return outputPrefix;
+    @Override
+    public Set<Integer> getPages(int upperLimit) {
+        return splitType.getPages(upperLimit);
     }
 
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
-    }
-
-    public SimpleSplitType getSplitType() {
-        return splitType;
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(splitType).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(splitType).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(splitType).toHashCode();
     }
 
     @Override
@@ -61,11 +61,10 @@ public class SimpleSplitParameters extends SinglePdfSourceParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof RotateParameters)) {
+        if (!(other instanceof SimpleSplitParameters)) {
             return false;
         }
         SimpleSplitParameters parameter = (SimpleSplitParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .append(splitType, parameter.getSplitType()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(splitType, parameter.splitType).isEquals();
     }
 }

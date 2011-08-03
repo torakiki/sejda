@@ -1,6 +1,5 @@
 /*
- * Created on 13/giu/2010
- *
+ * Created on 03/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -17,7 +16,6 @@
  */
 package org.sejda.core.manipulation.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,67 +28,63 @@ import org.junit.Test;
 import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.Rotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfReader;
-
 /**
- * Abstract test unit for the rotate task
- * 
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-@SuppressWarnings("unchecked")
-public abstract class RotateTaskTest extends PdfOutEnabledTest implements TestableTask<RotateParameters> {
-
+public abstract class SplitByPageNumberTaskTest extends PdfOutEnabledTest implements
+        TestableTask<SplitByPagesParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private RotateParameters parameters;
+    private SplitByPagesParameters parameters;
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
-    }
-
-    /**
-     * Set up of the rotation parameters
-     * 
-     */
-    private void setUpParameters() {
-        parameters = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_180,
-                RotationType.ALL_PAGES));
+        parameters = new SplitByPagesParameters();
         parameters.setCompress(true);
-        parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.addSource(source);
+        parameters.setSource(source);
         parameters.setOverwrite(true);
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
+    public void testExecuteBurst() throws TaskException, IOException {
+        parameters.addPage(1);
+        parameters.addPage(2);
+        parameters.addPage(3);
+        parameters.addPage(4);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_test_file.pdf");
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        assertEquals(4, reader.getNumberOfPages());
-        assertEquals(180, reader.getPageRotation(2));
-        reader.close();
+        assertOutputContainsDocuments(4);
     }
 
-    protected RotateParameters getParameters() {
-        return parameters;
+    @Test
+    public void testExecuteEven() throws TaskException, IOException {
+        parameters.addPage(2);
+        parameters.addPage(4);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(2);
     }
 
+    @Test
+    public void testExecuteOdd() throws TaskException, IOException {
+        parameters.addPage(1);
+        parameters.addPage(3);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(3);
+    }
 }

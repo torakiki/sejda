@@ -1,6 +1,5 @@
 /*
- * Created on 30/mag/2010
- *
+ * Created on 03/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -17,29 +16,20 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
 
 /**
- * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the {@link PageRotation} will be applied.
+ * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateParameters extends PdfSourceListParameters {
+public abstract class AbstractSplitByPagesParameters extends SinglePdfSourceParameters {
 
     private String outputPrefix = "";
-    @Valid
-    @NotNull
-    private PageRotation rotation = null;
-
-    public RotateParameters(PageRotation rotation) {
-        this.rotation = rotation;
-    }
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -49,13 +39,16 @@ public class RotateParameters extends PdfSourceListParameters {
         this.outputPrefix = outputPrefix;
     }
 
-    public PageRotation getRotation() {
-        return rotation;
-    }
+    /**
+     * @param upperLimit
+     *            upper limit for the pages set.
+     * @return the set of pages to split at.
+     */
+    public abstract Set<Integer> getPages(int upperLimit);
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(rotation).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).toHashCode();
     }
 
     @Override
@@ -63,11 +56,11 @@ public class RotateParameters extends PdfSourceListParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof RotateParameters)) {
+        if (!(other instanceof AbstractSplitByPagesParameters)) {
             return false;
         }
-        RotateParameters parameter = (RotateParameters) other;
+        AbstractSplitByPagesParameters parameter = (AbstractSplitByPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .append(rotation, parameter.getRotation()).isEquals();
+                .isEquals();
     }
 }

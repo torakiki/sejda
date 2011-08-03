@@ -74,15 +74,6 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
         this.metadata.put(key, metadata);
     }
 
-    /**
-     * clear the metadata map
-     * 
-     * @see Map#clear()
-     */
-    public void clear() {
-        metadata.clear();
-    }
-
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).toHashCode();
