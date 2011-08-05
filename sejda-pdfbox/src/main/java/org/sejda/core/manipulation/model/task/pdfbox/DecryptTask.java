@@ -46,15 +46,18 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class DecryptTask extends MultipleOutputWriterSupport implements Task<DecryptParameters> {
+public class DecryptTask implements Task<DecryptParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(DecryptTask.class);
 
     private int totalSteps;
     private PDDocument document = null;
+    private MultipleOutputWriterSupport outputWriter;
+
     private PdfSourceOpener<PDDocument> documentLoader;
 
     public void before(DecryptParameters parameters) {
+        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size() + 1;
         documentLoader = new DefaultPdfSourceOpener();
     }
@@ -67,7 +70,7 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
             document = source.open(documentLoader);
             ensureOwnerPermissions(document);
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
             setVersionOnPDDocument(document, parameters.getVersion());
 
@@ -77,14 +80,14 @@ public class DecryptTask extends MultipleOutputWriterSupport implements Task<Dec
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()));
-            addOutput(file(tmpFile).name(outName));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
             closePDDocumentQuitely(document);
 
             notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
         notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
 
         LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
