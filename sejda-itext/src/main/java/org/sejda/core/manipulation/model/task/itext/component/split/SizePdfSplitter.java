@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Splitter implementation that splits a pdf document when the output reaches a given size.
+ * Splitter implementation to split a pdf document when the output reaches a given size.
  * 
  * @author Andrea Vacondio
  * 

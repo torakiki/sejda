@@ -33,7 +33,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Splitter implementation that split at a given set of page numbers.
+ * Splitter implementation to split at a given set of page numbers.
  * 
  * @author Andrea Vacondio
  * @param <T>

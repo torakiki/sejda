@@ -21,7 +21,8 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
- * Model for a task to be executed. Can generically define the {@link TaskParameters} subclass used to parametrize the execution
+ * Interface to defines the task lifecycle. Generically defines the {@link TaskParameters} subclass used to parameterize the task execution. Implementing classes must define a
+ * public no-args constructor that will be reflectively invoked when the {@link Task} is executed.
  * 
  * @author Andrea Vacondio
  * 

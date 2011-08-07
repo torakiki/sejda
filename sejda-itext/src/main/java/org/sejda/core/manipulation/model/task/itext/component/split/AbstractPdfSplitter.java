@@ -41,15 +41,8 @@ import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.pdf.PdfReader;
 
-//TODO check javadoc once the class is done
 /**
- * Component responsible for the split process on an open {@link PdfReader}.
- * 
- * <pre>
- * {@code
- * new PdfSplitter(reader).usingParams(params).usingPrefix(prefix).split(pages);
- * }
- * </pre>
+ * Abstract component providing a skeletal implementation of the split execution.
  * 
  * @author Andrea Vacondio
  * @param <T>
@@ -70,7 +63,7 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
      * 
      * @param reader
      */
-    public AbstractPdfSplitter(PdfReader reader) {
+    AbstractPdfSplitter(PdfReader reader) {
         this.reader = reader;
         this.totalPages = reader.getNumberOfPages();
         this.outlineSubsetProvider = new ITextOutlineSubsetProvider(reader);

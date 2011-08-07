@@ -17,6 +17,9 @@
  */
 package org.sejda.core.manipulation.service;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
@@ -47,10 +50,18 @@ class DefaultTaskExecutionContext implements TaskExecutionContext {
                     parametersClass));
         }
         try {
-            return taskClass.newInstance();
+            Constructor<? extends Task> constructor = taskClass.getConstructor();
+            return constructor.newInstance();
         } catch (InstantiationException e) {
             throw new TaskException("Error instantiating the task", e);
         } catch (IllegalAccessException e) {
+            throw new TaskException("Error instantiating the task", e);
+        } catch (SecurityException e) {
+            throw new TaskException("Error instantiating the task", e);
+        } catch (NoSuchMethodException e) {
+            throw new TaskException(
+                    String.format("The task %s doesn't define a public no-args contructor.", taskClass), e);
+        } catch (InvocationTargetException e) {
             throw new TaskException("Error instantiating the task", e);
         }
     }
