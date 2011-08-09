@@ -24,7 +24,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.sejda.core.manipulation.model.task.OutlineHandler;
+import org.sejda.core.manipulation.model.outline.OutlineHandler;
 
 import com.lowagie.text.pdf.PdfReader;
 
@@ -40,7 +40,7 @@ public class ITextOutlineHandlerTest {
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader);
+            OutlineHandler victim = new ITextOutlineHandler(reader, null);
             assertEquals(3, victim.getMaxGoToActionDepth());
         } finally {
             IOUtils.closeQuietly(inputStream);
@@ -57,7 +57,7 @@ public class ITextOutlineHandlerTest {
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader);
+            OutlineHandler victim = new ITextOutlineHandler(reader, null);
             assertEquals(0, victim.getMaxGoToActionDepth());
         } finally {
             IOUtils.closeQuietly(inputStream);
@@ -74,10 +74,10 @@ public class ITextOutlineHandlerTest {
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader);
-            assertTrue(victim.getPageNumbersAtGoToActionLevel(4).isEmpty());
-            assertEquals(2, victim.getPageNumbersAtGoToActionLevel(2).size());
-            assertEquals(1, victim.getPageNumbersAtGoToActionLevel(3).size());
+            OutlineHandler victim = new ITextOutlineHandler(reader, null);
+            assertTrue(victim.getGoToPageDestinationFroActionLevel(4).isEmpty());
+            assertEquals(2, victim.getGoToPageDestinationFroActionLevel(2).size());
+            assertEquals(1, victim.getGoToPageDestinationFroActionLevel(3).size());
         } finally {
             IOUtils.closeQuietly(inputStream);
             if (reader != null) {

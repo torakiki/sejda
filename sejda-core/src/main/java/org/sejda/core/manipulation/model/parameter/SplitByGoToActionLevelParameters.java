@@ -20,20 +20,21 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
- * Parameter class for a split by bookmark level task.
+ * Parameter class for a split by GoTo Action level task.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SplitByBookmarkLevelParameters extends AbstractSplitParameters {
+public class SplitByGoToActionLevelParameters extends AbstractSplitParameters {
 
     @Min(1)
     private int levelToSplitAt;
-    private String matchingBookmarkRegEx;
+    private String matchingTitleRegEx;
 
-    public SplitByBookmarkLevelParameters(int levelToSplitAt) {
+    public SplitByGoToActionLevelParameters(int levelToSplitAt) {
         super();
         this.levelToSplitAt = levelToSplitAt;
     }
@@ -42,17 +43,23 @@ public class SplitByBookmarkLevelParameters extends AbstractSplitParameters {
         return levelToSplitAt;
     }
 
-    public String getMatchingBookmarkRegEx() {
-        return matchingBookmarkRegEx;
+    public String getMatchingTitleRegEx() {
+        return matchingTitleRegEx;
     }
 
-    public void setMatchingBookmarkRegEx(String matchingBookmarkRegEx) {
-        this.matchingBookmarkRegEx = matchingBookmarkRegEx;
+    public void setMatchingTitleRegEx(String matchingTitleRegEx) {
+        this.matchingTitleRegEx = matchingTitleRegEx;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("levelToSplitAt", levelToSplitAt)
+                .append("matchingTitleRegEx", matchingTitleRegEx).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(levelToSplitAt).append(matchingBookmarkRegEx)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(levelToSplitAt).append(matchingTitleRegEx)
                 .toHashCode();
     }
 
@@ -61,12 +68,12 @@ public class SplitByBookmarkLevelParameters extends AbstractSplitParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitByBookmarkLevelParameters)) {
+        if (!(other instanceof SplitByGoToActionLevelParameters)) {
             return false;
         }
-        SplitByBookmarkLevelParameters parameter = (SplitByBookmarkLevelParameters) other;
+        SplitByGoToActionLevelParameters parameter = (SplitByGoToActionLevelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(levelToSplitAt, parameter.getLevelToSplitAt())
-                .append(matchingBookmarkRegEx, parameter.getMatchingBookmarkRegEx()).isEquals();
+                .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();
     }
 }

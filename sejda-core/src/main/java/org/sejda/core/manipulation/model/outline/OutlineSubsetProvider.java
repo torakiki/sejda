@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.task;
+package org.sejda.core.manipulation.model.outline;
 
 import java.util.Collection;
 

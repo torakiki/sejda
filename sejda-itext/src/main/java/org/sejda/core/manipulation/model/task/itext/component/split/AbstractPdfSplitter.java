@@ -29,9 +29,9 @@ import java.util.Map;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
 import org.sejda.core.manipulation.model.parameter.AbstractSplitParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.task.OutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;

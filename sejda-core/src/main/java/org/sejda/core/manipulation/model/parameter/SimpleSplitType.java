@@ -14,7 +14,7 @@ public enum SimpleSplitType {
         @Override
         public Set<Integer> getPages(int totalNumberOfPage) {
             Set<Integer> retSet = new HashSet<Integer>();
-            for (int i = 1; i < totalNumberOfPage; i++) {
+            for (int i = 1; i <= totalNumberOfPage; i++) {
                 retSet.add(i);
             }
             return retSet;
@@ -24,7 +24,7 @@ public enum SimpleSplitType {
         @Override
         public Set<Integer> getPages(int totalNumberOfPage) {
             Set<Integer> retSet = new HashSet<Integer>();
-            for (int i = 2; i < totalNumberOfPage; i = i + 2) {
+            for (int i = 2; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
             return retSet;
@@ -34,7 +34,7 @@ public enum SimpleSplitType {
         @Override
         public Set<Integer> getPages(int totalNumberOfPage) {
             Set<Integer> retSet = new HashSet<Integer>();
-            for (int i = 1; i < totalNumberOfPage; i = i + 2) {
+            for (int i = 1; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
             return retSet;

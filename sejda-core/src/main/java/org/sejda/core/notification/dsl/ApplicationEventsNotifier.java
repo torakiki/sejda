@@ -93,7 +93,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     public void outOf(BigDecimal total) {
         notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage.multiply(
-                PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total)));
+                PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN)));
 
     }
 

@@ -23,16 +23,16 @@ import org.sejda.core.TestUtils;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByBookmarkLevelParametersTest {
+public class SplitByGoToActionLevelParametersTest {
 
     @Test
     public void testEquals() {
-        SplitByBookmarkLevelParameters eq1 = new SplitByBookmarkLevelParameters(10);
-        SplitByBookmarkLevelParameters eq2 = new SplitByBookmarkLevelParameters(10);
-        SplitByBookmarkLevelParameters eq3 = new SplitByBookmarkLevelParameters(10);
-        SplitByBookmarkLevelParameters diff = new SplitByBookmarkLevelParameters(1);
+        SplitByGoToActionLevelParameters eq1 = new SplitByGoToActionLevelParameters(10);
+        SplitByGoToActionLevelParameters eq2 = new SplitByGoToActionLevelParameters(10);
+        SplitByGoToActionLevelParameters eq3 = new SplitByGoToActionLevelParameters(10);
+        SplitByGoToActionLevelParameters diff = new SplitByGoToActionLevelParameters(1);
         diff.setOutputPrefix("prefix");
-        diff.setMatchingBookmarkRegEx("string");
+        diff.setMatchingTitleRegEx("string");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

@@ -1,6 +1,5 @@
 /*
- * Created on 04/jul/2011
- *
+ * Created on 09/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -20,7 +19,8 @@ package org.sejda.core.manipulation.model.task.itext.component.split;
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.parameter.AbstractSplitByPageParameters;
+import org.sejda.core.manipulation.model.outline.OutlineGoToPageDestinations;
+import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
@@ -29,20 +29,30 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Splitter implementation to split at a given set of page numbers.
+ * Splitter implementation to split at pages that have a GoTo action pointing to them.
  * 
  * @author Andrea Vacondio
- * @param <T>
- *            type of the parameter the splitter needs to perform the split.
+ * 
  */
-public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends AbstractPdfSplitter<T> {
+public class GoToPageDestinationsPdfSplitter extends AbstractPdfSplitter<SplitByGoToActionLevelParameters> {
 
     private SplitPages splitPages;
+    private OutlineGoToPageDestinations outlineDestinations;
 
-    public PagesPdfSplitter(PdfReader reader, T parameters) {
+    /**
+     * @param reader
+     */
+    public GoToPageDestinationsPdfSplitter(PdfReader reader, SplitByGoToActionLevelParameters parameters,
+            OutlineGoToPageDestinations outlineDestinations) {
         super(reader);
         setParameters(parameters);
-        this.splitPages = new SplitPages(parameters.getPages(super.getTotalNumberOfPages()));
+        this.splitPages = new SplitPages(outlineDestinations.getPages());
+        this.outlineDestinations = outlineDestinations;
+    }
+
+    @Override
+    NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
+        return request.bookmark(outlineDestinations.getTitle(request.getPage()));
     }
 
     @Override
@@ -53,10 +63,5 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
     @Override
     NextOutputStrategy nextOutputStrategy() {
         return splitPages;
-    }
-
-    @Override
-    NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
-        return request;
     }
 }

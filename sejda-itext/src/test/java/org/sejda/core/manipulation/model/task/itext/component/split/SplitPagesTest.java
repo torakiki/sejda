@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.task.itext.component.split.PagesPdfSplitter.SplitPages;
 
 public class SplitPagesTest {
 
@@ -20,9 +19,8 @@ public class SplitPagesTest {
         pages.add(1);
         pages.add(5);
         SplitPages victim = new SplitPages(pages);
-        Assert.assertTrue(victim.isClosing(5));
-        Assert.assertFalse(victim.isClosing(6));
-        Assert.assertTrue(victim.isOpening(6));
-        Assert.assertFalse(victim.isOpening(5));
+        Assert.assertTrue(victim.isClosing(4));
+        Assert.assertFalse(victim.isClosing(5));
+        Assert.assertTrue(victim.isOpening(5));
     }
 }

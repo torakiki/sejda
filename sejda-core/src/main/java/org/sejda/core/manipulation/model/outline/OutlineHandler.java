@@ -1,5 +1,5 @@
 /*
- * Created on 03/ago/2011
+ * Created on 07/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,22 +14,25 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.outline;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
 
 /**
+ * Provides methods to deal with a pdf document outline.
+ * 
  * @author Andrea Vacondio
  * 
  */
-public class SimpleSplitTypeTest {
+public interface OutlineHandler {
 
-    @Test
-    public void getPages() {
-        assertEquals(10, SimpleSplitType.BURST.getPages(10).size());
-        assertEquals(5, SimpleSplitType.EVEN_PAGES.getPages(10).size());
-        assertEquals(5, SimpleSplitType.ODD_PAGES.getPages(10).size());
-    }
+    /**
+     * @return the max depth level for GoTo action in the pdf document outline associated to this handler.
+     */
+    int getMaxGoToActionDepth();
+
+    /**
+     * @param goToActionLevel
+     * @return a set of page numbers found at the given GoTo Action level
+     */
+    OutlineGoToPageDestinations getGoToPageDestinationFroActionLevel(int goToActionLevel);
 }

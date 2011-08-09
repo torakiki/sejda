@@ -1,5 +1,5 @@
 /*
- * Created on 07/ago/2011
+ * Created on 09/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.task;
+package org.sejda.core.manipulation.model.task.itext;
 
-import java.util.Set;
+import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.service.SplitByGoToActionLevelTaskTest;
 
 /**
- * Provides methods to deal with a pdf document outline.
- * 
  * @author Andrea Vacondio
  * 
  */
-public interface OutlineHandler {
+public class SplitByGoToActionLevelITextTaskTest extends SplitByGoToActionLevelTaskTest {
 
-    /**
-     * @return the max depth level for GoTo action in the pdf document outline associated to this handler.
-     */
-    int getMaxGoToActionDepth();
+    public Task<SplitByGoToActionLevelParameters> getTask() {
+        return new SplitByGoToActionLevelTask();
+    }
 
-    /**
-     * @param goToActionLevel
-     * @return a set of page numbers found at the given GoTo Action level
-     */
-    Set<Integer> getPageNumbersAtGoToActionLevel(int goToActionLevel);
 }

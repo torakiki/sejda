@@ -16,14 +16,15 @@
  */
 package org.sejda.core.manipulation.model.task.itext.component;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sejda.core.manipulation.model.task.OutlineHandler;
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.sejda.core.manipulation.model.outline.OutlineGoToPageDestinations;
+import org.sejda.core.manipulation.model.outline.OutlineHandler;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;
@@ -40,47 +41,55 @@ public class ITextOutlineHandler implements OutlineHandler {
     private static final String ACTION_KEY = "Action";
     private static final String PAGE_KEY = "Page";
     private static final String KIDS_KEY = "Kids";
+    private static final String TITLE_KEY = "Title";
+
     private static final Pattern PAGE_NUMBER_MATCHING_PATTERN = Pattern.compile("(\\d+)(.*)");
 
+    private Pattern titleMatchingPattern = Pattern.compile(".+");
     private List<Map<String, Object>> bookmarks;
 
     @SuppressWarnings({ "cast", "unchecked" })
-    public ITextOutlineHandler(PdfReader reader) {
+    public ITextOutlineHandler(PdfReader reader, String matchingTitleRegEx) {
         reader.consolidateNamedDestinations();
         this.bookmarks = (List<Map<String, Object>>) SimpleBookmark.getBookmark(reader);
+        if (StringUtils.isNotBlank(matchingTitleRegEx)) {
+            titleMatchingPattern = Pattern.compile(matchingTitleRegEx);
+        }
     }
 
     public int getMaxGoToActionDepth() {
         return getMaxBookmarkLevel(bookmarks, 0);
     }
 
-    public Set<Integer> getPageNumbersAtGoToActionLevel(int goToActionLevel) {
-        Set<Integer> pages = new HashSet<Integer>();
-        addPageIfBookmarkLevel(bookmarks, 1, pages, goToActionLevel);
-        return pages;
+    public OutlineGoToPageDestinations getGoToPageDestinationFroActionLevel(int goToActionLevel) {
+        OutlineGoToPageDestinations destinations = new OutlineGoToPageDestinations();
+        addPageIfBookmarkLevel(bookmarks, 1, destinations, goToActionLevel);
+        return destinations;
     }
 
     @SuppressWarnings("unchecked")
-    private static void addPageIfBookmarkLevel(List<Map<String, Object>> bookmarks, int currentLevel,
-            Set<Integer> pages, int levelToAdd) {
+    private void addPageIfBookmarkLevel(List<Map<String, Object>> bookmarks, int currentLevel,
+            OutlineGoToPageDestinations destinations, int levelToAdd) {
         if (bookmarks != null) {
             for (Map<String, Object> bookmark : bookmarks) {
                 if (currentLevel <= levelToAdd && bookmark != null && isGoToAction(bookmark)) {
                     if (currentLevel == levelToAdd) {
-                        addPageIfValid(pages, bookmark);
+                        addPageIfValid(destinations, bookmark);
                     } else {
                         addPageIfBookmarkLevel((List<Map<String, Object>>) bookmark.get(KIDS_KEY), currentLevel + 1,
-                                pages, levelToAdd);
+                                destinations, levelToAdd);
                     }
                 }
             }
         }
     }
 
-    private static void addPageIfValid(Set<Integer> pages, Map<String, Object> bookmark) {
+    private void addPageIfValid(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
         int page = getPageNumber(bookmark);
-        if (page != -1) {
-            pages.add(page);
+        String title = nullSafeGetTitle(bookmark);
+        Matcher matcher = titleMatchingPattern.matcher(title);
+        if (page != -1 && matcher.matches()) {
+            destinations.addPage(page, title);
         }
     }
 
@@ -99,6 +108,10 @@ public class ITextOutlineHandler implements OutlineHandler {
             }
         }
         return maxLevel;
+    }
+
+    private static String nullSafeGetTitle(Map<String, Object> bookmark) {
+        return ObjectUtils.toString(bookmark.get(TITLE_KEY));
     }
 
     private static int getPageNumber(Map<String, Object> bookmark) {

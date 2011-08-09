@@ -1,5 +1,5 @@
 /*
- * Created on 29/lug/2011
+ * Created on 09/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,6 +16,7 @@
  */
 package org.sejda.core.manipulation.service;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -23,59 +24,58 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.TestUtils;
+import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitType;
+import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-@Ignore
-public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements TestableTask<SimpleSplitParameters> {
+public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest implements
+        TestableTask<SplitByGoToActionLevelParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private SimpleSplitParameters parameters;
 
     @Before
     public void setUp() {
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the set page labels parameters
-     * 
-     */
-    private void setUpParameters(SimpleSplitType type) {
-        parameters = new SimpleSplitParameters(type);
+    private SplitByGoToActionLevelParameters setUpParameters(int level, String regEx) {
+        SplitByGoToActionLevelParameters parameters = new SplitByGoToActionLevelParameters(level);
+        parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_outline.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
+        return parameters;
     }
 
     @Test
-    public void testExecuteBurst() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.BURST);
+    public void testExecuteLevel3() throws TaskException, IOException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(3, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        assertOutputContainsDocuments(4);
+        assertOutputContainsDocuments(2);
     }
 
     @Test
-    public void testExecuteEven() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.EVEN_PAGES);
+    public void testExecuteLevel2() throws TaskException, IOException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(2, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -83,12 +83,23 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
     }
 
     @Test
-    public void testExecuteOdd() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.ODD_PAGES);
+    public void testExecuteLevel2MatchingregEx() throws TaskException, IOException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(2, ".+(page)+.+");
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         assertOutputContainsDocuments(2);
+    }
+
+    @Test
+    public void testExecuteLevel4() throws TaskException, NotificationContextException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(4, null);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
 }
