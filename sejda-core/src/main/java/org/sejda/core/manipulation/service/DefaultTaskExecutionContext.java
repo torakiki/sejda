@@ -35,6 +35,8 @@ import org.sejda.core.manipulation.model.task.Task;
  */
 class DefaultTaskExecutionContext implements TaskExecutionContext {
 
+    private static final String ERROR_INSTANTIATING_THE_TASK = "Error instantiating the task";
+
     private SejdaContext context;
 
     public DefaultTaskExecutionContext() {
@@ -53,16 +55,16 @@ class DefaultTaskExecutionContext implements TaskExecutionContext {
             Constructor<? extends Task> constructor = taskClass.getConstructor();
             return constructor.newInstance();
         } catch (InstantiationException e) {
-            throw new TaskException("Error instantiating the task", e);
+            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
         } catch (IllegalAccessException e) {
-            throw new TaskException("Error instantiating the task", e);
+            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
         } catch (SecurityException e) {
-            throw new TaskException("Error instantiating the task", e);
+            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
         } catch (NoSuchMethodException e) {
             throw new TaskException(
                     String.format("The task %s doesn't define a public no-args contructor.", taskClass), e);
         } catch (InvocationTargetException e) {
-            throw new TaskException("Error instantiating the task", e);
+            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
         }
     }
 

@@ -141,17 +141,6 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
         this.parameters = parameters;
     }
 
-    // /**
-    // * Sets the bookmarksMap to use during the split process. Not mandatory, it's used during the output file name generation in case the the bookmark name is needed.
-    // *
-    // * @param bookmarksMap
-    // * @return the splitter instance with the bookmarksMap set.
-    // */
-    // public AbstractPdfSplitter usingBookmarks(Map<Integer, String> bookmarksMap) {
-    // this.bookmarksMap = bookmarksMap;
-    // return this;
-    // }
-
     /**
      * Strategy used by the {@link AbstractPdfSplitter} to know when it's time to close the ongoing output and open a new one.
      * 
