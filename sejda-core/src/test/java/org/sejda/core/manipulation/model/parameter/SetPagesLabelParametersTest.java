@@ -16,9 +16,16 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 
@@ -57,4 +64,14 @@ public class SetPagesLabelParametersTest {
         Assert.assertEquals(1, victim.getLabels().size());
     }
 
+    @Test
+    public void testInvalidParameters() {
+        SetPagesLabelParameters victim = new SetPagesLabelParameters();
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
+    }
 }

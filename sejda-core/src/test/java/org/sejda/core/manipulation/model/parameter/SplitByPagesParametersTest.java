@@ -17,9 +17,15 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 
 /**
  * @author Andrea Vacondio
@@ -47,5 +53,16 @@ public class SplitByPagesParametersTest {
         victim.addPage(10);
         assertEquals(1, victim.getPages(5).size());
         assertEquals(2, victim.getPages(15).size());
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        SplitByPagesParameters victim = new SplitByPagesParameters();
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

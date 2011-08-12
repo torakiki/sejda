@@ -45,6 +45,10 @@ public class EncryptParameters extends PdfSourceListParameters {
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
     private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
 
+    public EncryptParameters(PdfEncryption encryptionAlgorithm) {
+        this.encryptionAlgorithm = encryptionAlgorithm;
+    }
+
     public String getOutputPrefix() {
         return outputPrefix;
     }
@@ -71,10 +75,6 @@ public class EncryptParameters extends PdfSourceListParameters {
 
     public PdfEncryption getEncryptionAlgorithm() {
         return encryptionAlgorithm;
-    }
-
-    public void setEncryptionAlgorithm(PdfEncryption encryptionAlgorithm) {
-        this.encryptionAlgorithm = encryptionAlgorithm;
     }
 
     /**

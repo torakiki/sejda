@@ -34,13 +34,12 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * @return
      */
     public EncryptParameters toTaskParameters(EncryptTaskCliArguments taskCliArguments) {
-        EncryptParameters parameters = new EncryptParameters();
+        EncryptParameters parameters = new EncryptParameters(taskCliArguments.getEncryptionType());
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
         parameters.setOwnerPassword(taskCliArguments.getAdminstratorPassword());
         parameters.setUserPassword(taskCliArguments.getUserPassword());
-        parameters.setEncryptionAlgorithm(taskCliArguments.getEncryptionType());
         return parameters;
     }
 }

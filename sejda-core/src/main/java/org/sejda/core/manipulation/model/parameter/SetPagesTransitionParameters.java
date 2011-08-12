@@ -33,6 +33,7 @@ import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
  * @author Andrea Vacondio
  * 
  */
+// TODO verify one among transitions and defaultTransition is set
 public class SetPagesTransitionParameters extends SinglePdfSourceParameters {
 
     @Valid

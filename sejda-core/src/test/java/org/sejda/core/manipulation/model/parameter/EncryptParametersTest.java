@@ -18,11 +18,18 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 
 /**
  * @author Andrea Vacondio
@@ -32,21 +39,21 @@ public class EncryptParametersTest {
 
     @Test
     public void testAdd() {
-        EncryptParameters victim = new EncryptParameters();
+        EncryptParameters victim = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         victim.addPermission(PdfAccessPermission.ANNOTATION);
         assertEquals(1, victim.getPermissions().size());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
-        EncryptParameters victim = new EncryptParameters();
+        EncryptParameters victim = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         victim.addPermission(PdfAccessPermission.ANNOTATION);
         victim.getPermissions().clear();
     }
 
     @Test
     public void testClear() {
-        EncryptParameters victim = new EncryptParameters();
+        EncryptParameters victim = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         victim.addPermission(PdfAccessPermission.ANNOTATION);
         assertEquals(1, victim.getPermissions().size());
         victim.clearPermissions();
@@ -55,15 +62,26 @@ public class EncryptParametersTest {
 
     @Test
     public void testEqual() {
-        EncryptParameters eq1 = new EncryptParameters();
+        EncryptParameters eq1 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         eq1.addPermission(PdfAccessPermission.COPY);
-        EncryptParameters eq2 = new EncryptParameters();
+        EncryptParameters eq2 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         eq2.addPermission(PdfAccessPermission.COPY);
-        EncryptParameters eq3 = new EncryptParameters();
+        EncryptParameters eq3 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         eq3.addPermission(PdfAccessPermission.COPY);
-        EncryptParameters diff = new EncryptParameters();
+        EncryptParameters diff = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         diff.addPermission(PdfAccessPermission.ASSEMBLE);
         diff.setVersion(PdfVersion.VERSION_1_2);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        EncryptParameters victim = new EncryptParameters(null);
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.addSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

@@ -4,8 +4,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
+import java.util.Set;
 
+import javax.validation.ConstraintViolation;
+
+import org.junit.Assert;
 import org.junit.Ignore;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.validation.DefaultValidationContext;
 
 /**
  * Test utilitites
@@ -73,5 +79,17 @@ public final class TestUtils {
         assertTrue(eq1.hashCode() == eq2.hashCode());
         assertTrue(eq2.hashCode() == eq3.hashCode());
         assertTrue(eq1.hashCode() == eq3.hashCode());
+    }
+
+    public static void assertInvalidParameters(TaskParameters parameters) {
+        Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
+                .validate(parameters);
+        Assert.assertFalse(violations.isEmpty());
+    }
+
+    public static void assertValidParameters(TaskParameters parameters) {
+        Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
+                .validate(parameters);
+        Assert.assertFalse(violations.isEmpty());
     }
 }

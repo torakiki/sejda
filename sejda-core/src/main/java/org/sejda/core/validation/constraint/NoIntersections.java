@@ -1,7 +1,6 @@
 /*
- * Created on 26/giu/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 11/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -17,10 +16,7 @@
  */
 package org.sejda.core.validation.constraint;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -30,24 +26,20 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.PageRangeValidator;
+import org.sejda.core.validation.validator.NoIntersectionsValidator;
 
 /**
- * Constraint validating that a page range instance is a valid, start page cannot be greater then end page.
- * 
  * @author Andrea Vacondio
  * 
  */
-@NotNull
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
+@Target({ FIELD, TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = PageRangeValidator.class)
+@Constraint(validatedBy = { NoIntersectionsValidator.class })
 @Documented
-public @interface EndGreaterThenOrEqualToStart {
+public @interface NoIntersections {
 
-    String message() default "Invalid page range,ends before starting.";
+    String message() default "The selected page ranges contain intersections.";
 
     Class<?>[] groups() default {};
 

@@ -16,8 +16,15 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
@@ -40,5 +47,16 @@ public class RotateParametersTest {
                 RotationType.ALL_PAGES));
         diff.setOutputPrefix("prefix");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        RotateParameters victim = new RotateParameters(null);
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.addSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

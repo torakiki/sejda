@@ -56,13 +56,6 @@ public class PdfSourceListParameters extends AbstractParameters {
         return Collections.unmodifiableList(sourceList);
     }
 
-    /**
-     * Clear the source list
-     */
-    public void clearSourceList() {
-        sourceList.clear();
-    }
-
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(sourceList).toHashCode();

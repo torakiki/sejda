@@ -37,7 +37,6 @@ public class SimpleSplitParameters extends AbstractSplitByPageParameters {
     private SimpleSplitType splitType;
 
     public SimpleSplitParameters(SimpleSplitType splitType) {
-        super();
         this.splitType = splitType;
     }
 

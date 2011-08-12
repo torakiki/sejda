@@ -25,7 +25,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class PdfSourceListParametersTest {
 
@@ -43,15 +43,5 @@ public class PdfSourceListParametersTest {
         PdfSource source = mock(PdfSource.class);
         victim.addSource(source);
         victim.getSourceList().clear();
-    }
-
-    @Test
-    public void testClear() {
-        PdfSourceListParameters victim = new PdfSourceListParameters();
-        PdfSource source = mock(PdfSource.class);
-        victim.addSource(source);
-        assertEquals(1, victim.getSourceList().size());
-        victim.clearSourceList();
-        assertEquals(0, victim.getSourceList().size());
     }
 }

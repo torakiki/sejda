@@ -29,6 +29,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 class BookmarkPrefixProcessor implements PrefixProcessor {
 
     private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME\\]";
+    // TODO better handling of invalid chars depending on the platform (ex. $ is invalid on Linux)
     private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|]";
 
     public String process(String inputPrefix, NameGenerationRequest request) {

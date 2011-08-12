@@ -164,7 +164,7 @@ final class OutputWriter {
             try {
                 input = new FileInputStream(entry.getValue());
                 zipOut.putNextEntry(new ZipEntry(entry.getKey()));
-                LOG.debug("Copying {} to zip stream.", entry.getValue());
+                LOG.debug("Copying {} to zip stream {}.", entry.getValue(), entry.getKey());
                 IOUtils.copy(input, zipOut);
             } catch (IOException e) {
                 throw new TaskIOException("Unable to copy the temporary file to the zip output stream", e);

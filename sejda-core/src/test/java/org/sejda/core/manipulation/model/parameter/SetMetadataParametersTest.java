@@ -19,11 +19,16 @@ package org.sejda.core.manipulation.model.parameter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import java.io.InputStream;
 import java.util.Set;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 
 /**
@@ -56,5 +61,16 @@ public class SetMetadataParametersTest {
         assertTrue(keys.contains(PdfMetadataKey.AUTHOR));
         assertTrue(keys.contains(PdfMetadataKey.CREATOR));
         assertFalse(keys.contains(PdfMetadataKey.KEYWORDS));
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        SetMetadataParameters victim = new SetMetadataParameters();
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

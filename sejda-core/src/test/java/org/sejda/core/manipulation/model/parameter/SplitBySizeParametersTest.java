@@ -16,8 +16,15 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
+
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.PdfOutput;
 
 /**
  * @author Andrea Vacondio
@@ -32,5 +39,16 @@ public class SplitBySizeParametersTest {
         SplitBySizeParameters diff = new SplitBySizeParameters(100);
         diff.setOutputPrefix("prefix");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        SplitBySizeParameters victim = new SplitBySizeParameters(-10);
+        PdfOutput output = mock(PdfOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

@@ -15,12 +15,13 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model;
+package org.sejda.core.manipulation.model.input;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.core.TestUtils;
 
 /**
  * Test unit for the Bounds class
@@ -28,16 +29,25 @@ import org.junit.Test;
  * @author Andrea Vacondio
  * 
  */
-public class BoundsTest {
+public class PageRangeTest {
 
     @Test
     public void testIntersect() {
-        Bounds base = new Bounds(0, 10);
-        Bounds noIntersection = new Bounds(11, 12);
-        Bounds intersecion = new Bounds(5, 15);
-        Bounds included = new Bounds(2, 5);
+        PageRange base = new PageRange(0, 10);
+        PageRange noIntersection = new PageRange(11, 12);
+        PageRange intersecion = new PageRange(5, 15);
+        PageRange included = new PageRange(2, 5);
         assertTrue(base.intersects(intersecion));
         assertTrue(base.intersects(included));
         assertFalse(base.intersects(noIntersection));
+    }
+
+    @Test
+    public void testEquals() {
+        PageRange eq1 = new PageRange(1, 10);
+        PageRange eq2 = new PageRange(1, 10);
+        PageRange eq3 = new PageRange(1, 10);
+        PageRange diff = new PageRange(1, 9);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

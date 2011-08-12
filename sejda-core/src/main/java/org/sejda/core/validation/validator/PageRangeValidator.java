@@ -20,22 +20,22 @@ package org.sejda.core.validation.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.sejda.core.manipulation.model.Bounds;
+import org.sejda.core.manipulation.model.input.PageRange;
 import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
 
 /**
- * Validator for the {@link EndGreaterThenOrEqualToStart} constraint
+ * Validator for the {@link EndGreaterThenOrEqualToStart} constraint.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class BoundsValidator implements ConstraintValidator<EndGreaterThenOrEqualToStart, Bounds> {
+public class PageRangeValidator implements ConstraintValidator<EndGreaterThenOrEqualToStart, PageRange> {
 
     public void initialize(EndGreaterThenOrEqualToStart constraintAnnotation) {
         // on purpose
     }
 
-    public boolean isValid(Bounds value, ConstraintValidatorContext context) {
+    public boolean isValid(PageRange value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getStart() <= value.getEnd();
         }

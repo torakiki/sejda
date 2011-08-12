@@ -35,7 +35,6 @@ public class SplitByGoToActionLevelParameters extends AbstractSplitParameters {
     private String matchingTitleRegEx;
 
     public SplitByGoToActionLevelParameters(int levelToSplitAt) {
-        super();
         this.levelToSplitAt = levelToSplitAt;
     }
 

@@ -24,7 +24,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
 
 /**
- * Parameter class for the alternate mix manipulation. Accepts a list of two {@link org.sejda.core.manipulation.model.input.PdfSource} that will be mixed.
+ * Parameter class for the alternate mix manipulation. Accepts two {@link PdfMixInput} that will be mixed.
  * 
  * @author Andrea Vacondio
  * 

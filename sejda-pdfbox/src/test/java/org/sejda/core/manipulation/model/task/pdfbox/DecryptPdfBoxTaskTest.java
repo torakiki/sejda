@@ -36,7 +36,6 @@ public class DecryptPdfBoxTaskTest extends DecryptTaskTest {
         super.setUp();
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        getParameters().clearSourceList();
         getParameters().addSource(source);
     }
 
