@@ -32,6 +32,8 @@ import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
 @EndGreaterThenOrEqualToStart
 public class PageRange {
 
+    private static final int UNBOUNDED_END = Integer.MAX_VALUE;
+
     @Min(1)
     private int start;
     @Min(1)
@@ -55,7 +57,7 @@ public class PageRange {
      */
     public PageRange(int start) {
         this.start = start;
-        this.end = Integer.MAX_VALUE;
+        this.end = UNBOUNDED_END;
     }
 
     public int getStart() {
@@ -64,6 +66,13 @@ public class PageRange {
 
     public int getEnd() {
         return end;
+    }
+
+    /**
+     * @return true of this page range has a start but not an end.
+     */
+    public boolean isUnbounded() {
+        return this.end == UNBOUNDED_END;
     }
 
     /**
@@ -76,6 +85,9 @@ public class PageRange {
 
     @Override
     public String toString() {
+        if (isUnbounded()) {
+            return String.format("%s-", start);
+        }
         return String.format("%s-%s", start, end);
     }
 

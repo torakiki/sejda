@@ -14,7 +14,7 @@ public class SetPagesTransitionParametersTest {
         SetPagesTransitionParameters victim2 = new SetPagesTransitionParameters();
         SetPagesTransitionParameters victim3 = new SetPagesTransitionParameters();
         SetPagesTransitionParameters victim4 = new SetPagesTransitionParameters(PdfPageTransition.newInstance(
-                PdfPageTransitionStyle.DISSOLVE, 1, 5));
+                PdfPageTransitionStyle.DISSOLVE, 1, 5), "name");
         TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 

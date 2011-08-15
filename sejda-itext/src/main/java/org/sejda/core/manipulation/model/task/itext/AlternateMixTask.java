@@ -101,9 +101,6 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
         closeResources();
     }
 
-    /**
-     * Close readers and writer
-     */
     private void closeResources() {
         nullSafeClosePdfReader(firstReader);
         nullSafeClosePdfReader(secondReader);

@@ -26,6 +26,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.validation.constraint.NotEmpty;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
  * Parameter class for a merge task containing a collection of input to be merged.
@@ -33,19 +34,22 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class MergeParameters extends AbstractParameters {
+@ValidSingleOutput
+public class MergeParameters extends AbstractParameters implements SingleOutputDocumentParameter {
 
     @NotEmpty
     @Valid
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
     private boolean copyFormFields;
+    private String outputName;
 
     public MergeParameters() {
         this.copyFormFields = false;
     }
 
-    public MergeParameters(boolean copyFormFields) {
+    public MergeParameters(boolean copyFormFields, String outputName) {
         this.copyFormFields = copyFormFields;
+        this.outputName = outputName;
     }
 
     /**
@@ -53,6 +57,10 @@ public class MergeParameters extends AbstractParameters {
      */
     public List<PdfMergeInput> getInputList() {
         return Collections.unmodifiableList(inputList);
+    }
+
+    public String getOutputName() {
+        return outputName;
     }
 
     /**
@@ -71,7 +79,7 @@ public class MergeParameters extends AbstractParameters {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(copyFormFields)
-                .toHashCode();
+                .append(outputName).toHashCode();
     }
 
     @Override
@@ -85,6 +93,6 @@ public class MergeParameters extends AbstractParameters {
         MergeParameters parameter = (MergeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(copyFormFields, parameter.isCopyFormFields()).append(inputList, parameter.getInputList())
-                .isEquals();
+                .append(outputName, parameter.getOutputName()).isEquals();
     }
 }

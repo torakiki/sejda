@@ -26,6 +26,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
  * Parameter class for the set pages transition manipulation.
@@ -34,20 +35,29 @@ import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
  * 
  */
 // TODO verify one among transitions and defaultTransition is set
-public class SetPagesTransitionParameters extends SinglePdfSourceParameters {
+@ValidSingleOutput
+public class SetPagesTransitionParameters extends SinglePdfSourceParameters implements SingleOutputDocumentParameter {
 
     @Valid
     private final Map<Integer, PdfPageTransition> transitions = new HashMap<Integer, PdfPageTransition>();
     @Valid
     private PdfPageTransition defaultTransition;
     private boolean fullScreen = false;
+    private String outputName;
 
     public SetPagesTransitionParameters() {
         // no default transition
     }
 
-    public SetPagesTransitionParameters(PdfPageTransition defaultTransition) {
+    /**
+     * @param defaultTransition
+     *            the default transition
+     * @param outputName
+     *            to be used when the output is not a file destination
+     */
+    public SetPagesTransitionParameters(PdfPageTransition defaultTransition, String outputName) {
         this.defaultTransition = defaultTransition;
+        this.outputName = outputName;
     }
 
     public boolean isFullScreen() {
@@ -56,6 +66,10 @@ public class SetPagesTransitionParameters extends SinglePdfSourceParameters {
 
     public void setFullScreen(boolean fullScreen) {
         this.fullScreen = fullScreen;
+    }
+
+    public String getOutputName() {
+        return outputName;
     }
 
     /**
@@ -90,7 +104,7 @@ public class SetPagesTransitionParameters extends SinglePdfSourceParameters {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(transitions).append(defaultTransition)
-                .append(fullScreen).toHashCode();
+                .append(fullScreen).append(outputName).toHashCode();
     }
 
     @Override
@@ -104,6 +118,6 @@ public class SetPagesTransitionParameters extends SinglePdfSourceParameters {
         SetPagesTransitionParameters parameter = (SetPagesTransitionParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(transitions, parameter.getTransitions())
                 .append(defaultTransition, parameter.getDefaultTransition())
-                .append(fullScreen, parameter.isFullScreen()).isEquals();
+                .append(fullScreen, parameter.isFullScreen()).append(outputName, parameter.getOutputName()).isEquals();
     }
 }

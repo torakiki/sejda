@@ -50,4 +50,10 @@ public class PageRangeTest {
         PageRange diff = new PageRange(1, 9);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
+
+    @Test
+    public void testUnbounded() {
+        PageRange victim = new PageRange(10);
+        assertTrue(victim.isUnbounded());
+    }
 }

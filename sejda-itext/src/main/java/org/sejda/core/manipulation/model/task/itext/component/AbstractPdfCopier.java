@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.task.itext.component;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
@@ -119,7 +120,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         closed = true;
     }
 
-    public void setBookmarks(List<?> bookmarks) {
+    public void setOutline(List<Map<String, Object>> bookmarks) {
         if (bookmarks != null) {
             pdfCopy.setOutlines(bookmarks);
         }

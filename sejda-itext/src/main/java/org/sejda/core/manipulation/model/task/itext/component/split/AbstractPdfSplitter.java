@@ -88,7 +88,7 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
                 notifyEvent().stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     LOG.debug("Adding bookmarks to the temporary buffer ...");
-                    pdfCopier.setBookmarks(new ArrayList<Map<String, Object>>(outlineSubsetProvider
+                    pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
                     closeCopier(pdfCopier);
                     LOG.debug("Ending split at page {} of the original document...", page);

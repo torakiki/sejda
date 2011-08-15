@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
  * Parameter class for the set metadata manipulation.
@@ -34,10 +35,24 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public final class SetMetadataParameters extends SinglePdfSourceParameters {
+@ValidSingleOutput
+public final class SetMetadataParameters extends SinglePdfSourceParameters implements SingleOutputDocumentParameter {
 
     @NotEmpty
     private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
+    private String outputName;
+
+    public SetMetadataParameters() {
+        super();
+    }
+
+    /**
+     * @param outputName
+     *            to be used when the output is not a file destination
+     */
+    public SetMetadataParameters(String outputName) {
+        this.outputName = outputName;
+    }
 
     /**
      * @see Map#entrySet()
@@ -45,6 +60,10 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
      */
     public Set<Entry<PdfMetadataKey, String>> entrySet() {
         return Collections.unmodifiableSet(metadata.entrySet());
+    }
+
+    public String getOutputName() {
+        return outputName;
     }
 
     /**
@@ -76,7 +95,7 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(outputName).toHashCode();
     }
 
     @Override
@@ -89,6 +108,6 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters {
         }
         SetMetadataParameters parameter = (SetMetadataParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata.entrySet(), parameter.entrySet())
-                .isEquals();
+                .append(outputName, parameter.getOutputName()).isEquals();
     }
 }

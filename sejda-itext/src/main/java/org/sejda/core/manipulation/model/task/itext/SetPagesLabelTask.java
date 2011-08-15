@@ -76,7 +76,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
         nullSafeClosePdfCopy(copier);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }

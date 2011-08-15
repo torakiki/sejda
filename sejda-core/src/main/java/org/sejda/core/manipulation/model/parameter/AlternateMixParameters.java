@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
  * Parameter class for the alternate mix manipulation. Accepts two {@link PdfMixInput} that will be mixed.
@@ -29,7 +30,8 @@ import org.sejda.core.manipulation.model.input.PdfMixInput;
  * @author Andrea Vacondio
  * 
  */
-public class AlternateMixParameters extends AbstractParameters {
+@ValidSingleOutput
+public class AlternateMixParameters extends AbstractParameters implements SingleOutputDocumentParameter {
 
     @NotNull
     @Valid

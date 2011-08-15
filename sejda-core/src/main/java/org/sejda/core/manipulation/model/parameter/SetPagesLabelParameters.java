@@ -26,6 +26,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 import org.sejda.core.validation.constraint.NotEmpty;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
  * Parameter class for the set pages label manipulation. The manipulation will apply a label to physical pages until a new label for a physical page number is found.
@@ -36,11 +37,25 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesLabelParameters extends SinglePdfSourceParameters {
+@ValidSingleOutput
+public class SetPagesLabelParameters extends SinglePdfSourceParameters implements SingleOutputDocumentParameter {
 
     @NotEmpty
     @Valid
     private final Map<Integer, PdfPageLabel> labels = new HashMap<Integer, PdfPageLabel>();
+    private String outputName;
+
+    public SetPagesLabelParameters() {
+        super();
+    }
+
+    /**
+     * @param outputName
+     *            to be used when the output is not a file destination
+     */
+    public SetPagesLabelParameters(String outputName) {
+        this.outputName = outputName;
+    }
 
     /**
      * Associates the given label to the given page number. If a label was already associated to the given page, it is replaced with the new one.
@@ -60,6 +75,10 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters {
         labels.clear();
     }
 
+    public String getOutputName() {
+        return outputName;
+    }
+
     /**
      * @return an unmodifiable view of the labels in this parameter.
      */
@@ -69,7 +88,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(labels).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(labels).append(outputName).toHashCode();
     }
 
     @Override
@@ -82,7 +101,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters {
         }
         SetPagesLabelParameters parameter = (SetPagesLabelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getLabels(), parameter.getLabels())
-                .isEquals();
+                .append(outputName, parameter.getOutputName()).isEquals();
     }
 
 }

@@ -17,21 +17,16 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 import java.io.InputStream;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
-import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PageRange;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.output.PdfOutput;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
 
 /**
  * @author Andrea Vacondio
@@ -44,25 +39,22 @@ public class MergeParametersTest {
         MergeParameters eq1 = new MergeParameters();
         MergeParameters eq2 = new MergeParameters();
         MergeParameters eq3 = new MergeParameters();
-        MergeParameters diff = new MergeParameters(true);
+        MergeParameters diff = new MergeParameters(true, "name");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
-    public void testInvalidParametersNullSource() throws TaskException {
-        MergeParameters victim = new MergeParameters();
+    public void testInvalidParametersNullSource() {
+        MergeParameters victim = new MergeParameters(false, "name");
         PdfOutput output = mock(PdfOutput.class);
         victim.setOutput(output);
         victim.addInput(new PdfMergeInput(null));
-        DefaultTaskExecutionService service = new DefaultTaskExecutionService();
-        Task task = mock(Task.class);
-        service.execute(victim);
-        verify(task, never()).before(victim);
+        TestUtils.assertInvalidParameters(victim);
     }
 
     @Test
     public void testInvalidParametersInvalidRange() {
-        MergeParameters victim = new MergeParameters();
+        MergeParameters victim = new MergeParameters(false, "name");
         PdfOutput output = mock(PdfOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
@@ -76,7 +68,7 @@ public class MergeParametersTest {
 
     @Test
     public void testInvalidParametersIntersectingRanges() {
-        MergeParameters victim = new MergeParameters();
+        MergeParameters victim = new MergeParameters(false, "name");
         PdfOutput output = mock(PdfOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);

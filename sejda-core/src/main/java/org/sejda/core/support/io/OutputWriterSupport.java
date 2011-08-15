@@ -56,7 +56,7 @@ class OutputWriterSupport {
      */
     void writeToNonFileDestination(PdfOutput output, boolean overwrite) throws TaskIOException {
         if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-            throw new TaskIOException("Unsupported file ouput for a multiple output task.");
+            throw new TaskIOException("Unsupported file output for a multiple output task.");
         }
 
         if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {

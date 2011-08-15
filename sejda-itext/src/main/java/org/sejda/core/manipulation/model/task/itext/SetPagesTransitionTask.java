@@ -90,7 +90,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
         nullSafeClosePdfReader(reader);
         nullSafeClosePdfStamperHandler(stamperHandler);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(source.getName()), parameters.getOutput(),
+        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
 
         LOG.debug("Transitions set on {}", parameters.getOutput());
