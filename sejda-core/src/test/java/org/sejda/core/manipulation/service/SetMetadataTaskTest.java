@@ -51,7 +51,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private SetMetadataParameters parameters = new SetMetadataParameters();
+    private SetMetadataParameters parameters = new SetMetadataParameters("outName.pdf");
 
     @Before
     public void setUp() {
@@ -81,7 +81,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        PdfReader reader = getReaderFromResultStream("outName.pdf");
         assertCreator(reader);
         assertVersion(reader, PdfVersion.VERSION_1_6);
         HashMap<String, String> meta = reader.getInfo();
