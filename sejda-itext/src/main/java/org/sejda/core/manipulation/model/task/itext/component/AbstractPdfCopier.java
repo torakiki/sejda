@@ -67,7 +67,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
             pdfDocument.addCreator(Sejda.CREATOR);
             pdfDocument.open();
         } catch (DocumentException e) {
-            throw new TaskException("An error occurred opening the PdfCopy.", e);
+            throw new TaskException("An error occurred opening the PdfSmartCopy.", e);
         }
     }
 
@@ -76,10 +76,11 @@ abstract class AbstractPdfCopier implements PdfCopier {
             pdfCopy.addPage(pdfCopy.getImportedPage(reader, pageNumber));
             pdfDocument.open();
         } catch (BadPdfFormatException e) {
-            throw new TaskException(String.format("An error occurred adding page %d to the PdfCopy.", pageNumber), e);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format("An IO error occurred adding page %d to the PdfCopy.", pageNumber),
+            throw new TaskException(String.format("An error occurred adding page %d to the PdfSmartCopy.", pageNumber),
                     e);
+        } catch (IOException e) {
+            throw new TaskIOException(String.format("An IO error occurred adding page %d to the PdfSmartCopy.",
+                    pageNumber), e);
         }
     }
 
@@ -106,7 +107,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         try {
             pdfCopy.freeReader(reader);
         } catch (IOException e) {
-            throw new TaskIOException("An IO error occurred adding page %d to the PdfCopy.", e);
+            throw new TaskIOException("An IO error occurred freeing the pdf reader.", e);
         }
     }
 
@@ -115,14 +116,18 @@ abstract class AbstractPdfCopier implements PdfCopier {
     }
 
     public void close() {
-        pdfDocument.close();
-        pdfCopy.close();
+        if (pdfDocument != null) {
+            pdfDocument.close();
+        }
+        if (pdfCopy != null) {
+            pdfCopy.close();
+        }
         closed = true;
     }
 
-    public void setOutline(List<Map<String, Object>> bookmarks) {
-        if (bookmarks != null) {
-            pdfCopy.setOutlines(bookmarks);
+    public void setOutline(List<Map<String, Object>> outline) {
+        if (outline != null) {
+            pdfCopy.setOutlines(outline);
         }
     }
 

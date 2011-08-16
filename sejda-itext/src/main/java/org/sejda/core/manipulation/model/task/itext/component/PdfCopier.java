@@ -52,7 +52,7 @@ public interface PdfCopier {
     void addAllPages(PdfReader reader) throws TaskException;
 
     /**
-     * Enables compression if compress is true.
+     * Enables compression of the xref streams if compress is true.
      * 
      * @param compress
      */

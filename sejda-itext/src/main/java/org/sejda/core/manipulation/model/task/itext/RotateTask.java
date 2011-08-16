@@ -66,7 +66,6 @@ public class RotateTask implements Task<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
-            currentStep++;
             LOG.debug("Opening {} ...", source);
             reader = source.open(sourceOpener);
 
@@ -87,7 +86,7 @@ public class RotateTask implements Task<RotateParameters> {
                     nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

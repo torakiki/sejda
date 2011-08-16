@@ -68,7 +68,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
 
     public void before(ViewerPreferencesParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
-        totalSteps = parameters.getSourceList().size() + 1;
+        totalSteps = parameters.getSourceList().size();
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
         configuredPreferences = getConfiguredViewerPreferencesMap(parameters);
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
@@ -86,7 +86,6 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
-            currentStep++;
             LOG.debug("Opening {} ...", source);
             reader = source.open(sourceOpener);
 
@@ -111,12 +110,10 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
                     nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
-
         LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
 
     }

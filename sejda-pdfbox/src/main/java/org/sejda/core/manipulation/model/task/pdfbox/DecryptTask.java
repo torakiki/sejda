@@ -58,14 +58,13 @@ public class DecryptTask implements Task<DecryptParameters> {
 
     public void before(DecryptParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
-        totalSteps = parameters.getSourceList().size() + 1;
+        totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
-            currentStep++;
             LOG.debug("Opening {} ...", source);
             document = source.open(documentLoader);
             ensureOwnerPermissions(document);
@@ -84,7 +83,7 @@ public class DecryptTask implements Task<DecryptParameters> {
 
             closePDDocumentQuitely(document);
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

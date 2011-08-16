@@ -47,9 +47,8 @@ public class MergeParameters extends AbstractParameters implements SingleOutputD
         this.copyFormFields = false;
     }
 
-    public MergeParameters(boolean copyFormFields, String outputName) {
+    public MergeParameters(boolean copyFormFields) {
         this.copyFormFields = copyFormFields;
-        this.outputName = outputName;
     }
 
     /**
@@ -61,6 +60,14 @@ public class MergeParameters extends AbstractParameters implements SingleOutputD
 
     public String getOutputName() {
         return outputName;
+    }
+
+    /**
+     * @param outputName
+     *            the outputName to be used when the output is not a file destination
+     */
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
     }
 
     /**
