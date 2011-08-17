@@ -32,7 +32,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsoleMain.NAME)
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME)
 public interface GeneralCliArguments {
 
     // TODO: find a way to derive the commands supported from the CliCommand enumeration

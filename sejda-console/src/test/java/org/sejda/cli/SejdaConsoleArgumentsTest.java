@@ -22,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 
 /**
- * Tests for {@link SejdaConsoleArguments}
+ * Tests for {@link RawArguments}
  * 
  * @author Eduard Weissmann
  * 
@@ -48,12 +48,12 @@ public class SejdaConsoleArgumentsTest {
     }
 
     private void assertGeneralOptionsArguments(String[] expected, String[] input) {
-        String[] actual = new SejdaConsoleArguments(input).getGeneralArguments();
+        String[] actual = new RawArguments(input).getGeneralArguments();
         assertArrayEquals("For input: '" + StringUtils.join(input, " ") + "'", expected, actual);
     }
 
     private void assertCommandOptionsArguments(String[] expected, String[] input) {
-        String[] actual = new SejdaConsoleArguments(input).getCommandArguments();
+        String[] actual = new RawArguments(input).getCommandArguments();
         assertArrayEquals("For input: '" + StringUtils.join(input, " ") + "'", expected, actual);
     }
 }

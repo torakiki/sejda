@@ -53,30 +53,34 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
 public class ConsoleTestBase {
     protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
 
-    protected SejdaConsoleMain console = new SejdaConsoleMain() {
-        @Override
-        TaskExecutionAdapter getTaskExecutionAdapter() {
-            return new DefaultTaskExecutionAdapter() {
-                @Override
-                TaskExecutionService getTaskExecutionService() {
-                    return taskExecutionService;
-                }
-            };
-        }
-    };
+    private SejdaConsole getConsole(String commandLine) {
+        TaskExecutionAdapter testTaskExecutionAdapter = new DefaultTaskExecutionAdapter() {
+            @Override
+            TaskExecutionService getTaskExecutionService() {
+                return taskExecutionService;
+            }
+        };
 
-    protected void assertConsoleOutputContains(String commandLineArguments, String... expectedOutputContainedLines) {
-        String consoleOutput = invokeConsoleAndReturnSystemOut(commandLineArguments);
+        String[] args = parseCommandLineArgs(commandLine);
+        return new SejdaConsole(args, testTaskExecutionAdapter);
+    }
+
+    private String[] parseCommandLineArgs(String commandLine) {
+        return StringUtils.stripAll(StringUtils.splitPreserveAllTokens(commandLine));
+    }
+
+    protected void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
+        String consoleOutput = invokeConsoleAndReturnSystemOut(commandLine);
         for (String eachExpected : expectedOutputContainedLines) {
             assertThat(consoleOutput, containsString(eachExpected));
         }
     }
 
-    private String invokeConsoleAndReturnSystemOut(String command) {
+    private String invokeConsoleAndReturnSystemOut(String commandLine) {
         SystemOutRecordingStream newSystemOut = new SystemOutRecordingStream(System.out);
         System.setOut(new PrintStream(newSystemOut));
 
-        console.execute(StringUtils.stripAll(StringUtils.splitPreserveAllTokens(command)));
+        getConsole(commandLine).execute();
 
         return newSystemOut.getCapturedSystemOut();
     }
@@ -114,10 +118,10 @@ public class ConsoleTestBase {
         }
     }
 
-    protected <T extends TaskParameters> T invokeConsoleAndReturnTaskParameters(String command) {
+    protected <T extends TaskParameters> T invokeConsoleAndReturnTaskParameters(String commandLine) {
         ArgumentCaptor<TaskParameters> taskPrametersCaptor = ArgumentCaptor.forClass(TaskParameters.class);
 
-        console.execute(StringUtils.stripAll(StringUtils.splitPreserveAllTokens(command)));
+        getConsole(commandLine).execute();
 
         verify(taskExecutionService).execute(taskPrametersCaptor.capture());
         return (T) taskPrametersCaptor.getValue();

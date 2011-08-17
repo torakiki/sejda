@@ -4,19 +4,19 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Represents the command line arguments passed to the {@link SejdaConsoleMain}
+ * Represents the command line arguments passed to the {@link SejdaConsole}
  * 
  * @author Eduard Weissmann
  * 
  */
-class SejdaConsoleArguments {
+class RawArguments {
     private final String[] arguments;
 
     /**
      * @param arguments
      *            string representation of the command line arguments
      */
-    public SejdaConsoleArguments(String[] arguments) {
+    public RawArguments(String[] arguments) {
         super();
         this.arguments = arguments.clone();
     }
@@ -41,6 +41,11 @@ class SejdaConsoleArguments {
      */
     String[] getCommandArguments() {
         return (String[]) ArrayUtils.subarray(arguments, 1, arguments.length);
+    }
+
+    @Override
+    public String toString() {
+        return StringUtils.join(arguments, " ");
     }
 
 }

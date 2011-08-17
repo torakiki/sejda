@@ -27,7 +27,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsoleMain.NAME + " rotate")
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " rotate")
 public interface RotateTaskCliArguments extends TaskCliArguments {
 
     @Option(shortName = "r", description = "pages rotation. You can set pages rotation. Accepted string is "
