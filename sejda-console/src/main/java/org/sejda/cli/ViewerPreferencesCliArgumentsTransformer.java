@@ -1,0 +1,87 @@
+/*
+ * Created on Jul 1, 2011
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * you may not use this file except in compliance with the License. 
+ * You may obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+ * See the License for the specific language governing permissions and 
+ * limitations under the License. 
+ */
+package org.sejda.cli;
+
+import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
+import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
+import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
+
+/**
+ * {@link CommandCliArgumentsTransformer} for the ViewerPreferences task command line interface
+ * 
+ * @author Eduard Weissmann
+ * 
+ */
+public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
+        CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> {
+
+    /**
+     * Transforms {@link ViewerPreferencesTaskCliArguments} to {@link ViewerPreferencesParameters}
+     * 
+     * @param taskCliArguments
+     * @return
+     */
+    public ViewerPreferencesParameters toTaskParameters(ViewerPreferencesTaskCliArguments taskCliArguments) {
+        ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
+        populateAbstractParameters(parameters, taskCliArguments);
+        populateSourceParameters(parameters, taskCliArguments);
+
+        populateActivePreferences(taskCliArguments, parameters);
+
+        parameters.setNfsMode(taskCliArguments.getNfsMode());
+
+        parameters.setPageLayout(taskCliArguments.getLayout());
+        parameters.setPageMode(taskCliArguments.getMode());
+        parameters.setPrintScaling(taskCliArguments.isNoPrintScaling() ? PdfPrintScaling.NONE
+                : PdfPrintScaling.APP_DEFAULT);
+        parameters.setDirection(taskCliArguments.getDirection());
+        parameters.setDuplex(taskCliArguments.getDuplex());
+
+        return parameters;
+    }
+
+    /**
+     * @param taskCliArguments
+     * @param parameters
+     */
+    private void populateActivePreferences(ViewerPreferencesTaskCliArguments taskCliArguments,
+            ViewerPreferencesParameters parameters) {
+        if (taskCliArguments.isCenterWindow()) {
+            parameters.addActivePreference(PdfBooleanPreference.CENTER_WINDOW);
+        }
+
+        if (taskCliArguments.isDisplayDocTitle()) {
+            parameters.addActivePreference(PdfBooleanPreference.DISPLAY_DOC_TITLE);
+        }
+
+        if (taskCliArguments.isFitWindow()) {
+            parameters.addActivePreference(PdfBooleanPreference.FIT_WINDOW);
+        }
+
+        if (taskCliArguments.isHideMenu()) {
+            parameters.addActivePreference(PdfBooleanPreference.HIDE_MENUBAR);
+        }
+
+        if (taskCliArguments.isHideWindowUI()) {
+            parameters.addActivePreference(PdfBooleanPreference.HIDE_WINDOW_UI);
+        }
+
+        if (taskCliArguments.isHideToolbar()) {
+            parameters.addActivePreference(PdfBooleanPreference.HIDE_TOOLBAR);
+        }
+    }
+}

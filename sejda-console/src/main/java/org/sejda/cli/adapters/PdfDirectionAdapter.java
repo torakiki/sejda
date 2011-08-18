@@ -16,26 +16,26 @@
  */
 package org.sejda.cli.adapters;
 
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
 
 /**
- * Adapter for {@link PdfVersion}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link PdfDirectionAdapter}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfVersionAdapter {
+public class PdfDirectionAdapter {
 
-    private final PdfVersion pdfVersion;
+    private final PdfDirection pdfDirection;
 
-    public PdfVersionAdapter(String version) {
-        this.pdfVersion = PdfVersion.valueOf(version);
+    public PdfDirectionAdapter(String enumCode) {
+        this.pdfDirection = PdfDirection.valueOf(enumCode);
     }
 
     /**
-     * @return the pdfVersion
+     * @return the pdfDirection
      */
-    public PdfVersion getPdfVersion() {
-        return pdfVersion;
+    public PdfDirection getPdfDirection() {
+        return pdfDirection;
     }
 }

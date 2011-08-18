@@ -50,7 +50,7 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
  * @author Eduard Weissmann
  * 
  */
-public class ConsoleTestBase {
+public class ConsoleTestBase extends AbstractTestSuite {
     protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
 
     private SejdaConsole getConsole(String commandLine) {

@@ -40,8 +40,8 @@ public class SejdaConsole {
     private final TaskExecutionAdapter taskExecutionAdapter;
     private GeneralCliArguments generalCliArguments;
 
-    public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter) throws SejdaRuntimeException {
-        this.arguments = new RawArguments(rawArguments);
+    public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter) {
+        this.arguments = new RawArguments(rawArguments.clone());
         this.taskExecutionAdapter = taskExecutionAdapter;
     }
 
@@ -58,7 +58,7 @@ public class SejdaConsole {
         }
     }
 
-    private void doExecute() throws ArgumentValidationException, SejdaRuntimeException {
+    private void doExecute() throws ArgumentValidationException {
         LOG.debug("Starting execution with arguments: " + arguments);
 
         parseGeneralCliArguments();

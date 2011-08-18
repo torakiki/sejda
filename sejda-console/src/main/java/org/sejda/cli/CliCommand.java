@@ -21,6 +21,7 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
@@ -72,6 +73,17 @@ public enum CliCommand {
             return new RotateCliArgumentsTransformer();
         }
 
+    }),
+    SET_VIEWER_PREFERENCES("setviewerpreferences", new CliInterfacedTask<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters>() {
+        @Override
+        protected Class<ViewerPreferencesTaskCliArguments> getCliArgumentsClass() {
+            return ViewerPreferencesTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> getArgumentsTransformer() {
+            return new ViewerPreferencesCliArgumentsTransformer();
+        }
     });
 
     private String displayName;

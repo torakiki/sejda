@@ -8,5 +8,7 @@
 			task="org.sejda.core.manipulation.model.task.itext.EncryptTask" />
 		<task parameters="org.sejda.core.manipulation.model.parameter.RotateParameters"
 			task="org.sejda.core.manipulation.model.task.itext.RotateTask" />
+		<task parameters="org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters"
+			task="org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask" />
 	</tasks>
 </sejda>

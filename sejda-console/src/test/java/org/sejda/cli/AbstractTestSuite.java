@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 18, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,29 +16,23 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+
+import java.util.Collection;
 
 /**
- * Main entry point for the sejda console executable
+ * Base class for test suites, provides helper methods to ease testing
  * 
  * @author Eduard Weissmann
  * 
  */
-public class Main {
+public abstract class AbstractTestSuite {
 
-    private Main() {
-        // don't instantiate
-    }
-
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
-    }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        DefaultTaskExecutionAdapter taskExecutionAdapter = new DefaultTaskExecutionAdapter();
-        taskExecutionAdapter.setTaskExecutionService(new DefaultTaskExecutionService());
-
-        return taskExecutionAdapter;
+    public <T> void assertContainsAll(Collection<T> expectedItems, Collection<T> actualItems) {
+        for (T eachExpectedItem : expectedItems) {
+            assertThat(actualItems, hasItem(eachExpectedItem));
+        }
     }
 
 }
