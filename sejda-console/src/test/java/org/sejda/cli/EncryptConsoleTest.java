@@ -42,18 +42,7 @@ public class EncryptConsoleTest extends BaseTaskConsoleTest {
 
     @Test
     public void testExecuteCommandHelp() {
-        assertConsoleOutputContains(
-                "-h " + getTaskName(),
-                "Usage: sejda-console encrypt options",
-                "[--compressed] : compress output file (optional)",
-                "--files -f value... : pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)",
-                "--output -o value : output directory (required)",
-                "--outputPrefix -p value : prefix for the output files name (optional)",
-                "[--overwrite] : overwrite existing output file (optional)",
-                "--pdfVersion -v value : pdf version of the output document/s. (optional)",
-                "--adminstratorPassword -a value : administrator password for the document (optional)",
-                "--encryptionType -e value : encryption angorithm {STANDARD_ENC_40, STANDARD_ENC_128, AES_ENC_128}. If omitted it uses STANDARD_ENC_128 (optional)",
-                "--userPassword -u value : user password for the document (optional)");
+        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console encrypt options");
     }
 
     @Test

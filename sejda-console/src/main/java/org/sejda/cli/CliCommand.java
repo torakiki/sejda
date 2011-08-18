@@ -17,6 +17,7 @@
 package org.sejda.cli;
 
 import org.apache.commons.lang.StringUtils;
+import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
@@ -84,6 +85,19 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> getArgumentsTransformer() {
             return new ViewerPreferencesCliArgumentsTransformer();
         }
+    }),
+    ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixParameters>() {
+
+        @Override
+        protected Class<AlternateMixTaskCliArguments> getCliArgumentsClass() {
+            return AlternateMixTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
+            return new AlternateMixCliArgumentsTransformer();
+        }
+
     });
 
     private String displayName;

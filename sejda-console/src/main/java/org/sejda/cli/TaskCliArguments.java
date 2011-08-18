@@ -42,7 +42,7 @@ public interface TaskCliArguments {
     @Option(shortName = "o", description = "output directory (required)")
     PdfDirectoryOutputAdapter getOutput();
 
-    @Option(shortName = "f", description = "pdf files to decrypt: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
+    @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
     List<PdfFileSourceAdapter> getFiles();
 
     @Option(description = "overwrite existing output file (optional)")

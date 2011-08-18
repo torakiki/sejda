@@ -28,6 +28,9 @@ import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
+ * Base class for task test suites, creates default inputs and output files/folders.<br/>
+ * Contains base tests for common options
+ * 
  * @author Eduard Weissmann
  * 
  */
@@ -46,6 +49,7 @@ public abstract class BaseTaskConsoleTest extends ConsoleTestBase {
     @Before
     public void setUp() {
         createTestFile("./inputs/input.pdf");
+        createTestFile("./inputs/second_input.pdf");
         createTestFile("./inputs/input-protected.pdf");
         createTestFile("./inputs/input-unprotected.pdf");
         createTestFolder("./outputs");
@@ -113,5 +117,4 @@ public abstract class BaseTaskConsoleTest extends ConsoleTestBase {
         assertEquals(PdfVersion.VERSION_1_6, result.getVersion());
         assertFalse(result.isOverwrite());
     }
-
 }

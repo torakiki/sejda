@@ -24,7 +24,7 @@ import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
  * @author Eduard Weissmann
  * 
  */
-public class Main {
+public final class Main {
 
     private Main() {
         // don't instantiate

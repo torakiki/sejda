@@ -72,7 +72,7 @@ public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
     }
 
     @Test
-    public void testMultipleOptionsNonDefaults() {
+    public void testNonDefaults() {
         ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
                 .with("--noPrintScaling").with("--direction", "RIGHT_TO_LEFT")
                 .with("--duplex", "DUPLEX_FLIP_SHORT_EDGE").with("--nfsMode", "USE_THUMNS")
@@ -87,7 +87,7 @@ public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
     }
 
     @Test
-    public void testMultipleOptionsDefaults() {
+    public void testDefaults() {
         ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
                 .toString());
 
