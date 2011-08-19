@@ -30,7 +30,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
  * @author Andrea Vacondio
  * 
  */
-public class SinglePdfSourceParameters extends AbstractParameters {
+public abstract class SinglePdfSourceParameters extends AbstractParameters {
 
     @Valid
     @NotNull

@@ -32,7 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
@@ -52,13 +52,13 @@ public class PdfOutEnabledTest {
     private File outFile;
 
     /**
-     * Initialize the input parameters with a new {@link PdfStreamOutput}
+     * Initialize the input parameters with a new {@link StreamOutput}
      * 
      * @param parameters
      */
     void initializeNewStreamOutput(AbstractParameters parameters) {
         out = new ByteArrayOutputStream();
-        PdfStreamOutput pdfOut = PdfStreamOutput.newInstance(out);
+        StreamOutput pdfOut = StreamOutput.newInstance(out);
         parameters.setOutput(pdfOut);
     }
 

@@ -20,8 +20,10 @@ package org.sejda.core.manipulation.model.parameter;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -29,9 +31,28 @@ import org.sejda.core.manipulation.model.input.PdfSource;
  */
 public class PdfSourceListParametersTest {
 
+    private PdfSourceListParameters victim;
+
+    @Before
+    public void setUp() {
+        victim = new PdfSourceListParameters() {
+
+            @Override
+            public TaskOutput getOutput() {
+                return null;
+            }
+
+            @Override
+            public void setOutput(TaskOutput output) {
+                // nothing
+            }
+
+        };
+    }
+
     @Test
     public void testAdd() {
-        PdfSourceListParameters victim = new PdfSourceListParameters();
+
         PdfSource source = mock(PdfSource.class);
         victim.addSource(source);
         assertEquals(1, victim.getSourceList().size());
@@ -39,7 +60,6 @@ public class PdfSourceListParametersTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
-        PdfSourceListParameters victim = new PdfSourceListParameters();
         PdfSource source = mock(PdfSource.class);
         victim.addSource(source);
         victim.getSourceList().clear();

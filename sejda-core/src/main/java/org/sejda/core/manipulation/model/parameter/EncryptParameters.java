@@ -21,14 +21,18 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.support.util.PdfVersionUtility;
+import org.sejda.core.validation.constraint.ValidTaskOutput;
 
 /**
  * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be encrypted using the same parameters.
@@ -44,9 +48,22 @@ public class EncryptParameters extends PdfSourceListParameters {
     @NotNull
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
     private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
+    @Valid
+    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    private TaskOutput output;
 
     public EncryptParameters(PdfEncryption encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     public String getOutputPrefix() {

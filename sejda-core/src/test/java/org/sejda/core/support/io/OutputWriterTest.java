@@ -32,9 +32,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
 
 /**
  * Test unit for the {@link OutputWriter}
@@ -68,7 +68,7 @@ public class OutputWriterTest {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
-        PdfStreamOutput output = PdfStreamOutput.newInstance(new ByteArrayOutputStream());
+        StreamOutput output = StreamOutput.newInstance(new ByteArrayOutputStream());
         OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output));
         assertFalse("temporary file not deleted", tempFile.exists());
     }
@@ -132,7 +132,7 @@ public class OutputWriterTest {
 
         File outFile = mock(File.class);
         when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
-        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
+        DirectoryOutput output = DirectoryOutput.newInstance(outFile);
         when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
 
         try {
@@ -152,7 +152,7 @@ public class OutputWriterTest {
         when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.FALSE);
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
-        PdfDirectoryOutput output = PdfDirectoryOutput.newInstance(outFile);
+        DirectoryOutput output = DirectoryOutput.newInstance(outFile);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));

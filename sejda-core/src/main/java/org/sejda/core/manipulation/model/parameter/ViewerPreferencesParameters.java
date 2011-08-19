@@ -17,14 +17,19 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import static org.sejda.core.support.util.PdfVersionUtility.getMax;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
@@ -34,8 +39,7 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenP
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
-
-import static org.sejda.core.support.util.PdfVersionUtility.getMax;
+import org.sejda.core.validation.constraint.ValidTaskOutput;
 
 /**
  * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the view preferences will be
@@ -57,6 +61,19 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     private PdfDirection direction;
     private PdfPrintScaling printScaling;
     private Set<PdfBooleanPreference> activeBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
+    @Valid
+    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    private TaskOutput output;
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
+    }
 
     public String getOutputPrefix() {
         return outputPrefix;

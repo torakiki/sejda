@@ -16,8 +16,13 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import javax.validation.Valid;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.validation.constraint.ValidTaskOutput;
 
 /**
  * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
@@ -28,6 +33,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 public abstract class AbstractSplitParameters extends SinglePdfSourceParameters {
 
     private String outputPrefix = "";
+    @Valid
+    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    private TaskOutput output;
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -35,6 +43,16 @@ public abstract class AbstractSplitParameters extends SinglePdfSourceParameters 
 
     public void setOutputPrefix(String outputPrefix) {
         this.outputPrefix = outputPrefix;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     @Override

@@ -1,7 +1,6 @@
 /*
- * Created on 24/giu/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 19/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -17,10 +16,7 @@
  */
 package org.sejda.core.validation.constraint;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -29,28 +25,29 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.FileExtensionValidator;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.validation.validator.TaskOutputValidator;
 
 /**
- * Constraint on a File object with the given extension.
+ * Validates that a TaskOutput is of the expected type/s.
  * 
  * @author Andrea Vacondio
  * 
  */
-@ExistingFile
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
+@NotNull
+@Target(FIELD)
 @Retention(RUNTIME)
-@Constraint(validatedBy = FileExtensionValidator.class)
+@Constraint(validatedBy = TaskOutputValidator.class)
 @Documented
-public @interface FileExtension {
+public @interface ValidTaskOutput {
 
-    String message() default "Invalid extension.";
+    String message() default "Task output type is not allowed.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String value();
-
+    OutputType[] values();
 }

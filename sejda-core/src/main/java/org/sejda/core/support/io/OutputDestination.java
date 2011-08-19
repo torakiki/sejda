@@ -17,10 +17,10 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.support.io.Destination.FileDestination;
 import org.sejda.core.support.io.Destination.OverwriteFileDestination;
 
@@ -49,10 +49,10 @@ import org.sejda.core.support.io.Destination.OverwriteFileDestination;
  */
 final class OutputDestination implements OverwriteFileDestination, FileDestination {
 
-    private PdfOutput outputDestination;
+    private TaskOutput outputDestination;
     private boolean overwrite = false;
 
-    private OutputDestination(PdfOutput outputDestination) {
+    private OutputDestination(TaskOutput outputDestination) {
         this.outputDestination = outputDestination;
     }
 
@@ -74,7 +74,7 @@ final class OutputDestination implements OverwriteFileDestination, FileDestinati
      *            where the input source will be written.
      * @return the destination
      */
-    static OverwriteDestination destination(PdfDirectoryOutput output) {
+    static OverwriteDestination destination(DirectoryOutput output) {
         return new OutputDestination(output);
     }
 
@@ -85,11 +85,11 @@ final class OutputDestination implements OverwriteFileDestination, FileDestinati
      *            where the input source will be written.
      * @return the destination
      */
-    static Destination destination(PdfStreamOutput output) {
+    static Destination destination(StreamOutput output) {
         return new OutputDestination(output);
     }
 
-    public PdfOutput getOutputDestination() {
+    public TaskOutput getOutputDestination() {
         return outputDestination;
     }
 

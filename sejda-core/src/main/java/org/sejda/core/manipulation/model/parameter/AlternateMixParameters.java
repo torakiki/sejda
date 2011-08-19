@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
@@ -33,6 +34,9 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
 @ValidSingleOutput
 public class AlternateMixParameters extends AbstractParameters implements SingleOutputDocumentParameter {
 
+    @Valid
+    @NotNull
+    private TaskOutput output;
     @NotNull
     @Valid
     private PdfMixInput firstInput;
@@ -53,6 +57,16 @@ public class AlternateMixParameters extends AbstractParameters implements Single
         this.firstInput = firstInput;
         this.secondInput = secondInput;
         this.outputName = outputName;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     public PdfMixInput getFirstInput() {

@@ -16,37 +16,55 @@
  */
 package org.sejda.core.manipulation.model.output;
 
-import java.io.File;
-
-import org.junit.Test;
-
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.sejda.core.TestUtils;
+
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
-public class PdfDirectoryOutputTest {
+public class DirectoryOutputTest {
+
+    private File directory;
+
+    @Before
+    public void setUp() {
+        directory = mock(File.class);
+        when(directory.isDirectory()).thenReturn(Boolean.TRUE);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
-        PdfDirectoryOutput.newInstance(null);
+        DirectoryOutput.newInstance(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidDirectory() {
-        File file = mock(File.class);
-        when(file.isDirectory()).thenReturn(Boolean.FALSE);
-        PdfDirectoryOutput.newInstance(file);
+        when(directory.isDirectory()).thenReturn(Boolean.FALSE);
+        DirectoryOutput.newInstance(directory);
     }
 
     @Test
     public void testValidDirectory() {
-        File file = mock(File.class);
-        when(file.isDirectory()).thenReturn(Boolean.TRUE);
-        PdfDirectoryOutput instance = PdfDirectoryOutput.newInstance(file);
+        DirectoryOutput instance = DirectoryOutput.newInstance(directory);
         assertNotNull(instance);
+    }
+
+    @Test
+    public void testEquals() {
+        File diffDirectory = mock(File.class);
+        when(diffDirectory.isDirectory()).thenReturn(Boolean.TRUE);
+        DirectoryOutput eq1 = DirectoryOutput.newInstance(directory);
+        DirectoryOutput eq2 = DirectoryOutput.newInstance(directory);
+        DirectoryOutput eq3 = DirectoryOutput.newInstance(directory);
+        DirectoryOutput diff = DirectoryOutput.newInstance(diffDirectory);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

@@ -17,12 +17,9 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.validation.constraint.ValidPdfVersion;
 
@@ -35,9 +32,6 @@ import org.sejda.core.validation.constraint.ValidPdfVersion;
 @ValidPdfVersion
 public abstract class AbstractParameters implements TaskParameters {
 
-    @Valid
-    @NotNull
-    private PdfOutput output;
     private boolean overwrite = false;
     private boolean compressXref = false;
     private PdfVersion version;
@@ -76,13 +70,9 @@ public abstract class AbstractParameters implements TaskParameters {
         this.version = version;
     }
 
-    public PdfOutput getOutput() {
-        return output;
-    }
+    public abstract TaskOutput getOutput();
 
-    public void setOutput(PdfOutput output) {
-        this.output = output;
-    }
+    public abstract void setOutput(TaskOutput output);
 
     /**
      * @return the min output pdf version required by this parameter object depending on its attributes. Each extending class is responsible for the implementation of this method.
@@ -93,7 +83,8 @@ public abstract class AbstractParameters implements TaskParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(compressXref).append(version).append(output).toHashCode();
+        return new HashCodeBuilder().append(overwrite).append(compressXref).append(version).append(getOutput())
+                .toHashCode();
     }
 
     @Override
@@ -107,6 +98,6 @@ public abstract class AbstractParameters implements TaskParameters {
         AbstractParameters parameter = (AbstractParameters) other;
         return new EqualsBuilder().append(overwrite, parameter.isOverwrite())
                 .append(compressXref, parameter.isCompressXref()).append(version, parameter.getVersion())
-                .append(output, parameter.getOutput()).isEquals();
+                .append(getOutput(), parameter.getOutput()).isEquals();
     }
 }

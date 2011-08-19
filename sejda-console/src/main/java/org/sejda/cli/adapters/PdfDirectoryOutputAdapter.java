@@ -18,17 +18,17 @@ package org.sejda.cli.adapters;
 
 import java.io.File;
 
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
 
 /**
- * Adapter for {@link PdfDirectoryOutput}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link DirectoryOutput}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
  */
 public class PdfDirectoryOutputAdapter {
 
-    private final PdfDirectoryOutput pdfDirectoryOutput;
+    private final DirectoryOutput pdfDirectoryOutput;
 
     public PdfDirectoryOutputAdapter(String directoryPath) {
         File directory = new File(directoryPath);
@@ -37,13 +37,13 @@ public class PdfDirectoryOutputAdapter {
             throw new IllegalArgumentException("Path '" + directoryPath + "' does not exist");
         }
 
-        this.pdfDirectoryOutput = PdfDirectoryOutput.newInstance(new File(directoryPath));
+        this.pdfDirectoryOutput = DirectoryOutput.newInstance(new File(directoryPath));
     }
 
     /**
      * @return the pdfDirectoryOutput
      */
-    public PdfDirectoryOutput getPdfDirectoryOutput() {
+    public DirectoryOutput getPdfDirectoryOutput() {
         return pdfDirectoryOutput;
     }
 }

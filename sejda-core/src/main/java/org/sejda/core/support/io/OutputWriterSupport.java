@@ -26,9 +26,9 @@ import java.util.Map;
 
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
-import org.sejda.core.manipulation.model.output.PdfOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
@@ -54,15 +54,15 @@ class OutputWriterSupport {
      * @param overwrite
      * @throws TaskIOException
      */
-    void writeToNonFileDestination(PdfOutput output, boolean overwrite) throws TaskIOException {
+    void writeToNonFileDestination(TaskOutput output, boolean overwrite) throws TaskIOException {
         if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
             throw new TaskIOException("Unsupported file output for a multiple output task.");
         }
 
         if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
-            write(destination((PdfDirectoryOutput) output).overwriting(overwrite));
+            write(destination((DirectoryOutput) output).overwriting(overwrite));
         } else {
-            write(destination((PdfStreamOutput) output));
+            write(destination((StreamOutput) output));
         }
     }
 

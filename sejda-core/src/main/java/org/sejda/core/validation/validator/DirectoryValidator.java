@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 19/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,25 +14,32 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.validation.validator;
 
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import java.io.File;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.sejda.core.validation.constraint.Directory;
 
 /**
- * A parameter whose execution result in a single output pdf document.
+ * Validator to verify that a file is an existing directory.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface SingleOutputDocumentParameter {
+public class DirectoryValidator implements ConstraintValidator<Directory, File> {
 
-    /**
-     * @return the output destination where the output document will be written to.
-     */
-    TaskOutput getOutput();
+    public void initialize(Directory constraintAnnotation) {
+        // on purpose
 
-    /**
-     * @return the output file name to be used when the {@link TaskOutput} is not a File output.
-     */
-    String getOutputName();
+    }
+
+    public boolean isValid(File value, ConstraintValidatorContext context) {
+        if (value != null) {
+            return value.isDirectory();
+        }
+        return true;
+    }
 }

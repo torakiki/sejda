@@ -21,10 +21,12 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
 
@@ -42,6 +44,9 @@ public class MergeParameters extends AbstractParameters implements SingleOutputD
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
     private boolean copyFormFields;
     private String outputName;
+    @Valid
+    @NotNull
+    private TaskOutput output;
 
     public MergeParameters() {
         this.copyFormFields = false;
@@ -49,6 +54,16 @@ public class MergeParameters extends AbstractParameters implements SingleOutputD
 
     public MergeParameters(boolean copyFormFields) {
         this.copyFormFields = copyFormFields;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     /**

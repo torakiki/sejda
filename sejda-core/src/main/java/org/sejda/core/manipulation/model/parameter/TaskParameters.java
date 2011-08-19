@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 
 /**
  * Model for a task parameters used during the task executions
@@ -30,6 +30,6 @@ public interface TaskParameters {
     /**
      * @return output destination where the result of the manipulation is placed
      */
-    PdfOutput getOutput();
+    TaskOutput getOutput();
 
 }

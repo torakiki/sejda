@@ -24,11 +24,9 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskNotFoundException;
 import org.sejda.core.manipulation.ChildTestTaskParameter;
 import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.DefaultTaskExecutionContext;
-import org.sejda.core.manipulation.service.TaskExecutionContext;
 
 /**
  * @author Andrea Vacondio
@@ -53,13 +51,12 @@ public class DefaultTaskExecutionContextTest {
         Task<? extends TaskParameters> task = victim.getTask(new ChildTestTaskParameter());
         Assert.assertNotNull(task);
     }
-    
+
     @Test(expected = TaskNotFoundException.class)
     public void testGetTaskNegative() throws TaskException {
         Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
 
-            public PdfOutput getOutput() {
-                // TODO Auto-generated method stub
+            public TaskOutput getOutput() {
                 return null;
             }
         });

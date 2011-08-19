@@ -22,39 +22,40 @@ import java.io.File;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.sejda.core.validation.constraint.PdfFile;
+import org.sejda.core.validation.constraint.Directory;
 
 /**
- * {@link File} output destination
+ * Directory output destination.
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfFileOutput implements TaskOutput {
+public final class DirectoryOutput implements TaskOutput {
 
-    @PdfFile
-    private final File file;
+    @Directory
+    private final File directory;
 
-    private PdfFileOutput(File file) {
-        this.file = file;
+    private DirectoryOutput(File directory) {
+        this.directory = directory;
+
     }
 
-    public File getFile() {
-        return file;
+    public File getDirectory() {
+        return directory;
     }
 
     public OutputType getOutputType() {
-        return OutputType.FILE_OUTPUT;
+        return OutputType.DIRECTORY_OUTPUT;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).append(file).toString();
+        return new ToStringBuilder(this).append(getOutputType()).append(directory).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(file).toHashCode();
+        return new HashCodeBuilder().append(directory).toHashCode();
     }
 
     @Override
@@ -62,26 +63,25 @@ public final class PdfFileOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfFileOutput)) {
+        if (!(other instanceof DirectoryOutput)) {
             return false;
         }
-        PdfFileOutput output = (PdfFileOutput) other;
-        return new EqualsBuilder().append(file, output.getFile()).isEquals();
+        DirectoryOutput output = (DirectoryOutput) other;
+        return new EqualsBuilder().append(directory, output.getDirectory()).isEquals();
     }
 
     /**
-     * Creates a new instance of a PdfFileOutput using the input file
+     * Creates a new instance of a PdfOutput using the input directory
      * 
-     * @param file
+     * @param directory
      * @return the newly created instance
      * @throws IllegalArgumentException
-     *             if the input file is null or not a file
+     *             if the input directory is null or not a directory
      */
-    public static PdfFileOutput newInstance(File file) {
-        if (file == null || !file.isFile()) {
-            throw new IllegalArgumentException("A valid instance is expected (not null && isFile).");
+    public static DirectoryOutput newInstance(File directory) {
+        if (directory == null || !directory.isDirectory()) {
+            throw new IllegalArgumentException("A not null directory instance is expected.");
         }
-        return new PdfFileOutput(file);
+        return new DirectoryOutput(directory);
     }
-
 }

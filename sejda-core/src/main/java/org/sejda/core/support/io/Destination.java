@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 
 /**
  * Destination where the output will be written
@@ -28,9 +28,9 @@ import org.sejda.core.manipulation.model.output.PdfOutput;
 interface Destination {
 
     /**
-     * @return the {@link PdfOutput} where the input will be written to
+     * @return the {@link TaskOutput} where the input will be written to
      */
-    PdfOutput getOutputDestination();
+    TaskOutput getOutputDestination();
 
     /**
      * @return true if the destination should be overwritten if already exists

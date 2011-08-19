@@ -1,5 +1,6 @@
 /*
- * Created on 23/gen/2011
+ * Created on 30/mag/2010
+ *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,28 +17,16 @@
  */
 package org.sejda.core.manipulation.model.output;
 
-import java.io.OutputStream;
-
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-
 /**
+ * Abstract implementation of a task output destination where the results of a manipulation will be written.
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
-public class PdfStreamOutputTest {
+public interface TaskOutput {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNullStream() {
-        PdfStreamOutput.newInstance(null);
-    }
-
-    @Test
-    public void testValidStream() {
-        OutputStream stream = mock(OutputStream.class);
-        PdfStreamOutput instance = PdfStreamOutput.newInstance(stream);
-        assertNotNull(instance);
-    }
+    /**
+     * @return the type of this output
+     */
+    OutputType getOutputType();
 }

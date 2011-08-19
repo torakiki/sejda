@@ -22,9 +22,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
 
@@ -44,6 +46,9 @@ public class SetPagesTransitionParameters extends SinglePdfSourceParameters impl
     private PdfPageTransition defaultTransition;
     private boolean fullScreen = false;
     private String outputName;
+    @Valid
+    @NotNull
+    private TaskOutput output;
 
     public SetPagesTransitionParameters() {
         // no default transition
@@ -58,6 +63,16 @@ public class SetPagesTransitionParameters extends SinglePdfSourceParameters impl
     public SetPagesTransitionParameters(PdfPageTransition defaultTransition, String outputName) {
         this.defaultTransition = defaultTransition;
         this.outputName = outputName;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     public boolean isFullScreen() {

@@ -28,17 +28,16 @@ import org.sejda.core.manipulation.model.task.Task;
 public class TestTask implements Task<TestTaskParameter> {
 
     public void after() {
-        // TODO Auto-generated method stub
+        // nothing
 
     }
 
     public void before(TestTaskParameter parameters) {
-        // TODO Auto-generated method stub
+        // nothing
     }
 
     public void execute(TestTaskParameter parameters) {
-        // TODO Auto-generated method stub
-
+        // nothing
     }
 
 }

@@ -30,11 +30,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfOutput;
-import org.sejda.core.manipulation.model.output.PdfStreamOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,14 +64,14 @@ final class OutputWriter {
      */
     public static void executeCopyAndDelete(Map<String, File> files, Destination destination) throws TaskIOException {
         if (destination != null) {
-            PdfOutput outputDestination = destination.getOutputDestination();
+            TaskOutput outputDestination = destination.getOutputDestination();
             OutputType type = destination.getOutputDestination().getOutputType();
             if (OutputType.STREAM_OUTPUT.equals(type)) {
-                copyToStream(files, ((PdfStreamOutput) outputDestination).getStream());
+                copyToStream(files, ((StreamOutput) outputDestination).getStream());
             } else if (OutputType.FILE_OUTPUT.equals(type)) {
                 copyToFile(files, ((PdfFileOutput) outputDestination).getFile(), destination.isOverwrite());
             } else {
-                copyToDirectory(files, ((PdfDirectoryOutput) outputDestination).getFile(), destination.isOverwrite());
+                copyToDirectory(files, ((DirectoryOutput) outputDestination).getDirectory(), destination.isOverwrite());
             }
         } else {
             throw new TaskIOException("Destination for the output handler has not been set.");

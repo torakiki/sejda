@@ -36,8 +36,8 @@ import org.mockito.ArgumentCaptor;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfDirectoryOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
@@ -168,6 +168,6 @@ public class ConsoleTestBase extends AbstractTestSuite {
      */
     protected void assertOutputFolder(AbstractParameters result, File outputFolder) {
         assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
-        assertEquals(((PdfDirectoryOutput) result.getOutput()).getFile(), outputFolder);
+        assertEquals(((DirectoryOutput) result.getOutput()).getDirectory(), outputFolder);
     }
 }

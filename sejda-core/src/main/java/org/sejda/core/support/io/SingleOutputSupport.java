@@ -18,7 +18,7 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
@@ -50,7 +50,7 @@ public interface SingleOutputSupport {
      * @throws TaskIOException
      *             in case of error
      */
-    void flushSingleOutput(PopulatedFileOutput fileOutput, PdfOutput output, boolean overwrite)
+    void flushSingleOutput(PopulatedFileOutput fileOutput, TaskOutput output, boolean overwrite)
             throws TaskIOException;
 
 }

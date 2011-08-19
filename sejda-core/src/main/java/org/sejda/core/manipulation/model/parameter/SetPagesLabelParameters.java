@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
@@ -44,6 +46,9 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters implement
     @Valid
     private final Map<Integer, PdfPageLabel> labels = new HashMap<Integer, PdfPageLabel>();
     private String outputName;
+    @Valid
+    @NotNull
+    private TaskOutput output;
 
     public SetPagesLabelParameters() {
         super();
@@ -55,6 +60,16 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters implement
      */
     public SetPagesLabelParameters(String outputName) {
         this.outputName = outputName;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     /**

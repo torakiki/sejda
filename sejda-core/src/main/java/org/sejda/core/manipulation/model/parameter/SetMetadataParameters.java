@@ -23,8 +23,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
@@ -41,6 +45,9 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters imple
     @NotEmpty
     private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
     private String outputName;
+    @Valid
+    @NotNull
+    private TaskOutput output;
 
     public SetMetadataParameters() {
         super();
@@ -52,6 +59,16 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters imple
      */
     public SetMetadataParameters(String outputName) {
         this.outputName = outputName;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     /**

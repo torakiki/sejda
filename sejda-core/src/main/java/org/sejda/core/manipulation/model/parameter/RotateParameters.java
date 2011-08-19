@@ -22,7 +22,10 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
+import org.sejda.core.validation.constraint.ValidTaskOutput;
 
 /**
  * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the {@link PageRotation} will be applied.
@@ -36,9 +39,22 @@ public class RotateParameters extends PdfSourceListParameters {
     @Valid
     @NotNull
     private PageRotation rotation = null;
+    @Valid
+    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    private TaskOutput output;
 
     public RotateParameters(PageRotation rotation) {
         this.rotation = rotation;
+    }
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
     }
 
     public String getOutputPrefix() {

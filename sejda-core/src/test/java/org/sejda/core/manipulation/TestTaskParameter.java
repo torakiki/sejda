@@ -17,8 +17,13 @@
  */
 package org.sejda.core.manipulation;
 
+import javax.validation.Valid;
+
 import org.junit.Ignore;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.validation.constraint.ValidTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -26,5 +31,19 @@ import org.sejda.core.manipulation.model.parameter.AbstractParameters;
  */
 @Ignore
 public class TestTaskParameter extends AbstractParameters {
+
+    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @Valid
+    private TaskOutput output;
+
+    @Override
+    public TaskOutput getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(TaskOutput output) {
+        this.output = output;
+    }
 
 }

@@ -24,6 +24,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.OutputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -34,7 +37,9 @@ import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
@@ -56,6 +61,8 @@ public class DefaultTaskExecutionServiceTest {
 
     @Before
     public void setUp() throws TaskException {
+        OutputStream stream = mock(OutputStream.class);
+        parameters.setOutput(StreamOutput.newInstance(stream));
         when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
     }
 
@@ -78,7 +85,7 @@ public class DefaultTaskExecutionServiceTest {
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
-        PdfOutput output = mock(PdfOutput.class);
+        TaskOutput output = mock(TaskOutput.class);
         parameters.setOutput(output);
         TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
@@ -90,6 +97,10 @@ public class DefaultTaskExecutionServiceTest {
     @Test
     public void testNegativeValidationExecution() throws TaskException {
         TestUtils.setProperty(victim, "context", context);
+        File file = mock(File.class);
+        when(file.isFile()).thenReturn(Boolean.TRUE);
+        when(file.getName()).thenReturn("name.pdf");
+        parameters.setOutput(PdfFileOutput.newInstance(file));
         victim.execute(parameters);
         verify(task, never()).before(parameters);
         verify(task, never()).after();

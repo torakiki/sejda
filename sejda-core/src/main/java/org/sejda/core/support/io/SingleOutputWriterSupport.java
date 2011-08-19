@@ -22,7 +22,7 @@ import static org.sejda.core.support.io.OutputDestination.destination;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.PdfOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
@@ -44,7 +44,7 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
  */
 public class SingleOutputWriterSupport extends OutputWriterSupport implements SingleOutputSupport {
 
-    public void flushSingleOutput(PopulatedFileOutput fileOutput, PdfOutput output, boolean overwrite)
+    public void flushSingleOutput(PopulatedFileOutput fileOutput, TaskOutput output, boolean overwrite)
             throws TaskIOException {
         add(fileOutput);
         try {

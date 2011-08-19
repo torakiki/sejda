@@ -21,6 +21,8 @@ import java.io.OutputStream;
 
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
@@ -29,12 +31,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfStreamOutput implements PdfOutput {
+public final class StreamOutput implements TaskOutput {
 
     @NotNull
     private final OutputStream stream;
 
-    private PdfStreamOutput(OutputStream stream) {
+    private StreamOutput(OutputStream stream) {
         this.stream = stream;
     }
 
@@ -51,6 +53,23 @@ public final class PdfStreamOutput implements PdfOutput {
         return new ToStringBuilder(this).append(getOutputType()).toString();
     }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(stream).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof StreamOutput)) {
+            return false;
+        }
+        StreamOutput output = (StreamOutput) other;
+        return new EqualsBuilder().append(stream, output.getStream()).isEquals();
+    }
+
     /**
      * Creates a new instance of a PdfOutput using the input stream
      * 
@@ -59,10 +78,10 @@ public final class PdfStreamOutput implements PdfOutput {
      * @throws IllegalArgumentException
      *             if the input stream is null
      */
-    public static PdfStreamOutput newInstance(OutputStream stream) {
+    public static StreamOutput newInstance(OutputStream stream) {
         if (stream == null) {
             throw new IllegalArgumentException("A not null stream instance is expected.");
         }
-        return new PdfStreamOutput(stream);
+        return new StreamOutput(stream);
     }
 }
