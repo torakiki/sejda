@@ -102,7 +102,7 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ...", tmpFile);
 
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
         pdfCopier.setCompression(parameters.isCompressXref());

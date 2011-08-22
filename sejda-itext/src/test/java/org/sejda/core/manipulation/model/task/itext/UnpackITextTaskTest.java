@@ -1,6 +1,6 @@
 /*
- * Created on 29/lug/2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 22/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,18 +16,18 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
+import org.sejda.core.manipulation.model.parameter.UnpackParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SimpleSplitTaskTest;
+import org.sejda.core.manipulation.service.UnpackTaskTest;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class SimpleSplitITxtTaskTest extends SimpleSplitTaskTest {
+public class UnpackITextTaskTest extends UnpackTaskTest {
 
-    public Task<SimpleSplitParameters> getTask() {
-        return new SplitByPageNumbersTask<SimpleSplitParameters>();
+    public Task<UnpackParameters> getTask() {
+        return new UnpackTask();
     }
 
 }

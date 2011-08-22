@@ -63,7 +63,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         LOG.debug("Opening {} ...", source);
         document = source.open(documentLoader);
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ...", tmpFile);
 
         LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = document.getDocumentInformation();

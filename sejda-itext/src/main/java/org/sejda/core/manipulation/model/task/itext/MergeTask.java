@@ -65,7 +65,7 @@ public class MergeTask implements Task<MergeParameters> {
     public void execute(MergeParameters parameters) throws TaskException {
         int currentStep = 0;
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ...", tmpFile);
 
         for (PdfMergeInput input : parameters.getInputList()) {
             LOG.debug("Opening input {} ...", input.getSource());

@@ -65,7 +65,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
         secondReader = parameters.getSecondInput().getSource().open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ...", tmpFile);
         copier = new DefaultPdfCopier(firstReader, tmpFile, parameters.getVersion());
 
         copier.setCompression(parameters.isCompressXref());

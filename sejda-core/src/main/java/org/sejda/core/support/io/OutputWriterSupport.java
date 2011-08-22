@@ -25,10 +25,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
@@ -98,8 +98,22 @@ class OutputWriterSupport {
      * @throws TaskIOException
      */
     public File createTemporaryPdfBuffer() throws TaskIOException {
+        return createTemporaryBuffer(".pdf");
+    }
+
+    /**
+     * @return a temporary file
+     * @throws TaskIOException
+     */
+    public File createTemporaryBuffer() throws TaskIOException {
+        return createTemporaryBuffer(".tmp");
+    }
+
+    private File createTemporaryBuffer(String extension) throws TaskIOException {
         try {
-            return File.createTempFile(BUFFER_NAME, ".pdf");
+            File buffer = File.createTempFile(BUFFER_NAME, extension);
+            buffer.deleteOnExit();
+            return buffer;
         } catch (IOException e) {
             throw new TaskIOException("Unable to create temporary buffer", e);
         }

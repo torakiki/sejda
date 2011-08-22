@@ -73,7 +73,7 @@ public class RotateTask implements Task<RotateParameters> {
             applyRotation(parameters.getRotation()).to(reader);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output temporary buffer {} ...", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
