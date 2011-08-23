@@ -46,20 +46,17 @@ public class SingleOutputExtensionsValidator implements
     }
 
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
-        if (value != null) {
-            if (ArrayUtils.isNotEmpty(extensions)) {
-                String fileName = getLowerCaseOutputFileName(value);
+        if (value != null && ArrayUtils.isNotEmpty(extensions)) {
+            String fileName = getLowerCaseOutputFileName(value);
 
-                if (hasAllowedExtension(fileName)) {
-                    return true;
-                }
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(
-                        String.format("The output '%s' is not one of the expected types: %s", fileName,
-                                ArrayUtils.toString(extensions))).addNode("taskOutput").addConstraintViolation();
-                return false;
-
+            if (hasAllowedExtension(fileName)) {
+                return true;
             }
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(
+                    String.format("The output '%s' is not one of the expected types: %s", fileName,
+                            ArrayUtils.toString(extensions))).addNode("taskOutput").addConstraintViolation();
+            return false;
         }
         return true;
     }
