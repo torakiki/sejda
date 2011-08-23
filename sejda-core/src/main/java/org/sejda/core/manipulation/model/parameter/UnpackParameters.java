@@ -28,7 +28,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.NotEmpty;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the unpack manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be unpacked.
@@ -39,7 +39,7 @@ import org.sejda.core.validation.constraint.ValidTaskOutput;
 public class UnpackParameters implements TaskParameters {
 
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
     @NotEmpty
     @Valid

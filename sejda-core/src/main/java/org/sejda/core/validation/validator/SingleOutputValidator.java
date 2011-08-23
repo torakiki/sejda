@@ -21,7 +21,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.parameter.SingleOutputDocumentParameter;
+import org.sejda.core.manipulation.model.parameter.SingleOutputTaskParameters;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
@@ -31,18 +31,22 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
  * @author Andrea Vacondio
  * 
  */
-public class SingleOutputValidator implements ConstraintValidator<ValidSingleOutput, SingleOutputDocumentParameter> {
+public class SingleOutputValidator implements ConstraintValidator<ValidSingleOutput, SingleOutputTaskParameters> {
 
     public void initialize(ValidSingleOutput constraintAnnotation) {
         // nothing to do
     }
 
-    public boolean isValid(SingleOutputDocumentParameter value, ConstraintValidatorContext context) {
+    public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
         if (value != null) {
-            return value.getOutput().getOutputType() == OutputType.FILE_OUTPUT
-                    || StringUtils.isNotBlank(value.getOutputName());
+            return isValidOutputType(value);
         }
         return true;
+    }
+
+    private boolean isValidOutputType(SingleOutputTaskParameters value) {
+        return value.getOutput().getOutputType() == OutputType.FILE_OUTPUT
+                || StringUtils.isNotBlank(value.getOutputName());
     }
 
 }

@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.NotEmpty;
-import org.sejda.core.validation.constraint.ValidSingleOutput;
+import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter class for a merge task containing a collection of input to be merged.
@@ -36,8 +36,8 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
  * @author Andrea Vacondio
  * 
  */
-@ValidSingleOutput
-public class MergeParameters extends AbstractParameters implements SingleOutputDocumentParameter {
+@SingleOutputAllowedExtensions
+public class MergeParameters extends AbstractParameters implements SingleOutputTaskParameters {
 
     @NotEmpty
     @Valid

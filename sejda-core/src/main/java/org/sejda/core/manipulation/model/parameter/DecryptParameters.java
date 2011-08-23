@@ -23,7 +23,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the decrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be decrypted.
@@ -35,7 +35,7 @@ public class DecryptParameters extends PdfSourceListParameters {
 
     private String outputPrefix = "";
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
 
     public String getOutputPrefix() {

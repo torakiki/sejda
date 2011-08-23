@@ -18,9 +18,9 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.Destination.FileDestination;
 import org.sejda.core.support.io.Destination.OverwriteFileDestination;
 
@@ -63,7 +63,7 @@ final class OutputDestination implements OverwriteFileDestination, FileDestinati
      *            where the input source will be written.
      * @return the destination
      */
-    static OverwriteFileDestination destination(PdfFileOutput output) {
+    static OverwriteFileDestination destination(FileOutput output) {
         return new OutputDestination(output);
     }
 

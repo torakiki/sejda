@@ -32,7 +32,7 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.support.util.PdfVersionUtility;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be encrypted using the same parameters.
@@ -49,7 +49,7 @@ public class EncryptParameters extends PdfSourceListParameters {
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
     private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
 
     public EncryptParameters(PdfEncryption encryptionAlgorithm) {

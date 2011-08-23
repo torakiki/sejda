@@ -31,8 +31,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ final class OutputWriter {
             if (OutputType.STREAM_OUTPUT.equals(type)) {
                 copyToStream(files, ((StreamOutput) outputDestination).getStream());
             } else if (OutputType.FILE_OUTPUT.equals(type)) {
-                copyToFile(files, ((PdfFileOutput) outputDestination).getFile(), destination.isOverwrite());
+                copyToFile(files, ((FileOutput) outputDestination).getFile(), destination.isOverwrite());
             } else {
                 copyToDirectory(files, ((DirectoryOutput) outputDestination).getDirectory(), destination.isOverwrite());
             }

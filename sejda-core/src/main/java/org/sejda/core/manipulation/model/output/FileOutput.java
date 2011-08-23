@@ -1,7 +1,6 @@
 /*
- * Created on 30/mag/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 22/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -22,20 +21,20 @@ import java.io.File;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.sejda.core.validation.constraint.PdfFile;
+import org.sejda.core.validation.constraint.IsFile;
 
 /**
- * {@link File} output destination
+ * {@link File} output destination.
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfFileOutput implements TaskOutput {
+public final class FileOutput implements TaskOutput {
 
-    @PdfFile
+    @IsFile
     private final File file;
 
-    private PdfFileOutput(File file) {
+    private FileOutput(File file) {
         this.file = file;
     }
 
@@ -49,12 +48,12 @@ public final class PdfFileOutput implements TaskOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).append(file).toString();
+        return new ToStringBuilder(this).append(getOutputType()).append(getFile()).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(file).toHashCode();
+        return new HashCodeBuilder().append(getFile()).toHashCode();
     }
 
     @Override
@@ -62,26 +61,25 @@ public final class PdfFileOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfFileOutput)) {
+        if (!(other instanceof FileOutput)) {
             return false;
         }
-        PdfFileOutput output = (PdfFileOutput) other;
-        return new EqualsBuilder().append(file, output.getFile()).isEquals();
+        FileOutput output = (FileOutput) other;
+        return new EqualsBuilder().append(getFile(), output.getFile()).isEquals();
     }
 
     /**
-     * Creates a new instance of a PdfFileOutput using the input file
+     * Creates a new instance of a {@link FileOutput} using the input file.
      * 
      * @param file
      * @return the newly created instance
      * @throws IllegalArgumentException
      *             if the input file is null or not a file
      */
-    public static PdfFileOutput newInstance(File file) {
+    public static FileOutput newInstance(File file) {
         if (file == null || !file.isFile()) {
             throw new IllegalArgumentException("A valid instance is expected (not null && isFile).");
         }
-        return new PdfFileOutput(file);
+        return new FileOutput(file);
     }
-
 }

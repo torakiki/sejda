@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 import org.sejda.core.validation.constraint.NotEmpty;
-import org.sejda.core.validation.constraint.ValidSingleOutput;
+import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter class for the set pages label manipulation. The manipulation will apply a label to physical pages until a new label for a physical page number is found.
@@ -39,8 +39,8 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
  * @author Andrea Vacondio
  * 
  */
-@ValidSingleOutput
-public class SetPagesLabelParameters extends SinglePdfSourceParameters implements SingleOutputDocumentParameter {
+@SingleOutputAllowedExtensions
+public class SetPagesLabelParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters {
 
     @NotEmpty
     @Valid

@@ -39,7 +39,7 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenP
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the view preferences will be
@@ -62,7 +62,7 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     private PdfPrintScaling printScaling;
     private Set<PdfBooleanPreference> activeBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
 
     @Override

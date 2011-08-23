@@ -24,7 +24,10 @@ import java.io.File;
  * for the temporary file. Usage:
  * 
  * <pre>
- * {@code PopulatedFileOutput out = file(tmpFile).name(outName);}
+ * {
+ *     &#064;code
+ *     PopulatedFileOutput out = file(tmpFile).name(outName);
+ * }
  * </pre>
  * 
  * @author Andrea Vacondio

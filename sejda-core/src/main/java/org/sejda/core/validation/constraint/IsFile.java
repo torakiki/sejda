@@ -1,5 +1,5 @@
 /*
- * Created on 19/ago/2011
+ * Created on 23/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,7 +16,10 @@
  */
 package org.sejda.core.validation.constraint;
 
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -27,27 +30,25 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.validation.validator.TaskOutputValidator;
+import org.sejda.core.validation.validator.FileValidator;
 
 /**
- * Validates that a TaskOutput is of the expected type/s.
+ * Constraint on a File object to check that isFile is true.
  * 
  * @author Andrea Vacondio
  * 
  */
 @NotNull
-@Target(FIELD)
+@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = TaskOutputValidator.class)
+@Constraint(validatedBy = FileValidator.class)
 @Documented
-public @interface ValidTaskOutput {
+public @interface IsFile {
 
-    String message() default "Task output type is not allowed.";
+    String message() default "The given file instance is not a file.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    OutputType[] values();
 }

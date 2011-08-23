@@ -31,7 +31,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
-import org.sejda.core.validation.constraint.ValidSingleOutput;
+import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter class for the set metadata manipulation.
@@ -39,8 +39,8 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
  * @author Andrea Vacondio
  * 
  */
-@ValidSingleOutput
-public final class SetMetadataParameters extends SinglePdfSourceParameters implements SingleOutputDocumentParameter {
+@SingleOutputAllowedExtensions
+public final class SetMetadataParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters {
 
     @NotEmpty
     private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();

@@ -1,7 +1,6 @@
 /*
- * Created on 31/mag/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 12/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,23 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core;
+package org.sejda.core.manipulation.model.parameter;
+
 
 /**
- * Global constants
+ * A parameter whose execution result in a single output pdf document.
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class Sejda {
+public interface SingleOutputTaskParameters extends TaskParameters {
 
-    private Sejda() {
-        // on purpose
-    }
-
-    public static final String VERSION = "0.0.1-SNAPSHOT";
-    public static final String CREATOR = "Sejda (Ver. " + VERSION + ")";
-    public static final String PDF_EXTENSION = "pdf";
-    public static final String TXT_EXTENSION = "txt";
-
+    /**
+     * @return the output file name to be used when the TaskOutput is not a File output.
+     */
+    String getOutputName();
 }

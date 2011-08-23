@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 22/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -20,7 +20,6 @@ import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -29,24 +28,25 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
+import javax.validation.ReportAsSingleViolation;
 
-import org.sejda.core.validation.validator.SingleOutputValidator;
+import org.sejda.core.Sejda;
 
 /**
- * Constraint validating that a single output parameter is valid. Optionally a file extension different from PDF can be specified to validate that the output is of an expected
- * type.
+ * Constraint validating that a File instance whose isFile method returns true, is a txt file.
  * 
  * @author Andrea Vacondio
  * 
  */
-@NotNull
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
+@FileExtension(value = Sejda.TXT_EXTENSION)
+@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = SingleOutputValidator.class)
+@Constraint(validatedBy = {})
 @Documented
-public @interface ValidSingleOutput {
-    String message() default "Output name cannot be blank for non file output destinations.";
+@ReportAsSingleViolation
+public @interface TxtFile {
+
+    String message() default "Not a valid txt file.";
 
     Class<?>[] groups() default {};
 

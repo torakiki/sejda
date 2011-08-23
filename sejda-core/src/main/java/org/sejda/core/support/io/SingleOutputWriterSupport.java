@@ -20,8 +20,8 @@ package org.sejda.core.support.io;
 import static org.sejda.core.support.io.OutputDestination.destination;
 
 import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
@@ -49,7 +49,7 @@ public class SingleOutputWriterSupport extends OutputWriterSupport implements Si
         add(fileOutput);
         try {
             if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-                write(destination((PdfFileOutput) output).overwriting(overwrite));
+                write(destination((FileOutput) output).overwriting(overwrite));
             } else {
                 writeToNonFileDestination(output, overwrite);
             }

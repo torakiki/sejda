@@ -21,7 +21,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Validates that the type of the given task output is of the expected type.
@@ -29,11 +29,11 @@ import org.sejda.core.validation.constraint.ValidTaskOutput;
  * @author Andrea Vacondio
  * 
  */
-public class TaskOutputValidator implements ConstraintValidator<ValidTaskOutput, TaskOutput> {
+public class TaskOutputTypesValidator implements ConstraintValidator<TaskOutputAllowedTypes, TaskOutput> {
 
     private OutputType[] allowedTypes;
 
-    public void initialize(ValidTaskOutput constraintAnnotation) {
+    public void initialize(TaskOutputAllowedTypes constraintAnnotation) {
         allowedTypes = constraintAnnotation.values();
 
     }
@@ -47,7 +47,7 @@ public class TaskOutputValidator implements ConstraintValidator<ValidTaskOutput,
             }
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
-                    String.format("Task output type %s is not allowed", value.getOutputType())).addNode("parameters")
+                    String.format("Task output type %s is not allowed", value.getOutputType())).addNode("taskOutput")
                     .addConstraintViolation();
             return false;
         }

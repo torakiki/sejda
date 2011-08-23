@@ -33,7 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
 
 /**
@@ -57,7 +57,7 @@ public class OutputWriterTest {
         files.put("newName", tempFile);
 
         File outFile = File.createTempFile("outTemp", "");
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
+        FileOutput output = FileOutput.newInstance(outFile);
 
         OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
         assertFalse("temporary file not deleted", tempFile.exists());
@@ -79,7 +79,7 @@ public class OutputWriterTest {
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
+        FileOutput output = FileOutput.newInstance(outFile);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));
@@ -96,7 +96,7 @@ public class OutputWriterTest {
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
+        FileOutput output = FileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
 
         try {
@@ -115,7 +115,7 @@ public class OutputWriterTest {
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
-        PdfFileOutput output = PdfFileOutput.newInstance(outFile);
+        FileOutput output = FileOutput.newInstance(outFile);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(false));

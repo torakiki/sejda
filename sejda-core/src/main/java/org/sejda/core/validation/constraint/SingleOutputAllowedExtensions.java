@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 23/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -29,26 +29,28 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.SingleOutputValidator;
+import org.sejda.core.Sejda;
+import org.sejda.core.validation.validator.SingleOutputExtensionsValidator;
 
 /**
- * Constraint validating that a single output parameter is valid. Optionally a file extension different from PDF can be specified to validate that the output is of an expected
- * type.
+ * Constraint validating that a single output parameter has one of the expected output extensions (in the output file name for file task output or in the outputname attribute for
+ * non file task output). Default expected extension is Pdf.
  * 
  * @author Andrea Vacondio
  * 
  */
-@NotNull
+@ValidSingleOutput
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = SingleOutputValidator.class)
+@Constraint(validatedBy = SingleOutputExtensionsValidator.class)
 @Documented
-public @interface ValidSingleOutput {
-    String message() default "Output name cannot be blank for non file output destinations.";
+public @interface SingleOutputAllowedExtensions {
+    String message() default "TaskOutput is not of the expected type.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    String[] extensions() default { Sejda.PDF_EXTENSION };
 }

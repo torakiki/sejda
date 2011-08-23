@@ -23,7 +23,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.ValidSingleOutput;
+import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter class for the alternate mix manipulation. Accepts two {@link PdfMixInput} that will be mixed.
@@ -31,8 +31,8 @@ import org.sejda.core.validation.constraint.ValidSingleOutput;
  * @author Andrea Vacondio
  * 
  */
-@ValidSingleOutput
-public class AlternateMixParameters extends AbstractParameters implements SingleOutputDocumentParameter {
+@SingleOutputAllowedExtensions
+public class AlternateMixParameters extends AbstractParameters implements SingleOutputTaskParameters {
 
     @Valid
     @NotNull

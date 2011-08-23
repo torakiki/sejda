@@ -30,7 +30,7 @@ import org.sejda.core.TestUtils;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFileOutputTest {
+public class FileOutputTest {
 
     private File file;
 
@@ -42,18 +42,18 @@ public class PdfFileOutputTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
-        PdfFileOutput.newInstance(null);
+        FileOutput.newInstance(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidFile() {
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        PdfFileOutput.newInstance(file);
+        FileOutput.newInstance(file);
     }
 
     @Test
     public void testValidFile() {
-        PdfFileOutput instance = PdfFileOutput.newInstance(file);
+        FileOutput instance = FileOutput.newInstance(file);
         assertNotNull(instance);
     }
 
@@ -61,10 +61,10 @@ public class PdfFileOutputTest {
     public void testEquals() {
         File diffFile = mock(File.class);
         when(diffFile.isFile()).thenReturn(Boolean.TRUE);
-        PdfFileOutput eq1 = PdfFileOutput.newInstance(file);
-        PdfFileOutput eq2 = PdfFileOutput.newInstance(file);
-        PdfFileOutput eq3 = PdfFileOutput.newInstance(file);
-        PdfFileOutput diff = PdfFileOutput.newInstance(diffFile);
+        FileOutput eq1 = FileOutput.newInstance(file);
+        FileOutput eq2 = FileOutput.newInstance(file);
+        FileOutput eq3 = FileOutput.newInstance(file);
+        FileOutput diff = FileOutput.newInstance(diffFile);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

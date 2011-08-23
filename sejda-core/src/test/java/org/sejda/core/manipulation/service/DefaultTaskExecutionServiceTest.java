@@ -37,7 +37,7 @@ import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
@@ -100,7 +100,7 @@ public class DefaultTaskExecutionServiceTest {
         File file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.TRUE);
         when(file.getName()).thenReturn("name.pdf");
-        parameters.setOutput(PdfFileOutput.newInstance(file));
+        parameters.setOutput(FileOutput.newInstance(file));
         victim.execute(parameters);
         verify(task, never()).before(parameters);
         verify(task, never()).after();

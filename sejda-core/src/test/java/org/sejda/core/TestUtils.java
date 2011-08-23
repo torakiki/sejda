@@ -12,6 +12,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.validation.DefaultValidationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test utilitites
@@ -21,6 +23,8 @@ import org.sejda.core.validation.DefaultValidationContext;
  */
 @Ignore
 public final class TestUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private TestUtils() {
         // util
@@ -84,6 +88,9 @@ public final class TestUtils {
     public static void assertInvalidParameters(TaskParameters parameters) {
         Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                 .validate(parameters);
+        for (ConstraintViolation<TaskParameters> violation : violations) {
+            LOG.debug("{}: {}", violation.getPropertyPath(), violation.getMessage());
+        }
         Assert.assertFalse(violations.isEmpty());
     }
 

@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
 import org.sejda.core.manipulation.model.input.PageRange;
@@ -34,6 +35,13 @@ import org.sejda.core.manipulation.model.output.TaskOutput;
  */
 public class MergeParametersTest {
 
+    private TaskOutput output;
+
+    @Before
+    public void setUp() {
+        output = mock(TaskOutput.class);
+    }
+
     @Test
     public void testEquals() {
         MergeParameters eq1 = new MergeParameters();
@@ -46,7 +54,7 @@ public class MergeParametersTest {
     @Test
     public void testInvalidParametersNullSource() {
         MergeParameters victim = new MergeParameters(false);
-        TaskOutput output = mock(TaskOutput.class);
+
         victim.setOutput(output);
         victim.addInput(new PdfMergeInput(null));
         TestUtils.assertInvalidParameters(victim);
@@ -55,8 +63,8 @@ public class MergeParametersTest {
     @Test
     public void testInvalidParametersInvalidRange() {
         MergeParameters victim = new MergeParameters(false);
-        TaskOutput output = mock(TaskOutput.class);
         victim.setOutput(output);
+        victim.setOutputName("name");
         InputStream stream = mock(InputStream.class);
         PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         PdfMergeInput mergeInput = new PdfMergeInput(input);
@@ -69,7 +77,6 @@ public class MergeParametersTest {
     @Test
     public void testInvalidParametersIntersectingRanges() {
         MergeParameters victim = new MergeParameters(false);
-        TaskOutput output = mock(TaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");

@@ -25,7 +25,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the {@link PageRotation} will be applied.
@@ -40,7 +40,7 @@ public class RotateParameters extends PdfSourceListParameters {
     @NotNull
     private PageRotation rotation = null;
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
 
     public RotateParameters(PageRotation rotation) {

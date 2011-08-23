@@ -22,7 +22,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
@@ -34,7 +34,7 @@ public abstract class AbstractSplitParameters extends SinglePdfSourceParameters 
 
     private String outputPrefix = "";
     @Valid
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
 
     public String getOutputPrefix() {

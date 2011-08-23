@@ -31,7 +31,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
-import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
@@ -71,7 +71,7 @@ public class PdfOutEnabledTest {
     void initializeNewFileOutput(AbstractParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
         outFile.deleteOnExit();
-        PdfFileOutput pdfOut = PdfFileOutput.newInstance(outFile);
+        FileOutput pdfOut = FileOutput.newInstance(outFile);
         parameters.setOutput(pdfOut);
     }
 

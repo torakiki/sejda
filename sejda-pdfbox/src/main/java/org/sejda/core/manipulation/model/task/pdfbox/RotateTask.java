@@ -71,7 +71,7 @@ public class RotateTask implements Task<RotateParameters> {
             ensureOwnerPermissions(document);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Creating output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
             LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(document);

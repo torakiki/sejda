@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
-import org.sejda.core.validation.constraint.ValidTaskOutput;
+import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * @author Andrea Vacondio
@@ -32,7 +32,7 @@ import org.sejda.core.validation.constraint.ValidTaskOutput;
 @Ignore
 public class TestTaskParameter extends AbstractParameters {
 
-    @ValidTaskOutput(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     @Valid
     private TaskOutput output;
 

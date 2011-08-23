@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 19/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,11 +16,7 @@
  */
 package org.sejda.core.validation.constraint;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -31,24 +27,27 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.SingleOutputValidator;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.validation.validator.TaskOutputTypesValidator;
 
 /**
- * Constraint validating that a single output parameter is valid. Optionally a file extension different from PDF can be specified to validate that the output is of an expected
- * type.
+ * Validates that a TaskOutput is of the expected type/s.
  * 
  * @author Andrea Vacondio
  * 
  */
 @NotNull
-@Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
+@Target(FIELD)
 @Retention(RUNTIME)
-@Constraint(validatedBy = SingleOutputValidator.class)
+@Constraint(validatedBy = TaskOutputTypesValidator.class)
 @Documented
-public @interface ValidSingleOutput {
-    String message() default "Output name cannot be blank for non file output destinations.";
+public @interface TaskOutputAllowedTypes {
+
+    String message() default "Task output type is not allowed.";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    OutputType[] values();
 }

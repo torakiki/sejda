@@ -33,7 +33,6 @@ public class DirectoryValidator implements ConstraintValidator<Directory, File> 
 
     public void initialize(Directory constraintAnnotation) {
         // on purpose
-
     }
 
     public boolean isValid(File value, ConstraintValidatorContext context) {
