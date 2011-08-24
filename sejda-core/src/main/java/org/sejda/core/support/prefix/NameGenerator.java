@@ -19,7 +19,6 @@ package org.sejda.core.support.prefix;
 
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.sejda.core.Sejda;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 
@@ -37,7 +36,6 @@ public final class NameGenerator {
     private NameGenerator(String prefix) {
         this.prefix = prefix;
         this.prefixTypesChain = new PrefixTypesChain(prefix);
-
     }
 
     /**
@@ -57,8 +55,7 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        String generatedName = prefixTypesChain.process(prefix, preProcessRequest(request));
-        return ensurePdfExtension(generatedName);
+        return prefixTypesChain.process(prefix, preProcessRequest(request));
     }
 
     /**
@@ -73,12 +70,5 @@ public final class NameGenerator {
             retVal = nameRequest();
         }
         return retVal;
-    }
-
-    private String ensurePdfExtension(String name) {
-        if (!name.endsWith(Sejda.PDF_EXTENSION)) {
-            return String.format("%s.%s", name, Sejda.PDF_EXTENSION);
-        }
-        return name;
     }
 }

@@ -18,6 +18,7 @@
 package org.sejda.core.support.prefix.model;
 
 import org.apache.commons.lang.StringUtils;
+import org.sejda.core.Sejda;
 
 /**
  * Request for a new name generation.
@@ -31,16 +32,30 @@ public final class NameGenerationRequest {
     private Integer fileNumber = null;
     private String bookmark = null;
     private String originalName = null;
+    private String extension = null;
 
-    private NameGenerationRequest() {
-        super();
+    private NameGenerationRequest(String extension) {
+        if (StringUtils.isBlank(extension)) {
+            throw new IllegalArgumentException("Extension cannot be blank.");
+        }
+        this.extension = extension;
     }
 
     /**
      * @return a newly created {@link NameGenerationRequest}
      */
     public static NameGenerationRequest nameRequest() {
-        return new NameGenerationRequest();
+        return new NameGenerationRequest(Sejda.PDF_EXTENSION);
+    }
+
+    /**
+     * 
+     * @param extension
+     *            the extension applied to the generated name, cannot be blank (Ex. pdf, txt).
+     * @return a newly created {@link NameGenerationRequest}
+     */
+    public static NameGenerationRequest nameRequest(String extension) {
+        return new NameGenerationRequest(extension);
     }
 
     /**
@@ -49,7 +64,7 @@ public final class NameGenerationRequest {
      * @param page
      * @return the current instance
      */
-    public NameGenerationRequest page(Integer page) {
+    public NameGenerationRequest page(int page) {
         this.page = page;
         return this;
     }
@@ -60,7 +75,7 @@ public final class NameGenerationRequest {
      * @param fileNumber
      * @return the current instance
      */
-    public NameGenerationRequest fileNumber(Integer fileNumber) {
+    public NameGenerationRequest fileNumber(int fileNumber) {
         this.fileNumber = fileNumber;
         return this;
     }
@@ -92,7 +107,6 @@ public final class NameGenerationRequest {
         } else {
             this.originalName = originalName;
         }
-        this.originalName = originalName;
         return this;
     }
 
@@ -110,6 +124,10 @@ public final class NameGenerationRequest {
 
     public String getOriginalName() {
         return originalName;
+    }
+
+    public String getExtension() {
+        return extension;
     }
 
 }

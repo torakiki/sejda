@@ -44,7 +44,9 @@ public class PrefixTypesChain {
     // prefix types processed only if the first level processors performed some changed (ensuring unique name)
     private Set<PrefixType> secondLevelPrefixChain = new HashSet<PrefixType>();
     // processor used in case the processors chain did not perform any change
-    private PrefixProcessor fallBackProcessor = new PrependPrefixProcessor();
+    private PrefixProcessor fallBackProcessor = new LoggingPrefixProcessorDecorator(new PrependPrefixProcessor());
+    private PrefixProcessor extensionProcessor = new LoggingPrefixProcessorDecorator(
+            new AppendExtensionPrefixProcessor());
 
     public PrefixTypesChain(String prefix) {
         if (StringUtils.isNotBlank(prefix)) {
@@ -79,9 +81,8 @@ public class PrefixTypesChain {
             retVal = processChain(retVal, request, secondLevelPrefixChain);
         } else {
             retVal = fallBackProcessor.process(retVal, request);
-
         }
-        return retVal;
+        return extensionProcessor.process(retVal, request);
     }
 
     private String processChain(String prefix, NameGenerationRequest request, Set<PrefixType> chain) {
@@ -89,7 +90,7 @@ public class PrefixTypesChain {
         for (PrefixType type : chain) {
             PrefixProcessor processor;
             try {
-                processor = type.getProcessor().newInstance();
+                processor = new LoggingPrefixProcessorDecorator(type.getProcessor().newInstance());
             } catch (InstantiationException e) {
                 throw new SejdaRuntimeException(
                         String.format("Unable to instantiate processor %s", type.getProcessor()), e);

@@ -1,6 +1,6 @@
 /*
- * Created on 02/nov/2010
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 24/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -16,12 +16,9 @@
  */
 package org.sejda.core.manipulation.model.task.pdfbox;
 
+import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfTextExtractor.nullSafeClose;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.saveDecryptedPDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
 import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.ensureOwnerPermissions;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -30,67 +27,72 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 import java.io.File;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.pdfbox.component.DefaultPdfSourceOpener;
+import org.sejda.core.manipulation.model.task.pdfbox.component.PdfTextExtractor;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task performing decrypt of a list of encrypted {@link PdfSource}
+ * Task extracting text from a collection of {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DecryptTask implements Task<DecryptParameters> {
+public class ExtractTextTask implements Task<ExtractTextParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DecryptTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExtractTextTask.class);
 
     private int totalSteps;
     private PDDocument document = null;
     private MultipleOutputWriterSupport outputWriter;
     private PdfSourceOpener<PDDocument> documentLoader;
+    private PdfTextExtractor textExtractor;
 
-    public void before(DecryptParameters parameters) {
+    public void before(ExtractTextParameters parameters) throws TaskException {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
+        textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
     }
 
-    public void execute(DecryptParameters parameters) throws TaskException {
+    public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
             LOG.debug("Opening {} ...", source);
             document = source.open(documentLoader);
             ensureOwnerPermissions(document);
 
-            File tmpFile = outputWriter.createTemporaryPdfBuffer();
+            File tmpFile = outputWriter.createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
-            setVersionOnPDDocument(document, parameters.getVersion());
 
-            compressXrefStream(document);
-            setCreatorOnPDDocument(document);
-            saveDecryptedPDDocument(document, tmpFile);
-
+            textExtractor.extract(document, tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()));
+                    nameRequest(Sejda.TXT_EXTENSION).originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            closePDDocumentQuitely(document);
+            closeResources();
 
             notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
+        LOG.debug("Text extracted from input documents and written to {}", parameters.getOutput());
+
     }
 
     public void after() {
-        closePDDocumentQuitely(document);
+        closeResources();
     }
 
+    private void closeResources() {
+        closePDDocumentQuitely(document);
+        nullSafeClose(textExtractor);
+    }
 }

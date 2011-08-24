@@ -7,7 +7,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.sejda" level="DEBUG" />
+	<logger name="org.sejda" level="TRACE" />
 	<logger name="org.hibernate" level="INFO" />
 
 	<root level="WARN">
