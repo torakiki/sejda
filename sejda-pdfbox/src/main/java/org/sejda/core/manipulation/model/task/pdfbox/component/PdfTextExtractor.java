@@ -48,9 +48,20 @@ public class PdfTextExtractor {
         }
     }
 
-    public void extract(PDDocument document, File output) throws TaskExecutionException {
+    /**
+     * Extract text from the input document writing it to the given output file.
+     * 
+     * @param document
+     * @param output
+     * @throws TaskException
+     */
+    public void extract(PDDocument document, File output) throws TaskException {
         if (document == null) {
-            throw new TaskExecutionException("Unable to extract text from a null document.");
+            throw new TaskException("Unable to extract text from a null document.");
+        }
+        if (output == null || !output.isFile() || !output.canWrite()) {
+            throw new TaskException(String.format("Cannot write extracted text to a the given output file '%s'.",
+                    output));
         }
         try {
             outputWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
