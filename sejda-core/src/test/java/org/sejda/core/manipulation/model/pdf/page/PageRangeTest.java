@@ -15,13 +15,14 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.input;
+package org.sejda.core.manipulation.model.pdf.page;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
  * Test unit for the Bounds class

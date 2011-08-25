@@ -27,11 +27,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PageRange;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.task.Task;
 
 import com.itextpdf.text.pdf.PdfReader;

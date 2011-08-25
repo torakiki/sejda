@@ -25,6 +25,7 @@ import org.sejda.core.TestUtils;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * @author Andrea Vacondio
@@ -34,10 +35,10 @@ public class SimpleSplitParametersTest {
 
     @Test
     public void testEquals() {
-        SimpleSplitParameters eq1 = new SimpleSplitParameters(SimpleSplitType.BURST);
-        SimpleSplitParameters eq2 = new SimpleSplitParameters(SimpleSplitType.BURST);
-        SimpleSplitParameters eq3 = new SimpleSplitParameters(SimpleSplitType.BURST);
-        SimpleSplitParameters diff = new SimpleSplitParameters(SimpleSplitType.ODD_PAGES);
+        SimpleSplitParameters eq1 = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
+        SimpleSplitParameters eq2 = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
+        SimpleSplitParameters eq3 = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
+        SimpleSplitParameters diff = new SimpleSplitParameters(PredefinedSetOfPages.ODD_PAGES);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 

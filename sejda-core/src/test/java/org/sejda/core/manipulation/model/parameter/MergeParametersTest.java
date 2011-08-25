@@ -23,11 +23,11 @@ import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
-import org.sejda.core.manipulation.model.input.PageRange;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio

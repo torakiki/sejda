@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.pdf.page;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class SimpleSplitTypeTest {
+public class PredefinedSetOfPagesTest {
 
     @Test
     public void getPages() {
-        assertEquals(10, SimpleSplitType.BURST.getPages(10).size());
-        assertEquals(5, SimpleSplitType.EVEN_PAGES.getPages(10).size());
-        assertEquals(5, SimpleSplitType.ODD_PAGES.getPages(10).size());
+        assertEquals(10, PredefinedSetOfPages.ALL_PAGES.getPages(10).size());
+        assertEquals(5, PredefinedSetOfPages.EVEN_PAGES.getPages(10).size());
+        assertEquals(5, PredefinedSetOfPages.ODD_PAGES.getPages(10).size());
     }
 }

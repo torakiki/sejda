@@ -29,8 +29,8 @@ import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitType;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.core.manipulation.model.task.Task;
 
 /**
@@ -54,7 +54,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
      * Set up of the set page labels parameters
      * 
      */
-    private void setUpParameters(SimpleSplitType type) {
+    private void setUpParameters(PredefinedSetOfPages type) {
         parameters = new SimpleSplitParameters(type);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -66,7 +66,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
 
     @Test
     public void testExecuteBurst() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.BURST);
+        setUpParameters(PredefinedSetOfPages.ALL_PAGES);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -75,7 +75,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
 
     @Test
     public void testExecuteEven() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.EVEN_PAGES);
+        setUpParameters(PredefinedSetOfPages.EVEN_PAGES);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -84,7 +84,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
 
     @Test
     public void testExecuteOdd() throws TaskException, IOException {
-        setUpParameters(SimpleSplitType.ODD_PAGES);
+        setUpParameters(PredefinedSetOfPages.ODD_PAGES);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);

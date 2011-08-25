@@ -20,7 +20,7 @@ package org.sejda.core.validation.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.sejda.core.manipulation.model.input.PageRange;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
 
 /**

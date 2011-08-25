@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.input;
+package org.sejda.core.manipulation.model.pdf.page;
 
 import javax.validation.constraints.Min;
 

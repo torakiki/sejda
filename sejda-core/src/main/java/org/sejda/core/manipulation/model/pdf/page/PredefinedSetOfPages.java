@@ -1,16 +1,16 @@
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.pdf.page;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Different types of simple split.
+ * Represent a predefined set of pages like odd or even pages.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum SimpleSplitType {
-    BURST() {
+public enum PredefinedSetOfPages {
+    ALL_PAGES() {
         @Override
         public Set<Integer> getPages(int totalNumberOfPage) {
             Set<Integer> retSet = new HashSet<Integer>();

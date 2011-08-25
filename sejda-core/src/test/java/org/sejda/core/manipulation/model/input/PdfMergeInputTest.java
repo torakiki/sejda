@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.input;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio

@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * Parameter class for a simple split task. Used to perform split types which have a predefined set of pages based on the selected split type.
@@ -34,25 +35,25 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class SimpleSplitParameters extends AbstractSplitByPageParameters {
 
     @NotNull
-    private SimpleSplitType splitType;
+    private PredefinedSetOfPages setOfPages;
 
-    public SimpleSplitParameters(SimpleSplitType splitType) {
-        this.splitType = splitType;
+    public SimpleSplitParameters(PredefinedSetOfPages setOfPages) {
+        this.setOfPages = setOfPages;
     }
 
     @Override
     public Set<Integer> getPages(int upperLimit) {
-        return splitType.getPages(upperLimit);
+        return setOfPages.getPages(upperLimit);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append(splitType).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(setOfPages).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(splitType).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(setOfPages).toHashCode();
     }
 
     @Override
@@ -64,6 +65,6 @@ public class SimpleSplitParameters extends AbstractSplitByPageParameters {
             return false;
         }
         SimpleSplitParameters parameter = (SimpleSplitParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(splitType, parameter.splitType).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(setOfPages, parameter.setOfPages).isEquals();
     }
 }
