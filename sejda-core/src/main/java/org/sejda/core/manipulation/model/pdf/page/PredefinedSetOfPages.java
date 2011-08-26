@@ -9,7 +9,7 @@ import java.util.Set;
  * @author Andrea Vacondio
  * 
  */
-public enum PredefinedSetOfPages {
+public enum PredefinedSetOfPages implements PagesSelection {
     ALL_PAGES() {
         @Override
         public Set<Integer> getPages(int totalNumberOfPage) {
@@ -41,11 +41,5 @@ public enum PredefinedSetOfPages {
         }
     };
 
-    /**
-     * 
-     * @param totalNumberOfPage
-     *            the number of pages of the document.
-     * @return the set of pages to split at for this split type.
-     */
     public abstract Set<Integer> getPages(int totalNumberOfPage);
 }

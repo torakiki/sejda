@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.validation.constraint.NoIntersections;
 
 /**
@@ -36,7 +37,7 @@ import org.sejda.core.validation.constraint.NoIntersections;
  * 
  */
 @NoIntersections
-public class PdfMergeInput {
+public class PdfMergeInput implements PageRangeSelection {
 
     @NotNull
     @Valid

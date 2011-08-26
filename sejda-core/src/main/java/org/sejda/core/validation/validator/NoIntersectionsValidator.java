@@ -22,23 +22,23 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.validation.constraint.NoIntersections;
 
 /**
- * Validator for a {@link NoIntersections} constraint to ensure page ranges in an input {@link PdfMergeInput} do not intersect.
+ * Validator for a {@link NoIntersections} constraint to ensure page ranges in an input {@link PageRangeSelection} do not intersect.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class NoIntersectionsValidator implements ConstraintValidator<NoIntersections, PdfMergeInput> {
+public class NoIntersectionsValidator implements ConstraintValidator<NoIntersections, PageRangeSelection> {
 
     public void initialize(NoIntersections constraintAnnotation) {
         // on purpose
     }
 
-    public boolean isValid(PdfMergeInput value, ConstraintValidatorContext context) {
+    public boolean isValid(PageRangeSelection value, ConstraintValidatorContext context) {
         if (value != null) {
             List<PageRange> ranges = new ArrayList<PageRange>(value.getPageSelection());
             for (int i = 0; i < ranges.size(); i++) {

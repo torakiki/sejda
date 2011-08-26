@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 26/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,21 +16,20 @@
  */
 package org.sejda.core.manipulation.model.task.itext;
 
-import static org.apache.commons.lang.StringUtils.join;
 import static org.sejda.core.manipulation.model.task.itext.component.PdfCopiers.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
+import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
-import org.sejda.core.manipulation.model.task.itext.component.FormFieldsAwarePdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
@@ -40,55 +39,52 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * iText implementation for a merge task that merges a collection of input pdf documents.
+ * iText implementation of a task that extracts pages from a pdf source generating a single output pdf document containing the extracted pages.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class MergeTask implements Task<MergeParameters> {
+public class ExtractPagesTask implements Task<ExtractPagesParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MergeTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
     private SingleOutputWriterSupport outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
     private PdfCopier copier = null;
     private PdfReader reader;
-    private int totalSteps;
 
-    public void before(MergeParameters parameters) {
-        totalSteps = parameters.getInputList().size();
+    public void before(ExtractPagesParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+
     }
 
-    public void execute(MergeParameters parameters) throws TaskException {
-        int currentStep = 0;
+    public void execute(ExtractPagesParameters parameters) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ...", tmpFile);
 
-        for (PdfMergeInput input : parameters.getInputList()) {
-            LOG.debug("Opening input {} ...", input.getSource());
-            reader = input.getSource().open(sourceOpener);
+        LOG.debug("Opening input {} ...", parameters.getSource());
+        reader = parameters.getSource().open(sourceOpener);
 
-            createCopierIfNeeded(parameters, tmpFile);
-
-            if (!input.isAllPages()) {
-                String selection = join(input.getPageSelection(), ',');
-                LOG.debug("Setting pages selection ...");
-                reader.selectPages(selection);
-                LOG.trace("Pages selection set to {}", selection);
-            }
-
-            copier.addAllPages(reader);
-            copier.freeReader(reader);
-
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+        Set<Integer> pages = parameters.getPages(reader.getNumberOfPages());
+        if (pages == null || pages.isEmpty()) {
+            throw new TaskExecutionException("No page has been selected for extraction.");
         }
+        copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
+        LOG.debug("Created DefaultPdfCopier...");
+
+        LOG.debug("Setting pages selection ...");
+        reader.selectPages(new ArrayList<Integer>(pages));
+        LOG.trace("Pages selection set to {}", pages);
+
+        copier.addAllPages(reader);
+        copier.freeReader(reader);
 
         closeResources();
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
-        LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
+        LOG.debug("Pages extracted and written to {}", parameters.getOutput());
+
     }
 
     public void after() {
@@ -98,17 +94,5 @@ public class MergeTask implements Task<MergeParameters> {
     private void closeResources() {
         nullSafeClosePdfCopy(copier);
         nullSafeClosePdfReader(reader);
-    }
-
-    private void createCopierIfNeeded(MergeParameters parameters, File tmpFile) throws TaskException {
-        if (copier == null) {
-            if (parameters.isCopyFormFields()) {
-                copier = new FormFieldsAwarePdfCopier(reader, tmpFile, parameters.getVersion());
-                LOG.debug("Created FormFieldsAwarePdfCopier...");
-            } else {
-                copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-                LOG.debug("Created DefaultPdfCopier...");
-            }
-        }
     }
 }

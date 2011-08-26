@@ -17,6 +17,9 @@
  */
 package org.sejda.core.manipulation.model.pdf.page;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.constraints.Min;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -30,7 +33,7 @@ import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
  * 
  */
 @EndGreaterThenOrEqualToStart
-public class PageRange {
+public class PageRange implements PagesSelection {
 
     private static final int UNBOUNDED_END = Integer.MAX_VALUE;
 
@@ -81,6 +84,14 @@ public class PageRange {
      */
     public boolean intersects(PageRange range) {
         return ((range.getStart() >= start && range.getStart() <= end) || (range.getEnd() >= start && range.getEnd() <= end));
+    }
+
+    public Set<Integer> getPages(int totalNumberOfPage) {
+        Set<Integer> retSet = new HashSet<Integer>();
+        for (int i = start; (i <= totalNumberOfPage && i <= end); i++) {
+            retSet.add(i);
+        }
+        return retSet;
     }
 
     @Override

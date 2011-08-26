@@ -165,4 +165,10 @@ public class PdfOutEnabledTest {
     protected void assertVersion(PdfReader reader, PdfVersion version) {
         assertEquals(version.getVersionAsCharacter(), reader.getPdfVersion());
     }
+
+    protected void nullSafeCloseReader(PdfReader reader) {
+        if (reader != null) {
+            reader.close();
+        }
+    }
 }

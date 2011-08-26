@@ -17,12 +17,12 @@
  */
 package org.sejda.core.manipulation.model.pdf.page;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sejda.core.TestUtils;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
  * Test unit for the Bounds class
@@ -56,5 +56,13 @@ public class PageRangeTest {
     public void testUnbounded() {
         PageRange victim = new PageRange(10);
         assertTrue(victim.isUnbounded());
+    }
+
+    @Test
+    public void testGetPages() {
+        PageRange victim = new PageRange(1, 9);
+        assertEquals(9, victim.getPages(50).size());
+        PageRange victim2 = new PageRange(10);
+        assertEquals(16, victim2.getPages(25).size());
     }
 }
