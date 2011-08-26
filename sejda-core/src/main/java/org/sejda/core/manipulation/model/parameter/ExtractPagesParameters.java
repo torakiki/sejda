@@ -78,6 +78,14 @@ public class ExtractPagesParameters extends SinglePdfSourceParameters implements
         return outputName;
     }
 
+    /**
+     * @param outputName
+     *            the outputName to be used when the output is not a file destination
+     */
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
+
     @Override
     public TaskOutput getOutput() {
         return output;
