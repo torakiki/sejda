@@ -58,6 +58,8 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ...", source);
         documentHandler = source.open(documentLoader);
+        documentHandler.ensureOwnerPermissions();
+
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ...", tmpFile);
 
