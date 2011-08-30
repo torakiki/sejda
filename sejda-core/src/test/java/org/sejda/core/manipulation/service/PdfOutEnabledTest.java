@@ -99,7 +99,10 @@ public class PdfOutEnabledTest {
         if (StringUtils.isNotBlank(expectedFileName)) {
             assertEquals(expectedFileName, entry.getName());
         }
-        return new PdfReader(zip, ownerPwd);
+        PdfReader reader = new PdfReader(zip, ownerPwd);
+        reader.removeUnusedObjects();
+        reader.consolidateNamedDestinations();
+        return reader;
     }
 
     /**

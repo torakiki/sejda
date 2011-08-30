@@ -60,7 +60,7 @@ public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
                 .with("--centerWindow").with("--displayDocTitle").with("--hideMenu").with("--fitWindow")
                 .with("--hideWindowUI").with("--hideToolbar").toString());
 
-        assertContainsAll(EnumSet.allOf(PdfBooleanPreference.class), parameters.getActivePreferences());
+        assertContainsAll(EnumSet.allOf(PdfBooleanPreference.class), parameters.getEnabledPreferences());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
         ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
                 .toString());
 
-        assertTrue(parameters.getActivePreferences().isEmpty());
+        assertTrue(parameters.getEnabledPreferences().isEmpty());
     }
 
     @Test

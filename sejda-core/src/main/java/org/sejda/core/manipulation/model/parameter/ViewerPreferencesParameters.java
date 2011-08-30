@@ -60,7 +60,7 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     private PdfDuplex duplex;
     private PdfDirection direction;
     private PdfPrintScaling printScaling;
-    private Set<PdfBooleanPreference> activeBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
+    private Set<PdfBooleanPreference> enabledBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
     @Valid
     @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     private TaskOutput output;
@@ -83,12 +83,12 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
         this.outputPrefix = outputPrefix;
     }
 
-    public boolean addActivePreference(PdfBooleanPreference e) {
-        return activeBooleanPreferences.add(e);
+    public boolean addEnabledPreference(PdfBooleanPreference e) {
+        return enabledBooleanPreferences.add(e);
     }
 
-    public void clearActivePreferences() {
-        activeBooleanPreferences.clear();
+    public void clearEnabledPreferences() {
+        enabledBooleanPreferences.clear();
     }
 
     public PdfPageMode getPageMode() {
@@ -140,23 +140,23 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     }
 
     /**
-     * @return an unmodifiable view of the active boolean preferences
+     * @return an unmodifiable view of the enabled boolean preferences
      */
-    public Set<PdfBooleanPreference> getActivePreferences() {
-        return Collections.unmodifiableSet(activeBooleanPreferences);
+    public Set<PdfBooleanPreference> getEnabledPreferences() {
+        return Collections.unmodifiableSet(enabledBooleanPreferences);
     }
 
     @Override
     public PdfVersion getMinRequiredPdfVersion() {
         return getMax(super.getMinRequiredPdfVersion(), getMax(printScaling, direction, duplex, pageLayout, pageMode),
-                getMax(activeBooleanPreferences.toArray(new MinRequiredVersion[activeBooleanPreferences.size()])));
+                getMax(enabledBooleanPreferences.toArray(new MinRequiredVersion[enabledBooleanPreferences.size()])));
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(printScaling)
                 .append(direction).append(duplex).append(pageLayout).append(pageMode).append(nfsMode)
-                .append(activeBooleanPreferences).toHashCode();
+                .append(enabledBooleanPreferences).toHashCode();
     }
 
     @Override
@@ -172,6 +172,6 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
                 .append(printScaling, parameter.getPrintScaling()).append(direction, parameter.getDirection())
                 .append(duplex, parameter.getDuplex()).append(pageLayout, parameter.getPageLayout())
                 .append(pageMode, parameter.getPageMode()).append(nfsMode, parameter.getNfsMode())
-                .append(activeBooleanPreferences, parameter.getActivePreferences()).isEquals();
+                .append(enabledBooleanPreferences, parameter.getEnabledPreferences()).isEquals();
     }
 }

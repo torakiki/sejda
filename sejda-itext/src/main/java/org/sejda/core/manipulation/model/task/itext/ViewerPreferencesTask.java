@@ -72,13 +72,13 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
         configuredPreferences = getConfiguredViewerPreferencesMap(parameters);
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("The following preferences will be set on the input pdf sources:");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("The following preferences will be set on the input pdf sources:");
             for (Entry<PdfName, PdfObject> entry : configuredPreferences.entrySet()) {
-                LOG.debug(String.format("%s = %s", entry.getKey(), entry.getValue()));
+                LOG.trace("{} = {}", entry.getKey(), entry.getValue());
             }
-            LOG.debug(String.format("Page mode = %s", parameters.getPageMode()));
-            LOG.debug(String.format("Page layout = %s", parameters.getPageLayout()));
+            LOG.trace("Page mode = {}", parameters.getPageMode());
+            LOG.trace("Page layout = {}", parameters.getPageLayout());
         }
     }
 
@@ -142,7 +142,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         }
         confPreferences.put(PdfName.NONFULLSCREENPAGEMODE, ViewerPreferencesUtils.getNFSMode(parameters.getNfsMode()));
 
-        Set<PdfBooleanPreference> activePref = parameters.getActivePreferences();
+        Set<PdfBooleanPreference> activePref = parameters.getEnabledPreferences();
         for (PdfBooleanPreference boolPref : PdfBooleanPreference.values()) {
             if (activePref.contains(boolPref)) {
                 confPreferences.put(ViewerPreferencesUtils.getBooleanPreference(boolPref), PdfBoolean.PDFTRUE);

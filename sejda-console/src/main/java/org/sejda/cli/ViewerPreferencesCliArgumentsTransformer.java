@@ -61,27 +61,27 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
     private void populateActivePreferences(ViewerPreferencesTaskCliArguments taskCliArguments,
             ViewerPreferencesParameters parameters) {
         if (taskCliArguments.isCenterWindow()) {
-            parameters.addActivePreference(PdfBooleanPreference.CENTER_WINDOW);
+            parameters.addEnabledPreference(PdfBooleanPreference.CENTER_WINDOW);
         }
 
         if (taskCliArguments.isDisplayDocTitle()) {
-            parameters.addActivePreference(PdfBooleanPreference.DISPLAY_DOC_TITLE);
+            parameters.addEnabledPreference(PdfBooleanPreference.DISPLAY_DOC_TITLE);
         }
 
         if (taskCliArguments.isFitWindow()) {
-            parameters.addActivePreference(PdfBooleanPreference.FIT_WINDOW);
+            parameters.addEnabledPreference(PdfBooleanPreference.FIT_WINDOW);
         }
 
         if (taskCliArguments.isHideMenu()) {
-            parameters.addActivePreference(PdfBooleanPreference.HIDE_MENUBAR);
+            parameters.addEnabledPreference(PdfBooleanPreference.HIDE_MENUBAR);
         }
 
         if (taskCliArguments.isHideWindowUI()) {
-            parameters.addActivePreference(PdfBooleanPreference.HIDE_WINDOW_UI);
+            parameters.addEnabledPreference(PdfBooleanPreference.HIDE_WINDOW_UI);
         }
 
         if (taskCliArguments.isHideToolbar()) {
-            parameters.addActivePreference(PdfBooleanPreference.HIDE_TOOLBAR);
+            parameters.addEnabledPreference(PdfBooleanPreference.HIDE_TOOLBAR);
         }
     }
 }

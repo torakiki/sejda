@@ -49,14 +49,14 @@ public final class ViewerPreferencesUtils {
         DUPLEX_CACHE = Collections.unmodifiableMap(duplexCache);
     }
 
-    private static final Map<PdfNonFullScreenPageMode, PdfName> NSF_MODE_CACHE;
+    private static final Map<PdfNonFullScreenPageMode, PdfName> NFS_MODE_CACHE;
     static {
         Map<PdfNonFullScreenPageMode, PdfName> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, PdfName>();
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_NONE, PdfName.USENONE);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OC, PdfName.USEOC);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OUTLINES, PdfName.USEOUTLINES);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_THUMNS, PdfName.USETHUMBS);
-        NSF_MODE_CACHE = Collections.unmodifiableMap(nfsModeCache);
+        NFS_MODE_CACHE = Collections.unmodifiableMap(nfsModeCache);
     }
 
     private static final Map<PdfPageLayout, Integer> LAYOUT_CACHE;
@@ -142,7 +142,7 @@ public final class ViewerPreferencesUtils {
      * @return the iText non full screen mode constant
      */
     public static PdfName getNFSMode(PdfNonFullScreenPageMode nfsMode) {
-        return NSF_MODE_CACHE.get(nfsMode);
+        return NFS_MODE_CACHE.get(nfsMode);
     }
 
     /**

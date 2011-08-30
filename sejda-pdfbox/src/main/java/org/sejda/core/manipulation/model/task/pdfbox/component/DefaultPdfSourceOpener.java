@@ -5,49 +5,56 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
+import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.input.PdfURLSource;
-import org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil;
 
 /**
- * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocument}.
+ * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocumentHandler}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocument> {
+public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler> {
 
-    public PDDocument open(PdfURLSource source) throws TaskIOException {
+    public PDDocumentHandler open(PdfURLSource source) throws TaskIOException {
         PDDocument document = null;
         try {
             document = PDDocument.load(source.getUrl());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        PDDocumentUtil.decryptPDDocumentIfNeeded(document, source.getPassword());
-        return document;
+        PDDocumentHandler handler = newHandlerInstance(source, document);
+        return handler;
     }
 
-    public PDDocument open(PdfFileSource source) throws TaskIOException {
+    public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
         PDDocument document = null;
         try {
             document = PDDocument.load(source.getFile());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        PDDocumentUtil.decryptPDDocumentIfNeeded(document, source.getPassword());
-        return document;
+        PDDocumentHandler handler = newHandlerInstance(source, document);
+        return handler;
     }
 
-    public PDDocument open(PdfStreamSource source) throws TaskIOException {
+    public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
         PDDocument document = null;
         try {
             document = PDDocument.load(source.getStream());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        PDDocumentUtil.decryptPDDocumentIfNeeded(document, source.getPassword());
-        return document;
+        PDDocumentHandler handler = newHandlerInstance(source, document);
+        return handler;
+    }
+
+    private PDDocumentHandler newHandlerInstance(PdfSource source, PDDocument document) throws TaskIOException {
+        PDDocumentHandler handler = new PDDocumentHandler(document);
+        handler.decryptPDDocumentIfNeeded(source.getPassword());
+        handler.setCreatorOnPDDocument();
+        return handler;
     }
 }

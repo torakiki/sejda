@@ -1,5 +1,5 @@
 /*
- * Created on 24/ago/2011
+ * Created on 27/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -17,7 +17,9 @@
 package org.sejda.core.manipulation.model.task.pdfbox;
 
 import static org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentHandler.nullSafeClose;
-import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfTextExtractor.nullSafeClose;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.ViewerPreferencesUtils.getDirection;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.ViewerPreferencesUtils.getNFSMode;
+import static org.sejda.core.manipulation.model.task.pdfbox.util.ViewerPreferencesUtils.setBooleanPreferences;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -25,74 +27,87 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 
 import java.io.File;
 
-import org.sejda.core.Sejda;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
+import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentHandler;
-import org.sejda.core.manipulation.model.task.pdfbox.component.PdfTextExtractor;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task extracting text from a collection of {@link PdfSource}
+ * PDFBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class ExtractTextTask implements Task<ExtractTextParameters> {
+public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ExtractTextTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ViewerPreferencesTask.class);
 
-    private int totalSteps;
     private PDDocumentHandler documentHandler = null;
+    private int totalSteps;
     private MultipleOutputWriterSupport outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
-    private PdfTextExtractor textExtractor;
 
-    public void before(ExtractTextParameters parameters) throws TaskException {
+    public void before(ViewerPreferencesParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
     }
 
-    public void execute(ExtractTextParameters parameters) throws TaskException {
+    public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
             LOG.debug("Opening {} ...", source);
             documentHandler = source.open(documentLoader);
-            // TODO do I need this just to extract text?
             documentHandler.ensureOwnerPermissions();
 
-            File tmpFile = outputWriter.createTemporaryBuffer();
+            File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-            textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
+            documentHandler.setVersionOnPDDocument(parameters.getVersion());
+            documentHandler.compressXrefStream(parameters.isCompressXref());
+            documentHandler.setPageModeOnDocument(parameters.getPageMode());
+            documentHandler.setPageLayoutOnDocument(parameters.getPageLayout());
+
+            setViewerPreferences(parameters);
+
+            documentHandler.savePDDocument(tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(Sejda.TXT_EXTENSION).originalName(source.getName()));
+                    nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            closeResources();
+            nullSafeClose(documentHandler);
 
             notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
-        LOG.debug("Text extracted from input documents and written to {}", parameters.getOutput());
+        LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
 
+    }
+
+    private void setViewerPreferences(ViewerPreferencesParameters parameters) throws TaskException {
+        PDViewerPreferences preferences = documentHandler.getViewerPreferences();
+        setBooleanPreferences(preferences, parameters.getEnabledPreferences());
+        if (parameters.getDirection() != null) {
+            String direction = getDirection(parameters.getDirection());
+            preferences.setReadingDirection(direction);
+            LOG.trace("Direction set to '{}'.", direction);
+        }
+        String nfsMode = getNFSMode(parameters.getNfsMode());
+        preferences.setNonFullScreenPageMode(nfsMode);
+        LOG.trace("Non full screen mode set to '{}'.", nfsMode);
+        documentHandler.setViewerPreferences(preferences);
     }
 
     public void after() {
-        closeResources();
+        nullSafeClose(documentHandler);
     }
 
-    private void closeResources() {
-        nullSafeClose(documentHandler);
-        nullSafeClose(textExtractor);
-    }
 }

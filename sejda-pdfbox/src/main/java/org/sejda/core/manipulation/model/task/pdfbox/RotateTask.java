@@ -16,13 +16,8 @@
  */
 package org.sejda.core.manipulation.model.task.pdfbox;
 
+import static org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentHandler.nullSafeClose;
 import static org.sejda.core.manipulation.model.task.pdfbox.component.PdfRotator.applyRotation;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.closePDDocumentQuitely;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentIOUtil.savePDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.compressXrefStream;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.ensureOwnerPermissions;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setCreatorOnPDDocument;
-import static org.sejda.core.manipulation.model.task.pdfbox.util.PDDocumentUtil.setVersionOnPDDocument;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
@@ -30,13 +25,13 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 
 import java.io.File;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.pdfbox.component.DefaultPdfSourceOpener;
+import org.sejda.core.manipulation.model.task.pdfbox.component.PDDocumentHandler;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +47,9 @@ public class RotateTask implements Task<RotateParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
     private int totalSteps;
-    private PDDocument document = null;
+    private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriterSupport outputWriter;
-    private PdfSourceOpener<PDDocument> documentLoader;
+    private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(RotateParameters parameters) {
         outputWriter = new MultipleOutputWriterSupport();
@@ -67,25 +62,24 @@ public class RotateTask implements Task<RotateParameters> {
 
         for (PdfSource source : parameters.getSourceList()) {
             LOG.debug("Opening {} ...", source);
-            document = source.open(documentLoader);
-            ensureOwnerPermissions(document);
+            documentHandler = source.open(documentLoader);
+            documentHandler.ensureOwnerPermissions();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
             LOG.debug("Applying rotation {} ...", parameters.getRotation());
-            applyRotation(parameters.getRotation()).to(document);
-            setVersionOnPDDocument(document, parameters.getVersion());
+            applyRotation(parameters.getRotation()).to(documentHandler.getUnderlyingPDDocument());
 
-            compressXrefStream(document);
-            setCreatorOnPDDocument(document);
-            savePDDocument(document, tmpFile);
+            documentHandler.setVersionOnPDDocument(parameters.getVersion());
+            documentHandler.compressXrefStream(parameters.isCompressXref());
+            documentHandler.savePDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            closePDDocumentQuitely(document);
+            nullSafeClose(documentHandler);
 
             notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
@@ -95,7 +89,7 @@ public class RotateTask implements Task<RotateParameters> {
     }
 
     public void after() {
-        closePDDocumentQuitely(document);
+        nullSafeClose(documentHandler);
     }
 
 }
