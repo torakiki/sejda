@@ -66,8 +66,6 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
         for (PdfSource source : parameters.getSourceList()) {
             LOG.debug("Opening {} ...", source);
             documentHandler = source.open(documentLoader);
-            // TODO do I need this just to extract text?
-            documentHandler.ensureOwnerPermissions();
 
             File tmpFile = outputWriter.createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);

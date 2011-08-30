@@ -36,7 +36,6 @@ import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.exception.TaskPermissionsException;
-import org.sejda.core.exception.TaskWrongPasswordException;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
@@ -132,20 +131,17 @@ public class PDDocumentHandler {
      * @throws TaskIOException
      */
     public void decryptPDDocumentIfNeeded(String password) throws TaskIOException {
-        if (document.isEncrypted()) {
-            if (StringUtils.isNotBlank(password)) {
-                DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
-                try {
-                    document.openProtection(decryptionMaterial);
-                } catch (IOException e) {
-                    throw new TaskIOException("An error occurred reading cryptographic information.", e);
-                } catch (BadSecurityHandlerException e) {
-                    throw new TaskIOException("Unable to decrypt the document.", e);
-                } catch (CryptographyException e) {
-                    throw new TaskIOException("Unable to decrypt the document.", e);
-                }
-            } else {
-                throw new TaskWrongPasswordException("Unable to open the document due to an empty password.");
+        if (document.isEncrypted() && StringUtils.isNotBlank(password)) {
+            DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
+            LOG.trace("Decrypting input document ...");
+            try {
+                document.openProtection(decryptionMaterial);
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred reading cryptographic information.", e);
+            } catch (BadSecurityHandlerException e) {
+                throw new TaskIOException("Unable to decrypt the document.", e);
+            } catch (CryptographyException e) {
+                throw new TaskIOException("Unable to decrypt the document.", e);
             }
         }
     }

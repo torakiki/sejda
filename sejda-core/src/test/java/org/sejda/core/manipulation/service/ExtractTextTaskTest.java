@@ -67,8 +67,8 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
      */
     private void setUpParameters() {
         parameters = new ExtractTextParameters(StreamOutput.newInstance(out));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_test_test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
         parameters.setTextEncoding("UTF-8");
