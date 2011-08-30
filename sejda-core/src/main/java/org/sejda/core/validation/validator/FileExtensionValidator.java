@@ -17,11 +17,15 @@
  */
 package org.sejda.core.validation.validator;
 
+import static org.apache.commons.io.FilenameUtils.indexOfExtension;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+
 import java.io.File;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.validation.constraint.FileExtension;
 
 /**
@@ -35,13 +39,13 @@ public class FileExtensionValidator implements ConstraintValidator<FileExtension
     private String expectedExtension;
 
     public void initialize(FileExtension constraintAnnotation) {
-        expectedExtension = constraintAnnotation.value().toLowerCase();
+        expectedExtension = constraintAnnotation.value();
     }
 
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null && value.isFile()) {
-            String fileName = value.getName().toLowerCase();
-            return fileName.endsWith("." + expectedExtension) && fileName.length() > (expectedExtension.length() + 1);
+            String extension = FilenameUtils.getExtension(value.getName());
+            return equalsIgnoreCase(expectedExtension, extension) && indexOfExtension(value.getName()) > 0;
         }
         return true;
     }

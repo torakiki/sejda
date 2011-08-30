@@ -16,7 +16,9 @@
  */
 package org.sejda.core.validation.validator;
 
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.io.FilenameUtils.indexOfExtension;
+import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 
 import java.io.File;
 
@@ -47,7 +49,7 @@ public class SingleOutputExtensionsValidator implements
 
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
         if (value != null && ArrayUtils.isNotEmpty(extensions)) {
-            String fileName = getLowerCaseOutputFileName(value);
+            String fileName = getOutputFileName(value);
 
             if (hasAllowedExtension(fileName)) {
                 return true;
@@ -62,22 +64,23 @@ public class SingleOutputExtensionsValidator implements
     }
 
     private boolean hasAllowedExtension(String fileName) {
-        for (String extension : extensions) {
-            if (fileName.endsWith("." + extension) && fileName.length() > (extension.length() + 1)) {
+        String extension = getExtension(fileName);
+        for (String current : extensions) {
+            if (equalsIgnoreCase(current, extension) && indexOfExtension(fileName) > 0) {
                 return true;
             }
         }
         return false;
     }
 
-    private String getLowerCaseOutputFileName(SingleOutputTaskParameters value) {
+    private String getOutputFileName(SingleOutputTaskParameters value) {
         if (value.getOutput().getOutputType() == OutputType.FILE_OUTPUT) {
             File outputFile = ((FileOutput) value.getOutput()).getFile();
             if (outputFile != null) {
-                return defaultString(outputFile.getName(), "").toLowerCase();
+                return outputFile.getName();
             }
         } else {
-            return defaultString(value.getOutputName(), "").toLowerCase();
+            return value.getOutputName();
         }
         return "";
     }
