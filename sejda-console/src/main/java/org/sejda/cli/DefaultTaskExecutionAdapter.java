@@ -27,14 +27,14 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
  */
 public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
 
-    private TaskExecutionService taskExecutionService;
+    private final TaskExecutionService taskExecutionService;
+
+    public DefaultTaskExecutionAdapter(TaskExecutionService taskExecutionService) {
+        this.taskExecutionService = taskExecutionService;
+    }
 
     TaskExecutionService getTaskExecutionService() {
         return taskExecutionService;
-    }
-
-    public void setTaskExecutionService(TaskExecutionService taskExecutionService) {
-        this.taskExecutionService = taskExecutionService;
     }
 
     /*

@@ -24,46 +24,34 @@ import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
 
 /**
- * Tests for the DecryptTask command line interface
+ * Tests for the RotateTask command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class RotateConsoleTest extends BaseTaskConsoleTest {
+public class RotateTaskTest extends AbstractTaskTest {
 
-    @Override
-    String getTaskName() {
-        return "rotate";
-    }
-
-    @Override
-    protected CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults() {
-        return new CommandLineTestBuilder(getTaskName()).with("-r", "1:DEGREES_90");
-    }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console rotate options");
+    public RotateTaskTest() {
+        super(TestableTask.ROTATE);
     }
 
     @Test
     public void testOutputPrefix_Specified() {
-        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("-p", "fooPrefix").toString());
+        RotateParameters parameters = defaultCommandLine().with("-p", "fooPrefix")
+                .invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
     public void testOutputPrefix_Default() {
-        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
+        RotateParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals("", parameters.getOutputPrefix());
     }
 
     @Test
     public void testPageRotation() {
-        RotateParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("-r", "34:DEGREES_90").toString());
+        RotateParameters parameters = defaultCommandLine().with("-r", "34:DEGREES_90")
+                .invokeSejdaConsole();
         assertEquals(PageRotation.createSinglePageRotation(34, Rotation.DEGREES_90), parameters.getRotation());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 29, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,23 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import org.junit.Test;
 
 /**
- * Main entry point for the sejda console executable
+ * Test verifying the help request feature for commands
  * 
  * @author Eduard Weissmann
  * 
  */
-public final class Main {
+public class MandatoryInputAndOutputParametersTraitTest extends AcrossAllTasksTraitTest {
 
-    private Main() {
-        // don't instantiate
+    public MandatoryInputAndOutputParametersTraitTest(TestableTask testableTask) {
+        super(testableTask);
     }
 
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
+    @Test
+    public void testMandatoryOptions() {
+        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --files -f");
+        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --output");
     }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        return new DefaultTaskExecutionAdapter(new DefaultTaskExecutionService());
-    }
-
 }

@@ -18,7 +18,6 @@ package org.sejda.cli;
 
 import java.util.List;
 
-import org.sejda.cli.adapters.PdfDirectoryOutputAdapter;
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -38,9 +37,6 @@ public interface TaskCliArguments {
 
     @Option(shortName = "v", description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
     PdfVersion getPdfVersion();
-
-    @Option(shortName = "o", description = "output directory (required)")
-    PdfDirectoryOutputAdapter getOutput();
 
     @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
     List<PdfFileSourceAdapter> getFiles();

@@ -16,10 +16,26 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.core.manipulation.model.input.PdfFileSource;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.output.DirectoryOutput;
+import org.sejda.core.manipulation.model.output.OutputType;
+import org.sejda.core.manipulation.model.output.PdfFileOutput;
+import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
+import org.sejda.core.manipulation.model.parameter.SingleOutputDocumentParameter;
 
 /**
  * Base class for test suites, provides helper methods to ease testing
@@ -33,6 +49,52 @@ public abstract class AbstractTestSuite {
         for (T eachExpectedItem : expectedItems) {
             assertThat(actualItems, hasItem(eachExpectedItem));
         }
+    }
+
+    protected File createTestFile(String path) {
+        File file = new File(path);
+        file.deleteOnExit();
+        try {
+            FileUtils.writeStringToFile(file, "pdf contents");
+        } catch (IOException e) {
+            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
+        }
+
+        return file;
+    }
+
+    protected File createTestFolder(String path) {
+        File file = new File(path);
+        file.mkdirs();
+        file.deleteOnExit();
+
+        return file;
+    }
+
+    protected void assertHasFileSource(PdfSourceListParameters parameters, File file, String password) {
+        boolean found = false;
+        for (PdfSource each : parameters.getSourceList()) {
+            if (((PdfFileSource) each).getFile().equals(file) && StringUtils.equals(each.getPassword(), password)) {
+                found = true;
+            }
+        }
+
+        assertTrue("File '" + file + "'"
+                + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
+    }
+
+    protected void assertOutputFolder(AbstractParameters result, File outputFolder) {
+        assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
+        assertEquals(((DirectoryOutput) result.getOutput()).getDirectory(), outputFolder);
+    }
+
+    protected void assertOutputFile(SingleOutputDocumentParameter result, File outputFile) {
+        assertEquals(result.getOutput().getOutputType(), OutputType.FILE_OUTPUT);
+        assertEquals(((PdfFileOutput) result.getOutput()).getFile(), outputFile);
+    }
+
+    public static void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
+        new CommandLineExecuteTestHelper().assertConsoleOutputContains(commandLine, expectedOutputContainedLines);
     }
 
 }

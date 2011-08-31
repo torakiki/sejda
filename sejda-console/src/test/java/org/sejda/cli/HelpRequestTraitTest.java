@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 29, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,23 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import org.junit.Test;
 
 /**
- * Main entry point for the sejda console executable
+ * Test verifying the help request feature for commands
  * 
  * @author Eduard Weissmann
  * 
  */
-public final class Main {
+public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
 
-    private Main() {
-        // don't instantiate
+    public HelpRequestTraitTest(TestableTask testableTask) {
+        super(testableTask);
     }
 
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
-    }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        return new DefaultTaskExecutionAdapter(new DefaultTaskExecutionService());
+    @Test
+    public void testExecuteCommandHelp() {
+        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console " + getTaskName() + " options");
     }
 
 }

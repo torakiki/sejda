@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 29, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,19 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- * Main entry point for the sejda console executable
+ * Abstract base class for tests for task traits
  * 
  * @author Eduard Weissmann
  * 
  */
-public final class Main {
+@RunWith(Parameterized.class)
+public abstract class AbstractTaskTraitTest extends AbstractTaskTest {
 
-    private Main() {
-        // don't instantiate
+    public AbstractTaskTraitTest(TestableTask testableTask) {
+        super(testableTask);
     }
-
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
-    }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        return new DefaultTaskExecutionAdapter(new DefaultTaskExecutionService());
-    }
-
 }

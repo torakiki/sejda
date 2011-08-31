@@ -27,15 +27,31 @@ import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
 public class BaseCliArgumentsTransformer {
 
     /**
-     * Populates common parameters
+     * Populates common parameters for a task with output as directory
      * 
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateAbstractParameters(AbstractParameters parameters,
+            CliArgumentsWithDirectoryOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        populateCommonAbstractParameters(parameters, taskCliArguments);
+    }
+
+    /**
+     * Populates common parameters for a task with output as directory
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateAbstractParameters(AbstractParameters parameters, CliArgumentsWithFileOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getPdfFileOutput());
+        populateCommonAbstractParameters(parameters, taskCliArguments);
+    }
+
+    private void populateCommonAbstractParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
         parameters.setCompress(taskCliArguments.getCompressed());
         parameters.setVersion(taskCliArguments.getPdfVersion());
-        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
         parameters.setOverwrite(taskCliArguments.getOverwrite());
     }
 

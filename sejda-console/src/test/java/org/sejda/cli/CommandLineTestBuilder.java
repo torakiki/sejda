@@ -16,11 +16,24 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+import org.mockito.ArgumentCaptor;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.service.TaskExecutionService;
+import org.sejda.util.OnceWithMessage;
+import org.sejda.util.SystemOutRecordingStream;
+
 /**
- * Build for command line arguments, used in tests
+ * Builder for command line arguments, used in tests
  * 
  * @author Eduard Weissmann
  * 
@@ -32,15 +45,28 @@ public class CommandLineTestBuilder {
 
     public CommandLineTestBuilder(String taskName) {
         this.taskName = taskName;
-        defaultInputAndOutput();
+        defaultInput();
     }
 
     /**
-     * Populates default inputs and output
+     * Populates default input parameter as inputs/input.pdf
      */
-    private void defaultInputAndOutput() {
-        with("-f", "inputs/input.pdf");
+    private void defaultInput() {
+        with("-f", "inputs/input.pdf inputs/second_input.pdf");
+    }
+
+    /**
+     * Populates default output parameter as folder ./outputs
+     */
+    public void defaultFolderOutput() {
         with("-o", "./outputs");
+    }
+
+    /**
+     * Populates default output parameter as file fileOutput.pdf
+     */
+    public void defaultFileOutput() {
+        with("-o", "./outputs/fileOutput.pdf");
     }
 
     /**
@@ -66,8 +92,7 @@ public class CommandLineTestBuilder {
      * @param taskName
      * @return
      */
-    @Override
-    public String toString() {
+    public String toCommandLineString() {
         StringBuilder result = new StringBuilder(taskName);
 
         for (Map.Entry<String, String> eachOptionAndValue : optionsAndValues.entrySet()) {
@@ -78,5 +103,81 @@ public class CommandLineTestBuilder {
         }
 
         return result.toString();
+    }
+
+    public void assertConsoleOutputContains(String... expectedOutputContainedLines) {
+        new CommandLineExecuteTestHelper().assertConsoleOutputContains(this.toCommandLineString(),
+                expectedOutputContainedLines);
+    }
+
+    public <T extends TaskParameters> T invokeSejdaConsole() {
+        return new CommandLineExecuteTestHelper().invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
+    }
+}
+
+/**
+ * Helper test class for execution of the sejda-console<br/>
+ * Contains helper methods such as {@link #assertConsoleOutputContains(String...)}, {@link #invokeConsoleAndReturnTaskParameters(String)}<br/>
+ * 
+ * @author Eduard Weissmann
+ * 
+ */
+class CommandLineExecuteTestHelper {
+    protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
+    private SystemOutRecordingStream newSystemOut = new SystemOutRecordingStream(System.out);
+
+    private SejdaConsole getConsole(String commandLine) {
+        String[] args = parseCommandLineArgs(commandLine);
+        return new SejdaConsole(args, new DefaultTaskExecutionAdapter(taskExecutionService));
+    }
+
+    private String[] parseCommandLineArgs(String commandLine) {
+        return StringUtils.stripAll(StringUtils.splitPreserveAllTokens(commandLine));
+    }
+
+    public void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
+        String consoleOutput = invokeConsoleAndReturnSystemOut(commandLine);
+        for (String eachExpected : expectedOutputContainedLines) {
+            assertThat(consoleOutput, containsString(eachExpected));
+        }
+    }
+
+    private String invokeConsoleAndReturnSystemOut(String commandLine) {
+        invokeConsole(commandLine);
+
+        return getCapturedSystemOut();
+    }
+
+    private void invokeConsole(String commandLine) {
+        prepareSystemOutCapture();
+        getConsole(commandLine).execute();
+    }
+
+    private void prepareSystemOutCapture() {
+        newSystemOut = new SystemOutRecordingStream(System.out);
+        System.setOut(new PrintStream(newSystemOut));
+    }
+
+    private String getCapturedSystemOut() {
+        return newSystemOut.getCapturedSystemOut();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends TaskParameters> T invokeConsoleAndReturnTaskParameters(String commandLine) {
+        ArgumentCaptor<TaskParameters> taskPrametersCaptor = ArgumentCaptor.forClass(TaskParameters.class);
+
+        invokeConsole(commandLine);
+
+        // now Mockito can provide some context to verification failures, yay
+        verify(
+                taskExecutionService,
+                once("Command '" + commandLine
+                        + "' did not reach task execution, as was expected. Console output was: \n"
+                        + getCapturedSystemOut())).execute(taskPrametersCaptor.capture());
+        return (T) taskPrametersCaptor.getValue();
+    }
+
+    private static OnceWithMessage once(String failureDescribingMessage) {
+        return new OnceWithMessage(failureDescribingMessage);
     }
 }

@@ -37,46 +37,34 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
  * @author Eduard Weissmann
  * 
  */
-public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
+public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
-    @Override
-    String getTaskName() {
-        return "setviewerpreferences";
-    }
-
-    @Override
-    protected CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults() {
-        return new CommandLineTestBuilder(getTaskName());
+    public ViewerPreferencesTaskTest() {
+        super(TestableTask.SETVIEWERPREFERENCES);
     }
 
     @Test
-    public void testExecuteCommandHelp() {
-        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console setviewerpreferences options");
-    }
-
-    @Test
-    public void testFlagOptions_on() {
-        ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("--centerWindow").with("--displayDocTitle").with("--hideMenu").with("--fitWindow")
-                .with("--hideWindowUI").with("--hideToolbar").toString());
+    public void onFlagOptions() {
+        ViewerPreferencesParameters parameters = defaultCommandLine().with("--centerWindow").with("--displayDocTitle")
+                .with("--hideMenu").with("--fitWindow").with("--hideWindowUI").with("--hideToolbar")
+                .invokeSejdaConsole();
 
         assertContainsAll(EnumSet.allOf(PdfBooleanPreference.class), parameters.getActivePreferences());
     }
 
     @Test
-    public void testFlagOptions_off() {
-        ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
+    public void offFlagOptions() {
+        ViewerPreferencesParameters parameters = defaultCommandLine().invokeSejdaConsole();
 
         assertTrue(parameters.getActivePreferences().isEmpty());
     }
 
     @Test
-    public void testNonDefaults() {
-        ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("--noPrintScaling").with("--direction", "RIGHT_TO_LEFT")
-                .with("--duplex", "DUPLEX_FLIP_SHORT_EDGE").with("--nfsMode", "USE_THUMNS")
-                .with("--layout", "TWO_PAGE_LEFT").with("--mode", "USE_ATTACHMENTS").toString());
+    public void specifiedValues() {
+        ViewerPreferencesParameters parameters = defaultCommandLine().with("--noPrintScaling")
+                .with("--direction", "RIGHT_TO_LEFT").with("--duplex", "DUPLEX_FLIP_SHORT_EDGE")
+                .with("--nfsMode", "USE_THUMNS").with("--layout", "TWO_PAGE_LEFT").with("--mode", "USE_ATTACHMENTS")
+                .invokeSejdaConsole();
 
         assertEquals(PdfPrintScaling.NONE, parameters.getPrintScaling());
         assertEquals(PdfDirection.RIGHT_TO_LEFT, parameters.getDirection());
@@ -87,9 +75,8 @@ public class ViewerPreferencesConsoleTest extends BaseTaskConsoleTest {
     }
 
     @Test
-    public void testDefaults() {
-        ViewerPreferencesParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
+    public void defaultValues() {
+        ViewerPreferencesParameters parameters = defaultCommandLine().invokeSejdaConsole();
 
         assertEquals(PdfPrintScaling.APP_DEFAULT, parameters.getPrintScaling());
         assertEquals(PdfDirection.LEFT_TO_RIGHT, parameters.getDirection());

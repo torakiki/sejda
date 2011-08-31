@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " decrypt")
-public interface DecryptTaskCliArguments extends TaskCliArguments {
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "decrypted_")
+public interface DecryptTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
     String getOutputPrefix();
 }
