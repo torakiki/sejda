@@ -27,34 +27,22 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
  * @author Eduard Weissmann
  * 
  */
-public class DecryptConsoleTest extends BaseTaskConsoleTest {
+public class DecryptTaskTest extends AbstractTaskTest {
 
-    @Override
-    String getTaskName() {
-        return "decrypt";
-    }
-
-    @Override
-    protected CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults() {
-        return new CommandLineTestBuilder(getTaskName());
-    }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console decrypt options");
+    public DecryptTaskTest() {
+        super(TestableTask.DECRYPT);
     }
 
     @Test
     public void testOutputPrefix_Specified() {
-        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("-p", "fooPrefix").toString());
+        DecryptParameters parameters = defaultCommandLine().with("-p", "fooPrefix")
+                .invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
     public void testOutputPrefix_Default() {
-        DecryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
-        assertEquals("decrypted_", parameters.getOutputPrefix());
+        DecryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals("", parameters.getOutputPrefix());
     }
 }

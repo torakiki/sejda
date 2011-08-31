@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " alternatemix")
-public interface AlternateMixTaskCliArguments extends TaskCliArguments {
+public interface AlternateMixTaskCliArguments extends CliArgumentsWithFileOutput {
 
     @Option(description = "reverse first input file (optional)")
     boolean isReverseFirst();
@@ -42,7 +42,4 @@ public interface AlternateMixTaskCliArguments extends TaskCliArguments {
     int getStepSecond();
 
     // TODO: EW: pdf-sam-incompatibility {f1 and f2 are specified, vs now -f -f}
-    // TODO: EW: pdf-sam-incompatibility {doesnt exist}
-    @Option(description = "output name to be used only when the output is written to a non file destination (default is 'alternate_mix_output.pdf') (optional)", defaultValue = "alternate_mix_output.pdf")
-    String getOutputName();
 }

@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 29, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,26 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import java.util.Collection;
+
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Main entry point for the sejda console executable
+ * 
+ * Base class for trait tests that run across all defined tasks
  * 
  * @author Eduard Weissmann
  * 
  */
-public final class Main {
+public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
 
-    private Main() {
-        // don't instantiate
+    public AcrossAllTasksTraitTest(TestableTask testableTask) {
+        super(testableTask);
     }
 
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
-    }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        return new DefaultTaskExecutionAdapter(new DefaultTaskExecutionService());
+    @Parameters
+    public final static Collection<Object[]> data() {
+        return TestableTask.allTasks();
     }
 
 }

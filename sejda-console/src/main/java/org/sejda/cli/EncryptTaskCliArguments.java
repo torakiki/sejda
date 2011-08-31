@@ -28,7 +28,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " encrypt")
-public interface EncryptTaskCliArguments extends TaskCliArguments {
+public interface EncryptTaskCliArguments extends CliArgumentsWithDirectoryOutput {
     @Option(shortName = "u", description = "user password for the document (optional)", defaultValue = "")
     String getUserPassword();
 
@@ -38,6 +38,6 @@ public interface EncryptTaskCliArguments extends TaskCliArguments {
     @Option(shortName = "e", description = "encryption angorithm {STANDARD_ENC_40, STANDARD_ENC_128, AES_ENC_128}. If omitted it uses STANDARD_ENC_128 (optional)", defaultValue = "STANDARD_ENC_128")
     PdfEncryption getEncryptionType();
 
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "encrypted_")
+    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
     String getOutputPrefix();
 }

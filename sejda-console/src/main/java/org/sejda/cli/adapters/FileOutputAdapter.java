@@ -16,26 +16,34 @@
  */
 package org.sejda.cli.adapters;
 
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
+import java.io.File;
+
+import org.sejda.core.manipulation.model.output.FileOutput;
 
 /**
- * Adapter for {@link PdfDirectionAdapter}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link FileOutput}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfDirectionAdapter {
+public class FileOutputAdapter {
 
-    private final PdfDirection pdfDirection;
+    private final FileOutput fileOutput;
 
-    public PdfDirectionAdapter(String enumCode) {
-        this.pdfDirection = PdfDirection.valueOf(enumCode);
+    public FileOutputAdapter(String path) {
+        File file = new File(path);
+
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Path '" + path + "' does not exist");
+        }
+
+        this.fileOutput = FileOutput.newInstance(new File(path));
     }
 
     /**
-     * @return the pdfDirection
+     * @return the fileOutput
      */
-    public PdfDirection getPdfDirection() {
-        return pdfDirection;
+    public FileOutput getFileOutput() {
+        return fileOutput;
     }
 }

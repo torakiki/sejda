@@ -28,62 +28,48 @@ import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
  * @author Eduard Weissmann
  * 
  */
-public class EncryptConsoleTest extends BaseTaskConsoleTest {
+public class EncryptTaskTest extends AbstractTaskTest {
 
-    @Override
-    String getTaskName() {
-        return "encrypt";
-    }
-
-    @Override
-    protected CommandLineTestBuilder getMandatoryCommandLineArgumentsWithDefaults() {
-        return new CommandLineTestBuilder(getTaskName());
-    }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console encrypt options");
+    public EncryptTaskTest() {
+        super(TestableTask.ENCRYPT);
     }
 
     @Test
     public void testOutputPrefix_Specified() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("-p", "fooPrefix").toString());
+        EncryptParameters parameters = defaultCommandLine().with("-p", "fooPrefix")
+                .invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
     public void testOutputPrefix_Default() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
-        assertEquals("encrypted_", parameters.getOutputPrefix());
+        EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals("", parameters.getOutputPrefix());
     }
 
     public void testPasswords_Specified() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .with("-u", "user_pass").with("-a", "admin_pass").toString());
+        EncryptParameters parameters = defaultCommandLine().with("-u", "user_pass").with("-a", "admin_pass")
+                .invokeSejdaConsole();
         assertEquals("user_pass", parameters.getUserPassword());
         assertEquals("admin_pass", parameters.getOwnerPassword());
     }
 
     @Test
     public void testPasswords_Defaults() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
+        EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals("", parameters.getUserPassword());
         assertEquals("", parameters.getOwnerPassword());
     }
 
     public void testEncryptionType_Specified() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                + " -e AES_ENC_128");
+        EncryptParameters parameters = defaultCommandLine().with("-e", "AES_ENC_128")
+                .invokeSejdaConsole();
         assertEquals(PdfEncryption.AES_ENC_128, parameters.getEncryptionAlgorithm());
     }
 
     @Test
     public void testEncryptionType_Default() {
-        EncryptParameters parameters = invokeConsoleAndReturnTaskParameters(getMandatoryCommandLineArgumentsWithDefaults()
-                .toString());
+        EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals(PdfEncryption.STANDARD_ENC_128, parameters.getEncryptionAlgorithm());
     }
 }

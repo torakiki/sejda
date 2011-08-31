@@ -1,5 +1,5 @@
 /*
- * Created on Aug 1, 2011
+ * Created on Aug 22, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,19 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import org.sejda.cli.adapters.FileOutputAdapter;
+
+import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Main entry point for the sejda console executable
+ * 
+ * Base interface for specifying of the command line interface for tasks that have output configured as a file
  * 
  * @author Eduard Weissmann
  * 
  */
-public final class Main {
+public interface CliArgumentsWithFileOutput extends TaskCliArguments {
 
-    private Main() {
-        // don't instantiate
-    }
-
-    public static void main(String[] args) {
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
-    }
-
-    private static TaskExecutionAdapter getTaskExecutionAdapter() {
-        return new DefaultTaskExecutionAdapter(new DefaultTaskExecutionService());
-    }
-
+    @Option(shortName = "o", description = "output file (required)")
+    FileOutputAdapter getOutput();
 }
