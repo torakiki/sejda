@@ -41,11 +41,11 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfBoolean;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.internal.PdfViewerPreferencesImp;
+import com.lowagie.text.pdf.PdfBoolean;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
 
 /**
  * test unit for the viewer preferences task
@@ -98,11 +98,9 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         assertVersion(reader, PdfVersion.VERSION_1_7);
         PdfDictionary catalog = PdfViewerPreferencesImp.getViewerPreferences(reader.getCatalog())
                 .getViewerPreferences();
-        // TODO reenable when PDFBox supports it
-        // assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
+        assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
         assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
-        // TODO reenable when PDFBox supports it
-        // assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
+        assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
         assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));

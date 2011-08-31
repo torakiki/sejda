@@ -35,9 +35,9 @@ import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfPageLabels;
-import com.itextpdf.text.pdf.PdfPageLabels.PdfPageLabelFormat;
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfPageLabels;
+import com.lowagie.text.pdf.PdfPageLabels.PdfPageLabelFormat;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * @author Andrea Vacondio

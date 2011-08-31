@@ -37,7 +37,7 @@ import org.sejda.core.manipulation.model.rotation.Rotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * Abstract test unit for the rotate task

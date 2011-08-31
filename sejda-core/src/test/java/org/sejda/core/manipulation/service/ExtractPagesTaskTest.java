@@ -35,7 +35,7 @@ import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * Test for an extract pages task.

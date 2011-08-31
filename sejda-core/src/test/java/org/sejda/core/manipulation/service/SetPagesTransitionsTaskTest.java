@@ -20,9 +20,9 @@ import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
 import org.sejda.core.manipulation.model.task.Task;
 
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfReader;
 
 @Ignore
 public abstract class SetPagesTransitionsTaskTest extends PdfOutEnabledTest implements

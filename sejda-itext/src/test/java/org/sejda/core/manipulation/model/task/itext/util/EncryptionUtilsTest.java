@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 
-import com.itextpdf.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * @author Andrea Vacondio
