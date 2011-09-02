@@ -18,7 +18,7 @@ package org.sejda.cli;
 
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
-import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
+import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
 
 /**
  * @author Eduard Weissmann
@@ -61,7 +61,7 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateSourceParameters(PdfSourceListParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateSourceParameters(MultiplePdfSourceParameters parameters, TaskCliArguments taskCliArguments) {
         for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
             parameters.addSource(eachAdapter.getPdfFileSource());
         }

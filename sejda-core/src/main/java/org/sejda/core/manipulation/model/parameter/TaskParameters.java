@@ -32,4 +32,8 @@ public interface TaskParameters {
      */
     TaskOutput getOutput();
 
+    /**
+     * @return true if the tasks' outputs should overwrite any existing file, false otherwise
+     */
+    boolean isOverwrite();
 }

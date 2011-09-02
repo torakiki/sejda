@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Sep 2, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,29 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.core.manipulation.model.parameter;
 
-import java.util.Collection;
+import java.util.List;
 
-import org.junit.runners.Parameterized.Parameters;
+import org.sejda.core.manipulation.model.input.PdfSource;
 
 /**
- * 
- * Base class for trait tests that run across all defined tasks
+ * A parameter whose execution inputs consists of a list of pdf documents.
  * 
  * @author Eduard Weissmann
  * 
  */
-public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
+public interface MultiplePdfSourceParameters {
 
-    public AcrossAllTasksTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
+    /**
+     * adds the input source to the source list.
+     * 
+     * @param input
+     */
+    void addSource(PdfSource input);
 
-    @Parameters
-    public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasks();
-    }
-
+    /**
+     * @return a view of the source list
+     */
+    List<PdfSource> getSourceList();
 }

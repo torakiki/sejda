@@ -16,35 +16,62 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Test verifying that the --compressed flag can be specified for each task
+ * Test verifying that the --compressed flag and --pdfVersion can be specified for each task creating pdf outputs
  * 
  * @author Eduard Weissmann
  * 
  */
-public class CompressedFlagTraitTest extends AcrossAllTasksTraitTest {
+public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
-    public CompressedFlagTraitTest(TestableTask testableTask) {
+    private static Collection<TestableTask> exceptFor = Arrays.asList(TestableTask.UNPACK);
+
+    @Parameters
+    public final static Collection<Object[]> testParameters() {
+        return TestableTask.allTasksExceptFor(exceptFor);
+    }
+
+    public PdfFormatOutputTraitTest(TestableTask testableTask) {
         super(testableTask);
     }
 
     @Test
-    public void onValue() {
+    public void onValueCompressed() {
         AbstractParameters result = defaultCommandLine().with("--compressed").invokeSejdaConsole();
 
         assertTrue(describeExpectations(), result.isCompressXref());
     }
 
     @Test
-    public void offValue() {
+    public void offValueCompressed() {
         AbstractParameters result = defaultCommandLine().invokeSejdaConsole();
 
         assertFalse(describeExpectations(), result.isCompressXref());
+    }
+
+    @Test
+    public void specifiedValuePdfVersion() {
+        AbstractParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4").invokeSejdaConsole();
+
+        assertEquals(describeExpectations(), PdfVersion.VERSION_1_4, result.getVersion());
+    }
+
+    @Test
+    public void defaultValuePdfVersion() {
+        AbstractParameters result = defaultCommandLine().invokeSejdaConsole();
+
+        assertEquals(describeExpectations(), PdfVersion.VERSION_1_6, result.getVersion());
     }
 }

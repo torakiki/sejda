@@ -59,6 +59,10 @@ public class DefaultTaskExecutionContextTest {
             public TaskOutput getOutput() {
                 return null;
             }
+
+            public boolean isOverwrite() {
+                return false;
+            }
         });
         Assert.assertNotNull(task);
     }

@@ -22,6 +22,7 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.UnpackParameters;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
@@ -96,6 +97,19 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
             return new AlternateMixCliArgumentsTransformer();
+        }
+
+    }),
+    UNPACK("unpack", new CliInterfacedTask<UnpackTaskCliArguments, UnpackParameters>() {
+
+        @Override
+        protected Class<UnpackTaskCliArguments> getCliArgumentsClass() {
+            return UnpackTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<UnpackTaskCliArguments, UnpackParameters> getArgumentsTransformer() {
+            return new UnpackCliArgumentsTransformer();
         }
 
     });

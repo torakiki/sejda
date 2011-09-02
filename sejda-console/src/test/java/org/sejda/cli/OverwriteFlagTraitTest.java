@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * Test verifying that the --overwrite flag can be specified for each task
@@ -36,14 +36,14 @@ public class OverwriteFlagTraitTest extends AcrossAllTasksTraitTest {
 
     @Test
     public void onValue() {
-        AbstractParameters result = defaultCommandLine().with("--overwrite").invokeSejdaConsole();
+        TaskParameters result = defaultCommandLine().with("--overwrite").invokeSejdaConsole();
 
         assertTrue(describeExpectations(), result.isOverwrite());
     }
 
     @Test
     public void offValue() {
-        AbstractParameters result = defaultCommandLine().invokeSejdaConsole();
+        TaskParameters result = defaultCommandLine().invokeSejdaConsole();
 
         assertFalse(describeExpectations(), result.isOverwrite());
     }

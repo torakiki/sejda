@@ -32,7 +32,7 @@ public interface EncryptTaskCliArguments extends CliArgumentsWithDirectoryOutput
     @Option(shortName = "u", description = "user password for the document (optional)", defaultValue = "")
     String getUserPassword();
 
-    @Option(shortName = "a", description = "administrator password for the document (optional)", defaultValue = "")
+    @Option(shortName = "a", description = "owner password for the document (optional)", defaultValue = "")
     String getAdminstratorPassword();
 
     @Option(shortName = "e", description = "encryption angorithm {STANDARD_ENC_40, STANDARD_ENC_128, AES_ENC_128}. If omitted it uses STANDARD_ENC_128 (optional)", defaultValue = "STANDARD_ENC_128")

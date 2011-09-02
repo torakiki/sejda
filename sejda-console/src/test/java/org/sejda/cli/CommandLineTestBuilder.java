@@ -110,8 +110,8 @@ public class CommandLineTestBuilder {
                 expectedOutputContainedLines);
     }
 
-    public <T extends TaskParameters> T invokeSejdaConsole() {
-        return new CommandLineExecuteTestHelper().invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
+    public <T> T invokeSejdaConsole() {
+        return (T) new CommandLineExecuteTestHelper().invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
     }
 }
 

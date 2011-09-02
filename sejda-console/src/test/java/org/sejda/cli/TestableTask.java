@@ -17,9 +17,13 @@
 package org.sejda.cli;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
+ * Enumeration of all tasks, configured for testing
+ * 
  * @author Eduard Weissmann
  * 
  */
@@ -29,7 +33,8 @@ public enum TestableTask {
     ENCRYPT,
     ROTATE,
     SETVIEWERPREFERENCES,
-    ALTERNATEMIX(false);
+    ALTERNATEMIX(false),
+    UNPACK;
 
     private boolean folderOutput = true;
 
@@ -57,9 +62,15 @@ public enum TestableTask {
     }
 
     public static List<Object[]> allTasks() {
+        return allTasksExceptFor(Collections.EMPTY_LIST);
+    }
+
+    public static List<Object[]> allTasksExceptFor(Collection<TestableTask> exceptFor) {
         List<Object[]> result = new ArrayList<Object[]>();
         for (TestableTask each : TestableTask.values()) {
-            result.add(new Object[] { each });
+            if (!exceptFor.contains(each)) {
+                result.add(new Object[] { each });
+            }
         }
 
         return result;

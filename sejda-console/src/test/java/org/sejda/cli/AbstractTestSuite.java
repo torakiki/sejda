@@ -34,8 +34,8 @@ import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
-import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
+import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * Base class for test suites, provides helper methods to ease testing
@@ -71,7 +71,7 @@ public abstract class AbstractTestSuite {
         return file;
     }
 
-    protected void assertHasFileSource(PdfSourceListParameters parameters, File file, String password) {
+    protected void assertHasFileSource(MultiplePdfSourceParameters parameters, File file, String password) {
         boolean found = false;
         for (PdfSource each : parameters.getSourceList()) {
             if (((PdfFileSource) each).getFile().equals(file) && StringUtils.equals(each.getPassword(), password)) {
@@ -83,7 +83,7 @@ public abstract class AbstractTestSuite {
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
     }
 
-    protected void assertOutputFolder(AbstractParameters result, File outputFolder) {
+    protected void assertOutputFolder(TaskParameters result, File outputFolder) {
         assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
         assertEquals(((DirectoryOutput) result.getOutput()).getDirectory(), outputFolder);
     }

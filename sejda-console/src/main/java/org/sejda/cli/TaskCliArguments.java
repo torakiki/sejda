@@ -38,7 +38,7 @@ public interface TaskCliArguments {
     @Option(shortName = "v", description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
     PdfVersion getPdfVersion();
 
-    @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/file2.pdf) (required)")
+    @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/password_protected_file2.pdf;secret123) (required)")
     List<PdfFileSourceAdapter> getFiles();
 
     @Option(description = "overwrite existing output file (optional)")

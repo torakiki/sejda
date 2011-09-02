@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Sep 1, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,26 +16,15 @@
  */
 package org.sejda.cli;
 
-import java.util.Collection;
-
-import org.junit.runners.Parameterized.Parameters;
+import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 
 /**
- * 
- * Base class for trait tests that run across all defined tasks
+ * Specifications for command line options of the Unpack task
  * 
  * @author Eduard Weissmann
  * 
  */
-public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
-
-    public AcrossAllTasksTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
-
-    @Parameters
-    public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasks();
-    }
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " unpack")
+public interface UnpackTaskCliArguments extends CliArgumentsWithDirectoryOutput {
 
 }

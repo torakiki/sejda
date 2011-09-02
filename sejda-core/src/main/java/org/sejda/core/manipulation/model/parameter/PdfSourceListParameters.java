@@ -34,11 +34,11 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public abstract class PdfSourceListParameters extends AbstractParameters {
+public abstract class PdfSourceListParameters extends AbstractParameters implements MultiplePdfSourceParameters {
 
     @NotEmpty
     @Valid
-    private List<PdfSource> sourceList = new ArrayList<PdfSource>();
+    private final List<PdfSource> sourceList = new ArrayList<PdfSource>();
 
     /**
      * adds the input source to the source list.

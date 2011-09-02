@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
+import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
 
 /**
  * For tasks that support multiple files as input, test various scenarios related to this trait
@@ -37,7 +37,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { { TestableTask.DECRYPT }, { TestableTask.ENCRYPT },
-                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES } });
+                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES }, { TestableTask.UNPACK } });
     }
 
     public MultipleInputSourceFilesTraitTest(TestableTask testableTask) {
@@ -52,7 +52,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileNoPassword() {
-        PdfSourceListParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
+        MultiplePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
 
         assertEquals(1, result.getSourceList().size());
         assertHasFileSource(result, new File("inputs/input.pdf"), null);
@@ -60,7 +60,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileWithPassword() {
-        PdfSourceListParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
+        MultiplePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
                 .invokeSejdaConsole();
 
         assertEquals(1, result.getSourceList().size());
@@ -69,7 +69,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testMultipleSourceFiles() {
-        PdfSourceListParameters result = defaultCommandLine().with("-f",
+        MultiplePdfSourceParameters result = defaultCommandLine().with("-f",
                 "inputs/input-protected.pdf;secret123 inputs/second_input.pdf").invokeSejdaConsole();
 
         assertEquals(2, result.getSourceList().size());

@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.PdfSourceListParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * For tasks that support a folder as output, test various scenarios related to this trait
@@ -35,7 +35,7 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { { TestableTask.DECRYPT }, { TestableTask.ENCRYPT },
-                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES } });
+                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES }, { TestableTask.UNPACK } });
     }
 
     public FolderOutputTraitTest(TestableTask testableTask) {
@@ -50,7 +50,7 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void positive() {
-        PdfSourceListParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
+        TaskParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
         assertOutputFolder(result, new File("./outputs"));
     }
 }

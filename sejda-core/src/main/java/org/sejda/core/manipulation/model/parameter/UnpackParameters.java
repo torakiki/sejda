@@ -36,14 +36,14 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class UnpackParameters implements TaskParameters {
+public class UnpackParameters implements TaskParameters, MultiplePdfSourceParameters {
 
     @Valid
     @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
+    private final TaskOutput output;
     @NotEmpty
     @Valid
-    private List<PdfSource> sourceList = new ArrayList<PdfSource>();
+    private final List<PdfSource> sourceList = new ArrayList<PdfSource>();
     private boolean overwrite = false;
 
     public UnpackParameters(TaskOutput output) {
