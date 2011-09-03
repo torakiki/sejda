@@ -1,8 +1,15 @@
 package org.sejda.core.manipulation.model.parameter;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.manipulation.model.input.PdfSource;
+import org.sejda.core.manipulation.model.input.PdfStreamSource;
+import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
 
@@ -28,5 +35,16 @@ public class SetPagesTransitionParametersTest {
         PdfPageTransition result = victim.putTransition(3, secondTransition);
         Assert.assertEquals(firstTransition, result);
         Assert.assertEquals(1, victim.getTransitions().size());
+    }
+
+    @Test
+    public void testInvalidParameters() {
+        SetPagesTransitionParameters victim = new SetPagesTransitionParameters(null, "test.pdf");
+        TaskOutput output = mock(TaskOutput.class);
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
     }
 }

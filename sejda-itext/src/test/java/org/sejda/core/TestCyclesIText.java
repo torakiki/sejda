@@ -8,6 +8,6 @@ package org.sejda.core;
  */
 public class TestCyclesIText extends TestCycles {
 
-    // hinerited tests
+    // inherited tests
 
 }

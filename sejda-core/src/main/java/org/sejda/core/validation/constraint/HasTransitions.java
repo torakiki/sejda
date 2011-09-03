@@ -1,5 +1,5 @@
 /*
- * Created on 11/ago/2011
+ * Created on 03/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -27,21 +27,21 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import org.sejda.core.validation.validator.NoIntersectionsValidator;
+import org.sejda.core.validation.validator.HasTransitionsValidator;
 
 /**
- * Constraint to validate that a page range selection doesn't have any intersection among the selected ranges.
+ * Constraint to validate a parameter making sure that some valid transition has been set (default or not).
  * 
  * @author Andrea Vacondio
  * 
  */
 @Target({ FIELD, TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { NoIntersectionsValidator.class })
+@Constraint(validatedBy = { HasTransitionsValidator.class })
 @Documented
-public @interface NoIntersections {
+public @interface HasTransitions {
 
-    String message() default "The selected page ranges contain intersections.";
+    String message() default "No transition has been set.";
 
     Class<?>[] groups() default {};
 

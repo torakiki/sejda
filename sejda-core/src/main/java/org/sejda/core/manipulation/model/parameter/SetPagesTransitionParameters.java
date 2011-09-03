@@ -28,6 +28,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
+import org.sejda.core.validation.constraint.HasTransitions;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
@@ -36,8 +37,8 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  * @author Andrea Vacondio
  * 
  */
-// TODO verify one among transitions and defaultTransition is set
 @SingleOutputAllowedExtensions
+@HasTransitions
 public class SetPagesTransitionParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters {
 
     @Valid
