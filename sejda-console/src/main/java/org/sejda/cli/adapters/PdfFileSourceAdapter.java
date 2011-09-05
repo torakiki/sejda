@@ -1,6 +1,8 @@
 package org.sejda.cli.adapters;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
@@ -72,5 +74,21 @@ public class PdfFileSourceAdapter {
             return "";
         }
         return filePathAndPassword.substring(filePathAndPassword.indexOf(PASSWORD_SEPARATOR) + 1);
+    }
+
+    /**
+     * Factory method for transforming a collection of filenames to {@link PdfFileSource}s<br/>
+     * Password protected file support included
+     * 
+     * @param filenames
+     * @return
+     */
+    static List<PdfFileSource> fromStrings(List<String> filenames) {
+        List<PdfFileSource> result = new ArrayList<PdfFileSource>();
+        for (String filename : filenames) {
+            result.add(new PdfFileSourceAdapter(StringUtils.trim(filename)).getPdfFileSource());
+        }
+
+        return result;
     }
 }

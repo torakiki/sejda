@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
@@ -110,6 +111,19 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<UnpackTaskCliArguments, UnpackParameters> getArgumentsTransformer() {
             return new UnpackCliArgumentsTransformer();
+        }
+
+    }),
+    MERGE("merge", new CliInterfacedTask<MergeTaskCliArguments, MergeParameters>() {
+
+        @Override
+        protected Class<MergeTaskCliArguments> getCliArgumentsClass() {
+            return MergeTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> getArgumentsTransformer() {
+            return new MergeCliArgumentsTransformer();
         }
 
     });

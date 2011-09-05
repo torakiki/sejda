@@ -16,7 +16,10 @@
  */
 package org.sejda.cli;
 
+import java.util.Collection;
+
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test verifying the help request feature for commands
@@ -24,7 +27,12 @@ import org.junit.Test;
  * @author Eduard Weissmann
  * 
  */
-public class MandatoryInputAndOutputParametersTraitTest extends AcrossAllTasksTraitTest {
+public class MandatoryInputAndOutputParametersTraitTest extends AbstractTaskTraitTest {
+
+    @Parameters
+    public final static Collection<Object[]> testParameters() {
+        return TestableTask.allTasksExceptFor(TestableTask.MERGE);
+    }
 
     public MandatoryInputAndOutputParametersTraitTest(TestableTask testableTask) {
         super(testableTask);

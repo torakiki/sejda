@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -36,11 +35,9 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  */
 public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
-    private static Collection<TestableTask> exceptFor = Arrays.asList(TestableTask.UNPACK);
-
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasksExceptFor(exceptFor);
+        return TestableTask.allTasksExceptFor(TestableTask.UNPACK);
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {
