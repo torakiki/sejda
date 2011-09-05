@@ -17,8 +17,8 @@
 package org.sejda.cli;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +34,8 @@ public enum TestableTask {
     ROTATE,
     SETVIEWERPREFERENCES,
     ALTERNATEMIX(false),
-    UNPACK;
+    UNPACK,
+    MERGE(false);
 
     private boolean folderOutput = true;
 
@@ -62,13 +63,14 @@ public enum TestableTask {
     }
 
     public static List<Object[]> allTasks() {
-        return allTasksExceptFor(Collections.EMPTY_LIST);
+        return allTasksExceptFor();
     }
 
-    public static List<Object[]> allTasksExceptFor(Collection<TestableTask> exceptFor) {
+    public static List<Object[]> allTasksExceptFor(TestableTask... exceptFor) {
+        Collection<TestableTask> exceptForCollection = Arrays.asList(exceptFor);
         List<Object[]> result = new ArrayList<Object[]>();
         for (TestableTask each : TestableTask.values()) {
-            if (!exceptFor.contains(each)) {
+            if (!exceptForCollection.contains(each)) {
                 result.add(new Object[] { each });
             }
         }

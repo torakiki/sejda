@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
+import org.sejda.core.manipulation.model.parameter.TaskParameters;
 
 /**
  * For tasks that support single file as output, test various scenarios related to this trait
@@ -34,7 +34,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATEMIX } });
+        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATEMIX }, { TestableTask.MERGE } });
     }
 
     public FileOutputTraitTest(TestableTask testableTask) {
@@ -49,8 +49,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void positive() {
-        AlternateMixParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf")
-                .invokeSejdaConsole();
+        TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();
         assertOutputFile(result.getOutput(), new File("./outputs/fileOutput.pdf"));
     }
 }

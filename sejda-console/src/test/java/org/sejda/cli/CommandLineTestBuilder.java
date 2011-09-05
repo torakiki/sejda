@@ -70,6 +70,27 @@ public class CommandLineTestBuilder {
     }
 
     /**
+     * Removes flag/option specified
+     * 
+     * @param option
+     *            option to remove
+     * @return
+     */
+    public CommandLineTestBuilder without(String option) {
+        optionsAndValues.remove(option);
+        return this;
+    }
+
+    /**
+     * Removes any flags/options already added
+     * 
+     */
+    public CommandLineTestBuilder reset() {
+        optionsAndValues.clear();
+        return this;
+    }
+
+    /**
      * Adds a new option and it's value to the command
      * 
      * @param option

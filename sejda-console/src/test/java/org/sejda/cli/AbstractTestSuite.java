@@ -46,16 +46,24 @@ import org.sejda.core.manipulation.model.parameter.TaskParameters;
 public abstract class AbstractTestSuite {
 
     public <T> void assertContainsAll(Collection<T> expectedItems, Collection<T> actualItems) {
+        assertContainsAll("", expectedItems, actualItems);
+    }
+
+    public <T> void assertContainsAll(String message, Collection<T> expectedItems, Collection<T> actualItems) {
         for (T eachExpectedItem : expectedItems) {
-            assertThat(actualItems, hasItem(eachExpectedItem));
+            assertThat(message, actualItems, hasItem(eachExpectedItem));
         }
     }
 
     protected File createTestFile(String path) {
+        return createTestFile(path, "default contents");
+    }
+
+    protected File createTestFile(String path, String contents) {
         File file = new File(path);
         file.deleteOnExit();
         try {
-            FileUtils.writeStringToFile(file, "pdf contents");
+            FileUtils.writeStringToFile(file, contents);
         } catch (IOException e) {
             throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
         }
@@ -74,13 +82,17 @@ public abstract class AbstractTestSuite {
     protected void assertHasFileSource(MultiplePdfSourceParameters parameters, File file, String password) {
         boolean found = false;
         for (PdfSource each : parameters.getSourceList()) {
-            if (((PdfFileSource) each).getFile().equals(file) && StringUtils.equals(each.getPassword(), password)) {
+            if (matchesPdfFileSource(file, password, each)) {
                 found = true;
             }
         }
 
         assertTrue("File '" + file + "'"
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
+    }
+
+    protected boolean matchesPdfFileSource(File file, String password, PdfSource each) {
+        return ((PdfFileSource) each).getFile().equals(file) && StringUtils.equals(each.getPassword(), password);
     }
 
     protected void assertOutputFolder(TaskParameters result, File outputFolder) {
@@ -96,5 +108,4 @@ public abstract class AbstractTestSuite {
     public static void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
         new CommandLineExecuteTestHelper().assertConsoleOutputContains(commandLine, expectedOutputContainedLines);
     }
-
 }

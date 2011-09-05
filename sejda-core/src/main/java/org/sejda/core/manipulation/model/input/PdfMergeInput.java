@@ -16,6 +16,7 @@
  */
 package org.sejda.core.manipulation.model.input;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -62,6 +63,10 @@ public class PdfMergeInput implements PageRangeSelection {
 
     public void addPageRange(PageRange range) {
         pageSelection.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        pageSelection.addAll(ranges);
     }
 
     /**
