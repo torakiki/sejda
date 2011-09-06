@@ -69,7 +69,6 @@ public class RotateTask implements Task<RotateParameters> {
             LOG.debug("Opening {} ...", source);
             reader = source.open(sourceOpener);
 
-            LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(reader);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();

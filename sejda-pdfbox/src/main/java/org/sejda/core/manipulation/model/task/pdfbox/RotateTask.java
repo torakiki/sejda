@@ -68,7 +68,6 @@ public class RotateTask implements Task<RotateParameters> {
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
-            LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(documentHandler.getUnderlyingPDDocument());
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());

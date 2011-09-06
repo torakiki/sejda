@@ -83,6 +83,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
         LOG.debug("Applying {} transitions...", transitions.size());
         int currentStep = 0;
         for (Entry<Integer, PdfPageTransition> entry : transitions.entrySet()) {
+            LOG.trace("Applying transition {} to page {}", entry.getValue(), entry.getKey());
             stamperHandler.setTransitionOnStamper(entry.getKey(), entry.getValue());
             notifyEvent().stepsCompleted(++currentStep).outOf(transitions.size());
         }
