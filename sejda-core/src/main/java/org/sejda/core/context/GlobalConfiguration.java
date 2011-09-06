@@ -99,7 +99,9 @@ final class GlobalConfiguration {
             IOUtils.closeQuietly(stream);
         }
         notificationStrategy = configStrategy.getNotificationStrategy();
+        LOG.trace("Notification strategy: {}", notificationStrategy);
         validation = configStrategy.isValidation();
+        LOG.trace("Validation: {}", validation);
         Map<Class<? extends TaskParameters>, Class<? extends Task>> userTasks = configStrategy.getTasksMap();
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()) {
             taskRegistry.addTask(entry.getKey(), entry.getValue());

@@ -46,12 +46,12 @@ interface EventListenerHoldingStrategy {
 
     /**
      * @param event
-     * @return the list of listeners hold for the given {@link AbstractNotificationEvent}
+     * @return the list of listeners held for the given {@link AbstractNotificationEvent}
      */
     List<EventListener<? extends AbstractNotificationEvent>> get(AbstractNotificationEvent event);
 
     /**
-     * @return number of hold listener
+     * @return number of held listeners.
      */
     int size();
 }

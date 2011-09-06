@@ -24,7 +24,7 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.support.ListValueMap;
 
 /**
- * Holds a list of listeners as a property.
+ * Holds a list of listeners associated to the event class they are listening to.
  * 
  * @author Andrea Vacondio
  * 
