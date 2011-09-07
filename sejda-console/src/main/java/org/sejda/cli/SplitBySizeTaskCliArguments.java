@@ -20,20 +20,15 @@ import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Specifications for command line options of the SplitByGotoLevel task
+ * Specifications for command line options of the SplitBySize task
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbybookmarks")
-public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbysize")
+public interface SplitBySizeTaskCliArguments extends CliArgumentsWithDirectoryOutput {
 
-    // pdf-same incompat this is part of a larger task: split
-    @Option(shortName = "l", description = "bookmarks depth to split at (required)")
-    Integer getBookmarkLevel();
-
-    @Option(shortName = "e", description = "matching regular expression (optional)")
-    String getMatchingRegEx();
-
-    boolean isMatchingRegEx();
+    // pdf-same incompat no default, and this is part of a larger task: split
+    @Option(shortName = "s", description = "size in bytes to split at (required)")
+    Long getSize();
 }

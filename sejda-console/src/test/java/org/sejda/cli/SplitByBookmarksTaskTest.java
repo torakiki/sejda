@@ -40,14 +40,13 @@ public class SplitByBookmarksTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void bookmarksLevel_Default() {
-        SplitByGoToActionLevelParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals(1, parameters.getLevelToSplitAt());
+    public void mandatoryParams() {
+        defaultCommandLine().without("-l").assertConsoleOutputContains("Option is mandatory: --bookmarkLevel");
     }
 
     @Test
     public void matchingRegExp_Specified() {
-        SplitByGoToActionLevelParameters parameters = defaultCommandLine().with("-e", "[Chapter*]")
+        SplitByGoToActionLevelParameters parameters = defaultCommandLine().with("--matchingRegEx", "[Chapter*]")
                 .invokeSejdaConsole();
         assertEquals("[Chapter*]", parameters.getMatchingTitleRegEx());
     }

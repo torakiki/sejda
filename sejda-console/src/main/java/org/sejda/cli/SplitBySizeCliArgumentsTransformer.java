@@ -16,30 +16,25 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
 
 /**
- * {@link CommandCliArgumentsTransformer} for the SplitByBookmarks task command line interface
+ * {@link CommandCliArgumentsTransformer} for the SplitBySize task command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class SplitByBookmarksCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> {
+public class SplitBySizeCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
+        CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> {
 
     /**
-     * Transforms {@link SplitByBookmarksTaskCliArguments} to {@link SplitByGoToActionLevelParameters}
+     * Transforms {@link SplitBySizeTaskCliArguments} to {@link SplitBySizeParameters}
      * 
      * @param taskCliArguments
      * @return
      */
-    public SplitByGoToActionLevelParameters toTaskParameters(SplitByBookmarksTaskCliArguments taskCliArguments) {
-        SplitByGoToActionLevelParameters parameters = new SplitByGoToActionLevelParameters(
-                taskCliArguments.getBookmarkLevel());
-
-        if (taskCliArguments.isMatchingRegEx()) {
-            parameters.setMatchingTitleRegEx(taskCliArguments.getMatchingRegEx());
-        }
+    public SplitBySizeParameters toTaskParameters(SplitBySizeTaskCliArguments taskCliArguments) {
+        SplitBySizeParameters parameters = new SplitBySizeParameters(taskCliArguments.getSize());
 
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);

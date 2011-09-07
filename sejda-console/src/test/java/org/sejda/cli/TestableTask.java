@@ -36,7 +36,8 @@ public enum TestableTask {
     ALTERNATEMIX(new MultipleInputsAndFileOutputDefaultsProvider()),
     UNPACK,
     MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
-    SPLIT_BY_BOOKMARKS(new SingleInputAndFolderOutputDefaultsProvider());
+    SPLIT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
+    SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -101,4 +102,18 @@ class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
         return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
     }
 
+}
+
+class SplitByBookmarksDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-l", "1");
+    }
+}
+
+class SplitBySizeDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-s", "1234567890123456789");
+    }
 }
