@@ -37,7 +37,7 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
      * @return the minimum command line arguments that covers the mandatory arguments with reasonable defaults
      */
     protected CommandLineTestBuilder defaultCommandLine() {
-        return testableTask.getCommandLineTestBuilder();
+        return testableTask.getCommandLineDefaults();
     }
 
     protected String describeExpectations() {

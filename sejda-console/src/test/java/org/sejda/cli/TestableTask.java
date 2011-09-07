@@ -33,33 +33,28 @@ public enum TestableTask {
     ENCRYPT,
     ROTATE,
     SETVIEWERPREFERENCES,
-    ALTERNATEMIX(false),
+    ALTERNATEMIX(new MultipleInputsAndFileOutputDefaultsProvider()),
     UNPACK,
-    MERGE(false);
+    MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
+    SPLIT_BY_BOOKMARKS(new SingleInputAndFolderOutputDefaultsProvider());
 
-    private boolean folderOutput = true;
+    private final DefaultsProvider defaultsProvider;
 
     private TestableTask() {
         // defaults
+        this.defaultsProvider = new DefaultDefaultsProvider();
     }
 
-    private TestableTask(boolean folderOutput) {
-        this.folderOutput = folderOutput;
+    private TestableTask(DefaultsProvider defaultsProvider) {
+        this.defaultsProvider = defaultsProvider;
     }
 
-    public CommandLineTestBuilder getCommandLineTestBuilder() {
-        CommandLineTestBuilder commandBuilder = new CommandLineTestBuilder(getTaskName());
-        if (folderOutput) {
-            commandBuilder.defaultFolderOutput();
-        } else {
-            commandBuilder.defaultFileOutput();
-        }
-
-        return commandBuilder;
+    public CommandLineTestBuilder getCommandLineDefaults() {
+        return defaultsProvider.provideDefaults(getTaskName());
     }
 
     String getTaskName() {
-        return name().toLowerCase();
+        return name().toLowerCase().replaceAll("_", "");
     }
 
     public static List<Object[]> allTasks() {
@@ -77,4 +72,33 @@ public enum TestableTask {
 
         return result;
     }
+}
+
+interface DefaultsProvider {
+
+    CommandLineTestBuilder provideDefaults(String taskName);
+}
+
+class DefaultDefaultsProvider implements DefaultsProvider {
+
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFolderOutput();
+    }
+
+}
+
+class MultipleInputsAndFileOutputDefaultsProvider implements DefaultsProvider {
+
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFileOutput();
+    }
+
+}
+
+class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
+
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
+    }
+
 }

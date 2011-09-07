@@ -238,10 +238,6 @@ public class MergeTaskTest extends AbstractTaskTest {
                 5, 5), new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
     }
 
-    private void assertHasPdfMergeInput(MergeParameters parameters, String filename) {
-        assertHasPdfMergeInput(parameters, filename, NO_PASSWORD, NO_PAGE_RANGE_SPECIFIED);
-    }
-
     private void assertHasPdfMergeInput(MergeParameters parameters, String filename,
             Collection<PageRange> expectedPageRanges) {
         assertHasPdfMergeInput(parameters, filename, NO_PASSWORD, expectedPageRanges);

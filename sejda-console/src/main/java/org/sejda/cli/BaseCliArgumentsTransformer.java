@@ -17,8 +17,10 @@
 package org.sejda.cli;
 
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
 
 /**
  * @author Eduard Weissmann
@@ -56,7 +58,7 @@ public class BaseCliArgumentsTransformer {
     }
 
     /**
-     * Populates pdf source parameters
+     * Populates pdf source parameters for tasks that support <i>more than</i> one input file
      * 
      * @param parameters
      * @param taskCliArguments
@@ -65,5 +67,19 @@ public class BaseCliArgumentsTransformer {
         for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
             parameters.addSource(eachAdapter.getPdfFileSource());
         }
+    }
+
+    /**
+     * Populates pdf source parameters for tasks that support <i>only</i> one input file
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateSourceParameters(SinglePdfSourceParameters parameters, TaskCliArguments taskCliArguments) {
+        if (taskCliArguments.getFiles().size() != 1) {
+            throw new SejdaRuntimeException("Only one input file expected, received "
+                    + taskCliArguments.getFiles().size());
+        }
+        parameters.setSource(taskCliArguments.getFiles().get(0).getPdfFileSource());
     }
 }
