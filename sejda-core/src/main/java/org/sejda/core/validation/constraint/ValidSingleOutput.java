@@ -34,8 +34,7 @@ import javax.validation.constraints.NotNull;
 import org.sejda.core.validation.validator.SingleOutputValidator;
 
 /**
- * Constraint validating that a single output parameter is valid. Optionally a file extension different from PDF can be specified to validate that the output is of an expected
- * type.
+ * Constraint validating that a single output parameter is valid.
  * 
  * @author Andrea Vacondio
  * 

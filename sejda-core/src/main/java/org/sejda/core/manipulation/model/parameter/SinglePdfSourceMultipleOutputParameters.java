@@ -25,12 +25,12 @@ import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
- * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
+ * Provides a skeletal implementation for the parameter classes having a single pdf source as input and generating multiple output.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitParameters extends SinglePdfSourceParameters {
+public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfSourceParameters {
 
     private String outputPrefix = "";
     @Valid
@@ -65,10 +65,10 @@ public abstract class AbstractSplitParameters extends SinglePdfSourceParameters 
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractSplitParameters)) {
+        if (!(other instanceof SinglePdfSourceMultipleOutputParameters)) {
             return false;
         }
-        AbstractSplitParameters parameter = (AbstractSplitParameters) other;
+        SinglePdfSourceMultipleOutputParameters parameter = (SinglePdfSourceMultipleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
                 .isEquals();
     }

@@ -21,11 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
@@ -40,37 +38,11 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @SingleOutputAllowedExtensions
-public class SetPagesLabelParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters {
+public class SetPagesLabelParameters extends SinglePdfSourceSingleOutputParameters {
 
     @NotEmpty
     @Valid
     private final Map<Integer, PdfPageLabel> labels = new HashMap<Integer, PdfPageLabel>();
-    private String outputName;
-    @Valid
-    @NotNull
-    private TaskOutput output;
-
-    public SetPagesLabelParameters() {
-        super();
-    }
-
-    /**
-     * @param outputName
-     *            to be used when the output is not a file destination
-     */
-    public SetPagesLabelParameters(String outputName) {
-        this.outputName = outputName;
-    }
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
-    }
 
     /**
      * Associates the given label to the given page number. If a label was already associated to the given page, it is replaced with the new one.
@@ -84,17 +56,6 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters implement
     }
 
     /**
-     * Clears the collection of labels stored in this parameter instance.
-     */
-    public void clearLabels() {
-        labels.clear();
-    }
-
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
      * @return an unmodifiable view of the labels in this parameter.
      */
     public Map<Integer, PdfPageLabel> getLabels() {
@@ -103,7 +64,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters implement
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(labels).append(outputName).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(labels).toHashCode();
     }
 
     @Override
@@ -116,7 +77,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceParameters implement
         }
         SetPagesLabelParameters parameter = (SetPagesLabelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getLabels(), parameter.getLabels())
-                .append(outputName, parameter.getOutputName()).isEquals();
+                .isEquals();
     }
 
 }

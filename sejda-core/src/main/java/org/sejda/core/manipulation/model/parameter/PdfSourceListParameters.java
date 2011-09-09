@@ -34,7 +34,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public abstract class PdfSourceListParameters extends AbstractParameters implements MultiplePdfSourceParameters {
+abstract class PdfSourceListParameters extends AbstractParameters implements MultiplePdfSourceParameters {
 
     @NotEmpty
     @Valid

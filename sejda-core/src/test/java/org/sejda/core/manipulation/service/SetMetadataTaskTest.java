@@ -51,7 +51,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private SetMetadataParameters parameters = new SetMetadataParameters("outName.pdf");
+    private SetMetadataParameters parameters = new SetMetadataParameters();
 
     @Before
     public void setUp() {
@@ -65,6 +65,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
      */
     private void setUpParameters() {
         parameters.setCompress(true);
+        parameters.setOutputName("outName.pdf");
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.put(PdfMetadataKey.AUTHOR, "test_author");
         parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");

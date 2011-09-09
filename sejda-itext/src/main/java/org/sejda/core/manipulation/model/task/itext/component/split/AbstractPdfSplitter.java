@@ -30,7 +30,7 @@ import java.util.Map;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
-import org.sejda.core.manipulation.model.parameter.AbstractSplitParameters;
+import org.sejda.core.manipulation.model.parameter.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
@@ -48,7 +48,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @param <T>
  *            the type of parameters the splitter needs to have all the information necessary to perform the split.
  */
-abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
+abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);
 

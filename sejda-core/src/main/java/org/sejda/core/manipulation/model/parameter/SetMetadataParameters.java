@@ -23,12 +23,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
@@ -40,36 +36,10 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @SingleOutputAllowedExtensions
-public final class SetMetadataParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters {
+public final class SetMetadataParameters extends SinglePdfSourceSingleOutputParameters {
 
     @NotEmpty
     private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
-    private String outputName;
-    @Valid
-    @NotNull
-    private TaskOutput output;
-
-    public SetMetadataParameters() {
-        super();
-    }
-
-    /**
-     * @param outputName
-     *            to be used when the output is not a file destination
-     */
-    public SetMetadataParameters(String outputName) {
-        this.outputName = outputName;
-    }
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
-    }
 
     /**
      * @see Map#entrySet()
@@ -77,10 +47,6 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters imple
      */
     public Set<Entry<PdfMetadataKey, String>> entrySet() {
         return Collections.unmodifiableSet(metadata.entrySet());
-    }
-
-    public String getOutputName() {
-        return outputName;
     }
 
     /**
@@ -112,7 +78,7 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters imple
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(outputName).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).toHashCode();
     }
 
     @Override
@@ -125,6 +91,6 @@ public final class SetMetadataParameters extends SinglePdfSourceParameters imple
         }
         SetMetadataParameters parameter = (SetMetadataParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata.entrySet(), parameter.entrySet())
-                .append(outputName, parameter.getOutputName()).isEquals();
+                .isEquals();
     }
 }

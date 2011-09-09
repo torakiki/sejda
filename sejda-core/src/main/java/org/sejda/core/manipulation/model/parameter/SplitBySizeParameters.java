@@ -27,7 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class SplitBySizeParameters extends AbstractSplitParameters {
+public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParameters {
 
     @Min(1)
     private long sizeToSplitAt;

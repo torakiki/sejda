@@ -24,7 +24,7 @@ import java.util.Set;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitByPageParameters extends AbstractSplitParameters {
+public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters {
 
     /**
      * @param upperLimit
