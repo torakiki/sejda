@@ -71,7 +71,7 @@ abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSourcePara
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SinglePdfSourceParameters)) {
+        if (!(other instanceof SinglePdfSourceSingleOutputParameters)) {
             return false;
         }
         SinglePdfSourceSingleOutputParameters parameter = (SinglePdfSourceSingleOutputParameters) other;

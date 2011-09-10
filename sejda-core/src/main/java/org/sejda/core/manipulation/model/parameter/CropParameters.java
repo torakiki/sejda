@@ -17,7 +17,6 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -25,6 +24,7 @@ import javax.validation.Valid;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.RectangularBox;
+import org.sejda.core.support.NullSafeSet;
 import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
@@ -38,7 +38,7 @@ public class CropParameters extends SinglePdfSourceSingleOutputParameters {
     @Valid
     @NotEmpty
     // TODO validator for rectangular boxes
-    private final Set<RectangularBox> cropAreas = new LinkedHashSet<RectangularBox>();
+    private final Set<RectangularBox> cropAreas = new NullSafeSet<RectangularBox>();
 
     /**
      * @return an unmodifiable view of the crop areas.

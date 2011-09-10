@@ -22,6 +22,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.manipulation.model.rotation.Rotation;
+import org.sejda.core.validation.constraint.NotNegativeCoordinates;
+import org.sejda.core.validation.constraint.ValidCoordinates;
 
 /**
  * A rectangular box with rotation capabilities.
@@ -29,6 +31,8 @@ import org.sejda.core.manipulation.model.rotation.Rotation;
  * @author Andrea Vacondio
  * 
  */
+@ValidCoordinates
+@NotNegativeCoordinates
 public final class RectangularBox {
 
     private int bottom;
@@ -127,10 +131,10 @@ public final class RectangularBox {
         assertNotNegative(left);
         assertNotNegative(top);
         assertNotNegative(right);
-        if (top < bottom) {
+        if (top <= bottom) {
             throw new IllegalArgumentException("Top must be greter then bottom.");
         }
-        if (right < left) {
+        if (right <= left) {
             throw new IllegalArgumentException("Right must be greter then left.");
         }
         return new RectangularBox(bottom, left, top, right);
