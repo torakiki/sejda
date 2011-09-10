@@ -36,9 +36,7 @@ public class CoordinatesValidator implements ConstraintValidator<ValidCoordinate
 
     public boolean isValid(RectangularBox value, ConstraintValidatorContext context) {
         if (value != null) {
-            if (value.getTop() <= value.getBottom() || value.getRight() <= value.getLeft()) {
-                return false;
-            }
+            return value.getTop() > value.getBottom() && value.getRight() > value.getLeft();
         }
         return true;
     }

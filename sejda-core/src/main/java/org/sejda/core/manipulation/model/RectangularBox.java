@@ -71,7 +71,7 @@ public final class RectangularBox {
     public void rotate(Rotation desiredRotation) {
         if (desiredRotation != null) {
             Rotation currentRotation = Rotation.DEGREES_0;
-            while (currentRotation != desiredRotation) {
+            while (!currentRotation.equals(desiredRotation)) {
                 switchTopRight();
                 switchBottomLeft();
                 currentRotation = currentRotation.rotateClockwise();
@@ -142,7 +142,7 @@ public final class RectangularBox {
 
     private static void assertNotNegative(int value) {
         if (value < 0) {
-            throw new IllegalArgumentException(String.format("Found negative value %n", value));
+            throw new IllegalArgumentException(String.format("Found negative value %d", value));
         }
     }
 

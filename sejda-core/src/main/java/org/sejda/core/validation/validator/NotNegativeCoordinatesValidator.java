@@ -36,9 +36,7 @@ public class NotNegativeCoordinatesValidator implements ConstraintValidator<NotN
 
     public boolean isValid(RectangularBox value, ConstraintValidatorContext context) {
         if (value != null) {
-            if (value.getBottom() < 0 || value.getTop() < 0 || value.getLeft() < 0 || value.getRight() < 0) {
-                return false;
-            }
+            return value.getBottom() >= 0 && value.getTop() >= 0 && value.getLeft() >= 0 && value.getRight() >= 0;
         }
         return true;
     }
