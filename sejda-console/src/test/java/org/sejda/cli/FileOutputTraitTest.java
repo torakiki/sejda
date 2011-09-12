@@ -34,7 +34,8 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATEMIX }, { TestableTask.MERGE } });
+        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATEMIX }, { TestableTask.MERGE },
+                { TestableTask.EXTRACT_PAGES } });
     }
 
     public FileOutputTraitTest(TestableTask testableTask) {

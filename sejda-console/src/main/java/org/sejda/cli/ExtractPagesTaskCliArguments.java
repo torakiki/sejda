@@ -16,21 +16,29 @@
  */
 package org.sejda.cli;
 
+import org.sejda.cli.adapters.PageRangeSetAdapter;
 import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Specifications for command line options of the SimpleSplit task
+ * Specifications for command line options of the ExtractPages task
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " simplesplit")
-public interface SimpleSplitTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " extractpages")
+public interface ExtractPagesTaskCliArguments extends CliArgumentsWithFileOutput {
 
-    // pdf-same incompat no default, and this is part of a larger task: split
-    @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (required)")
+    @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (optional)")
     PredefinedSetOfPages getPredefinedPages();
+
+    boolean isPredefinedPages();
+
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Accepted values: 'all' or 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s all or -s 4,12-14,8,20-)s (optional)")
+    PageRangeSetAdapter getPageSelection();
+
+    boolean isPageSelection();
 }

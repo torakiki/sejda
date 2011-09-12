@@ -19,40 +19,51 @@ package org.sejda.cli;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
- * Tests for the SimpleSplitTask command line interface
+ * Tests for the ExtractPagesTask command line interface
  * 
  * @author Eduard Weissmann
  * 
  */
-public class SimpleSplitTaskTest extends AbstractTaskTest {
+public class ExtractPagesTaskTest extends AbstractTaskTest {
 
-    public SimpleSplitTaskTest() {
-        super(TestableTask.SIMPLE_SPLIT);
+    public ExtractPagesTaskTest() {
+        super(TestableTask.EXTRACT_PAGES);
     }
 
     @Test
     public void predefinedPages_ALL_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "ALL_PAGES").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "ALL_PAGES").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 2, 3, 4, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_ODD_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "ODD_PAGES").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "ODD_PAGES").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 3, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_EVEN_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "EVEN_PAGES").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "EVEN_PAGES").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
     }
 
     @Test
+    public void pageRange_combined() {
+        ExtractPagesParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
+                .invokeSejdaConsole();
+
+        assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
+                new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
+    }
+
+    @Test
     public void mandatoryParams() {
-        defaultCommandLine().without("-p").assertConsoleOutputContains("Option is mandatory: --predefinedPages");
+        defaultCommandLine().without("-p").without("-s")
+                .assertConsoleOutputContains("Please specify at least one option that defines pages to be extracted");
     }
 }
