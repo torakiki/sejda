@@ -61,14 +61,13 @@ public class RotateTask implements Task<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.ensureOwnerPermissions();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            LOG.debug("Applying rotation {} ...", parameters.getRotation());
             applyRotation(parameters.getRotation()).to(documentHandler.getUnderlyingPDDocument());
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());

@@ -56,7 +56,7 @@ public class UnpackTask implements Task<UnpackParameters> {
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
             unpacker.unpack(reader);

@@ -30,7 +30,7 @@ import java.util.Map;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
-import org.sejda.core.manipulation.model.parameter.AbstractSplitParameters;
+import org.sejda.core.manipulation.model.parameter.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.core.manipulation.model.task.itext.component.PdfCopier;
@@ -48,7 +48,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @param <T>
  *            the type of parameters the splitter needs to have all the information necessary to perform the split.
  */
-abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
+abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);
 
@@ -80,18 +80,18 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
             int outputDocumentsCounter = 0;
             for (int page = 1; page <= totalPages; page++) {
                 if (nextOutputStrategy().isOpening(page)) {
-                    LOG.debug("Starting split at page {} of the original document...", page);
+                    LOG.debug("Starting split at page {} of the original document", page);
                     outputDocumentsCounter++;
                     pdfCopier = open(page, outputDocumentsCounter);
                 }
                 pdfCopier.addPage(reader, page);
                 notifyEvent().stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
-                    LOG.debug("Adding bookmarks to the temporary buffer ...");
+                    LOG.debug("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
                     closeCopier(pdfCopier);
-                    LOG.debug("Ending split at page {} of the original document...", page);
+                    LOG.debug("Ending split at page {} of the original document", page);
                 }
             }
         } finally {
@@ -102,7 +102,7 @@ abstract class AbstractPdfSplitter<T extends AbstractSplitParameters> {
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {}", tmpFile);
 
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
         pdfCopier.setCompression(parameters.isCompressXref());

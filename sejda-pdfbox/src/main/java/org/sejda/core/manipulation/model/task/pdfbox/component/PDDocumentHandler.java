@@ -133,7 +133,7 @@ public class PDDocumentHandler {
     public void decryptPDDocumentIfNeeded(String password) throws TaskIOException {
         if (document.isEncrypted() && StringUtils.isNotBlank(password)) {
             DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
-            LOG.trace("Decrypting input document ...");
+            LOG.trace("Decrypting input document");
             try {
                 document.openProtection(decryptionMaterial);
             } catch (IOException e) {

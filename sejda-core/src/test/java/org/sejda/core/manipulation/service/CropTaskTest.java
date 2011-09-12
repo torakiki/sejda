@@ -1,7 +1,6 @@
 /*
- * Created on 09/lug/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 10/set/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,37 +20,40 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.awt.Point;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
+import org.sejda.core.manipulation.model.RectangularBox;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
+import org.sejda.core.manipulation.model.parameter.CropParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
 
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Test unit for the set metadata task
- * 
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-@SuppressWarnings("unchecked")
-public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements TestableTask<SetMetadataParameters> {
+public abstract class CropTaskTest extends PdfOutEnabledTest implements TestableTask<CropParameters> {
+
+    private static final RectangularBox EVEN_PAGES_RECTANGLE = RectangularBox.newInstanceFromPoints(new Point(0, 0),
+            new Point(595, 421));
+    private static final RectangularBox ODD_PAGES_RECTANGLE = RectangularBox.newInstanceFromPoints(new Point(0, 421),
+            new Point(595, 842));
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private SetMetadataParameters parameters = new SetMetadataParameters();
+    private CropParameters parameters;
 
     @Before
     public void setUp() {
@@ -60,17 +62,15 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     }
 
     /**
-     * Set up of the set metadata parameters
+     * Set up of the set page labels parameters
      * 
      */
     private void setUpParameters() {
-        parameters.setCompress(true);
-        parameters.setOutputName("outName.pdf");
+        parameters = new CropParameters();
+        parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.put(PdfMetadataKey.AUTHOR, "test_author");
-        parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");
-        parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
-        parameters.put(PdfMetadataKey.TITLE, "test_title");
+        parameters.addCropArea(ODD_PAGES_RECTANGLE);
+        parameters.addCropArea(EVEN_PAGES_RECTANGLE);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
@@ -78,39 +78,37 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     }
 
     @Test
-    public void testExecuteStream() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("outName.pdf");
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        HashMap<String, String> meta = reader.getInfo();
-        assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
-        assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
-        assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
-        assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
-        reader.close();
-    }
-
-    @Test
-    public void testExecuteFile() throws TaskException, IOException {
+    public void testExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
         assertVersion(reader, PdfVersion.VERSION_1_6);
-        HashMap<String, String> meta = reader.getInfo();
-        assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
-        assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
-        assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
-        assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
+        assertEquals(8, reader.getNumberOfPages());
+        for (int i = 1; i <= reader.getNumberOfPages(); i = i + 2) {
+            Rectangle crop = reader.getBoxSize(i, "crop");
+            assertEqualsRectangleOddPages(ODD_PAGES_RECTANGLE, crop);
+            Rectangle media = reader.getBoxSize(i, "media");
+            assertEqualsRectangleOddPages(ODD_PAGES_RECTANGLE, media);
+        }
+        for (int i = 2; i <= reader.getNumberOfPages(); i = i + 2) {
+            Rectangle crop = reader.getBoxSize(i, "crop");
+            assertEqualsRectangleOddPages(EVEN_PAGES_RECTANGLE, crop);
+            Rectangle media = reader.getBoxSize(i, "media");
+            assertEqualsRectangleOddPages(EVEN_PAGES_RECTANGLE, media);
+        }
         reader.close();
     }
 
-    protected SetMetadataParameters getParameters() {
-        return parameters;
+    private void assertEqualsRectangleOddPages(RectangularBox expected, Rectangle found) {
+        assertEquals(expected.getLeft(), (int) found.getLeft());
+        assertEquals(expected.getBottom(), (int) found.getBottom());
+        assertEquals(expected.getRight(), (int) found.getRight());
+        assertEquals(expected.getTop(), (int) found.getTop());
     }
 
+    protected CropParameters getParameters() {
+        return parameters;
+    }
 }

@@ -28,7 +28,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByGoToActionLevelParameters extends AbstractSplitParameters {
+public class SplitByGoToActionLevelParameters extends SinglePdfSourceMultipleOutputParameters {
 
     @Min(1)
     private int levelToSplitAt;

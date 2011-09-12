@@ -50,20 +50,39 @@ public final class AsyncNotificationStrategy implements NotificationStrategy {
     @SuppressWarnings("rawtypes")
     public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
-            THREAD_LOCAL.get().execute(new Runnable() {
-
-                @SuppressWarnings("unchecked")
-                public void run() {
-                    try {
-                        listener.onEvent(event);
-                    } catch (RuntimeException e) {
-                        LOG.error(String.format("An error occurred notifying event %s", event), e);
-                        throw e;
-                    }
-                }
-
-            });
+            THREAD_LOCAL.get().execute(new NotifyRunnable(listener, event));
         }
     }
 
+    /**
+     * Runnable that can notify a listener of a given event.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    @SuppressWarnings("rawtypes")
+    private static final class NotifyRunnable implements Runnable {
+
+        private final EventListener listener;
+        private final AbstractNotificationEvent event;
+
+        /**
+         * @param listener
+         * @param event
+         */
+        private NotifyRunnable(EventListener listener, AbstractNotificationEvent event) {
+            this.listener = listener;
+            this.event = event;
+        }
+
+        @SuppressWarnings("unchecked")
+        public void run() {
+            try {
+                listener.onEvent(event);
+            } catch (RuntimeException e) {
+                LOG.error(String.format("An error occurred notifying event %s", event), e);
+                throw e;
+            }
+        }
+    }
 }

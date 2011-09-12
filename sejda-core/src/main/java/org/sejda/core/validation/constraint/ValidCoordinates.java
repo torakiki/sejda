@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 10/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -29,23 +29,22 @@ import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import javax.validation.constraints.NotNull;
 
-import org.sejda.core.validation.validator.SingleOutputValidator;
+import org.sejda.core.validation.validator.CoordinatesValidator;
 
 /**
- * Constraint validating that a single output parameter is valid.
+ * Constraint on the coordinates defined ensuring that top is greater then bottom and right is greater then left.
  * 
  * @author Andrea Vacondio
  * 
  */
-@NotNull
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
 @Retention(RUNTIME)
-@Constraint(validatedBy = SingleOutputValidator.class)
+@Constraint(validatedBy = { CoordinatesValidator.class })
 @Documented
-public @interface ValidSingleOutput {
-    String message() default "Output name cannot be blank for non file output destinations.";
+public @interface ValidCoordinates {
+
+    String message() default "The given coordinates are not valid.";
 
     Class<?>[] groups() default {};
 

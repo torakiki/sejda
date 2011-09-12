@@ -1,6 +1,6 @@
 /*
- * Created on 23/gen/2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 10/set/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -18,15 +18,18 @@ package org.sejda.core.manipulation.model.task.itext;
 
 import static org.sejda.core.manipulation.model.task.itext.component.PdfCopiers.nullSafeClosePdfCopy;
 import static org.sejda.core.manipulation.model.task.itext.util.ITextUtils.nullSafeClosePdfReader;
-import static org.sejda.core.manipulation.model.task.itext.util.PageLabelUtils.getLabels;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
+import org.sejda.core.manipulation.model.RectangularBox;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
+import org.sejda.core.manipulation.model.parameter.CropParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.manipulation.model.task.itext.component.DefaultPdfCopier;
 import org.sejda.core.manipulation.model.task.itext.component.input.PdfSourceOpeners;
@@ -34,32 +37,37 @@ import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.lowagie.text.pdf.PdfDictionary;
+import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfRectangle;
 
 /**
- * Task that apply page labels to a input pdf.
+ * iText implementation of the Crop task to set MEDIABOX and CROPBOX on an input document. This task allow multiple boxes on the same page, generating an output document that
+ * contains duplicated pages with different boxes applied.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
+public class CropTask implements Task<CropParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CropTask.class);
 
     private PdfReader reader = null;
     private DefaultPdfCopier copier = null;
     private SingleOutputWriterSupport outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
-    public void before(SetPagesLabelParameters parameters) {
+    public void before(CropParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
-        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        sourceOpener = PdfSourceOpeners.newFullReadOpener();
     }
 
-    public void execute(SetPagesLabelParameters parameters) throws TaskException {
+    public void execute(CropParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
+        int totalPages = reader.getNumberOfPages();
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
@@ -67,23 +75,35 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
         copier.setCompression(parameters.isCompressXref());
 
-        copier.addAllPages(reader);
-
-        nullSafeClosePdfReader(reader);
-
-        LOG.debug("Applying {} labels ", parameters.getLabels().size());
-        copier.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
-
+        Set<PdfRectangle> cropAreas = getPdfRectangles(parameters.getCropAreas());
+        for (int page = 1; page <= totalPages; page++) {
+            PdfDictionary dictionary = reader.getPageN(page);
+            for (PdfRectangle cropBox : cropAreas) {
+                LOG.trace("Applying crop box {} to page {}", cropBox, page);
+                dictionary.put(PdfName.MEDIABOX, cropBox);
+                dictionary.put(PdfName.CROPBOX, cropBox);
+                copier.addPage(reader, page);
+            }
+            notifyEvent().stepsCompleted(page).outOf(totalPages);
+        }
         nullSafeClosePdfCopy(copier);
+        nullSafeClosePdfReader(reader);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
-        LOG.debug("Labels applied to {}", parameters.getOutput());
+        LOG.debug("Crop areas applied to {}", parameters.getOutput());
     }
 
     public void after() {
-        nullSafeClosePdfReader(reader);
         nullSafeClosePdfCopy(copier);
+        nullSafeClosePdfReader(reader);
     }
 
+    private Set<PdfRectangle> getPdfRectangles(Set<RectangularBox> areas) {
+        Set<PdfRectangle> retVal = new LinkedHashSet<PdfRectangle>();
+        for (RectangularBox box : areas) {
+            retVal.add(new PdfRectangle(box.getLeft(), box.getBottom(), box.getRight(), box.getTop()));
+        }
+        return retVal;
+    }
 }

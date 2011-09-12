@@ -23,11 +23,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.manipulation.model.pdf.page.PagesSelection;
@@ -45,16 +43,12 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 @NoIntersections
 @SingleOutputAllowedExtensions
 // TODO validate setOfPages or at least one range are specified
-public class ExtractPagesParameters extends SinglePdfSourceParameters implements SingleOutputTaskParameters,
-        PageRangeSelection, PagesSelection {
+public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters implements PageRangeSelection,
+        PagesSelection {
 
     private PredefinedSetOfPages setOfPages;
     @Valid
     private final Set<PageRange> pageSelection = new LinkedHashSet<PageRange>();
-    private String outputName;
-    @Valid
-    @NotNull
-    private TaskOutput output;
 
     /**
      * Creates an instance using a predefined set of pages to extract.
@@ -72,28 +66,6 @@ public class ExtractPagesParameters extends SinglePdfSourceParameters implements
      */
     public ExtractPagesParameters(Collection<PageRange> pageRanges) {
         this.pageSelection.addAll(pageRanges);
-    }
-
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
-     * @param outputName
-     *            the outputName to be used when the output is not a file destination
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
     }
 
     /**
@@ -117,7 +89,7 @@ public class ExtractPagesParameters extends SinglePdfSourceParameters implements
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(setOfPages).append(pageSelection)
-                .append(output).append(outputName).toHashCode();
+                .toHashCode();
     }
 
     @Override
@@ -130,7 +102,6 @@ public class ExtractPagesParameters extends SinglePdfSourceParameters implements
         }
         ExtractPagesParameters parameter = (ExtractPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(setOfPages, parameter.setOfPages)
-                .append(pageSelection, parameter.pageSelection).append(output, parameter.getOutput())
-                .append(outputName, parameter.getOutputName()).isEquals();
+                .append(pageSelection, parameter.pageSelection).isEquals();
     }
 }

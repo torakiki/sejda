@@ -61,9 +61,9 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
 
     public void execute(ExtractPagesParameters parameters) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
 
-        LOG.debug("Opening input {} ...", parameters.getSource());
+        LOG.debug("Opening input {} ", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
         Set<Integer> pages = parameters.getPages(reader.getNumberOfPages());
@@ -71,9 +71,9 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
             throw new TaskExecutionException("No page has been selected for extraction.");
         }
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-        LOG.debug("Created DefaultPdfCopier...");
+        LOG.debug("Created DefaultPdfCopier");
 
-        LOG.debug("Setting pages selection ...");
+        LOG.debug("Setting pages selection ");
         reader.selectPages(new ArrayList<Integer>(pages));
         LOG.trace("Pages selection set to {}", pages);
 

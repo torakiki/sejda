@@ -59,12 +59,12 @@ public class DecryptTask implements Task<DecryptParameters> {
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.ensureOwnerPermissions();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.compressXrefStream(parameters.isCompressXref());

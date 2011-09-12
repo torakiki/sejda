@@ -98,9 +98,11 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         assertVersion(reader, PdfVersion.VERSION_1_7);
         PdfDictionary catalog = PdfViewerPreferencesImp.getViewerPreferences(reader.getCatalog())
                 .getViewerPreferences();
-        assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
+        // TODO once PDFBox has it
+        // assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
         assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
-        assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
+        // TODO once PDFBox has it
+        // assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
         assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));

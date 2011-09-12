@@ -1,6 +1,6 @@
 /*
- * Created on 03/ago/2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 09/set/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -17,32 +17,30 @@
 package org.sejda.core.manipulation.model.parameter;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
+import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
- * Abstract split by page parameters. Provides a skeletal implementation for the parameter class to be used during a split by page task.
+ * Abstract parameter class to be used as base class for tasks parameter having a single pdf source as input and producing a single {@link TaskOutput}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitParameters extends SinglePdfSourceParameters {
+@ValidSingleOutput
+abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSourceParameters implements
+        SingleOutputTaskParameters {
 
-    private String outputPrefix = "";
+    private String outputName;
     @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
+    @NotNull
     private TaskOutput output;
 
-    public String getOutputPrefix() {
-        return outputPrefix;
-    }
-
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
+    public String getOutputName() {
+        return outputName;
     }
 
     @Override
@@ -55,9 +53,17 @@ public abstract class AbstractSplitParameters extends SinglePdfSourceParameters 
         this.output = output;
     }
 
+    /**
+     * @param outputName
+     *            the outputName to be used when the output is not a file destination
+     */
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputName).toHashCode();
     }
 
     @Override
@@ -65,11 +71,11 @@ public abstract class AbstractSplitParameters extends SinglePdfSourceParameters 
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractSplitParameters)) {
+        if (!(other instanceof SinglePdfSourceSingleOutputParameters)) {
             return false;
         }
-        AbstractSplitParameters parameter = (AbstractSplitParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
+        SinglePdfSourceSingleOutputParameters parameter = (SinglePdfSourceSingleOutputParameters) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputName, parameter.getOutputName())
                 .isEquals();
     }
 }

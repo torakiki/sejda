@@ -21,7 +21,7 @@ public class SetPagesTransitionParametersTest {
         SetPagesTransitionParameters victim2 = new SetPagesTransitionParameters();
         SetPagesTransitionParameters victim3 = new SetPagesTransitionParameters();
         SetPagesTransitionParameters victim4 = new SetPagesTransitionParameters(PdfPageTransition.newInstance(
-                PdfPageTransitionStyle.DISSOLVE, 1, 5), "name");
+                PdfPageTransitionStyle.DISSOLVE, 1, 5));
         TestUtils.testEqualsAndHashCodes(victim1, victim2, victim3, victim4);
     }
 
@@ -39,7 +39,8 @@ public class SetPagesTransitionParametersTest {
 
     @Test
     public void testInvalidParameters() {
-        SetPagesTransitionParameters victim = new SetPagesTransitionParameters(null, "test.pdf");
+        SetPagesTransitionParameters victim = new SetPagesTransitionParameters(null);
+        victim.setOutputName("test.pdf");
         TaskOutput output = mock(TaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);

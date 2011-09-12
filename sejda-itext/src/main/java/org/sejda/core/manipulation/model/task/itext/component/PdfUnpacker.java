@@ -64,7 +64,7 @@ public class PdfUnpacker {
         if (reader == null) {
             throw new TaskException("Unable to unpack a null reader.");
         }
-        LOG.debug("Unpacking started ...");
+        LOG.debug("Unpacking started");
         Set<PdfDictionary> dictionaries = getAttachmentsDictionaries(reader);
         if (dictionaries.isEmpty()) {
             LOG.info("No attachments found.");
@@ -92,13 +92,13 @@ public class PdfUnpacker {
 
     private File copyToTemporaryFile(PRStream prs) throws TaskIOException {
         File tmpFile = outputWriter.createTemporaryBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {}", tmpFile);
 
         ByteArrayInputStream inputStream = null;
         try {
             inputStream = new ByteArrayInputStream(PdfReader.getStreamBytes(prs));
             FileUtils.copyInputStreamToFile(inputStream, tmpFile);
-            LOG.debug("Attachment unpacked to temporary buffer ...");
+            LOG.debug("Attachment unpacked to temporary buffer");
         } catch (IOException e) {
             throw new TaskIOException("Unable to copy attachment to temporary file.", e);
         } finally {

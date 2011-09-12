@@ -72,11 +72,11 @@ public class EncryptTask implements Task<EncryptParameters> {
     public void execute(EncryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Created output temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output temporary buffer {} ", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());

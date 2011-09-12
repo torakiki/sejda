@@ -17,47 +17,47 @@
 package org.sejda.core.support;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * {@link HashSet} wrapper disallowing null elements.
+ * {@link LinkedHashSet} wrapper disallowing null elements.
  * 
  * @author Andrea Vacondio
  * @param <E>
- *            the set type.
+ *            type of elements of the set.
  */
 public class NullSafeSet<E> implements Set<E> {
 
-    private Set<E> wrappedSet;
+    private Set<E> delegate;
 
     public NullSafeSet() {
-        wrappedSet = new HashSet<E>();
+        delegate = new LinkedHashSet<E>();
     }
 
     public int size() {
-        return wrappedSet.size();
+        return delegate.size();
     }
 
     public boolean isEmpty() {
-        return wrappedSet.isEmpty();
+        return delegate.isEmpty();
     }
 
     public boolean contains(Object o) {
-        return wrappedSet.contains(o);
+        return delegate.contains(o);
     }
 
     public Iterator<E> iterator() {
-        return wrappedSet.iterator();
+        return delegate.iterator();
     }
 
     public Object[] toArray() {
-        return wrappedSet.toArray();
+        return delegate.toArray();
     }
 
     public <T> T[] toArray(T[] a) {
-        return wrappedSet.toArray(a);
+        return delegate.toArray(a);
     }
 
     /**
@@ -65,17 +65,17 @@ public class NullSafeSet<E> implements Set<E> {
      */
     public boolean add(E e) {
         if (e != null) {
-            return wrappedSet.add(e);
+            return delegate.add(e);
         }
         return false;
     }
 
     public boolean remove(Object o) {
-        return wrappedSet.remove(o);
+        return delegate.remove(o);
     }
 
     public boolean containsAll(Collection<?> c) {
-        return wrappedSet.containsAll(c);
+        return delegate.containsAll(c);
     }
 
     public boolean addAll(Collection<? extends E> c) {
@@ -89,15 +89,25 @@ public class NullSafeSet<E> implements Set<E> {
     }
 
     public boolean retainAll(Collection<?> c) {
-        return wrappedSet.retainAll(c);
+        return delegate.retainAll(c);
     }
 
     public boolean removeAll(Collection<?> c) {
-        return wrappedSet.removeAll(c);
+        return delegate.removeAll(c);
     }
 
     public void clear() {
-        wrappedSet.clear();
+        delegate.clear();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return delegate.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate.hashCode();
     }
 
 }

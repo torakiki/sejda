@@ -74,7 +74,6 @@ abstract class AbstractPdfCopier implements PdfCopier {
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addPage(pdfCopy.getImportedPage(reader, pageNumber));
-            pdfDocument.open();
         } catch (BadPdfFormatException e) {
             throw new TaskException(String.format("An error occurred adding page %d to the PdfSmartCopy.", pageNumber),
                     e);

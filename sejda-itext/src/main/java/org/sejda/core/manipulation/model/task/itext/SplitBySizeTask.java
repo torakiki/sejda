@@ -48,11 +48,11 @@ public class SplitBySizeTask implements Task<SplitBySizeParameters> {
     }
 
     public void execute(SplitBySizeParameters parameters) throws TaskException {
-        LOG.debug("Opening {} ...", parameters.getSource());
+        LOG.debug("Opening {} ", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
         splitter = new SizePdfSplitter(reader, parameters);
-        LOG.debug("Starting split by size {} bytes...", parameters.getSizeToSplitAt());
+        LOG.debug("Starting split by size {} bytes", parameters.getSizeToSplitAt());
         splitter.split();
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());

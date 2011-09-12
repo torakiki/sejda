@@ -103,7 +103,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * @param event
      */
     private void notifyListeners(AbstractNotificationEvent event) {
-        LOG.debug("Notifing event {}", event);
+        LOG.trace("Notifing event {}", event);
         GlobalNotificationContext.getContext().notifyListeners(event);
         ThreadLocalNotificationContext.getContext().notifyListeners(event);
     }
