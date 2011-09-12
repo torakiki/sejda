@@ -49,11 +49,11 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> imp
     }
 
     public void execute(T parameters) throws TaskException {
-        LOG.debug("Opening {} ...", parameters.getSource());
+        LOG.debug("Opening {} ", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
         splitter = new PagesPdfSplitter<T>(reader, parameters);
-        LOG.debug("Starting split by page numbers for {} ...", parameters);
+        LOG.debug("Starting split by page numbers for {} ", parameters);
         splitter.split();
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());

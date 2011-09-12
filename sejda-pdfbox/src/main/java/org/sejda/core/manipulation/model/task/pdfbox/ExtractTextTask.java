@@ -64,11 +64,11 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
     public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
 
             File tmpFile = outputWriter.createTemporaryBuffer();
-            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(

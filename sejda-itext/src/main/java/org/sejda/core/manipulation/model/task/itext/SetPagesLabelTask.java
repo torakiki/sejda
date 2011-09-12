@@ -58,11 +58,11 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
-        LOG.debug("Opening {} ...", source);
+        LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
         copier.setCompression(parameters.isCompressXref());
@@ -71,7 +71,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
         nullSafeClosePdfReader(reader);
 
-        LOG.debug("Applying {} labels ...", parameters.getLabels().size());
+        LOG.debug("Applying {} labels ", parameters.getLabels().size());
         copier.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
 
         nullSafeClosePdfCopy(copier);

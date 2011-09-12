@@ -86,11 +86,11 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
-            LOG.debug("Created output temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output temporary buffer {} ", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
             stamperHandler.setCompressionOnStamper(parameters.isCompressXref());

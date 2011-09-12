@@ -59,13 +59,13 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
-        LOG.debug("Opening first input {} ...", parameters.getFirstInput().getSource());
+        LOG.debug("Opening first input {} ", parameters.getFirstInput().getSource());
         firstReader = parameters.getFirstInput().getSource().open(sourceOpener);
-        LOG.debug("Opening second input {} ...", parameters.getSecondInput().getSource());
+        LOG.debug("Opening second input {} ", parameters.getSecondInput().getSource());
         secondReader = parameters.getSecondInput().getSource().open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
         copier = new DefaultPdfCopier(firstReader, tmpFile, parameters.getVersion());
 
         copier.setCompression(parameters.isCompressXref());

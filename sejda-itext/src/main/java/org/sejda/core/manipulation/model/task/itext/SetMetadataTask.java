@@ -61,11 +61,11 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
-        LOG.debug("Opening {} ...", source);
+        LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
         stamperHandler.setCompressionOnStamper(parameters.isCompressXref());

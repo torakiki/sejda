@@ -50,7 +50,7 @@ public class SplitByGoToActionLevelTask implements Task<SplitByGoToActionLevelPa
     }
 
     public void execute(SplitByGoToActionLevelParameters parameters) throws TaskException {
-        LOG.debug("Opening {} ...", parameters.getSource());
+        LOG.debug("Opening {} ", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
 
         LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
@@ -58,7 +58,7 @@ public class SplitByGoToActionLevelTask implements Task<SplitByGoToActionLevelPa
                 parameters.getMatchingTitleRegEx())
                 .getGoToPageDestinationFroActionLevel(parameters.getLevelToSplitAt());
         splitter = new GoToPageDestinationsPdfSplitter(reader, parameters, goToPagesDestination);
-        LOG.debug("Starting split by GoTo Action level for {} ...", parameters);
+        LOG.debug("Starting split by GoTo Action level for {} ", parameters);
         splitter.split();
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());

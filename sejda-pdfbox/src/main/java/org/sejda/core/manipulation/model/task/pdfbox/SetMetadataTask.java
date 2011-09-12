@@ -56,12 +56,12 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
-        LOG.debug("Opening {} ...", source);
+        LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
         documentHandler.ensureOwnerPermissions();
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {}", tmpFile);
 
         LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();

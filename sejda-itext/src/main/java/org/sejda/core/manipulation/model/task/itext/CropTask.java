@@ -65,12 +65,12 @@ public class CropTask implements Task<CropParameters> {
 
     public void execute(CropParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
-        LOG.debug("Opening {} ...", source);
+        LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
         int totalPages = reader.getNumberOfPages();
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
         copier.setCompression(parameters.isCompressXref());

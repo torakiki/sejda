@@ -80,18 +80,18 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
             int outputDocumentsCounter = 0;
             for (int page = 1; page <= totalPages; page++) {
                 if (nextOutputStrategy().isOpening(page)) {
-                    LOG.debug("Starting split at page {} of the original document...", page);
+                    LOG.debug("Starting split at page {} of the original document", page);
                     outputDocumentsCounter++;
                     pdfCopier = open(page, outputDocumentsCounter);
                 }
                 pdfCopier.addPage(reader, page);
                 notifyEvent().stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
-                    LOG.debug("Adding bookmarks to the temporary buffer ...");
+                    LOG.debug("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
                     closeCopier(pdfCopier);
-                    LOG.debug("Ending split at page {} of the original document...", page);
+                    LOG.debug("Ending split at page {} of the original document", page);
                 }
             }
         } finally {
@@ -102,7 +102,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {}", tmpFile);
 
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
         pdfCopier.setCompression(parameters.isCompressXref());

@@ -65,22 +65,22 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
 
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
         PdfSource source = parameters.getSource();
-        LOG.debug("Opening {} ...", source);
+        LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 
         File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ...", tmpFile);
+        LOG.debug("Created output temporary buffer {} ", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
         stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
         stamperHandler.setCreatorOnStamper(reader);
         if (parameters.isFullScreen()) {
-            LOG.debug("Setting fullscreen mode...");
+            LOG.debug("Setting fullscreen mode");
             stamperHandler.setViewerPreferencesOnStamper(getPageMode(PdfPageMode.FULLSCREEN));
         }
 
         Map<Integer, PdfPageTransition> transitions = getTransitionsMap(parameters, reader.getNumberOfPages());
-        LOG.debug("Applying {} transitions...", transitions.size());
+        LOG.debug("Applying {} transitions", transitions.size());
         int currentStep = 0;
         for (Entry<Integer, PdfPageTransition> entry : transitions.entrySet()) {
             LOG.trace("Applying transition {} to page {}", entry.getValue(), entry.getKey());
