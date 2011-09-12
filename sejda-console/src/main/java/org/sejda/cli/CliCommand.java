@@ -23,6 +23,7 @@ import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
 import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
@@ -152,6 +153,19 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> getArgumentsTransformer() {
             return new SplitBySizeCliArgumentsTransformer();
+        }
+
+    }),
+    SPLIT_BY_PAGES("splitbypages", new CliInterfacedTask<SplitByPagesTaskCliArguments, SplitByPagesParameters>() {
+
+        @Override
+        protected Class<SplitByPagesTaskCliArguments> getCliArgumentsClass() {
+            return SplitByPagesTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
+            return new SplitByPagesCliArgumentsTransformer();
         }
 
     });

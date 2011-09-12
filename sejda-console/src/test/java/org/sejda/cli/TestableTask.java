@@ -37,7 +37,8 @@ public enum TestableTask {
     UNPACK,
     MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
     SPLIT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
-    SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider());
+    SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider()),
+    SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -115,5 +116,12 @@ class SplitBySizeDefaultsProvider extends SingleInputAndFolderOutputDefaultsProv
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-s", "1234567890123456789");
+    }
+}
+
+class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-n", "1 2 3 9 23 78");
     }
 }

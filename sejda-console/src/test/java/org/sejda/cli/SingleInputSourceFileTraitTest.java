@@ -34,7 +34,8 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.SPLIT_BY_BOOKMARKS }, { TestableTask.SPLIT_BY_SIZE } });
+        return Arrays.asList(new Object[][] { { TestableTask.SPLIT_BY_BOOKMARKS }, { TestableTask.SPLIT_BY_SIZE },
+                { TestableTask.SPLIT_BY_PAGES } });
     }
 
     public SingleInputSourceFileTraitTest(TestableTask testableTask) {

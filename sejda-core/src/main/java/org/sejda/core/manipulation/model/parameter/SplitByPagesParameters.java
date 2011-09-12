@@ -16,6 +16,7 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +36,15 @@ public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @NotEmpty
     private final Set<Integer> pages = new HashSet<Integer>();
+
+    /**
+     * Adds all pages to split at.
+     * 
+     * @param pagesToAdd
+     */
+    public void addPages(Collection<Integer> pagesToAdd) {
+        pages.addAll(pagesToAdd);
+    }
 
     /**
      * Adds a page to split at.
