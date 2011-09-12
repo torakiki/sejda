@@ -54,10 +54,9 @@ public class PageRangeAdapter {
             if (rawString.contains(SEPARATOR)) {
                 // 23-<end>
                 return new PageRange(parseInt(tokens[0]));
-            } else {
-                // 23
-                return new PageRange(parseInt(tokens[0]), parseInt(tokens[0]));
             }
+            // 23
+            return new PageRange(parseInt(tokens[0]), parseInt(tokens[0]));
         } else if (tokens.length == 2) {
             return new PageRange(parseInt(tokens[0]), parseInt(tokens[1]));
         } else {

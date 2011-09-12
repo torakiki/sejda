@@ -22,6 +22,8 @@ import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
@@ -124,6 +126,32 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> getArgumentsTransformer() {
             return new MergeCliArgumentsTransformer();
+        }
+
+    }),
+    SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters>() {
+
+        @Override
+        protected Class<SplitByBookmarksTaskCliArguments> getCliArgumentsClass() {
+            return SplitByBookmarksTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
+            return new SplitByBookmarksCliArgumentsTransformer();
+        }
+
+    }),
+    SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
+
+        @Override
+        protected Class<SplitBySizeTaskCliArguments> getCliArgumentsClass() {
+            return SplitBySizeTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> getArgumentsTransformer() {
+            return new SplitBySizeCliArgumentsTransformer();
         }
 
     });

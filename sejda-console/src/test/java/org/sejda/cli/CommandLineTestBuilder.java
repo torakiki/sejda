@@ -45,28 +45,38 @@ public class CommandLineTestBuilder {
 
     public CommandLineTestBuilder(String taskName) {
         this.taskName = taskName;
-        defaultInput();
     }
 
     /**
-     * Populates default input parameter as inputs/input.pdf
+     * Populates 2 default input parameters
      */
-    private void defaultInput() {
+    public CommandLineTestBuilder defaultTwoInputs() {
         with("-f", "inputs/input.pdf inputs/second_input.pdf");
+        return this;
+    }
+
+    /**
+     * Populates default single input parameter
+     */
+    public CommandLineTestBuilder defaultSingleInput() {
+        with("-f", "inputs/input.pdf");
+        return this;
     }
 
     /**
      * Populates default output parameter as folder ./outputs
      */
-    public void defaultFolderOutput() {
+    public CommandLineTestBuilder defaultFolderOutput() {
         with("-o", "./outputs");
+        return this;
     }
 
     /**
      * Populates default output parameter as file fileOutput.pdf
      */
-    public void defaultFileOutput() {
+    public CommandLineTestBuilder defaultFileOutput() {
         with("-o", "./outputs/fileOutput.pdf");
+        return this;
     }
 
     /**
