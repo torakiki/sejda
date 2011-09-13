@@ -26,7 +26,7 @@ package org.sejda.core.manipulation.model.pdf.encryption;
  */
 public enum PdfAccessPermission {
     MODIFY,
-    COPY,
+    COPY_AND_EXTRACT,
     ANNOTATION,
     PRINT,
     FILL_FORMS,

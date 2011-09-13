@@ -63,11 +63,11 @@ public class EncryptParametersTest {
     @Test
     public void testEqual() {
         EncryptParameters eq1 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
-        eq1.addPermission(PdfAccessPermission.COPY);
+        eq1.addPermission(PdfAccessPermission.COPY_AND_EXTRACT);
         EncryptParameters eq2 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
-        eq2.addPermission(PdfAccessPermission.COPY);
+        eq2.addPermission(PdfAccessPermission.COPY_AND_EXTRACT);
         EncryptParameters eq3 = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
-        eq3.addPermission(PdfAccessPermission.COPY);
+        eq3.addPermission(PdfAccessPermission.COPY_AND_EXTRACT);
         EncryptParameters diff = new EncryptParameters(PdfEncryption.STANDARD_ENC_40);
         diff.addPermission(PdfAccessPermission.ASSEMBLE);
         diff.setVersion(PdfVersion.VERSION_1_2);

@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.input.PdfURLSource;
@@ -25,7 +24,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        return newHandlerInstance(source, document);
+        return new PDDocumentHandler(document, source.getPassword());
     }
 
     public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
@@ -35,7 +34,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        return newHandlerInstance(source, document);
+        return new PDDocumentHandler(document, source.getPassword());
     }
 
     public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
@@ -45,13 +44,6 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-        return newHandlerInstance(source, document);
-    }
-
-    private PDDocumentHandler newHandlerInstance(PdfSource source, PDDocument document) throws TaskIOException {
-        PDDocumentHandler handler = new PDDocumentHandler(document);
-        handler.decryptPDDocumentIfNeeded(source.getPassword());
-        handler.setCreatorOnPDDocument();
-        return handler;
+        return new PDDocumentHandler(document, source.getPassword());
     }
 }

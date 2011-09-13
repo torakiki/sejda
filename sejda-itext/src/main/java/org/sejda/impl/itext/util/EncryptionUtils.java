@@ -39,7 +39,7 @@ public final class EncryptionUtils {
         Map<PdfAccessPermission, Integer> permissionsCache = new HashMap<PdfAccessPermission, Integer>();
         permissionsCache.put(PdfAccessPermission.ANNOTATION, PdfWriter.ALLOW_MODIFY_ANNOTATIONS);
         permissionsCache.put(PdfAccessPermission.ASSEMBLE, PdfWriter.ALLOW_ASSEMBLY);
-        permissionsCache.put(PdfAccessPermission.COPY, PdfWriter.ALLOW_COPY);
+        permissionsCache.put(PdfAccessPermission.COPY_AND_EXTRACT, PdfWriter.ALLOW_COPY);
         permissionsCache.put(PdfAccessPermission.DEGRADATED_PRINT, PdfWriter.ALLOW_DEGRADED_PRINTING);
         permissionsCache.put(PdfAccessPermission.EXTRACTION_FOR_DISABLES, PdfWriter.ALLOW_SCREENREADERS);
         permissionsCache.put(PdfAccessPermission.FILL_FORMS, PdfWriter.ALLOW_FILL_IN);

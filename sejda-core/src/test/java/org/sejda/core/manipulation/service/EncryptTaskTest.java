@@ -78,7 +78,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
     @Test
     public void testExecuteOwner() throws TaskException, IOException {
         parameters.setOwnerPassword("test");
-        parameters.addPermission(PdfAccessPermission.COPY);
+        parameters.addPermission(PdfAccessPermission.COPY_AND_EXTRACT);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);

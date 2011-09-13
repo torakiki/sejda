@@ -27,7 +27,6 @@ import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
@@ -35,7 +34,6 @@ import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferenc
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.exception.TaskPermissionsException;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
@@ -53,31 +51,43 @@ public class PDDocumentHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
 
     private PDDocument document;
+    private PDDocumentAccessPermission permissions;
 
-    public PDDocumentHandler(PDDocument document) {
+    public PDDocumentHandler(PDDocument document, String password) throws TaskIOException {
         if (document == null) {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }
         this.document = document;
+        decryptPDDocumentIfNeeded(password);
+        setCreatorOnPDDocument();
+        permissions = new PDDocumentAccessPermission(document);
     }
 
-    /**
-     * Ensures that underlying {@link PDDocument} is opened with Owner permissions
-     * 
-     * @throws TaskPermissionsException
-     */
-    public void ensureOwnerPermissions() throws TaskPermissionsException {
-        AccessPermission ap = document.getCurrentAccessPermission();
-        if (!ap.isOwnerPermission()) {
-            throw new TaskPermissionsException("Owner permission is required.");
+    private void decryptPDDocumentIfNeeded(String password) throws TaskIOException {
+        if (document.isEncrypted() && StringUtils.isNotBlank(password)) {
+            DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
+            LOG.trace("Decrypting input document");
+            try {
+                document.openProtection(decryptionMaterial);
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred reading cryptographic information.", e);
+            } catch (BadSecurityHandlerException e) {
+                throw new TaskIOException("Unable to decrypt the document.", e);
+            } catch (CryptographyException e) {
+                throw new TaskIOException("Unable to decrypt the document.", e);
+            }
         }
     }
 
-    /**
-     * Sets the creator on the underlying {@link PDDocument}.
-     */
-    public void setCreatorOnPDDocument() {
+    private void setCreatorOnPDDocument() {
         document.getDocumentInformation().setCreator(Sejda.CREATOR);
+    }
+
+    /**
+     * @return access permissions granted to this document.
+     */
+    public PDDocumentAccessPermission getPermissions() {
+        return permissions;
     }
 
     /**
@@ -121,28 +131,6 @@ public class PDDocumentHandler {
     public void compressXrefStream(boolean compress) {
         if (compress) {
             LOG.warn("Xref Compression not yet supported by PDFBox");
-        }
-    }
-
-    /**
-     * Decrypts the underlying {@link PDDocument} if encrypted using the provided password if not blank.
-     * 
-     * @param password
-     * @throws TaskIOException
-     */
-    public void decryptPDDocumentIfNeeded(String password) throws TaskIOException {
-        if (document.isEncrypted() && StringUtils.isNotBlank(password)) {
-            DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
-            LOG.trace("Decrypting input document");
-            try {
-                document.openProtection(decryptionMaterial);
-            } catch (IOException e) {
-                throw new TaskIOException("An error occurred reading cryptographic information.", e);
-            } catch (BadSecurityHandlerException e) {
-                throw new TaskIOException("Unable to decrypt the document.", e);
-            } catch (CryptographyException e) {
-                throw new TaskIOException("Unable to decrypt the document.", e);
-            }
         }
     }
 

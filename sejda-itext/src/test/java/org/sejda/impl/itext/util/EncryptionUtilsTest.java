@@ -44,7 +44,7 @@ public class EncryptionUtilsTest {
     @Test
     public void testGetAccessPermission() {
         assertEquals(PdfWriter.ALLOW_ASSEMBLY, getAccessPermission(PdfAccessPermission.ASSEMBLE).intValue());
-        assertEquals(PdfWriter.ALLOW_COPY, getAccessPermission(PdfAccessPermission.COPY).intValue());
+        assertEquals(PdfWriter.ALLOW_COPY, getAccessPermission(PdfAccessPermission.COPY_AND_EXTRACT).intValue());
         assertEquals(PdfWriter.ALLOW_DEGRADED_PRINTING, getAccessPermission(PdfAccessPermission.DEGRADATED_PRINT)
                 .intValue());
         assertEquals(PdfWriter.ALLOW_FILL_IN, getAccessPermission(PdfAccessPermission.FILL_FORMS).intValue());
