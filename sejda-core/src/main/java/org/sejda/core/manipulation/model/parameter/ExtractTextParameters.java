@@ -36,7 +36,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class ExtractTextParameters implements TaskParameters {
+public class ExtractTextParameters implements TaskParameters, MultiplePdfSourceParameters {
 
     private String outputPrefix = "";
     @Valid

@@ -37,7 +37,8 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] { { TestableTask.DECRYPT }, { TestableTask.ENCRYPT },
-                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES }, { TestableTask.UNPACK } });
+                { TestableTask.ROTATE }, { TestableTask.SETVIEWERPREFERENCES }, { TestableTask.UNPACK },
+                { TestableTask.EXTRACT_TEXT } });
     }
 
     public MultipleInputSourceFilesTraitTest(TestableTask testableTask) {

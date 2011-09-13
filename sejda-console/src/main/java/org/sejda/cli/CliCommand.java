@@ -21,6 +21,7 @@ import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
@@ -194,6 +195,19 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
             return new ExtractPagesCliArgumentsTransformer();
+        }
+
+    }),
+    EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
+
+        @Override
+        protected Class<ExtractTextTaskCliArguments> getCliArgumentsClass() {
+            return ExtractTextTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> getArgumentsTransformer() {
+            return new ExtractTextCliArgumentsTransformer();
         }
 
     });

@@ -40,7 +40,8 @@ public enum TestableTask {
     SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider()),
     SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider()),
     SIMPLE_SPLIT(new SimpleSplitDefaultsProvider()),
-    EXTRACT_PAGES(new SingleInputAndFileOutputDefaultsProvider());
+    EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
+    EXTRACT_TEXT;
 
     private final DefaultsProvider defaultsProvider;
 
@@ -137,6 +138,13 @@ class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsPro
 }
 
 class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
+    }
+}
+
+class ExtractPagesDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
