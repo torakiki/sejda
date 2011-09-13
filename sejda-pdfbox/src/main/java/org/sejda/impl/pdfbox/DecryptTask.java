@@ -62,6 +62,7 @@ public class DecryptTask implements Task<DecryptParameters> {
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensureOwnerPermissions();
+            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);

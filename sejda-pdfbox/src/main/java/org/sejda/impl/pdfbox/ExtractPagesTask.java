@@ -1,5 +1,5 @@
 /*
- * Created on 26/ago/2011
+ * Created on 13/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,32 +14,30 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.impl.itext;
+package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
-import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
+import static org.sejda.impl.pdfbox.component.PDDocumentHandler.nullSafeClose;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
-import org.sejda.impl.itext.component.DefaultPdfCopier;
-import org.sejda.impl.itext.component.PdfCopier;
-import org.sejda.impl.itext.component.input.PdfSourceOpeners;
+import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.pdfbox.component.PDDocumentHandler;
+import org.sejda.impl.pdfbox.component.PagesExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lowagie.text.pdf.PdfReader;
-
 /**
- * iText implementation of a task that extracts pages from a pdf source generating a single output pdf document containing the extracted pages.
+ * PDFBox implementation of the task responsible for extracting pages from a given pdf document.
  * 
  * @author Andrea Vacondio
  * 
@@ -48,51 +46,50 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
+    private PagesExtractor extractor = null;
     private SingleOutputWriterSupport outputWriter;
-    private PdfSourceOpener<PdfReader> sourceOpener;
-    private PdfCopier copier = null;
-    private PdfReader reader;
+    private PdfSourceOpener<PDDocumentHandler> documentLoader;
+    private PDDocumentHandler sourceDocumentHandler;
 
     public void before(ExtractPagesParameters parameters) {
         outputWriter = new SingleOutputWriterSupport();
-        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-
+        documentLoader = new DefaultPdfSourceOpener();
     }
 
     public void execute(ExtractPagesParameters parameters) throws TaskException {
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ", tmpFile);
+        PdfSource source = parameters.getSource();
+        LOG.debug("Opening {}", source);
+        sourceDocumentHandler = source.open(documentLoader);
+        sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
 
-        LOG.debug("Opening input {} ", parameters.getSource());
-        reader = parameters.getSource().open(sourceOpener);
-
-        Set<Integer> pages = parameters.getPages(reader.getNumberOfPages());
+        Set<Integer> pages = parameters.getPages(sourceDocumentHandler.getNumberOfPages());
         if (pages == null || pages.isEmpty()) {
             throw new TaskExecutionException("No page has been selected for extraction.");
         }
-        copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-        LOG.trace("Created DefaultPdfCopier");
+        extractor = new PagesExtractor(sourceDocumentHandler);
+        LOG.debug("Extracting pages {}", pages);
+        extractor.extractPages(pages);
+        extractor.setVersionOnPDDocument(parameters.getVersion());
+        extractor.compressXrefStream(parameters.isCompressXref());
 
-        LOG.debug("Setting pages selection");
-        reader.selectPages(new ArrayList<Integer>(pages));
-        LOG.trace("Pages selection set to {}", pages);
+        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        LOG.debug("Created output temporary buffer {}", tmpFile);
+        extractor.saveDecryptedPDDocument(tmpFile);
 
-        copier.addAllPages(reader);
-        copier.freeReader(reader);
+        closeResource();
 
-        closeResources();
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
         LOG.debug("Pages extracted and written to {}", parameters.getOutput());
-
     }
 
     public void after() {
-        closeResources();
+        closeResource();
     }
 
-    private void closeResources() {
-        nullSafeClosePdfCopy(copier);
-        nullSafeClosePdfReader(reader);
+    private void closeResource() {
+        nullSafeClose(sourceDocumentHandler);
+        nullSafeClose(extractor);
     }
+
 }

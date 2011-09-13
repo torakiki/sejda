@@ -65,6 +65,7 @@ public class RotateTask implements Task<RotateParameters> {
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
+            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);

@@ -68,6 +68,7 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
+            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = outputWriter.createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);

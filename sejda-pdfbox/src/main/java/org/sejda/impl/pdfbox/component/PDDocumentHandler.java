@@ -27,6 +27,7 @@ import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
@@ -53,13 +54,33 @@ public class PDDocumentHandler {
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
 
+    /**
+     * Creates a new handler using the given document as underlying {@link PDDocument}.
+     * 
+     * @param document
+     * @param password
+     * @throws TaskIOException
+     */
     public PDDocumentHandler(PDDocument document, String password) throws TaskIOException {
         if (document == null) {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }
         this.document = document;
         decryptPDDocumentIfNeeded(password);
-        setCreatorOnPDDocument();
+        permissions = new PDDocumentAccessPermission(document);
+    }
+
+    /**
+     * Creates a new handler with an empty underlying {@link PDDocument}.
+     * 
+     * @throws TaskIOException
+     */
+    public PDDocumentHandler() throws TaskIOException {
+        try {
+            this.document = new PDDocument();
+        } catch (IOException e) {
+            throw new TaskIOException("An error occurred creating the PDDocument.", e);
+        }
         permissions = new PDDocumentAccessPermission(document);
     }
 
@@ -79,8 +100,20 @@ public class PDDocumentHandler {
         }
     }
 
-    private void setCreatorOnPDDocument() {
+    /**
+     * set the creator on the underlying {@link PDDocument}
+     */
+    public void setCreatorOnPDDocument() {
         document.getDocumentInformation().setCreator(Sejda.CREATOR);
+    }
+
+    /**
+     * Set the document information on the underlying {@link PDDocument}
+     * 
+     * @param info
+     */
+    public void setDocumentInformation(PDDocumentInformation info) {
+        document.setDocumentInformation(info);
     }
 
     /**
@@ -149,7 +182,7 @@ public class PDDocumentHandler {
         document.getDocumentCatalog().setViewerPreferences(preferences);
     }
 
-    private void close() throws IOException {
+    void close() throws IOException {
         document.close();
     }
 
@@ -184,6 +217,10 @@ public class PDDocumentHandler {
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
+    }
+
+    public int getNumberOfPages() {
+        return document.getDocumentCatalog().getAllPages().size();
     }
 
     public PDDocument getUnderlyingPDDocument() {

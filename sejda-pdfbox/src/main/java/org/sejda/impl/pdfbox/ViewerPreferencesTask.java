@@ -65,6 +65,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
         for (PdfSource source : parameters.getSourceList()) {
             LOG.debug("Opening {} ...", source);
             documentHandler = source.open(documentLoader);
+            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = outputWriter.createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
