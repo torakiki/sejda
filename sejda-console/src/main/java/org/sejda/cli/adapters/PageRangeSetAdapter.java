@@ -1,5 +1,5 @@
 /*
- * Created on Sep 4, 2011
+ * Created on Sep 12, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,32 +16,41 @@
  */
 package org.sejda.cli.adapters;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
- * Adapter for a list of sets of {@link PageRange}s, providing initialization from {@link String}
+ * Adapter for a set of {@link PageRange}s, providing intialization from {@link String}
  * 
  * @author Eduard Weissmann
  * 
  */
-public class MultiplePageRangeSetAdapter {
-    private static final String SEPARATOR = ":";
-    private final List<Set<PageRange>> listOfPageRangeSets = new ArrayList<Set<PageRange>>();
+public class PageRangeSetAdapter {
 
-    public MultiplePageRangeSetAdapter(String rawString) {
-        String[] tokens = StringUtils.split(rawString, SEPARATOR);
+    private static final String SEPARATOR = ",";
+    private static final String ALL = "all";
+
+    private final Set<PageRange> pageRangeSet = new HashSet<PageRange>();
+
+    public PageRangeSetAdapter(String rawString) {
+        if (isAllPages(rawString)) {
+            return;
+        }
+
+        String[] tokens = StringUtils.split(StringUtils.trim(rawString), SEPARATOR);
         for (String eachToken : tokens) {
-            listOfPageRangeSets.add(new PageRangeSetAdapter(eachToken).getPageRangeSet());
+            pageRangeSet.add(new PageRangeAdapter(eachToken).getPageRange());
         }
     }
 
-    public Iterator<Set<PageRange>> iterator() {
-        return listOfPageRangeSets.iterator();
+    private boolean isAllPages(String rawString) {
+        return StringUtils.equalsIgnoreCase(ALL, rawString);
+    }
+
+    public Set<PageRange> getPageRangeSet() {
+        return pageRangeSet;
     }
 }

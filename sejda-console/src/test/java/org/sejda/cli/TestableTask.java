@@ -38,7 +38,10 @@ public enum TestableTask {
     MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
     SPLIT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
     SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider()),
-    SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider());
+    SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider()),
+    SIMPLE_SPLIT(new SimpleSplitDefaultsProvider()),
+    EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
+    EXTRACT_TEXT;
 
     private final DefaultsProvider defaultsProvider;
 
@@ -105,6 +108,14 @@ class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
 }
 
+class SingleInputAndFileOutputDefaultsProvider implements DefaultsProvider {
+
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFileOutput();
+    }
+
+}
+
 class SplitByBookmarksDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
@@ -123,5 +134,19 @@ class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsPro
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-n", "1 2 3 9 23 78");
+    }
+}
+
+class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
+    }
+}
+
+class ExtractPagesDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
     }
 }

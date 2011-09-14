@@ -20,8 +20,11 @@ import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
 import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
@@ -166,6 +169,45 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
             return new SplitByPagesCliArgumentsTransformer();
+        }
+
+    }),
+    SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
+
+        @Override
+        protected Class<SimpleSplitTaskCliArguments> getCliArgumentsClass() {
+            return SimpleSplitTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<SimpleSplitTaskCliArguments, SimpleSplitParameters> getArgumentsTransformer() {
+            return new SimpleSplitCliArgumentsTransformer();
+        }
+
+    }),
+    EXTRACT_PAGES("extractpages", new CliInterfacedTask<ExtractPagesTaskCliArguments, ExtractPagesParameters>() {
+
+        @Override
+        protected Class<ExtractPagesTaskCliArguments> getCliArgumentsClass() {
+            return ExtractPagesTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
+            return new ExtractPagesCliArgumentsTransformer();
+        }
+
+    }),
+    EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
+
+        @Override
+        protected Class<ExtractTextTaskCliArguments> getCliArgumentsClass() {
+            return ExtractTextTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> getArgumentsTransformer() {
+            return new ExtractTextCliArgumentsTransformer();
         }
 
     });
