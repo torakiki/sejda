@@ -36,6 +36,9 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 public interface GeneralCliArguments {
 
     // TODO: find a way to derive the commands supported from the CliCommand enumeration
+    // TODO: stop printing [options] command to execute because user can think the order of params is different
+    // TODO: get rid of this class completely
+    // TODO: support -version, -license
     @Unparsed(name = "command to execute {[concat], [split],"
             + " [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}")
     CliCommandAdapter getCommand();

@@ -22,10 +22,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.mockito.ArgumentCaptor;
 import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
@@ -162,8 +165,30 @@ class CommandLineExecuteTestHelper {
         return new SejdaConsole(args, new DefaultTaskExecutionAdapter(taskExecutionService));
     }
 
-    private String[] parseCommandLineArgs(String commandLine) {
-        return StringUtils.stripAll(StringUtils.splitPreserveAllTokens(commandLine));
+    /**
+     * Simulate's java's cli argument parsing. That means {@code java MyProgram 1234 www.caltech.edu "olive festival"} has 3 arguments: <br/>
+     * <ul>
+     * <li>
+     * args[0] = "1234"</li>
+     * <li>
+     * args[1] = "www.caltech.edu"</li>
+     * <li>
+     * args[2] = "olive festival"</li>
+     * <ul/>
+     * 
+     */
+    static String[] parseCommandLineArgs(String commandLine) {
+        List<String> result = new ArrayList<String>();
+
+        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(commandLine);
+        while (m.find()) {
+            if (m.group(1) != null) {
+                result.add(m.group(1));
+            } else {
+                result.add(m.group(2));
+            }
+        }
+        return result.toArray(new String[] {});
     }
 
     public void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {

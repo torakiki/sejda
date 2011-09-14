@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Sep 14, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,24 +16,21 @@
  */
 package org.sejda.cli;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
- * Test verifying the help request feature for commands
- * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
-
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
+public class CommandLineExecuteTestHelperTest extends AbstractTestSuite {
 
     @Test
-    public void testExecuteCommandHelp() {
-        // TODO: use command -h
-        assertConsoleOutputContains("-h " + getTaskName(), "Usage: sejda-console " + getTaskName() + " options");
+    public void parseCommandLineArgs() {
+        assertContainsAll(Arrays.asList("1234", "www.caltech.edu", "olive festival"),
+                Arrays.asList(CommandLineExecuteTestHelper
+                        .parseCommandLineArgs("1234 www.caltech.edu \"olive festival\"")));
     }
 
 }

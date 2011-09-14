@@ -46,6 +46,10 @@ import org.sejda.core.manipulation.model.parameter.TaskParameters;
  */
 public abstract class AbstractTestSuite {
 
+    public <T> void assertContains(T expectedItem, Collection<T> actualItems) {
+        assertThat(actualItems, hasItem(expectedItem));
+    }
+
     public <T> void assertContainsAll(Collection<T> expectedItems, Collection<T> actualItems) {
         assertContainsAll("", expectedItems, actualItems);
     }

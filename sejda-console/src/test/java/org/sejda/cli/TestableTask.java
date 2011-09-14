@@ -41,7 +41,8 @@ public enum TestableTask {
     SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider()),
     SIMPLE_SPLIT(new SimpleSplitDefaultsProvider()),
     EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
-    EXTRACT_TEXT;
+    EXTRACT_TEXT,
+    SET_METADATA(new SetMetadataDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -148,5 +149,12 @@ class ExtractPagesDefaultsProvider extends SingleInputAndFileOutputDefaultsProvi
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
+    }
+}
+
+class SetMetadataDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-t", "\"Tales from a test\"");
     }
 }

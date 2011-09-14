@@ -69,6 +69,8 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
             inputFiles = taskCliArguments.getFilesListConfig().getFileSourceList();
         }
 
+        // TODO: if more than one input file "source" specified, warn the user
+
         if (inputFiles == null) {
             throw new SejdaRuntimeException("No input files specified");
         }
