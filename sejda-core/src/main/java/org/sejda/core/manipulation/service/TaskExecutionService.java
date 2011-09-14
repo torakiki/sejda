@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.service;
 
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 
 /**
  * Service interface to perform the actual execution of a task.

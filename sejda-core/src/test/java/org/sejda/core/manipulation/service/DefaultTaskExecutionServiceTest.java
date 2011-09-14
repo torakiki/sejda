@@ -40,7 +40,7 @@ import org.sejda.core.manipulation.TestTaskParameter;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.context.GlobalNotificationContext;

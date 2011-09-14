@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
@@ -36,7 +37,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class ExtractTextParameters implements TaskParameters, MultiplePdfSourceParameters {
+public class ExtractTextParameters implements MultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid

@@ -1,7 +1,6 @@
 /*
- * Created on 30/ott/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 14/set/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,20 +14,27 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.parameter.base;
 
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.input.PdfSource;
 
 /**
+ * A parameter with a single source as input for the task.
+ * 
  * @author Andrea Vacondio
  * 
- * @param <T>
  */
-public interface TestableTask<T extends TaskParameters> {
+public interface SinglePdfSourceTaskParameters {
 
     /**
-     * @return the task to be tested
+     * @return the source for this parameter.
      */
-    Task<T> getTask();
+    PdfSource getSource();
+
+    /**
+     * Set the source for this parameter.
+     * 
+     * @param source
+     */
+    void setSource(PdfSource source);
 }

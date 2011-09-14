@@ -34,9 +34,9 @@ import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 
 /**
  * Base class for test suites, provides helper methods to ease testing
@@ -80,13 +80,13 @@ public abstract class AbstractTestSuite {
         return file;
     }
 
-    protected void assertHasFileSource(SinglePdfSourceParameters parameters, File file, String password) {
+    protected void assertHasFileSource(SinglePdfSourceTaskParameters parameters, File file, String password) {
         assertTrue("File '" + file + "'"
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"),
                 matchesPdfFileSource(file, password, parameters.getSource()));
     }
 
-    protected void assertHasFileSource(MultiplePdfSourceParameters parameters, File file, String password) {
+    protected void assertHasFileSource(MultiplePdfSourceTaskParameters parameters, File file, String password) {
         boolean found = false;
         for (PdfSource each : parameters.getSourceList()) {
             if (matchesPdfFileSource(file, password, each)) {

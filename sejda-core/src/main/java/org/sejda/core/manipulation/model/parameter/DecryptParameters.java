@@ -17,60 +17,28 @@
  */
 package org.sejda.core.manipulation.model.parameter;
 
-import javax.validation.Valid;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 
 /**
- * Parameter class for the decrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be decrypted.
+ * Parameter class for the decrypt manipulation. Accepts multiple {@link org.sejda.core.manipulation.model.input.PdfSource} to be decrypted.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class DecryptParameters extends PdfSourceListParameters {
-
-    private String outputPrefix = "";
-    @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
-
-    public String getOutputPrefix() {
-        return outputPrefix;
-    }
-
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
-    }
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
-    }
+public class DecryptParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).toHashCode();
     }
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
         if (!(other instanceof DecryptParameters)) {
             return false;
         }
-        DecryptParameters parameter = (DecryptParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).isEquals();
     }
 }

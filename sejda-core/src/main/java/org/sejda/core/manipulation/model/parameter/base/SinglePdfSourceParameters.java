@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -30,7 +30,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
  * @author Andrea Vacondio
  * 
  */
-public abstract class SinglePdfSourceParameters extends AbstractParameters {
+abstract class SinglePdfSourceParameters extends AbstractPdfOutputParameters implements SinglePdfSourceTaskParameters {
 
     @Valid
     @NotNull

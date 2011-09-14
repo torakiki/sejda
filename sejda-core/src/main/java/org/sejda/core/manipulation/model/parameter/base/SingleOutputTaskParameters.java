@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
-
+package org.sejda.core.manipulation.model.parameter.base;
 
 /**
- * A parameter whose execution result in a single output pdf document.
+ * A {@link TaskParameters} parameter whose execution result in a single output pdf document.
  * 
  * @author Andrea Vacondio
  * 

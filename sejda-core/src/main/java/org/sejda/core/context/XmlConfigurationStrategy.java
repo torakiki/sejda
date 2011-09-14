@@ -33,7 +33,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.sejda.core.exception.ConfigurationException;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;

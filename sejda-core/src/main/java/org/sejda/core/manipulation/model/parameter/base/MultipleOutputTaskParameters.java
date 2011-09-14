@@ -1,6 +1,6 @@
 /*
- * Created on Sep 2, 2011
- * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Created on 14/set/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -14,29 +14,25 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
-
-import java.util.List;
-
-import org.sejda.core.manipulation.model.input.PdfSource;
+package org.sejda.core.manipulation.model.parameter.base;
 
 /**
- * A parameter whose execution inputs consists of a list of pdf documents.
+ * A {@link TaskParameters} parameter whose execution result in multiple output.
  * 
- * @author Eduard Weissmann
+ * @author Andrea Vacondio
  * 
  */
-public interface MultiplePdfSourceParameters {
+public interface MultipleOutputTaskParameters extends TaskParameters {
 
     /**
-     * adds the input source to the source list.
+     * @return the prefix to be used to generate names of the multiple outputs.
+     */
+    String getOutputPrefix();
+
+    /**
+     * Set the prefix to be used to generate names of the multiple outputs for this parameter.
      * 
-     * @param input
+     * @param outputPrefix
      */
-    void addSource(PdfSource input);
-
-    /**
-     * @return a view of the source list
-     */
-    List<PdfSource> getSourceList();
+    void setOutputPrefix(String outputPrefix);
 }

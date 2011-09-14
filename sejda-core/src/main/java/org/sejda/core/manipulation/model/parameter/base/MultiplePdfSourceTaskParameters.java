@@ -1,7 +1,6 @@
 /*
- * Created on 30/ott/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on Sep 2, 2011
+ * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,20 +14,29 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.manipulation.model.parameter.base;
 
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import java.util.List;
+
+import org.sejda.core.manipulation.model.input.PdfSource;
 
 /**
- * @author Andrea Vacondio
+ * A parameter whose execution inputs consists of a list of pdf documents.
  * 
- * @param <T>
+ * @author Eduard Weissmann
+ * 
  */
-public interface TestableTask<T extends TaskParameters> {
+public interface MultiplePdfSourceTaskParameters {
 
     /**
-     * @return the task to be tested
+     * adds the input source to the source list.
+     * 
+     * @param input
      */
-    Task<T> getTask();
+    void addSource(PdfSource input);
+
+    /**
+     * @return a view of the source list
+     */
+    List<PdfSource> getSourceList();
 }

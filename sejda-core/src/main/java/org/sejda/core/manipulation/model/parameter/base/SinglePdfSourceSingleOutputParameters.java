@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -25,13 +25,13 @@ import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.validation.constraint.ValidSingleOutput;
 
 /**
- * Abstract parameter class to be used as base class for tasks parameter having a single pdf source as input and producing a single {@link TaskOutput}.
+ * Provides a skeletal implementation for parameter classes having a single pdf source as input and producing a single {@link TaskOutput}.
  * 
  * @author Andrea Vacondio
  * 
  */
 @ValidSingleOutput
-abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSourceParameters implements
+public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSourceParameters implements
         SingleOutputTaskParameters {
 
     private String outputName;

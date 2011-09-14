@@ -23,13 +23,11 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
@@ -39,7 +37,6 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenP
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
-import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} where the view preferences will be
@@ -48,9 +45,8 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesParameters extends PdfSourceListParameters {
+public class ViewerPreferencesParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    private String outputPrefix = "";
     @NotNull
     private PdfPageMode pageMode = PdfPageMode.USE_NONE;
     @NotNull
@@ -61,27 +57,6 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
     private PdfDirection direction;
     private PdfPrintScaling printScaling;
     private Set<PdfBooleanPreference> enabledBooleanPreferences = EnumSet.noneOf(PdfBooleanPreference.class);
-    @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
-    }
-
-    public String getOutputPrefix() {
-        return outputPrefix;
-    }
-
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
-    }
 
     public boolean addEnabledPreference(PdfBooleanPreference e) {
         return enabledBooleanPreferences.add(e);
@@ -154,9 +129,9 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(printScaling)
-                .append(direction).append(duplex).append(pageLayout).append(pageMode).append(nfsMode)
-                .append(enabledBooleanPreferences).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(printScaling).append(direction)
+                .append(duplex).append(pageLayout).append(pageMode).append(nfsMode).append(enabledBooleanPreferences)
+                .toHashCode();
     }
 
     @Override
@@ -168,10 +143,10 @@ public class ViewerPreferencesParameters extends PdfSourceListParameters {
             return false;
         }
         ViewerPreferencesParameters parameter = (ViewerPreferencesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .append(printScaling, parameter.getPrintScaling()).append(direction, parameter.getDirection())
-                .append(duplex, parameter.getDuplex()).append(pageLayout, parameter.getPageLayout())
-                .append(pageMode, parameter.getPageMode()).append(nfsMode, parameter.getNfsMode())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(printScaling, parameter.getPrintScaling())
+                .append(direction, parameter.getDirection()).append(duplex, parameter.getDuplex())
+                .append(pageLayout, parameter.getPageLayout()).append(pageMode, parameter.getPageMode())
+                .append(nfsMode, parameter.getNfsMode())
                 .append(enabledBooleanPreferences, parameter.getEnabledPreferences()).isEquals();
     }
 }

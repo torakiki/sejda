@@ -25,7 +25,7 @@ import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.slf4j.Logger;

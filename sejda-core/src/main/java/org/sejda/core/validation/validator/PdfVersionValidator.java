@@ -19,7 +19,7 @@ package org.sejda.core.validation.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.core.validation.constraint.ValidPdfVersion;
 
 /**
@@ -28,13 +28,13 @@ import org.sejda.core.validation.constraint.ValidPdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion, AbstractParameters> {
+public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion, AbstractPdfOutputParameters> {
 
     public void initialize(ValidPdfVersion constraintAnnotation) {
         // on purpose
     }
 
-    public boolean isValid(AbstractParameters value, ConstraintValidatorContext context) {
+    public boolean isValid(AbstractPdfOutputParameters value, ConstraintValidatorContext context) {
         boolean isValid = value.getVersion() == null
                 || value.getVersion().compareTo(value.getMinRequiredPdfVersion()) >= 0;
         if (!isValid) {
