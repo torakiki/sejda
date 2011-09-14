@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,8 @@ import org.sejda.core.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-abstract class PdfSourceListParameters extends AbstractParameters implements MultiplePdfSourceParameters {
+abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters implements
+        MultiplePdfSourceTaskParameters {
 
     @NotEmpty
     @Valid
@@ -66,10 +67,10 @@ abstract class PdfSourceListParameters extends AbstractParameters implements Mul
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfSourceListParameters)) {
+        if (!(other instanceof MultiplePdfSourceParameters)) {
             return false;
         }
-        PdfSourceListParameters parameter = (PdfSourceListParameters) other;
+        MultiplePdfSourceParameters parameter = (MultiplePdfSourceParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(sourceList, parameter.getSourceList())
                 .isEquals();
     }

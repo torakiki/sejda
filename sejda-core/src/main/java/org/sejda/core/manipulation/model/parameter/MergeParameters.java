@@ -27,6 +27,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.core.manipulation.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -37,7 +39,7 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @SingleOutputAllowedExtensions
-public class MergeParameters extends AbstractParameters implements SingleOutputTaskParameters {
+public class MergeParameters extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
 
     @NotEmpty
     @Valid

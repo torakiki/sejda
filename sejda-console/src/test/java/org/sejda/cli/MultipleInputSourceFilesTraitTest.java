@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
 
 /**
  * For tasks that support multiple files as input, test various scenarios related to this trait
@@ -52,7 +52,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileNoPassword() {
-        MultiplePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
+        MultiplePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
 
         assertEquals(1, result.getSourceList().size());
         assertHasFileSource(result, new File("inputs/input.pdf"), null);
@@ -60,7 +60,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileWithPassword() {
-        MultiplePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
+        MultiplePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
                 .invokeSejdaConsole();
 
         assertEquals(1, result.getSourceList().size());
@@ -69,7 +69,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testMultipleSourceFiles() {
-        MultiplePdfSourceParameters result = defaultCommandLine().with("-f",
+        MultiplePdfSourceTaskParameters result = defaultCommandLine().with("-f",
                 "inputs/input-protected.pdf;secret123 inputs/second_input.pdf").invokeSejdaConsole();
 
         assertEquals(2, result.getSourceList().size());

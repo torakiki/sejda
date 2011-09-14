@@ -25,7 +25,7 @@ import org.sejda.core.exception.TaskNotFoundException;
 import org.sejda.core.manipulation.ChildTestTaskParameter;
 import org.sejda.core.manipulation.TestTaskParameter;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
 /**

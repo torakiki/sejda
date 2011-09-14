@@ -25,9 +25,9 @@ import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
 import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;

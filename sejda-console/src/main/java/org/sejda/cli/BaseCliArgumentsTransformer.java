@@ -18,9 +18,9 @@ package org.sejda.cli;
 
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
-import org.sejda.core.manipulation.model.parameter.MultiplePdfSourceParameters;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
 
 /**
  * @author Eduard Weissmann
@@ -34,7 +34,7 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractParameters parameters,
+    protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
             CliArgumentsWithDirectoryOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
         populateCommonAbstractParameters(parameters, taskCliArguments);
@@ -46,12 +46,14 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractParameters parameters, CliArgumentsWithFileOutput taskCliArguments) {
+    protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
+            CliArgumentsWithFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
         populateCommonAbstractParameters(parameters, taskCliArguments);
     }
 
-    private void populateCommonAbstractParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
+    private void populateCommonAbstractParameters(AbstractPdfOutputParameters parameters,
+            TaskCliArguments taskCliArguments) {
         parameters.setCompress(taskCliArguments.getCompressed());
         parameters.setVersion(taskCliArguments.getPdfVersion());
         parameters.setOverwrite(taskCliArguments.getOverwrite());
@@ -63,7 +65,7 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateSourceParameters(MultiplePdfSourceParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters, TaskCliArguments taskCliArguments) {
         for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
             parameters.addSource(eachAdapter.getPdfFileSource());
         }
@@ -75,7 +77,7 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateSourceParameters(SinglePdfSourceParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateSourceParameters(SinglePdfSourceTaskParameters parameters, TaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 1) {
             throw new SejdaRuntimeException("Only one input file expected, received "
                     + taskCliArguments.getFiles().size());

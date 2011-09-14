@@ -31,7 +31,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Constraint validating that the pdf version specified in an {@link org.sejda.core.manipulation.model.parameter.AbstractParameters} is compatible with the other class attributes.
+ * Constraint validating that the pdf version specified in an {@link org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters} is compatible with the other class attributes.
  * 
  * @author Andrea Vacondio
  * 

@@ -26,6 +26,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.manipulation.model.pdf.page.PagesSelection;

@@ -30,7 +30,7 @@ import java.util.Map;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;

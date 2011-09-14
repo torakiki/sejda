@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
@@ -46,28 +46,28 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void onValueCompressed() {
-        AbstractParameters result = defaultCommandLine().with("--compressed").invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().with("--compressed").invokeSejdaConsole();
 
         assertTrue(describeExpectations(), result.isCompressXref());
     }
 
     @Test
     public void offValueCompressed() {
-        AbstractParameters result = defaultCommandLine().invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().invokeSejdaConsole();
 
         assertFalse(describeExpectations(), result.isCompressXref());
     }
 
     @Test
     public void specifiedValuePdfVersion() {
-        AbstractParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4").invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4").invokeSejdaConsole();
 
         assertEquals(describeExpectations(), PdfVersion.VERSION_1_4, result.getVersion());
     }
 
     @Test
     public void defaultValuePdfVersion() {
-        AbstractParameters result = defaultCommandLine().invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().invokeSejdaConsole();
 
         assertEquals(describeExpectations(), PdfVersion.VERSION_1_6, result.getVersion());
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import javax.validation.Valid;
 
@@ -30,7 +30,8 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfSourceParameters {
+public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfSourceParameters implements
+        MultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid

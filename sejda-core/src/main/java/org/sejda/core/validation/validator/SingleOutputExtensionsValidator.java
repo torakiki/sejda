@@ -28,7 +28,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang.ArrayUtils;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.parameter.SingleOutputTaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
 /**

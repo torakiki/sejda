@@ -20,6 +20,7 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
  * Parameter class for a split by size task.
