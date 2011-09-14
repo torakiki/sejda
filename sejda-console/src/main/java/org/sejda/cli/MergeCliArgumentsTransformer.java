@@ -19,6 +19,7 @@ package org.sejda.cli;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.sejda.cli.adapters.MultiplePdfMergeInputAdapter;
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.exception.SejdaRuntimeException;
@@ -69,7 +70,11 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
             inputFiles = taskCliArguments.getFilesListConfig().getFileSourceList();
         }
 
-        // TODO: if more than one input file "source" specified, warn the user
+        if (!BooleanUtils.xor(new boolean[] { taskCliArguments.isDirectory(), taskCliArguments.isFiles(),
+                taskCliArguments.isFilesListConfig() })) {
+            throw new SejdaRuntimeException(
+                    "Too many options given for input. Please use only one of the following options: --directory --filesListConfig --file");
+        }
 
         if (inputFiles == null) {
             throw new SejdaRuntimeException("No input files specified");
