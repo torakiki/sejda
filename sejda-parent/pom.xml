@@ -15,7 +15,7 @@
 		<module>../sejda-core</module>
 		<module>../sejda-itext</module>
 		<module>../sejda-pdfbox</module>
-		<module>../sejda-icepdf</module>
+<!-- 		<module>../sejda-icepdf</module> -->
 		<module>../sejda-console</module>
 	</modules>
 
