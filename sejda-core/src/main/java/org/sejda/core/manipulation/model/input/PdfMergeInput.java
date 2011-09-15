@@ -18,7 +18,6 @@ package org.sejda.core.manipulation.model.input;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -29,6 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
+import org.sejda.core.support.NullSafeSet;
 import org.sejda.core.validation.constraint.NoIntersections;
 
 /**
@@ -44,7 +44,7 @@ public class PdfMergeInput implements PageRangeSelection {
     @Valid
     private final PdfSource source;
     @Valid
-    private final Set<PageRange> pageSelection = new LinkedHashSet<PageRange>();
+    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
 
     public PdfMergeInput(PdfSource source) {
         this.source = source;

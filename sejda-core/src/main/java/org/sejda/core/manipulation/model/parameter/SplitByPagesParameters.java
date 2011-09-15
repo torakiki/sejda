@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.sejda.core.support.NullSafeSet;
 import org.sejda.core.validation.constraint.NotEmpty;
 
 /**
@@ -35,7 +36,7 @@ import org.sejda.core.validation.constraint.NotEmpty;
 public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @NotEmpty
-    private final Set<Integer> pages = new HashSet<Integer>();
+    private final Set<Integer> pages = new NullSafeSet<Integer>();
 
     /**
      * Adds all pages to split at.
