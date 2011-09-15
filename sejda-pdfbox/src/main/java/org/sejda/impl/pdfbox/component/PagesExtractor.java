@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.support.util.ComponentsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +73,9 @@ public class PagesExtractor extends PDDocumentHandler {
     }
 
     @Override
-    void close() throws IOException {
+    public void close() throws IOException {
         super.close();
-        PDDocumentHandler.nullSafeClose(sourceDocumentHandler);
+        ComponentsUtility.nullSafeClose(sourceDocumentHandler);
     }
 
 }

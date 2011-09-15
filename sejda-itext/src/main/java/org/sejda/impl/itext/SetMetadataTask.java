@@ -18,7 +18,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         stamperHandler.setMetadataOnStamper(actualMeta);
 
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClose(stamperHandler);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
@@ -90,7 +90,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClose(stamperHandler);
     }
 
 }

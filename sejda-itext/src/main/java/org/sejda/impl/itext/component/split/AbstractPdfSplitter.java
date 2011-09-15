@@ -21,7 +21,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,12 +90,12 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
                     LOG.debug("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
-                    closeCopier(pdfCopier);
+                    nullSafeClose(pdfCopier);
                     LOG.debug("Ending split at page {} of the original document", page);
                 }
             }
         } finally {
-            closeCopier(pdfCopier);
+            nullSafeClose(pdfCopier);
         }
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
     }
@@ -122,10 +122,6 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
     abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);
 
     abstract PdfCopier openCopier(PdfReader reader, File outputFile, PdfVersion version) throws TaskException;
-
-    private void closeCopier(PdfCopier pdfCopier) {
-        nullSafeClosePdfCopy(pdfCopier);
-    }
 
     /**
      * @return the strategy to use to know if it's time to open a new document or close the current one.

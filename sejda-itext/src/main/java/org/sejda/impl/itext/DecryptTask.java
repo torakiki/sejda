@@ -21,7 +21,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -75,7 +75,7 @@ public class DecryptTask implements Task<DecryptParameters> {
             stamperHandler.setCreatorOnStamper(reader);
 
             nullSafeClosePdfReader(reader);
-            nullSafeClosePdfStamperHandler(stamperHandler);
+            nullSafeClose(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()));
@@ -90,6 +90,6 @@ public class DecryptTask implements Task<DecryptParameters> {
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClose(stamperHandler);
     }
 }

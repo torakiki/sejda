@@ -19,7 +19,7 @@ package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfStamperHandler.nullSafeClosePdfStamperHandler;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.impl.itext.util.ViewerPreferencesUtils.getPageMode;
 
@@ -89,7 +89,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
         }
 
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClose(stamperHandler);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
@@ -99,7 +99,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClosePdfStamperHandler(stamperHandler);
+        nullSafeClose(stamperHandler);
     }
 
     /**

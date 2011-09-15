@@ -20,7 +20,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.pdfbox.component.PDDocumentHandler.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getDirection;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getNFSMode;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.setBooleanPreferences;

@@ -18,7 +18,7 @@ package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -86,7 +86,7 @@ public class CropTask implements Task<CropParameters> {
             }
             notifyEvent().stepsCompleted(page).outOf(totalPages);
         }
-        nullSafeClosePdfCopy(copier);
+        nullSafeClose(copier);
         nullSafeClosePdfReader(reader);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
@@ -95,7 +95,7 @@ public class CropTask implements Task<CropParameters> {
     }
 
     public void after() {
-        nullSafeClosePdfCopy(copier);
+        nullSafeClose(copier);
         nullSafeClosePdfReader(reader);
     }
 

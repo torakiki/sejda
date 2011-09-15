@@ -17,6 +17,7 @@
 package org.sejda.impl.pdfbox.component;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.sejda.core.exception.TaskExecutionException;
  * @author Andrea Vacondio
  * 
  */
-public class PdfTextExtractor {
+public class PdfTextExtractor implements Closeable {
 
     private PDFTextStripper textStripper = null;
     private Writer outputWriter;
@@ -71,13 +72,7 @@ public class PdfTextExtractor {
         }
     }
 
-    private void close() {
+    public void close() {
         IOUtils.closeQuietly(outputWriter);
-    }
-
-    public static void nullSafeClose(PdfTextExtractor extractor) {
-        if (extractor != null) {
-            extractor.close();
-        }
     }
 }

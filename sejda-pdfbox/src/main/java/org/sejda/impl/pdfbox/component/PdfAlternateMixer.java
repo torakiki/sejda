@@ -29,6 +29,7 @@ import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.support.util.ComponentsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,10 +97,10 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     }
 
     @Override
-    void close() throws IOException {
+    public void close() throws IOException {
         super.close();
-        PDDocumentHandler.nullSafeClose(firstDocumentHandler);
-        PDDocumentHandler.nullSafeClose(secondDocumentHandler);
+        ComponentsUtility.nullSafeClose(firstDocumentHandler);
+        ComponentsUtility.nullSafeClose(secondDocumentHandler);
     }
 
 }

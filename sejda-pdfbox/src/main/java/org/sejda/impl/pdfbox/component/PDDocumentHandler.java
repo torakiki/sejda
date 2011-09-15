@@ -19,6 +19,7 @@ package org.sejda.impl.pdfbox.component;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageMode;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class PDDocumentHandler {
+public class PDDocumentHandler implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
 
@@ -183,7 +184,7 @@ public class PDDocumentHandler {
         document.getDocumentCatalog().setViewerPreferences(preferences);
     }
 
-    void close() throws IOException {
+    public void close() throws IOException {
         document.close();
     }
 
@@ -246,20 +247,5 @@ public class PDDocumentHandler {
         imported.setMediaBox(page.findMediaBox());
         imported.setResources(page.findResources());
         imported.setRotation(page.findRotation());
-    }
-
-    /**
-     * closes the underlying {@link PDDocument} if the handler is not null.
-     * 
-     * @param handler
-     */
-    public static void nullSafeClose(PDDocumentHandler handler) {
-        if (handler != null) {
-            try {
-                handler.close();
-            } catch (IOException e) {
-                LOG.warn("An error occurred closing the document handler.", e);
-            }
-        }
     }
 }
