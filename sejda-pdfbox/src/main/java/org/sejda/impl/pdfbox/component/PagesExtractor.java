@@ -46,12 +46,7 @@ public class PagesExtractor extends PDDocumentHandler {
 
     public void extractPages(Set<Integer> pages) throws TaskIOException {
         initializeDocument();
-
-        try {
-            doExtract(pages);
-        } catch (IOException e) {
-            throw new TaskIOException("Unable to extract pages.", e);
-        }
+        doExtract(pages);
     }
 
     private void initializeDocument() {
@@ -64,17 +59,13 @@ public class PagesExtractor extends PDDocumentHandler {
         setCreatorOnPDDocument();
     }
 
-    private void doExtract(Set<Integer> pages) throws IOException {
+    private void doExtract(Set<Integer> pages) throws TaskIOException {
         @SuppressWarnings("unchecked")
         List<PDPage> existingPages = sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAllPages();
         int currentStep = 0;
         for (Integer page : pages) {
             PDPage existingPage = existingPages.get(page - 1);
-            PDPage imported = getUnderlyingPDDocument().importPage(existingPage);
-            imported.setCropBox(existingPage.findCropBox());
-            imported.setMediaBox(existingPage.findMediaBox());
-            imported.setResources(existingPage.findResources());
-            imported.setRotation(existingPage.findRotation());
+            importPage(existingPage);
             LOG.trace("Imported page number {}", page);
             notifyEvent().stepsCompleted(++currentStep).outOf(pages.size());
         }

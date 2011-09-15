@@ -28,6 +28,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
@@ -211,6 +212,7 @@ public class PDDocumentHandler {
             if (decrypted) {
                 document.setAllSecurityToBeRemoved(decrypted);
             }
+            LOG.trace("Saving document to {}", file);
             document.save(file.getAbsolutePath());
         } catch (COSVisitorException e) {
             throw new TaskException("An error occured saving to temporary file.", e);
@@ -225,6 +227,25 @@ public class PDDocumentHandler {
 
     public PDDocument getUnderlyingPDDocument() {
         return document;
+    }
+
+    /**
+     * Import an existing page to the underlying {@link PDDocument}
+     * 
+     * @param page
+     * @throws TaskIOException
+     */
+    public void importPage(PDPage page) throws TaskIOException {
+        PDPage imported;
+        try {
+            imported = document.importPage(page);
+        } catch (IOException e) {
+            throw new TaskIOException("An error occurred copying the page.", e);
+        }
+        imported.setCropBox(page.findCropBox());
+        imported.setMediaBox(page.findMediaBox());
+        imported.setResources(page.findResources());
+        imported.setRotation(page.findRotation());
     }
 
     /**
