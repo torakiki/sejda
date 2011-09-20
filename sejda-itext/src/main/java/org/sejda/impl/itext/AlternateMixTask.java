@@ -18,13 +18,13 @@ package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfMixInput;
+import org.sejda.core.manipulation.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
@@ -70,9 +70,9 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
 
         copier.setCompression(parameters.isCompressXref());
 
-        PdfMixProcessStatus firstDocStatus = new PdfMixProcessStatus(parameters.getFirstInput(),
+        PdfMixInputProcessStatus firstDocStatus = parameters.getFirstInput().newProcessingStatus(
                 firstReader.getNumberOfPages());
-        PdfMixProcessStatus secondDocStatus = new PdfMixProcessStatus(parameters.getSecondInput(),
+        PdfMixInputProcessStatus secondDocStatus = parameters.getSecondInput().newProcessingStatus(
                 secondReader.getNumberOfPages());
 
         int currentStep = 0;
@@ -104,45 +104,6 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     private void closeResources() {
         nullSafeClosePdfReader(firstReader);
         nullSafeClosePdfReader(secondReader);
-        nullSafeClosePdfCopy(copier);
-    }
-
-    /**
-     * Holds the status of the process on a {@link PdfMixInput}
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    private static class PdfMixProcessStatus {
-
-        private boolean reverse;
-        private int currentPage;
-        private int numberOfPages;
-
-        PdfMixProcessStatus(PdfMixInput input, int numberOfPages) {
-            this.reverse = input.isReverse();
-            this.numberOfPages = numberOfPages;
-            this.currentPage = (input.isReverse()) ? numberOfPages : 1;
-        }
-
-        /**
-         * @return the next page number
-         */
-        int nextPage() {
-            int retVal = currentPage;
-            if (reverse) {
-                currentPage--;
-            } else {
-                currentPage++;
-            }
-            return retVal;
-        }
-
-        /**
-         * @return true if there is another page to be processed
-         */
-        boolean hasNextPage() {
-            return (currentPage > 0 && currentPage <= numberOfPages);
-        }
+        nullSafeClose(copier);
     }
 }

@@ -17,7 +17,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -92,7 +92,7 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
     }
 
     private void closeResources() {
-        nullSafeClosePdfCopy(copier);
+        nullSafeClose(copier);
         nullSafeClosePdfReader(reader);
     }
 }

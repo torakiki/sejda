@@ -27,6 +27,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
@@ -36,7 +38,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class UnpackParameters implements TaskParameters, MultiplePdfSourceParameters {
+public class UnpackParameters implements TaskParameters, MultiplePdfSourceTaskParameters {
 
     @Valid
     @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })

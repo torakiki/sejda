@@ -22,7 +22,7 @@ import javax.validation.Valid;
 import org.junit.Ignore;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
@@ -30,7 +30,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * 
  */
 @Ignore
-public class TestTaskParameter extends AbstractParameters {
+public class TestTaskParameter extends AbstractPdfOutputParameters {
 
     @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     @Valid

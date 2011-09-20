@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -24,13 +24,13 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.validation.constraint.ValidPdfVersion;
 
 /**
- * Abstract parameter implementation with attributes commonly used by all the parameters implementation.
+ * Abstract parameters implementation with attributes commonly used by all the parameters implementation having single or multiple pdf output as result of the task manipulation.
  * 
  * @author Andrea Vacondio
  * 
  */
 @ValidPdfVersion
-public abstract class AbstractParameters implements TaskParameters {
+public abstract class AbstractPdfOutputParameters implements TaskParameters {
 
     private boolean overwrite = false;
     private boolean compressXref = false;
@@ -92,10 +92,10 @@ public abstract class AbstractParameters implements TaskParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractParameters)) {
+        if (!(other instanceof AbstractPdfOutputParameters)) {
             return false;
         }
-        AbstractParameters parameter = (AbstractParameters) other;
+        AbstractPdfOutputParameters parameter = (AbstractPdfOutputParameters) other;
         return new EqualsBuilder().append(overwrite, parameter.isOverwrite())
                 .append(compressXref, parameter.isCompressXref()).append(version, parameter.getVersion())
                 .append(getOutput(), parameter.getOutput()).isEquals();

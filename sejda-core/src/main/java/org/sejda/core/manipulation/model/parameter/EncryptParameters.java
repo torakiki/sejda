@@ -21,18 +21,15 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.support.util.PdfVersionUtility;
-import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.core.manipulation.model.input.PdfSource} that will be encrypted using the same parameters.
@@ -40,38 +37,16 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class EncryptParameters extends PdfSourceListParameters {
+public class EncryptParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    private String outputPrefix = "";
     private String ownerPassword = "";
     private String userPassword = "";
     @NotNull
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
     private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
-    @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
 
     public EncryptParameters(PdfEncryption encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;
-    }
-
-    @Override
-    public TaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(TaskOutput output) {
-        this.output = output;
-    }
-
-    public String getOutputPrefix() {
-        return outputPrefix;
-    }
-
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
     }
 
     public String getOwnerPassword() {
@@ -124,8 +99,8 @@ public class EncryptParameters extends PdfSourceListParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(userPassword)
-                .append(ownerPassword).append(encryptionAlgorithm).append(permissions).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(userPassword).append(ownerPassword)
+                .append(encryptionAlgorithm).append(permissions).toHashCode();
     }
 
     @Override
@@ -137,8 +112,8 @@ public class EncryptParameters extends PdfSourceListParameters {
             return false;
         }
         EncryptParameters parameter = (EncryptParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .append(userPassword, parameter.getUserPassword()).append(ownerPassword, parameter.getOwnerPassword())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(userPassword, parameter.getUserPassword())
+                .append(ownerPassword, parameter.getOwnerPassword())
                 .append(encryptionAlgorithm, parameter.getEncryptionAlgorithm())
                 .append(permissions, parameter.getPermissions()).isEquals();
     }

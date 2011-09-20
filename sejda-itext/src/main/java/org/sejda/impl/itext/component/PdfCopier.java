@@ -17,6 +17,7 @@
  */
 package org.sejda.impl.itext.component;
 
+import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public interface PdfCopier {
+public interface PdfCopier extends Closeable {
 
     /**
      * Adds the given page extracted from the input reader.
@@ -64,11 +65,6 @@ public interface PdfCopier {
      * @param labels
      */
     void setPageLabels(PdfPageLabels labels);
-
-    /**
-     * Closes the copier.
-     */
-    void close();
 
     /**
      * Frees the reader on the underlying pdf copy.

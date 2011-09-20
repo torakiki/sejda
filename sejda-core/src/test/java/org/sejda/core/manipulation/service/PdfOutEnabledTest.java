@@ -33,7 +33,7 @@ import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.StreamOutput;
-import org.sejda.core.manipulation.model.parameter.AbstractParameters;
+import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -56,7 +56,7 @@ public class PdfOutEnabledTest {
      * 
      * @param parameters
      */
-    void initializeNewStreamOutput(AbstractParameters parameters) {
+    void initializeNewStreamOutput(AbstractPdfOutputParameters parameters) {
         out = new ByteArrayOutputStream();
         StreamOutput pdfOut = StreamOutput.newInstance(out);
         parameters.setOutput(pdfOut);
@@ -68,7 +68,7 @@ public class PdfOutEnabledTest {
      * @param parameters
      * @throws IOException
      */
-    void initializeNewFileOutput(AbstractParameters parameters) throws IOException {
+    void initializeNewFileOutput(AbstractPdfOutputParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
         outFile.deleteOnExit();
         FileOutput pdfOut = FileOutput.newInstance(outFile);

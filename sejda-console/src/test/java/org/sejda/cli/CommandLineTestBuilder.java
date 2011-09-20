@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.mockito.ArgumentCaptor;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
 import org.sejda.util.OnceWithMessage;
 import org.sejda.util.SystemOutRecordingStream;

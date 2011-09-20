@@ -19,6 +19,7 @@ package org.sejda.impl.itext.component;
 
 import static org.sejda.impl.itext.util.TransitionUtils.getTransition;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +49,7 @@ import com.lowagie.text.pdf.PdfTransition;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfStamperHandler {
+public final class PdfStamperHandler implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfStamperHandler.class);
 
@@ -94,16 +95,10 @@ public final class PdfStamperHandler {
         }
     }
 
-    /**
-     * Closes the stamper suppressing the exception.
-     * 
-     */
-    public void closePdfStamper() {
+    public void close() throws IOException {
         try {
             stamper.close();
         } catch (DocumentException e) {
-            LOG.error("Error closing the PdfStamper.", e);
-        } catch (IOException e) {
             LOG.error("Error closing the PdfStamper.", e);
         }
         IOUtils.closeQuietly(ouputStream);
@@ -193,16 +188,5 @@ public final class PdfStamperHandler {
      */
     public PdfStamper getStamper() {
         return stamper;
-    }
-
-    /**
-     * Null safe close of the {@link PdfStamperHandler}
-     * 
-     * @param stamperHandler
-     */
-    public static void nullSafeClosePdfStamperHandler(PdfStamperHandler stamperHandler) {
-        if (stamperHandler != null) {
-            stamperHandler.closePdfStamper();
-        }
     }
 }

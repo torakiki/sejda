@@ -65,7 +65,7 @@ public class XmlConfigurationStrategyTest {
     public void testNegativeConstuctorWrongParam() throws IOException, ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-param-sejda-config.xml");
         expected.expectMessage(new Contains(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.parameter.TaskParameters"));
+                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.parameter.base.TaskParameters"));
         try {
             new XmlConfigurationStrategy(stream);
         } finally {

@@ -17,7 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.pdfbox.component.PDDocumentHandler.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 
 import java.io.File;
 import java.util.Map.Entry;

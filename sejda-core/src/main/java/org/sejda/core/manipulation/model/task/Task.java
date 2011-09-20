@@ -18,7 +18,7 @@
 package org.sejda.core.manipulation.model.task;
 
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 
 /**
  * Interface to defines the task lifecycle. Generically defines the {@link TaskParameters} subclass used to parameterize the task execution. Implementing classes must define a

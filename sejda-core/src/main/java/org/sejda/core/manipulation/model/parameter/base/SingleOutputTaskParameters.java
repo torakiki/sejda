@@ -1,7 +1,6 @@
 /*
- * Created on 27/apr/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 12/ago/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,25 +14,18 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
-
-import org.sejda.core.manipulation.model.output.TaskOutput;
+package org.sejda.core.manipulation.model.parameter.base;
 
 /**
- * Model for a task parameters used during the task executions
+ * A {@link TaskParameters} parameter whose execution result in a single output pdf document.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface TaskParameters {
+public interface SingleOutputTaskParameters extends TaskParameters {
 
     /**
-     * @return output destination where the result of the manipulation is placed
+     * @return the output file name to be used when the TaskOutput is not a File output.
      */
-    TaskOutput getOutput();
-
-    /**
-     * @return true if the tasks' outputs should overwrite any existing file, false otherwise
-     */
-    boolean isOverwrite();
+    String getOutputName();
 }

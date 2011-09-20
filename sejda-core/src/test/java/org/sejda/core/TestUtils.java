@@ -10,7 +10,7 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.sejda.core.manipulation.model.parameter.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

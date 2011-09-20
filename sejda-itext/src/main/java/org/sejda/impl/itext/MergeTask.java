@@ -19,7 +19,7 @@ package org.sejda.impl.itext;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.itext.component.PdfCopiers.nullSafeClosePdfCopy;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -96,7 +96,7 @@ public class MergeTask implements Task<MergeParameters> {
     }
 
     private void closeResources() {
-        nullSafeClosePdfCopy(copier);
+        nullSafeClose(copier);
         nullSafeClosePdfReader(reader);
     }
 

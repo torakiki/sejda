@@ -18,6 +18,8 @@ package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Set;
 
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+
 /**
  * Skeletal implementation for a split by page parameter class.
  * 

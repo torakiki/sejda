@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.SinglePdfSourceParameters;
+import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
 
 /**
  * For tasks that support single file as input, test various scenarios related to this trait
@@ -51,14 +51,14 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileNoPassword() {
-        SinglePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
+        SinglePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input.pdf").invokeSejdaConsole();
 
         assertHasFileSource(result, new File("inputs/input.pdf"), null);
     }
 
     @Test
     public void testSourceFileWithPassword() {
-        SinglePdfSourceParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
+        SinglePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
                 .invokeSejdaConsole();
 
         assertHasFileSource(result, new File("inputs/input-protected.pdf"), "secret123");

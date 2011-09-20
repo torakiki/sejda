@@ -1,5 +1,6 @@
 /*
- * Created on 03/ago/2011
+ * Created on 27/apr/2010
+ *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +15,25 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.impl.itext.component;
+package org.sejda.core.manipulation.model.parameter.base;
+
+import org.sejda.core.manipulation.model.output.TaskOutput;
 
 /**
- * Provides utility methods related to the pdf copier
+ * Model for a task parameters used during the task executions
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfCopiers {
-
-    private PdfCopiers() {
-        // hide
-    }
+public interface TaskParameters {
 
     /**
-     * Null safe close of the {@link PdfCopier}
-     * 
-     * @param stamperHandler
+     * @return output destination where the result of the manipulation is placed
      */
-    public static void nullSafeClosePdfCopy(PdfCopier pdfCopier) {
-        if (pdfCopier != null) {
-            pdfCopier.close();
-        }
-    }
+    TaskOutput getOutput();
+
+    /**
+     * @return true if the tasks' outputs should overwrite any existing file, false otherwise
+     */
+    boolean isOverwrite();
 }

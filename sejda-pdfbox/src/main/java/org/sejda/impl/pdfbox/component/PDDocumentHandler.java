@@ -19,6 +19,7 @@ package org.sejda.impl.pdfbox.component;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageMode;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -28,6 +29,7 @@ import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
@@ -47,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class PDDocumentHandler {
+public class PDDocumentHandler implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
 
@@ -182,7 +184,7 @@ public class PDDocumentHandler {
         document.getDocumentCatalog().setViewerPreferences(preferences);
     }
 
-    void close() throws IOException {
+    public void close() throws IOException {
         document.close();
     }
 
@@ -211,6 +213,7 @@ public class PDDocumentHandler {
             if (decrypted) {
                 document.setAllSecurityToBeRemoved(decrypted);
             }
+            LOG.trace("Saving document to {}", file);
             document.save(file.getAbsolutePath());
         } catch (COSVisitorException e) {
             throw new TaskException("An error occured saving to temporary file.", e);
@@ -228,17 +231,21 @@ public class PDDocumentHandler {
     }
 
     /**
-     * closes the underlying {@link PDDocument} if the handler is not null.
+     * Import an existing page to the underlying {@link PDDocument}
      * 
-     * @param handler
+     * @param page
+     * @throws TaskIOException
      */
-    public static void nullSafeClose(PDDocumentHandler handler) {
-        if (handler != null) {
-            try {
-                handler.close();
-            } catch (IOException e) {
-                LOG.warn("An error occurred closing the document handler.", e);
-            }
+    public void importPage(PDPage page) throws TaskIOException {
+        PDPage imported;
+        try {
+            imported = document.importPage(page);
+        } catch (IOException e) {
+            throw new TaskIOException("An error occurred copying the page.", e);
         }
+        imported.setCropBox(page.findCropBox());
+        imported.setMediaBox(page.findMediaBox());
+        imported.setResources(page.findResources());
+        imported.setRotation(page.findRotation());
     }
 }

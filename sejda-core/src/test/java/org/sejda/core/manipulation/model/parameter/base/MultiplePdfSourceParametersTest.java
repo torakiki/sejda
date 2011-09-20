@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -24,18 +24,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceParameters;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class PdfSourceListParametersTest {
+public class MultiplePdfSourceParametersTest {
 
-    private PdfSourceListParameters victim;
+    private MultiplePdfSourceParameters victim;
 
     @Before
     public void setUp() {
-        victim = new PdfSourceListParameters() {
+        victim = new MultiplePdfSourceParameters() {
 
             @Override
             public TaskOutput getOutput() {

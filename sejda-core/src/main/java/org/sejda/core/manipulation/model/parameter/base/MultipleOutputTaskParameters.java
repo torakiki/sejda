@@ -1,5 +1,5 @@
 /*
- * Created on 12/ago/2011
+ * Created on 14/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
-
+package org.sejda.core.manipulation.model.parameter.base;
 
 /**
- * A parameter whose execution result in a single output pdf document.
+ * A {@link TaskParameters} parameter whose execution result in multiple output.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface SingleOutputTaskParameters extends TaskParameters {
+public interface MultipleOutputTaskParameters extends TaskParameters {
 
     /**
-     * @return the output file name to be used when the TaskOutput is not a File output.
+     * @return the prefix to be used to generate names of the multiple outputs.
      */
-    String getOutputName();
+    String getOutputPrefix();
+
+    /**
+     * Set the prefix to be used to generate names of the multiple outputs for this parameter.
+     * 
+     * @param outputPrefix
+     */
+    void setOutputPrefix(String outputPrefix);
 }

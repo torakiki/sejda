@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.parameter;
+package org.sejda.core.manipulation.model.parameter.base;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
  * @author Eduard Weissmann
  * 
  */
-public interface MultiplePdfSourceParameters {
+public interface MultiplePdfSourceTaskParameters {
 
     /**
      * adds the input source to the source list.
