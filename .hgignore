@@ -3,3 +3,6 @@ syntax: regexp
 ^target$
 syntax: glob
 target/**
+.project
+.classpath
+.settings/**
