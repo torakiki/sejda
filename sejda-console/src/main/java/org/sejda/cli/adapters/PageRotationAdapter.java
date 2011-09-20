@@ -16,7 +16,6 @@
  */
 package org.sejda.cli.adapters;
 
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
@@ -37,7 +36,7 @@ public class PageRotationAdapter {
     private final PageRotation pageRotation;
 
     public PageRotationAdapter(String input) {
-        final String[] tokens = StringUtils.split(input, SEPARATOR);
+        final String[] tokens = AdapterUtils.splitAndTrim(input, SEPARATOR);
         if (tokens.length < 2) {
             throw new IllegalArgumentException("Separator '" + SEPARATOR + "' missing");
         }
@@ -45,17 +44,17 @@ public class PageRotationAdapter {
         final String pageToken = tokens[0];
         final String rotationToken = tokens[1];
 
-        final Rotation rotation = valueOfSilently(Rotation.class, rotationToken);
+        final Rotation rotation = AdapterUtils.valueOfSilently(Rotation.class, rotationToken);
         if (rotation == null) {
             throw new IllegalArgumentException("Unknown rotation: '" + rotationToken + "'");
         }
 
-        RotationType rotationType = valueOfSilently(RotationType.class, pageToken);
+        RotationType rotationType = AdapterUtils.valueOfSilently(RotationType.class, pageToken);
         Integer pageNumber = null;
 
         if (rotationType == null) {
             rotationType = RotationType.SINGLE_PAGE;
-            pageNumber = valueOfSilently(pageToken);
+            pageNumber = AdapterUtils.parseIntSilently(pageToken);
         }
 
         if (rotationType.isSinglePage() && pageNumber == null) {
@@ -64,22 +63,6 @@ public class PageRotationAdapter {
 
         this.pageRotation = rotationType.isSinglePage() ? PageRotation.createSinglePageRotation(pageNumber, rotation)
                 : PageRotation.createMultiplePagesRotation(rotation, rotationType);
-    }
-
-    public static Integer valueOfSilently(String input) {
-        try {
-            return Integer.valueOf(input);
-        } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    public static <T extends Enum<T>> T valueOfSilently(Class<T> enumClass, String name) {
-        try {
-            return T.valueOf(enumClass, name);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
     }
 
     /**

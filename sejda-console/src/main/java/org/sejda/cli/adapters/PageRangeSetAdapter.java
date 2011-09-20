@@ -40,7 +40,7 @@ public class PageRangeSetAdapter {
             return;
         }
 
-        String[] tokens = StringUtils.split(StringUtils.trim(rawString), SEPARATOR);
+        String[] tokens = AdapterUtils.splitAndTrim(rawString, SEPARATOR);
         for (String eachToken : tokens) {
             pageRangeSet.add(new PageRangeAdapter(eachToken).getPageRange());
         }

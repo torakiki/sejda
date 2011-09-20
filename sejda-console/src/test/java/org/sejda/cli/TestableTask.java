@@ -42,7 +42,8 @@ public enum TestableTask {
     SIMPLE_SPLIT(new SimpleSplitDefaultsProvider()),
     EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
     EXTRACT_TEXT,
-    SET_METADATA(new SetMetadataDefaultsProvider());
+    SET_METADATA(new SetMetadataDefaultsProvider()),
+    SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -156,5 +157,12 @@ class SetMetadataDefaultsProvider extends SingleInputAndFileOutputDefaultsProvid
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-t", "\"Tales from a test\"");
+    }
+}
+
+class SetPageLabelsDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-l", "99:UPPERCASE_ROMANS:1:Chapter");
     }
 }

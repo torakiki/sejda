@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**
@@ -31,11 +30,15 @@ import org.sejda.core.manipulation.model.pdf.page.PageRange;
  * 
  */
 public class MultiplePageRangeSetAdapter {
+    /**
+     * Tokens separator in the user input
+     */
     private static final String SEPARATOR = ":";
+
     private final List<Set<PageRange>> listOfPageRangeSets = new ArrayList<Set<PageRange>>();
 
     public MultiplePageRangeSetAdapter(String rawString) {
-        String[] tokens = StringUtils.split(rawString, SEPARATOR);
+        String[] tokens = AdapterUtils.splitAndTrim(rawString, SEPARATOR);
         for (String eachToken : tokens) {
             listOfPageRangeSets.add(new PageRangeSetAdapter(eachToken).getPageRangeSet());
         }

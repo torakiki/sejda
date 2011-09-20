@@ -16,7 +16,6 @@
  */
 package org.sejda.cli.adapters;
 
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
@@ -49,27 +48,23 @@ public class PageRangeAdapter {
      *            string representation of the {@link PageRange}
      */
     private PageRange doParsePageRange(String rawString) {
-        String[] tokens = StringUtils.split(StringUtils.trim(rawString), SEPARATOR);
+        String[] tokens = AdapterUtils.splitAndTrim(rawString, SEPARATOR);
         if (tokens.length == 1) {
             if (rawString.contains(SEPARATOR)) {
                 // 23-<end>
-                return new PageRange(parseInt(tokens[0]));
+                return new PageRange(parsePageNumber(tokens[0]));
             }
             // 23
-            return new PageRange(parseInt(tokens[0]), parseInt(tokens[0]));
+            return new PageRange(parsePageNumber(tokens[0]), parsePageNumber(tokens[0]));
         } else if (tokens.length == 2) {
-            return new PageRange(parseInt(tokens[0]), parseInt(tokens[1]));
+            return new PageRange(parsePageNumber(tokens[0]), parsePageNumber(tokens[1]));
         } else {
             throw new SejdaRuntimeException(
                     "Ambiguous definition. Use following formats: [<page>] or [<page1>-<page2>] or [<page1>-]");
         }
     }
 
-    private int parseInt(String s) {
-        try {
-            return Integer.parseInt(s);
-        } catch (NumberFormatException e) {
-            throw new SejdaRuntimeException("Unrecognized page number '" + s + "'", e);
-        }
+    private int parsePageNumber(String s) {
+        return AdapterUtils.parseInt(s, "page number");
     }
 }

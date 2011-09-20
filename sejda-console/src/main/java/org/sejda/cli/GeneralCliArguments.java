@@ -39,6 +39,7 @@ public interface GeneralCliArguments {
     // TODO: stop printing [options] command to execute because user can think the order of params is different
     // TODO: get rid of this class completely
     // TODO: support -version, -license
+    // TODO: support detailed command -help
     @Unparsed(name = "command to execute {[concat], [split],"
             + " [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}")
     CliCommandAdapter getCommand();
