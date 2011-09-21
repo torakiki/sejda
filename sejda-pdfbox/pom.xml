@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<description>Package containing tasks implemented using PDFBox.</description>
 	<url>http://www.sejda.org</url>
 	<parent>
 		<groupId>org.sejda</groupId>
@@ -28,14 +29,14 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>

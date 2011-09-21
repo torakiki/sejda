@@ -38,7 +38,8 @@ public interface NotificationContext {
      * @throws NotificationContextException
      *             if unable to infer the listened {@link AbstractNotificationEvent} subclass
      */
-    void addListener(EventListener<? extends AbstractNotificationEvent> listener) throws NotificationContextException;
+    <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
+            throws NotificationContextException;
 
     /**
      * Clears the list of listeners for this context

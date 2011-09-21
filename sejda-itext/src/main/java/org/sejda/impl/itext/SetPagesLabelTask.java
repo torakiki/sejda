@@ -17,7 +17,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 import static org.sejda.impl.itext.util.PageLabelUtils.getLabels;
 
@@ -74,7 +74,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
         LOG.debug("Applying {} labels ", parameters.getLabels().size());
         copier.setPageLabels(getLabels(parameters.getLabels(), reader.getNumberOfPages()));
 
-        nullSafeClose(copier);
+        nullSafeCloseQuietly(copier);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
@@ -83,7 +83,7 @@ public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClose(copier);
+        nullSafeCloseQuietly(copier);
     }
 
 }

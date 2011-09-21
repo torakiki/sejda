@@ -37,17 +37,27 @@ public final class ComponentsUtility {
     }
 
     /**
-     * closes the {@link Closeable} component it is not null logging exceptions.
+     * closes the {@link Closeable} component if it is not null logging exceptions.
      * 
-     * @param handler
+     * @param closeable
      */
-    public static void nullSafeClose(Closeable closeable) {
+    public static void nullSafeCloseQuietly(Closeable closeable) {
+        try {
+            nullSafeClose(closeable);
+        } catch (IOException e) {
+            LOG.warn("An error occurred closing the document handler.", e);
+        }
+    }
+
+    /**
+     * closes the {@link Closeable} component if it is not null.
+     * 
+     * @param closeable
+     * @throws IOException
+     */
+    public static void nullSafeClose(Closeable closeable) throws IOException {
         if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (IOException e) {
-                LOG.warn("An error occurred closing the document handler.", e);
-            }
+            closeable.close();
         }
     }
 }

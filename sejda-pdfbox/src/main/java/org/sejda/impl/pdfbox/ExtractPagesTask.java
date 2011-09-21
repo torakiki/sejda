@@ -17,7 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 import java.util.Set;
@@ -88,8 +88,8 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
     }
 
     private void closeResource() {
-        nullSafeClose(sourceDocumentHandler);
-        nullSafeClose(extractor);
+        nullSafeCloseQuietly(sourceDocumentHandler);
+        nullSafeCloseQuietly(extractor);
     }
 
 }

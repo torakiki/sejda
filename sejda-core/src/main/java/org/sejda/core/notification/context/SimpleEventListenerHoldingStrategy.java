@@ -37,8 +37,7 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
     }
 
-    public void add(Class<? extends AbstractNotificationEvent> eventClass,
-            EventListener<? extends AbstractNotificationEvent> listener) {
+    public <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener) {
         listeners.put(eventClass, listener);
     }
 

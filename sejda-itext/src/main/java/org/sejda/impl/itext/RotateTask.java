@@ -21,7 +21,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.component.PdfRotator.applyRotation;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
@@ -79,7 +79,7 @@ public class RotateTask implements Task<RotateParameters> {
             stamperHandler.setCreatorOnStamper(reader);
 
             nullSafeClosePdfReader(reader);
-            nullSafeClose(stamperHandler);
+            nullSafeCloseQuietly(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()));
@@ -94,7 +94,7 @@ public class RotateTask implements Task<RotateParameters> {
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClose(stamperHandler);
+        nullSafeCloseQuietly(stamperHandler);
     }
 
 }

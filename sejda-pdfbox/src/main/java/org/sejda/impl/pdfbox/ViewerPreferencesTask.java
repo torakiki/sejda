@@ -20,7 +20,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getDirection;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getNFSMode;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.setBooleanPreferences;
@@ -82,7 +82,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
                     nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            nullSafeClose(documentHandler);
+            nullSafeCloseQuietly(documentHandler);
 
             notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
@@ -107,7 +107,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
     }
 
     public void after() {
-        nullSafeClose(documentHandler);
+        nullSafeCloseQuietly(documentHandler);
     }
 
 }
