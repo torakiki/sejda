@@ -35,7 +35,7 @@ import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParamete
 class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
         AbstractXmlGraphicsImageWriterAdapter<PdfToSingleTiffParameters> {
 
-    private MultiImageWriter adaptedWriter;
+    private MultiImageWriter adaptedWriter = null;
 
     public void openWriteDestination(OutputStream destination, PdfToSingleTiffParameters params) throws TaskIOException {
         setOutputStream(destination);

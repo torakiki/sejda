@@ -64,7 +64,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
         } catch (IOException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format("An I/O error occurred opening the source: %s.", source), e);
         }
         return document;
     }
@@ -79,7 +79,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
         } catch (IOException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format("An I/O error occurred opening the source: %s.", source), e);
         }
         return document;
     }
@@ -87,14 +87,26 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     private Document newDocument(final PdfSource source) {
         Document document = new Document();
         if (StringUtils.isNotBlank(source.getPassword())) {
-            document.setSecurityCallback(new SecurityCallback() {
-
-                public String requestPassword(Document document) {
-                    return source.getPassword();
-                }
-
-            });
+            document.setSecurityCallback(new PdfSourceSecurityCallback(source));
         }
         return document;
+    }
+
+    /**
+     * ICEpdf security callback binded to a {@link PdfSource}.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static final class PdfSourceSecurityCallback implements SecurityCallback {
+        private final PdfSource source;
+
+        private PdfSourceSecurityCallback(PdfSource source) {
+            this.source = source;
+        }
+
+        public String requestPassword(Document document) {
+            return source.getPassword();
+        }
     }
 }
