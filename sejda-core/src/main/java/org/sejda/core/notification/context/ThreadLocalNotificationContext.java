@@ -30,7 +30,7 @@ public final class ThreadLocalNotificationContext {
         // hide
     }
 
-    private static ThreadLocal<? extends AbstractNotificationContext> threadLocal = new ThreadLocal<SimpleNotificationContext>() {
+    private static final ThreadLocal<? extends AbstractNotificationContext> THREAD_LOCAL_CONTEXT = new ThreadLocal<SimpleNotificationContext>() {
         @Override
         protected SimpleNotificationContext initialValue() {
             return new ThreadLocalNotificationContext.SimpleNotificationContext();
@@ -38,7 +38,7 @@ public final class ThreadLocalNotificationContext {
     };
 
     public static NotificationContext getContext() {
-        return threadLocal.get();
+        return THREAD_LOCAL_CONTEXT.get();
     }
 
     /**

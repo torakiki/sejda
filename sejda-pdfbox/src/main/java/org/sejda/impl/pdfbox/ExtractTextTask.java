@@ -20,7 +20,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 
@@ -92,7 +92,7 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
     }
 
     private void closeResources() {
-        nullSafeClose(documentHandler);
-        nullSafeClose(textExtractor);
+        nullSafeCloseQuietly(documentHandler);
+        nullSafeCloseQuietly(textExtractor);
     }
 }

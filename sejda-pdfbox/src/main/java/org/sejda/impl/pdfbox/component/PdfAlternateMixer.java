@@ -99,8 +99,8 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     @Override
     public void close() throws IOException {
         super.close();
-        ComponentsUtility.nullSafeClose(firstDocumentHandler);
-        ComponentsUtility.nullSafeClose(secondDocumentHandler);
+        ComponentsUtility.nullSafeCloseQuietly(firstDocumentHandler);
+        ComponentsUtility.nullSafeCloseQuietly(secondDocumentHandler);
     }
 
 }

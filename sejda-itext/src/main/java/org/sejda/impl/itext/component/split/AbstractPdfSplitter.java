@@ -21,7 +21,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,12 +90,12 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
                     LOG.debug("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
-                    nullSafeClose(pdfCopier);
+                    nullSafeCloseQuietly(pdfCopier);
                     LOG.debug("Ending split at page {} of the original document", page);
                 }
             }
         } finally {
-            nullSafeClose(pdfCopier);
+            nullSafeCloseQuietly(pdfCopier);
         }
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
     }

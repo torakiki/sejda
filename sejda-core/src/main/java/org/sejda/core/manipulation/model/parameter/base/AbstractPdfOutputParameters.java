@@ -30,24 +30,10 @@ import org.sejda.core.validation.constraint.ValidPdfVersion;
  * 
  */
 @ValidPdfVersion
-public abstract class AbstractPdfOutputParameters implements TaskParameters {
+public abstract class AbstractPdfOutputParameters extends AbstractParameters {
 
-    private boolean overwrite = false;
     private boolean compressXref = false;
     private PdfVersion version;
-
-    public boolean isOverwrite() {
-        return overwrite;
-    }
-
-    /**
-     * Set if the output should be overwritten if already exists
-     * 
-     * @param overwrite
-     */
-    public void setOverwrite(boolean overwrite) {
-        this.overwrite = overwrite;
-    }
 
     public boolean isCompressXref() {
         return compressXref;
@@ -83,8 +69,8 @@ public abstract class AbstractPdfOutputParameters implements TaskParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(compressXref).append(version).append(getOutput())
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(compressXref).append(version)
+                .append(getOutput()).toHashCode();
     }
 
     @Override
@@ -96,8 +82,7 @@ public abstract class AbstractPdfOutputParameters implements TaskParameters {
             return false;
         }
         AbstractPdfOutputParameters parameter = (AbstractPdfOutputParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite())
-                .append(compressXref, parameter.isCompressXref()).append(version, parameter.getVersion())
-                .append(getOutput(), parameter.getOutput()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(compressXref, parameter.isCompressXref())
+                .append(version, parameter.getVersion()).append(getOutput(), parameter.getOutput()).isEquals();
     }
 }

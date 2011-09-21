@@ -54,13 +54,12 @@ public abstract class AbstractNotificationContext implements NotificationContext
         }
     }
 
-    
-    public void addListener(EventListener<? extends AbstractNotificationEvent> listener)
+    public <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
             throws NotificationContextException {
         synchronized (holder) {
-            //inferring the event class on the event listener 
+            // inferring the event class on the event listener
             @SuppressWarnings("unchecked")
-            Class<? extends AbstractNotificationEvent> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
+            Class<T> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
             if (eventClass == null) {
                 throw new NotificationContextException("Unable to infer the listened event class.");
             }
@@ -85,15 +84,11 @@ public abstract class AbstractNotificationContext implements NotificationContext
         try {
             return new DefaultSejdaContext().getNotificationStrategy().newInstance();
         } catch (InstantiationException e) {
-            LOG
-                    .warn(
-                            "An error occur while instantiating a new NotificationStrategy. Default strategy will be used.",
-                            e);
+            LOG.warn("An error occur while instantiating a new NotificationStrategy. Default strategy will be used.", e);
         } catch (IllegalAccessException e) {
-            LOG
-                    .warn(
-                            "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",
-                            e);
+            LOG.warn(
+                    "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",
+                    e);
         }
         return new SyncNotificationStrategy();
     }

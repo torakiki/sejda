@@ -27,8 +27,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.validation.constraint.NotEmpty;
 import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
 
@@ -38,7 +38,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class UnpackParameters implements TaskParameters, MultiplePdfSourceTaskParameters {
+public class UnpackParameters extends AbstractParameters implements MultiplePdfSourceTaskParameters {
 
     @Valid
     @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
@@ -46,23 +46,9 @@ public class UnpackParameters implements TaskParameters, MultiplePdfSourceTaskPa
     @NotEmpty
     @Valid
     private final List<PdfSource> sourceList = new ArrayList<PdfSource>();
-    private boolean overwrite = false;
 
     public UnpackParameters(TaskOutput output) {
         this.output = output;
-    }
-
-    public boolean isOverwrite() {
-        return overwrite;
-    }
-
-    /**
-     * Set if the output should be overwritten if already exists
-     * 
-     * @param overwrite
-     */
-    public void setOverwrite(boolean overwrite) {
-        this.overwrite = overwrite;
     }
 
     public TaskOutput getOutput() {
@@ -87,7 +73,7 @@ public class UnpackParameters implements TaskParameters, MultiplePdfSourceTaskPa
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(output).append(sourceList).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(sourceList).toHashCode();
     }
 
     @Override
@@ -99,7 +85,7 @@ public class UnpackParameters implements TaskParameters, MultiplePdfSourceTaskPa
             return false;
         }
         UnpackParameters parameter = (UnpackParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(output, parameter.getOutput())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
                 .append(sourceList, parameter.getSourceList()).isEquals();
     }
 }

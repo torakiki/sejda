@@ -36,8 +36,7 @@ interface EventListenerHoldingStrategy {
      *            event class listened
      * @param listener
      */
-    void add(Class<? extends AbstractNotificationEvent> eventClass,
-            EventListener<? extends AbstractNotificationEvent> listener);
+    <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener);
 
     /**
      * Clears the list of listeners

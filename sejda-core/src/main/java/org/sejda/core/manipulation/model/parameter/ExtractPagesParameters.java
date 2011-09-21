@@ -19,7 +19,6 @@ package org.sejda.core.manipulation.model.parameter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -31,6 +30,7 @@ import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.manipulation.model.pdf.page.PagesSelection;
 import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.core.support.NullSafeSet;
 import org.sejda.core.validation.constraint.NoIntersections;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -49,7 +49,7 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
 
     private PredefinedSetOfPages setOfPages;
     @Valid
-    private final Set<PageRange> pageSelection = new LinkedHashSet<PageRange>();
+    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
 
     /**
      * Creates an instance using a predefined set of pages to extract.

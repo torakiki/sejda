@@ -20,7 +20,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 
@@ -75,7 +75,7 @@ public class DecryptTask implements Task<DecryptParameters> {
                     nameRequest().originalName(source.getName()));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            nullSafeClose(documentHandler);
+            nullSafeCloseQuietly(documentHandler);
 
             notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
         }
@@ -85,7 +85,7 @@ public class DecryptTask implements Task<DecryptParameters> {
     }
 
     public void after() {
-        nullSafeClose(documentHandler);
+        nullSafeCloseQuietly(documentHandler);
     }
 
 }

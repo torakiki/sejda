@@ -17,7 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 
@@ -66,7 +66,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     }
 
     public void after() {
-        nullSafeClose(mixer);
+        nullSafeCloseQuietly(mixer);
     }
 
 }
