@@ -26,6 +26,7 @@ import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
+import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
 import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
@@ -236,6 +237,19 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
             return new SetPageLabelsCliArgumentsTransformer();
+        }
+
+    }),
+    SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
+
+        @Override
+        protected Class<SetPageTransitionsTaskCliArguments> getCliArgumentsClass() {
+            return SetPageTransitionsTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters> getArgumentsTransformer() {
+            return new SetPageTransitionsCliArgumentsTransformer();
         }
 
     });

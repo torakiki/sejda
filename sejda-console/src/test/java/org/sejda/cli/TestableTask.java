@@ -43,7 +43,8 @@ public enum TestableTask {
     EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
     EXTRACT_TEXT,
     SET_METADATA(new SetMetadataDefaultsProvider()),
-    SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider());
+    SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider()),
+    SET_PAGE_TRANSITIONS(new SetPageTransitionsDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -164,5 +165,12 @@ class SetPageLabelsDefaultsProvider extends SingleInputAndFileOutputDefaultsProv
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-l", "99:UPPERCASE_ROMANS:1:Chapter");
+    }
+}
+
+class SetPageTransitionsDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("--transitions", "DISSOLVE:6:9:55");
     }
 }

@@ -31,7 +31,6 @@ public class PdfPageLabelAdapter {
 
     private static final int LABEL_PREFIX_INDEX = 3;
     private static final int MIN_SPERATOR_OCCURENCES = 3;
-    private static final String SEPARATOR = ":";
 
     private Integer pageNumber;
     private PdfPageLabel pdfPageLabel;
@@ -46,7 +45,7 @@ public class PdfPageLabelAdapter {
     }
 
     private void doParseInput(String input) {
-        String[] tokens = AdapterUtils.splitAndTrim(input, SEPARATOR);
+        String[] tokens = AdapterUtils.splitAndTrim(input);
 
         if (tokens.length < MIN_SPERATOR_OCCURENCES) {
             throw new SejdaRuntimeException(

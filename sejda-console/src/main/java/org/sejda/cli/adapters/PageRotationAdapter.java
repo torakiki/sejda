@@ -16,6 +16,7 @@
  */
 package org.sejda.cli.adapters;
 
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
@@ -28,17 +29,13 @@ import org.sejda.core.manipulation.model.rotation.RotationType;
  * 
  */
 public class PageRotationAdapter {
-    /**
-     * Tokens separator in the user input
-     */
-    private static final String SEPARATOR = ":";
-
     private final PageRotation pageRotation;
 
     public PageRotationAdapter(String input) {
-        final String[] tokens = AdapterUtils.splitAndTrim(input, SEPARATOR);
+        final String[] tokens = AdapterUtils.splitAndTrim(input);
         if (tokens.length < 2) {
-            throw new IllegalArgumentException("Separator '" + SEPARATOR + "' missing");
+            throw new SejdaRuntimeException("Invalid input: '" + input
+                    + "'. Expected format: 'pageDefinition:rotation'");
         }
 
         final String pageToken = tokens[0];
@@ -46,7 +43,7 @@ public class PageRotationAdapter {
 
         final Rotation rotation = AdapterUtils.valueOfSilently(Rotation.class, rotationToken);
         if (rotation == null) {
-            throw new IllegalArgumentException("Unknown rotation: '" + rotationToken + "'");
+            throw new SejdaRuntimeException("Unknown rotation: '" + rotationToken + "'");
         }
 
         RotationType rotationType = AdapterUtils.valueOfSilently(RotationType.class, pageToken);
@@ -58,7 +55,7 @@ public class PageRotationAdapter {
         }
 
         if (rotationType.isSinglePage() && pageNumber == null) {
-            throw new IllegalArgumentException("Unknown pages definition: '" + pageToken + "'");
+            throw new SejdaRuntimeException("Unknown page definition: '" + pageToken + "'");
         }
 
         this.pageRotation = rotationType.isSinglePage() ? PageRotation.createSinglePageRotation(pageNumber, rotation)

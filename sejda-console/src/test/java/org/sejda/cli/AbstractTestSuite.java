@@ -23,7 +23,10 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -118,5 +121,9 @@ public abstract class AbstractTestSuite {
 
     public static void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
         new CommandLineExecuteTestHelper().assertConsoleOutputContains(commandLine, expectedOutputContainedLines);
+    }
+
+    protected static <T> Set<T> asSet(T... items) {
+        return new HashSet<T>(Arrays.asList(items));
     }
 }

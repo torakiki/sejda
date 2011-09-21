@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
+import org.sejda.core.manipulation.model.rotation.RotationType;
 
 /**
  * Tests for the RotateTask command line interface
@@ -37,8 +38,7 @@ public class RotateTaskTest extends AbstractTaskTest {
 
     @Test
     public void testOutputPrefix_Specified() {
-        RotateParameters parameters = defaultCommandLine().with("-p", "fooPrefix")
-                .invokeSejdaConsole();
+        RotateParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
@@ -49,9 +49,32 @@ public class RotateTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void testPageRotation() {
-        RotateParameters parameters = defaultCommandLine().with("-r", "34:DEGREES_90")
-                .invokeSejdaConsole();
+    public void pageRotation_singlePage() {
+        RotateParameters parameters = defaultCommandLine().with("-r", "34:DEGREES_90").invokeSejdaConsole();
         assertEquals(PageRotation.createSinglePageRotation(34, Rotation.DEGREES_90), parameters.getRotation());
+    }
+
+    @Test
+    public void pageRotation_multiplePages() {
+        RotateParameters parameters = defaultCommandLine().with("-r", "ODD_PAGES:DEGREES_0").invokeSejdaConsole();
+        assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0, RotationType.ODD_PAGES),
+                parameters.getRotation());
+    }
+
+    @Test
+    public void pageRotation_invalidRotationType() {
+        defaultCommandLine().with("-r", "ODD_PAGES:DEGREES_99990").assertConsoleOutputContains(
+                "Unknown rotation: 'DEGREES_99990'");
+    }
+
+    @Test
+    public void pageRotation_invalidPageDefinition() {
+        defaultCommandLine().with("-r", "abc:DEGREES_0").assertConsoleOutputContains("Unknown page definition: 'abc'");
+    }
+
+    @Test
+    public void pageRotation_invalidOption() {
+        defaultCommandLine().with("-r", "invalid").assertConsoleOutputContains(
+                "Invalid input: 'invalid'. Expected format: 'pageDefinition:rotation'");
     }
 }

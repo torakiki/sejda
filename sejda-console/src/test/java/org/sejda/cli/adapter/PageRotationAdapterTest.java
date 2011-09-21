@@ -23,6 +23,7 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 
 import org.junit.Test;
 import org.sejda.cli.adapters.PageRotationAdapter;
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.rotation.PageRotation;
 import org.sejda.core.manipulation.model.rotation.Rotation;
 import org.sejda.core.manipulation.model.rotation.RotationType;
@@ -56,8 +57,9 @@ public class PageRotationAdapterTest {
         try {
             new PageRotationAdapter("ALL_PAGESDEGREES_0").getPageRotation();
             fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), containsString("Separator ':' missing"));
+        } catch (SejdaRuntimeException e) {
+            assertThat(e.getMessage(),
+                    containsString("Invalid input: 'ALL_PAGESDEGREES_0'. Expected format: 'pageDefinition:rotation'"));
         }
     }
 
@@ -66,8 +68,8 @@ public class PageRotationAdapterTest {
         try {
             new PageRotationAdapter("SOME_PAGES:DEGREES_0").getPageRotation();
             fail();
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), containsString("Unknown pages definition: 'SOME_PAGES'"));
+        } catch (SejdaRuntimeException e) {
+            assertThat(e.getMessage(), containsString("Unknown page definition: 'SOME_PAGES'"));
         }
     }
 
@@ -76,7 +78,7 @@ public class PageRotationAdapterTest {
         try {
             new PageRotationAdapter("ODD_PAGES:DEGREES_99").getPageRotation();
             fail();
-        } catch (IllegalArgumentException e) {
+        } catch (SejdaRuntimeException e) {
             assertThat(e.getMessage(), containsString("Unknown rotation: 'DEGREES_99'"));
         }
     }
