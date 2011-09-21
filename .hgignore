@@ -6,3 +6,6 @@ target/**
 .project
 .classpath
 .settings/**
+
+syntax: regexp
+\.cld$

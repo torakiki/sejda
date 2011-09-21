@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<description>Package containing different implementations of image writers used during conversion of pdf documents to image format.</description>
+	<url>http://www.sejda.org</url>
+	<parent>
+		<groupId>org.sejda</groupId>
+		<artifactId>sejda-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../sejda-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>sejda-image-writers</artifactId>
+	<packaging>jar</packaging>
+
+	<name>sejda image writers</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-core</artifactId>
+			<version>${version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-core</artifactId>
+			<version>${version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>xmlgraphics-commons</artifactId>
+			<version>1.4</version>
+		</dependency>
+	</dependencies>
+</project>

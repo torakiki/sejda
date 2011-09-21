@@ -21,7 +21,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
@@ -104,7 +104,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
             }
 
             nullSafeClosePdfReader(reader);
-            nullSafeClose(stamperHandler);
+            nullSafeCloseQuietly(stamperHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()));
@@ -120,7 +120,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
 
     public void after() {
         nullSafeClosePdfReader(reader);
-        nullSafeClose(stamperHandler);
+        nullSafeCloseQuietly(stamperHandler);
     }
 
     /**

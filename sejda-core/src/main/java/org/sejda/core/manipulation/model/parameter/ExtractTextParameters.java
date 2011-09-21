@@ -27,6 +27,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.base.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.core.validation.constraint.NotEmpty;
@@ -38,7 +39,8 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-public class ExtractTextParameters implements MultiplePdfSourceTaskParameters, MultipleOutputTaskParameters {
+public class ExtractTextParameters extends AbstractParameters implements MultiplePdfSourceTaskParameters,
+        MultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid
@@ -47,24 +49,10 @@ public class ExtractTextParameters implements MultiplePdfSourceTaskParameters, M
     @NotEmpty
     @Valid
     private List<PdfSource> sourceList = new ArrayList<PdfSource>();
-    private boolean overwrite = false;
     private String textEncoding;
 
     public ExtractTextParameters(TaskOutput output) {
         this.output = output;
-    }
-
-    public boolean isOverwrite() {
-        return overwrite;
-    }
-
-    /**
-     * Set if the output should be overwritten if already exists
-     * 
-     * @param overwrite
-     */
-    public void setOverwrite(boolean overwrite) {
-        this.overwrite = overwrite;
     }
 
     public String getTextEncoding() {
@@ -105,8 +93,8 @@ public class ExtractTextParameters implements MultiplePdfSourceTaskParameters, M
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).append(output).append(sourceList).append(textEncoding)
-                .append(outputPrefix).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(sourceList)
+                .append(textEncoding).append(outputPrefix).toHashCode();
     }
 
     @Override
@@ -118,7 +106,7 @@ public class ExtractTextParameters implements MultiplePdfSourceTaskParameters, M
             return false;
         }
         ExtractTextParameters parameter = (ExtractTextParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).append(output, parameter.getOutput())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
                 .append(sourceList, parameter.getSourceList()).append(textEncoding, parameter.getTextEncoding())
                 .append(outputPrefix, parameter.getOutputPrefix()).isEquals();
     }

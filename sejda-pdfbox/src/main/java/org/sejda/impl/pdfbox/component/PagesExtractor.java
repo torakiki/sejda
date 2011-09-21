@@ -75,7 +75,7 @@ public class PagesExtractor extends PDDocumentHandler {
     @Override
     public void close() throws IOException {
         super.close();
-        ComponentsUtility.nullSafeClose(sourceDocumentHandler);
+        ComponentsUtility.nullSafeCloseQuietly(sourceDocumentHandler);
     }
 
 }

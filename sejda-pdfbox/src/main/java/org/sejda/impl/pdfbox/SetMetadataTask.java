@@ -17,7 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -72,7 +72,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.compressXrefStream(parameters.isCompressXref());
         documentHandler.savePDDocument(tmpFile);
-        nullSafeClose(documentHandler);
+        nullSafeCloseQuietly(documentHandler);
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
                 parameters.isOverwrite());
@@ -82,7 +82,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
     }
 
     public void after() {
-        nullSafeClose(documentHandler);
+        nullSafeCloseQuietly(documentHandler);
     }
 
 }
