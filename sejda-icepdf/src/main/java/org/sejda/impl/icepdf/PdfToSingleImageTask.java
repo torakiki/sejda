@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImag
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.support.io.SingleOutputWriterSupport;
 import org.sejda.core.writer.model.ImageWriter;
-import org.sejda.core.writer.model.ImageWriterFactoryLocator;
+import org.sejda.core.writer.model.ImageWriterContext;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +55,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
 
     public void before(T parameters) throws TaskExecutionException {
         outputWriter = new SingleOutputWriterSupport();
-        writer = ImageWriterFactoryLocator.getFactory().createImageWriter(parameters);
+        writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
         if (writer == null || !writer.supportMultiImage()) {
             throw new TaskExecutionException("No suitable ImageWriter found.");
         }
@@ -78,7 +78,6 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
             writer.write(toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters), parameters);
             notifyEvent().stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
         }
-        pdfDocument.dispose();
         writer.closeDestination();
 
         outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),

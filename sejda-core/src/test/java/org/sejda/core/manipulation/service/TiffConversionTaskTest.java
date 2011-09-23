@@ -43,6 +43,7 @@ import org.sejda.core.manipulation.model.image.ImageColorType;
 import org.sejda.core.manipulation.model.image.TiffCompressionType;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.output.FileOutput;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
@@ -56,22 +57,21 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
-    private PdfToSingleTiffParameters parameters;
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the unpack parameters
-     * 
-     */
-    private void setUpParameters() {
-        parameters = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);
-        parameters.setResolutionInDpi(96);
+    private AbstractPdfToSingleImageParameters getTiffParams() {
+        PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);
         parameters.setCompressionType(TiffCompressionType.PACKBITS);
+        setCommonParams(parameters);
+        return parameters;
+    }
+
+    private void setCommonParams(PdfToSingleTiffParameters parameters) {
+        parameters.setResolutionInDpi(96);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
@@ -79,7 +79,8 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
     }
 
     @Test
-    public void testExecuteStream() throws TaskException, IOException, ImageException {
+    public void testExecuteStreamToTiff() throws TaskException, IOException, ImageException {
+        AbstractPdfToSingleImageParameters parameters = getTiffParams();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         File out = File.createTempFile("SejdaTest", ".tiff");
         out.deleteOnExit();
