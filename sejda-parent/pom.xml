@@ -15,7 +15,7 @@
 		<module>../sejda-core</module>
 		<module>../sejda-itext</module>
 		<module>../sejda-pdfbox</module>
-<!-- 		<module>../sejda-icepdf</module> -->
+		<module>../sejda-icepdf</module>
 		<module>../sejda-console</module>
 		<module>../sejda-image-writers</module>
 	</modules>
@@ -206,5 +206,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 </project>
