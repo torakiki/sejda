@@ -5,6 +5,7 @@ syntax: glob
 target/**
 .project
 .classpath
+.checkstyle
 .settings/**
 
 syntax: regexp
