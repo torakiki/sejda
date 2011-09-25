@@ -37,6 +37,7 @@ public final class ImageWriterContext {
     private static final String IMAGE_WRITER_FACTORY_CLASS = "org.sejda.image.writer.factory.class";
 
     private final ImageWriterAbstractFactory factory;
+    private final ImageWriterAbstractFactory defaultFactory;
 
     public static ImageWriterContext getContext() {
         return DefaultImageWriterFactoryContextHolder.IMAGE_WRITER_CONTEXT;
@@ -44,6 +45,7 @@ public final class ImageWriterContext {
 
     private ImageWriterContext() {
         factory = newImageWriterFactory();
+        defaultFactory = new XmlGraphicsImageWriterFactory();
     }
 
     /**
@@ -51,6 +53,13 @@ public final class ImageWriterContext {
      */
     public ImageWriterAbstractFactory getImageWriterFactory() {
         return factory;
+    }
+
+    /**
+     * @return the shared instance of the default {@link ImageWriterAbstractFactory}.
+     */
+    public ImageWriterAbstractFactory getDefaultImageWriterFactory() {
+        return defaultFactory;
     }
 
     private static ImageWriterAbstractFactory newImageWriterFactory() {

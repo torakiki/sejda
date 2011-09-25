@@ -56,6 +56,10 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     public void before(T parameters) throws TaskExecutionException {
         outputWriter = new SingleOutputWriterSupport();
         writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
+        if (writer == null) {
+            LOG.info("Unable to create an ImageWriter using the provided factory, falling back on default factory.");
+            writer = ImageWriterContext.getContext().getDefaultImageWriterFactory().createImageWriter(parameters);
+        }
         if (writer == null || !writer.supportMultiImage()) {
             throw new TaskExecutionException("No suitable ImageWriter found.");
         }
@@ -64,7 +68,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
 
     public void execute(T parameters) throws TaskException {
 
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = outputWriter.createTemporaryBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         pdfDocument = parameters.getSource().open(sourceOpener);
