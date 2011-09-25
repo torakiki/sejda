@@ -48,7 +48,7 @@ public class SingleOutputExtensionsValidator implements
     }
 
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
-        if (value != null && ArrayUtils.isNotEmpty(extensions)) {
+        if (value != null && value.getOutput() != null && ArrayUtils.isNotEmpty(extensions)) {
             String fileName = getOutputFileName(value);
 
             if (hasAllowedExtension(fileName)) {

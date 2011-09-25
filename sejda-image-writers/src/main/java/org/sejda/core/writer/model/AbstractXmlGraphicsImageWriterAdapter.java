@@ -81,22 +81,21 @@ abstract class AbstractXmlGraphicsImageWriterAdapter<T extends AbstractPdfToImag
     }
 
     /**
-     * Sets the specified compression on the input argument.
      * 
+     * @param params
      * @param compressionType
-     * @param inputArgument
+     * @return a new {@link ImageWriterParams} for the given input.
      */
-    void setCompressionOnInputArgument(TiffCompressionType compressionType, ImageWriterParams inputArgument) {
-        if (inputArgument != null) {
-            String compression = TIFF_COMPRESSION_TYPE_CACHE.get(compressionType);
-            if (StringUtils.isNotBlank(compression)) {
-                inputArgument.setCompressionMethod(compression);
-            } else {
-                LOG.warn("{} compression type is currently not supported by XML Graphics.", compressionType);
-            }
+    ImageWriterParams newImageWriterParams(T params, TiffCompressionType compressionType) {
+        ImageWriterParams imageWriterParams = new ImageWriterParams();
+        imageWriterParams.setResolution(params.getResolutionInDpi());
+        String compression = TIFF_COMPRESSION_TYPE_CACHE.get(compressionType);
+        if (StringUtils.isNotBlank(compression)) {
+            imageWriterParams.setCompressionMethod(compression);
         } else {
-            LOG.warn("Compression cannot be set on a null ImageWriterParams.");
+            LOG.warn("{} compression type is currently not supported by XML Graphics.", compressionType);
         }
+        return imageWriterParams;
     }
 
     /**

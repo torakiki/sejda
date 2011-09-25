@@ -32,10 +32,14 @@ import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParamete
  * @author Andrea Vacondio
  * 
  */
-class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
+final class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
         AbstractXmlGraphicsImageWriterAdapter<PdfToSingleTiffParameters> {
 
     private MultiImageWriter adaptedWriter = null;
+
+    private XmlGraphicsSingleOutputTiffImageWriterAdapter() {
+        // hide, constructed using builder
+    }
 
     public void openWriteDestination(OutputStream destination, PdfToSingleTiffParameters params) throws TaskIOException {
         setOutputStream(destination);
@@ -47,9 +51,10 @@ class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
     }
 
     public void write(RenderedImage image, PdfToSingleTiffParameters params) throws TaskIOException {
-        ImageWriterParams imageWriterParams = new ImageWriterParams();
-        imageWriterParams.setResolution(params.getResolutionInDpi());
-        setCompressionOnInputArgument(params.getCompressionType(), imageWriterParams);
+        if (adaptedWriter == null || getOutputDestination() == null) {
+            throw new TaskIOException("Cannot call write before opening the write destination");
+        }
+        ImageWriterParams imageWriterParams = newImageWriterParams(params, params.getCompressionType());
         try {
             adaptedWriter.writeImage(image, imageWriterParams);
         } catch (IOException e) {
@@ -93,7 +98,7 @@ class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
     static final class XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToSingleTiffParameters> {
 
-        public ImageWriter<PdfToSingleTiffParameters> build() {
+        public XmlGraphicsSingleOutputTiffImageWriterAdapter build() {
             return new XmlGraphicsSingleOutputTiffImageWriterAdapter();
         }
 

@@ -39,17 +39,19 @@ import org.sejda.core.manipulation.model.input.PdfURLSource;
  */
 public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
 
+    private static final String AN_ERROR_OCCURRED_OPENING_SOURCE = "An error occurred opening the source: %s.";
+
     public Document open(PdfURLSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
             document.setUrl(source.getUrl());
         } catch (PDFException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
         } catch (IOException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         }
         return document;
     }
@@ -59,12 +61,12 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         try {
             document.setFile(source.getFile().getAbsolutePath());
         } catch (PDFException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
         } catch (IOException e) {
-            throw new TaskIOException(String.format("An I/O error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         }
         return document;
     }
@@ -74,7 +76,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         try {
             document.setInputStream(source.getStream(), source.getName());
         } catch (PDFException e) {
-            throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
+            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);

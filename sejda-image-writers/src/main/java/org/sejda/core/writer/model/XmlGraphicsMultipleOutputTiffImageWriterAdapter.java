@@ -31,6 +31,7 @@ import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParame
  * @author Andrea Vacondio
  * 
  */
+// PMD reports a false positive on this class (https://sourceforge.net/tracker/?func=detail&aid=3110548&group_id=56262&atid=479921)
 final class XmlGraphicsMultipleOutputTiffImageWriterAdapter extends
         AbstractXmlGraphicsImageWriterAdapter<PdfToMultipleTiffParameters> {
 
@@ -45,9 +46,10 @@ final class XmlGraphicsMultipleOutputTiffImageWriterAdapter extends
     }
 
     public void write(RenderedImage image, PdfToMultipleTiffParameters params) throws TaskIOException {
-        ImageWriterParams imageWriterParams = new ImageWriterParams();
-        imageWriterParams.setResolution(params.getResolutionInDpi());
-        setCompressionOnInputArgument(params.getCompressionType(), imageWriterParams);
+        if (getOutputDestination() == null) {
+            throw new TaskIOException("Cannot call write before opening the write destination");
+        }
+        ImageWriterParams imageWriterParams = newImageWriterParams(params, params.getCompressionType());
         try {
             adaptedWriter.writeImage(image, getOutputDestination(), imageWriterParams);
         } catch (IOException e) {
@@ -75,10 +77,8 @@ final class XmlGraphicsMultipleOutputTiffImageWriterAdapter extends
     static final class XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToMultipleTiffParameters> {
 
-        public ImageWriter<PdfToMultipleTiffParameters> build() {
+        public XmlGraphicsMultipleOutputTiffImageWriterAdapter build() {
             return new XmlGraphicsMultipleOutputTiffImageWriterAdapter();
         }
-
     }
-
 }

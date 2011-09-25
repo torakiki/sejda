@@ -25,18 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.xmlgraphics.image.loader.Image;
 import org.apache.xmlgraphics.image.loader.ImageException;
-import org.apache.xmlgraphics.image.loader.ImageFlavor;
-import org.apache.xmlgraphics.image.loader.ImageInfo;
-import org.apache.xmlgraphics.image.loader.ImageManager;
-import org.apache.xmlgraphics.image.loader.ImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.DefaultImageContext;
-import org.apache.xmlgraphics.image.loader.impl.DefaultImageSessionContext;
-import org.apache.xmlgraphics.image.loader.impl.ImageRendered;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.ImageTestUtils;
 import org.sejda.core.TestUtils;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.image.ImageColorType;
@@ -72,8 +65,8 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
 
     private void setCommonParams(PdfToSingleTiffParameters parameters) {
         parameters.setResolutionInDpi(96);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
         parameters.setSource(source);
         parameters.setOverwrite(true);
     }
@@ -86,20 +79,9 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
         out.deleteOnExit();
         parameters.setOutput(FileOutput.newInstance(out));
         victim.execute(parameters);
-        RenderedImage ri = loadImage(out);
+        RenderedImage ri = ImageTestUtils.loadImage(out);
         assertTrue(ri.getHeight() > 0);
         assertTrue(ri.getWidth() > 0);
     }
 
-    private RenderedImage loadImage(File image) throws ImageException, IOException {
-        ImageManager imageManager = new ImageManager(new DefaultImageContext());
-        ImageSessionContext sessionContext = new DefaultImageSessionContext(imageManager.getImageContext(), null);
-
-        ImageInfo info = imageManager.getImageInfo(image.toURI().toString(), sessionContext);
-        Image img = imageManager.getImage(info, ImageFlavor.RENDERED_IMAGE, sessionContext);
-
-        ImageRendered imageRend = (ImageRendered) img;
-        return imageRend.getRenderedImage();
-
-    }
 }
