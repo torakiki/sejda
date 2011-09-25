@@ -123,7 +123,7 @@ final class OutputWriter {
         for (Entry<String, File> entry : files.entrySet()) {
             if (StringUtils.isBlank(entry.getKey())) {
                 throw new TaskIOException(String.format(
-                        "Unable to copy %s to the output stream, no output name specified.", entry.getValue()));
+                        "Unable to copy %s to the output directory, no output name specified.", entry.getValue()));
             }
             copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
         }

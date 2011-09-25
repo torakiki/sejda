@@ -16,16 +16,18 @@
  */
 package org.sejda.core.manipulation.model.input;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.io.InputStream;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import org.sejda.core.exception.TaskIOException;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class PdfStreamSourceTest {
 
@@ -45,5 +47,15 @@ public class PdfStreamSourceTest {
         InputStream stream = mock(InputStream.class);
         PdfStreamSource instance = PdfStreamSource.newInstanceWithPassword(stream, "dsadsada", "dsdasdsa");
         assertNotNull(instance);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void testOpener() throws TaskIOException {
+        PdfSourceOpener opener = mock(PdfSourceOpener.class);
+        InputStream stream = mock(InputStream.class);
+        PdfStreamSource instance = PdfStreamSource.newInstanceWithPassword(stream, "dsadsada", "dsdasdsa");
+        instance.open(opener);
+        verify(opener).open(instance);
     }
 }

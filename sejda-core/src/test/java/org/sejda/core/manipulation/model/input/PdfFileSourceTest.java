@@ -16,16 +16,18 @@
  */
 package org.sejda.core.manipulation.model.input;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 
 import org.junit.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.sejda.core.exception.TaskIOException;
 
 /**
  * @author Andrea Vacondio
- *
+ * 
  */
 public class PdfFileSourceTest {
 
@@ -49,4 +51,15 @@ public class PdfFileSourceTest {
         PdfFileSource.newInstanceNoPassword(file);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void testOpener() throws TaskIOException {
+        PdfSourceOpener opener = mock(PdfSourceOpener.class);
+        File file = mock(File.class);
+        when(file.getName()).thenReturn("name");
+        when(file.isFile()).thenReturn(Boolean.TRUE);
+        PdfFileSource instance = PdfFileSource.newInstanceNoPassword(file);
+        instance.open(opener);
+        verify(opener).open(instance);
+    }
 }

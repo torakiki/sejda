@@ -16,12 +16,15 @@
  */
 package org.sejda.core.manipulation.model.input;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
+import org.sejda.core.exception.TaskIOException;
 
 /**
  * @author Andrea Vacondio
@@ -45,5 +48,15 @@ public class PdfURLSourceTest {
         URL url = new URL("http://www.sejda.org");
         PdfURLSource instance = PdfURLSource.newInstanceWithPassword(url, "dsadsada", "dsdasdsa");
         assertNotNull(instance);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void testOpener() throws MalformedURLException, TaskIOException {
+        PdfSourceOpener opener = mock(PdfSourceOpener.class);
+        URL url = new URL("http://www.sejda.org");
+        PdfURLSource instance = PdfURLSource.newInstanceNoPassword(url, "dsadsada");
+        instance.open(opener);
+        verify(opener).open(instance);
     }
 }
