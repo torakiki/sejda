@@ -63,6 +63,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
+            currentStep++;
             LOG.debug("Opening {} ...", source);
             documentHandler = source.open(documentLoader);
             documentHandler.setCreatorOnPDDocument();
@@ -79,12 +80,12 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
 
             documentHandler.savePDDocument(tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()));
+                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

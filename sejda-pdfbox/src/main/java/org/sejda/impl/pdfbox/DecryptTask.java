@@ -59,6 +59,7 @@ public class DecryptTask implements Task<DecryptParameters> {
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
+            currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensureOwnerPermissions();
@@ -72,12 +73,12 @@ public class DecryptTask implements Task<DecryptParameters> {
             documentHandler.saveDecryptedPDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()));
+                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

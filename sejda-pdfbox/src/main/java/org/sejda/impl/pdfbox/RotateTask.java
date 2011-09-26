@@ -62,6 +62,7 @@ public class RotateTask implements Task<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource source : parameters.getSourceList()) {
+            currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
@@ -77,12 +78,12 @@ public class RotateTask implements Task<RotateParameters> {
             documentHandler.savePDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()));
+                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

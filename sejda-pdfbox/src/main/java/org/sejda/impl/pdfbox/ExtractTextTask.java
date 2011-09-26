@@ -64,6 +64,7 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
     public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource source : parameters.getSourceList()) {
+            currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
@@ -74,12 +75,12 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
 
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(Sejda.TXT_EXTENSION).originalName(source.getName()));
+                    nameRequest(Sejda.TXT_EXTENSION).originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closeResources();
 
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
