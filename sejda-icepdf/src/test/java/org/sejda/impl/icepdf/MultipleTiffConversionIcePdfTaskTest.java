@@ -1,5 +1,5 @@
 /*
- * Created on 16/set/2011
+ * Created on 26/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,18 +16,17 @@
  */
 package org.sejda.impl.icepdf;
 
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.TiffConversionTaskTest;
+import org.sejda.core.manipulation.service.MultipleTiffConversionTaskTest;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class TiffConversionIcePdfTaskTest extends TiffConversionTaskTest {
+public class MultipleTiffConversionIcePdfTaskTest extends MultipleTiffConversionTaskTest {
 
-    public Task<PdfToSingleTiffParameters> getTask() {
-        return new PdfToSingleImageTask<PdfToSingleTiffParameters>();
+    public Task<PdfToMultipleTiffParameters> getTask() {
+        return new PdfToMultipleImageTask<PdfToMultipleTiffParameters>();
     }
-
 }

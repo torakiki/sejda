@@ -32,7 +32,7 @@ import org.sejda.core.validation.constraint.TaskOutputAllowedTypes;
  * @author Andrea Vacondio
  * 
  */
-abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfToImageParameters implements
+public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfToImageParameters implements
         MultipleOutputTaskParameters {
 
     AbstractPdfToMultipleImageParameters(ImageColorType outputImageColorType) {

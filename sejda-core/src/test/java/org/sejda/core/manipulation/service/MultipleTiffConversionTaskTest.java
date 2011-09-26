@@ -1,5 +1,5 @@
 /*
- * Created on 16/set/2011
+ * Created on 26/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -21,9 +21,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.xmlgraphics.image.loader.ImageException;
 import org.junit.Before;
@@ -35,9 +38,10 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.image.ImageColorType;
 import org.sejda.core.manipulation.model.image.TiffCompressionType;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.output.FileOutput;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.core.manipulation.model.task.Task;
 
 /**
@@ -45,7 +49,7 @@ import org.sejda.core.manipulation.model.task.Task;
  * 
  */
 @Ignore
-public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingleTiffParameters> {
+public abstract class MultipleTiffConversionTaskTest implements TestableTask<PdfToMultipleTiffParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
@@ -56,14 +60,15 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
         TestUtils.setProperty(victim, "context", context);
     }
 
-    private AbstractPdfToSingleImageParameters getTiffParams() {
-        PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);
+    private AbstractPdfToMultipleImageParameters getMultipleTiffParams() {
+        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
         parameters.setCompressionType(TiffCompressionType.PACKBITS);
+        parameters.setOutputPrefix("[CURRENTPAGE]");
         setCommonParams(parameters);
         return parameters;
     }
 
-    private void setCommonParams(PdfToSingleTiffParameters parameters) {
+    private void setCommonParams(AbstractPdfToImageParameters parameters) {
         parameters.setResolutionInDpi(96);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
@@ -72,16 +77,22 @@ public abstract class TiffConversionTaskTest implements TestableTask<PdfToSingle
     }
 
     @Test
-    public void testExecuteStreamToTiff() throws TaskException, IOException, ImageException {
-        AbstractPdfToSingleImageParameters parameters = getTiffParams();
+    public void testExecuteStreamToMultipleTiff() throws TaskException, IOException, ImageException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleTiffParams();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
-        File out = File.createTempFile("SejdaTest", ".tiff");
-        out.deleteOnExit();
-        parameters.setOutput(FileOutput.newInstance(out));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        parameters.setOutput(StreamOutput.newInstance(out));
         victim.execute(parameters);
-        RenderedImage ri = ImageTestUtils.loadImage(out);
-        assertTrue(ri.getHeight() > 0);
-        assertTrue(ri.getWidth() > 0);
-    }
+        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+        ZipInputStream zip = new ZipInputStream(input);
+        ZipEntry entry = zip.getNextEntry();
+        while (entry != null) {
+            RenderedImage ri = ImageTestUtils.loadImage(zip, entry.getName());
+            assertTrue(ri.getHeight() > 0);
+            assertTrue(ri.getWidth() > 0);
+            zip.closeEntry();
+            entry = zip.getNextEntry();
+        }
 
+    }
 }
