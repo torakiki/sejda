@@ -30,7 +30,7 @@ import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
 public class PdfPageLabelAdapter {
 
     private static final int LABEL_PREFIX_INDEX = 3;
-    private static final int MIN_SPERATOR_OCCURENCES = 3;
+    private static final int MIN_TOKENS = 3;
 
     private Integer pageNumber;
     private PdfPageLabel pdfPageLabel;
@@ -47,7 +47,7 @@ public class PdfPageLabelAdapter {
     private void doParseInput(String input) {
         String[] tokens = AdapterUtils.splitAndTrim(input);
 
-        if (tokens.length < MIN_SPERATOR_OCCURENCES) {
+        if (tokens.length < MIN_TOKENS) {
             throw new SejdaRuntimeException(
                     "Format expected is: pageNumber(mandatory):numberingStyle(mandatory):logicalPageNumber(mandatory):labelPrefix(optional)'");
         }

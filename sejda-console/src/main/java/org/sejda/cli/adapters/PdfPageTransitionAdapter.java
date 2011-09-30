@@ -27,7 +27,7 @@ import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
  * 
  */
 public class PdfPageTransitionAdapter {
-    private static final int MIN_SPERATOR_OCCURENCES = 3;
+    private static final int MIN_TOKENS = 3;
     private PdfPageTransition pdfPageTransition;
 
     public PdfPageTransitionAdapter(String input) {
@@ -44,7 +44,7 @@ public class PdfPageTransitionAdapter {
     private void doParse(String input) {
         String[] tokens = AdapterUtils.splitAndTrim(input);
 
-        if (tokens.length < MIN_SPERATOR_OCCURENCES) {
+        if (tokens.length < MIN_TOKENS) {
             throw new SejdaRuntimeException(
                     "Expected format is: 'transitionType:transitionDurationInSec:pageDisplayDurationInSec'");
         }

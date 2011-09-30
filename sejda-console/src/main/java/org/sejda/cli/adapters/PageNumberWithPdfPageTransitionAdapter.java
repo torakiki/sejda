@@ -58,7 +58,7 @@ public class PageNumberWithPdfPageTransitionAdapter {
         return pageNumber;
     }
 
-    public PdfPageTransition getPdfPageTransition() {
+    public final PdfPageTransition getPdfPageTransition() {
         return pdfPageTransition;
     }
 }

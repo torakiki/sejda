@@ -18,6 +18,7 @@ package org.sejda.cli;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
+import org.sejda.core.manipulation.model.parameter.CropParameters;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
@@ -58,7 +59,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<DecryptTaskCliArguments, DecryptParameters> getArgumentsTransformer() {
             return new DecryptCliArgumentsTransformer();
         }
-
     }),
     ENCRYPT("encrypt", new CliInterfacedTask<EncryptTaskCliArguments, EncryptParameters>() {
 
@@ -71,7 +71,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<EncryptTaskCliArguments, EncryptParameters> getArgumentsTransformer() {
             return new EncryptCliArgumentsTransformer();
         }
-
     }),
     ROTATE("rotate", new CliInterfacedTask<RotateTaskCliArguments, RotateParameters>() {
 
@@ -84,7 +83,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> getArgumentsTransformer() {
             return new RotateCliArgumentsTransformer();
         }
-
     }),
     SET_VIEWER_PREFERENCES("setviewerpreferences", new CliInterfacedTask<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters>() {
         @Override
@@ -108,7 +106,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
             return new AlternateMixCliArgumentsTransformer();
         }
-
     }),
     UNPACK("unpack", new CliInterfacedTask<UnpackTaskCliArguments, UnpackParameters>() {
 
@@ -121,7 +118,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<UnpackTaskCliArguments, UnpackParameters> getArgumentsTransformer() {
             return new UnpackCliArgumentsTransformer();
         }
-
     }),
     MERGE("merge", new CliInterfacedTask<MergeTaskCliArguments, MergeParameters>() {
 
@@ -134,7 +130,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> getArgumentsTransformer() {
             return new MergeCliArgumentsTransformer();
         }
-
     }),
     SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters>() {
 
@@ -147,7 +142,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
             return new SplitByBookmarksCliArgumentsTransformer();
         }
-
     }),
     SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
 
@@ -160,7 +154,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> getArgumentsTransformer() {
             return new SplitBySizeCliArgumentsTransformer();
         }
-
     }),
     SPLIT_BY_PAGES("splitbypages", new CliInterfacedTask<SplitByPagesTaskCliArguments, SplitByPagesParameters>() {
 
@@ -173,7 +166,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
             return new SplitByPagesCliArgumentsTransformer();
         }
-
     }),
     SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
 
@@ -186,7 +178,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SimpleSplitTaskCliArguments, SimpleSplitParameters> getArgumentsTransformer() {
             return new SimpleSplitCliArgumentsTransformer();
         }
-
     }),
     EXTRACT_PAGES("extractpages", new CliInterfacedTask<ExtractPagesTaskCliArguments, ExtractPagesParameters>() {
 
@@ -199,7 +190,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
             return new ExtractPagesCliArgumentsTransformer();
         }
-
     }),
     EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
 
@@ -225,7 +215,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetMetadataTaskCliArguments, SetMetadataParameters> getArgumentsTransformer() {
             return new SetMetadataCliArgumentsTransformer();
         }
-
     }),
     SET_PAGE_LABELS("setpagelabels", new CliInterfacedTask<SetPageLabelsTaskCliArguments, SetPagesLabelParameters>() {
 
@@ -238,7 +227,6 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
             return new SetPageLabelsCliArgumentsTransformer();
         }
-
     }),
     SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
 
@@ -251,7 +239,18 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters> getArgumentsTransformer() {
             return new SetPageTransitionsCliArgumentsTransformer();
         }
+    }),
+    CROP("crop", new CliInterfacedTask<CropTaskCliArguments, CropParameters>() {
 
+        @Override
+        protected Class<CropTaskCliArguments> getCliArgumentsClass() {
+            return CropTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
+            return new CropCliArgumentsTransformer();
+        }
     });
 
     private String displayName;

@@ -21,12 +21,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Ignore;
+
 /**
- * Enumeration of all tasks, configured for testing
+ * Enumeration of all cli tasks, configured for testing
  * 
  * @author Eduard Weissmann
  * 
  */
+@Ignore
+// TODO: this is weird, http://nemo.sonarsource.org is actually trying to execute this enum as a test
 public enum TestableTask {
 
     DECRYPT,
@@ -44,7 +48,8 @@ public enum TestableTask {
     EXTRACT_TEXT,
     SET_METADATA(new SetMetadataDefaultsProvider()),
     SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider()),
-    SET_PAGE_TRANSITIONS(new SetPageTransitionsDefaultsProvider());
+    SET_PAGE_TRANSITIONS(new SetPageTransitionsDefaultsProvider()),
+    CROP(new CropDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -172,5 +177,12 @@ class SetPageTransitionsDefaultsProvider extends SingleInputAndFileOutputDefault
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("--transitions", "DISSOLVE:6:9:55");
+    }
+}
+
+class CropDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("--cropAreas", "(1:2)(3:4)");
     }
 }
