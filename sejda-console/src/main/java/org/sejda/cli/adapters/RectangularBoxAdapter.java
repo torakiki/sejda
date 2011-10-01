@@ -31,6 +31,10 @@ import org.sejda.core.manipulation.model.RectangularBox;
  */
 public class RectangularBoxAdapter {
 
+    private static final int INDEX_OF_BOTTOM_TOKEN = 0;
+    private static final int INDEX_OF_LEFT_TOKEN = 1;
+    private static final int INDEX_OF_TOP_TOKEN = 2;
+    private static final int INDEX_OF_RIGHT_TOKEN = 3;
     private static final int MIN_TOKENS = 4;
     private RectangularBox rectangularBox;
 
@@ -52,10 +56,10 @@ public class RectangularBoxAdapter {
             throw new SejdaRuntimeException("Expected format is: '(bottom:left)(top:right)'");
         }
 
-        int bottom = AdapterUtils.parseInt(tokens[0], "bottom");
-        int left = AdapterUtils.parseInt(tokens[1], "left");
-        int top = AdapterUtils.parseInt(tokens[2], "top");
-        int right = AdapterUtils.parseInt(tokens[3], "right");
+        int bottom = AdapterUtils.parseInt(tokens[INDEX_OF_BOTTOM_TOKEN], "bottom");
+        int left = AdapterUtils.parseInt(tokens[INDEX_OF_LEFT_TOKEN], "left");
+        int top = AdapterUtils.parseInt(tokens[INDEX_OF_TOP_TOKEN], "top");
+        int right = AdapterUtils.parseInt(tokens[INDEX_OF_RIGHT_TOKEN], "right");
 
         rectangularBox = RectangularBox.newInstance(bottom, left, top, right);
     }
