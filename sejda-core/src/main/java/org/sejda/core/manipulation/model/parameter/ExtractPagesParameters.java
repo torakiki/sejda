@@ -31,6 +31,7 @@ import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
 import org.sejda.core.manipulation.model.pdf.page.PagesSelection;
 import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.core.support.NullSafeSet;
+import org.sejda.core.validation.constraint.HasSelectedPages;
 import org.sejda.core.validation.constraint.NoIntersections;
 import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -43,21 +44,21 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  */
 @NoIntersections
 @SingleOutputAllowedExtensions
-// TODO validate setOfPages or at least one range are specified
+@HasSelectedPages
 public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters implements PageRangeSelection,
         PagesSelection {
 
-    private PredefinedSetOfPages setOfPages;
+    private PredefinedSetOfPages predefinedSetOfPages;
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
 
     /**
      * Creates an instance using a predefined set of pages to extract.
      * 
-     * @param setOfPages
+     * @param predefinedSetOfPages
      */
-    public ExtractPagesParameters(PredefinedSetOfPages setOfPages) {
-        this.setOfPages = setOfPages;
+    public ExtractPagesParameters(PredefinedSetOfPages predefinedSetOfPages) {
+        this.predefinedSetOfPages = predefinedSetOfPages;
     }
 
     /**
@@ -69,6 +70,10 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         this.pageSelection.addAll(pageRanges);
     }
 
+    public PredefinedSetOfPages getPredefinedSetOfPages() {
+        return predefinedSetOfPages;
+    }
+
     /**
      * @return an unmodifiable view of the pageSelection
      */
@@ -77,8 +82,8 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
     }
 
     public Set<Integer> getPages(int upperLimit) {
-        if (setOfPages != null) {
-            return setOfPages.getPages(upperLimit);
+        if (predefinedSetOfPages != null) {
+            return predefinedSetOfPages.getPages(upperLimit);
         }
         Set<Integer> retSet = new HashSet<Integer>();
         for (PageRange range : getPageSelection()) {
@@ -89,7 +94,7 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(setOfPages).append(pageSelection)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(predefinedSetOfPages).append(pageSelection)
                 .toHashCode();
     }
 
@@ -102,7 +107,8 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
             return false;
         }
         ExtractPagesParameters parameter = (ExtractPagesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(setOfPages, parameter.setOfPages)
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
                 .append(pageSelection, parameter.pageSelection).isEquals();
     }
 }
