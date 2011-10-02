@@ -35,6 +35,8 @@ import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.Cli;
@@ -250,6 +252,30 @@ public enum CliCommand {
         @Override
         protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
             return new CropCliArgumentsTransformer();
+        }
+    }),
+    PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
+
+        @Override
+        protected Class<PdfToSingleTiffTaskCliArguments> getCliArgumentsClass() {
+            return PdfToSingleTiffTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters> getArgumentsTransformer() {
+            return new PdfToSingleTiffCliArgumentsTransformer();
+        }
+    }),
+    PDF_TO_MULTIPLE_TIFF("pdftomultipletiff", new CliInterfacedTask<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters>() {
+
+        @Override
+        protected Class<PdfToMultipleTiffTaskCliArguments> getCliArgumentsClass() {
+            return PdfToMultipleTiffTaskCliArguments.class;
+        }
+
+        @Override
+        protected CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> getArgumentsTransformer() {
+            return new PdfToMultipleTiffCliArgumentsTransformer();
         }
     });
 

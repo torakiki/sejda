@@ -32,7 +32,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " setviewerpreferences")
-public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
     @Option(description = "center of the screen (optional)")
     boolean isCenterWindow();
 

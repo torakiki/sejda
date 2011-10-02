@@ -19,7 +19,6 @@ package org.sejda.cli;
 import java.util.List;
 
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -32,12 +31,6 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 public interface TaskCliArguments {
-    @Option(description = "compress output file (optional)")
-    boolean getCompressed();
-
-    @Option(shortName = "v", description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
-    PdfVersion getPdfVersion();
-
     @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf -f /tmp/password_protected_file2.pdf;secret123) (required)")
     List<PdfFileSourceAdapter> getFiles();
 

@@ -25,6 +25,6 @@ import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " unpack")
-public interface UnpackTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface UnpackTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
 }

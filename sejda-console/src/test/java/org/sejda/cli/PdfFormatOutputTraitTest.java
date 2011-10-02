@@ -28,7 +28,7 @@ import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParamet
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Test verifying that the --compressed flag and --pdfVersion can be specified for each task creating pdf outputs
+ * Test verifying that the --compressed and --pdfVersion flags can be specified for each task creating pdf outputs
  * 
  * @author Eduard Weissmann
  * 
@@ -37,7 +37,8 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT);
+        return TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
+                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF);
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {
@@ -60,7 +61,8 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void specifiedValuePdfVersion() {
-        AbstractPdfOutputParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4").invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4")
+                .invokeSejdaConsole();
 
         assertEquals(describeExpectations(), PdfVersion.VERSION_1_4, result.getVersion());
     }

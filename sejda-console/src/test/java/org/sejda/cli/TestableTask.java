@@ -30,7 +30,7 @@ import org.junit.Ignore;
  * 
  */
 @Ignore
-// TODO: this is weird, http://nemo.sonarsource.org is actually trying to execute this enum as a test
+// TODO: this is weird, http://nemo.sonarsource.org is trying to execute this as a test
 public enum TestableTask {
 
     DECRYPT,
@@ -49,7 +49,9 @@ public enum TestableTask {
     SET_METADATA(new SetMetadataDefaultsProvider()),
     SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider()),
     SET_PAGE_TRANSITIONS(new SetPageTransitionsDefaultsProvider()),
-    CROP(new CropDefaultsProvider());
+    CROP(new CropDefaultsProvider()),
+    PDF_TO_SINGLE_TIFF(new PdfToSingleTiffDefaultsProvider()),
+    PDF_TO_MULTIPLE_TIFF(new PdfToMultipleTiffDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -184,5 +186,19 @@ class CropDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("--cropAreas", "(1:2)(3:4)");
+    }
+}
+
+class PdfToSingleTiffDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("--colorType", "GRAY_SCALE");
+    }
+}
+
+class PdfToMultipleTiffDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("--colorType", "GRAY_SCALE");
     }
 }

@@ -29,7 +29,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " extractpages")
-public interface ExtractPagesTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (optional)")
     PredefinedSetOfPages getPredefinedPages();

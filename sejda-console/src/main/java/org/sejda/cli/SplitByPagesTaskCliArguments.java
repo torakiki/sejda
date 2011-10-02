@@ -28,7 +28,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbypages")
-public interface SplitByPagesTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface SplitByPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     // pdf-same incompat no default, and this is part of a larger task: split
     @Option(shortName = "n", description = "page number(s) to split at (required)")

@@ -31,7 +31,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " setpagetransitions")
-public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(description = "open the document in fullscreen mode")
     boolean isFullscreen();

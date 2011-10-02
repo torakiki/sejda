@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " alternatemix")
-public interface AlternateMixTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface AlternateMixTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(description = "reverse first input file (optional)")
     boolean isReverseFirst();

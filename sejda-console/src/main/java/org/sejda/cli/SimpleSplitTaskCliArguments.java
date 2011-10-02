@@ -28,7 +28,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " simplesplit")
-public interface SimpleSplitTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface SimpleSplitTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     // pdf-same incompat no default, and this is part of a larger task: split
     @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (required)")

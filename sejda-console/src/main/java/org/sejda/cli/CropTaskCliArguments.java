@@ -24,11 +24,13 @@ import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
+ * CLI interface for the Crop task
+ * 
  * @author Eduard Weissmann
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " crop")
-public interface CropTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface CropTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     // TODO: EW: explain what the numbers mean, is it pixels?
     @Option(description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format (bottom:left)(top:right). Ex: --cropAreas (0:0)(5:10) (5:0)(10:10)")

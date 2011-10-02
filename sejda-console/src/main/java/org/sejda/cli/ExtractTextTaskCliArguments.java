@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " extracttext")
-public interface ExtractTextTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface ExtractTextTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
     String getOutputPrefix();

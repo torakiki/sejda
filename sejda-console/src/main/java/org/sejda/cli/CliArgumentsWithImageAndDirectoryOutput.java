@@ -1,5 +1,5 @@
 /*
- * Created on Sep 3, 2011
+ * Created on Aug 22, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,19 +16,14 @@
  */
 package org.sejda.cli;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
-
 /**
- * Specifications for command line options of the SplitBySize task
+ * 
+ * Base interface for specifying of the command line interface for tasks that have output configured as a <i>directory</i> and format as <i>image</i>
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbysize")
-public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface CliArgumentsWithImageAndDirectoryOutput extends CliArgumentsWithImageOutput,
+        CliArgumentsWithDirectoryOutput {
 
-    // pdf-same incompat no default, and this is part of a larger task: split
-    @Option(shortName = "s", description = "size in bytes to split at (required)")
-    Long getSize();
 }

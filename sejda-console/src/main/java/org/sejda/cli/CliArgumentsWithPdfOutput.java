@@ -1,5 +1,5 @@
 /*
- * Created on Aug 22, 2011
+ * Created on Oct 2, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,19 +16,22 @@
  */
 package org.sejda.cli;
 
-import org.sejda.cli.adapters.FileOutputAdapter;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
  * 
- * Base interface for specifying of the command line interface for tasks that have output configured as a file
+ * Trait for cli tasks that output pdf files
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CliArgumentsWithFileOutput extends TaskCliArguments {
+public interface CliArgumentsWithPdfOutput extends TaskCliArguments {
 
-    @Option(shortName = "o", description = "output file (required)")
-    FileOutputAdapter getOutput();
+    @Option(description = "compress output file (optional)")
+    boolean getCompressed();
+
+    @Option(shortName = "v", description = "pdf version of the output document/s. (optional)", defaultValue = "VERSION_1_6")
+    PdfVersion getPdfVersion();
 }

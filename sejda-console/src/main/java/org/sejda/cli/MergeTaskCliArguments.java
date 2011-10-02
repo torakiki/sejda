@@ -29,7 +29,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " merge")
-public interface MergeTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(description = "input pdf documents contain forms (high memory usage) (optional)")
     boolean isCopyFields();

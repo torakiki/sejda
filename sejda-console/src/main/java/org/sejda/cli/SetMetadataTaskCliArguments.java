@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " setmetadata")
-public interface SetMetadataTaskCliArguments extends CliArgumentsWithFileOutput {
+public interface SetMetadataTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(shortName = "t", description = "document title (optional)", defaultValue = "")
     String getTitle();

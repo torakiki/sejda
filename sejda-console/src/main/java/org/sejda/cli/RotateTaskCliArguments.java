@@ -28,7 +28,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " rotate")
-public interface RotateTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     // TODO: EW: pdfsam incompat = no default value
     @Option(shortName = "r", description = "pages rotation. You can set pages rotation. Accepted string is "

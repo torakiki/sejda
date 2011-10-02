@@ -18,9 +18,13 @@ package org.sejda.cli;
 
 import org.sejda.cli.adapters.PdfFileSourceAdapter;
 import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.core.manipulation.model.parameter.base.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
 
 /**
  * @author Eduard Weissmann
@@ -29,34 +33,74 @@ import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParam
 public class BaseCliArgumentsTransformer {
 
     /**
-     * Populates common parameters for a task with output as directory
+     * Populates common parameters for a task with output pdf files into a directory
      * 
      * @param parameters
      * @param taskCliArguments
      */
     protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
-            CliArgumentsWithDirectoryOutput taskCliArguments) {
+            CliArgumentsWithPdfAndDirectoryOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
-        populateCommonAbstractParameters(parameters, taskCliArguments);
+        populateCommonPdfOutputParameters(parameters, taskCliArguments);
     }
 
     /**
-     * Populates common parameters for a task with output as directory
+     * Populates common parameters for a task with output a single pdf file
      * 
      * @param parameters
      * @param taskCliArguments
      */
     protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
-            CliArgumentsWithFileOutput taskCliArguments) {
+            CliArgumentsWithPdfFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+        populateCommonPdfOutputParameters(parameters, taskCliArguments);
+    }
+
+    /**
+     * Populates common parameters for a task with output image files into a directory
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateAbstractParameters(AbstractPdfToMultipleImageParameters parameters,
+            CliArgumentsWithImageAndDirectoryOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        populateCommonImageOutputParameters(parameters, taskCliArguments);
+    }
+
+    /**
+     * Populates common parameters for a task with output a single image file
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateAbstractParameters(AbstractPdfToSingleImageParameters parameters,
+            CliArgumentsWithImageFileOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+        populateCommonImageOutputParameters(parameters, taskCliArguments);
+    }
+
+    private void populateCommonImageOutputParameters(AbstractPdfToImageParameters parameters,
+            CliArgumentsWithImageOutput taskCliArguments) {
+        if (taskCliArguments.isResolution()) {
+            parameters.setResolutionInDpi(taskCliArguments.getResolution());
+        }
+
+        // todo: hmmm, should populate also taskCliArguments.getColorType() but it's wired by constructor not setter... hmmm
+
         populateCommonAbstractParameters(parameters, taskCliArguments);
     }
 
-    private void populateCommonAbstractParameters(AbstractPdfOutputParameters parameters,
-            TaskCliArguments taskCliArguments) {
+    private void populateCommonAbstractParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
+        parameters.setOverwrite(taskCliArguments.getOverwrite());
+    }
+
+    private void populateCommonPdfOutputParameters(AbstractPdfOutputParameters parameters,
+            CliArgumentsWithPdfOutput taskCliArguments) {
         parameters.setCompress(taskCliArguments.getCompressed());
         parameters.setVersion(taskCliArguments.getPdfVersion());
-        parameters.setOverwrite(taskCliArguments.getOverwrite());
+
+        populateCommonAbstractParameters(parameters, taskCliArguments);
     }
 
     /**
@@ -65,7 +109,8 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters,
+            TaskCliArguments taskCliArguments) {
         for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
             parameters.addSource(eachAdapter.getPdfFileSource());
         }

@@ -28,7 +28,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " encrypt")
-public interface EncryptTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
     @Option(shortName = "u", description = "user password for the document (optional)", defaultValue = "")
     String getUserPassword();
 

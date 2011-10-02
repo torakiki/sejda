@@ -1,5 +1,5 @@
 /*
- * Created on Sep 3, 2011
+ * Created on Oct 2, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,19 +16,23 @@
  */
 package org.sejda.cli;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
+import org.sejda.core.manipulation.model.image.ImageColorType;
+
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Specifications for command line options of the SplitBySize task
+ * Trait for cli tasks that output image files
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbysize")
-public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface CliArgumentsWithImageOutput extends TaskCliArguments {
 
-    // pdf-same incompat no default, and this is part of a larger task: split
-    @Option(shortName = "s", description = "size in bytes to split at (required)")
-    Long getSize();
+    @Option(description = "image color type: BLACK_AND_WHITE, GRAY_SCALE, COLOR_RGB")
+    ImageColorType getColorType();
+
+    @Option(description = "resolution in dpi")
+    int getResolution();
+
+    boolean isResolution();
 }

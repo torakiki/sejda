@@ -26,7 +26,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbybookmarks")
-public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithDirectoryOutput {
+public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     // pdf-same incompat this is part of a larger task: split
     @Option(shortName = "l", description = "bookmarks depth to split at (required)")

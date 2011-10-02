@@ -1,5 +1,5 @@
 /*
- * Created on Sep 3, 2011
+ * Created on Oct 2, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,19 +16,20 @@
  */
 package org.sejda.cli;
 
+import org.sejda.core.manipulation.model.image.TiffCompressionType;
+
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Specifications for command line options of the SplitBySize task
+ * CLI interface for the PdfToSingleTiff task
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " splitbysize")
-public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " pdftosingletiff")
+public interface PdfToSingleTiffTaskCliArguments extends CliArgumentsWithImageFileOutput {
 
-    // pdf-same incompat no default, and this is part of a larger task: split
-    @Option(shortName = "s", description = "size in bytes to split at (required)")
-    Long getSize();
+    @Option(description = "image compression type: NONE, CCITT_GROUP_3_1D, CCITT_GROUP_3_2D, CCITT_GROUP_4, LZW, JPEG_TTN2, PACKBITS, DEFLATE. Default is NONE", defaultValue = "NONE")
+    TiffCompressionType getCompressionType();
 }
