@@ -1,5 +1,5 @@
 /*
- * Created on 03/set/2011
+ * Created on 02/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -22,23 +22,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.Map;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
+import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class HasTransitionsValidatorTest {
-
-    private HasTransitionsValidator victim = new HasTransitionsValidator();
-    private SetPagesTransitionParameters params = mock(SetPagesTransitionParameters.class);
-    private PdfPageTransition mockTransition = PdfPageTransition.newInstance(PdfPageTransitionStyle.BLINDS_HORIZONTAL,
-            1, 1);
+public class HasSelectedPagesValidatorTest {
+    private HasSelectedPagesValidator victim = new HasSelectedPagesValidator();
+    private ExtractPagesParameters params = mock(ExtractPagesParameters.class);
+    private PageRange range = new PageRange(10);
 
     @Test
     public void testNull() {
@@ -47,29 +44,28 @@ public class HasTransitionsValidatorTest {
 
     @Test
     public void testHasDefault() {
-        when(params.getDefaultTransition()).thenReturn(mockTransition);
+        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.EVEN_PAGES);
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
     public void testHasTransitions() {
-        when(params.getDefaultTransition()).thenReturn(null);
-        when(params.getTransitions()).thenReturn(Collections.singletonMap(Integer.MAX_VALUE, mockTransition));
+        when(params.getPredefinedSetOfPages()).thenReturn(null);
+        when(params.getPageSelection()).thenReturn(Collections.singleton(range));
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
     public void testHasBoth() {
-        when(params.getDefaultTransition()).thenReturn(mockTransition);
-        when(params.getTransitions()).thenReturn(Collections.singletonMap(Integer.MAX_VALUE, mockTransition));
+        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.EVEN_PAGES);
+        when(params.getPageSelection()).thenReturn(Collections.singleton(range));
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
     public void testHasNone() {
-        when(params.getDefaultTransition()).thenReturn(null);
-        Map<Integer, PdfPageTransition> empty = Collections.emptyMap();
-        when(params.getTransitions()).thenReturn(empty);
+        when(params.getPredefinedSetOfPages()).thenReturn(null);
+        when(params.getPageSelection()).thenReturn(Collections.EMPTY_SET);
         assertFalse(victim.isValid(params, null));
     }
 }
