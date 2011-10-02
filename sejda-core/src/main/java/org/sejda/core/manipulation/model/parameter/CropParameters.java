@@ -38,7 +38,6 @@ public class CropParameters extends SinglePdfSourceSingleOutputParameters {
 
     @Valid
     @NotEmpty
-    // TODO validator for rectangular boxes
     private final Set<RectangularBox> cropAreas = new NullSafeSet<RectangularBox>();
 
     /**
