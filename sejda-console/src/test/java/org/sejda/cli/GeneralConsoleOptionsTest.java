@@ -16,6 +16,9 @@
  */
 package org.sejda.cli;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
 /**
@@ -28,18 +31,30 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
     public void testExecuteWithoutArgs() {
-        assertConsoleOutputContains(
-                "",
-                "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
-                "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
+        List<String> expectedStrings = getExpectedStringForGeneralHelp();
+
+        assertConsoleOutputContains("", expectedStrings.toArray(new String[] {}));
     }
 
     @Test
     public void testExecuteHelp() {
-        assertConsoleOutputContains(
-                "-h",
-                "Usage: sejda-console [options] command to execute {[concat], [split], [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}",
-                "[--help -h] : prints this usage information. Can be used to detail options for a command '-h command' (optional)");
+        List<String> expectedStrings = getExpectedStringForGeneralHelp();
+
+        assertConsoleOutputContains("-h", expectedStrings.toArray(new String[] {}));
+    }
+
+    private List<String> getExpectedStringForGeneralHelp() {
+        List<String> expectedStrings = new ArrayList<String>();
+        expectedStrings.add("Basic commands:");
+
+        for (CliCommand eachCommand : CliCommand.values()) {
+            // each command should be mentioned
+            expectedStrings.add(eachCommand.getDisplayName());
+            // together with its description
+            // TODO: add a test verifying that descriptions are included. What to do with formatting, test should be formatting-unaware? Should formatting also be tested?
+            // expectedStrings.add(eachCommand.getDescription());
+        }
+        return expectedStrings;
     }
 
     @Test

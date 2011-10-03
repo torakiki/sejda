@@ -37,6 +37,6 @@ public interface TaskCliArguments {
     @Option(description = "overwrite existing output file (optional)")
     boolean getOverwrite();
 
-    @Option(shortName = "h", description = "prints this usage information. Can be used to detail options for a command '-h command' (optional)")
+    @Option(shortName = "h", description = "prints usage information. Can be used to detail options for a command '-h command' (optional)")
     boolean isHelp();
 }

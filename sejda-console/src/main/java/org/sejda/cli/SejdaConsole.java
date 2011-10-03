@@ -99,7 +99,7 @@ public class SejdaConsole {
     }
 
     private void printGeneralHelp() {
-        LOG.info(generalCli.getHelpMessage());
+        LOG.info(new GeneralHelpFormatter().getFormattedString());
     }
 
     private boolean isNoCommandSpecified() {

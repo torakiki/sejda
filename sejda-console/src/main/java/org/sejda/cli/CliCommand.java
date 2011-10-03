@@ -16,6 +16,9 @@
  */
 package org.sejda.cli;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.parameter.CropParameters;
@@ -48,6 +51,7 @@ import uk.co.flamingpenguin.jewel.cli.CliFactory;
  * @author Eduard Weissmann
  * 
  */
+// TODO: Docs: Detail descriptions that refer back to the pdf specs in a more user-friendly way. Keep this is sync with the website
 public enum CliCommand {
 
     DECRYPT("decrypt", new CliInterfacedTask<DecryptTaskCliArguments, DecryptParameters>() {
@@ -61,7 +65,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<DecryptTaskCliArguments, DecryptParameters> getArgumentsTransformer() {
             return new DecryptCliArgumentsTransformer();
         }
-    }),
+    }, "Given a collection of encrypted pdf documents and their owner password, creates a decrypted version of each of them."),
     ENCRYPT("encrypt", new CliInterfacedTask<EncryptTaskCliArguments, EncryptParameters>() {
 
         @Override
@@ -73,7 +77,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<EncryptTaskCliArguments, EncryptParameters> getArgumentsTransformer() {
             return new EncryptCliArgumentsTransformer();
         }
-    }),
+    }, "Given a collection of pdf documents, applies the selected permission using the selected encryption algorithm and the provided owner and user password."),
     ROTATE("rotate", new CliInterfacedTask<RotateTaskCliArguments, RotateParameters>() {
 
         @Override
@@ -85,7 +89,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> getArgumentsTransformer() {
             return new RotateCliArgumentsTransformer();
         }
-    }),
+    }, "Apply page rotation to a collection of pdf documents. Rotation can be applied to a specified set of pages or to a predefined set (all, even pages, odd pages)"),
     SET_VIEWER_PREFERENCES("setviewerpreferences", new CliInterfacedTask<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters>() {
         @Override
         protected Class<ViewerPreferencesTaskCliArguments> getCliArgumentsClass() {
@@ -96,7 +100,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> getArgumentsTransformer() {
             return new ViewerPreferencesCliArgumentsTransformer();
         }
-    }),
+    }, "Given a collection of pdf documents, applies the selected viewer preferences."),
     ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixParameters>() {
 
         @Override
@@ -108,7 +112,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
             return new AlternateMixCliArgumentsTransformer();
         }
-    }),
+    }, "Given two pdf documents, creates a single output pdf document taking pages alternatively from the two input. Pages can be taken in straight or reverse order and using a configurable step (number of pages before the process switch from a document to the other)."),
     UNPACK("unpack", new CliInterfacedTask<UnpackTaskCliArguments, UnpackParameters>() {
 
         @Override
@@ -120,7 +124,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<UnpackTaskCliArguments, UnpackParameters> getArgumentsTransformer() {
             return new UnpackCliArgumentsTransformer();
         }
-    }),
+    }, "Unpacks all the attachments of a given collection of pdf documents."),
     MERGE("merge", new CliInterfacedTask<MergeTaskCliArguments, MergeParameters>() {
 
         @Override
@@ -132,7 +136,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> getArgumentsTransformer() {
             return new MergeCliArgumentsTransformer();
         }
-    }),
+    }, "Given a collection of pdf documents, creates a single output pdf document composed by the selected pages of each input document taken in the given order."),
     SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters>() {
 
         @Override
@@ -144,7 +148,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
             return new SplitByBookmarksCliArgumentsTransformer();
         }
-    }),
+    }, "Splits a given pdf document at pages where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression)"),
     SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
 
         @Override
@@ -156,7 +160,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> getArgumentsTransformer() {
             return new SplitBySizeCliArgumentsTransformer();
         }
-    }),
+    }, "Splits a given pdf document in files of the selected size (roughly)."),
     SPLIT_BY_PAGES("splitbypages", new CliInterfacedTask<SplitByPagesTaskCliArguments, SplitByPagesParameters>() {
 
         @Override
@@ -168,7 +172,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
             return new SplitByPagesCliArgumentsTransformer();
         }
-    }),
+    }, "Splits a given pdf document at a selected set of page numbers."),
     SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
 
         @Override
@@ -180,7 +184,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SimpleSplitTaskCliArguments, SimpleSplitParameters> getArgumentsTransformer() {
             return new SimpleSplitCliArgumentsTransformer();
         }
-    }),
+    }, "Splits a given pdf document at a predefined set of page numbers (all, odd pages, even pages)."),
     EXTRACT_PAGES("extractpages", new CliInterfacedTask<ExtractPagesTaskCliArguments, ExtractPagesParameters>() {
 
         @Override
@@ -192,7 +196,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
             return new ExtractPagesCliArgumentsTransformer();
         }
-    }),
+    }, "Extract pages from a pdf document creating a new one containing only the selected pages. Page selection can be done using a predefined set of pages (odd, even) or as a set of ranges (from page x to y)."),
     EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
 
         @Override
@@ -205,7 +209,7 @@ public enum CliCommand {
             return new ExtractTextCliArgumentsTransformer();
         }
 
-    }),
+    }, "Given a collection of pdf documents, creates a collection of text files containing text extracted from them."),
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override
@@ -217,7 +221,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetMetadataTaskCliArguments, SetMetadataParameters> getArgumentsTransformer() {
             return new SetMetadataCliArgumentsTransformer();
         }
-    }),
+    }, "Apply new metadata (title, author, subject, keywords) to an input pdf document."),
     SET_PAGE_LABELS("setpagelabels", new CliInterfacedTask<SetPageLabelsTaskCliArguments, SetPagesLabelParameters>() {
 
         @Override
@@ -229,7 +233,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
             return new SetPageLabelsCliArgumentsTransformer();
         }
-    }),
+    }, "Given a collection of pdf documents, applies the selected page labels as defined in the Pdf reference 1.7, chapter 8.3.1."),
     SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
 
         @Override
@@ -241,7 +245,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters> getArgumentsTransformer() {
             return new SetPageTransitionsCliArgumentsTransformer();
         }
-    }),
+    }, "Given a pdf document, applies the selected pages transitions (to use the document as a slide show presentation) as defined in the Pdf reference 1.7, chapter 8.3.3."),
     CROP("crop", new CliInterfacedTask<CropTaskCliArguments, CropParameters>() {
 
         @Override
@@ -253,7 +257,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
             return new CropCliArgumentsTransformer();
         }
-    }),
+    }, "Given a pdf document and a set of rectangular boxes, creates a single output pdf document where pages are cropped according to the input rectangular boxes. Input boxes are set as mediabox and cropbox on the resulting document pages (see Pdf reference 1.7, chapter 3.6.2, TABLE 3.27). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes."),
     PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
 
         @Override
@@ -265,7 +269,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters> getArgumentsTransformer() {
             return new PdfToSingleTiffCliArgumentsTransformer();
         }
-    }),
+    }, "Converts a pdf document to a single TIFF image (TIFF format supports multiple images written to a single file)."),
     PDF_TO_MULTIPLE_TIFF("pdftomultipletiff", new CliInterfacedTask<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters>() {
 
         @Override
@@ -277,15 +281,17 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> getArgumentsTransformer() {
             return new PdfToMultipleTiffCliArgumentsTransformer();
         }
-    });
+    }, "Converts a pdf document to multiple TIFF images (one image per page).");
 
     private String displayName;
+    private String description;
     private CliInterfacedTask<? extends TaskCliArguments, ? extends TaskParameters> cliInterfacedTask;
 
     private CliCommand(String displayName,
-            CliInterfacedTask<? extends TaskCliArguments, ? extends TaskParameters> cliTask) {
+            CliInterfacedTask<? extends TaskCliArguments, ? extends TaskParameters> cliTask, String description) {
         this.displayName = displayName;
         this.cliInterfacedTask = cliTask;
+        this.description = description;
     }
 
     /**
@@ -293,6 +299,13 @@ public enum CliCommand {
      */
     public String getDisplayName() {
         return displayName;
+    }
+
+    /**
+     * @return task description, explaining what the task does in a nutshell
+     */
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -308,6 +321,17 @@ public enum CliCommand {
         }
 
         throw new IllegalArgumentException("Unknown command: '" + displayName + "'");
+    }
+
+    /**
+     * @return all values, sorted by display name
+     */
+    public static CliCommand[] sortedValues() {
+        SortedMap<String, CliCommand> map = new TreeMap<String, CliCommand>();
+        for (CliCommand each : CliCommand.values()) {
+            map.put(each.getDisplayName(), each);
+        }
+        return map.values().toArray(new CliCommand[] {});
     }
 
     /**
