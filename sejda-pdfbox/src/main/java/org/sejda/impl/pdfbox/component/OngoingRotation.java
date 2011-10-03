@@ -20,17 +20,17 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
  * Identifies an ongoing rotation exposing methods to finalize it.
- *
+ * 
  * @author Nero Couvalli
- *
+ * 
  */
 
 public interface OngoingRotation {
 
     /**
      * applies the rotation to the input document
-     *
-     * @param reader
+     * 
+     * @param document
      */
     void to(PDDocument document);
 }

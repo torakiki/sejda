@@ -62,7 +62,7 @@ public class OutlineGoToPageDestinations {
     }
 
     /**
-     * @return
+     * @return the number of destinations held.
      * @see java.util.Map#size()
      */
     public int size() {
@@ -70,7 +70,7 @@ public class OutlineGoToPageDestinations {
     }
 
     /**
-     * @return
+     * @return true if there is no destination.
      * @see java.util.Map#isEmpty()
      */
     public boolean isEmpty() {
