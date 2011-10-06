@@ -331,7 +331,7 @@ public enum CliCommand {
         for (CliCommand each : CliCommand.values()) {
             map.put(each.getDisplayName(), each);
         }
-        return map.values().toArray(new CliCommand[] {});
+        return map.values().toArray(new CliCommand[map.values().size()]);
     }
 
     /**
