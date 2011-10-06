@@ -1,5 +1,5 @@
 /*
- * Created on Oct 2, 2011
+ * Created on Oct 5, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
-
-import org.sejda.cli.adapters.PdfVersionAdapter;
-
-import uk.co.flamingpenguin.jewel.cli.Option;
+package org.sejda.core;
 
 /**
- * Trait for cli tasks that output pdf files
+ * Designates an {@link Enum} that has a user friendly string representation for its value
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CliArgumentsWithPdfOutput extends TaskCliArguments {
+public interface DisplayNamedEnum {
 
-    @Option(description = "compress output file (optional)")
-    boolean getCompressed();
-
-    @Option(shortName = "v", description = "pdf version of the output document/s {2, 3, 4, 5, 6 or 7}. Default is 6. (optional)", defaultValue = "6")
-    PdfVersionAdapter getPdfVersion();
+    /**
+     * @return the user friendly name of the enum, to be used as a representation for an user
+     */
+    String getDisplayName();
 }

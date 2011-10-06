@@ -35,7 +35,6 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME)
 public interface GeneralCliArguments {
 
-    // TODO: map sejda enum names to user-friendly names in console's usage
     // TODO: stop printing [options] command to execute because user can think the order of params is different
     // TODO: get rid of this class completely
     // TODO: support -version, -license

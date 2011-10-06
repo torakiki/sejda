@@ -34,9 +34,10 @@ public class PdfToSingleTiffCliArgumentsTransformer extends BaseCliArgumentsTran
      * @return
      */
     public PdfToSingleTiffParameters toTaskParameters(PdfToSingleTiffTaskCliArguments taskCliArguments) {
-        PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(taskCliArguments.getColorType());
+        PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(taskCliArguments.getColorType()
+                .getEnumValue());
 
-        parameters.setCompressionType(taskCliArguments.getCompressionType());
+        parameters.setCompressionType(taskCliArguments.getCompressionType().getEnumValue());
 
         populateSourceParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);

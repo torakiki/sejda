@@ -34,9 +34,10 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
      * @return
      */
     public PdfToMultipleTiffParameters toTaskParameters(PdfToMultipleTiffTaskCliArguments taskCliArguments) {
-        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(taskCliArguments.getColorType());
+        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(taskCliArguments.getColorType()
+                .getEnumValue());
 
-        parameters.setCompressionType(taskCliArguments.getCompressionType());
+        parameters.setCompressionType(taskCliArguments.getCompressionType().getEnumValue());
 
         populateSourceParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);

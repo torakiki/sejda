@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
+import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -26,13 +27,20 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * 
  * @author Andrea Vacondio
  */
-public enum PdfDirection implements MinRequiredVersion {
-    LEFT_TO_RIGHT(PdfVersion.VERSION_1_3), RIGHT_TO_LEFT(PdfVersion.VERSION_1_3);
+public enum PdfDirection implements MinRequiredVersion, DisplayNamedEnum {
+    LEFT_TO_RIGHT("l2r", PdfVersion.VERSION_1_3),
+    RIGHT_TO_LEFT("r2l", PdfVersion.VERSION_1_3);
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfDirection(PdfVersion minVersion) {
+    private PdfDirection(String displayName, PdfVersion minVersion) {
+        this.displayName = displayName;
         this.minVersion = minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public PdfVersion getMinVersion() {

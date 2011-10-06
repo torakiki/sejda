@@ -41,12 +41,12 @@ public class PageRotationAdapter {
         final String pageToken = tokens[0];
         final String rotationToken = tokens[1];
 
-        final Rotation rotation = AdapterUtils.valueOfSilently(Rotation.class, rotationToken);
+        final Rotation rotation = EnumUtils.valueOfSilently(Rotation.class, rotationToken);
         if (rotation == null) {
             throw new SejdaRuntimeException("Unknown rotation: '" + rotationToken + "'");
         }
 
-        RotationType rotationType = AdapterUtils.valueOfSilently(RotationType.class, pageToken);
+        RotationType rotationType = EnumUtils.valueOfSilently(RotationType.class, pageToken);
         Integer pageNumber = null;
 
         if (rotationType == null) {

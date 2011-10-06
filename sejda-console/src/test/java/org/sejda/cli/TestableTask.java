@@ -150,14 +150,14 @@ class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsPro
 class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
+        return super.provideDefaults(taskName).with("-p", "all");
     }
 }
 
 class ExtractPagesDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-p", "ALL_PAGES");
+        return super.provideDefaults(taskName).with("-p", "all");
     }
 }
 
@@ -171,14 +171,14 @@ class SetMetadataDefaultsProvider extends SingleInputAndFileOutputDefaultsProvid
 class SetPageLabelsDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-l", "99:UPPERCASE_ROMANS:1:Chapter");
+        return super.provideDefaults(taskName).with("-l", "99:uroman:1:Chapter");
     }
 }
 
 class SetPageTransitionsDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("--transitions", "DISSOLVE:6:9:55");
+        return super.provideDefaults(taskName).with("--transitions", "dissolve:6:9:55");
     }
 }
 
@@ -192,13 +192,13 @@ class CropDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
 class PdfToSingleTiffDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("--colorType", "GRAY_SCALE");
+        return super.provideDefaults(taskName).with("--colorType", "gray_scale");
     }
 }
 
 class PdfToMultipleTiffDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("--colorType", "GRAY_SCALE");
+        return super.provideDefaults(taskName).with("--colorType", "gray_scale");
     }
 }

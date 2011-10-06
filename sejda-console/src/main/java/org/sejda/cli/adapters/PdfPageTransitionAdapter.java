@@ -49,7 +49,7 @@ public class PdfPageTransitionAdapter {
                     "Expected format is: 'transitionType:transitionDurationInSec:pageDisplayDurationInSec'");
         }
 
-        PdfPageTransitionStyle style = AdapterUtils.valueOf(PdfPageTransitionStyle.class, tokens[0], "transition type");
+        PdfPageTransitionStyle style = EnumUtils.valueOf(PdfPageTransitionStyle.class, tokens[0], "transition type");
         int transitionDuration = AdapterUtils.parseInt(tokens[1], "transition duration in seconds");
         int displayDuration = AdapterUtils.parseInt(tokens[2], "page display duration in seconds");
 

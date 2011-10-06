@@ -86,37 +86,4 @@ public final class AdapterUtils {
             return null;
         }
     }
-
-    /**
-     * Transform to an {@link Enum} a specified input, throwing an exception in case the input is not a valid value
-     * 
-     * @param enumClass
-     *            the {@link Enum} class
-     * @param name
-     * @return
-     */
-    public static <T extends Enum<T>> T valueOfSilently(Class<T> enumClass, String name) {
-        try {
-            return T.valueOf(enumClass, name);
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    /**
-     * Transform to an {@link Enum} a specified input, returning {@code null} in case the input is not a valid value
-     * 
-     * @param enumClass
-     *            the {@link Enum} class
-     * @param name
-     * @param explainedInput
-     * @return
-     */
-    public static <T extends Enum<T>> T valueOf(Class<T> enumClass, String name, String describedEnumClass) {
-        try {
-            return T.valueOf(enumClass, name);
-        } catch (IllegalArgumentException e) {
-            throw new SejdaRuntimeException("Invalid value '" + name + "' for " + describedEnumClass, e);
-        }
-    }
 }

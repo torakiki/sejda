@@ -47,7 +47,7 @@ public class PdfToMultipleTiffTaskTest extends AbstractTaskTest {
 
     @Test
     public void compressionType() {
-        PdfToMultipleTiffParameters result = defaultCommandLine().with("--compressionType", "JPEG_TTN2")
+        PdfToMultipleTiffParameters result = defaultCommandLine().with("--compressionType", "jpeg_ttn2")
                 .invokeSejdaConsole();
         assertThat(result.getCompressionType(), is(TiffCompressionType.JPEG_TTN2));
     }

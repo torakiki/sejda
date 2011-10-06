@@ -17,13 +17,15 @@
  */
 package org.sejda.core.manipulation.model.pdf;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * pdf versions
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum PdfVersion {
+public enum PdfVersion implements DisplayNamedEnum {
 
     VERSION_1_0(0, 1.0d, "%PDF-1.0"),
     VERSION_1_1(1, 1.1d, "%PDF-1.1"),
@@ -37,11 +39,17 @@ public enum PdfVersion {
     private int version;
     private double versionDouble;
     private String versionHeader;
+    private String displayName;
 
     private PdfVersion(int version, double versionDouble, String versionHeader) {
+        this.displayName = String.valueOf(version);
         this.version = version;
         this.versionDouble = versionDouble;
         this.versionHeader = versionHeader;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**

@@ -42,14 +42,14 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
 
         populateActivePreferences(taskCliArguments, parameters);
 
-        parameters.setNfsMode(taskCliArguments.getNfsMode());
+        parameters.setNfsMode(taskCliArguments.getNfsMode().getEnumValue());
 
-        parameters.setPageLayout(taskCliArguments.getLayout());
-        parameters.setPageMode(taskCliArguments.getMode());
+        parameters.setPageLayout(taskCliArguments.getLayout().getEnumValue());
+        parameters.setPageMode(taskCliArguments.getMode().getEnumValue());
         parameters.setPrintScaling(taskCliArguments.isNoPrintScaling() ? PdfPrintScaling.NONE
                 : PdfPrintScaling.APP_DEFAULT);
-        parameters.setDirection(taskCliArguments.getDirection());
-        parameters.setDuplex(taskCliArguments.getDuplex());
+        parameters.setDirection(taskCliArguments.getDirection().getEnumValue());
+        parameters.setDuplex(taskCliArguments.getDuplex().getEnumValue());
 
         return parameters;
     }

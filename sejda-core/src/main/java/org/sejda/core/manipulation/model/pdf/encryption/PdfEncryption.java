@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.encryption;
 
+import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -26,18 +27,24 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfEncryption implements MinRequiredVersion {
-    STANDARD_ENC_40(PdfVersion.VERSION_1_2),
-    STANDARD_ENC_128(PdfVersion.VERSION_1_2),
-    AES_ENC_128(PdfVersion.VERSION_1_6);
+public enum PdfEncryption implements MinRequiredVersion, DisplayNamedEnum {
+    STANDARD_ENC_40("rc4_40", PdfVersion.VERSION_1_2),
+    STANDARD_ENC_128("rc4_128", PdfVersion.VERSION_1_2),
+    AES_ENC_128("aes_128", PdfVersion.VERSION_1_6);
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfEncryption(PdfVersion minVersion) {
+    private PdfEncryption(String displayName, PdfVersion minVersion) {
+        this.displayName = displayName;
         this.minVersion = minVersion;
     }
 
     public PdfVersion getMinVersion() {
         return minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

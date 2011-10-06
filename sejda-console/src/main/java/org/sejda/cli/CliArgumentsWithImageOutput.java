@@ -16,7 +16,7 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.image.ImageColorType;
+import org.sejda.cli.adapters.ImageColorTypeAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -28,8 +28,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  */
 public interface CliArgumentsWithImageOutput extends TaskCliArguments {
 
-    @Option(description = "image color type: BLACK_AND_WHITE, GRAY_SCALE, COLOR_RGB")
-    ImageColorType getColorType();
+    @Option(description = "image color type: black_and_white, gray_scale, color_rgb")
+    ImageColorTypeAdapter getColorType();
 
     @Option(description = "resolution in dpi")
     int getResolution();

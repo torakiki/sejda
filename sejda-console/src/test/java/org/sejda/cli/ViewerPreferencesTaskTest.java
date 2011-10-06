@@ -62,9 +62,8 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
     @Test
     public void specifiedValues() {
         ViewerPreferencesParameters parameters = defaultCommandLine().with("--noPrintScaling")
-                .with("--direction", "RIGHT_TO_LEFT").with("--duplex", "DUPLEX_FLIP_SHORT_EDGE")
-                .with("--nfsMode", "USE_THUMNS").with("--layout", "TWO_PAGE_LEFT").with("--mode", "USE_ATTACHMENTS")
-                .invokeSejdaConsole();
+                .with("--direction", "r2l").with("--duplex", "duplex_flip_short_edge").with("--nfsMode", "nfsthumbs")
+                .with("--layout", "twopagel").with("--mode", "attachments").invokeSejdaConsole();
 
         assertEquals(PdfPrintScaling.NONE, parameters.getPrintScaling());
         assertEquals(PdfDirection.RIGHT_TO_LEFT, parameters.getDirection());

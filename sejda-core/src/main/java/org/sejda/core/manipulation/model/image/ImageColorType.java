@@ -18,21 +18,29 @@ package org.sejda.core.manipulation.model.image;
 
 import java.awt.image.BufferedImage;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * The color type of an image.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum ImageColorType {
-    BLACK_AND_WHITE(BufferedImage.TYPE_BYTE_BINARY),
-    GRAY_SCALE(BufferedImage.TYPE_BYTE_GRAY),
-    COLOR_RGB(BufferedImage.TYPE_INT_RGB);
+public enum ImageColorType implements DisplayNamedEnum {
+    BLACK_AND_WHITE("black_and_white", BufferedImage.TYPE_BYTE_BINARY),
+    GRAY_SCALE("gray_scale", BufferedImage.TYPE_BYTE_GRAY),
+    COLOR_RGB("color_rgb", BufferedImage.TYPE_INT_RGB);
 
     private int bufferedImageType;
+    private String displayName;
 
-    private ImageColorType(int bufferedImageType) {
+    private ImageColorType(String displayName, int bufferedImageType) {
+        this.displayName = displayName;
         this.bufferedImageType = bufferedImageType;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**

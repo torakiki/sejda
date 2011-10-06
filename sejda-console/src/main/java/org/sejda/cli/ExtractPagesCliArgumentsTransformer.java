@@ -37,7 +37,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
     public ExtractPagesParameters toTaskParameters(ExtractPagesTaskCliArguments taskCliArguments) {
         final ExtractPagesParameters parameters;
         if (taskCliArguments.isPredefinedPages()) {
-            parameters = new ExtractPagesParameters(taskCliArguments.getPredefinedPages());
+            parameters = new ExtractPagesParameters(taskCliArguments.getPredefinedPages().getEnumValue());
         } else if (taskCliArguments.isPageSelection()) {
             parameters = new ExtractPagesParameters(taskCliArguments.getPageSelection().getPageRangeSet());
         } else {

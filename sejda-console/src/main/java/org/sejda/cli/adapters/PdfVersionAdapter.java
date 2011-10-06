@@ -1,5 +1,5 @@
 /*
- * Created on Oct 2, 2011
+ * Created on Oct 5, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.adapters;
 
-import org.sejda.cli.adapters.PdfVersionAdapter;
-
-import uk.co.flamingpenguin.jewel.cli.Option;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Trait for cli tasks that output pdf files
+ * Adapter class for enum {@link PdfVersion}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CliArgumentsWithPdfOutput extends TaskCliArguments {
+public class PdfVersionAdapter extends EnumAdapter<PdfVersion> {
 
-    @Option(description = "compress output file (optional)")
-    boolean getCompressed();
-
-    @Option(shortName = "v", description = "pdf version of the output document/s {2, 3, 4, 5, 6 or 7}. Default is 6. (optional)", defaultValue = "6")
-    PdfVersionAdapter getPdfVersion();
+    public PdfVersionAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfVersion.class, "pdf version");
+    }
 }

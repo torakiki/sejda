@@ -34,7 +34,8 @@ public class SimpleSplitCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * @return
      */
     public SimpleSplitParameters toTaskParameters(SimpleSplitTaskCliArguments taskCliArguments) {
-        SimpleSplitParameters parameters = new SimpleSplitParameters(taskCliArguments.getPredefinedPages());
+        SimpleSplitParameters parameters = new SimpleSplitParameters(taskCliArguments.getPredefinedPages()
+                .getEnumValue());
 
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);

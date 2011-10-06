@@ -61,8 +61,7 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void specifiedValuePdfVersion() {
-        AbstractPdfOutputParameters result = defaultCommandLine().with("--pdfVersion", "VERSION_1_4")
-                .invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().with("--pdfVersion", "4").invokeSejdaConsole();
 
         assertEquals(describeExpectations(), PdfVersion.VERSION_1_4, result.getVersion());
     }

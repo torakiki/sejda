@@ -17,7 +17,7 @@
 package org.sejda.cli;
 
 import org.sejda.cli.adapters.PageRangeSetAdapter;
-import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.cli.adapters.PredefinedSetOfPagesAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -31,8 +31,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " extractpages")
 public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (optional)")
-    PredefinedSetOfPages getPredefinedPages();
+    @Option(shortName = "p", description = "predefined pages mode {all, odd or even} (optional)")
+    PredefinedSetOfPagesAdapter getPredefinedPages();
 
     boolean isPredefinedPages();
 

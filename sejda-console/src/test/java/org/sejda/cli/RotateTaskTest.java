@@ -50,26 +50,25 @@ public class RotateTaskTest extends AbstractTaskTest {
 
     @Test
     public void pageRotation_singlePage() {
-        RotateParameters parameters = defaultCommandLine().with("-r", "34:DEGREES_90").invokeSejdaConsole();
+        RotateParameters parameters = defaultCommandLine().with("-r", "34:90").invokeSejdaConsole();
         assertEquals(PageRotation.createSinglePageRotation(34, Rotation.DEGREES_90), parameters.getRotation());
     }
 
     @Test
     public void pageRotation_multiplePages() {
-        RotateParameters parameters = defaultCommandLine().with("-r", "ODD_PAGES:DEGREES_0").invokeSejdaConsole();
+        RotateParameters parameters = defaultCommandLine().with("-r", "odd:0").invokeSejdaConsole();
         assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0, RotationType.ODD_PAGES),
                 parameters.getRotation());
     }
 
     @Test
     public void pageRotation_invalidRotationType() {
-        defaultCommandLine().with("-r", "ODD_PAGES:DEGREES_99990").assertConsoleOutputContains(
-                "Unknown rotation: 'DEGREES_99990'");
+        defaultCommandLine().with("-r", "odd:99990").assertConsoleOutputContains("Unknown rotation: '99990'");
     }
 
     @Test
     public void pageRotation_invalidPageDefinition() {
-        defaultCommandLine().with("-r", "abc:DEGREES_0").assertConsoleOutputContains("Unknown page definition: 'abc'");
+        defaultCommandLine().with("-r", "abc:0").assertConsoleOutputContains("Unknown page definition: 'abc'");
     }
 
     @Test

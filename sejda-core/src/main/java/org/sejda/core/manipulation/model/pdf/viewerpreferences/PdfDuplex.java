@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
+import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -27,15 +28,21 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfDuplex implements MinRequiredVersion {
-    SIMPLEX(PdfVersion.VERSION_1_7),
-    DUPLEX_FLIP_SHORT_EDGE(PdfVersion.VERSION_1_7),
-    DUPLEX_FLIP_LONG_EDGE(PdfVersion.VERSION_1_7);
+public enum PdfDuplex implements MinRequiredVersion, DisplayNamedEnum {
+    SIMPLEX("simplex", PdfVersion.VERSION_1_7),
+    DUPLEX_FLIP_SHORT_EDGE("duplex_flip_short_edge", PdfVersion.VERSION_1_7),
+    DUPLEX_FLIP_LONG_EDGE("duplex_flip_long_edge", PdfVersion.VERSION_1_7);
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfDuplex(PdfVersion minVersion) {
+    private PdfDuplex(String displayName, PdfVersion minVersion) {
+        this.displayName = displayName;
         this.minVersion = minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public PdfVersion getMinVersion() {

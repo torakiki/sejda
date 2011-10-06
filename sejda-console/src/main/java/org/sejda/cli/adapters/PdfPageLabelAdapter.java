@@ -53,7 +53,7 @@ public class PdfPageLabelAdapter {
         }
 
         pageNumber = AdapterUtils.parseInt(tokens[0], "page number");
-        PdfLabelNumberingStyle numberingStyle = AdapterUtils.valueOf(PdfLabelNumberingStyle.class, tokens[1],
+        PdfLabelNumberingStyle numberingStyle = EnumUtils.valueOf(PdfLabelNumberingStyle.class, tokens[1],
                 "numbering style");
         int labelSuffixStartFromNumber = AdapterUtils.parseInt(tokens[2], "label suffix start number");
         String labelPrefix = tokens.length < LABEL_PREFIX_INDEX + 1 ? "" : tokens[LABEL_PREFIX_INDEX];

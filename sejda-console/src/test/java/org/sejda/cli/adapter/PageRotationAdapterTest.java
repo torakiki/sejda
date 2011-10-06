@@ -37,49 +37,49 @@ public class PageRotationAdapterTest {
     @Test
     public void singlePage() {
         PageRotation expected = PageRotation.createSinglePageRotation(77, Rotation.DEGREES_270);
-        assertEquals(expected, new PageRotationAdapter("77:DEGREES_270").getPageRotation());
+        assertEquals(expected, new PageRotationAdapter("77:270").getPageRotation());
     }
 
     @Test
     public void multiplePages() {
         assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0, RotationType.ALL_PAGES),
-                new PageRotationAdapter("ALL_PAGES:DEGREES_0").getPageRotation());
+                new PageRotationAdapter("all:0").getPageRotation());
 
         assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_180, RotationType.EVEN_PAGES),
-                new PageRotationAdapter("EVEN_PAGES:DEGREES_180").getPageRotation());
+                new PageRotationAdapter("even:180").getPageRotation());
 
         assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_90, RotationType.ODD_PAGES),
-                new PageRotationAdapter("ODD_PAGES:DEGREES_90").getPageRotation());
+                new PageRotationAdapter("odd:90").getPageRotation());
     }
 
     @Test
     public void negative_noSeparator() {
         try {
-            new PageRotationAdapter("ALL_PAGESDEGREES_0").getPageRotation();
+            new PageRotationAdapter("all0").getPageRotation();
             fail();
         } catch (SejdaRuntimeException e) {
             assertThat(e.getMessage(),
-                    containsString("Invalid input: 'ALL_PAGESDEGREES_0'. Expected format: 'pageDefinition:rotation'"));
+                    containsString("Invalid input: 'all0'. Expected format: 'pageDefinition:rotation'"));
         }
     }
 
     @Test
     public void negative_unrecognizedPages() {
         try {
-            new PageRotationAdapter("SOME_PAGES:DEGREES_0").getPageRotation();
+            new PageRotationAdapter("some:0").getPageRotation();
             fail();
         } catch (SejdaRuntimeException e) {
-            assertThat(e.getMessage(), containsString("Unknown page definition: 'SOME_PAGES'"));
+            assertThat(e.getMessage(), containsString("Unknown page definition: 'some'"));
         }
     }
 
     @Test
     public void negative_unrecognizedRotation() {
         try {
-            new PageRotationAdapter("ODD_PAGES:DEGREES_99").getPageRotation();
+            new PageRotationAdapter("odd:99").getPageRotation();
             fail();
         } catch (SejdaRuntimeException e) {
-            assertThat(e.getMessage(), containsString("Unknown rotation: 'DEGREES_99'"));
+            assertThat(e.getMessage(), containsString("Unknown rotation: '99'"));
         }
     }
 }

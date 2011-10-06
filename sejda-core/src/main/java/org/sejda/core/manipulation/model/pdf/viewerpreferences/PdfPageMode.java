@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
+import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -27,18 +28,24 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPageMode implements MinRequiredVersion {
-    USE_NONE(PdfVersion.VERSION_1_2),
-    USE_OUTLINES(PdfVersion.VERSION_1_2),
-    USE_THUMBS(PdfVersion.VERSION_1_2),
-    FULLSCREEN(PdfVersion.VERSION_1_2),
-    USE_OC(PdfVersion.VERSION_1_5),
-    USE_ATTACHMENTS(PdfVersion.VERSION_1_6);
+public enum PdfPageMode implements MinRequiredVersion, DisplayNamedEnum {
+    USE_NONE("none", PdfVersion.VERSION_1_2),
+    USE_OUTLINES("outlines", PdfVersion.VERSION_1_2),
+    USE_THUMBS("thumbs", PdfVersion.VERSION_1_2),
+    FULLSCREEN("fullscreen", PdfVersion.VERSION_1_2),
+    USE_OC("ocontent", PdfVersion.VERSION_1_5),
+    USE_ATTACHMENTS("attachments", PdfVersion.VERSION_1_6);
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfPageMode(PdfVersion minVersion) {
+    private PdfPageMode(String displayName, PdfVersion minVersion) {
+        this.displayName = displayName;
         this.minVersion = minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public PdfVersion getMinVersion() {

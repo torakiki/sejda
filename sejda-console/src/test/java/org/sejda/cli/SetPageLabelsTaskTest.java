@@ -37,39 +37,32 @@ public class SetPageLabelsTaskTest extends AbstractTaskTest {
 
     @Test
     public void unrecognizedPageNumber() {
-        defaultCommandLine()
-                .with("-l", "99unparseable:UPPERCASE_ROMANS:1:Chapter")
-                .assertConsoleOutputContains(
-                        "Could not parse input: '99unparseable:UPPERCASE_ROMANS:1:Chapter'. Unrecognized page number: '99unparseable'");
+        defaultCommandLine().with("-l", "99unparseable:uroman:1:Chapter").assertConsoleOutputContains(
+                "Could not parse input: '99unparseable:uroman:1:Chapter'. Unrecognized page number: '99unparseable'");
     }
 
     @Test
     public void unrecognizedNumberingStyle() {
-        defaultCommandLine()
-                .with("-l", "99:UPPERCASE_KLINGON:1:Chapter")
-                .assertConsoleOutputContains(
-                        "Could not parse input: '99:UPPERCASE_KLINGON:1:Chapter'. Invalid value 'UPPERCASE_KLINGON' for numbering style");
+        defaultCommandLine().with("-l", "99:klingon:1:Chapter").assertConsoleOutputContains(
+                "Could not parse input: '99:klingon:1:Chapter'. Invalid value 'klingon' for numbering style");
     }
 
     @Test
     public void unrecognizedSuffixStartNumber() {
-        defaultCommandLine()
-                .with("-l", "99:UPPERCASE_ROMANS:1abc:Chapter")
-                .assertConsoleOutputContains(
-                        "Could not parse input: '99:UPPERCASE_ROMANS:1abc:Chapter'. Unrecognized label suffix start number: '1abc'");
+        defaultCommandLine().with("-l", "99:uroman:1abc:Chapter").assertConsoleOutputContains(
+                "Could not parse input: '99:uroman:1abc:Chapter'. Unrecognized label suffix start number: '1abc'");
     }
 
     @Test
     public void optionalLabelPrefix() {
-        SetPagesLabelParameters parameters = defaultCommandLine().with("-l", "99:UPPERCASE_ROMANS:1")
-                .invokeSejdaConsole();
+        SetPagesLabelParameters parameters = defaultCommandLine().with("-l", "99:uroman:1").invokeSejdaConsole();
         assertEquals("", parameters.getLabels().get(99).getLabelPrefix());
     }
 
     @Test
     public void multipleLabels() {
-        SetPagesLabelParameters parameters = defaultCommandLine().with("-l",
-                "98:ARABIC:6:Preface 99:UPPERCASE_ROMANS:1").invokeSejdaConsole();
+        SetPagesLabelParameters parameters = defaultCommandLine().with("-l", "98:arabic:6:Preface 99:uroman:1")
+                .invokeSejdaConsole();
         assertEquals(2, parameters.getLabels().size());
 
         assertPageLabel(parameters, 98, "Preface", PdfLabelNumberingStyle.ARABIC, 6);
@@ -78,8 +71,8 @@ public class SetPageLabelsTaskTest extends AbstractTaskTest {
 
     @Test
     public void tooFewTokensInLabelInput() {
-        defaultCommandLine().with("-l", "99:UPPERCASE_KLINGON").assertConsoleOutputContains(
-                "Could not parse input: '99:UPPERCASE_KLINGON'. Format expected is: ");
+        defaultCommandLine().with("-l", "99:klingon").assertConsoleOutputContains(
+                "Could not parse input: '99:klingon'. Format expected is: ");
     }
 
     @Test

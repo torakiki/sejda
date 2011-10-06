@@ -16,6 +16,8 @@
  */
 package org.sejda.core.manipulation.model.pdf.label;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Possible values for a numbering style to be used for page labels.<br>
  * Pdf reference 1.7, TABLE 8.10 Entries in a page label dictionary
@@ -23,11 +25,21 @@ package org.sejda.core.manipulation.model.pdf.label;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfLabelNumberingStyle {
-    ARABIC,
-    UPPERCASE_ROMANS,
-    LOWERCASE_ROMANS,
-    UPPERCASE_LETTERS,
-    LOWERCASE_LETTERS,
-    EMPTY;
+public enum PdfLabelNumberingStyle implements DisplayNamedEnum {
+    ARABIC("arabic"),
+    UPPERCASE_ROMANS("uroman"),
+    LOWERCASE_ROMANS("lroman"),
+    UPPERCASE_LETTERS("uletter"),
+    LOWERCASE_LETTERS("lletter"),
+    EMPTY("empty");
+
+    private String displayName;
+
+    private PdfLabelNumberingStyle(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }

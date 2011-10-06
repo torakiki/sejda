@@ -17,13 +17,15 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Enum to model a page rotation.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum Rotation {
+public enum Rotation implements DisplayNamedEnum {
     DEGREES_0(0),
     DEGREES_90(90),
     DEGREES_180(180),
@@ -34,9 +36,15 @@ public enum Rotation {
     private static final int D_270 = 270;
 
     private int degrees;
+    private String displayName;
 
     Rotation(int degrees) {
+        this.displayName = String.valueOf(degrees);
         this.degrees = degrees;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     /**

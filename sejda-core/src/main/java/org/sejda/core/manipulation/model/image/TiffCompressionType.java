@@ -16,19 +16,31 @@
  */
 package org.sejda.core.manipulation.model.image;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Types of compression for the TIFF format.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum TiffCompressionType {
-    NONE,
-    CCITT_GROUP_3_1D,
-    CCITT_GROUP_3_2D,
-    CCITT_GROUP_4,
-    LZW,
-    JPEG_TTN2,
-    PACKBITS,
-    DEFLATE;
+public enum TiffCompressionType implements DisplayNamedEnum {
+    NONE("none"),
+    CCITT_GROUP_3_1D("ccitt_group_3_1d"),
+    CCITT_GROUP_3_2D("ccitt_group_32d"),
+    CCITT_GROUP_4("ccitt_group_4"),
+    LZW("lzw"),
+    JPEG_TTN2("jpeg_ttn2"),
+    PACKBITS("packbits"),
+    DEFLATE("deflate");
+
+    private String displayName;
+
+    private TiffCompressionType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }

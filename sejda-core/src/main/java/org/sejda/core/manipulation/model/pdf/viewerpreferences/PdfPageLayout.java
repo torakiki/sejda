@@ -17,6 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
+import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
@@ -27,18 +28,24 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPageLayout implements MinRequiredVersion {
-    SINGLE_PAGE(PdfVersion.VERSION_1_2),
-    ONE_COLUMN(PdfVersion.VERSION_1_2),
-    TWO_COLUMN_LEFT(PdfVersion.VERSION_1_2),
-    TWO_COLUMN_RIGHT(PdfVersion.VERSION_1_2),
-    TWO_PAGE_LEFT(PdfVersion.VERSION_1_5),
-    TWO_PAGE_RIGHT(PdfVersion.VERSION_1_5);
+public enum PdfPageLayout implements MinRequiredVersion, DisplayNamedEnum {
+    SINGLE_PAGE("singlepage", PdfVersion.VERSION_1_2),
+    ONE_COLUMN("onecolumn", PdfVersion.VERSION_1_2),
+    TWO_COLUMN_LEFT("twocolumnl", PdfVersion.VERSION_1_2),
+    TWO_COLUMN_RIGHT("twocolumnr", PdfVersion.VERSION_1_2),
+    TWO_PAGE_LEFT("twopagel", PdfVersion.VERSION_1_5),
+    TWO_PAGE_RIGHT("twopager", PdfVersion.VERSION_1_5);
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfPageLayout(PdfVersion minVersion) {
+    private PdfPageLayout(String displayName, PdfVersion minVersion) {
+        this.displayName = displayName;
         this.minVersion = minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public PdfVersion getMinVersion() {

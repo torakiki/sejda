@@ -17,17 +17,29 @@
  */
 package org.sejda.core.manipulation.model.rotation;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Types of rotation
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum RotationType {
-    SINGLE_PAGE(),
-    ODD_PAGES(),
-    EVEN_PAGES(),
-    ALL_PAGES();
+public enum RotationType implements DisplayNamedEnum {
+    SINGLE_PAGE("single"),
+    ODD_PAGES("odd"),
+    EVEN_PAGES("even"),
+    ALL_PAGES("all");
+
+    private String displayName;
+
+    private RotationType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 
     public boolean isSinglePage() {
         return SINGLE_PAGE.equals(this);

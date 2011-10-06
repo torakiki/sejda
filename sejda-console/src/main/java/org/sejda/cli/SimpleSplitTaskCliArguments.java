@@ -16,7 +16,7 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.cli.adapters.PredefinedSetOfPagesAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -31,6 +31,6 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface SimpleSplitTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     // pdf-same incompat no default, and this is part of a larger task: split
-    @Option(shortName = "p", description = "predefined pages mode. Accepted values are ALL_PAGES, ODD_PAGES or EVEN_PAGES (required)")
-    PredefinedSetOfPages getPredefinedPages();
+    @Option(shortName = "p", description = "predefined pages mode. Accepted values are 'all', 'odd' or 'even' (required)")
+    PredefinedSetOfPagesAdapter getPredefinedPages();
 }

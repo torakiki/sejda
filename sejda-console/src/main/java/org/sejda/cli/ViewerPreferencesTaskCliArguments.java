@@ -16,11 +16,11 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
+import org.sejda.cli.adapters.PdfDirectionAdapter;
+import org.sejda.cli.adapters.PdfDuplexAdapter;
+import org.sejda.cli.adapters.PdfNonFullScreenPageModeAdapter;
+import org.sejda.cli.adapters.PdfPageLayoutAdapter;
+import org.sejda.cli.adapters.PdfPageModeAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -39,9 +39,8 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "display document title metadata as window title (optional)")
     boolean isDisplayDocTitle();
 
-    // EW: pdf-sam-incompatibility {l2r, r2l} = {LEFT_TO_RIGHT, RIGHT_TO_LEFT}
-    @Option(description = "direction {LEFT_TO_RIGHT, RIGHT_TO_LEFT}. If omitted it uses LEFT_TO_RIGHT (optional)", defaultValue = "LEFT_TO_RIGHT")
-    PdfDirection getDirection();
+    @Option(description = "direction {l2r, r2l}. If omitted it uses l2r (optional)", defaultValue = "l2r")
+    PdfDirectionAdapter getDirection();
 
     @Option(description = "resize the window to fit the page size (optional)")
     boolean isFitWindow();
@@ -55,21 +54,19 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "hide user interface elements (optional)")
     boolean isHideWindowUI();
 
-    // EW: pdf-sam-incompatibility { onecolumn, singlepage, twocolumnl, twocolumnr, twopagel, twopager}
-    @Option(description = "layout for the viewer. { ONE_COLUMN, SINGLE_PAGE, TWO_COLUMN_LEFT, TWO_COLUMN_RIGHT, TWO_PAGE_LEFT, TWO_PAGE_RIGHT}  (optional)", defaultValue = "SINGLE_PAGE")
-    PdfPageLayout getLayout();
+    @Option(description = "layout for the viewer. { onecolumn, singlepage, twocolumnl, twocolumnr, twopagel, twopager}  (optional)", defaultValue = "singlepage")
+    PdfPageLayoutAdapter getLayout();
 
-    // EW: pdf-sam-incompatibility {attachments, fullscreen, none, ocontent, outlines, thumbs}
-    @Option(description = "open mode for the viewer {USE_ATTACHMENTS, FULLSCREEN, USE_NONE, USE_OC, USE_OUTLINES, USE_THUMBS}. If omitted it uses none (optional)", defaultValue = "USE_NONE")
-    PdfPageMode getMode();
+    @Option(description = "open mode for the viewer {attachments, fullscreen, none, ocontent, outlines, thumbs}. If omitted it uses none (optional)", defaultValue = "none")
+    PdfPageModeAdapter getMode();
 
-    // EW: pdf-sam-incompatibility {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}
-    @Option(description = "non full screen mode for the viewer when exiting full screen mode {USE_NONE, USE_OC, USE_OUTLINES, USE_THUMNS}. If omitted it uses none (optional)", defaultValue = "USE_NONE")
-    PdfNonFullScreenPageMode getNfsMode();
+    @Option(description = "non full screen mode for the viewer when exiting full screen mode {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}. If omitted it uses none (optional)", defaultValue = "nfsnone")
+    PdfNonFullScreenPageModeAdapter getNfsMode();
 
     @Option(description = "no page scaling in print dialog (optional)")
     boolean isNoPrintScaling();
 
-    @Option(description = "paper handling options to use when printing the file from the print dialog. {SIMPLEX, DUPLEX_FLIP_SHORT_EDGE, DUPLEX_FLIP_LONG_EDGE}. If ommited it uses SIMPLEX (optional)", defaultValue = "SIMPLEX")
-    PdfDuplex getDuplex();
+    // TODO: pdf-sam incompat doesnt exist in pdfsam
+    @Option(description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge}. If ommited it uses 'simplex' (optional)", defaultValue = "simplex")
+    PdfDuplexAdapter getDuplex();
 }

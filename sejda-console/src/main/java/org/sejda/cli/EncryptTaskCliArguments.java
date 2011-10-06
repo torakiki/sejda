@@ -16,7 +16,7 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
+import org.sejda.cli.adapters.PdfEncryptionAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -35,8 +35,8 @@ public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectory
     @Option(shortName = "a", description = "owner password for the document (optional)", defaultValue = "")
     String getAdminstratorPassword();
 
-    @Option(shortName = "e", description = "encryption angorithm {STANDARD_ENC_40, STANDARD_ENC_128, AES_ENC_128}. If omitted it uses STANDARD_ENC_128 (optional)", defaultValue = "STANDARD_ENC_128")
-    PdfEncryption getEncryptionType();
+    @Option(shortName = "e", description = "encryption angorithm {rc4_40, rc4_128, aes_128}. If omitted it uses aes_128 (optional)", defaultValue = "rc4_128")
+    PdfEncryptionAdapter getEncryptionType();
 
     @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
     String getOutputPrefix();

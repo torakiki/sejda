@@ -16,7 +16,7 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.model.image.TiffCompressionType;
+import org.sejda.cli.adapters.TiffCompressionTypeAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -30,6 +30,6 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " pdftosingletiff")
 public interface PdfToSingleTiffTaskCliArguments extends CliArgumentsWithImageFileOutput {
 
-    @Option(description = "image compression type: NONE, CCITT_GROUP_3_1D, CCITT_GROUP_3_2D, CCITT_GROUP_4, LZW, JPEG_TTN2, PACKBITS, DEFLATE. Default is NONE", defaultValue = "NONE")
-    TiffCompressionType getCompressionType();
+    @Option(description = "image compression type: none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate. Default is 'none'", defaultValue = "NONE")
+    TiffCompressionTypeAdapter getCompressionType();
 }

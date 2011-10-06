@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Possible values for the document’s page mode, specifying how to display the document on exiting full-screen mode.<br>
  * According to the reference: <i>This entry is meaningful only if the value of the PageMode entry in the catalog dictionary (see Section 3.6.1, “Document Catalog”) is FullScreen;
@@ -26,9 +28,19 @@ package org.sejda.core.manipulation.model.pdf.viewerpreferences;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfNonFullScreenPageMode {
-    USE_NONE,
-    USE_OUTLINES,
-    USE_THUMNS,
-    USE_OC;
+public enum PdfNonFullScreenPageMode implements DisplayNamedEnum {
+    USE_NONE("nfsnone"),
+    USE_OUTLINES("nfsoutlines"),
+    USE_THUMNS("nfsthumbs"),
+    USE_OC("nfsocontent");
+
+    private String displayName;
+
+    private PdfNonFullScreenPageMode(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
