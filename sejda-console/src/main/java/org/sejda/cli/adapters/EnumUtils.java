@@ -31,7 +31,11 @@ import org.sejda.core.exception.SejdaRuntimeException;
  * @author Eduard Weissmann
  * 
  */
-public class EnumUtils {
+public final class EnumUtils {
+
+    private EnumUtils() {
+        // no instances
+    }
 
     /**
      * Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
