@@ -37,14 +37,18 @@ public interface GeneralCliArguments {
 
     // TODO: stop printing [options] command to execute because user can think the order of params is different
     // TODO: get rid of this class completely
-    // TODO: support -version, -license
     // TODO: support detailed command -help
-    @Unparsed(name = "command to execute {[concat], [split],"
-            + " [encrypt], [mix], [unpack], [setviewer], [slideshow], [decrypt], [rotate], [pagelabels]}")
+    @Unparsed(name = "command")
     CliCommandAdapter getCommand();
 
     boolean isCommand();
 
-    @Option(shortName = "h", description = "prints this usage information. Can be used to detail options for a command '-h command' (optional)")
+    @Option(shortName = "h", description = "help")
     boolean isHelp();
+
+    @Option(shortName = "v", description = "version")
+    boolean isVersion();
+
+    @Option(shortName = "l", description = "licence")
+    boolean isLicense();
 }

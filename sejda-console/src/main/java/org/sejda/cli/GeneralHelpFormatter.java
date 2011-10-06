@@ -37,7 +37,7 @@ public final class GeneralHelpFormatter {
 
     public String getFormattedString() {
         StringBuilder helpMessage = new StringBuilder();
-        helpMessage.append("Sejda console").append(DOUBLE_LINE_BREAK).append("Basic commands:")
+        helpMessage.append("Sejda Console").append(DOUBLE_LINE_BREAK).append("Basic commands:")
                 .append(DOUBLE_LINE_BREAK);
 
         for (CliCommand each : CliCommand.sortedValues()) {
