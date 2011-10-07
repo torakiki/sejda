@@ -19,9 +19,11 @@ package org.sejda.core.notification.context;
 
 import java.util.List;
 
+import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.support.ListValueMap;
+import org.sejda.core.support.util.ReflectionUtility;
 
 /**
  * Holds a list of listeners associated to the event class they are listening to.
@@ -37,8 +39,26 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
     }
 
-    public <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener) {
+    public <T extends AbstractNotificationEvent> void add(EventListener<T> listener)
+            throws NotificationContextException {
+        Class<T> eventClass = getListenerEventClass(listener);
         listeners.put(eventClass, listener);
+    }
+
+    public <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener)
+            throws NotificationContextException {
+        Class<T> eventClass = getListenerEventClass(listener);
+        return listeners.remove(eventClass, listener);
+    }
+
+    private <T extends AbstractNotificationEvent> Class<T> getListenerEventClass(EventListener<T> listener)
+            throws NotificationContextException {
+        @SuppressWarnings("unchecked")
+        Class<T> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
+        if (eventClass == null) {
+            throw new NotificationContextException("Unable to infer the listened event class.");
+        }
+        return eventClass;
     }
 
     public void clear() {

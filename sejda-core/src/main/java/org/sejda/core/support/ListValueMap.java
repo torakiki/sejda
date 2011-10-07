@@ -50,7 +50,7 @@ public final class ListValueMap<K, V> {
     }
 
     /**
-     * Adds the input value to the List associated to the input key
+     * Adds the input value to the {@link List} associated to the input key
      * 
      * @param key
      * @param value
@@ -63,6 +63,21 @@ public final class ListValueMap<K, V> {
         }
         list.add(value);
         return map.put(key, list);
+    }
+
+    /**
+     * Removes the input value from the {@link List} associated to the input key.
+     * 
+     * @param key
+     * @param value
+     * @return true if the value was found and removed.
+     */
+    public boolean remove(K key, V value) {
+        List<V> list = map.get(key);
+        if (list != null && !list.isEmpty()) {
+            return list.remove(value);
+        }
+        return false;
     }
 
     /**

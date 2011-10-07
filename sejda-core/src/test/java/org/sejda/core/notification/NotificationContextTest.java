@@ -29,6 +29,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.TestListenerFactory.TestListenerPercentage;
+import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.NotificationContext;
@@ -56,6 +57,7 @@ public class NotificationContextTest {
             assertEquals(0, victim.size());
             testNotificationContextAddListener(victim);
             testNotificationContextClear(victim);
+            testNotificationContextRemoveListener(victim);
         }
     }
 
@@ -81,6 +83,14 @@ public class NotificationContextTest {
         assertEquals(1, victim.size());
         victim.addListener(newPercentageListener());
         assertEquals(2, victim.size());
+    }
+
+    private void testNotificationContextRemoveListener(NotificationContext victim) throws NotificationContextException {
+        TestListenerStart listener = newStartListener();
+        victim.addListener(listener);
+        assertEquals(1, victim.size());
+        victim.removeListener(listener);
+        assertEquals(0, victim.size());
     }
 
     /**

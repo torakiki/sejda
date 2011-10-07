@@ -32,13 +32,24 @@ import org.sejda.core.notification.event.AbstractNotificationEvent;
 public interface NotificationContext {
 
     /**
-     * Adds the input listeners to the context
+     * Adds the input listeners to the context.
      * 
      * @param listener
      * @throws NotificationContextException
      *             if unable to infer the listened {@link AbstractNotificationEvent} subclass
      */
     <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
+            throws NotificationContextException;
+
+    /**
+     * Remove the input listener from the context .
+     * 
+     * @param listener
+     * @return true if the listener was found and removed, false otherwise
+     * @throws NotificationContextException
+     *             if unable to infer the listened {@link AbstractNotificationEvent} subclass
+     */
+    <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener)
             throws NotificationContextException;
 
     /**

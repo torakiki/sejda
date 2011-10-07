@@ -23,7 +23,6 @@ import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
-import org.sejda.core.support.util.ReflectionUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,13 +56,16 @@ public abstract class AbstractNotificationContext implements NotificationContext
     public <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
             throws NotificationContextException {
         synchronized (holder) {
-            // inferring the event class on the event listener
-            @SuppressWarnings("unchecked")
-            Class<T> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
-            if (eventClass == null) {
-                throw new NotificationContextException("Unable to infer the listened event class.");
-            }
-            holder.add(eventClass, listener);
+            LOG.trace("Adding event listener: {}", listener);
+            holder.add(listener);
+        }
+    }
+
+    public <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener)
+            throws NotificationContextException {
+        synchronized (holder) {
+            LOG.trace("Removing event listener: {}", listener);
+            return holder.remove(listener);
         }
     }
 
