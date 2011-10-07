@@ -16,6 +16,7 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.mock;
@@ -29,9 +30,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.mutable.MutableBoolean;
 import org.mockito.ArgumentCaptor;
+import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
 import org.sejda.core.manipulation.service.TaskExecutionService;
+import org.sejda.core.notification.EventListener;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.util.OnceWithMessage;
 import org.sejda.util.SystemOutRecordingStream;
 
@@ -140,12 +148,13 @@ public class CommandLineTestBuilder {
     }
 
     public void assertConsoleOutputContains(String... expectedOutputContainedLines) {
-        new CommandLineExecuteTestHelper().assertConsoleOutputContains(this.toCommandLineString(),
+        new CommandLineExecuteTestHelper(true).assertConsoleOutputContains(this.toCommandLineString(),
                 expectedOutputContainedLines);
     }
 
     public <T> T invokeSejdaConsole() {
-        return (T) new CommandLineExecuteTestHelper().invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
+        return (T) new CommandLineExecuteTestHelper(true).invokeConsoleAndReturnTaskParameters(this
+                .toCommandLineString());
     }
 }
 
@@ -157,8 +166,16 @@ public class CommandLineTestBuilder {
  * 
  */
 class CommandLineExecuteTestHelper {
-    protected TaskExecutionService taskExecutionService = mock(TaskExecutionService.class);
+    protected TaskExecutionService taskExecutionService;
     private SystemOutRecordingStream newSystemOut = new SystemOutRecordingStream(System.out);
+
+    CommandLineExecuteTestHelper(boolean useMockTaskExecutionService) {
+        if (useMockTaskExecutionService) {
+            taskExecutionService = mock(TaskExecutionService.class);
+        } else {
+            taskExecutionService = new DefaultTaskExecutionService();
+        }
+    }
 
     private SejdaConsole getConsole(String commandLine) {
         String[] args = parseCommandLineArgs(commandLine);
@@ -196,6 +213,24 @@ class CommandLineExecuteTestHelper {
         for (String eachExpected : expectedOutputContainedLines) {
             assertThat(consoleOutput, containsString(eachExpected));
         }
+    }
+
+    public void assertTaskCompletes(String commandLine) {
+        final MutableBoolean taskCompleted = new MutableBoolean(false);
+        try {
+            GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionCompletedEvent>() {
+
+                public void onEvent(TaskExecutionCompletedEvent event) {
+                    taskCompleted.setValue(true);
+                }
+
+            });
+        } catch (NotificationContextException e) {
+            throw new SejdaRuntimeException("Registering notification listener failed. Reason: " + e.getMessage(), e);
+        }
+
+        String consoleOutput = invokeConsoleAndReturnSystemOut(commandLine);
+        assertThat("Task did not complete. Console output was:\n" + consoleOutput, taskCompleted.toBoolean(), is(true));
     }
 
     private String invokeConsoleAndReturnSystemOut(String commandLine) {

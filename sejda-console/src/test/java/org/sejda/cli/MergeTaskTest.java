@@ -55,20 +55,20 @@ public class MergeTaskTest extends AbstractTaskTest {
     public void setUp() {
         super.setUp();
 
-        createTestFile("/tmp/merge/file1.pdf");
-        createTestFile("/tmp/merge/file2.pdf");
-        createTestFile("/tmp/merge/file3.pdf");
-        createTestFile("/tmp/merge/file4.pdf");
+        createTestPdfFile("/tmp/merge/file1.pdf");
+        createTestPdfFile("/tmp/merge/file2.pdf");
+        createTestPdfFile("/tmp/merge/file3.pdf");
+        createTestPdfFile("/tmp/merge/file4.pdf");
 
-        createTestFile("./location/filenames.csv", "/tmp/merge/file3.pdf, /tmp/merge/file1.pdf, /tmp/merge/file2.pdf");
-        createTestFile("./location/empty_filenames.csv", "");
-        createTestFile("./location/filenames_invalidPaths.csv", "/tmp/merge/fileDoesntExist.pdf,/tmp/merge/file1.pdf");
-        createTestFile(
+        createTestTextFile("./location/filenames.csv", "/tmp/merge/file3.pdf, /tmp/merge/file1.pdf, /tmp/merge/file2.pdf");
+        createTestTextFile("./location/empty_filenames.csv", "");
+        createTestTextFile("./location/filenames_invalidPaths.csv", "/tmp/merge/fileDoesntExist.pdf,/tmp/merge/file1.pdf");
+        createTestTextFile(
                 "./location/filenames.xml",
                 "<filelist><file value=\"/tmp/merge/file1.pdf \"/><file value=\"/tmp/merge/file4.pdf\"/><file value=\"/tmp/merge/file3.pdf\"/></filelist>");
-        createTestFile("./location/filenames_invalidXml.xml", "<filelist><file value=\"/tmp/merge/file1.pdf \">");
+        createTestTextFile("./location/filenames_invalidXml.xml", "<filelist><file value=\"/tmp/merge/file1.pdf \">");
         createTestFolder("/tmp/emptyFolder");
-        createTestFile("./location/filenames.xls");
+        createTestPdfFile("./location/filenames.xls");
     }
 
     @Test

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.sejda.core.Sejda;
 
 /**
  * Tests for the command line's general options
@@ -55,6 +56,25 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
             // expectedStrings.add(eachCommand.getDescription());
         }
         return expectedStrings;
+    }
+
+    @Test
+    public void testCommandHelp() {
+        for (CliCommand eachCliCommand : CliCommand.values()) {
+            // it should contain description, example usage and usage details
+            assertConsoleOutputContains("-h " + eachCliCommand.getDisplayName(), eachCliCommand.getDescription(),
+                    "Example usage: ", "Usage: ");
+        }
+    }
+
+    @Test
+    public void testExecuteVersion() {
+        assertConsoleOutputContains("--version", "Sejda Console (Version " + Sejda.VERSION + ")");
+    }
+
+    @Test
+    public void testExecuteLicense() {
+        assertConsoleOutputContains("--license", "Licensed under the Apache License, Version 2.0");
     }
 
     @Test

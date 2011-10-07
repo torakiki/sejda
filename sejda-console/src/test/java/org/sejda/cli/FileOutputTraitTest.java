@@ -16,6 +16,8 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +36,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATEMIX }, { TestableTask.MERGE },
+        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATE_MIX }, { TestableTask.MERGE },
                 { TestableTask.EXTRACT_PAGES } });
     }
 
@@ -43,13 +45,9 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
-    public void negative_NotFound() {
-        defaultCommandLine().with("-o", "output-doesntexist.pdf").assertConsoleOutputContains(
-                "Path 'output-doesntexist.pdf' does not exist");
-    }
-
-    @Test
     public void positive() {
+        assertFalse(new File("./outputs/fileOutput.pdf").exists());
+
         TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();
         assertOutputFile(result.getOutput(), new File("./outputs/fileOutput.pdf"));
     }

@@ -17,7 +17,6 @@
 package org.sejda.cli;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -34,9 +33,7 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.SPLIT_BY_BOOKMARKS }, { TestableTask.SPLIT_BY_SIZE },
-                { TestableTask.SPLIT_BY_PAGES }, { TestableTask.SIMPLE_SPLIT }, { TestableTask.SET_METADATA },
-                { TestableTask.SET_PAGE_LABELS } });
+        return TestableTask.allTasksExceptFor(TestableTask.getTasksWithMultipleSouceFiles());
     }
 
     public SingleInputSourceFileTraitTest(TestableTask testableTask) {
@@ -58,7 +55,7 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileWithPassword() {
-        SinglePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf;secret123")
+        SinglePdfSourceTaskParameters result = defaultCommandLine().with("-f", "inputs/input-protected.pdf:secret123")
                 .invokeSejdaConsole();
 
         assertHasFileSource(result, new File("inputs/input-protected.pdf"), "secret123");

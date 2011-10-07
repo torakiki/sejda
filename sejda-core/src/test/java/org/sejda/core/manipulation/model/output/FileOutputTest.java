@@ -38,6 +38,7 @@ public class FileOutputTest {
     public void setUp() {
         file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.TRUE);
+        when(file.exists()).thenReturn(Boolean.TRUE);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -52,7 +53,16 @@ public class FileOutputTest {
     }
 
     @Test
-    public void testValidFile() {
+    public void testValidFile_exists() {
+        FileOutput instance = FileOutput.newInstance(file);
+        assertNotNull(instance);
+    }
+
+    @Test
+    public void testValidFile_doesntExist() {
+        when(file.isFile()).thenReturn(Boolean.FALSE);
+        when(file.exists()).thenReturn(Boolean.FALSE);
+
         FileOutput instance = FileOutput.newInstance(file);
         assertNotNull(instance);
     }

@@ -74,7 +74,7 @@ public class RectangularBoxAdapter {
             String[] newTokens = eachInput.split(delimiter);
             result.addAll(Arrays.asList(newTokens));
         }
-        return result.toArray(new String[] {});
+        return result.toArray(new String[result.size()]);
     }
 
     public final RectangularBox getRectangularBox() {

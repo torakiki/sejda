@@ -88,7 +88,7 @@ final class OutputWriter {
      * @throws TaskIOException
      */
     private static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
-        if (!outputFile.isFile()) {
+        if (outputFile.exists() && !outputFile.isFile()) {
             throw new TaskIOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
         if (files.size() != 1) {

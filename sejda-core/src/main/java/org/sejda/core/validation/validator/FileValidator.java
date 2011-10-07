@@ -36,7 +36,7 @@ public class FileValidator implements ConstraintValidator<IsFile, File> {
     }
 
     public boolean isValid(File value, ConstraintValidatorContext context) {
-        if (value != null) {
+        if (value != null && value.exists()) {
             return value.isFile();
         }
         return true;
