@@ -35,7 +35,8 @@ enum PrefixType {
     CURRENTPAGE(true, "\\[CURRENTPAGE(#*)\\]", CurrentPagePrefixProcessor.class),
     FILENUMBER(true, "\\[FILENUMBER(#*)(\\d*)\\]", FileNumberPrefixProcessor.class),
     TIMESTAMP(true, "\\[TIMESTAMP\\]", TimestampPrefixProcessor.class),
-    BOOKMARK(true, "\\[BOOKMARK_NAME\\]", BookmarkPrefixProcessor.class);
+    BOOKMARK(true, "\\[BOOKMARK_NAME\\]", BookmarkPrefixProcessor.class),
+    BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", StrictBookmarkPrefixProcessor.class);
 
     private boolean ensureUniqueNames;
     private String matchingRegexp;

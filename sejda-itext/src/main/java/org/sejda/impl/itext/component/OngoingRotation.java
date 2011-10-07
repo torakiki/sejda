@@ -29,7 +29,7 @@ public interface OngoingRotation {
     /**
      * applies the rotation to the input target
      * 
-     * @param reader
+     * @param target
      */
     void to(PdfReader target);
 }

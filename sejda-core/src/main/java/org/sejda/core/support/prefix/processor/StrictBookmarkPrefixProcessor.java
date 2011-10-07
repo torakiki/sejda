@@ -1,7 +1,6 @@
 /*
- * Created on 01/lug/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 07/ott/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -18,18 +17,18 @@
 package org.sejda.core.support.prefix.processor;
 
 /**
- * Process the input prefix replacing all the [BOOKMARK_NAME] occurrences with the input bookmark name if any. A small set of possibly invalid characters is trimmed from the the
- * bookmark value.
+ * Process the input prefix replacing all the [BOOKMARK_NAME_STRICT] occurrences with the input bookmark name if any. All the character that are not a letter or a number or '_' are
+ * trimmed from the the bookmark value.
  * 
  * @author Andrea Vacondio
  * 
  */
-class BookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
+public class StrictBookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
 
-    private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME\\]";
-    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|]";
+    private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME_STRICT\\]";
+    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "(?i)[^A-Z0-9_]";
 
-    public BookmarkPrefixProcessor() {
+    public StrictBookmarkPrefixProcessor() {
         super(BOOKMARK_NAME_REPLACE_REGX, INVALID_WIN_FILENAME_CHARS_REGEXP);
     }
 }

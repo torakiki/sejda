@@ -9,7 +9,7 @@
 	<name>sejda</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<url>http://www.sejda.org</url>
-	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the iText or PDFBox but it can be extended and/or configured to use other implementations.</description>
+	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.</description>
 
 	<modules>
 		<module>../sejda-core</module>
@@ -21,8 +21,8 @@
 	</modules>
 
 	<issueManagement>
-		<system>MantisBT</system>
-		<url>http://sourceforge.net/apps/mantisbt/sejda/</url>
+		<system>BitBucket</system>
+		<url>https://bitbucket.org/torakiki/sejda/issues/</url>
 	</issueManagement>
 
 	<organization>
@@ -41,8 +41,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:hg:http://sejda.hg.sourceforge.net:8000/hgroot/sejda/sejda-dev</connection>
-		<url>http://sejda.hg.sourceforge.net/hgweb/sejda/</url>
+		<connection>scm:hg:https://bitbucket.org/torakiki/sejda</connection>
+		<developerConnection>scm:hg:https://bitbucket.org/torakiki/sejda</developerConnection>
+		<url>https://bitbucket.org/torakiki/sejda/src</url>
 	</scm>
 
 	<developers>
@@ -69,11 +70,6 @@
 						<target>1.5</target>
 					</configuration>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-site-plugin</artifactId>
-					<version>2.1.1</version>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -90,6 +86,16 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.2.1</version>
+				<configuration>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<goals>clean compile install assembly:assembly</goals>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
