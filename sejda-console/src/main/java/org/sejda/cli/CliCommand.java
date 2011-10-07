@@ -366,10 +366,8 @@ public enum CliCommand {
         result.append(getDescription());
         result.append("\n\n");
 
-        if (getExampleUsage() != null) {
-            result.append(getExampleUsage());
-            result.append("\n\n");
-        }
+        result.append("Example usage: ").append(SejdaConsole.EXECUTABLE_NAME).append(getExampleUsage());
+        result.append("\n\n");
 
         result.append(cliInterfacedTask.createCli().getHelpMessage());
 
