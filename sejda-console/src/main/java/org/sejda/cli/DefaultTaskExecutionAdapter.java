@@ -16,8 +16,15 @@
  */
 package org.sejda.cli;
 
+import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
+import org.sejda.core.notification.EventListener;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link TaskExecutionAdapter}
@@ -27,10 +34,30 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
  */
 public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionAdapter.class);
+
     private final TaskExecutionService taskExecutionService;
 
     public DefaultTaskExecutionAdapter(TaskExecutionService taskExecutionService) {
         this.taskExecutionService = taskExecutionService;
+        registerProcessListener();
+    }
+
+    private void registerProcessListener() {
+        try {
+            doRegisterProcessListener();
+        } catch (NotificationContextException e) {
+            throw new SejdaRuntimeException("Could not register progress listener. Reason: " + e.getMessage(), e);
+        }
+    }
+
+    private void doRegisterProcessListener() throws NotificationContextException {
+        GlobalNotificationContext.getContext().addListener(new EventListener<PercentageOfWorkDoneChangedEvent>() {
+
+            public void onEvent(PercentageOfWorkDoneChangedEvent event) {
+                LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
+            }
+        });
     }
 
     TaskExecutionService getTaskExecutionService() {
