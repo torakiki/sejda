@@ -29,7 +29,7 @@ public class SetPageTransitionsCliArgumentsTransformer extends BaseCliArgumentsT
         CommandCliArgumentsTransformer<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters> {
 
     /**
-     * Transforms {@link SetPagesLabelTaskCliArguments} to {@link SetPagesTransitionParameters}
+     * Transforms {@link SetPageTransitionsTaskCliArguments} to {@link SetPagesTransitionParameters}
      * 
      * @param taskCliArguments
      * @return

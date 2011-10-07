@@ -32,7 +32,7 @@ import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 public class AlternateMixTaskTest extends AbstractTaskTest {
 
     public AlternateMixTaskTest() {
-        super(TestableTask.ALTERNATEMIX);
+        super(TestableTask.ALTERNATE_MIX);
     }
 
     @Override
@@ -81,6 +81,6 @@ public class AlternateMixTaskTest extends AbstractTaskTest {
     @Test
     public void testFileInputs_missing_second_file() {
         assertConsoleOutputContains(getTaskName() + " -f inputs/input.pdf -o ./outputs/fileOutput.pdf",
-                "Please specify two files as input parameters, using -f file1 file2");
+                "Please specify two files as input parameters");
     }
 }

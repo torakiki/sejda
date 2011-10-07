@@ -3,12 +3,56 @@
 	<notification async="false" />
 	<tasks>
 		<task parameters="org.sejda.core.manipulation.model.parameter.DecryptParameters"
-			task="org.sejda.core.manipulation.model.task.itext.DecryptTask" />
+			task="org.sejda.impl.itext.DecryptTask" />
 		<task parameters="org.sejda.core.manipulation.model.parameter.EncryptParameters"
-			task="org.sejda.core.manipulation.model.task.itext.EncryptTask" />
+			task="org.sejda.impl.itext.EncryptTask" />
 		<task parameters="org.sejda.core.manipulation.model.parameter.RotateParameters"
-			task="org.sejda.core.manipulation.model.task.itext.RotateTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters"
-			task="org.sejda.core.manipulation.model.task.itext.ViewerPreferencesTask" />
+			task="org.sejda.impl.itext.RotateTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters"
+			task="org.sejda.impl.itext.ViewerPreferencesTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.AlternateMixParameters"
+			task="org.sejda.impl.itext.AlternateMixTask" />
+		<task parameters="org.sejda.core.manipulation.model.parameter.UnpackParameters"
+			task="org.sejda.impl.itext.UnpackTask" />
+		<task parameters="org.sejda.core.manipulation.model.parameter.MergeParameters"
+			task="org.sejda.impl.itext.MergeTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters"
+			task="org.sejda.impl.itext.SplitByGoToActionLevelTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SplitBySizeParameters"
+			task="org.sejda.impl.itext.SplitBySizeTask" />
+
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SplitByPagesParameters"
+			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SimpleSplitParameters"
+			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.ExtractPagesParameters"
+			task="org.sejda.impl.itext.ExtractPagesTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.ExtractTextParameters"
+			task="org.sejda.impl.pdfbox.ExtractTextTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SetMetadataParameters"
+			task="org.sejda.impl.itext.SetMetadataTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters"
+			task="org.sejda.impl.itext.SetPagesLabelTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters"
+			task="org.sejda.impl.itext.SetPagesTransitionTask" />
+		<task parameters="org.sejda.core.manipulation.model.parameter.CropParameters"
+			task="org.sejda.impl.itext.CropTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters"
+			task="org.sejda.impl.icepdf.PdfToSingleImageTask" />
+		<task
+			parameters="org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters"
+			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />
 	</tasks>
 </sejda>

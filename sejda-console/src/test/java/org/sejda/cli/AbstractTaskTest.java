@@ -50,11 +50,12 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
 
     @Before
     public void setUp() {
-        createTestFile("./inputs/input.pdf");
-        createTestFile("./inputs/second_input.pdf");
-        createTestFile("./inputs/input-protected.pdf");
-        createTestFile("./inputs/input-unprotected.pdf");
+        createTestPdfFile("./inputs/input.pdf");
+        createTestPdfFile("./inputs/second_input.pdf");
+        createTestPdfFile("./inputs/input-protected.pdf");
+        createTestPdfFile("./inputs/input-unprotected.pdf");
         createTestFolder("./outputs");
-        createTestFile("./outputs/fileOutput.pdf");
+
+        createTestPdfFile("/tmp/file1.pdf");
     }
 }

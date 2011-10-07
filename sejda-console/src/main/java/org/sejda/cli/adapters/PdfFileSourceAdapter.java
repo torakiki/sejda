@@ -16,14 +16,14 @@ import org.sejda.core.manipulation.model.input.PdfFileSource;
  * 
  */
 public class PdfFileSourceAdapter {
-    private static final String PASSWORD_SEPARATOR = ";";
+    private static final String PASSWORD_SEPARATOR = ":";
 
     private final PdfFileSource pdfFileSource;
 
     /**
      * Constructor for a {@link PdfFileSourceAdapter}. Supports pdf files that are password protected<br/>
      * If file has no password protection, input parameter is the path to the file. Eg: {@code /path/to/file.pdf}<br/>
-     * For password protected files, input is concatenation of file path and password, using {@value #PASSWORD_SEPARATOR} as delimiter. Eg: {@code /path/to/file.pdf;secret123}
+     * For password protected files, input is concatenation of file path and password, using {@value #PASSWORD_SEPARATOR} as delimiter. Eg: {@code /path/to/file.pdf:secret123}
      * 
      * @param filePathAndPassword
      *            file path concatenated using {@value #PASSWORD_SEPARATOR} with (optional) password

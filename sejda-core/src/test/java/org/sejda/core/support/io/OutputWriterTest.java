@@ -98,6 +98,7 @@ public class OutputWriterTest {
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         FileOutput output = FileOutput.newInstance(outFile);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
+        when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
             OutputWriter.executeCopyAndDelete(files, OutputDestination.destination(output).overwriting(true));

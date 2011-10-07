@@ -40,7 +40,7 @@ import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     public ViewerPreferencesTaskTest() {
-        super(TestableTask.SETVIEWERPREFERENCES);
+        super(TestableTask.SET_VIEWER_PREFERENCES);
     }
 
     @Test

@@ -27,7 +27,7 @@ import org.sejda.core.DisplayNamedEnum;
 public enum TiffCompressionType implements DisplayNamedEnum {
     NONE("none"),
     CCITT_GROUP_3_1D("ccitt_group_3_1d"),
-    CCITT_GROUP_3_2D("ccitt_group_32d"),
+    CCITT_GROUP_3_2D("ccitt_group_3_2d"),
     CCITT_GROUP_4("ccitt_group_4"),
     LZW("lzw"),
     JPEG_TTN2("jpeg_ttn2"),

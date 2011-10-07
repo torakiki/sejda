@@ -31,12 +31,6 @@ public class FileOutputAdapter {
     private final FileOutput fileOutput;
 
     public FileOutputAdapter(String path) {
-        File file = new File(path);
-
-        if (!file.exists()) {
-            throw new IllegalArgumentException("Path '" + path + "' does not exist");
-        }
-
         this.fileOutput = FileOutput.newInstance(new File(path));
     }
 

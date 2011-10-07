@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 
 /**
@@ -36,8 +37,8 @@ public enum TestableTask {
     DECRYPT,
     ENCRYPT,
     ROTATE,
-    SETVIEWERPREFERENCES,
-    ALTERNATEMIX(new MultipleInputsAndFileOutputDefaultsProvider()),
+    SET_VIEWER_PREFERENCES,
+    ALTERNATE_MIX(new MultipleInputsAndFileOutputDefaultsProvider()),
     UNPACK,
     MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
     SPLIT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
@@ -72,6 +73,24 @@ public enum TestableTask {
         return name().toLowerCase().replaceAll("_", "");
     }
 
+    String getExampleUsage() {
+        return getCorrespondingCliCommand().getExampleUsage();
+    }
+
+    /**
+     * @return the {@link CliCommand} matching this {@link TestableTask}
+     * 
+     */
+    private CliCommand getCorrespondingCliCommand() {
+        for (CliCommand eachCliCommand : CliCommand.values()) {
+            if (StringUtils.equalsIgnoreCase(eachCliCommand.name(), this.name())) {
+                return eachCliCommand;
+            }
+        }
+
+        return null;
+    }
+
     public static List<Object[]> allTasks() {
         return allTasksExceptFor();
     }
@@ -86,6 +105,12 @@ public enum TestableTask {
         }
 
         return result;
+    }
+
+    public static TestableTask[] getTasksWithMultipleSouceFiles() {
+        return new TestableTask[] { TestableTask.DECRYPT, TestableTask.ENCRYPT, TestableTask.ROTATE,
+                TestableTask.SET_VIEWER_PREFERENCES, TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
+                TestableTask.ALTERNATE_MIX, TestableTask.MERGE };
     }
 }
 

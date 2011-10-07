@@ -38,7 +38,8 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
      */
     public AlternateMixParameters toTaskParameters(AlternateMixTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 2) {
-            throw new SejdaRuntimeException("Please specify two files as input parameters, using -f file1 file2");
+            throw new SejdaRuntimeException("Please specify two files as input parameters, found "
+                    + taskCliArguments.getFiles().size());
         }
 
         PdfFileSourceAdapter f1 = taskCliArguments.getFiles().get(0);

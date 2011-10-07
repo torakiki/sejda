@@ -21,22 +21,29 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
+import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
+import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
@@ -63,15 +70,23 @@ public abstract class AbstractTestSuite {
         }
     }
 
-    protected File createTestFile(String path) {
-        return createTestFile(path, "default contents");
+    protected File createTestPdfFile(String path) {
+        return createTestFile(path, getDefaultPdfContents());
     }
 
-    protected File createTestFile(String path, String contents) {
+    private InputStream getDefaultPdfContents() {
+        return getClass().getResourceAsStream("/pdf/test_outline.pdf");
+    }
+
+    protected File createTestTextFile(String path, String contents) {
+        return createTestFile(path, new ByteArrayInputStream(contents.getBytes()));
+    }
+
+    protected File createTestFile(String path, InputStream contents) {
         File file = new File(path);
         file.deleteOnExit();
         try {
-            FileUtils.writeStringToFile(file, contents);
+            FileUtils.copyInputStreamToFile(contents, file);
         } catch (IOException e) {
             throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
         }
@@ -87,15 +102,48 @@ public abstract class AbstractTestSuite {
         return file;
     }
 
+    protected void assertHasFileSource(TaskParameters parameters, File file, String password) {
+        if (parameters instanceof AlternateMixParameters) {
+            assertHasFileSource((AlternateMixParameters) parameters, file, password);
+        } else if (parameters instanceof MergeParameters) {
+            assertHasFileSource((MergeParameters) parameters, file, password);
+        } else if (parameters instanceof SinglePdfSourceTaskParameters) {
+            assertHasFileSource((SinglePdfSourceTaskParameters) parameters, file, password);
+        } else if (parameters instanceof MultiplePdfSourceTaskParameters) {
+            assertHasFileSource((MultiplePdfSourceTaskParameters) parameters, file, password);
+        } else {
+            throw new SejdaRuntimeException("Cannot assert has file source: " + parameters);
+        }
+    }
+
     protected void assertHasFileSource(SinglePdfSourceTaskParameters parameters, File file, String password) {
         assertTrue("File '" + file + "'"
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"),
                 matchesPdfFileSource(file, password, parameters.getSource()));
     }
 
+    protected void assertHasFileSource(MergeParameters parameters, File file, String password) {
+        List<PdfSource> sourcesList = new ArrayList<PdfSource>();
+        for (PdfMergeInput eachInput : parameters.getInputList()) {
+            sourcesList.add(eachInput.getSource());
+        }
+
+        assertHasFileSource(sourcesList, file, password);
+    }
+
+    protected void assertHasFileSource(AlternateMixParameters parameters, File file, String password) {
+        assertHasFileSource(
+                Arrays.asList(parameters.getFirstInput().getSource(), parameters.getSecondInput().getSource()), file,
+                password);
+    }
+
     protected void assertHasFileSource(MultiplePdfSourceTaskParameters parameters, File file, String password) {
+        assertHasFileSource(parameters.getSourceList(), file, password);
+    }
+
+    protected void assertHasFileSource(Collection<PdfSource> parametersPdfSources, File file, String password) {
         boolean found = false;
-        for (PdfSource each : parameters.getSourceList()) {
+        for (PdfSource each : parametersPdfSources) {
             if (matchesPdfFileSource(file, password, each)) {
                 found = true;
             }
@@ -120,7 +168,11 @@ public abstract class AbstractTestSuite {
     }
 
     public static void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {
-        new CommandLineExecuteTestHelper().assertConsoleOutputContains(commandLine, expectedOutputContainedLines);
+        new CommandLineExecuteTestHelper(false).assertConsoleOutputContains(commandLine, expectedOutputContainedLines);
+    }
+
+    public static void assertTaskCompletes(String commandLine) {
+        new CommandLineExecuteTestHelper(false).assertTaskCompletes(commandLine);
     }
 
     protected static <T> Set<T> asSet(T... items) {

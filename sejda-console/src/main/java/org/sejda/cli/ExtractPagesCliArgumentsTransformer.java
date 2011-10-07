@@ -44,6 +44,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
             throw new SejdaRuntimeException("Please specify at least one option that defines pages to be extracted");
         }
         populateAbstractParameters(parameters, taskCliArguments);
+        populateSourceParameters(parameters, taskCliArguments);
 
         return parameters;
     }
