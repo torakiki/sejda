@@ -79,22 +79,22 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-itext</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-pdfbox</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-icepdf</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.co.flamingpenguin.jewelcli</groupId>
@@ -135,7 +135,7 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
