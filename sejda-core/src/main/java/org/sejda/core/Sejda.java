@@ -17,6 +17,12 @@
  */
 package org.sejda.core;
 
+import java.io.IOException;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Global constants
  * 
@@ -25,14 +31,44 @@ package org.sejda.core;
  */
 public final class Sejda {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Sejda.class);
+
     private Sejda() {
         // on purpose
     }
 
-    public static final String VERSION = "0.0.1-SNAPSHOT";
+    public static final String VERSION = new SejdaVersionLoader().getSejdaVersion();
     public static final String CREATOR = "Sejda (Ver. " + VERSION + ")";
     public static final String PDF_EXTENSION = "pdf";
     public static final String TXT_EXTENSION = "txt";
     public static final String TIFF_EXTENSION = "tiff";
     public static final String TIF_EXTENSION = "tif";
+
+    /**
+     * Loader for the sejda properties.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static final class SejdaVersionLoader {
+
+        private static final String SEJDA_PROPERTIES = "/sejda.properties";
+        private String sejdaVersion = "";
+
+        private SejdaVersionLoader() {
+            Properties props = new Properties();
+            try {
+                props.load(SejdaVersionLoader.class.getResourceAsStream(SEJDA_PROPERTIES));
+                sejdaVersion = props.getProperty("sejda.version", "UNKNOWN");
+
+            } catch (IOException e) {
+                LOG.warn("Unable to determine version of Sejda.", e);
+            }
+        }
+
+        String getSejdaVersion() {
+            return sejdaVersion;
+        }
+
+    }
 }
