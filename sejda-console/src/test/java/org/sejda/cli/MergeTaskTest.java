@@ -60,12 +60,16 @@ public class MergeTaskTest extends AbstractTaskTest {
         createTestPdfFile("/tmp/merge/file3.pdf");
         createTestPdfFile("/tmp/merge/file4.pdf");
 
-        createTestTextFile("./location/filenames.csv", "/tmp/merge/file3.pdf, /tmp/merge/file1.pdf, /tmp/merge/file2.pdf");
+        createTestTextFile("./location/filenames.csv",
+                "/tmp/merge/file3.pdf, /tmp/merge/file1.pdf, /tmp/merge/file2.pdf");
         createTestTextFile("./location/empty_filenames.csv", "");
-        createTestTextFile("./location/filenames_invalidPaths.csv", "/tmp/merge/fileDoesntExist.pdf,/tmp/merge/file1.pdf");
+        createTestTextFile("./location/filenames_invalidPaths.csv",
+                "/tmp/merge/fileDoesntExist.pdf,/tmp/merge/file1.pdf");
         createTestTextFile(
                 "./location/filenames.xml",
                 "<filelist><file value=\"/tmp/merge/file1.pdf \"/><file value=\"/tmp/merge/file4.pdf\"/><file value=\"/tmp/merge/file3.pdf\"/></filelist>");
+        createTestTextFile("./location/filenamesPasswordProtected.xml",
+                "<filelist><file value=\"/tmp/merge/file1.pdf:secret1 \"/><file value=\"/tmp/merge/file4.pdf:secret4\"/></filelist>");
         createTestTextFile("./location/filenames_invalidXml.xml", "<filelist><file value=\"/tmp/merge/file1.pdf \">");
         createTestFolder("/tmp/emptyFolder");
         createTestPdfFile("./location/filenames.xls");
@@ -179,18 +183,42 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters, List<File> expectedFilesList) {
-        List<File> actualFileList = new ArrayList<File>();
+        assertPdfMergeInputsFilesList(parameters, expectedFilesList, nullsFilledList(expectedFilesList.size()));
+    }
 
-        for (PdfMergeInput each : parameters.getInputList()) {
+    private List<String> nullsFilledList(int size) {
+        List<String> result = new ArrayList<String>();
+        for (int i = 0; i < size; i++) {
+            result.add(null);
+        }
+
+        return result;
+    }
+
+    private void assertPdfMergeInputsFilesList(MergeParameters parameters, List<File> expectedFilesList,
+            List<String> expectedFilesPasswords) {
+        List<File> actualFileList = new ArrayList<File>();
+        List<String> actualPasswords = new ArrayList<String>();
+
+        for (int i = 0; i < parameters.getInputList().size(); i++) {
+            PdfMergeInput each = parameters.getInputList().get(i);
             PdfFileSource pdfFileSource = (PdfFileSource) each.getSource();
             actualFileList.add(pdfFileSource.getFile());
+            actualPasswords.add(pdfFileSource.getPassword());
         }
 
         assertEquals(expectedFilesList, actualFileList);
-
+        assertEquals(expectedFilesPasswords, actualPasswords);
     }
 
-    // TODO: test file inputs with password
+    @Test
+    public void fileListConfigInput_xmlWithPasswordProtectedFilesInside() {
+        MergeParameters parameters = defaultCommandLine().without("-f")
+                .with("-l", "./location/filenamesPasswordProtected.xml").invokeSejdaConsole();
+
+        assertPdfMergeInputsFilesList(parameters, filesList("/tmp/merge/file1.pdf", "/tmp/merge/file4.pdf"),
+                Arrays.asList("secret1", "secret4"));
+    }
 
     private static final String NO_PASSWORD = null;
     private static final Set<PageRange> NO_PAGE_RANGE_SPECIFIED = Collections.emptySet();
