@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
+import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException.ValidationError;
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 
@@ -90,15 +91,30 @@ public class SejdaConsole {
 
     /**
      * throws an exception if there are duplicate option:value pairs specified, that would override each other silently otherwise
+     * 
+     * @throws ArgumentValidationException
      */
-    private void validateNoDuplicateCommandArguments() {
+    private void validateNoDuplicateCommandArguments() throws ArgumentValidationException {
         Map<String, Object> uniqueArguments = new HashMap<String, Object>();
-        for (String eachArgument : arguments.getCommandArguments()) {
+        for (final String eachArgument : arguments.getCommandArguments()) {
             if (uniqueArguments.containsKey(eachArgument) && StringUtils.startsWith(eachArgument, "-")) {
-                throw new SejdaRuntimeException(
-                        "Option '"
+                throw new ArgumentValidationException(new ValidationError() {
+
+                    public String getMessage() {
+                        return "Option '"
                                 + eachArgument
-                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf");
+                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf";
+                    }
+
+                    public ErrorType getErrorType() {
+                        return ErrorType.AdditionalValue;
+                    }
+
+                    @Override
+                    public String toString() {
+                        return getMessage();
+                    }
+                });
             }
 
             uniqueArguments.put(eachArgument, eachArgument);
