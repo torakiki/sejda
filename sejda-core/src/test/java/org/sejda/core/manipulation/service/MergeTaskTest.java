@@ -95,8 +95,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         PdfReader reader = null;
         try {
             reader = getReaderFromResultFile();
-            // TODO
-            // assertCreator(reader);
+            assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
             assertEquals(8, reader.getNumberOfPages());
         } finally {
@@ -137,8 +136,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         PdfReader reader = null;
         try {
             reader = getReaderFromResultFile();
-            // TODO
-            // assertCreator(reader);
+            assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
             assertEquals(6, reader.getNumberOfPages());
         } finally {

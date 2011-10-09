@@ -32,6 +32,7 @@ import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParamete
  * @author Andrea Vacondio
  * 
  */
+// PMD reports a false positive on this class (https://sourceforge.net/tracker/?func=detail&aid=3110548&group_id=56262&atid=479921)
 final class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
         AbstractXmlGraphicsImageWriterAdapter<PdfToSingleTiffParameters> {
 
