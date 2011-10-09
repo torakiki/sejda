@@ -16,6 +16,7 @@
  */
 package org.sejda.cli;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -57,21 +58,11 @@ public enum CliCommand {
     DECRYPT("decrypt", new CliInterfacedTask<DecryptTaskCliArguments, DecryptParameters>() {
 
         @Override
-        protected Class<DecryptTaskCliArguments> getCliArgumentsClass() {
-            return DecryptTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<DecryptTaskCliArguments, DecryptParameters> getArgumentsTransformer() {
             return new DecryptCliArgumentsTransformer();
         }
     }, "Given a collection of encrypted pdf documents and their owner password, creates a decrypted version of each of them.", "decrypt -f /tmp/file1.pdf:secret123 -o /tmp -p decrypted_"),
     ENCRYPT("encrypt", new CliInterfacedTask<EncryptTaskCliArguments, EncryptParameters>() {
-
-        @Override
-        protected Class<EncryptTaskCliArguments> getCliArgumentsClass() {
-            return EncryptTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<EncryptTaskCliArguments, EncryptParameters> getArgumentsTransformer() {
@@ -81,20 +72,11 @@ public enum CliCommand {
     ROTATE("rotate", new CliInterfacedTask<RotateTaskCliArguments, RotateParameters>() {
 
         @Override
-        protected Class<RotateTaskCliArguments> getCliArgumentsClass() {
-            return RotateTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> getArgumentsTransformer() {
             return new RotateCliArgumentsTransformer();
         }
     }, "Apply page rotation to a collection of pdf documents. Rotation can be applied to a specified set of pages or to a predefined set (all, even pages, odd pages)", "rotate -f /tmp/file1.pdf -o /tmp -r all:180"),
     SET_VIEWER_PREFERENCES("setviewerpreferences", new CliInterfacedTask<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters>() {
-        @Override
-        protected Class<ViewerPreferencesTaskCliArguments> getCliArgumentsClass() {
-            return ViewerPreferencesTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> getArgumentsTransformer() {
@@ -104,21 +86,11 @@ public enum CliCommand {
     ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixParameters>() {
 
         @Override
-        protected Class<AlternateMixTaskCliArguments> getCliArgumentsClass() {
-            return AlternateMixTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
             return new AlternateMixCliArgumentsTransformer();
         }
     }, "Given two pdf documents, creates a single output pdf document taking pages alternatively from the two input. Pages can be taken in straight or reverse order and using a configurable step (number of pages before the process switch from a document to the other).", "alternatemix -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp/output.pdf --reverseSecond"),
     UNPACK("unpack", new CliInterfacedTask<UnpackTaskCliArguments, UnpackParameters>() {
-
-        @Override
-        protected Class<UnpackTaskCliArguments> getCliArgumentsClass() {
-            return UnpackTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<UnpackTaskCliArguments, UnpackParameters> getArgumentsTransformer() {
@@ -128,21 +100,11 @@ public enum CliCommand {
     MERGE("merge", new CliInterfacedTask<MergeTaskCliArguments, MergeParameters>() {
 
         @Override
-        protected Class<MergeTaskCliArguments> getCliArgumentsClass() {
-            return MergeTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> getArgumentsTransformer() {
             return new MergeCliArgumentsTransformer();
         }
     }, "Given a collection of pdf documents, creates a single output pdf document composed by the selected pages of each input document taken in the given order.", "merge -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp/output.pdf -s all:12-14:32,12-14,4,34-:"),
     SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters>() {
-
-        @Override
-        protected Class<SplitByBookmarksTaskCliArguments> getCliArgumentsClass() {
-            return SplitByBookmarksTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
@@ -152,21 +114,11 @@ public enum CliCommand {
     SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
 
         @Override
-        protected Class<SplitBySizeTaskCliArguments> getCliArgumentsClass() {
-            return SplitBySizeTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<SplitBySizeTaskCliArguments, SplitBySizeParameters> getArgumentsTransformer() {
             return new SplitBySizeCliArgumentsTransformer();
         }
     }, "Splits a given pdf document in files of the selected size (roughly).", "splitbysize -f /tmp/file1.pdf -o /tmp -s 10000"),
     SPLIT_BY_PAGES("splitbypages", new CliInterfacedTask<SplitByPagesTaskCliArguments, SplitByPagesParameters>() {
-
-        @Override
-        protected Class<SplitByPagesTaskCliArguments> getCliArgumentsClass() {
-            return SplitByPagesTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
@@ -176,11 +128,6 @@ public enum CliCommand {
     SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
 
         @Override
-        protected Class<SimpleSplitTaskCliArguments> getCliArgumentsClass() {
-            return SimpleSplitTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<SimpleSplitTaskCliArguments, SimpleSplitParameters> getArgumentsTransformer() {
             return new SimpleSplitCliArgumentsTransformer();
         }
@@ -188,21 +135,11 @@ public enum CliCommand {
     EXTRACT_PAGES("extractpages", new CliInterfacedTask<ExtractPagesTaskCliArguments, ExtractPagesParameters>() {
 
         @Override
-        protected Class<ExtractPagesTaskCliArguments> getCliArgumentsClass() {
-            return ExtractPagesTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
             return new ExtractPagesCliArgumentsTransformer();
         }
     }, "Extract pages from a pdf document creating a new one containing only the selected pages. Page selection can be done using a predefined set of pages (odd, even) or as a set of ranges (from page x to y).", "extractpages -f /tmp/file1.pdf -o /tmp/output.pdf -s 1-4,7,12-14,8,20-"),
     EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
-
-        @Override
-        protected Class<ExtractTextTaskCliArguments> getCliArgumentsClass() {
-            return ExtractTextTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> getArgumentsTransformer() {
@@ -213,21 +150,11 @@ public enum CliCommand {
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override
-        protected Class<SetMetadataTaskCliArguments> getCliArgumentsClass() {
-            return SetMetadataTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<SetMetadataTaskCliArguments, SetMetadataParameters> getArgumentsTransformer() {
             return new SetMetadataCliArgumentsTransformer();
         }
     }, "Apply new metadata (title, author, subject, keywords) to an input pdf document.", "setmetadata -f /tmp/file1.pdf -o /tmp/output.pdf --subject \"Subject of the document\""),
     SET_PAGE_LABELS("setpagelabels", new CliInterfacedTask<SetPageLabelsTaskCliArguments, SetPagesLabelParameters>() {
-
-        @Override
-        protected Class<SetPageLabelsTaskCliArguments> getCliArgumentsClass() {
-            return SetPageLabelsTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
@@ -239,21 +166,11 @@ public enum CliCommand {
     SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
 
         @Override
-        protected Class<SetPageTransitionsTaskCliArguments> getCliArgumentsClass() {
-            return SetPageTransitionsTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters> getArgumentsTransformer() {
             return new SetPageTransitionsCliArgumentsTransformer();
         }
     }, "Given a pdf document, applies the selected pages transitions (to use the document as a slide show presentation) as defined in the Pdf reference 1.7, chapter 8.3.3.", "setpagetransitions -f /tmp/file1.pdf -o /tmp/output.pdf --defaultTransition fade:2:10 --transitions push_left_to_right:3:20:2 dissolve:1:10:3"),
     CROP("crop", new CliInterfacedTask<CropTaskCliArguments, CropParameters>() {
-
-        @Override
-        protected Class<CropTaskCliArguments> getCliArgumentsClass() {
-            return CropTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
@@ -263,21 +180,11 @@ public enum CliCommand {
     PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
 
         @Override
-        protected Class<PdfToSingleTiffTaskCliArguments> getCliArgumentsClass() {
-            return PdfToSingleTiffTaskCliArguments.class;
-        }
-
-        @Override
         protected CommandCliArgumentsTransformer<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters> getArgumentsTransformer() {
             return new PdfToSingleTiffCliArgumentsTransformer();
         }
     }, "Converts a pdf document to a single TIFF image (TIFF format supports multiple images written to a single file).", "pdftosingletiff -f /tmp/file1.pdf -o /tmp/output.tiff --compressionType ccitt_group_3_2d --colorType gray_scale"),
     PDF_TO_MULTIPLE_TIFF("pdftomultipletiff", new CliInterfacedTask<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters>() {
-
-        @Override
-        protected Class<PdfToMultipleTiffTaskCliArguments> getCliArgumentsClass() {
-            return PdfToMultipleTiffTaskCliArguments.class;
-        }
 
         @Override
         protected CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> getArgumentsTransformer() {
@@ -385,8 +292,11 @@ public enum CliCommand {
  */
 abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParameters> {
 
-    // TODO: figure out a way to simply return T.class
-    protected abstract Class<T> getCliArgumentsClass();
+    private Class<T> getCliArgumentsClass() {
+        // returning T.class see http://www.artima.com/weblogs/viewpost.jsp?thread=208860
+        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
+        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
+    }
 
     protected abstract CommandCliArgumentsTransformer<T, P> getArgumentsTransformer();
 
