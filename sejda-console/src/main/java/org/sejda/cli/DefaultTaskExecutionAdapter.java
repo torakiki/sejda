@@ -16,6 +16,8 @@
  */
 package org.sejda.cli;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
@@ -33,6 +35,36 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
+
+    /**
+     * Listener for the {@link PercentageOfWorkDoneChangedEvent} that logs a message containing the percentage done
+     * 
+     * @author Eduard Weissmann
+     * 
+     */
+    private static final class LoggingPercentageOfWorkDoneChangeEventListener implements
+            EventListener<PercentageOfWorkDoneChangedEvent> {
+        public void onEvent(PercentageOfWorkDoneChangedEvent event) {
+            LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder().append(getClass()).toHashCode();
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (!(other instanceof LoggingPercentageOfWorkDoneChangeEventListener)) {
+                return false;
+            }
+            LoggingPercentageOfWorkDoneChangeEventListener otherListener = (LoggingPercentageOfWorkDoneChangeEventListener) other;
+            return new EqualsBuilder().append(getClass(), otherListener.getClass()).isEquals();
+        }
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionAdapter.class);
 
@@ -52,12 +84,9 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     }
 
     private void doRegisterProcessListener() throws NotificationContextException {
-        GlobalNotificationContext.getContext().addListener(new EventListener<PercentageOfWorkDoneChangedEvent>() {
-
-            public void onEvent(PercentageOfWorkDoneChangedEvent event) {
-                LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
-            }
-        });
+        LoggingPercentageOfWorkDoneChangeEventListener listener = new LoggingPercentageOfWorkDoneChangeEventListener();
+        GlobalNotificationContext.getContext().removeListener(listener);
+        GlobalNotificationContext.getContext().addListener(listener);
     }
 
     TaskExecutionService getTaskExecutionService() {

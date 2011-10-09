@@ -233,7 +233,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
             return new SetPageLabelsCliArgumentsTransformer();
         }
-    }, "Given a collection of pdf documents, applies the selected page labels as defined in the Pdf reference 1.7, chapter 8.3.1.", "setpagelabels -f /tmp/file1.pdf -o /tmp/output.pdf -l 1:uroman:1:Preface -l 5:arabic:1"),
+    }, "Given a collection of pdf documents, applies the selected page labels as defined in the Pdf reference 1.7, chapter 8.3.1.", "setpagelabels -f /tmp/file1.pdf -o /tmp/output.pdf -l 1:uroman:1:Preface 5:arabic:1"),
     // \n\nThis would label the pages starting from the first page with uppercase roman numbers suffixed with 'Preface' ('Preface I', 'Preface II' etc.) and starting from the fifth
     // page (first logical page) with arabic numbers ('1', '2', etc.)
     SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
@@ -366,7 +366,7 @@ public enum CliCommand {
         result.append(getDescription());
         result.append("\n\n");
 
-        result.append("Example usage: ").append(SejdaConsole.EXECUTABLE_NAME).append(getExampleUsage());
+        result.append("Example usage: ").append(SejdaConsole.EXECUTABLE_NAME).append(" ").append(getExampleUsage());
         result.append("\n\n");
 
         result.append(cliInterfacedTask.createCli().getHelpMessage());
