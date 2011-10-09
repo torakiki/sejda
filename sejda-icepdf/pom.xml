@@ -31,19 +31,19 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>${version}</version>
+			<version>${pom.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
-			<version>${version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-image-writers</artifactId>
-			<version>${version}</version>
+			<version>${pom.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.icepdf</groupId>
