@@ -59,15 +59,6 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
     }
 
     @Test
-    public void testCommandHelp() {
-        for (CliCommand eachCliCommand : CliCommand.values()) {
-            // it should contain description, example usage and usage details
-            assertConsoleOutputContains("-h " + eachCliCommand.getDisplayName(), eachCliCommand.getDescription(),
-                    "Example usage: ", "Usage: ");
-        }
-    }
-
-    @Test
     public void testExecuteVersion() {
         assertConsoleOutputContains("--version", "Sejda Console (Version " + Sejda.VERSION + ")");
     }

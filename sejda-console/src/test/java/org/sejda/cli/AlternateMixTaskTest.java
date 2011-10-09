@@ -65,7 +65,7 @@ public class AlternateMixTaskTest extends AbstractTaskTest {
 
     @Test
     public void testNonDefaults() {
-        AlternateMixParameters parameters = defaultCommandLine().with("--stepFirst", "5").with("--stepSecond", "9")
+        AlternateMixParameters parameters = defaultCommandLine().with("--firstStep", "5").with("--secondStep", "9")
                 .invokeSejdaConsole();
         assertEquals(5, parameters.getFirstInput().getStep());
         assertEquals(9, parameters.getSecondInput().getStep());

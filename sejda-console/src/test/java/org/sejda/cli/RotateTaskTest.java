@@ -76,4 +76,9 @@ public class RotateTaskTest extends AbstractTaskTest {
         defaultCommandLine().with("-r", "invalid").assertConsoleOutputContains(
                 "Invalid input: 'invalid'. Expected format: 'pageDefinition:rotation'");
     }
+
+    @Test
+    public void mandatoryParams() {
+        defaultCommandLine().without("-r").assertConsoleOutputContains("Option is mandatory: --pageRotation");
+    }
 }

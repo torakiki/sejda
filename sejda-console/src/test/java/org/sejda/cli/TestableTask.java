@@ -36,7 +36,7 @@ public enum TestableTask {
 
     DECRYPT,
     ENCRYPT,
-    ROTATE,
+    ROTATE(new RotateDefaultsProvider()),
     SET_VIEWER_PREFERENCES,
     ALTERNATE_MIX(new MultipleInputsAndFileOutputDefaultsProvider()),
     UNPACK,
@@ -81,7 +81,7 @@ public enum TestableTask {
      * @return the {@link CliCommand} matching this {@link TestableTask}
      * 
      */
-    private CliCommand getCorrespondingCliCommand() {
+    public CliCommand getCorrespondingCliCommand() {
         for (CliCommand eachCliCommand : CliCommand.values()) {
             if (StringUtils.equalsIgnoreCase(eachCliCommand.name(), this.name())) {
                 return eachCliCommand;
@@ -117,6 +117,13 @@ public enum TestableTask {
 interface DefaultsProvider {
 
     CommandLineTestBuilder provideDefaults(String taskName);
+}
+
+class RotateDefaultsProvider extends DefaultDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-r", "1:90");
+    }
 }
 
 class DefaultDefaultsProvider implements DefaultsProvider {

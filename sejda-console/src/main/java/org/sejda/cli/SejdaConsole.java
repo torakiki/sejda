@@ -16,6 +16,10 @@
  */
 package org.sejda.cli;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
@@ -76,11 +80,30 @@ public class SejdaConsole {
             if (isCommandHelpRequested()) {
                 printCommandHelp(command);
             } else {
+                validateNoDuplicateCommandArguments();
                 executeCommand(command);
             }
         }
 
         LOG.debug("Completed execution");
+    }
+
+    /**
+     * throws an exception if there are duplicate option:value pairs specified, that would override each other silently otherwise
+     */
+    private void validateNoDuplicateCommandArguments() {
+        Map<String, Object> uniqueArguments = new HashMap<String, Object>();
+        for (String eachArgument : arguments.getCommandArguments()) {
+            if (uniqueArguments.containsKey(eachArgument) && StringUtils.startsWith(eachArgument, "-")) {
+                throw new SejdaRuntimeException(
+                        "Option '"
+                                + eachArgument
+                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf");
+            }
+
+            uniqueArguments.put(eachArgument, eachArgument);
+        }
+
     }
 
     private void executeCommand(CliCommand command) throws ArgumentValidationException {

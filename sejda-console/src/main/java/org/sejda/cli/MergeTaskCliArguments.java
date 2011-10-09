@@ -39,7 +39,6 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     boolean isDirectory();
 
-    // TODO: EW: pdfsam incompat = no rotation anymore
     // TODO: make sure optional options are reflected in the jewelcli produced help output, add isXXX
     @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -f /tmp/file1.pdf /tmp/file2.pdf -s all:all:), "
