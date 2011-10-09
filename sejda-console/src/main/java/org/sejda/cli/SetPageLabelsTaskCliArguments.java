@@ -32,7 +32,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME + " setpagelabels")
 public interface SetPageLabelsTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    // TODO: EW: document pdfsam-incompatibility with extra labelPrefix option in the string format
+    // pdfsam-incompatibility with extra labelPrefix option in the string format
     @Option(shortName = "l", description = "labels definition. Accepted string is \"pageFrom:numberingStyle:labelSuffixStartNumber:labelPrefix\" where "
             + "pagefrom is the index of the starting page within the document, numberingStyle is the suffix label number style "
             + "('arabic', 'uroman', 'lroman', 'uletter', 'lletter', 'empty'), "

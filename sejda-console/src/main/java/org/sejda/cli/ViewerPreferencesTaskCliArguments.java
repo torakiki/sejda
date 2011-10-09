@@ -66,7 +66,7 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "no page scaling in print dialog (optional)")
     boolean isNoPrintScaling();
 
-    // TODO: pdf-sam incompat doesnt exist in pdfsam
+    // pdfsam-incompatibility: doesnt exist in pdfsam
     @Option(description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge}. If ommited it uses 'simplex' (optional)", defaultValue = "simplex")
     PdfDuplexAdapter getDuplex();
 }
