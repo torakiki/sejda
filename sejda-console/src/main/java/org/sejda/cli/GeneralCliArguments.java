@@ -27,6 +27,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
  * <li>print general help, detailing all possible commands supported, Eg: {@code sejda-console -h} or simply {@code sejda-console}</li>
  * <li>execute specific command help. Eg: {@code sejda-console -h command_name}</li>
  * <li>execute specific command. Eg: {@code sejda-console command_name command_options}</li>
+ * <li>view license or version info. Eg: {@code sejda-console -v} or {@code sejda-console -l}</li>
  * </ul>
  * 
  * @author Eduard Weissmann
