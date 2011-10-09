@@ -26,15 +26,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
+import com.lowagie.text.pdf.PdfName;
+import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStream;
+import com.lowagie.text.pdf.PdfString;
 
 /**
  * @author Andrea Vacondio
@@ -53,7 +57,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
             } else {
                 pdfCopy = new PdfCopyFields(outputStream, version.getVersionAsCharacter());
             }
-            // TODO set creator
+            pdfCopy.getWriter().getInfo().put(PdfName.CREATOR, new PdfString(Sejda.CREATOR, PdfObject.TEXT_UNICODE));
         } catch (FileNotFoundException e) {
             throw new TaskException(String.format("Unable to find the output file %s", outputFile.getPath()), e);
         } catch (DocumentException e) {
