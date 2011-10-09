@@ -27,7 +27,6 @@ import java.io.File;
 import org.icepdf.core.pobjects.Document;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.core.support.io.MultipleOutputWriterSupport;
@@ -50,11 +49,6 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     private MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();;
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
     private Document pdfDocument = null;
-
-    @Override
-    public void before(T parameters) throws TaskExecutionException {
-        super.before(parameters);
-    }
 
     public void execute(T parameters) throws TaskException {
         pdfDocument = parameters.getSource().open(sourceOpener);
