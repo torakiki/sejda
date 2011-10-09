@@ -35,9 +35,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 @CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME)
 public interface GeneralCliArguments {
 
-    // TODO: stop printing [options] command to execute because user can think the order of params is different
     // TODO: get rid of this class completely
-    // TODO: support detailed command -help
     @Unparsed(name = "command")
     CliCommandAdapter getCommand();
 
