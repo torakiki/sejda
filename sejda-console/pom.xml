@@ -124,6 +124,21 @@
 			<artifactId>itext</artifactId>
 			<version>2.1.7</version>
 			<scope>compile</scope>
+			<exclusions>
+				<!-- PDFBox bouncy castle dependency is used instead -->
+				<exclusion>
+					<artifactId>bctsp-jdk14</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- sejda-core needs an implementation of javax.validation -->
 		<dependency>
