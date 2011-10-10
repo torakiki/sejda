@@ -19,34 +19,43 @@ package org.sejda.cli;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 import org.sejda.core.manipulation.model.image.TiffCompressionType;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.core.manipulation.model.parameter.image.PdfToTiffParameters;
 
 /**
- * Tests for PdfToSingleTiff task
+ * Tests for tasks having pdf as input and tiff image format as output
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfToSingleTiffTaskTest extends AbstractTaskTest {
+public class PdfToTiffTraitTest extends AbstractTaskTraitTest {
+
+    public PdfToTiffTraitTest(TestableTask testableTask) {
+        super(testableTask);
+    }
 
     private static final TiffCompressionType DEFAULT_COMPRESSION_TYPE = TiffCompressionType.NONE;
 
-    public PdfToSingleTiffTaskTest() {
-        super(TestableTask.PDF_TO_SINGLE_TIFF);
+    @Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] { { TestableTask.PDF_TO_MULTIPLE_TIFF },
+                { TestableTask.PDF_TO_SINGLE_TIFF } });
     }
 
     @Test
     public void compressionType_default() {
-        PdfToSingleTiffParameters result = defaultCommandLine().without("--compressionType").invokeSejdaConsole();
+        PdfToTiffParameters result = defaultCommandLine().without("--compressionType").invokeSejdaConsole();
         assertThat(result.getCompressionType(), is(DEFAULT_COMPRESSION_TYPE));
     }
 
     @Test
     public void compressionType() {
-        PdfToSingleTiffParameters result = defaultCommandLine().with("--compressionType", "JPEG_TTN2")
-                .invokeSejdaConsole();
+        PdfToTiffParameters result = defaultCommandLine().with("--compressionType", "jpeg_ttn2").invokeSejdaConsole();
         assertThat(result.getCompressionType(), is(TiffCompressionType.JPEG_TTN2));
     }
 

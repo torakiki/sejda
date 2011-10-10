@@ -32,7 +32,6 @@ import org.sejda.cli.transformer.CliCommand;
  * 
  */
 @Ignore
-// TODO: this is weird, http://nemo.sonarsource.org is trying to execute this as a test
 public enum TestableTask {
 
     DECRYPT,

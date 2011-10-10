@@ -34,7 +34,7 @@ import org.sejda.core.validation.constraint.SingleOutputAllowedExtensions;
  */
 // TODO validate combinations of imagecolortype and tiff compression
 @SingleOutputAllowedExtensions(extensions = { Sejda.TIFF_EXTENSION, Sejda.TIF_EXTENSION })
-public class PdfToSingleTiffParameters extends AbstractPdfToSingleImageParameters {
+public class PdfToSingleTiffParameters extends AbstractPdfToSingleImageParameters implements PdfToTiffParameters {
 
     @NotNull
     private TiffCompressionType compressionType = TiffCompressionType.NONE;

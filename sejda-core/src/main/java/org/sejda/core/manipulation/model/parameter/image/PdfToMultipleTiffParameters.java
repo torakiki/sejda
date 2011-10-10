@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.image.TiffCompressionType;
  * 
  */
 // TODO validate combinations of imagecolortype and tiff compression
-public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParameters {
+public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParameters implements PdfToTiffParameters {
 
     @NotNull
     private TiffCompressionType compressionType = TiffCompressionType.NONE;
