@@ -78,6 +78,18 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
                 getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test.pdf"));
     }
 
+    private void setUpParametersPageRangesMediumFile() {
+        PageRange ristRange = new PageRange(2, 20);
+        Set<PageRange> ranges = new HashSet<PageRange>();
+        ranges.add(ristRange);
+        parameters = new ExtractPagesParameters(ranges);
+        parameters.setOverwrite(true);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setSource(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "test.pdf"));
+    }
+
     @Test
     public void testExecuteExtractOddPages() throws TaskException, IOException {
         setUpParametersOddPages();
@@ -107,6 +119,23 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
             assertEquals(3, reader.getNumberOfPages());
+        } finally {
+            nullSafeCloseReader(reader);
+        }
+    }
+
+    @Test
+    public void testExecuteExtractRangesMedium() throws TaskException, IOException {
+        setUpParametersPageRangesMediumFile();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewFileOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = null;
+        try {
+            reader = getReaderFromResultFile();
+            assertCreator(reader);
+            assertVersion(reader, PdfVersion.VERSION_1_6);
+            assertEquals(19, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }

@@ -16,12 +16,12 @@
  */
 package org.sejda.impl.itext;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Set;
 
 import org.sejda.core.exception.TaskException;
@@ -73,11 +73,12 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
         LOG.trace("Created DefaultPdfCopier");
 
-        LOG.debug("Setting pages selection");
-        reader.selectPages(new ArrayList<Integer>(pages));
-        LOG.trace("Pages selection set to {}", pages);
-
-        copier.addAllPages(reader);
+        int currentStep = 0;
+        for (Integer page : pages) {
+            LOG.trace("Adding page {}", page);
+            copier.addPage(reader, page);
+            notifyEvent().stepsCompleted(++currentStep).outOf(pages.size());
+        }
         copier.freeReader(reader);
 
         closeResources();
