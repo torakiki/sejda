@@ -71,11 +71,11 @@ public abstract class AbstractTestSuite {
     }
 
     protected File createTestPdfFile(String path) {
-        return createTestFile(path, getDefaultPdfContents());
+        return createTestFile(path, getClass().getResourceAsStream("/pdf/test_outline.pdf"));
     }
 
-    private InputStream getDefaultPdfContents() {
-        return getClass().getResourceAsStream("/pdf/test_outline.pdf");
+    protected File createTestEncryptedPdfFile(String path) {
+        return createTestFile(path, getClass().getResourceAsStream("/pdf/enc_test_test_file.pdf"));
     }
 
     protected File createTestTextFile(String path, String contents) {

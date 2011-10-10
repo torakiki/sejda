@@ -16,29 +16,53 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
+import java.util.Collection;
+
+import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tsest encrypted files across all pdf implementations (itext, pdfbox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
+ * Test encrypted files across all pdf implementations (itext, pdfbox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
  * might be different behaviour at runtime
  * 
  * @author Eduard Weissmann
  * 
  */
-public class EncryptionIntegrationTest extends AbstractTestSuite {
+public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
-    @Test
-    public void itextReadEncryptedFile() {
-        // TODO
+    @Override
+    @Before
+    public void setUp() {
+        super.setUp();
+        createTestEncryptedPdfFile("/tmp/file1encrypted.pdf");
+    }
+
+    public EncryptionIntegrationTest(TestableTask testableTask) {
+        super(testableTask);
+    }
+
+    @Parameters
+    public final static Collection<Object[]> testParameters() {
+        return TestableTask.allTasks();
     }
 
     @Test
-    public void icepdfReadEncryptedFile() {
-        // TODO
-    }
+    public void executeExampleUsageWithEncryptedFileAsInput() {
+        String exampleUsage = testableTask.getExampleUsage();
+        // use an encrypted file as input instead of the regular input file
+        // TODO: don't hack around with exampleUsage
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // quick hack for decrypt
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
+        exampleUsage = StringUtils.replace(exampleUsage, "-l 2 -e \".+(page)+.+\"", "-l 1"); // quick hack around splitbybookmarks ("Unable to split, no page number given.")
 
-    @Test
-    public void pdfboxReadEncryptedFile() {
-        // TODO
+        assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
+
+        assertTaskCompletes(exampleUsage + " --overwrite");
     }
 }

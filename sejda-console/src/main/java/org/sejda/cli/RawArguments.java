@@ -2,6 +2,7 @@ package org.sejda.cli;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.sejda.cli.transformer.CliCommand;
 
 /**
  * Represents the command line arguments passed to the {@link SejdaConsole}
@@ -10,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 class RawArguments {
+
     private final String[] arguments;
 
     /**
@@ -22,24 +24,19 @@ class RawArguments {
     }
 
     public boolean isHelpRequest() {
-        return (this.arguments.length >= 1 && StringUtils.equalsIgnoreCase("-h", arguments[0]))
-                || this.arguments.length == 0;
+        return ArrayUtils.contains(this.arguments, "-h") || ArrayUtils.contains(this.arguments, "--help");
     }
 
-    /**
-     * @return only arguments relevant for the {@link org.sejda.cli.GeneralCliArguments}
-     * @see org.sejda.cli.GeneralCliArguments to understand the distinction between {@link org.sejda.cli.GeneralCliArguments} and
-     *      {@link org.sejda.cli.model.TaskCliArguments}
-     */
-    String[] getGeneralArguments() {
-        int min = Math.min(isHelpRequest() ? 2 : 1, arguments.length);
-        return (String[]) ArrayUtils.subarray(arguments, 0, min);
+    public boolean isVersionRequest() {
+        return ArrayUtils.contains(this.arguments, "--version");
+    }
+
+    public boolean isLicenseRequest() {
+        return ArrayUtils.contains(this.arguments, "--license");
     }
 
     /**
      * @return only arguments relevant for the {@link org.sejda.cli.model.TaskCliArguments}
-     * @see org.sejda.cli.model.TaskCliArguments to understand the distinction between {@link org.sejda.cli.GeneralCliArguments} and
-     *      {@link org.sejda.cli.model.TaskCliArguments}
      */
     String[] getCommandArguments() {
         return (String[]) ArrayUtils.subarray(arguments, 1, arguments.length);
@@ -50,4 +47,24 @@ class RawArguments {
         return StringUtils.join(arguments, " ");
     }
 
+    /**
+     * @return {@link CliCommand} specified or null if no known command was specified (first or second supplied argument can be matched to a known command)
+     */
+    public CliCommand getCliCommand() {
+        if (arguments.length >= 1 && CliCommand.findByDisplayNameSilently(arguments[0]) != null) {
+            return CliCommand.findByDisplayNameSilently(arguments[0]);
+        }
+
+        if (arguments.length >= 2 && CliCommand.findByDisplayNameSilently(arguments[1]) != null) {
+            return CliCommand.findByDisplayNameSilently(arguments[1]);
+        }
+        return null;
+    }
+
+    /**
+     * @return true if no known command was specified
+     */
+    public boolean isNoCommandSpecified() {
+        return getCliCommand() == null;
+    }
 }
