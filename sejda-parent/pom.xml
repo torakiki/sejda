@@ -76,40 +76,17 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>aggregate-jar</id>
-						<goals>
-							<goal>aggregate-jar</goal>
-						</goals>
-						<phase>package</phase><!-- not sure about which phase -->
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.2.1</version>
 				<configuration>
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>clean compile install assembly:assembly</goals>
+					<!-- You will want to configure <mavenExecutorId>forked-path</mavenExecutorId> 
+						for maven-release-plugin to get around a GPG plugin hanging issue -->
+					<!-- Because maven-release-plugin will start a new Maven instance, gpg 
+						plugin's -Dgpg.passphrase=PASSPHRASE won't work in this case, instead, you 
+						should use mvn release:perform -Darguments=-Dgpg.passphrase=PASSPHRASE -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -239,5 +216,69 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<!-- This profile will be activated when the value of maven property 
+					performRelease is true. When you use maven-release-plugin and run mvn release:perform, 
+					the property value will be set to true. -->
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- create -sources.jar -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.1.2</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- create aggregated -javadoc.jar -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<execution>
+								<id>aggregate-jar</id>
+								<goals>
+									<goal>aggregate-jar</goal>
+								</goals>
+								<phase>verify</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- signs the jars, see https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
