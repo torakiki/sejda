@@ -34,8 +34,6 @@ import org.sejda.cli.transformer.CliCommand;
  * @author Eduard Weissmann
  * 
  */
-// TODO: test encrypted files across all pdf implementations (itext, pdfbox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption,
-// there might be different behaviour at runtime
 public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
 
     public ExampleUsageIntegrationTest(TestableTask testableTask) {
