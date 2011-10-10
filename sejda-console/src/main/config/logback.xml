@@ -14,8 +14,9 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.sejda" level="INFO" />
+	<logger name="org.sejda" level="DEBUG" />
 	<logger name="org.sejda.core.manipulation.model" level="DEBUG" />
+	<logger name="org.hibernate.validator" level="INFO" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

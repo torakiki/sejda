@@ -61,10 +61,10 @@ final class GlobalConfiguration {
     }
 
     private void logConfiguredTasks() {
-        LOG.debug("Configured tasks:");
+        LOG.trace("Configured tasks:");
         for (@SuppressWarnings("rawtypes")
         Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
-            LOG.debug(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
+            LOG.trace(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
         }
     }
 
