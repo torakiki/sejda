@@ -128,7 +128,11 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             task.before(parameters);
             task.execute(parameters);
         } finally {
-            task.after();
+            try {
+                task.after();
+            } catch (RuntimeException e) {
+                LOG.warn("An unexpected error occurred during the execution of the 'after' phase.", e);
+            }
         }
     }
 }
