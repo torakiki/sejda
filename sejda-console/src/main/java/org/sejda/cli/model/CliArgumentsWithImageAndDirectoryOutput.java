@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Aug 22, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,16 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
-
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+package org.sejda.cli.model;
 
 /**
- * Test verifying the help request feature for commands
+ * 
+ * Base interface for specifying of the command line interface for tasks that have output configured as a <i>directory</i> and format as <i>image</i>
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
-
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
-    }
+public interface CliArgumentsWithImageAndDirectoryOutput extends CliArgumentsWithImageOutput,
+        CliArgumentsWithDirectoryOutput {
 
 }

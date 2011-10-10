@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Oct 10, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,44 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.exception;
 
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.core.exception.SejdaRuntimeException;
 
 /**
- * Test verifying the help request feature for commands
+ * General console exception
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+public class ConsoleException extends SejdaRuntimeException {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
+    private static final long serialVersionUID = 1L;
+
+    ConsoleException() {
+        super();
     }
 
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
+    /**
+     * @param message
+     * @param cause
+     */
+    ConsoleException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * @param message
+     */
+    ConsoleException(String message) {
+        super(message);
+    }
+
+    /**
+     * @param cause
+     */
+    ConsoleException(Throwable cause) {
+        super(cause);
     }
 
 }

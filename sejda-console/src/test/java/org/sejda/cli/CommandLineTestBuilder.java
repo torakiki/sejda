@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.mutable.MutableBoolean;
 import org.mockito.ArgumentCaptor;
+import org.sejda.cli.util.OnceWithMessage;
+import org.sejda.cli.util.SystemOutRecordingStream;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
@@ -40,8 +42,6 @@ import org.sejda.core.manipulation.service.TaskExecutionService;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
-import org.sejda.util.OnceWithMessage;
-import org.sejda.util.SystemOutRecordingStream;
 
 /**
  * Builder for command line arguments, used in tests

@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Oct 3, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,34 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.util;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.util.FormattingUtils;
 
 /**
- * Test verifying the help request feature for commands
+ * Tests for {@link FormattingUtils}
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+public class FormattingUtilsTest {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
+    @Test
+    public void justifyLeft() {
+        assertThat(FormattingUtils.justifyLeft(9, "this is line two"), is("this is\nline two"));
     }
 
     @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
+    public void leftPadMultiline() {
+        assertThat(FormattingUtils.leftPadMultiline("this is\nline two", ' ', 3), is("this is\n   line two"));
     }
 
+    @Test
+    public void repeatedChar() {
+        assertThat(FormattingUtils.repeatedChar(' ', 3), is("   "));
+    }
 }

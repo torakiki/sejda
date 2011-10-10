@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Oct 5, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.model.adapter;
 
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.core.manipulation.model.image.ImageColorType;
 
 /**
- * Test verifying the help request feature for commands
+ * Adapter class for enum {@link ImageColorType}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+public class ImageColorTypeAdapter extends EnumAdapter<ImageColorType> {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
+    public ImageColorTypeAdapter(String userFriendlyName) {
+        super(userFriendlyName, ImageColorType.class, "image color type");
     }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Oct 2, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.model;
 
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.model.adapter.PdfVersionAdapter;
+
+import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Test verifying the help request feature for commands
+ * Trait for cli tasks that output pdf files
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+public interface CliArgumentsWithPdfOutput extends TaskCliArguments {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
+    @Option(description = "compress output file (optional)")
+    boolean getCompressed();
 
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
-    }
-
+    @Option(shortName = "v", description = "pdf version of the output document/s {2, 3, 4, 5, 6 or 7}. Default is 6. (optional)", defaultValue = "6")
+    PdfVersionAdapter getPdfVersion();
 }

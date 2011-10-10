@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.transformer.CliCommand;
 
 /**
  * Integration tests, running without mocks the example usage for each task

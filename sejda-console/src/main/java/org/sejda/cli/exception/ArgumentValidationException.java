@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Oct 10, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,27 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
-
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+package org.sejda.cli.exception;
 
 /**
- * Test verifying the help request feature for commands
+ * Exception thrown when the arguments passed to the console are found to be invalid
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+public class ArgumentValidationException extends ConsoleException {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
+    private static final long serialVersionUID = 1L;
+
+    public ArgumentValidationException(String message) {
+        super(message);
     }
 
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
+    public ArgumentValidationException(Throwable cause) {
+        super(cause);
     }
 
+    public ArgumentValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

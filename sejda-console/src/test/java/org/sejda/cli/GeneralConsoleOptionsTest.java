@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
 
 /**

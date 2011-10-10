@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Sep 3, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli;
+package org.sejda.cli.model;
 
-import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+
+import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
+import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Test verifying the help request feature for commands
+ * Specifications for command line options of the SplitBySize task
  * 
  * @author Eduard Weissmann
  * 
  */
-public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
+@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbysize")
+public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
-    public HelpRequestTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
-
-    @Test
-    public void testExecuteCommandHelp() {
-        CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
-                "Usage: sejda-console " + getTaskName() + " options");
-    }
-
+    // pdf-same incompat no default, and this is part of a larger task: split
+    @Option(shortName = "s", description = "size in bytes to split at (required)")
+    Long getSize();
 }

@@ -16,6 +16,10 @@
  */
 package org.sejda.cli;
 
+
+import org.sejda.cli.model.TaskCliArguments;
+import org.sejda.cli.transformer.CliCommandAdapter;
+
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 import uk.co.flamingpenguin.jewel.cli.Unparsed;
@@ -33,7 +37,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = SejdaConsole.EXECUTABLE_NAME)
+@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME)
 public interface GeneralCliArguments {
 
     // TODO: get rid of this class completely

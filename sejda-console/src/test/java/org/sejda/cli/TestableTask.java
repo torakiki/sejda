@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
+import org.sejda.cli.transformer.CliCommand;
 
 /**
  * Enumeration of all cli tasks, configured for testing

@@ -16,7 +16,8 @@
  */
 package org.sejda.cli;
 
-import org.sejda.utils.FormattingUtils;
+import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.util.FormattingUtils;
 
 /**
  * Formats the general help for the sejda-console, printing all the available commands, together with their description

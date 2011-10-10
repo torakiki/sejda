@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
-import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException.ValidationError;
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 
@@ -37,7 +37,6 @@ import uk.co.flamingpenguin.jewel.cli.CliFactory;
  * 
  */
 public class SejdaConsole {
-    public static final String EXECUTABLE_NAME = "sejda-console";
     private static final Logger LOG = LoggerFactory.getLogger(SejdaConsole.class);
 
     private final Cli<GeneralCliArguments> generalCli = CliFactory.createCli(GeneralCliArguments.class);
@@ -64,7 +63,7 @@ public class SejdaConsole {
         }
     }
 
-    private void doExecute() throws ArgumentValidationException {
+    private void doExecute() {
         LOG.debug("Starting execution with arguments: " + arguments);
 
         parseGeneralCliArguments();
@@ -92,42 +91,31 @@ public class SejdaConsole {
     /**
      * throws an exception if there are duplicate option:value pairs specified, that would override each other silently otherwise
      * 
-     * @throws ArgumentValidationException
      */
-    private void validateNoDuplicateCommandArguments() throws ArgumentValidationException {
+    private void validateNoDuplicateCommandArguments() {
         Map<String, Object> uniqueArguments = new HashMap<String, Object>();
         for (final String eachArgument : arguments.getCommandArguments()) {
             if (uniqueArguments.containsKey(eachArgument) && StringUtils.startsWith(eachArgument, "-")) {
-                throw new ArgumentValidationException(new ValidationError() {
-
-                    public String getMessage() {
-                        return "Option '"
+                throw new ArgumentValidationException(
+                        "Option '"
                                 + eachArgument
-                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf";
-                    }
-
-                    public ErrorType getErrorType() {
-                        return ErrorType.AdditionalValue;
-                    }
-
-                    @Override
-                    public String toString() {
-                        return getMessage();
-                    }
-                });
+                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf");
             }
-
             uniqueArguments.put(eachArgument, eachArgument);
         }
 
     }
 
-    private void executeCommand(CliCommand command) throws ArgumentValidationException {
+    private void executeCommand(CliCommand command) {
         getTaskExecutionAdapter().execute(command.parseTaskParameters(arguments.getCommandArguments()));
     }
 
-    private void parseGeneralCliArguments() throws ArgumentValidationException {
-        generalCliArguments = generalCli.parseArguments(arguments.getGeneralArguments());
+    private void parseGeneralCliArguments() {
+        try {
+            generalCliArguments = generalCli.parseArguments(arguments.getGeneralArguments());
+        } catch (uk.co.flamingpenguin.jewel.cli.ArgumentValidationException e) {
+            throw new ArgumentValidationException(e);
+        }
     }
 
     private void printCommandHelp(CliCommand command) {

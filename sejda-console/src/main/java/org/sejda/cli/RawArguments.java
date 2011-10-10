@@ -27,8 +27,9 @@ class RawArguments {
     }
 
     /**
-     * @return only arguments relevant for the {@link GeneralCliArguments}
-     * @see GeneralCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link TaskCliArguments}
+     * @return only arguments relevant for the {@link org.sejda.cli.GeneralCliArguments}
+     * @see org.sejda.cli.GeneralCliArguments to understand the distinction between {@link org.sejda.cli.GeneralCliArguments} and
+     *      {@link org.sejda.cli.model.TaskCliArguments}
      */
     String[] getGeneralArguments() {
         int min = Math.min(isHelpRequest() ? 2 : 1, arguments.length);
@@ -36,8 +37,9 @@ class RawArguments {
     }
 
     /**
-     * @return only arguments relevant for the {@link TaskCliArguments}
-     * @see TaskCliArguments to understand the distinction between {@link GeneralCliArguments} and {@link TaskCliArguments}
+     * @return only arguments relevant for the {@link org.sejda.cli.model.TaskCliArguments}
+     * @see org.sejda.cli.model.TaskCliArguments to understand the distinction between {@link org.sejda.cli.GeneralCliArguments} and
+     *      {@link org.sejda.cli.model.TaskCliArguments}
      */
     String[] getCommandArguments() {
         return (String[]) ArrayUtils.subarray(arguments, 1, arguments.length);
