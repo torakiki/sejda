@@ -20,13 +20,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.cli.transformer.CliCommand;
 
 /**
  * Integration tests, running without mocks the example usage for each task
@@ -51,14 +48,5 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
         assertTaskCompletes(exampleUsage + " --overwrite");
-    }
-
-    public static List<Object[]> allCliCommands() {
-        List<Object[]> result = new ArrayList<Object[]>();
-        for (CliCommand each : CliCommand.values()) {
-            result.add(new Object[] { each });
-        }
-
-        return result;
     }
 }
