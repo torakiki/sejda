@@ -246,19 +246,14 @@ public enum CliCommand {
         return exampleUsage;
     }
 
-    /**
-     * 
-     * @throws IllegalArgumentException
-     *             if no command exists with specified name
-     */
-    public static CliCommand findByDisplayName(String displayName) {
+    public static CliCommand findByDisplayNameSilently(String displayName) {
         for (CliCommand eachCommand : CliCommand.values()) {
             if (StringUtils.equalsIgnoreCase(displayName, eachCommand.getDisplayName())) {
                 return eachCommand;
             }
         }
 
-        throw new IllegalArgumentException("Unknown command: '" + displayName + "'");
+        return null;
     }
 
     /**

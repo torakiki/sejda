@@ -18,7 +18,6 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
-import org.sejda.cli.GeneralCliArguments;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -26,13 +25,11 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 /**
  * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
  * 
- * @see GeneralCliArguments for the specifications of the general options of the command line interface
- * 
  * @author Eduard Weissmann
  * 
  */
 public interface TaskCliArguments {
-    public static final String EXECUTABLE_NAME = "sejda-console";
+    String EXECUTABLE_NAME = "sejda-console";
 
     @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf /tmp/password_protected_file2.pdf:secret123) (required)")
     List<PdfFileSourceAdapter> getFiles();

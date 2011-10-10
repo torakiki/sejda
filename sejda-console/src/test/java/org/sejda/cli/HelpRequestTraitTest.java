@@ -32,9 +32,21 @@ public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
     }
 
     @Test
-    public void testExecuteCommandHelp() {
+    public void testCommandMinusH() {
+        doTestExecuteCommandHelp(getTaskName() + " -h");
+    }
+
+    @Test
+    public void testMinusHCommand() {
+        doTestExecuteCommandHelp("-h " + getTaskName());
+    }
+
+    /**
+     * 
+     */
+    private void doTestExecuteCommandHelp(String commandLineForHelpRequest) {
         CliCommand cliCommmand = testableTask.getCorrespondingCliCommand();
-        assertConsoleOutputContains("-h " + getTaskName(), cliCommmand.getDescription(), "Example usage: ",
+        assertConsoleOutputContains(commandLineForHelpRequest, cliCommmand.getDescription(), "Example usage: ",
                 "Usage: sejda-console " + getTaskName() + " options");
     }
 

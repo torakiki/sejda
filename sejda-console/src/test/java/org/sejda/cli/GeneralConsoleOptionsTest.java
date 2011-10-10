@@ -71,11 +71,12 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
     public void testExecuteUnknownCommandHelp() {
-        assertConsoleOutputContains("-h unknownCommand", "Unknown command: 'unknownCommand'");
+        assertConsoleOutputContains("-h unknownCommand", "Basic commands:");
+        assertConsoleOutputContains("unknownCommand -h", "Basic commands:");
     }
 
     @Test
     public void testExecuteUnknownCommand() {
-        assertConsoleOutputContains("unknownCommand", "Unknown command: 'unknownCommand'");
+        assertConsoleOutputContains("unknownCommand", "Basic commands:");
     }
 }

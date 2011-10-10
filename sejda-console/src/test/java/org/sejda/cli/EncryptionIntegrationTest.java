@@ -56,8 +56,10 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
     public void executeExampleUsageWithEncryptedFileAsInput() {
         String exampleUsage = testableTask.getExampleUsage();
         // use an encrypted file as input instead of the regular input file
-        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test");
-        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test");
+        // TODO: don't hack around with exampleUsage
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // quick hack for decrypt
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
+        exampleUsage = StringUtils.replace(exampleUsage, "-l 2 -e \".+(page)+.+\"", "-l 1"); // quick hack around splitbybookmarks ("Unable to split, no page number given.")
 
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 

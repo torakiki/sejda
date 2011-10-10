@@ -27,9 +27,6 @@ import org.sejda.core.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.flamingpenguin.jewel.cli.Cli;
-import uk.co.flamingpenguin.jewel.cli.CliFactory;
-
 /**
  * Sejda command line service. Responsible for interpreting the arguments, displaying help requests or delegating execution of commands
  * 
@@ -39,11 +36,9 @@ import uk.co.flamingpenguin.jewel.cli.CliFactory;
 public class SejdaConsole {
     private static final Logger LOG = LoggerFactory.getLogger(SejdaConsole.class);
 
-    private final Cli<GeneralCliArguments> generalCli = CliFactory.createCli(GeneralCliArguments.class);
     private final RawArguments arguments;
 
     private final TaskExecutionAdapter taskExecutionAdapter;
-    private GeneralCliArguments generalCliArguments;
 
     public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter) {
         this.arguments = new RawArguments(rawArguments.clone());
@@ -64,9 +59,7 @@ public class SejdaConsole {
     }
 
     private void doExecute() {
-        LOG.debug("Starting execution with arguments: " + arguments);
-
-        parseGeneralCliArguments();
+        LOG.debug("Starting execution with arguments: '" + arguments + "'");
 
         if (isNoCommandSpecified()) {
             if (isVersionRequest() || isLicenseRequest()) {
@@ -110,24 +103,16 @@ public class SejdaConsole {
         getTaskExecutionAdapter().execute(command.parseTaskParameters(arguments.getCommandArguments()));
     }
 
-    private void parseGeneralCliArguments() {
-        try {
-            generalCliArguments = generalCli.parseArguments(arguments.getGeneralArguments());
-        } catch (uk.co.flamingpenguin.jewel.cli.ArgumentValidationException e) {
-            throw new ArgumentValidationException(e);
-        }
-    }
-
     private void printCommandHelp(CliCommand command) {
         LOG.info(command.getHelpMessage());
     }
 
     private boolean isCommandHelpRequested() {
-        return generalCliArguments.isHelp();
+        return arguments.isHelpRequest();
     }
 
     private CliCommand getCommandSpecified() {
-        return generalCliArguments.getCommand().getCommand();
+        return arguments.getCliCommand();
     }
 
     private void printGeneralHelp() {
@@ -150,15 +135,15 @@ public class SejdaConsole {
     }
 
     private boolean isNoCommandSpecified() {
-        return !generalCliArguments.isCommand();
+        return arguments.isNoCommandSpecified();
     }
 
     private boolean isVersionRequest() {
-        return generalCliArguments.isVersion();
+        return arguments.isVersionRequest();
     }
 
     private boolean isLicenseRequest() {
-        return generalCliArguments.isLicense();
+        return arguments.isLicenseRequest();
     }
 
     TaskExecutionAdapter getTaskExecutionAdapter() {
