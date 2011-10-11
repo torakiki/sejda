@@ -16,6 +16,9 @@
  */
 package org.sejda.cli.model;
 
+import java.util.List;
+
+import org.sejda.cli.model.adapter.PdfAccessPermissionAdapter;
 import org.sejda.cli.model.adapter.PdfEncryptionAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -29,13 +32,19 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " encrypt")
 public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+
+    @Option(description = "permissions: a list of permissions. { print, modify, copy, modifyannotations, fill, screenreaders, assembly, degradedprinting}  (optional)")
+    List<PdfAccessPermissionAdapter> getAllow();
+
+    boolean isAllow();
+
     @Option(shortName = "u", description = "user password for the document (optional)", defaultValue = "")
     String getUserPassword();
 
     @Option(shortName = "a", description = "owner password for the document (optional)", defaultValue = "")
     String getAdminstratorPassword();
 
-    @Option(shortName = "e", description = "encryption angorithm {rc4_40, rc4_128, aes_128}. If omitted it uses aes_128 (optional)", defaultValue = "rc4_128")
+    @Option(shortName = "e", description = "encryption angorithm {rc4_40, rc4_128, aes_128}. If omitted it uses rc4_128 (optional)", defaultValue = "rc4_128")
     PdfEncryptionAdapter getEncryptionType();
 
     @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")

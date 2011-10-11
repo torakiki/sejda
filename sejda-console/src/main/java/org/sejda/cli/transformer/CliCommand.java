@@ -87,7 +87,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<EncryptTaskCliArguments, EncryptParameters> getArgumentsTransformer() {
             return new EncryptCliArgumentsTransformer();
         }
-    }, "Given a collection of pdf documents, applies the selected permission using the selected encryption algorithm and the provided owner and user password.", "encrypt -f /tmp/file1.pdf -o /tmp -u secret123 -a top-secret123 -e aes_128 -p encrypted_"),
+    }, "Given a collection of pdf documents, applies the selected permission using the selected encryption algorithm and the provided owner and user password.", "encrypt -f /tmp/file1.pdf -o /tmp -u secret123 -a top-secret123 --allow print fill -e aes_128 -p encrypted_"),
     ROTATE("rotate", new CliInterfacedTask<RotateTaskCliArguments, RotateParameters>() {
 
         @Override

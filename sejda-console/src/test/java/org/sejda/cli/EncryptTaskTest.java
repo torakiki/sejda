@@ -17,9 +17,14 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItems;
+
+import java.util.Collections;
 
 import org.junit.Test;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 
 /**
@@ -36,8 +41,7 @@ public class EncryptTaskTest extends AbstractTaskTest {
 
     @Test
     public void testOutputPrefix_Specified() {
-        EncryptParameters parameters = defaultCommandLine().with("-p", "fooPrefix")
-                .invokeSejdaConsole();
+        EncryptParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
@@ -62,8 +66,7 @@ public class EncryptTaskTest extends AbstractTaskTest {
     }
 
     public void testEncryptionType_Specified() {
-        EncryptParameters parameters = defaultCommandLine().with("-e", "AES_ENC_128")
-                .invokeSejdaConsole();
+        EncryptParameters parameters = defaultCommandLine().with("-e", "AES_ENC_128").invokeSejdaConsole();
         assertEquals(PdfEncryption.AES_ENC_128, parameters.getEncryptionAlgorithm());
     }
 
@@ -71,5 +74,19 @@ public class EncryptTaskTest extends AbstractTaskTest {
     public void testEncryptionType_Default() {
         EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals(PdfEncryption.STANDARD_ENC_128, parameters.getEncryptionAlgorithm());
+    }
+
+    @Test
+    public void noPermissions() {
+        EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(Collections.EMPTY_SET, parameters.getPermissions());
+    }
+
+    @Test
+    public void testPermissions() {
+        EncryptParameters parameters = defaultCommandLine().with("--allow",
+                "print modify copy modifyannotations fill screenreaders assembly degradedprinting")
+                .invokeSejdaConsole();
+        assertThat(parameters.getPermissions(), hasItems(PdfAccessPermission.values()));
     }
 }

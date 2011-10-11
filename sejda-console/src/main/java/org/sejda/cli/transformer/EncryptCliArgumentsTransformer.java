@@ -17,6 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.EncryptTaskCliArguments;
+import org.sejda.cli.model.adapter.PdfAccessPermissionAdapter;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 
 /**
@@ -41,6 +42,11 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
         parameters.setOwnerPassword(taskCliArguments.getAdminstratorPassword());
         parameters.setUserPassword(taskCliArguments.getUserPassword());
+        if (taskCliArguments.isAllow()) {
+            for (PdfAccessPermissionAdapter eachAllowedPermissionAdapter : taskCliArguments.getAllow()) {
+                parameters.addPermission(eachAllowedPermissionAdapter.getEnumValue());
+            }
+        }
         return parameters;
     }
 }

@@ -43,7 +43,7 @@ public class EncryptParameters extends MultiplePdfSourceMultipleOutputParameters
     private String userPassword = "";
     @NotNull
     private PdfEncryption encryptionAlgorithm = PdfEncryption.STANDARD_ENC_40;
-    private Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
+    private final Set<PdfAccessPermission> permissions = EnumSet.noneOf(PdfAccessPermission.class);
 
     public EncryptParameters(PdfEncryption encryptionAlgorithm) {
         this.encryptionAlgorithm = encryptionAlgorithm;

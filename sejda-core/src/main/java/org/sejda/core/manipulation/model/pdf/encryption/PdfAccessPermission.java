@@ -17,6 +17,8 @@
  */
 package org.sejda.core.manipulation.model.pdf.encryption;
 
+import org.sejda.core.DisplayNamedEnum;
+
 /**
  * Access permissions correspond to various operations that can be allowed/disallowed when encrypting a pdf document.<br>
  * Pdf reference 1.7, section 3.5.2
@@ -24,13 +26,23 @@ package org.sejda.core.manipulation.model.pdf.encryption;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfAccessPermission {
-    MODIFY,
-    COPY_AND_EXTRACT,
-    ANNOTATION,
-    PRINT,
-    FILL_FORMS,
-    ASSEMBLE,
-    DEGRADATED_PRINT,
-    EXTRACTION_FOR_DISABLES;
+public enum PdfAccessPermission implements DisplayNamedEnum {
+    MODIFY("modify"),
+    COPY_AND_EXTRACT("copy"),
+    ANNOTATION("modifyannotations"),
+    PRINT("print"),
+    FILL_FORMS("fill"),
+    ASSEMBLE("assembly"),
+    DEGRADATED_PRINT("degradedprinting"),
+    EXTRACTION_FOR_DISABLES("screenreaders");
+
+    private String displayName;
+
+    private PdfAccessPermission(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
 }
