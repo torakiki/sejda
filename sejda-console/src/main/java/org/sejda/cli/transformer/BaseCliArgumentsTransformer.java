@@ -22,11 +22,13 @@ import org.sejda.cli.model.CliArgumentsWithImageOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfFileOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfOutput;
+import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.AbstractParameters;
 import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.core.manipulation.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
 import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
@@ -38,6 +40,11 @@ import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImag
  * 
  */
 public class BaseCliArgumentsTransformer {
+
+    protected void populateOutputPrefix(MultipleOutputTaskParameters parameters,
+            CliArgumentsWithPrefixableOutput taskCliArguments) {
+        parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
+    }
 
     /**
      * Populates common parameters for a task with output pdf files into a directory

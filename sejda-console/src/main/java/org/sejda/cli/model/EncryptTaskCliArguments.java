@@ -31,7 +31,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " encrypt")
-public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     @Option(description = "permissions: a list of permissions. { print, modify, copy, modifyannotations, fill, screenreaders, assembly, degradedprinting}  (optional)")
     List<PdfAccessPermissionAdapter> getAllow();
@@ -46,7 +47,4 @@ public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectory
 
     @Option(shortName = "e", description = "encryption angorithm {rc4_40, rc4_128, aes_128}. If omitted it uses rc4_128 (optional)", defaultValue = "rc4_128")
     PdfEncryptionAdapter getEncryptionType();
-
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
-    String getOutputPrefix();
 }

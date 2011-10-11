@@ -28,14 +28,11 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " rotate")
-public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "r", description = "pages rotation. You can set pages rotation. Accepted string is "
             + "\"pages:rotationdegrees\" where pages can be one among 'all',"
             + "'odd', 'even' and where rotationdegrees can be '90', '180' or"
             + "'270'. Pages will be rotate clockwise (required)")
     PageRotationAdapter getPageRotation();
-
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
-    String getOutputPrefix();
 }

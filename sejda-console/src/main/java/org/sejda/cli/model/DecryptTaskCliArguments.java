@@ -16,9 +16,7 @@
  */
 package org.sejda.cli.model;
 
-
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the Decrypt task
@@ -27,7 +25,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " decrypt")
-public interface DecryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
-    String getOutputPrefix();
+public interface DecryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
+
 }

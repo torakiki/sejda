@@ -95,6 +95,7 @@ public enum TestableTask {
         return allTasksExceptFor();
     }
 
+    // TODO: return array and use asData() to convert to list of object[]
     public static List<Object[]> allTasksExceptFor(TestableTask... exceptFor) {
         Collection<TestableTask> exceptForCollection = Arrays.asList(exceptFor);
         List<Object[]> result = new ArrayList<Object[]>();
@@ -111,6 +112,34 @@ public enum TestableTask {
         return new TestableTask[] { TestableTask.DECRYPT, TestableTask.ENCRYPT, TestableTask.ROTATE,
                 TestableTask.SET_VIEWER_PREFERENCES, TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
                 TestableTask.ALTERNATE_MIX, TestableTask.MERGE };
+    }
+
+    boolean hasFolderOutput() {
+        return getCorrespondingCliCommand().hasFolderOutput();
+    }
+
+    boolean hasPrefixableOutput() {
+        return getCorrespondingCliCommand().hasPrefixableOutput();
+    }
+
+    public static TestableTask[] getTasksWithFolderOutput() {
+        List<TestableTask> result = new ArrayList<TestableTask>();
+        for (TestableTask each : TestableTask.values()) {
+            if (each.hasFolderOutput()) {
+                result.add(each);
+            }
+        }
+        return result.toArray(new TestableTask[result.size()]);
+    }
+
+    public static TestableTask[] getTasksWithPrefixableOutput() {
+        List<TestableTask> result = new ArrayList<TestableTask>();
+        for (TestableTask each : TestableTask.values()) {
+            if (each.hasPrefixableOutput()) {
+                result.add(each);
+            }
+        }
+        return result.toArray(new TestableTask[result.size()]);
     }
 }
 
@@ -182,7 +211,7 @@ class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsPro
 class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-p", "all");
+        return super.provideDefaults(taskName).with("-s", "all");
     }
 }
 

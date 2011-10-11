@@ -42,6 +42,7 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
 
         populateSourceParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
+        populateOutputPrefix(parameters, taskCliArguments);
 
         return parameters;
     }

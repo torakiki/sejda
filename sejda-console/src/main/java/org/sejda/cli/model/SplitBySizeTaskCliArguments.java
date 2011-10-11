@@ -30,7 +30,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbysize")
-public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "s", description = "size in bytes to split at (required)")
     Long getSize();

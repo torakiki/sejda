@@ -16,6 +16,9 @@
  */
 package org.sejda.cli;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -30,5 +33,14 @@ public abstract class AbstractTaskTraitTest extends AbstractTaskTest {
 
     public AbstractTaskTraitTest(TestableTask testableTask) {
         super(testableTask);
+    }
+
+    public static Collection<Object[]> asData(TestableTask[] tasks) {
+        Collection<Object[]> result = new ArrayList<Object[]>();
+        for (TestableTask eachTask : tasks) {
+            result.add(new Object[] { eachTask });
+        }
+
+        return result;
     }
 }

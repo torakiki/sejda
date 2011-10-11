@@ -38,7 +38,7 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         DecryptParameters parameters = new DecryptParameters();
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
-        parameters.setOutputPrefix(taskCliArguments.getOutputPrefix());
+        populateOutputPrefix(parameters, taskCliArguments);
         return parameters;
     }
 

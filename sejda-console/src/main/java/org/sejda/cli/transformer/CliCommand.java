@@ -22,6 +22,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
+import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
+import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.CropTaskCliArguments;
 import org.sejda.cli.model.DecryptTaskCliArguments;
 import org.sejda.cli.model.EncryptTaskCliArguments;
@@ -150,7 +152,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SimpleSplitTaskCliArguments, SimpleSplitParameters> getArgumentsTransformer() {
             return new SimpleSplitCliArgumentsTransformer();
         }
-    }, "Splits a given pdf document at a predefined set of page numbers (all, odd pages, even pages).", "simplesplit -f /tmp/file1.pdf -o /tmp -p odd"),
+    }, "Splits a given pdf document at a predefined set of page numbers (all, odd pages, even pages).", "simplesplit -f /tmp/file1.pdf -o /tmp -s odd"),
     EXTRACT_PAGES("extractpages", new CliInterfacedTask<ExtractPagesTaskCliArguments, ExtractPagesParameters>() {
 
         @Override
@@ -293,6 +295,22 @@ public enum CliCommand {
 
         return result.toString();
     }
+
+    public boolean hasFolderOutput() {
+        return isInheritingTraitsFrom(CliArgumentsWithDirectoryOutput.class);
+    }
+
+    public boolean hasPrefixableOutput() {
+        return isInheritingTraitsFrom(CliArgumentsWithPrefixableOutput.class);
+    }
+
+    boolean isInheritingTraitsFrom(Class<?> parentClazz) {
+        return parentClazz.isAssignableFrom(getCliArgumentsClass());
+    }
+
+    public Class<?> getCliArgumentsClass() {
+        return cliInterfacedTask.getCliArgumentsClass();
+    }
 }
 
 /**
@@ -305,7 +323,8 @@ public enum CliCommand {
  */
 abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParameters> {
 
-    private Class<T> getCliArgumentsClass() {
+    @SuppressWarnings("unchecked")
+    protected Class<T> getCliArgumentsClass() {
         // returning T.class see http://www.artima.com/weblogs/viewpost.jsp?thread=208860
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         return (Class<T>) parameterizedType.getActualTypeArguments()[0];

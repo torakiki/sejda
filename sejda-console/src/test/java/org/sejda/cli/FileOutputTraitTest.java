@@ -19,7 +19,6 @@ package org.sejda.cli;
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -36,8 +35,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.ALTERNATE_MIX }, { TestableTask.MERGE },
-                { TestableTask.EXTRACT_PAGES } });
+        return TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput());
     }
 
     public FileOutputTraitTest(TestableTask testableTask) {

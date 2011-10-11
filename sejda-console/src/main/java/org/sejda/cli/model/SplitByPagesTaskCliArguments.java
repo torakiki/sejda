@@ -30,7 +30,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbypages")
-public interface SplitByPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface SplitByPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "n", description = "page number(s) to split at (required)")
     List<Integer> getPageNumbers();

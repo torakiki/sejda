@@ -30,7 +30,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbybookmarks")
-public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "l", description = "bookmarks depth to split at (required)")
     Integer getBookmarkLevel();

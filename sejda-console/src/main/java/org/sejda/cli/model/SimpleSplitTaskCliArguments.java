@@ -31,10 +31,11 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " simplesplit")
-public interface SimpleSplitTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface SimpleSplitTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     // pdfsam-incompatibility no default, and this is part of a larger task: split
-    @Option(shortName = "p", description = "predefined pages mode. Accepted values are 'all', 'odd' or 'even' (required)")
+    @Option(shortName = "s", description = "predefined pages mode. Accepted values are 'all', 'odd' or 'even' (required)")
     PredefinedSetOfPagesAdapter getPredefinedPages();
 
     // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file

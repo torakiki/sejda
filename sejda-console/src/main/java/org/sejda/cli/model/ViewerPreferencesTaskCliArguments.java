@@ -32,7 +32,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setviewerpreferences")
-public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
     @Option(description = "center of the screen (optional)")
     boolean isCenterWindow();
 

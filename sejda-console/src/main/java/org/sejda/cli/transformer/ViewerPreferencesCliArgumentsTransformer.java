@@ -42,6 +42,7 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
         populateSourceParameters(parameters, taskCliArguments);
 
         populateActivePreferences(taskCliArguments, parameters);
+        populateOutputPrefix(parameters, taskCliArguments);
 
         parameters.setNfsMode(taskCliArguments.getNfsMode().getEnumValue());
 

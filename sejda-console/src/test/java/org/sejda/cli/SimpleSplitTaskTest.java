@@ -35,24 +35,24 @@ public class SimpleSplitTaskTest extends AbstractTaskTest {
 
     @Test
     public void predefinedPages_ALL_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "all").invokeSejdaConsole();
+        SimpleSplitParameters parameters = defaultCommandLine().with("-s", "all").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 2, 3, 4, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_ODD_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "odd").invokeSejdaConsole();
+        SimpleSplitParameters parameters = defaultCommandLine().with("-s", "odd").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 3, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_EVEN_PAGES() {
-        SimpleSplitParameters parameters = defaultCommandLine().with("-p", "even").invokeSejdaConsole();
+        SimpleSplitParameters parameters = defaultCommandLine().with("-s", "even").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
     }
 
     @Test
     public void mandatoryParams() {
-        defaultCommandLine().without("-p").assertConsoleOutputContains("Option is mandatory: --predefinedPages");
+        defaultCommandLine().without("-s").assertConsoleOutputContains("Option is mandatory: --predefinedPages");
     }
 }

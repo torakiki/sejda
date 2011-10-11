@@ -16,7 +16,6 @@
  */
 package org.sejda.cli.model;
 
-
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -27,10 +26,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extracttext")
-public interface ExtractTextTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
-
-    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
-    String getOutputPrefix();
+public interface ExtractTextTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+        CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "e", description = "text encoding, default is UTF-8 (optional)", defaultValue = "UTF-8")
     String getTextEncoding();

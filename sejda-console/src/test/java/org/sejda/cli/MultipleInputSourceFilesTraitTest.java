@@ -17,7 +17,6 @@
 package org.sejda.cli;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -34,12 +33,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        Collection<Object[]> result = new ArrayList<Object[]>();
-        for (TestableTask eachTask : TestableTask.getTasksWithMultipleSouceFiles()) {
-            result.add(new Object[] { eachTask });
-        }
-
-        return result;
+        return asData(TestableTask.getTasksWithMultipleSouceFiles());
     }
 
     public MultipleInputSourceFilesTraitTest(TestableTask testableTask) {

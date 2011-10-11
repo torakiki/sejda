@@ -16,12 +16,13 @@
  */
 package org.sejda.cli;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.core.manipulation.model.parameter.base.MultipleOutputTaskParameters;
 
 /**
  * For tasks that support a folder as output, test various scenarios related to this trait
@@ -29,26 +30,26 @@ import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
  * @author Eduard Weissmann
  * 
  */
-public class FolderOutputTraitTest extends AbstractTaskTraitTest {
+public class PrefixableOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asData(TestableTask.getTasksWithFolderOutput());
+        return asData(TestableTask.getTasksWithPrefixableOutput());
     }
 
-    public FolderOutputTraitTest(TestableTask testableTask) {
+    public PrefixableOutputTraitTest(TestableTask testableTask) {
         super(testableTask);
     }
 
     @Test
-    public void negative_NotFound() {
-        defaultCommandLine().with("-o", "output-doesntexist").assertConsoleOutputContains(
-                "Path 'output-doesntexist' does not exist");
+    public void testOutputPrefix_Specified() {
+        MultipleOutputTaskParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
+        assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
-    public void positive() {
-        TaskParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
-        assertOutputFolder(result, new File("./outputs"));
+    public void testOutputPrefix_Default() {
+        MultipleOutputTaskParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals("", parameters.getOutputPrefix());
     }
 }

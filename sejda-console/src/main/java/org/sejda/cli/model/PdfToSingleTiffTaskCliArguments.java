@@ -33,7 +33,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftosingletiff")
 public interface PdfToSingleTiffTaskCliArguments extends CliArgumentsWithImageFileOutput {
 
-    @Option(description = "image compression type: none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate. Default is 'none'", defaultValue = "NONE")
+    @Option(shortName = "x", description = "image compression type: {none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate}. Default is 'none' (optional)", defaultValue = "NONE")
     TiffCompressionTypeAdapter getCompressionType();
 
     // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file

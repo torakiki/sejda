@@ -1,5 +1,5 @@
 /*
- * Created on Oct 2, 2011
+ * Created on Oct 11, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,23 +16,16 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.ImageColorTypeAdapter;
-
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Trait for cli tasks that output image files
+ * Cli arguments that support a specified prefix to be applied to the name of the outputs
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface CliArgumentsWithImageOutput extends TaskCliArguments {
+public interface CliArgumentsWithPrefixableOutput {
 
-    @Option(shortName = "c", description = "image color type: { black_and_white, gray_scale, color_rgb } (required)")
-    ImageColorTypeAdapter getColorType();
-
-    @Option(shortName = "r", description = "resolution in dpi. Default is 72 (optional)")
-    int getResolution();
-
-    boolean isResolution();
+    @Option(shortName = "p", description = "prefix for the output files name (optional)", defaultValue = "")
+    String getOutputPrefix();
 }
