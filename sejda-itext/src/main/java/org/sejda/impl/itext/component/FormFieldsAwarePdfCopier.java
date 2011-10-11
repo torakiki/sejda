@@ -49,7 +49,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     private PdfCopyFields pdfCopy;
     private OutputStream outputStream;
 
-    public FormFieldsAwarePdfCopier(PdfReader reader, File outputFile, PdfVersion version) throws TaskException {
+    public FormFieldsAwarePdfCopier(File outputFile, PdfVersion version) throws TaskException {
         try {
             outputStream = new FileOutputStream(outputFile);
             if (version == null) {

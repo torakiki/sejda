@@ -103,7 +103,7 @@ public class MergeTask implements Task<MergeParameters> {
     private void createCopierIfNeeded(MergeParameters parameters, File tmpFile) throws TaskException {
         if (copier == null) {
             if (parameters.isCopyFormFields()) {
-                copier = new FormFieldsAwarePdfCopier(reader, tmpFile, parameters.getVersion());
+                copier = new FormFieldsAwarePdfCopier(tmpFile, parameters.getVersion());
                 LOG.debug("Created FormFieldsAwarePdfCopier");
             } else {
                 copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
