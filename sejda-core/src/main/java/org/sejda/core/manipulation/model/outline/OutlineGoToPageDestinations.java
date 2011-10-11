@@ -30,6 +30,7 @@ import java.util.Set;
 public class OutlineGoToPageDestinations {
 
     private Map<Integer, String> destinations = new HashMap<Integer, String>();
+    private String firstPageTitle;
 
     /**
      * Adds the given page destination with the given title.
@@ -58,6 +59,9 @@ public class OutlineGoToPageDestinations {
      * @return the title corresponding to the input page.
      */
     public String getTitle(Integer page) {
+        if (page == 1) {
+            return firstPageTitle;
+        }
         return destinations.get(page);
     }
 
@@ -75,6 +79,15 @@ public class OutlineGoToPageDestinations {
      */
     public boolean isEmpty() {
         return destinations.isEmpty();
+    }
+
+    /**
+     * Adds the title for the first page. This page has a special meaning since we might need it even if it's not a split destination.
+     * 
+     * @param title
+     */
+    public void addFirstPageTitle(String title) {
+        this.firstPageTitle = title;
     }
 
 }

@@ -72,9 +72,12 @@ public class ITextOutlineHandler implements OutlineHandler {
             OutlineGoToPageDestinations destinations, int levelToAdd) {
         if (bookmarks != null) {
             for (Map<String, Object> bookmark : bookmarks) {
-                if (currentLevel <= levelToAdd && bookmark != null && isGoToAction(bookmark)) {
-                    if (currentLevel == levelToAdd) {
-                        addPageIfValid(destinations, bookmark);
+                if (currentLevel <= levelToAdd && isGoToAction(bookmark)) {
+                    if (isFirstPageBookmark(currentLevel, bookmark)) {
+                        addFirstPageBookmark(destinations, bookmark);
+                    }
+                    if (isLevelToBeAdded(currentLevel, levelToAdd)) {
+                        addPageIfValidOrFirstPage(destinations, bookmark);
                     } else {
                         addPageIfBookmarkLevel((List<Map<String, Object>>) bookmark.get(KIDS_KEY), currentLevel + 1,
                                 destinations, levelToAdd);
@@ -84,7 +87,22 @@ public class ITextOutlineHandler implements OutlineHandler {
         }
     }
 
-    private void addPageIfValid(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
+    private boolean isFirstPageBookmark(int currentLevel, Map<String, Object> bookmark) {
+        return currentLevel == 1 && getPageNumber(bookmark) == 1;
+    }
+
+    private void addFirstPageBookmark(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
+        String title = nullSafeGetTitle(bookmark);
+        if (StringUtils.isNotBlank(title)) {
+            destinations.addFirstPageTitle(title);
+        }
+    }
+
+    private boolean isLevelToBeAdded(int currentLevel, int levelToAdd) {
+        return currentLevel == levelToAdd;
+    }
+
+    private void addPageIfValidOrFirstPage(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
         int page = getPageNumber(bookmark);
         String title = nullSafeGetTitle(bookmark);
         Matcher matcher = titleMatchingPattern.matcher(title);
@@ -97,7 +115,7 @@ public class ITextOutlineHandler implements OutlineHandler {
         int maxLevel = parentLevel;
         if (bookmarks != null) {
             for (Map<String, Object> bookmark : bookmarks) {
-                if (bookmark != null && isGoToAction(bookmark)) {
+                if (isGoToAction(bookmark)) {
                     @SuppressWarnings("unchecked")
                     int maxBookmarkBranchLevel = getMaxBookmarkLevel(
                             (List<Map<String, Object>>) bookmark.get(KIDS_KEY), parentLevel + 1);
@@ -127,6 +145,6 @@ public class ITextOutlineHandler implements OutlineHandler {
     }
 
     private static boolean isGoToAction(Map<String, Object> bookmark) {
-        return GOTO_KEY.equals(bookmark.get(ACTION_KEY));
+        return bookmark != null && GOTO_KEY.equals(bookmark.get(ACTION_KEY));
     }
 }
