@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<url>http://www.sejda.org</url>
+	<artifactId>sejda-distribution</artifactId>
+	<packaging>pom</packaging>
+	<name>sejda distribution</name>
+	<description>Meta module for assembling the sejda project distribution binaries.</description>
+
+	<parent>
+		<groupId>org.sejda</groupId>
+		<artifactId>sejda-parent</artifactId>
+		<version>1.0.0-BETA-SNAPSHOT</version>
+		<relativePath>../sejda-parent/pom.xml</relativePath>
+	</parent>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<!-- This profile will be activated when the value of maven property 
+					performRelease is true. When you use maven-release-plugin and run mvn release:perform, 
+					the property value will be set to true. -->
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- creates the binary distributable zip containing all modules jars -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>distro-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assemble/bin-assembly.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-itext</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-pdfbox</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-icepdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-icepdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-image-writers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

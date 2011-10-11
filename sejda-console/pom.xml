@@ -16,6 +16,43 @@
 		<relativePath>../sejda-parent/pom.xml</relativePath>
 	</parent>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<activation>
+				<!-- This profile will be activated when the value of maven property 
+					performRelease is true. When you use maven-release-plugin and run mvn release:perform, 
+					the property value will be set to true. -->
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<!-- creates the binary distributable sejda-console*-bin.zip -->
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sejda-console-assembly</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<descriptors>
+										<descriptor>src/assemble/bin-assembly.xml</descriptor>
+									</descriptors>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -71,24 +108,6 @@
 						</program>
 					</programs>
 				</configuration>
-			</plugin>
-			<!-- creates the binary distributable sejda-console*-bin.zip -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>assembly</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
