@@ -172,7 +172,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetMetadataTaskCliArguments, SetMetadataParameters> getArgumentsTransformer() {
             return new SetMetadataCliArgumentsTransformer();
         }
-    }, "Apply new metadata (title, author, subject, keywords) to an input pdf document.", "setmetadata -f /tmp/file1.pdf -o /tmp/output.pdf --subject \"Subject of the document\""),
+    }, "Apply new metadata (title, author, subject, keywords) to an input pdf document.", "setmetadata -f /tmp/file1.pdf -o /tmp/output.pdf --subject \"Subject of the document\" --keywords \"\""),
     SET_PAGE_LABELS("setpagelabels", new CliInterfacedTask<SetPageLabelsTaskCliArguments, SetPagesLabelParameters>() {
 
         @Override
