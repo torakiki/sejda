@@ -1,0 +1,13 @@
+<assembly>
+	<id>bin</id>
+	<formats>
+		<!-- <format>tar.gz</format> -->
+		<format>zip</format>
+	</formats>
+	<fileSets>
+		<fileSet>
+			<directory>target/assembled/</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
+</assembly>
