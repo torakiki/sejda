@@ -87,7 +87,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
                 pdfCopier.addPage(reader, page);
                 notifyEvent().stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
-                    LOG.debug("Adding bookmarks to the temporary buffer");
+                    LOG.trace("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
                             .getOutlineUntillPage(page)));
                     nullSafeCloseQuietly(pdfCopier);

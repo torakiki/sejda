@@ -73,11 +73,11 @@ public class PrefixTypesChain {
      * @return the processed string
      */
     public String process(String prefix, NameGenerationRequest request) {
-        LOG.debug("Performing prefix processing with first level prefix chain");
+        LOG.trace("Performing prefix processing with first level prefix chain");
         String retVal = processChain(prefix, request, firstLevelPrefixChain);
         // if the first level performed some change
         if (!prefix.equals(retVal)) {
-            LOG.debug("Performing prefix processing with second level prefix chain");
+            LOG.trace("Performing prefix processing with second level prefix chain");
             retVal = processChain(retVal, request, secondLevelPrefixChain);
         } else {
             retVal = fallBackProcessor.process(retVal, request);
