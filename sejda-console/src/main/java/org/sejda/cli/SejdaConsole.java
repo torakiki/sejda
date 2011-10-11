@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author Eduard Weissmann
  * 
  */
+// TODO: fix javadoc warnings
 public class SejdaConsole {
     private static final Logger LOG = LoggerFactory.getLogger(SejdaConsole.class);
 

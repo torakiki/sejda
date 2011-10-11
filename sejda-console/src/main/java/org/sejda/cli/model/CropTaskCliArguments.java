@@ -18,6 +18,7 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
+import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.cli.model.adapter.RectangularBoxAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -34,4 +35,8 @@ public interface CropTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     @Option(description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format (bottom:left)(top:right). Ex: --cropAreas (0:0)(5:10) (5:0)(10:10)")
     List<RectangularBoxAdapter> getCropAreas();
+
+    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
+    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
+    List<PdfFileSourceAdapter> getFiles();
 }
