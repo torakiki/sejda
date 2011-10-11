@@ -93,18 +93,20 @@
 	</build>
 
 	<properties>
-		<slf4j.version>1.6.0</slf4j.version>
+		<junit.version>4.10</junit.version>
+		<slf4j.version>1.6.2</slf4j.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<jaxen.version>1.1.1</jaxen.version>
-		<commons.lang.version>2.5</commons.lang.version>
-		<commons.io.version>2.0</commons.io.version>
+		<commons.lang.version>2.6</commons.lang.version>
+		<commons.io.version>2.1</commons.io.version>
 		<commons.collections.version>3.2.1</commons.collections.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
-		<mockito.version>1.8.5</mockito.version>
+		<mockito.version>1.9.0-rc1</mockito.version>
 		<powermock.version>1.4.10</powermock.version>
 		<itextpdf.version>2.1.7</itextpdf.version>
 		<logback.version>0.9.29</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
+		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -177,7 +179,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
