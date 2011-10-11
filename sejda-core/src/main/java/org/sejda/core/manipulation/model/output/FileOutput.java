@@ -78,7 +78,7 @@ public final class FileOutput implements TaskOutput {
      */
     public static FileOutput newInstance(File file) {
         if (file == null || (file.exists() && !file.isFile())) {
-            throw new IllegalArgumentException("A valid instance is expected (not null && isFile).");
+            throw new IllegalArgumentException("A valid instance is expected (not null or existing file).");
         }
         return new FileOutput(file);
     }
