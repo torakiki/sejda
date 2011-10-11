@@ -1,5 +1,5 @@
 /*
- * Created on Sep 12, 2011
+ * Created on Aug 22, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,19 +16,13 @@
  */
 package org.sejda.cli.model;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
-
 /**
- * Specifications for command line options of the ExtractText task
+ * 
+ * Base interface for specifying of the command line interface for tasks that have output configured as a directory and format as text
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extracttext")
-public interface ExtractTextTaskCliArguments extends CliArgumentsWithTextAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+public interface CliArgumentsWithTextAndDirectoryOutput extends CliArgumentsWithDirectoryOutput {
 
-    @Option(shortName = "e", description = "text encoding, default is UTF-8 (optional)", defaultValue = "UTF-8")
-    String getTextEncoding();
 }
