@@ -16,7 +16,7 @@
  */
 package org.sejda.core.manipulation.model.image;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Types of compression for the TIFF format.

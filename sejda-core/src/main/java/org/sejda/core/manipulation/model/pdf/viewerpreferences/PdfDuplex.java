@@ -17,9 +17,9 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
-import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible values for the paper handling option to use when printing the file from the print dialog.<br>

@@ -18,7 +18,7 @@ package org.sejda.core.manipulation.model.image;
 
 import java.awt.image.BufferedImage;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * The color type of an image.

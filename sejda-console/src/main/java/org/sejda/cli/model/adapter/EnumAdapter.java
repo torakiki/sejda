@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model.adapter;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Base class for adapters for sejda {@link Enum}s. Provides common boiler plate code to initialize the actual enum value from it's user friendly display name

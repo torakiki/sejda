@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core;
+package org.sejda.core.support;
 
 /**
  * Designates an {@link Enum} that has a user friendly string representation for its value

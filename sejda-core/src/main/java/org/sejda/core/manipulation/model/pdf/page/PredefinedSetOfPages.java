@@ -3,7 +3,7 @@ package org.sejda.core.manipulation.model.pdf.page;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Represent a predefined set of pages like odd or even pages.

@@ -16,7 +16,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.label;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible values for a numbering style to be used for page labels.<br>

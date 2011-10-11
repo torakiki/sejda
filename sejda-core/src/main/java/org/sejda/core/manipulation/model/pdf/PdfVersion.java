@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * pdf versions

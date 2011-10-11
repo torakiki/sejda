@@ -17,9 +17,9 @@
  */
 package org.sejda.core.manipulation.model.pdf.encryption;
 
-import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible encryption algorithm to use during pdf encryption.

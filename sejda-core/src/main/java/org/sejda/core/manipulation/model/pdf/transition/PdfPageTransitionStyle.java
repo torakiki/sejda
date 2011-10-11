@@ -17,9 +17,9 @@
  */
 package org.sejda.core.manipulation.model.pdf.transition;
 
-import org.sejda.core.DisplayNamedEnum;
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible entries in the transition dictionary defining a visual transition when moving from a page to another in presentation mode.<br>

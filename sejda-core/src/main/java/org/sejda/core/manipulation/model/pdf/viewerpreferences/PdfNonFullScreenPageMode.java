@@ -17,7 +17,7 @@
  */
 package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
-import org.sejda.core.DisplayNamedEnum;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible values for the document’s page mode, specifying how to display the document on exiting full-screen mode.<br>
