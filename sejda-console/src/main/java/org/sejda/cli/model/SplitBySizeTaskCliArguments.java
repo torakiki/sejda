@@ -16,6 +16,9 @@
  */
 package org.sejda.cli.model;
 
+import java.util.List;
+
+import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -29,7 +32,10 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbysize")
 public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
-    // pdf-same incompat no default, and this is part of a larger task: split
     @Option(shortName = "s", description = "size in bytes to split at (required)")
     Long getSize();
+
+    // override default -f option that is decribed as expecting a list of files with a description stating that it is expecting a single file
+    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
+    List<PdfFileSourceAdapter> getFiles();
 }

@@ -19,6 +19,7 @@ package org.sejda.cli.model;
 import java.util.List;
 
 import org.sejda.cli.model.adapter.PageNumberWithPdfPageTransitionAdapter;
+import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.cli.model.adapter.PdfPageTransitionAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -47,4 +48,7 @@ public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithPdfF
 
     boolean isTransitions();
 
+    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
+    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
+    List<PdfFileSourceAdapter> getFiles();
 }
