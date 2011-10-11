@@ -32,20 +32,25 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setmetadata")
 public interface SetMetadataTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(shortName = "t", description = "document title (optional)", defaultValue = "")
+    @Option(shortName = "t", description = "document title (optional)")
     String getTitle();
 
-    @Option(shortName = "a", description = "document author (optional)", defaultValue = "")
+    boolean isTitle();
+
+    @Option(shortName = "a", description = "document author (optional)")
     String getAuthor();
 
-    @Option(shortName = "s", description = "document subject (optional)", defaultValue = "")
+    boolean isAuthor();
+
+    @Option(shortName = "s", description = "document subject (optional)")
     String getSubject();
 
-    @Option(shortName = "c", description = "document creator (optional)", defaultValue = "")
-    String getCreator();
+    boolean isSubject();
 
-    @Option(shortName = "k", description = "document keywords (optional)", defaultValue = "")
+    @Option(shortName = "k", description = "document keywords (optional)")
     String getKeywords();
+
+    boolean isKeywords();
 
     // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)

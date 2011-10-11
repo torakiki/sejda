@@ -16,11 +16,6 @@
  */
 package org.sejda.cli.transformer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang.StringUtils;
 import org.sejda.cli.model.SetMetadataTaskCliArguments;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
@@ -43,17 +38,17 @@ public class SetMetadataCliArgumentsTransformer extends BaseCliArgumentsTransfor
      */
     public SetMetadataParameters toTaskParameters(SetMetadataTaskCliArguments taskCliArguments) {
         final SetMetadataParameters parameters = new SetMetadataParameters();
-        Map<PdfMetadataKey, String> metadataProps = new HashMap<PdfMetadataKey, String>(PdfMetadataKey.values().length);
-        metadataProps.put(PdfMetadataKey.AUTHOR, taskCliArguments.getAuthor());
-        metadataProps.put(PdfMetadataKey.TITLE, taskCliArguments.getTitle());
-        metadataProps.put(PdfMetadataKey.KEYWORDS, taskCliArguments.getKeywords());
-        metadataProps.put(PdfMetadataKey.SUBJECT, taskCliArguments.getSubject());
-        metadataProps.put(PdfMetadataKey.CREATOR, taskCliArguments.getCreator());
-
-        for (Entry<PdfMetadataKey, String> eachEntry : metadataProps.entrySet()) {
-            if (!StringUtils.isBlank(eachEntry.getValue())) {
-                parameters.put(eachEntry.getKey(), eachEntry.getValue());
-            }
+        if (taskCliArguments.isAuthor()) {
+            parameters.put(PdfMetadataKey.AUTHOR, taskCliArguments.getAuthor());
+        }
+        if (taskCliArguments.isTitle()) {
+            parameters.put(PdfMetadataKey.TITLE, taskCliArguments.getTitle());
+        }
+        if (taskCliArguments.isKeywords()) {
+            parameters.put(PdfMetadataKey.KEYWORDS, taskCliArguments.getKeywords());
+        }
+        if (taskCliArguments.isSubject()) {
+            parameters.put(PdfMetadataKey.SUBJECT, taskCliArguments.getSubject());
         }
 
         if (parameters.keySet().isEmpty()) {

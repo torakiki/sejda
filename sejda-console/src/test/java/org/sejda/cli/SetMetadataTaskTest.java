@@ -43,6 +43,13 @@ public class SetMetadataTaskTest extends AbstractTaskTest {
         assertContains(PdfMetadataKey.TITLE, "A tale of two tests", parameters);
     }
 
+    @Test
+    public void title_SpecifiedAsResetEmptyString() {
+        SetMetadataParameters parameters = defaultCommandLine().without("-t").with("--title", "\"\"")
+                .invokeSejdaConsole();
+        assertContains(PdfMetadataKey.TITLE, "", parameters);
+    }
+
     private void assertContains(PdfMetadataKey expectedKey, String expectedValue, SetMetadataParameters parameters) {
         for (Entry<PdfMetadataKey, String> each : parameters.entrySet()) {
             if (each.getKey().equals(expectedKey) && each.getValue().equals(expectedValue)) {
@@ -55,7 +62,7 @@ public class SetMetadataTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void title_Default() {
+    public void title_notSpecified() {
         SetMetadataParameters parameters = defaultCommandLine().without("-t").without("--title").with("-s", "subject")
                 .invokeSejdaConsole();
         assertDoesntContain(PdfMetadataKey.TITLE, parameters);
@@ -95,8 +102,8 @@ public class SetMetadataTaskTest extends AbstractTaskTest {
 
     @Test
     public void mandatoryParams() {
-        defaultCommandLine().without("-a").without("--author").without("-t").without("--title").without("-c")
-                .without("--creator").without("-k").without("--keywords").without("-s").without("--subject")
+        defaultCommandLine().without("-a").without("--author").without("-t").without("--title").without("-k")
+                .without("--keywords").without("-s").without("--subject")
                 .assertConsoleOutputContains("Please specify at least one metadata option to be set");
     }
 }
