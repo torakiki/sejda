@@ -16,7 +16,6 @@
  */
 package org.sejda.cli.model;
 
-
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -35,10 +34,10 @@ public interface AlternateMixTaskCliArguments extends CliArgumentsWithPdfFileOut
     @Option(description = "reverse second input file (optional)")
     boolean isReverseSecond();
 
-    @Option(description = "step for the alternate mix of the first file (default is 1) (optional)", defaultValue = "1")
+    @Option(shortName = "y", description = "step for the alternate mix of the first file (default is 1) (optional)", defaultValue = "1")
     int getFirstStep();
 
-    @Option(description = "step for the alternate mix of the second file (default is 1) (optional)", defaultValue = "1")
+    @Option(shortName = "z", description = "step for the alternate mix of the second file (default is 1) (optional)", defaultValue = "1")
     int getSecondStep();
 
     // pdfsam-incompatibility {f1 and f2 are specified, vs now -f -f}
