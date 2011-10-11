@@ -40,7 +40,7 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "display document title metadata as window title (optional)")
     boolean isDisplayDocTitle();
 
-    @Option(description = "direction {l2r, r2l}. If omitted it uses l2r (optional)", defaultValue = "l2r")
+    @Option(shortName = "d", description = "direction {l2r, r2l}. If omitted it uses l2r (optional)", defaultValue = "l2r")
     PdfDirectionAdapter getDirection();
 
     @Option(description = "resize the window to fit the page size (optional)")
@@ -55,19 +55,19 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "hide user interface elements (optional)")
     boolean isHideWindowUI();
 
-    @Option(description = "layout for the viewer. { onecolumn, singlepage, twocolumnl, twocolumnr, twopagel, twopager}  (optional)", defaultValue = "singlepage")
+    @Option(shortName = "l", description = "layout for the viewer. { onecolumn, singlepage, twocolumnl, twocolumnr, twopagel, twopager}  (optional)", defaultValue = "singlepage")
     PdfPageLayoutAdapter getLayout();
 
-    @Option(description = "open mode for the viewer {attachments, fullscreen, none, ocontent, outlines, thumbs}. If omitted it uses none (optional)", defaultValue = "none")
+    @Option(shortName = "m", description = "open mode for the viewer {attachments, fullscreen, none, ocontent, outlines, thumbs}. If omitted it uses none (optional)", defaultValue = "none")
     PdfPageModeAdapter getMode();
 
-    @Option(description = "non full screen mode for the viewer when exiting full screen mode {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}. If omitted it uses none (optional)", defaultValue = "nfsnone")
+    @Option(shortName = "n", description = "non full screen mode for the viewer when exiting full screen mode {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}. If omitted it uses none (optional)", defaultValue = "nfsnone")
     PdfNonFullScreenPageModeAdapter getNfsMode();
 
     @Option(description = "no page scaling in print dialog (optional)")
     boolean isNoPrintScaling();
 
     // pdfsam-incompatibility: doesnt exist in pdfsam
-    @Option(description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge}. If ommited it uses 'simplex' (optional)", defaultValue = "simplex")
+    @Option(shortName = "x", description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge}. If ommited it uses 'simplex' (optional)", defaultValue = "simplex")
     PdfDuplexAdapter getDuplex();
 }

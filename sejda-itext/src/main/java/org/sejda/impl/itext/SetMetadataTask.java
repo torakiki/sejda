@@ -74,6 +74,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         @SuppressWarnings("unchecked")
         HashMap<String, String> actualMeta = reader.getInfo();
         for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
+            LOG.trace("'{}' -> '{}'", meta.getKey().getKey(), meta.getValue());
             actualMeta.put(meta.getKey().getKey(), meta.getValue());
         }
         stamperHandler.setMetadataOnStamper(actualMeta);

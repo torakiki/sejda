@@ -66,6 +66,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
         for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
+            LOG.trace("'{}' -> '{}'", meta.getKey().getKey(), meta.getValue());
             actualMeta.setCustomMetadataValue(meta.getKey().getKey(), meta.getValue());
         }
 
