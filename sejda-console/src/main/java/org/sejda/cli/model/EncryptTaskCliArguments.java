@@ -33,7 +33,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " encrypt")
 public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
-    @Option(description = "permissions: a list of permissions. { print, modify, copy, modifyannotations, fill, screenreaders, assembly, degradedprinting}  (optional)")
+    @Option(shortName = "l", description = "permissions: a list of permissions. { print, modify, copy, modifyannotations, fill, screenreaders, assembly, degradedprinting}  (optional)")
     List<PdfAccessPermissionAdapter> getAllow();
 
     boolean isAllow();
