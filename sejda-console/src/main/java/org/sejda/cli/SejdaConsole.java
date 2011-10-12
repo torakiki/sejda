@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.cli.exception.ConsoleException;
 import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.core.exception.TaskException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +50,14 @@ public class SejdaConsole {
 
     /**
      * Interprets and executes the console command
+     * 
      */
     public void execute() {
         try {
             doExecute();
-        } catch (ArgumentValidationException e) {
-            LOG.info(e.getMessage());
-        } catch (SejdaRuntimeException e) {
-            LOG.error(e.getMessage(), e);
+        } catch (RuntimeException e) {
+            reportToLogger(e);
+            throw e;
         }
     }
 
@@ -150,4 +152,35 @@ public class SejdaConsole {
     TaskExecutionAdapter getTaskExecutionAdapter() {
         return taskExecutionAdapter;
     }
+
+    public static final String REPORT_A_BUG_MESAGE = "\nTo report a bug, please visit http://www.sejda.org/issuetracker \nHelpful information to include when raising a bug: the input files, the command line executed and the stack trace below.\n";
+
+    /**
+     * @param e
+     */
+    private void reportToLogger(Exception e) {
+        if (isExpectedConsoleException(e) || isExpectedTaskException(e)) {
+            LOG.error(e.getMessage());
+        } else {
+            LOG.error(REPORT_A_BUG_MESAGE);
+            LOG.error(e.getMessage(), e); // unexpected
+        }
+    }
+
+    /**
+     * @param e
+     * @return
+     */
+    private boolean isExpectedConsoleException(Throwable e) {
+        return e instanceof ConsoleException;
+    }
+
+    /**
+     * @param e
+     * @return
+     */
+    private boolean isExpectedTaskException(Throwable e) {
+        return ExceptionUtils.indexOfType(e, TaskException.class) > 0;
+    }
+
 }

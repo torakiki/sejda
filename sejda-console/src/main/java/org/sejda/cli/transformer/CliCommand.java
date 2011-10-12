@@ -181,7 +181,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> getArgumentsTransformer() {
             return new SetPageLabelsCliArgumentsTransformer();
         }
-    }, "Given a collection of pdf documents, applies the selected page labels as defined in the Pdf reference 1.7, chapter 8.3.1.", "setpagelabels -f /tmp/file1.pdf -o /tmp/output.pdf -l 1:uroman:1:Preface 5:arabic:1"),
+    }, "Given a collection of pdf documents, applies the selected page labels as defined in the Pdf reference 1.7, chapter 8.3.1.", "setpagelabels -f /tmp/file1.pdf -o /tmp/output.pdf -l \"1:uroman:1:Preface \" 5:arabic:1"),
     // \n\nThis would label the pages starting from the first page with uppercase roman numbers suffixed with 'Preface' ('Preface I', 'Preface II' etc.) and starting from the fifth
     // page (first logical page) with arabic numbers ('1', '2', etc.)
     SET_PAGE_TRANSITIONS("setpagetransitions", new CliInterfacedTask<SetPageTransitionsTaskCliArguments, SetPagesTransitionParameters>() {
@@ -341,7 +341,7 @@ abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParam
             T cliArguments = createCli().parseArguments(rawArguments);
             return getArgumentsTransformer().toTaskParameters(cliArguments);
         } catch (uk.co.flamingpenguin.jewel.cli.ArgumentValidationException e) {
-            throw new org.sejda.cli.exception.ArgumentValidationException(e);
+            throw new org.sejda.cli.exception.ArgumentValidationException(e.getMessage(), e);
         }
     }
 }

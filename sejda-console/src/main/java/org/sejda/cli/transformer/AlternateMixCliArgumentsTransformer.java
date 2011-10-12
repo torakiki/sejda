@@ -16,9 +16,9 @@
  */
 package org.sejda.cli.transformer;
 
+import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 
@@ -39,7 +39,7 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
      */
     public AlternateMixParameters toTaskParameters(AlternateMixTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 2) {
-            throw new SejdaRuntimeException("Please specify two files as input parameters, found "
+            throw new ArgumentValidationException("Please specify two files as input parameters, found "
                     + taskCliArguments.getFiles().size());
         }
 

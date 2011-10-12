@@ -51,6 +51,17 @@ public final class AdapterUtils {
     private static final String DEFAULT_SEPARATOR = ":";
 
     /**
+     * Splits an input string using the default ":" separator
+     * 
+     * @param input
+     * @param separator
+     * @return
+     */
+    public static String[] split(String input) {
+        return StringUtils.split(input, DEFAULT_SEPARATOR);
+    }
+
+    /**
      * Same as {@link #splitAndTrim(String, String)} only it uses default ":" separator
      * 
      * @param input

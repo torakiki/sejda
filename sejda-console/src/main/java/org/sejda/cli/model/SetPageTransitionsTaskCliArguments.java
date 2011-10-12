@@ -34,7 +34,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setpagetransitions")
 public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(description = "open the document in fullscreen mode")
+    @Option(description = "open the document in fullscreen mode (optional)")
     boolean isFullscreen();
 
     @Option(shortName = "d", description = "slideshow default transition effect definition. Expected format is 'transitionType:transitionDurationInSec:pageDisplayDurationInSec'. Transition types are "

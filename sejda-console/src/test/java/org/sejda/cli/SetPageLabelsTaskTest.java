@@ -61,11 +61,11 @@ public class SetPageLabelsTaskTest extends AbstractTaskTest {
 
     @Test
     public void multipleLabels() {
-        SetPagesLabelParameters parameters = defaultCommandLine().with("-l", "98:arabic:6:Preface 99:uroman:1")
+        SetPagesLabelParameters parameters = defaultCommandLine().with("-l", "\"98:arabic:6:Preface \" 99:uroman:1")
                 .invokeSejdaConsole();
         assertEquals(2, parameters.getLabels().size());
 
-        assertPageLabel(parameters, 98, "Preface", PdfLabelNumberingStyle.ARABIC, 6);
+        assertPageLabel(parameters, 98, "Preface ", PdfLabelNumberingStyle.ARABIC, 6);
         assertPageLabel(parameters, 99, "", PdfLabelNumberingStyle.UPPERCASE_ROMANS, 1);
     }
 

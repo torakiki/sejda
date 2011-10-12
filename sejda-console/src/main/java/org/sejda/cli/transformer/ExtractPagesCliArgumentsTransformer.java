@@ -16,8 +16,8 @@
  */
 package org.sejda.cli.transformer;
 
+import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.ExtractPagesTaskCliArguments;
-import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
 
 /**
@@ -42,7 +42,8 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
         } else if (taskCliArguments.isPageSelection()) {
             parameters = new ExtractPagesParameters(taskCliArguments.getPageSelection().getPageRangeSet());
         } else {
-            throw new SejdaRuntimeException("Please specify at least one option that defines pages to be extracted");
+            throw new ArgumentValidationException(
+                    "Please specify at least one option that defines pages to be extracted");
         }
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);

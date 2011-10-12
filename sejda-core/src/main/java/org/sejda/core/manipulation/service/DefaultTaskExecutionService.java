@@ -45,8 +45,8 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionService.class);
 
-    private TaskExecutionContext context = new DefaultTaskExecutionContext();
-    private SejdaContext sejdaContext = new DefaultSejdaContext();
+    private final TaskExecutionContext context = new DefaultTaskExecutionContext();
+    private final SejdaContext sejdaContext = new DefaultSejdaContext();
 
     public void execute(TaskParameters parameters) {
         StopWatch stopWatch = new StopWatch();
@@ -61,10 +61,10 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             LOG.info("Task ({}) executed in {}", task,
                     DurationFormatUtils.formatDurationWords(stopWatch.getTime(), true, true));
         } catch (InvalidTaskParametersException i) {
-            LOG.warn("Task execution failed due to invalid parameters.", i);
+            LOG.error("Task execution failed due to invalid parameters.", i);
             executionFailed(i);
         } catch (TaskException e) {
-            LOG.warn(String.format("Task (%s) execution failed.", task), e);
+            LOG.error(String.format("Task (%s) execution failed.", task), e);
             executionFailed(e);
         } catch (RuntimeException e) {
             executionFailed(e);

@@ -46,7 +46,7 @@ public class PdfPageLabelAdapter {
     }
 
     private void doParseInput(String input) {
-        String[] tokens = AdapterUtils.splitAndTrim(input);
+        String[] tokens = AdapterUtils.split(input);
 
         if (tokens.length < MIN_TOKENS) {
             throw new ArgumentValidationException(

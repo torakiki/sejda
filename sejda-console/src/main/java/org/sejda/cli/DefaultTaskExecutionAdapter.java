@@ -16,17 +16,12 @@
  */
 package org.sejda.cli;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.service.TaskExecutionService;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.context.GlobalNotificationContext;
-import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link TaskExecutionAdapter}
@@ -36,55 +31,37 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
 
-    /**
-     * Listener for the {@link PercentageOfWorkDoneChangedEvent} that logs a message containing the percentage done
-     * 
-     * @author Eduard Weissmann
-     * 
-     */
-    private static final class LoggingPercentageOfWorkDoneChangeEventListener implements
-            EventListener<PercentageOfWorkDoneChangedEvent> {
-        public void onEvent(PercentageOfWorkDoneChangedEvent event) {
-            LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder().append(getClass()).toHashCode();
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (this == other) {
-                return true;
-            }
-            if (!(other instanceof LoggingPercentageOfWorkDoneChangeEventListener)) {
-                return false;
-            }
-            LoggingPercentageOfWorkDoneChangeEventListener otherListener = (LoggingPercentageOfWorkDoneChangeEventListener) other;
-            return new EqualsBuilder().append(getClass(), otherListener.getClass()).isEquals();
-        }
-    }
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionAdapter.class);
-
     private final TaskExecutionService taskExecutionService;
 
     public DefaultTaskExecutionAdapter(TaskExecutionService taskExecutionService) {
         this.taskExecutionService = taskExecutionService;
-        registerProcessListener();
+        registerListeners();
     }
 
-    private void registerProcessListener() {
+    private void registerListeners() {
         try {
             doRegisterProcessListener();
+            doRegisterTaskFailureListener();
         } catch (NotificationContextException e) {
-            throw new SejdaRuntimeException("Could not register progress listener. Reason: " + e.getMessage(), e);
+            throw new SejdaRuntimeException("Could not register listeners. Reason: " + e.getMessage(), e);
         }
     }
 
     private void doRegisterProcessListener() throws NotificationContextException {
         LoggingPercentageOfWorkDoneChangeEventListener listener = new LoggingPercentageOfWorkDoneChangeEventListener();
+        addEnsuringOnlyOne(listener);
+    }
+
+    private void doRegisterTaskFailureListener() throws NotificationContextException {
+        DefaultTaskExecutionFailedEventListener listener = new DefaultTaskExecutionFailedEventListener();
+        addEnsuringOnlyOne(listener);
+    }
+
+    /**
+     * @param listener
+     * @throws NotificationContextException
+     */
+    private void addEnsuringOnlyOne(EventListener<?> listener) throws NotificationContextException {
         GlobalNotificationContext.getContext().removeListener(listener);
         GlobalNotificationContext.getContext().addListener(listener);
     }

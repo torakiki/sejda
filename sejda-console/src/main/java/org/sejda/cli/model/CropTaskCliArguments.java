@@ -33,7 +33,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " crop")
 public interface CropTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format (bottom:left)(top:right). Ex: --cropAreas (0:0)(5:10) (5:0)(10:10)")
+    @Option(shortName = "c", description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format (bottom:left)(top:right). Ex: --cropAreas (0:0)(5:10) (5:0)(10:10) (required)")
     List<RectangularBoxAdapter> getCropAreas();
 
     // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
