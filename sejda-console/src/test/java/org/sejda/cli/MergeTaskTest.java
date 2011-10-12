@@ -65,11 +65,19 @@ public class MergeTaskTest extends AbstractTaskTest {
         createTestTextFile("./location/empty_filenames.csv", "");
         createTestTextFile("./location/filenames_invalidPaths.csv",
                 "/tmp/merge/fileDoesntExist.pdf,/tmp/merge/file1.pdf");
-        createTestTextFile(
-                "./location/filenames.xml",
-                "<filelist><file value=\"/tmp/merge/file1.pdf \"/><file value=\"/tmp/merge/file4.pdf\"/><file value=\"/tmp/merge/file3.pdf\"/></filelist>");
-        createTestTextFile("./location/filenamesPasswordProtected.xml",
-                "<filelist><file value=\"/tmp/merge/file1.pdf:secret1 \"/><file value=\"/tmp/merge/file4.pdf:secret4\"/></filelist>");
+
+        createTestTextFile("/tmp/filenames.xml", getClass().getResourceAsStream("/merge-filelist-config.xml"));
+        // files inside
+        createTestPdfFile("/tmp/pdf/inputFile.pdf");
+        createTestPdfFile("/tmp/pdf/inputFile2.pdf");
+        createTestPdfFile("/tmp/inputFile1.pdf");
+        createTestPdfFile("/tmp/inputFile2.pdf");
+        createTestPdfFile("/tmp/subdir/inputFile1.pdf");
+        createTestPdfFile("/tmp/subdir/inputFile2.pdf");
+        createTestPdfFile("/tmp/subdir2/inputFile1.pdf");
+        createTestPdfFile("/tmp/subdir2/inputFile2.pdf");
+        createTestPdfFile("/tmp/subdir2/inputFile3.pdf");
+
         createTestTextFile("./location/filenames_invalidXml.xml", "<filelist><file value=\"/tmp/merge/file1.pdf \">");
         createTestFolder("/tmp/emptyFolder");
         createTestPdfFile("./location/filenames.xls");
@@ -133,15 +141,6 @@ public class MergeTaskTest extends AbstractTaskTest {
     public void fileListConfigInput_csv_doesntExist() {
         defaultCommandLine().without("-f").with("-l", "./location/doesntExist.csv")
                 .assertConsoleOutputContains("File './location/doesntExist.csv' does not exist");
-    }
-
-    @Test
-    public void fileListConfigInput_xml() {
-        MergeParameters parameters = defaultCommandLine().without("-f").with("-l", "./location/filenames.xml")
-                .invokeSejdaConsole();
-
-        assertPdfMergeInputsFilesList(parameters,
-                filesList("/tmp/merge/file1.pdf", "/tmp/merge/file4.pdf", "/tmp/merge/file3.pdf"));
     }
 
     @Test
@@ -212,12 +211,16 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void fileListConfigInput_xmlWithPasswordProtectedFilesInside() {
-        MergeParameters parameters = defaultCommandLine().without("-f")
-                .with("-l", "./location/filenamesPasswordProtected.xml").invokeSejdaConsole();
+    public void fileListConfigInput_xml() {
+        MergeParameters parameters = defaultCommandLine().without("-f").with("-l", "/tmp/filenames.xml")
+                .invokeSejdaConsole();
 
-        assertPdfMergeInputsFilesList(parameters, filesList("/tmp/merge/file1.pdf", "/tmp/merge/file4.pdf"),
-                Arrays.asList("secret1", "secret4"));
+        assertPdfMergeInputsFilesList(
+                parameters,
+                filesList("/tmp/pdf/inputFile.pdf", "/tmp/pdf/inputFile2.pdf", "/tmp/inputFile1.pdf",
+                        "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir/inputFile2.pdf",
+                        "/tmp/subdir2/inputFile1.pdf", "/tmp/subdir2/inputFile2.pdf", "/tmp/subdir2/inputFile3.pdf"),
+                Arrays.asList(null, "test", null, null, null, null, null, "secret2", null));
     }
 
     private static final String NO_PASSWORD = null;

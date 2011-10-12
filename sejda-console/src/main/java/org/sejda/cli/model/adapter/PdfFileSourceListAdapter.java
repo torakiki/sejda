@@ -32,6 +32,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -39,10 +40,13 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -176,12 +180,14 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
  * 
  */
 class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
+    private static final Log LOG = LogFactory.getLog(CsvFileSourceListParser.class);
 
     @Override
     protected List<String> parseFileNames(File file) {
         try {
             return doParseFileNames(file);
         } catch (Exception e) {
+            LOG.error("Can't extract filesnames", e);
             throw new ArgumentValidationException("Can't extract filenames from '" + file.getName() + "'. Reason:"
                     + e.getMessage(), e);
         }
@@ -207,12 +213,14 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
  * 
  */
 class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
+    private static final Log LOG = LogFactory.getLog(XmlFileSourceListParser.class);
 
     @Override
     protected List<String> parseFileNames(File file) {
         try {
             return doParseFileNames(file);
         } catch (Exception e) {
+            LOG.error("Can't extract filenames", e);
             throw new ArgumentValidationException("Can't extract filenames from '" + file.getName() + "'. Reason:"
                     + e.getMessage(), e);
         }
@@ -225,16 +233,72 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document doc = builder.parse(file);
 
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath = factory.newXPath();
-        XPathExpression expr = xpath.compile("//filelist/file/@value");
-
         List<String> result = new ArrayList<String>();
-        NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+
+        result.addAll(parseSingleFiles(doc));
+        result.addAll(parseFileSets(doc, file));
+
+        return result;
+    }
+
+    private List<String> parseFileSets(Document doc, File configFile) throws XPathExpressionException {
+        List<String> result = new ArrayList<String>();
+
+        NodeList nodeList = getNodeListMatchingXpath("//filelist/fileset/file", doc);
         for (int i = 0; i < nodeList.getLength(); i++) {
-            result.add(nodeList.item(i).getNodeValue());
+            Node node = nodeList.item(i);
+            Node fileSet = node.getParentNode();
+
+            // warn if file in fileset is in absolute path mode
+            String parentDirPath = configFile.getAbsoluteFile().getParent();
+            if (fileSet.getAttributes().getNamedItem("dir") != null) {
+                parentDirPath = fileSet.getAttributes().getNamedItem("dir").getNodeValue();
+            }
+
+            // avoid double separators
+            result.add(parentDirPath + File.separator + extractFilePath(node));
         }
 
         return result;
+    }
+
+    private String extractFilePath(Node fileNode) {
+        String password = nullSafeGetAttribute(fileNode, "password");
+        String value = nullSafeGetAttribute(fileNode, "value");
+        return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR + password);
+    }
+
+    private String nullSafeGetAttribute(Node node, String attributeName) {
+        if (node.getAttributes().getNamedItem(attributeName) == null) {
+            return null;
+        }
+
+        return node.getAttributes().getNamedItem(attributeName).getNodeValue();
+    }
+
+    /**
+     * Parse single file definitions <filelist><file>[...]</file></filelist> ignoring the rest of the document
+     * 
+     * @param doc
+     * @return
+     * @throws XPathExpressionException
+     */
+    private List<String> parseSingleFiles(Document doc) throws XPathExpressionException {
+        List<String> result = new ArrayList<String>();
+
+        NodeList nodeList = getNodeListMatchingXpath("//filelist/file", doc);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            result.add(extractFilePath(nodeList.item(i)));
+        }
+
+        return result;
+    }
+
+    private static NodeList getNodeListMatchingXpath(String xpathString, Document doc) throws XPathExpressionException {
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        XPathExpression expr = xpath.compile(xpathString);
+
+        return (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
     }
 }
