@@ -16,8 +16,8 @@
  */
 package org.sejda.cli.transformer;
 
+import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.SetMetadataTaskCliArguments;
-import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 
@@ -52,7 +52,7 @@ public class SetMetadataCliArgumentsTransformer extends BaseCliArgumentsTransfor
         }
 
         if (parameters.keySet().isEmpty()) {
-            throw new SejdaRuntimeException("Please specify at least one metadata option to be set");
+            throw new ArgumentValidationException("Please specify at least one metadata option to be set");
         }
 
         populateAbstractParameters(parameters, taskCliArguments);

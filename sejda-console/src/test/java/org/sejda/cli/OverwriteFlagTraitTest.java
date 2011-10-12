@@ -37,7 +37,6 @@ public class OverwriteFlagTraitTest extends AcrossAllTasksTraitTest {
     @Test
     public void onValue() {
         TaskParameters result = defaultCommandLine().with("--overwrite").invokeSejdaConsole();
-
         assertTrue(describeExpectations(), result.isOverwrite());
     }
 

@@ -341,7 +341,7 @@ abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParam
             T cliArguments = createCli().parseArguments(rawArguments);
             return getArgumentsTransformer().toTaskParameters(cliArguments);
         } catch (uk.co.flamingpenguin.jewel.cli.ArgumentValidationException e) {
-            throw new org.sejda.cli.exception.ArgumentValidationException(e);
+            throw new org.sejda.cli.exception.ArgumentValidationException(e.getMessage(), e);
         }
     }
 }

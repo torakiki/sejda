@@ -234,14 +234,21 @@ class CommandLineExecuteTestHelper {
     }
 
     private String invokeConsoleAndReturnSystemOut(String commandLine) {
-        invokeConsole(commandLine);
+        invokeConsoleIgnoringExpectedExceptions(commandLine);
 
         return getCapturedSystemOut();
     }
 
-    private void invokeConsole(String commandLine) {
+    private void invokeConsoleIgnoringExpectedExceptions(String commandLine) {
         prepareSystemOutCapture();
-        getConsole(commandLine).execute();
+        try {
+            getConsole(commandLine).execute();
+            // fail("Console execution should have failed, no? " + commandLine);
+        } catch (SejdaRuntimeException e) {
+            // no-op
+        } catch (Exception e) {
+            throw new SejdaRuntimeException("An unexpected exception occured while executing the console", e);
+        }
     }
 
     private void prepareSystemOutCapture() {
@@ -257,7 +264,7 @@ class CommandLineExecuteTestHelper {
     public <T extends TaskParameters> T invokeConsoleAndReturnTaskParameters(String commandLine) {
         ArgumentCaptor<TaskParameters> taskPrametersCaptor = ArgumentCaptor.forClass(TaskParameters.class);
 
-        invokeConsole(commandLine);
+        invokeConsoleIgnoringExpectedExceptions(commandLine);
 
         // now Mockito can provide some context to verification failures, yay
         verify(

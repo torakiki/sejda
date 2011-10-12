@@ -1,5 +1,5 @@
 /*
- * Created on Oct 10, 2011
+ * Created on Oct 12, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,44 +14,22 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.exception;
+package org.sejda.cli;
 
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.junit.Test;
+import org.sejda.core.TestUtils;
 
 /**
- * General console exception
- * 
  * @author Eduard Weissmann
  * 
  */
-public class ConsoleException extends SejdaRuntimeException {
+public class LoggingPercentageOfWorkDoneChangeEventListenerTest {
 
-    private static final long serialVersionUID = 1L;
+    private final LoggingPercentageOfWorkDoneChangeEventListener victim = new LoggingPercentageOfWorkDoneChangeEventListener();
 
-    ConsoleException() {
-        super();
+    @Test
+    public void equalsHashcode() {
+        TestUtils.testEqualsAndHashCodes(victim, new LoggingPercentageOfWorkDoneChangeEventListener(),
+                new LoggingPercentageOfWorkDoneChangeEventListener(), new DefaultTaskExecutionFailedEventListener());
     }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public ConsoleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * @param message
-     */
-    public ConsoleException(String message) {
-        super(message);
-    }
-
-    /**
-     * @param cause
-     */
-    ConsoleException(Throwable cause) {
-        super(cause);
-    }
-
 }
