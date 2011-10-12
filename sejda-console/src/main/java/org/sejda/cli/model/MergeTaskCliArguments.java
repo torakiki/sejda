@@ -49,7 +49,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     boolean isFiles();
 
     @Option(shortName = "l", description = "xml or csv file containing pdf files list to concat. If csv file in comma separated value format; "
-            + "if xml file <filelist><filevalue=\"filepath\" /></filelist> (optional)")
+            + "if xml file <filelist><file value=\"filepath\" /></filelist> (optional)")
     PdfFileSourceListAdapter getFilesListConfig();
 
     boolean isFilesListConfig();
