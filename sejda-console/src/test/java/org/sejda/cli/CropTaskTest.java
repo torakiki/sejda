@@ -38,28 +38,28 @@ public class CropTaskTest extends AbstractTaskTest {
 
     @Test
     public void cropAreas_unrecognizedLeft() {
-        defaultCommandLine().with("--cropAreas", "(1:a)(3:4)").assertConsoleOutputContains("Unrecognized left: 'a'");
+        defaultCommandLine().with("--cropAreas", "[1:a][3:4]").assertConsoleOutputContains("Unrecognized left: 'a'");
     }
 
     @Test
     public void cropAreas_unrecognizedTop() {
-        defaultCommandLine().with("--cropAreas", "(1:4)(c:3)").assertConsoleOutputContains("Unrecognized top: 'c'");
+        defaultCommandLine().with("--cropAreas", "[1:4][c:3]").assertConsoleOutputContains("Unrecognized top: 'c'");
     }
 
     @Test
     public void cropAreas_unrecognizedRight() {
-        defaultCommandLine().with("--cropAreas", "(1:4)(3:b)").assertConsoleOutputContains("Unrecognized right: 'b'");
+        defaultCommandLine().with("--cropAreas", "[1:4][3:b]").assertConsoleOutputContains("Unrecognized right: 'b'");
     }
 
     @Test
     public void cropAreas_unrecognizedBottom() {
-        defaultCommandLine().with("--cropAreas", "(d:4)(2:3)").assertConsoleOutputContains("Unrecognized bottom: 'd'");
+        defaultCommandLine().with("--cropAreas", "[d:4][2:3]").assertConsoleOutputContains("Unrecognized bottom: 'd'");
     }
 
     @Test
     public void tooFewTokensInCropArea() {
-        defaultCommandLine().with("--cropAreas", "(4:2)(3)").assertConsoleOutputContains(
-                "Unparsable rectangular box: '(4:2)(3)'. Expected format is: ");
+        defaultCommandLine().with("--cropAreas", "[4:2][3]").assertConsoleOutputContains(
+                "Unparsable rectangular box: '[4:2][3]'. Expected format is: ");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class CropTaskTest extends AbstractTaskTest {
 
     @Test
     public void cropAreas_positive() {
-        CropParameters parameters = defaultCommandLine().with("--cropAreas", "(1:2)(3:4) (21:22)(23:24)")
+        CropParameters parameters = defaultCommandLine().with("--cropAreas", "[1:2][3:4] [21:22][23:24]")
                 .invokeSejdaConsole();
 
         assertThat(parameters.getCropAreas(),

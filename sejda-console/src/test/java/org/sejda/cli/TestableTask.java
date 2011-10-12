@@ -246,7 +246,7 @@ class SetPageTransitionsDefaultsProvider extends SingleInputAndFileOutputDefault
 class CropDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("--cropAreas", "(1:2)(3:4)");
+        return super.provideDefaults(taskName).with("--cropAreas", "[1:2][3:4]");
     }
 }
 

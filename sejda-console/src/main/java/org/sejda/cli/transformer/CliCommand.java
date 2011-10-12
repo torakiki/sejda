@@ -197,7 +197,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
             return new CropCliArgumentsTransformer();
         }
-    }, "Given a pdf document and a set of rectangular boxes, creates a single output pdf document where pages are cropped according to the input rectangular boxes. Input boxes are set as mediabox and cropbox on the resulting document pages (see Pdf reference 1.7, chapter 3.6.2, TABLE 3.27). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes.", "crop -f /tmp/file1.pdf -o /tmp/output.pdf --cropAreas (0:0)(5:10) (5:0)(10:10)"),
+    }, "Given a pdf document and a set of rectangular boxes, creates a single output pdf document where pages are cropped according to the input rectangular boxes. Input boxes are set as mediabox and cropbox on the resulting document pages (see Pdf reference 1.7, chapter 3.6.2, TABLE 3.27). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes.", "crop -f /tmp/file1.pdf -o /tmp/output.pdf --cropAreas [0:0][5:10] [5:0][10:10]"),
     PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
 
         @Override

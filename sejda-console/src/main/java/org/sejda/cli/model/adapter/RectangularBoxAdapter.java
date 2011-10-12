@@ -51,10 +51,10 @@ public class RectangularBoxAdapter {
      * @param input
      */
     private void doParse(String input) {
-        String[] tokens = doubleSplit(input.replaceFirst("^\\(", "").replaceFirst("\\)$", ""), "\\)\\(", ":");
+        String[] tokens = doubleSplit(input.replaceFirst("^\\[", "").replaceFirst("\\]$", ""), "\\]\\[", ":");
 
         if (tokens.length < MIN_TOKENS) {
-            throw new ArgumentValidationException("Expected format is: '(bottom:left)(top:right)'");
+            throw new ArgumentValidationException("Expected format is: '[bottom:left][top:right]'");
         }
 
         int bottom = AdapterUtils.parseInt(tokens[INDEX_OF_BOTTOM_TOKEN], "bottom");
