@@ -16,7 +16,10 @@
  */
 package org.sejda.cli.model;
 
+import java.util.List;
+
 import org.sejda.cli.model.adapter.MultiplePageRangeSetAdapter;
+import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.cli.model.adapter.PdfFileSourceListAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -40,11 +43,14 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     boolean isDirectory();
 
     // TODO: make sure optional options are reflected in the jewelcli produced help output, add isXXX
-    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Accepted values: 'all' or 'num1-num2' or"
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -f /tmp/file1.pdf /tmp/file2.pdf -s all:all:), "
             + "(EX. -f /tmp/file1.pdf /tmp/file2.pdf /tmp/file3.pdf -s all:12-14:32,12-14,4,34-:) to merge file1.pdf and pages 12,13,14 of file2.pdf. "
             + "If -s is not set default behaviour is to merge document completely (optional)", defaultValue = "")
     MultiplePageRangeSetAdapter getPageSelection();
+
+    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
+    List<PdfFileSourceAdapter> getFiles();
 
     boolean isFiles();
 

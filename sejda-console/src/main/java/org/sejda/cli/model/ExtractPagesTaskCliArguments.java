@@ -39,7 +39,7 @@ public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOut
 
     boolean isPredefinedPages();
 
-    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Accepted values: 'all' or 'num1-num2' or"
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -s all or -s 4,12-14,8,20-)s (optional)")
     PageRangeSetAdapter getPageSelection();
 
