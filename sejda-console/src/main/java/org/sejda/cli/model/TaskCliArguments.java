@@ -31,6 +31,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface TaskCliArguments {
     String EXECUTABLE_NAME = "sejda-console";
     String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)";
+    String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (optional)";
     String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE = "pdf file to operate on: a single pdf file (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)";
 
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST)

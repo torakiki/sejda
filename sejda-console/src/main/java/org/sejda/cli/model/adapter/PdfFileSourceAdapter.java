@@ -16,7 +16,7 @@ import org.sejda.core.manipulation.model.input.PdfFileSource;
  * 
  */
 public class PdfFileSourceAdapter {
-    private static final String PASSWORD_SEPARATOR = ":";
+    public static final String PASSWORD_SEPARATOR = ":";
 
     private final PdfFileSource pdfFileSource;
 

@@ -82,6 +82,10 @@ public abstract class AbstractTestSuite {
         return createTestFile(path, new ByteArrayInputStream(contents.getBytes()));
     }
 
+    protected File createTestTextFile(String path, InputStream contents) {
+        return createTestFile(path, contents);
+    }
+
     protected File createTestFile(String path, InputStream contents) {
         File file = new File(path);
         file.deleteOnExit();
