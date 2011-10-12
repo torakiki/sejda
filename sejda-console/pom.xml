@@ -111,48 +111,6 @@
 					</programs>
 				</configuration>
 			</plugin>
-			<!-- console executables should redirect system err to /dev/null -->
-			<plugin>
-				<groupId>com.google.code.maven-replacer-plugin</groupId>
-				<artifactId>maven-replacer-plugin</artifactId>
-				<version>1.3.9</version>
-				<executions>
-					<execution>
-						<id>unix-script-redirect-stderr-to-dev-null</id>
-						<phase>package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-						<configuration>
-							<file>target/assembled/bin/sejda-console</file>
-							<regex>false</regex>
-							<replacements>
-								<replacement>
-									<token>"$@"</token>
-									<value>"$@" 2>/dev/null</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</execution>
-					<execution>
-						<id>win-script-redirect-stderr-to-dev-null</id>
-						<phase>package</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-						<configuration>
-							<file>target/assembled/bin/sejda-console.bat</file>
-							<regex>false</regex>
-							<replacements>
-								<replacement>
-									<token>%CMD_LINE_ARGS%</token>
-									<value>"%CMD_LINE_ARGS% 2>null</value>
-								</replacement>
-							</replacements>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 

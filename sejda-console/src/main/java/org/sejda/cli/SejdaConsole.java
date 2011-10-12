@@ -20,12 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.cli.exception.ConsoleException;
+import org.sejda.cli.exception.DefaultUncaughtExceptionHandler;
+import org.sejda.cli.exception.ExceptionUtils;
 import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +43,7 @@ public class SejdaConsole {
     private final TaskExecutionAdapter taskExecutionAdapter;
 
     public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter) {
+        Thread.setDefaultUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler());
         this.arguments = new RawArguments(rawArguments.clone());
         this.taskExecutionAdapter = taskExecutionAdapter;
     }
@@ -159,28 +159,11 @@ public class SejdaConsole {
      * @param e
      */
     private void reportToLogger(Exception e) {
-        if (isExpectedConsoleException(e) || isExpectedTaskException(e)) {
+        if (ExceptionUtils.isExpectedConsoleException(e) || ExceptionUtils.isExpectedTaskException(e)) {
             LOG.error(e.getMessage());
         } else {
             LOG.error(REPORT_A_BUG_MESAGE);
             LOG.error(e.getMessage(), e); // unexpected
         }
     }
-
-    /**
-     * @param e
-     * @return
-     */
-    private boolean isExpectedConsoleException(Throwable e) {
-        return e instanceof ConsoleException;
-    }
-
-    /**
-     * @param e
-     * @return
-     */
-    private boolean isExpectedTaskException(Throwable e) {
-        return ExceptionUtils.indexOfType(e, TaskException.class) > 0;
-    }
-
 }
