@@ -34,7 +34,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     @Option(description = "input pdf documents contain forms (high memory usage) (optional)")
     boolean isCopyFields();
 
-    @Option(shortName = "d", description = "directory containing pdf files to concat. Files will be merged in alphabetical order. (optional)")
+    @Option(shortName = "d", description = "directory containing pdf files to merge. Files will be merged in alphabetical order. (optional)")
     PdfFileSourceListAdapter getDirectory();
 
     boolean isDirectory();
@@ -42,7 +42,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     // TODO: make sure optional options are reflected in the jewelcli produced help output, add isXXX
     @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -f /tmp/file1.pdf /tmp/file2.pdf -s all:all:), "
-            + "(EX. -f /tmp/file1.pdf /tmp/file2.pdf /tmp/file3.pdf -s all:12-14:32,12-14,4,34-:) to merge file1.pdf and pages 12,13,14 of file2.pdf. "
+            + "(EX. -f /tmp/file1.pdf /tmp/file2.pdf /tmp/file3.pdf -s all:12-14:32,12-14,4,34-:) to merge file1.pdf, pages 12,13,14 of file2.pdf and pages 32,12,13,14,4,34,35.. of file3.pdf. "
             + "If -s is not set default behaviour is to merge document completely (optional)", defaultValue = "")
     MultiplePageRangeSetAdapter getPageSelection();
 

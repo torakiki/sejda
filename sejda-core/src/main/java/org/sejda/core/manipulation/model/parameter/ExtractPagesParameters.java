@@ -18,7 +18,6 @@ package org.sejda.core.manipulation.model.parameter;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -81,11 +80,18 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         return Collections.unmodifiableSet(pageSelection);
     }
 
+    /**
+     * @param totalNumberOfPage
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
+     *         case of {@link PredefinedSetOfPages}.
+     * @see PagesSelection#getPages(int)
+     */
     public Set<Integer> getPages(int upperLimit) {
         if (predefinedSetOfPages != null) {
             return predefinedSetOfPages.getPages(upperLimit);
         }
-        Set<Integer> retSet = new HashSet<Integer>();
+        Set<Integer> retSet = new NullSafeSet<Integer>();
         for (PageRange range : getPageSelection()) {
             retSet.addAll(range.getPages(upperLimit));
         }
