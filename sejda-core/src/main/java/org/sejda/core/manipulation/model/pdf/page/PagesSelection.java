@@ -30,7 +30,8 @@ public interface PagesSelection {
      * 
      * @param totalNumberOfPage
      *            the number of pages of the document (upper limit).
-     * @return the selected set of pages.
+     * @return the selected set of pages. No constraint is imposed on the predictability of the iteration order but implementors may explicitly state if grant predictable iteration
+     *         order.
      */
     Set<Integer> getPages(int totalNumberOfPage);
 }

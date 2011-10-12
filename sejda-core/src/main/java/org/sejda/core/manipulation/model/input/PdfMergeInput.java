@@ -28,6 +28,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.manipulation.model.pdf.page.PageRangeSelection;
+import org.sejda.core.manipulation.model.pdf.page.PagesSelection;
 import org.sejda.core.support.NullSafeSet;
 import org.sejda.core.validation.constraint.NoIntersections;
 
@@ -38,7 +39,7 @@ import org.sejda.core.validation.constraint.NoIntersections;
  * 
  */
 @NoIntersections
-public class PdfMergeInput implements PageRangeSelection {
+public class PdfMergeInput implements PageRangeSelection, PagesSelection {
 
     @NotNull
     @Valid
@@ -76,6 +77,20 @@ public class PdfMergeInput implements PageRangeSelection {
         return pageSelection.isEmpty();
     }
 
+    /**
+     * @param totalNumberOfPage
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set.
+     * @see PagesSelection#getPages(int)
+     */
+    public Set<Integer> getPages(int totalNumberOfPage) {
+        Set<Integer> retSet = new NullSafeSet<Integer>();
+        for (PageRange range : getPageSelection()) {
+            retSet.addAll(range.getPages(totalNumberOfPage));
+        }
+        return retSet;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("source", source).append("pageSelection", pageSelection).toString();
@@ -98,4 +113,5 @@ public class PdfMergeInput implements PageRangeSelection {
         return new EqualsBuilder().append(source, input.getSource()).append(pageSelection, input.pageSelection)
                 .isEquals();
     }
+
 }

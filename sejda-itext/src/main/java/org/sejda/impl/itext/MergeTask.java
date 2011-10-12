@@ -58,7 +58,7 @@ public class MergeTask implements Task<MergeParameters> {
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
         outputWriter = new SingleOutputWriterSupport();
-        sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        sourceOpener = PdfSourceOpeners.newFullReadOpener();
     }
 
     public void execute(MergeParameters parameters) throws TaskException {

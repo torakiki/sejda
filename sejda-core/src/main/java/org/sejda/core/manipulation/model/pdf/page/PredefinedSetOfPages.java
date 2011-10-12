@@ -1,7 +1,7 @@
 package org.sejda.core.manipulation.model.pdf.page;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.sejda.core.support.DisplayNamedEnum;
 
@@ -14,8 +14,8 @@ import org.sejda.core.support.DisplayNamedEnum;
 public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
     ALL_PAGES("all") {
         @Override
-        public Set<Integer> getPages(int totalNumberOfPage) {
-            Set<Integer> retSet = new HashSet<Integer>();
+        public SortedSet<Integer> getPages(int totalNumberOfPage) {
+            SortedSet<Integer> retSet = new TreeSet<Integer>();
             for (int i = 1; i <= totalNumberOfPage; i++) {
                 retSet.add(i);
             }
@@ -24,8 +24,8 @@ public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
     },
     EVEN_PAGES("even") {
         @Override
-        public Set<Integer> getPages(int totalNumberOfPage) {
-            Set<Integer> retSet = new HashSet<Integer>();
+        public SortedSet<Integer> getPages(int totalNumberOfPage) {
+            SortedSet<Integer> retSet = new TreeSet<Integer>();
             for (int i = 2; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
@@ -34,8 +34,8 @@ public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
     },
     ODD_PAGES("odd") {
         @Override
-        public Set<Integer> getPages(int totalNumberOfPage) {
-            Set<Integer> retSet = new HashSet<Integer>();
+        public SortedSet<Integer> getPages(int totalNumberOfPage) {
+            SortedSet<Integer> retSet = new TreeSet<Integer>();
             for (int i = 1; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
@@ -43,7 +43,13 @@ public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
         }
     };
 
-    public abstract Set<Integer> getPages(int totalNumberOfPage);
+    /**
+     * @param totalNumberOfPage
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages ordered using their natural ordering.
+     * @see PagesSelection#getPages(int)
+     */
+    public abstract SortedSet<Integer> getPages(int totalNumberOfPage);
 
     private String displayName;
 

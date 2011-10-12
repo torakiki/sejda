@@ -79,9 +79,15 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
     }
 
     private void setUpParametersPageRangesMediumFile() {
-        PageRange ristRange = new PageRange(2, 20);
+        PageRange firstRange = new PageRange(2, 3);
+        PageRange secondRange = new PageRange(5, 7);
+        PageRange thirdRange = new PageRange(12, 18);
+        PageRange fourthRange = new PageRange(20, 26);
         Set<PageRange> ranges = new HashSet<PageRange>();
-        ranges.add(ristRange);
+        ranges.add(firstRange);
+        ranges.add(secondRange);
+        ranges.add(thirdRange);
+        ranges.add(fourthRange);
         parameters = new ExtractPagesParameters(ranges);
         parameters.setOverwrite(true);
         parameters.setCompress(true);

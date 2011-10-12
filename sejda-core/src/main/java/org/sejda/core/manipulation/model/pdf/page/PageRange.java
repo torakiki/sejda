@@ -17,8 +17,8 @@
  */
 package org.sejda.core.manipulation.model.pdf.page;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.validation.constraints.Min;
 
@@ -86,8 +86,14 @@ public class PageRange implements PagesSelection {
         return ((range.getStart() >= start && range.getStart() <= end) || (range.getEnd() >= start && range.getEnd() <= end));
     }
 
-    public Set<Integer> getPages(int totalNumberOfPage) {
-        Set<Integer> retSet = new HashSet<Integer>();
+    /**
+     * @param totalNumberOfPage
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages ordered using their natural ordering.
+     * @see PagesSelection#getPages(int)
+     */
+    public SortedSet<Integer> getPages(int totalNumberOfPage) {
+        SortedSet<Integer> retSet = new TreeSet<Integer>();
         for (int i = start; (i <= totalNumberOfPage && i <= end); i++) {
             retSet.add(i);
         }
