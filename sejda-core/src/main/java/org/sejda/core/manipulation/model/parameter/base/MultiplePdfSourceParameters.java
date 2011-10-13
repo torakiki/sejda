@@ -23,8 +23,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.validation.constraint.NotEmpty;
 

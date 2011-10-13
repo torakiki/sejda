@@ -16,10 +16,11 @@
  */
 package org.sejda.core.writer.model;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +76,7 @@ public final class ImageWriterContext {
         ImageWriterAbstractFactory retVal = null;
         String factoryClassString = System.getProperty(IMAGE_WRITER_FACTORY_CLASS);
 
-        if (StringUtils.isNotBlank(factoryClassString)) {
+        if (isNotBlank(factoryClassString)) {
             LOG.trace("Instantiating custom ImageWriterAbstractFactory: {}", factoryClassString);
             try {
                 Constructor<?> constructor = findConstructor(factoryClassString);

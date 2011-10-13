@@ -19,8 +19,8 @@ package org.sejda.cli;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.exception.ConsoleException;
 import org.sejda.cli.transformer.CliCommand;

@@ -19,7 +19,7 @@
  */
 package org.sejda.core.notification.event;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Event thrown when an execution completes without errors.

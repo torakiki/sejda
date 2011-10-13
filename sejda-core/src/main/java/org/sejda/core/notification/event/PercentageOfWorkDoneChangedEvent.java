@@ -21,7 +21,7 @@ package org.sejda.core.notification.event;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Event used to notify about the increasing percentage of work executed by the task.
