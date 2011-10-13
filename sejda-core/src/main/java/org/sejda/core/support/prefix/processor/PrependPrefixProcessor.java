@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**

@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;

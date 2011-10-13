@@ -16,8 +16,8 @@
  */
 package org.sejda.cli;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.slf4j.Logger;

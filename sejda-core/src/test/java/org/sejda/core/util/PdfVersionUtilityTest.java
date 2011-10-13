@@ -16,14 +16,14 @@
  */
 package org.sejda.core.util;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
 import org.sejda.core.support.util.PdfVersionUtility;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Andrea Vacondio

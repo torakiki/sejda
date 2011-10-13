@@ -18,7 +18,7 @@
 package org.sejda.core.validation.validator;
 
 import static org.apache.commons.io.FilenameUtils.indexOfExtension;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.io.File;
 

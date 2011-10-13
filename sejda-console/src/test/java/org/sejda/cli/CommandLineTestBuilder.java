@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.mutable.MutableBoolean;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.ArgumentCaptor;
 import org.sejda.cli.util.OnceWithMessage;
 import org.sejda.cli.util.SystemOutRecordingStream;

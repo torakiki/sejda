@@ -44,6 +44,6 @@ public final class ExceptionUtils {
      * @return true if the specified {@link Throwable} is an exception that is considered expected by sejda-core, and therefore can be considered as expected by the console also.
      */
     public static boolean isExpectedTaskException(Throwable e) {
-        return org.apache.commons.lang.exception.ExceptionUtils.indexOfType(e, TaskException.class) > 0;
+        return org.apache.commons.lang3.exception.ExceptionUtils.indexOfType(e, TaskException.class) > 0;
     }
 }

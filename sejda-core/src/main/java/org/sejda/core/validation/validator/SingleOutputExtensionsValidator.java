@@ -18,14 +18,14 @@ package org.sejda.core.validation.validator;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.indexOfExtension;
-import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import java.io.File;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.sejda.core.manipulation.model.output.FileOutput;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.parameter.base.SingleOutputTaskParameters;

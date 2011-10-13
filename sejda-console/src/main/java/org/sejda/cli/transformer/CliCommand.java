@@ -20,7 +20,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
 import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;

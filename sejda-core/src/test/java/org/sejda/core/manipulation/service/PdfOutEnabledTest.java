@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.core.manipulation.model.output.FileOutput;

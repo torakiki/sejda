@@ -19,9 +19,9 @@ package org.sejda.core.manipulation.model.rotation;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * Model representing a rotation to be applied to a single page or to a class of pages (even, odd, all)

@@ -19,7 +19,7 @@ package org.sejda.cli;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.exception.DefaultUncaughtExceptionHandler;
 import org.sejda.cli.exception.ExceptionUtils;

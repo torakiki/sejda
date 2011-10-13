@@ -19,7 +19,7 @@ package org.sejda.cli.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.sejda.cli.model.MergeTaskCliArguments;
 import org.sejda.cli.model.adapter.MultiplePdfMergeInputAdapter;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;

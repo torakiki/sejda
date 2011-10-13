@@ -46,6 +46,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>		
+		<dependency>
 			<groupId>org.icepdf</groupId>
 			<artifactId>icepdf-core</artifactId>
 			<version>4.2.2</version>

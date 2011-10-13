@@ -96,7 +96,8 @@
 					<goals>deploy</goals>
 					<localCheckout>true</localCheckout>
 					<pushChanges>false</pushChanges>
-					<!-- activates the release profile, which executes the plugin(s) creating the bin assemblies -->
+					<!-- activates the release profile, which executes the plugin(s) creating 
+						the bin assemblies -->
 					<releaseProfiles>release</releaseProfiles>
 					<!-- You will want to configure <mavenExecutorId>forked-path</mavenExecutorId> 
 						for maven-release-plugin to get around a GPG plugin hanging issue -->
@@ -113,7 +114,7 @@
 		<slf4j.version>1.6.2</slf4j.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<jaxen.version>1.1.1</jaxen.version>
-		<commons.lang.version>2.6</commons.lang.version>
+		<commons.lang.version>3.0.1</commons.lang.version>
 		<commons.io.version>2.1</commons.io.version>
 		<commons.collections.version>3.2.1</commons.collections.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
@@ -158,8 +159,8 @@
 				<version>${commons.io.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>commons-lang</groupId>
-				<artifactId>commons-lang</artifactId>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
 				<version>${commons.lang.version}</version>
 			</dependency>
 			<dependency>
@@ -257,7 +258,8 @@
 						<executions>
 							<execution>
 								<id>sign-artifacts</id>
-								<!-- install and not verify because the plugin needs to sign artifacts created during package phase-->
+								<!-- install and not verify because the plugin needs to sign artifacts 
+									created during package phase -->
 								<phase>install</phase>
 								<goals>
 									<goal>sign</goal>

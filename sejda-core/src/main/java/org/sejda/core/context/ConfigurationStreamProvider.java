@@ -1,6 +1,6 @@
 /*
- * Created on 03/ago/2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 13/ott/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -14,22 +14,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.model.pdf.page;
+package org.sejda.core.context;
 
-import static org.junit.Assert.assertEquals;
+import java.io.InputStream;
 
-import org.junit.Test;
+import org.sejda.core.exception.ConfigurationException;
 
 /**
+ * Component providing an input stream where the configuration will be read from.
+ * 
  * @author Andrea Vacondio
  * 
  */
-public class PredefinedSetOfPagesTest {
+interface ConfigurationStreamProvider {
 
-    @Test
-    public void getPages() {
-        assertEquals(10, PredefinedSetOfPages.ALL_PAGES.getPages(10).size());
-        assertEquals(5, PredefinedSetOfPages.EVEN_PAGES.getPages(10).size());
-        assertEquals(5, PredefinedSetOfPages.ODD_PAGES.getPages(10).size());
-    }
+    /**
+     * @return InputStream where the configuration can be read from.
+     * @throws ConfigurationException
+     */
+    InputStream getConfigurationStream() throws ConfigurationException;
 }
