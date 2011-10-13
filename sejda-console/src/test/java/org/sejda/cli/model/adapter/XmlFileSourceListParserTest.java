@@ -46,7 +46,7 @@ public class XmlFileSourceListParserTest extends AbstractTestSuite {
         assertThat(result, hasItem("/tmp/inputFile1.pdf"));
         assertThat(result, hasItem("/tmp/inputFile2.pdf"));
         assertThat(result, hasItem("/tmp/subdir/inputFile1.pdf"));
-        assertThat(result, hasItem("/tmp/subdir/inputFile2.pdf"));
+        assertThat(result, hasItem("/tmp/subdir3/inputFile2.pdf")); // its defined in absolute path mode in the file
         assertThat(result, hasItem("/tmp/subdir2/inputFile1.pdf"));
         assertThat(result, hasItem("/tmp/subdir2/inputFile2.pdf:secret2"));
         assertThat(result, hasItem("/tmp/subdir2/inputFile3.pdf"));

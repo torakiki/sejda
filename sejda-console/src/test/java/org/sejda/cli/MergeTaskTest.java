@@ -73,7 +73,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         createTestPdfFile("/tmp/inputFile1.pdf");
         createTestPdfFile("/tmp/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir/inputFile1.pdf");
-        createTestPdfFile("/tmp/subdir/inputFile2.pdf");
+        createTestPdfFile("/tmp/subdir3/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile1.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile3.pdf");
@@ -218,7 +218,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         assertPdfMergeInputsFilesList(
                 parameters,
                 filesList("/tmp/pdf/inputFile.pdf", "/tmp/pdf/inputFile2.pdf", "/tmp/inputFile1.pdf",
-                        "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir/inputFile2.pdf",
+                        "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir3/inputFile2.pdf",
                         "/tmp/subdir2/inputFile1.pdf", "/tmp/subdir2/inputFile2.pdf", "/tmp/subdir2/inputFile3.pdf"),
                 Arrays.asList(null, "test", null, null, null, null, null, "secret2", null));
     }

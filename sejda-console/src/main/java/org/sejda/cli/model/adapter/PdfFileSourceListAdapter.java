@@ -257,14 +257,23 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             Node node = nodeList.item(i);
             Node fileSet = node.getParentNode();
 
-            // warn if file in fileset is in absolute path mode
-            String parentDirPath = configFile.getAbsoluteFile().getParent();
-            if (fileSet.getAttributes().getNamedItem("dir") != null) {
-                parentDirPath = fileSet.getAttributes().getNamedItem("dir").getNodeValue();
+            String parentDirPath = nullSafeGetAttribute(fileSet, "dir");
+            if (parentDirPath == null) {
+                parentDirPath = configFile.getAbsoluteFile().getParent();
             }
 
-            // avoid double separators
-            result.add(parentDirPath + File.separator + extractFilePath(node));
+            String filePath = extractFilePath(node);
+
+            // warn if file in fileset is using absolute path mode
+            if (FilenameUtils.getPrefixLength(filePath) > 0) {
+                LOG.warn("File "
+                        + filePath
+                        + " in fileset "
+                        + StringUtils.defaultIfBlank(nullSafeGetAttribute(fileSet, "dir"), "")
+                        + " seems to be an absolute path. Will _not_ be resolved relative to the <fileset>, but as an absolute path. Normally you would want to use relative paths in a //filelist/fileset/file, and absolute paths in a //filelist/file.");
+            }
+
+            result.add(FilenameUtils.concat(parentDirPath, filePath));
         }
 
         return result;
