@@ -45,8 +45,8 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     @Test
     public void onFlagOptions() {
-        ViewerPreferencesParameters parameters = defaultCommandLine().with("--centerWindow").with("--displayDocTitle")
-                .with("--hideMenu").with("--fitWindow").with("--hideWindowUI").with("--hideToolbar")
+        ViewerPreferencesParameters parameters = defaultCommandLine().withFlag("--centerWindow").withFlag("--displayDocTitle")
+                .withFlag("--hideMenu").withFlag("--fitWindow").withFlag("--hideWindowUI").withFlag("--hideToolbar")
                 .invokeSejdaConsole();
 
         assertContainsAll(EnumSet.allOf(PdfBooleanPreference.class), parameters.getEnabledPreferences());
@@ -61,7 +61,7 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     @Test
     public void specifiedValues() {
-        ViewerPreferencesParameters parameters = defaultCommandLine().with("--noPrintScaling")
+        ViewerPreferencesParameters parameters = defaultCommandLine().withFlag("--noPrintScaling")
                 .with("--direction", "r2l").with("--duplex", "duplex_flip_short_edge").with("--nfsMode", "nfsthumbs")
                 .with("--layout", "twopagel").with("--mode", "attachments").invokeSejdaConsole();
 

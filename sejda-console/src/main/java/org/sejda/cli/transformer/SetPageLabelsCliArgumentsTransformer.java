@@ -30,10 +30,10 @@ public class SetPageLabelsCliArgumentsTransformer extends BaseCliArgumentsTransf
         CommandCliArgumentsTransformer<SetPageLabelsTaskCliArguments, SetPagesLabelParameters> {
 
     /**
-     * Transforms {@link SetPagesLabelTaskCliArguments} to {@link SetPagesLabelParameters}
+     * Transforms {@link SetPageLabelsTaskCliArguments} to {@link SetPagesLabelParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public SetPagesLabelParameters toTaskParameters(SetPageLabelsTaskCliArguments taskCliArguments) {
         final SetPagesLabelParameters parameters = new SetPagesLabelParameters();

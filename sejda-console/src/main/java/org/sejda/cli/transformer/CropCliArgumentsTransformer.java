@@ -30,10 +30,10 @@ public class CropCliArgumentsTransformer extends BaseCliArgumentsTransformer imp
         CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> {
 
     /**
-     * Transforms {@link SetPagesLabelTaskCliArguments} to {@link CropParameters}
+     * Transforms {@link CropTaskCliArguments} to {@link CropParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public CropParameters toTaskParameters(CropTaskCliArguments taskCliArguments) {
         CropParameters parameters = new CropParameters();

@@ -32,7 +32,7 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * Transforms {@link DecryptTaskCliArguments} to {@link DecryptParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public DecryptParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
         DecryptParameters parameters = new DecryptParameters();

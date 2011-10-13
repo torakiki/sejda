@@ -38,12 +38,10 @@ public final class EnumUtils {
     }
 
     /**
-     * Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
-     * Does not throw an exception if enum value is not found, returns null
-     * 
      * @param enumClass
      * @param displayName
-     * @return
+     * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
+     *         Does not throw an exception if enum value is not found, returns null
      */
     public static <T extends DisplayNamedEnum> T valueOfSilently(Class<T> enumClass, String displayName) {
         for (T each : enumClass.getEnumConstants()) {
@@ -56,13 +54,12 @@ public final class EnumUtils {
     }
 
     /**
-     * Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
-     * Throws an exception if enum value is not found, mentioning the valid values in the message
-     * 
      * @param enumClass
      * @param displayName
      * @param describedEnumClass
-     * @return
+     * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
+     * @throws SejdaRuntimeException
+     *             if enum value is not found, mentioning the valid values in the message
      */
     public static <T extends DisplayNamedEnum> T valueOf(Class<T> enumClass, String displayName,
             String describedEnumClass) {

@@ -33,7 +33,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
      * Transforms {@link ExtractPagesTaskCliArguments} to {@link ExtractPagesParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public ExtractPagesParameters toTaskParameters(ExtractPagesTaskCliArguments taskCliArguments) {
         final ExtractPagesParameters parameters;

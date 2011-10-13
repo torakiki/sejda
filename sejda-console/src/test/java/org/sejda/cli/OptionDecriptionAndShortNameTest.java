@@ -118,14 +118,14 @@ public class OptionDecriptionAndShortNameTest extends AcrossAllTasksTraitTest {
         }
 
         /**
-         * @return
+         * @return true if the Option defined by the method is not a flag that has only true/false values (these are known to always be optional options)
          */
         public boolean isNotBooleanFlag() {
             return !method.getReturnType().equals(boolean.class);
         }
 
         /**
-         * @return
+         * @return name of the method
          */
         public String getMethodName() {
             return getMethod().getName();

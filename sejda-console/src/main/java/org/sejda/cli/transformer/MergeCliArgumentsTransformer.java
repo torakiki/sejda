@@ -41,7 +41,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
      * Transforms {@link MergeTaskCliArguments} to {@link MergeParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public MergeParameters toTaskParameters(MergeTaskCliArguments taskCliArguments) {
         MergeParameters parameters = new MergeParameters(taskCliArguments.isCopyFields());
@@ -56,10 +56,6 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
         return parameters;
     }
 
-    /**
-     * @param taskCliArguments
-     * @return
-     */
     private MultiplePdfMergeInputAdapter extractPdfMergeInputs(MergeTaskCliArguments taskCliArguments) {
         // input files can be specified in 3 ways: explicitly, via a folder or via a config file
         List<PdfFileSource> inputFiles = null;

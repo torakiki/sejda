@@ -37,7 +37,7 @@ public class DefaultUncaughtExceptionHandler implements UncaughtExceptionHandler
 
     /**
      * @param e
-     * @return
+     * @return true if the {@link Throwable} specified is an expected exception
      */
     private boolean isExpectedException(Throwable e) {
         return ExceptionUtils.isExpectedConsoleException(e) || ExceptionUtils.isExpectedTaskException(e);

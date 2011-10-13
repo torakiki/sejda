@@ -38,7 +38,7 @@ public class DefaultTaskExecutionFailedEventListener implements EventListener<Ta
 
     /**
      * @param event
-     * @return
+     * @return string containing the message in the failing cause exception of the event
      */
     private String extractFailingCauseMessage(TaskExecutionFailedEvent event) {
         return ExceptionUtils.getMessage(event.getFailingCause());

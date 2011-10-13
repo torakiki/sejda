@@ -85,7 +85,7 @@ public class MergeTaskTest extends AbstractTaskTest {
 
     @Test
     public void onCopyFields() {
-        MergeParameters parameters = defaultCommandLine().with("--copyFields").invokeSejdaConsole();
+        MergeParameters parameters = defaultCommandLine().withFlag("--copyFields").invokeSejdaConsole();
         assertTrue(parameters.isCopyFormFields());
     }
 

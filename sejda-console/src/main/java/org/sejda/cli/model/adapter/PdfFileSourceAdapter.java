@@ -81,7 +81,7 @@ public class PdfFileSourceAdapter {
      * Password protected file support included
      * 
      * @param filenames
-     * @return
+     * @return a list of {@link PdfFileSource}s built from the filenames specified
      */
     static List<PdfFileSource> fromStrings(List<String> filenames) {
         List<PdfFileSource> result = new ArrayList<PdfFileSource>();

@@ -32,7 +32,7 @@ public class UnpackCliArgumentsTransformer extends BaseCliArgumentsTransformer i
      * Transforms {@link UnpackTaskCliArguments} to {@link UnpackParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public UnpackParameters toTaskParameters(UnpackTaskCliArguments taskCliArguments) {
         UnpackParameters parameters = new UnpackParameters(taskCliArguments.getOutput().getPdfDirectoryOutput());

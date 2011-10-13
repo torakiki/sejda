@@ -32,7 +32,7 @@ public class ExtractTextCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * Transforms {@link ExtractTextTaskCliArguments} to {@link ExtractTextParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public ExtractTextParameters toTaskParameters(ExtractTextTaskCliArguments taskCliArguments) {
         final ExtractTextParameters parameters = new ExtractTextParameters(taskCliArguments.getOutput()

@@ -47,7 +47,7 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void onValueCompressed() {
-        AbstractPdfOutputParameters result = defaultCommandLine().with("--compressed").invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().withFlag("--compressed").invokeSejdaConsole();
 
         assertTrue(describeExpectations(), result.isCompressXref());
     }

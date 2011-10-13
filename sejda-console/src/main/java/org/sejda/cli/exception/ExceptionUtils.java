@@ -32,7 +32,8 @@ public final class ExceptionUtils {
 
     /**
      * @param e
-     * @return
+     * @return true if specified {@link Throwable} e is an exception that is considered expected by sejda-console (validation failure, for example - something that is expected to
+     *         occur if input is incorrect, not an unexpected failure)
      */
     public static boolean isExpectedConsoleException(Throwable e) {
         return e instanceof ConsoleException;
@@ -40,7 +41,7 @@ public final class ExceptionUtils {
 
     /**
      * @param e
-     * @return
+     * @return true if the specified {@link Throwable} is an exception that is considered expected by sejda-core, and therefore can be considered as expected by the console also.
      */
     public static boolean isExpectedTaskException(Throwable e) {
         return org.apache.commons.lang.exception.ExceptionUtils.indexOfType(e, TaskException.class) > 0;
