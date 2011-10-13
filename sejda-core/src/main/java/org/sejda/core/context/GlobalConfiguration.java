@@ -17,11 +17,9 @@
  */
 package org.sejda.core.context;
 
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.exception.SejdaRuntimeException;
@@ -45,9 +43,6 @@ final class GlobalConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
-    private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
-    private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
-
     private Class<? extends NotificationStrategy> notificationStrategy;
     private TasksRegistry taskRegistry;
     private boolean validation;
@@ -68,35 +63,14 @@ final class GlobalConfiguration {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private void initialize() {
         taskRegistry = new DefaultTasksRegistry();
-        String userConfigFileName = System.getProperty(USER_CONFIG_FILE_PROPERTY, USER_CONFIG_FILE_NAME);
-        InputStream userConfigStream = ClassLoader.getSystemResourceAsStream(userConfigFileName);
-        if (userConfigStream != null) {
-            LOG.debug("Loading Sejda configuration form " + userConfigFileName);
-            initializeConfigurationFromStream(userConfigStream);
-        } else {
-            throw new SejdaRuntimeException(String.format("Unable to find configuration file [%s] in classpath.",
-                    userConfigFileName));
-        }
-    }
-
-    /**
-     * initialize the configuration values from the input stream.
-     * 
-     * @param stream
-     * @throws SejdaRuntimeException
-     *             in case of error loading the configuration
-     */
-    @SuppressWarnings("rawtypes")
-    private void initializeConfigurationFromStream(InputStream stream) {
         ConfigurationStrategy configStrategy;
         try {
-            configStrategy = new XmlConfigurationStrategy(stream);
+            configStrategy = XmlConfigurationStrategy.newInstance(new XmlConfigurationStreamProvider());
         } catch (ConfigurationException e) {
             throw new SejdaRuntimeException("Unable to complete Sejda configuration ", e);
-        } finally {
-            IOUtils.closeQuietly(stream);
         }
         notificationStrategy = configStrategy.getNotificationStrategy();
         LOG.trace("Notification strategy: {}", notificationStrategy);

@@ -18,17 +18,15 @@
 package org.sejda.core.exception;
 
 /**
- * General runtime exception
+ * General Sejda runtime exception.
+ * 
  * @author Andrea Vacondio
- *
+ * 
  */
 public class SejdaRuntimeException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1630506833274259591L;
 
-    /**
-     * 
-     */
     public SejdaRuntimeException() {
         super();
     }

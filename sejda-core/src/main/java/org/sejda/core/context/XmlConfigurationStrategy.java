@@ -28,6 +28,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
@@ -47,7 +48,7 @@ import org.xml.sax.SAXException;
  * 
  */
 
-class XmlConfigurationStrategy implements ConfigurationStrategy {
+final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
     private static final String VALIDATION_XPATH = "/@validation";
@@ -70,7 +71,7 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @throws ConfigurationException
      *             in case of error parsing the input stream
      */
-    XmlConfigurationStrategy(InputStream input) throws ConfigurationException {
+    private XmlConfigurationStrategy(InputStream input) throws ConfigurationException {
         initializeFromInputStream(input);
     }
 
@@ -185,5 +186,23 @@ class XmlConfigurationStrategy implements ConfigurationStrategy {
             retVal = Boolean.parseBoolean(node.getText().trim());
         }
         return retVal;
+    }
+
+    /**
+     * static factory method.
+     * 
+     * @param provider
+     *            provider for the configuration stream.
+     * @return the new instance.
+     * @throws ConfigurationException
+     */
+    static XmlConfigurationStrategy newInstance(ConfigurationStreamProvider provider) throws ConfigurationException {
+        InputStream stream = null;
+        try {
+            stream = provider.getConfigurationStream();
+            return new XmlConfigurationStrategy(stream);
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 }
