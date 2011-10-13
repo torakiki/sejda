@@ -124,9 +124,11 @@ interface PdfInputFilesSource {
  * 
  */
 abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
+    private static final Log LOG = LogFactory.getLog(AbstractPdfInputFilesSource.class);
 
     public List<PdfFileSource> getInputFiles(File file) {
         List<String> filenames = parseFileNames(file);
+        LOG.trace("Input files: '" + StringUtils.join(filenames, "', '") + "'");
         try {
             return PdfFileSourceAdapter.fromStrings(filenames);
         } catch (SejdaRuntimeException e) {
@@ -282,7 +284,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
     private String extractFilePath(Node fileNode) {
         String password = nullSafeGetAttribute(fileNode, "password");
         String value = nullSafeGetAttribute(fileNode, "value");
-        return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR + password);
+        return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR_CHARACTER + password);
     }
 
     private String nullSafeGetAttribute(Node node, String attributeName) {
