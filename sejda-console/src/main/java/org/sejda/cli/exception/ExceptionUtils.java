@@ -43,6 +43,6 @@ public final class ExceptionUtils {
      * @return
      */
     public static boolean isExpectedTaskException(Throwable e) {
-        return org.apache.commons.lang.exception.ExceptionUtils.indexOfType(e, TaskException.class) > 0;
+        return org.apache.commons.lang3.exception.ExceptionUtils.indexOfType(e, TaskException.class) > 0;
     }
 }
