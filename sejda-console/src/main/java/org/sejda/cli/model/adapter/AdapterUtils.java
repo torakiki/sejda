@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model.adapter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 
 /**

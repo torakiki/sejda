@@ -16,13 +16,14 @@
  */
 package org.sejda.impl.itext.component;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.sejda.core.manipulation.model.outline.OutlineGoToPageDestinations;
 import org.sejda.core.manipulation.model.outline.OutlineHandler;
 
@@ -52,7 +53,7 @@ public class ITextOutlineHandler implements OutlineHandler {
     public ITextOutlineHandler(PdfReader reader, String matchingTitleRegEx) {
         reader.consolidateNamedDestinations();
         this.bookmarks = (List<Map<String, Object>>) SimpleBookmark.getBookmark(reader);
-        if (StringUtils.isNotBlank(matchingTitleRegEx)) {
+        if (isNotBlank(matchingTitleRegEx)) {
             titleMatchingPattern = Pattern.compile(matchingTitleRegEx);
         }
     }
@@ -93,7 +94,7 @@ public class ITextOutlineHandler implements OutlineHandler {
 
     private void addFirstPageBookmark(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
         String title = nullSafeGetTitle(bookmark);
-        if (StringUtils.isNotBlank(title)) {
+        if (isNotBlank(title)) {
             destinations.addFirstPageTitle(title);
         }
     }

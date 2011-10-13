@@ -24,7 +24,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceParameters;
 
 /**
  * @author Andrea Vacondio

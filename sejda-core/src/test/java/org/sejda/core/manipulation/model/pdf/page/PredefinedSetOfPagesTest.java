@@ -19,7 +19,6 @@ package org.sejda.core.manipulation.model.pdf.page;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * @author Andrea Vacondio

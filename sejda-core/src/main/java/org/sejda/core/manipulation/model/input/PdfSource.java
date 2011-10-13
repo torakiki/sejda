@@ -17,8 +17,10 @@
  */
 package org.sejda.core.manipulation.model.input;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.validation.constraint.NotEmpty;
 
@@ -42,7 +44,7 @@ public abstract class PdfSource {
      *             if the name is blank
      */
     PdfSource(String name) {
-        if (StringUtils.isBlank(name)) {
+        if (isBlank(name)) {
             throw new IllegalArgumentException("A not blank name are expected.");
         }
         this.name = name;
@@ -70,7 +72,7 @@ public abstract class PdfSource {
      */
     public byte[] getPasswordBytes() {
         byte[] retVal = null;
-        if (StringUtils.isNotEmpty(password)) {
+        if (isNotEmpty(password)) {
             retVal = password.getBytes();
         }
         return retVal;

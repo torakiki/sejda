@@ -17,8 +17,8 @@
  */
 package org.sejda.core.manipulation.model.parameter.base;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.validation.constraint.ValidPdfVersion;

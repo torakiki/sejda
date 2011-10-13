@@ -16,6 +16,7 @@
  */
 package org.sejda.core.writer.model;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
 
 import java.io.File;
@@ -27,7 +28,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.xmlgraphics.image.codec.util.SeekableOutputStream;
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.sejda.core.exception.TaskIOException;
@@ -90,7 +90,7 @@ abstract class AbstractXmlGraphicsImageWriterAdapter<T extends AbstractPdfToImag
         ImageWriterParams imageWriterParams = new ImageWriterParams();
         imageWriterParams.setResolution(params.getResolutionInDpi());
         String compression = TIFF_COMPRESSION_TYPE_CACHE.get(compressionType);
-        if (StringUtils.isNotBlank(compression)) {
+        if (isNotBlank(compression)) {
             imageWriterParams.setCompressionMethod(compression);
         } else {
             LOG.warn("{} compression type is currently not supported by XML Graphics.", compressionType);

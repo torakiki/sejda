@@ -19,7 +19,7 @@ package org.sejda.core.validation.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.manipulation.model.output.OutputType;
 import org.sejda.core.manipulation.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.core.validation.constraint.ValidSingleOutput;

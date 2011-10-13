@@ -17,6 +17,8 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,7 +30,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.output.FileOutput;
@@ -121,7 +122,7 @@ final class OutputWriter {
             throw new TaskIOException(String.format("Unable to make destination directory tree %s.", outputDirectory));
         }
         for (Entry<String, File> entry : files.entrySet()) {
-            if (StringUtils.isBlank(entry.getKey())) {
+            if (isBlank(entry.getKey())) {
                 throw new TaskIOException(String.format(
                         "Unable to copy %s to the output directory, no output name specified.", entry.getValue()));
             }
@@ -166,7 +167,7 @@ final class OutputWriter {
         ZipOutputStream zipOut = new ZipOutputStream(out);
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;
-            if (StringUtils.isBlank(entry.getKey())) {
+            if (isBlank(entry.getKey())) {
                 throw new TaskIOException(String.format(
                         "Unable to copy %s to the output stream, no output name specified.", entry.getValue()));
             }

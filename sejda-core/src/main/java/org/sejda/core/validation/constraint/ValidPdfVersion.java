@@ -16,6 +16,9 @@
  */
 package org.sejda.core.validation.constraint;
 
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -26,9 +29,6 @@ import javax.validation.ReportAsSingleViolation;
 import javax.validation.constraints.NotNull;
 
 import org.sejda.core.validation.validator.PdfVersionValidator;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Constraint validating that the pdf version specified in an {@link org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters} is compatible with the other class attributes.

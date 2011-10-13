@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.sejda.cli.util.FormattingUtils;
 
 /**
  * Tests for {@link FormattingUtils}
