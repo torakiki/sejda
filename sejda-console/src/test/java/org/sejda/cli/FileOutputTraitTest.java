@@ -35,7 +35,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput());
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput()));
     }
 
     public FileOutputTraitTest(TestableTask testableTask) {

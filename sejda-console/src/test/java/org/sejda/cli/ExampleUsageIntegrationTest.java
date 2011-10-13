@@ -20,10 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-
 import org.junit.Test;
-import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Integration tests, running without mocks the example usage for each task
@@ -31,15 +28,10 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Eduard Weissmann
  * 
  */
-public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
+public class ExampleUsageIntegrationTest extends AcrossAllTasksTraitTest {
 
     public ExampleUsageIntegrationTest(TestableTask testableTask) {
         super(testableTask);
-    }
-
-    @Parameters
-    public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasks();
     }
 
     @Test

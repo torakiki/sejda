@@ -32,8 +32,8 @@ import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParam
 public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
-    public static Collection<Object[]> data() {
-        return TestableTask.allTasksExceptFor(TestableTask.getTasksWithMultipleSouceFiles());
+    public static Collection<Object[]> getTestParameters() {
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithMultipleSouceFiles()));
     }
 
     public SingleInputSourceFileTraitTest(TestableTask testableTask) {

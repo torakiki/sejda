@@ -37,8 +37,8 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF);
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
+                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF));
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {

@@ -33,7 +33,7 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asData(TestableTask.getTasksWithFolderOutput());
+        return asParameterizedTestData(TestableTask.getTasksWithFolderOutput());
     }
 
     public FolderOutputTraitTest(TestableTask testableTask) {
