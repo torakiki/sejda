@@ -62,6 +62,7 @@ public class SejdaConsole {
 
     private void doExecute() {
         LOG.debug("Starting execution with arguments: '" + arguments + "'");
+        LOG.debug("Java version: '" + System.getProperty("java.version") + "'");
 
         if (isNoCommandSpecified()) {
             if (isVersionRequest() || isLicenseRequest()) {
