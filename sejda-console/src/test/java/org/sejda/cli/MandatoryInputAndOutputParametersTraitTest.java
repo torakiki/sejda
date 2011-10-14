@@ -31,7 +31,7 @@ public class MandatoryInputAndOutputParametersTraitTest extends AbstractTaskTrai
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasksExceptFor(TestableTask.MERGE);
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.MERGE));
     }
 
     public MandatoryInputAndOutputParametersTraitTest(TestableTask testableTask) {

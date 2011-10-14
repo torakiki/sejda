@@ -33,7 +33,7 @@ public class SetPageTransitionsCliArgumentsTransformer extends BaseCliArgumentsT
      * Transforms {@link SetPageTransitionsTaskCliArguments} to {@link SetPagesTransitionParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public SetPagesTransitionParameters toTaskParameters(SetPageTransitionsTaskCliArguments taskCliArguments) {
         SetPagesTransitionParameters parameters;

@@ -16,17 +16,20 @@ import org.sejda.core.manipulation.model.input.PdfFileSource;
  * 
  */
 public class PdfFileSourceAdapter {
-    public static final String PASSWORD_SEPARATOR = ":";
+    public static final String PASSWORD_SEPARATOR_CHARACTER = ":";
+    private static final String PDF_EXTENSION = ".pdf";
+    private static final String PDF_EXTENSION_AND_PASSWORD_SEPARATOR = PDF_EXTENSION + PASSWORD_SEPARATOR_CHARACTER;
 
     private final PdfFileSource pdfFileSource;
 
     /**
      * Constructor for a {@link PdfFileSourceAdapter}. Supports pdf files that are password protected<br/>
      * If file has no password protection, input parameter is the path to the file. Eg: {@code /path/to/file.pdf}<br/>
-     * For password protected files, input is concatenation of file path and password, using {@value #PASSWORD_SEPARATOR} as delimiter. Eg: {@code /path/to/file.pdf:secret123}
+     * For password protected files, input is concatenation of file path and password, using {@value #PASSWORD_SEPARATOR_CHARACTER} as delimiter. Eg:
+     * {@code /path/to/file.pdf:secret123}
      * 
      * @param filePathAndPassword
-     *            file path concatenated using {@value #PASSWORD_SEPARATOR} with (optional) password
+     *            file path concatenated using {@value #PASSWORD_SEPARATOR_CHARACTER} with (optional) password
      */
     public PdfFileSourceAdapter(String filePathAndPassword) {
 
@@ -52,28 +55,31 @@ public class PdfFileSourceAdapter {
      * Extracts the file path part from the specified input
      * 
      * @param filePathAndPassword
-     *            input containing file path concatenated using {@value #PASSWORD_SEPARATOR} with (optional) password
+     *            input containing file path concatenated using {@value #PASSWORD_SEPARATOR_CHARACTER} with (optional) password
      * @return file path part
      */
     static String extractFilePath(String filePathAndPassword) {
-        if (!filePathAndPassword.contains(PASSWORD_SEPARATOR)) {
+        if (!StringUtils.containsIgnoreCase(filePathAndPassword, PDF_EXTENSION_AND_PASSWORD_SEPARATOR)) {
             return filePathAndPassword;
         }
-        return filePathAndPassword.substring(0, filePathAndPassword.indexOf(PASSWORD_SEPARATOR));
+        return filePathAndPassword.substring(0,
+                StringUtils.indexOfIgnoreCase(filePathAndPassword, PDF_EXTENSION_AND_PASSWORD_SEPARATOR)
+                        + PDF_EXTENSION.length());
     }
 
     /**
      * Extracts the password part from the specified input
      * 
      * @param filePathAndPassword
-     *            input containing file path concatenated using {@value #PASSWORD_SEPARATOR} with (optional) password
+     *            input containing file path concatenated using {@value #PASSWORD_SEPARATOR_CHARACTER} with (optional) password
      * @return the password part
      */
     static String extractPassword(String filePathAndPassword) {
-        if (!filePathAndPassword.contains(PASSWORD_SEPARATOR)) {
+        if (!StringUtils.containsIgnoreCase(filePathAndPassword, PDF_EXTENSION_AND_PASSWORD_SEPARATOR)) {
             return "";
         }
-        return filePathAndPassword.substring(filePathAndPassword.indexOf(PASSWORD_SEPARATOR) + 1);
+        return filePathAndPassword.substring(StringUtils.indexOfIgnoreCase(filePathAndPassword,
+                PDF_EXTENSION_AND_PASSWORD_SEPARATOR) + 1 + PDF_EXTENSION.length());
     }
 
     /**
@@ -81,7 +87,7 @@ public class PdfFileSourceAdapter {
      * Password protected file support included
      * 
      * @param filenames
-     * @return
+     * @return a list of {@link PdfFileSource}s built from the filenames specified
      */
     static List<PdfFileSource> fromStrings(List<String> filenames) {
         List<PdfFileSource> result = new ArrayList<PdfFileSource>();

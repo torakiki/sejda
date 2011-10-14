@@ -33,7 +33,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asData(TestableTask.getTasksWithMultipleSouceFiles());
+        return asParameterizedTestData(TestableTask.getTasksWithMultipleSouceFiles());
     }
 
     public MultipleInputSourceFilesTraitTest(TestableTask testableTask) {

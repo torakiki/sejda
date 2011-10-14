@@ -32,7 +32,7 @@ public class SplitByBookmarksCliArgumentsTransformer extends BaseCliArgumentsTra
      * Transforms {@link SplitByBookmarksTaskCliArguments} to {@link SplitByGoToActionLevelParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public SplitByGoToActionLevelParameters toTaskParameters(SplitByBookmarksTaskCliArguments taskCliArguments) {
         SplitByGoToActionLevelParameters parameters = new SplitByGoToActionLevelParameters(

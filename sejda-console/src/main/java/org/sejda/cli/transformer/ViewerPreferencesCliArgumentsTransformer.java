@@ -34,7 +34,7 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
      * Transforms {@link ViewerPreferencesTaskCliArguments} to {@link ViewerPreferencesParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public ViewerPreferencesParameters toTaskParameters(ViewerPreferencesTaskCliArguments taskCliArguments) {
         ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();

@@ -29,10 +29,10 @@ public class PdfToSingleTiffCliArgumentsTransformer extends BaseCliArgumentsTran
         CommandCliArgumentsTransformer<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters> {
 
     /**
-     * Transforms {@link SetPagesLabelTaskCliArguments} to {@link PdfToSingleTiffParameters}
+     * Transforms {@link PdfToSingleTiffParameters} to {@link PdfToSingleTiffParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public PdfToSingleTiffParameters toTaskParameters(PdfToSingleTiffTaskCliArguments taskCliArguments) {
         PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(taskCliArguments.getColorType()

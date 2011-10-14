@@ -53,8 +53,7 @@ public final class GeneralHelpFormatter {
 
     /**
      * @param each
-     * @param formattedDescription
-     * @return
+     * @return formatted command text
      */
     private String formatCommandText(CliCommand each) {
         String formattedDescription = formatCommandDescriptionText(each);

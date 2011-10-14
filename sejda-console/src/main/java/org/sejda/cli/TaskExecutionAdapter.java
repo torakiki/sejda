@@ -19,7 +19,7 @@ package org.sejda.cli;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 
 /**
- * Sejda cli adapter for the {@link org.sejda.core.manipulation.model.task.TaskExecutionService}
+ * Sejda cli adapter for the {@link org.sejda.core.manipulation.service.TaskExecutionService}
  * 
  * @author Eduard Weissmann
  * 

@@ -35,10 +35,10 @@ public abstract class AbstractTaskTraitTest extends AbstractTaskTest {
         super(testableTask);
     }
 
-    public static Collection<Object[]> asData(TestableTask[] tasks) {
+    public static <T> Collection<Object[]> asParameterizedTestData(T[] items) {
         Collection<Object[]> result = new ArrayList<Object[]>();
-        for (TestableTask eachTask : tasks) {
-            result.add(new Object[] { eachTask });
+        for (T eachItem : items) {
+            result.add(new Object[] { eachItem });
         }
 
         return result;

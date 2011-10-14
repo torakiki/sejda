@@ -29,10 +29,10 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
         CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> {
 
     /**
-     * Transforms {@link SetPagesLabelTaskCliArguments} to {@link PdfToMultipleTiffParameters}
+     * Transforms {@link PdfToMultipleTiffParameters} to {@link PdfToMultipleTiffParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public PdfToMultipleTiffParameters toTaskParameters(PdfToMultipleTiffTaskCliArguments taskCliArguments) {
         PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(taskCliArguments.getColorType()

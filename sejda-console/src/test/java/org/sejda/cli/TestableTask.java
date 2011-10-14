@@ -18,7 +18,6 @@ package org.sejda.cli;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -91,21 +90,15 @@ public enum TestableTask {
         return null;
     }
 
-    public static List<Object[]> allTasks() {
+    public static TestableTask[] allTasks() {
         return allTasksExceptFor();
     }
 
-    // TODO: return array and use asData() to convert to list of object[]
-    public static List<Object[]> allTasksExceptFor(TestableTask... exceptFor) {
-        Collection<TestableTask> exceptForCollection = Arrays.asList(exceptFor);
-        List<Object[]> result = new ArrayList<Object[]>();
-        for (TestableTask each : TestableTask.values()) {
-            if (!exceptForCollection.contains(each)) {
-                result.add(new Object[] { each });
-            }
-        }
+    public static TestableTask[] allTasksExceptFor(TestableTask... exceptFor) {
+        List<TestableTask> result = new ArrayList<TestableTask>(Arrays.asList(TestableTask.values()));
+        result.removeAll(Arrays.asList(exceptFor));
 
-        return result;
+        return result.toArray(new TestableTask[result.size()]);
     }
 
     public static TestableTask[] getTasksWithMultipleSouceFiles() {

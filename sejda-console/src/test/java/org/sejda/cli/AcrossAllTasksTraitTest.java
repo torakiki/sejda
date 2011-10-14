@@ -35,7 +35,7 @@ public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasks();
+        return asParameterizedTestData(TestableTask.allTasks());
     }
 
 }

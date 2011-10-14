@@ -32,7 +32,7 @@ public class SplitByPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
      * Transforms {@link SplitByPagesTaskCliArguments} to {@link SplitByPagesParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public SplitByPagesParameters toTaskParameters(SplitByPagesTaskCliArguments taskCliArguments) {
         SplitByPagesParameters parameters = new SplitByPagesParameters();

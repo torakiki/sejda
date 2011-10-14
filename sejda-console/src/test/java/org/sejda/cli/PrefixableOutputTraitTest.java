@@ -34,7 +34,7 @@ public class PrefixableOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asData(TestableTask.getTasksWithPrefixableOutput());
+        return asParameterizedTestData(TestableTask.getTasksWithPrefixableOutput());
     }
 
     public PrefixableOutputTraitTest(TestableTask testableTask) {

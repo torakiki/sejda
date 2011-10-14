@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * @author Eduard Weissmann
  * 
  */
-// TODO: fix javadoc warnings
 public class SejdaConsole {
     private static final Logger LOG = LoggerFactory.getLogger(SejdaConsole.class);
 
@@ -63,6 +62,7 @@ public class SejdaConsole {
 
     private void doExecute() {
         LOG.debug("Starting execution with arguments: '" + arguments + "'");
+        LOG.debug("Java version: '" + System.getProperty("java.version") + "'");
 
         if (isNoCommandSpecified()) {
             if (isVersionRequest() || isLicenseRequest()) {

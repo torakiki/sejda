@@ -60,6 +60,8 @@ public class CommandLineTestBuilder {
 
     /**
      * Populates 2 default input parameters
+     * 
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder defaultTwoInputs() {
         with("-f", "inputs/input.pdf inputs/second_input.pdf");
@@ -68,6 +70,8 @@ public class CommandLineTestBuilder {
 
     /**
      * Populates default single input parameter
+     * 
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder defaultSingleInput() {
         with("-f", "inputs/input.pdf");
@@ -76,6 +80,8 @@ public class CommandLineTestBuilder {
 
     /**
      * Populates default output parameter as folder ./outputs
+     * 
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder defaultFolderOutput() {
         with("-o", "./outputs");
@@ -84,6 +90,8 @@ public class CommandLineTestBuilder {
 
     /**
      * Populates default output parameter as file fileOutput.pdf
+     * 
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder defaultFileOutput() {
         with("-o", "./outputs/fileOutput.pdf");
@@ -95,7 +103,7 @@ public class CommandLineTestBuilder {
      * 
      * @param option
      *            option to remove
-     * @return
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder without(String option) {
         optionsAndValues.remove(option);
@@ -104,6 +112,8 @@ public class CommandLineTestBuilder {
 
     /**
      * Removes any flags/options already added
+     * 
+     * @return this builder (for telescopic usage)
      * 
      */
     public CommandLineTestBuilder reset() {
@@ -116,14 +126,20 @@ public class CommandLineTestBuilder {
      * 
      * @param option
      * @param value
-     * @return
+     * @return this builder (for telescopic usage)
      */
     public CommandLineTestBuilder with(String option, String value) {
         optionsAndValues.put(option, value);
         return this;
     }
 
-    public CommandLineTestBuilder with(String option) {
+    /**
+     * Adds a new boolean flag option
+     * 
+     * @param option
+     * @return this builder (for telescopic usage)
+     */
+    public CommandLineTestBuilder withFlag(String option) {
         optionsAndValues.put(option, null);
         return this;
     }
@@ -131,8 +147,7 @@ public class CommandLineTestBuilder {
     /**
      * Builds a command line string, that calls the task specified as input, using the collected options & values
      * 
-     * @param taskName
-     * @return
+     * @return command line as string
      */
     public String toCommandLineString() {
         StringBuilder result = new StringBuilder(taskName);
@@ -160,7 +175,7 @@ public class CommandLineTestBuilder {
 
 /**
  * Helper test class for execution of the sejda-console<br/>
- * Contains helper methods such as {@link #assertConsoleOutputContains(String...)}, {@link #invokeConsoleAndReturnTaskParameters(String)}<br/>
+ * Contains helper methods such as {@link #assertConsoleOutputContains(String, String...)}, {@link #invokeConsoleAndReturnTaskParameters(String)}<br/>
  * 
  * @author Eduard Weissmann
  * 

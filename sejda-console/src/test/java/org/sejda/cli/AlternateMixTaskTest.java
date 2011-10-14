@@ -43,7 +43,7 @@ public class AlternateMixTaskTest extends AbstractTaskTest {
 
     @Test
     public void testFlagOptions_on() {
-        AlternateMixParameters parameters = defaultCommandLine().with("--reverseFirst").with("--reverseSecond")
+        AlternateMixParameters parameters = defaultCommandLine().withFlag("--reverseFirst").withFlag("--reverseSecond")
                 .invokeSejdaConsole();
         assertTrue(parameters.getFirstInput().isReverse());
         assertTrue(parameters.getSecondInput().isReverse());

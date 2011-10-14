@@ -51,6 +51,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * Adapter for a list of {@link PdfFileSource}s. Provides a filePath based constructor. Will parse xml, csv config file formats, and list a directory contents
  * 
  * @author Eduard Weissmann
  * 
@@ -123,9 +124,11 @@ interface PdfInputFilesSource {
  * 
  */
 abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
+    private static final Log LOG = LogFactory.getLog(AbstractPdfInputFilesSource.class);
 
     public List<PdfFileSource> getInputFiles(File file) {
         List<String> filenames = parseFileNames(file);
+        LOG.trace("Input files: '" + StringUtils.join(filenames, "', '") + "'");
         try {
             return PdfFileSourceAdapter.fromStrings(filenames);
         } catch (SejdaRuntimeException e) {
@@ -241,6 +244,13 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
         return result;
     }
 
+    /**
+     * Parse fileset definitions <filelist><fileset>[...]</fileset></filelist> ignoring the rest of the document
+     * 
+     * @param doc
+     * @return a list of string matching the contents of the <filelist><fileset> tags in the document
+     * @throws XPathExpressionException
+     */
     private List<String> parseFileSets(Document doc, File configFile) throws XPathExpressionException {
         List<String> result = new ArrayList<String>();
 
@@ -249,14 +259,23 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             Node node = nodeList.item(i);
             Node fileSet = node.getParentNode();
 
-            // warn if file in fileset is in absolute path mode
-            String parentDirPath = configFile.getAbsoluteFile().getParent();
-            if (fileSet.getAttributes().getNamedItem("dir") != null) {
-                parentDirPath = fileSet.getAttributes().getNamedItem("dir").getNodeValue();
+            String parentDirPath = nullSafeGetAttribute(fileSet, "dir");
+            if (parentDirPath == null) {
+                parentDirPath = configFile.getAbsoluteFile().getParent();
             }
 
-            // avoid double separators
-            result.add(parentDirPath + File.separator + extractFilePath(node));
+            String filePath = extractFilePath(node);
+
+            // warn if file in fileset is using absolute path mode
+            if (FilenameUtils.getPrefixLength(filePath) > 0) {
+                LOG.warn("File "
+                        + filePath
+                        + " in fileset "
+                        + StringUtils.defaultIfBlank(nullSafeGetAttribute(fileSet, "dir"), "")
+                        + " seems to be an absolute path. Will _not_ be resolved relative to the <fileset>, but as an absolute path. Normally you would want to use relative paths in a //filelist/fileset/file, and absolute paths in a //filelist/file.");
+            }
+
+            result.add(FilenameUtils.concat(parentDirPath, filePath));
         }
 
         return result;
@@ -265,7 +284,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
     private String extractFilePath(Node fileNode) {
         String password = nullSafeGetAttribute(fileNode, "password");
         String value = nullSafeGetAttribute(fileNode, "value");
-        return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR + password);
+        return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR_CHARACTER + password);
     }
 
     private String nullSafeGetAttribute(Node node, String attributeName) {
@@ -280,7 +299,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
      * Parse single file definitions <filelist><file>[...]</file></filelist> ignoring the rest of the document
      * 
      * @param doc
-     * @return
+     * @return a list of string matching the contents of the <filelist><file> tags in the document
      * @throws XPathExpressionException
      */
     private List<String> parseSingleFiles(Document doc) throws XPathExpressionException {

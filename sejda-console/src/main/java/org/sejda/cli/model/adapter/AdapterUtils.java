@@ -38,7 +38,9 @@ public final class AdapterUtils {
      * @param explainedInput
      *            the user-friendly name of what the input represents, to be used in exception message. Ex: "page number" or "phone number"
      * @see #parseIntSilently(String) for an alternative that silently returns {@code null} in case the input cannot be parsed
-     * @return
+     * @return parsed int value
+     * @throws SejdaRuntimeException
+     *             if the input cannot be parsed
      */
     public static int parseInt(String input, String explainedInput) {
         try {
@@ -54,8 +56,7 @@ public final class AdapterUtils {
      * Splits an input string using the default ":" separator
      * 
      * @param input
-     * @param separator
-     * @return
+     * @return an array of String tokens that result from the split
      */
     public static String[] split(String input) {
         return StringUtils.split(input, DEFAULT_SEPARATOR);
@@ -65,8 +66,7 @@ public final class AdapterUtils {
      * Same as {@link #splitAndTrim(String, String)} only it uses default ":" separator
      * 
      * @param input
-     * @param separator
-     * @return
+     * @return an array of String tokens that result from the split
      */
     public static String[] splitAndTrim(String input) {
         return StringUtils.split(StringUtils.trim(input), DEFAULT_SEPARATOR);
@@ -77,7 +77,7 @@ public final class AdapterUtils {
      * 
      * @param input
      * @param separator
-     * @return
+     * @return an array of String tokens that result from the split
      */
     public static String[] splitAndTrim(String input, String separator) {
         return StringUtils.split(StringUtils.trim(input), separator);
@@ -87,7 +87,7 @@ public final class AdapterUtils {
      * Parse input string into an integer, silently returning a {@code null} in case the input cannot be parsed
      * 
      * @param input
-     * @return
+     * @return an Integer matching the string input, or null if the input cannot be parsed as an Integer
      * @see #parseInt(String, String) for an alternative that throws an exception when input cannot be parsed
      */
     public static Integer parseIntSilently(String input) {

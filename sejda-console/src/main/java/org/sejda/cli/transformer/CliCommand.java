@@ -270,10 +270,8 @@ public enum CliCommand {
     }
 
     /**
-     * Creates task parameters out of the raw string arguments
-     * 
      * @param rawArguments
-     * @return
+     * @return task parameters out of the raw string arguments passed as input (removing the command argument for example)
      */
     public TaskParameters parseTaskParameters(String[] rawArguments) {
         return cliInterfacedTask.getTaskParameters(rawArguments);

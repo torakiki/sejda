@@ -34,7 +34,7 @@ public class SetMetadataCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * Transforms {@link SetMetadataTaskCliArguments} to {@link SetMetadataParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated task parameters
      */
     public SetMetadataParameters toTaskParameters(SetMetadataTaskCliArguments taskCliArguments) {
         final SetMetadataParameters parameters = new SetMetadataParameters();

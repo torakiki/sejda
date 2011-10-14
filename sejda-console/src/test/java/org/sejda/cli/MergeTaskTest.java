@@ -18,7 +18,10 @@ package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.matchers.JUnitMatchers.either;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +33,9 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
@@ -73,7 +78,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         createTestPdfFile("/tmp/inputFile1.pdf");
         createTestPdfFile("/tmp/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir/inputFile1.pdf");
-        createTestPdfFile("/tmp/subdir/inputFile2.pdf");
+        createTestPdfFile("/tmp/subdir3/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile1.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile2.pdf");
         createTestPdfFile("/tmp/subdir2/inputFile3.pdf");
@@ -85,7 +90,7 @@ public class MergeTaskTest extends AbstractTaskTest {
 
     @Test
     public void onCopyFields() {
-        MergeParameters parameters = defaultCommandLine().with("--copyFields").invokeSejdaConsole();
+        MergeParameters parameters = defaultCommandLine().withFlag("--copyFields").invokeSejdaConsole();
         assertTrue(parameters.isCopyFormFields());
     }
 
@@ -110,12 +115,19 @@ public class MergeTaskTest extends AbstractTaskTest {
         defaultCommandLine().with("-d", "/tmp/emptyFolder").assertConsoleOutputContains("No input files specified in");
     }
 
-    private static List<File> filesList(String... filenames) {
-        List<File> result = new ArrayList<File>();
+    private static List<Matcher<Iterable<File>>> filesList(String... filenames) {
+        List<Matcher<Iterable<File>>> result = new ArrayList<Matcher<Iterable<File>>>();
         CollectionUtils.collect(Arrays.asList(filenames), new Transformer() {
 
             public Object transform(Object input) {
-                return new File(input.toString());
+                String filename = input.toString();
+                if (FilenameUtils.getPrefixLength(filename) > 0) {
+                    return either(hasItem(new File(filename))).or(
+                            hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename))));
+                }
+
+                return hasItem(new File(filename));
+
             }
         }, result);
 
@@ -140,7 +152,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     @Test
     public void fileListConfigInput_csv_doesntExist() {
         defaultCommandLine().without("-f").with("-l", "./location/doesntExist.csv")
-                .assertConsoleOutputContains("File './location/doesntExist.csv' does not exist");
+                .assertConsoleOutputContains("does not exist");
     }
 
     @Test
@@ -181,8 +193,10 @@ public class MergeTaskTest extends AbstractTaskTest {
                 .assertConsoleOutputContains("Unsupported file format: xls");
     }
 
-    private void assertPdfMergeInputsFilesList(MergeParameters parameters, List<File> expectedFilesList) {
-        assertPdfMergeInputsFilesList(parameters, expectedFilesList, nullsFilledList(expectedFilesList.size()));
+    private void assertPdfMergeInputsFilesList(MergeParameters parameters,
+            Collection<Matcher<Iterable<File>>> expectedFilesMatchers) {
+        assertPdfMergeInputsFilesList(parameters, expectedFilesMatchers, nullsFilledList(parameters.getInputList()
+                .size()));
     }
 
     private List<String> nullsFilledList(int size) {
@@ -194,8 +208,8 @@ public class MergeTaskTest extends AbstractTaskTest {
         return result;
     }
 
-    private void assertPdfMergeInputsFilesList(MergeParameters parameters, List<File> expectedFilesList,
-            List<String> expectedFilesPasswords) {
+    private void assertPdfMergeInputsFilesList(MergeParameters parameters,
+            Collection<Matcher<Iterable<File>>> expectedFilesMatchers, List<String> expectedFilesPasswords) {
         List<File> actualFileList = new ArrayList<File>();
         List<String> actualPasswords = new ArrayList<String>();
 
@@ -206,7 +220,9 @@ public class MergeTaskTest extends AbstractTaskTest {
             actualPasswords.add(pdfFileSource.getPassword());
         }
 
-        assertEquals(expectedFilesList, actualFileList);
+        for (Matcher<Iterable<File>> expectedFileMatcher : expectedFilesMatchers) {
+            assertThat(actualFileList, expectedFileMatcher);
+        }
         assertEquals(expectedFilesPasswords, actualPasswords);
     }
 
@@ -218,7 +234,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         assertPdfMergeInputsFilesList(
                 parameters,
                 filesList("/tmp/pdf/inputFile.pdf", "/tmp/pdf/inputFile2.pdf", "/tmp/inputFile1.pdf",
-                        "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir/inputFile2.pdf",
+                        "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir3/inputFile2.pdf",
                         "/tmp/subdir2/inputFile1.pdf", "/tmp/subdir2/inputFile2.pdf", "/tmp/subdir2/inputFile3.pdf"),
                 Arrays.asList(null, "test", null, null, null, null, null, "secret2", null));
     }

@@ -17,11 +17,13 @@
 package org.sejda.cli.model.adapter;
 
 import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.either;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.sejda.cli.AbstractTestSuite;
 
@@ -43,12 +45,12 @@ public class XmlFileSourceListParserTest extends AbstractTestSuite {
         List<String> result = victim.parseFileNames(config);
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
-        assertThat(result, hasItem("/tmp/inputFile1.pdf"));
-        assertThat(result, hasItem("/tmp/inputFile2.pdf"));
-        assertThat(result, hasItem("/tmp/subdir/inputFile1.pdf"));
-        assertThat(result, hasItem("/tmp/subdir/inputFile2.pdf"));
-        assertThat(result, hasItem("/tmp/subdir2/inputFile1.pdf"));
-        assertThat(result, hasItem("/tmp/subdir2/inputFile2.pdf:secret2"));
-        assertThat(result, hasItem("/tmp/subdir2/inputFile3.pdf"));
+        assertThat(result, either(hasItem("/tmp/inputFile1.pdf")).or(hasItem("C:\\tmp\\inputFile1.pdf")));
+        assertThat(result, either(hasItem("/tmp/inputFile2.pdf")).or(hasItem("C:\\tmp\\inputFile2.pdf")));
+        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir/inputFile1.pdf")));
+        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir3/inputFile2.pdf"))); // its defined in absolute path mode in the file
+        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile1.pdf")));
+        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile2.pdf:secret2")));
+        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile3.pdf")));
     }
 }

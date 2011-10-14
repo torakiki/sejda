@@ -35,7 +35,7 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
      * Transforms {@link AlternateMixTaskCliArguments} to {@link AlternateMixParameters}
      * 
      * @param taskCliArguments
-     * @return
+     * @return populated parameters
      */
     public AlternateMixParameters toTaskParameters(AlternateMixTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 2) {

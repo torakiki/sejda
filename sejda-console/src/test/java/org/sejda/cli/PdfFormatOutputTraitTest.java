@@ -37,8 +37,8 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF);
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
+                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF));
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {
@@ -47,7 +47,7 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void onValueCompressed() {
-        AbstractPdfOutputParameters result = defaultCommandLine().with("--compressed").invokeSejdaConsole();
+        AbstractPdfOutputParameters result = defaultCommandLine().withFlag("--compressed").invokeSejdaConsole();
 
         assertTrue(describeExpectations(), result.isCompressXref());
     }

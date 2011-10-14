@@ -20,12 +20,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test encrypted files across all pdf implementations (itext, pdfbox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
@@ -34,7 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
  * @author Eduard Weissmann
  * 
  */
-public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
+public class EncryptionIntegrationTest extends AcrossAllTasksTraitTest {
 
     @Override
     @Before
@@ -45,11 +42,6 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
     public EncryptionIntegrationTest(TestableTask testableTask) {
         super(testableTask);
-    }
-
-    @Parameters
-    public final static Collection<Object[]> testParameters() {
-        return TestableTask.allTasks();
     }
 
     @Test
