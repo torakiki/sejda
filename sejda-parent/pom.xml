@@ -94,6 +94,7 @@
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
+					<preparationGoals>clean verify install</preparationGoals>
 					<localCheckout>true</localCheckout>
 					<pushChanges>false</pushChanges>
 					<!-- activates the release profile, which executes the plugin(s) creating 
