@@ -16,11 +16,11 @@
  */
 package org.sejda.cli.model.adapter;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.core.support.NullSafeSet;
 
 /**
  * Adapter for a set of {@link PageRange}s, providing intialization from {@link String}
@@ -33,7 +33,7 @@ public class PageRangeSetAdapter {
     private static final String SEPARATOR = ",";
     private static final String ALL = "all";
 
-    private final Set<PageRange> pageRangeSet = new HashSet<PageRange>();
+    private final Set<PageRange> pageRangeSet = new NullSafeSet<PageRange>();
 
     public PageRangeSetAdapter(String rawString) {
         if (isAllPages(rawString)) {
