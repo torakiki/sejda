@@ -18,16 +18,7 @@
 
 	<profiles>
 		<profile>
-			<id>release</id>
-			<activation>
-				<!-- This profile will be activated when the value of maven property 
-					performRelease is true. When you use maven-release-plugin and run mvn release:perform, 
-					the property value will be set to true. -->
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
+			<id>sonatype-oss-release</id>
 			<build>
 				<plugins>
 					<!-- creates the binary distributable sejda-console*-bin.zip -->

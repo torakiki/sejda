@@ -7,12 +7,8 @@
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
-	<moduleSets>
-		<moduleSet>
-
-			<!-- Enable access to all projects in the current multimodule build! -->
-			<useAllReactorProjects>true</useAllReactorProjects>
-
+	<dependencySets>
+		<dependencySet>
 			<!-- Now, select which projects to include in this module-set. -->
 			<includes>
 				<include>org.sejda:sejda-core</include>
@@ -21,10 +17,8 @@
 				<include>org.sejda:sejda-icepdf</include>
 				<include>org.sejda:sejda-image-writers</include>
 			</includes>
-			<binaries>
-				<outputDirectory>/</outputDirectory>
-				<unpack>false</unpack>
-			</binaries>
-		</moduleSet>
-	</moduleSets>
+			<outputDirectory>/</outputDirectory>
+			<unpack>false</unpack>
+		</dependencySet>
+	</dependencySets>
 </assembly>

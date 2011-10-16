@@ -18,16 +18,6 @@
 		<version>7</version>
 	</parent>
 
-	<modules>
-		<module>../sejda-core</module>
-		<module>../sejda-itext</module>
-		<module>../sejda-pdfbox</module>
-		<module>../sejda-icepdf</module>
-		<module>../sejda-console</module>
-		<module>../sejda-image-writers</module>
-		<module>../sejda-distribution</module>
-	</modules>
-
 	<issueManagement>
 		<system>BitBucket</system>
 		<url>https://bitbucket.org/torakiki/sejda/issues/</url>
@@ -94,17 +84,11 @@
 					<tagNameFormat>v@{project.version}</tagNameFormat>
 					<autoVersionSubmodules>true</autoVersionSubmodules>
 					<goals>deploy</goals>
-					<preparationGoals>clean verify install</preparationGoals>
+					<preparationGoals>clean install</preparationGoals>
+					<!-- sonatype's OSS parent pom v7 is configured in a way that doesn't allow any other cli -Darguments to get honored by the release plugin (such as -Dgpg.passphrase) -->
+					<arguments>${arguments}</arguments>
 					<localCheckout>true</localCheckout>
 					<pushChanges>false</pushChanges>
-					<!-- activates the release profile, which executes the plugin(s) creating 
-						the bin assemblies -->
-					<releaseProfiles>release</releaseProfiles>
-					<!-- You will want to configure <mavenExecutorId>forked-path</mavenExecutorId> 
-						for maven-release-plugin to get around a GPG plugin hanging issue -->
-					<!-- Because maven-release-plugin will start a new Maven instance, gpg 
-						plugin's -Dgpg.passphrase=PASSPHRASE won't work in this case, instead, you 
-						should use mvn release:perform -Darguments=-Dgpg.passphrase=PASSPHRASE -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -236,41 +220,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<profiles>
-		<profile>
-			<id>release</id>
-			<activation>
-				<!-- This profile will be activated when the value of maven property 
-					performRelease is true. When you use maven-release-plugin and run mvn release:perform, 
-					the property value will be set to true. -->
-				<property>
-					<name>performRelease</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<!-- signs the artifacts, see https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.4</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<!-- install and not verify because the plugin needs to sign artifacts 
-									created during package phase -->
-								<phase>install</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
