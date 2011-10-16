@@ -57,6 +57,13 @@
 	</developers>
 
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ftp</artifactId>
+				<version>1.0</version>
+			</extension>
+		</extensions>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -91,8 +98,51 @@
 					<pushChanges>false</pushChanges>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0-beta-3</version>
+				<configuration>
+					<fromDir>${project.build.directory}/site/apidocs</fromDir>
+					<includes>**/*</includes>
+					<excludes>pom.xml</excludes>
+					<url>ftp://ftp.sejda.org/</url>
+					<serverId>sejda-website</serverId>
+					<toDir>www.sejda.org/javadocs</toDir>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.4</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<!-- Exclude console packages. -->
+					<excludePackageNames>org.sejda.cli</excludePackageNames>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<properties>
 		<junit.version>4.10</junit.version>

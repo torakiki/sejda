@@ -81,7 +81,7 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
     }
 
     /**
-     * @param totalNumberOfPage
+     * @param upperLimit
      *            the number of pages of the document (upper limit).
      * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
      *         case of {@link PredefinedSetOfPages}.
