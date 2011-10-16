@@ -103,7 +103,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters> getArgumentsTransformer() {
             return new ViewerPreferencesCliArgumentsTransformer();
         }
-    }, "Given a collection of pdf documents, applies the selected viewer preferences.", "setviewerpreferences -f /tmp/file1.pdf -o /tmp --centerWindow --displayDocTitle --direction r2l --fitWindow --hideMenu --hideToolbar --hideWindowUI --layout onecolumn --mode fullscreen --nfsMode nfsthumbs --noPrintScaling --duplex duplex_flip_short_edge -v 7"),
+    }, "Given a collection of pdf documents, applies the selected viewer preferences.", "setviewerpreferences -f /tmp/file1.pdf -o /tmp --centerWindow --displayDocTitle --fitWindow --hideMenu --hideToolbar --hideWindowUI --layout onecolumn --mode fullscreen --nfsMode nfsthumbs"),
     ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixParameters>() {
 
         @Override

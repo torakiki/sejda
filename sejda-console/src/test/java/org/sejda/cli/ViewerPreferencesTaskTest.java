@@ -17,6 +17,7 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.EnumSet;
@@ -45,9 +46,9 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     @Test
     public void onFlagOptions() {
-        ViewerPreferencesParameters parameters = defaultCommandLine().withFlag("--centerWindow").withFlag("--displayDocTitle")
-                .withFlag("--hideMenu").withFlag("--fitWindow").withFlag("--hideWindowUI").withFlag("--hideToolbar")
-                .invokeSejdaConsole();
+        ViewerPreferencesParameters parameters = defaultCommandLine().withFlag("--centerWindow")
+                .withFlag("--displayDocTitle").withFlag("--hideMenu").withFlag("--fitWindow")
+                .withFlag("--hideWindowUI").withFlag("--hideToolbar").invokeSejdaConsole();
 
         assertContainsAll(EnumSet.allOf(PdfBooleanPreference.class), parameters.getEnabledPreferences());
     }
@@ -61,11 +62,11 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     @Test
     public void specifiedValues() {
-        ViewerPreferencesParameters parameters = defaultCommandLine().withFlag("--noPrintScaling")
+        ViewerPreferencesParameters parameters = defaultCommandLine().with("--printScaling", "app_default")
                 .with("--direction", "r2l").with("--duplex", "duplex_flip_short_edge").with("--nfsMode", "nfsthumbs")
                 .with("--layout", "twopagel").with("--mode", "attachments").invokeSejdaConsole();
 
-        assertEquals(PdfPrintScaling.NONE, parameters.getPrintScaling());
+        assertEquals(PdfPrintScaling.APP_DEFAULT, parameters.getPrintScaling());
         assertEquals(PdfDirection.RIGHT_TO_LEFT, parameters.getDirection());
         assertEquals(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE, parameters.getDuplex());
         assertEquals(PdfNonFullScreenPageMode.USE_THUMNS, parameters.getNfsMode());
@@ -76,10 +77,9 @@ public class ViewerPreferencesTaskTest extends AbstractTaskTest {
     @Test
     public void defaultValues() {
         ViewerPreferencesParameters parameters = defaultCommandLine().invokeSejdaConsole();
-
-        assertEquals(PdfPrintScaling.APP_DEFAULT, parameters.getPrintScaling());
-        assertEquals(PdfDirection.LEFT_TO_RIGHT, parameters.getDirection());
-        assertEquals(PdfDuplex.SIMPLEX, parameters.getDuplex());
+        assertNull(parameters.getPrintScaling());
+        assertNull(parameters.getDirection());
+        assertNull(parameters.getDuplex());
         assertEquals(PdfNonFullScreenPageMode.USE_NONE, parameters.getNfsMode());
         assertEquals(PdfPageLayout.SINGLE_PAGE, parameters.getPageLayout());
         assertEquals(PdfPageMode.USE_NONE, parameters.getPageMode());

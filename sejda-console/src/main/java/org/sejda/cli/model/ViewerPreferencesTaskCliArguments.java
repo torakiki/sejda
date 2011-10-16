@@ -21,6 +21,7 @@ import org.sejda.cli.model.adapter.PdfDuplexAdapter;
 import org.sejda.cli.model.adapter.PdfNonFullScreenPageModeAdapter;
 import org.sejda.cli.model.adapter.PdfPageLayoutAdapter;
 import org.sejda.cli.model.adapter.PdfPageModeAdapter;
+import org.sejda.cli.model.adapter.PdfPrintScalingAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -40,8 +41,10 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(description = "display document title metadata as window title (optional)")
     boolean isDisplayDocTitle();
 
-    @Option(shortName = "d", description = "direction {l2r, r2l}. If omitted it uses l2r (optional)", defaultValue = "l2r")
+    @Option(shortName = "d", description = "direction {l2r, r2l} (optional)")
     PdfDirectionAdapter getDirection();
+
+    boolean isDirection();
 
     @Option(description = "resize the window to fit the page size (optional)")
     boolean isFitWindow();
@@ -61,13 +64,19 @@ public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAn
     @Option(shortName = "m", description = "open mode for the viewer {attachments, fullscreen, none, ocontent, outlines, thumbs}. If omitted it uses none (optional)", defaultValue = "none")
     PdfPageModeAdapter getMode();
 
-    @Option(shortName = "n", description = "non full screen mode for the viewer when exiting full screen mode {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}. If omitted it uses none (optional)", defaultValue = "nfsnone")
+    @Option(shortName = "n", description = "non full screen mode for the viewer when exiting full screen mode {nfsnone, nfsocontent, nfsoutlines, nfsthumbs}."
+            + " If omitted it uses 'nfsnone' (optional)", defaultValue = "nfsnone")
     PdfNonFullScreenPageModeAdapter getNfsMode();
 
-    @Option(description = "no page scaling in print dialog (optional)")
-    boolean isNoPrintScaling();
+    // pdfsam-incompatibility: is called noPrintScaling in pdfsam
+    @Option(shortName = "s", description = "page scaling in print dialog {none, app_default} (optional)")
+    PdfPrintScalingAdapter getPrintScaling();
+
+    boolean isPrintScaling();
 
     // pdfsam-incompatibility: doesnt exist in pdfsam
-    @Option(shortName = "x", description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge}. If ommited it uses 'simplex' (optional)", defaultValue = "simplex")
+    @Option(shortName = "x", description = "paper handling options to use when printing the file from the print dialog: {simplex, duplex_flip_short_edge, duplex_flip_long_edge} (optional)")
     PdfDuplexAdapter getDuplex();
+
+    boolean isDuplex();
 }

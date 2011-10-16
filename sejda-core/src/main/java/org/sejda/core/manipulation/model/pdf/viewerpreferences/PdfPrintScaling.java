@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.pdf.viewerpreferences;
 
 import org.sejda.core.manipulation.model.pdf.MinRequiredVersion;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.support.DisplayNamedEnum;
 
 /**
  * Possible values for the page scaling option to be selected when a print dialog is displayed for this document.<br>
@@ -27,16 +28,23 @@ import org.sejda.core.manipulation.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPrintScaling implements MinRequiredVersion {
-    NONE(PdfVersion.VERSION_1_6), APP_DEFAULT(PdfVersion.VERSION_1_6);
+public enum PdfPrintScaling implements MinRequiredVersion, DisplayNamedEnum {
+    NONE(PdfVersion.VERSION_1_6, "none"),
+    APP_DEFAULT(PdfVersion.VERSION_1_6, "app_default");
 
     private PdfVersion minVersion;
+    private String displayName;
 
-    private PdfPrintScaling(PdfVersion minVersion) {
+    private PdfPrintScaling(PdfVersion minVersion, String displayName) {
         this.minVersion = minVersion;
+        this.displayName = displayName;
     }
 
     public PdfVersion getMinVersion() {
         return minVersion;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 }

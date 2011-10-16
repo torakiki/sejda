@@ -19,7 +19,6 @@ package org.sejda.cli.transformer;
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the ViewerPreferences task command line interface
@@ -48,10 +47,15 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
 
         parameters.setPageLayout(taskCliArguments.getLayout().getEnumValue());
         parameters.setPageMode(taskCliArguments.getMode().getEnumValue());
-        parameters.setPrintScaling(taskCliArguments.isNoPrintScaling() ? PdfPrintScaling.NONE
-                : PdfPrintScaling.APP_DEFAULT);
-        parameters.setDirection(taskCliArguments.getDirection().getEnumValue());
-        parameters.setDuplex(taskCliArguments.getDuplex().getEnumValue());
+        if (taskCliArguments.isPrintScaling()) {
+            parameters.setPrintScaling(taskCliArguments.getPrintScaling().getEnumValue());
+        }
+        if (taskCliArguments.isDirection()) {
+            parameters.setDirection(taskCliArguments.getDirection().getEnumValue());
+        }
+        if (taskCliArguments.isDuplex()) {
+            parameters.setDuplex(taskCliArguments.getDuplex().getEnumValue());
+        }
 
         return parameters;
     }
