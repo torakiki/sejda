@@ -1,15 +1,17 @@
 <settings>
   <servers>
-  	<!-- Following 2 server definitions are required for deployment to Maven Central -->
+  	<!-- Server definitions required for deployment to Maven Central -->
+  	<!-- not deploying snapshots yet
     <server>
       <id>sonatype-nexus-snapshots</id>
       <username>sejda</username>
-      <password>SEJDA-JIRA-PWD</password>
+      <password>SONATYPE-OSS-JIRA-PWD</password>
     </server>
+     -->
     <server>
       <id>sonatype-nexus-staging</id>
       <username>sejda</username>
-      <password>SEJDA-JIRA-PWD</password>
+      <password>SONATYPE-OSS-JIRA-PWD</password>
     </server>
   </servers>
 </settings>
