@@ -16,6 +16,7 @@
 				<include>org.sejda:sejda-pdfbox</include>
 				<include>org.sejda:sejda-icepdf</include>
 				<include>org.sejda:sejda-image-writers</include>
+				<include>org.sejda:sejda-example</include>
 			</includes>
 			<outputDirectory>/</outputDirectory>
 			<unpack>false</unpack>
