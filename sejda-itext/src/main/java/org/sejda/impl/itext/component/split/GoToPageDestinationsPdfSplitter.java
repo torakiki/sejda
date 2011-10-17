@@ -40,7 +40,12 @@ public class GoToPageDestinationsPdfSplitter extends AbstractPdfSplitter<SplitBy
     private OutlineGoToPageDestinations outlineDestinations;
 
     /**
+     * 
      * @param reader
+     *            reader opened on the target pdf document.
+     * @param parameters
+     * @param outlineDestinations
+     *            holder for the outline destinations the splitter has to split at.
      */
     public GoToPageDestinationsPdfSplitter(PdfReader reader, SplitByGoToActionLevelParameters parameters,
             OutlineGoToPageDestinations outlineDestinations) {
