@@ -26,6 +26,7 @@
 		<module>sejda-console</module>
 		<module>sejda-image-writers</module>
 		<module>sejda-distribution</module>
+		<module>sejda-example</module>
 	</modules>
 	
 </project>
