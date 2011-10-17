@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<description>Package containing examples on how to use Sejda.</description>
+	<url>http://www.sejda.org</url>
+	<parent>
+		<groupId>org.sejda</groupId>
+		<artifactId>sejda-parent</artifactId>
+		<version>1.0.0-BETA-SNAPSHOT</version>
+		<relativePath>../sejda-parent/pom.xml</relativePath>
+	</parent>
+
+	<artifactId>sejda-example</artifactId>
+	<packaging>jar</packaging>
+
+	<name>sejda example</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-core</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-itext</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>[${logback.version},]</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+</project>
