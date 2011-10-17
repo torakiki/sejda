@@ -28,7 +28,7 @@ import org.sejda.core.writer.model.ImageWriter.ImageWriterBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class ImageWriterBuildersRegistry {
+class ImageWriterBuildersRegistry {
 
     private final Map<Class<? extends AbstractPdfToImageParameters>, ImageWriterBuilder<?>> builders = new HashMap<Class<? extends AbstractPdfToImageParameters>, ImageWriterBuilder<?>>();
 

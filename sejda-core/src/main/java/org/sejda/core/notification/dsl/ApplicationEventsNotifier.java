@@ -52,7 +52,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * <p>
      * Examples: <br />
      * <code>
-     * notifyEvent().stepsCompleted(2).on(10);
+     * notifyEvent().stepsCompleted(2).outOf(10);
      * </code> <br />
      * <code>
      * notifyEvent().taskCompleted();

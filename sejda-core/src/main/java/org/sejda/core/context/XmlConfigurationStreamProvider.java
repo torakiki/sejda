@@ -70,7 +70,7 @@ public class XmlConfigurationStreamProvider implements ConfigurationStreamProvid
                 return new FileInputStream(userConfigFileName);
             } catch (FileNotFoundException e) {
                 throw new ConfigurationException(String.format("Unable to access the provided configuration file [%s]",
-                        userConfigFileName));
+                        userConfigFileName), e);
             }
         }
         return retVal;
