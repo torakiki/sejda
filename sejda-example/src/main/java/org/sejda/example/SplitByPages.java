@@ -19,6 +19,7 @@ package org.sejda.example;
 import java.io.File;
 
 import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.input.PdfFileSource;
 import org.sejda.core.manipulation.model.output.DirectoryOutput;
 import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
@@ -66,7 +67,7 @@ public final class SplitByPages {
     }
 
     private static void printUsage() {
-        LOG.info("Usage: java -jar sejda-example-VERSION.jar -f /PATH_TO_INPUT/INPUT.pdf -o /OUTPUT_DIRECTORY -s n1,n2,n3.. -overwrite");
+        LOG.info("Usage: sejda-example -f /PATH_TO_INPUT/INPUT.pdf -o /OUTPUT_DIRECTORY -s n1,n2,n3.. -overwrite");
         LOG.info("Where /PATH_TO_INPUT/INPUT.pdf is the absolut path to the input pdf document.");
         LOG.info("Where /OUTPUT_DIRECTORY is the directory where output will be written.");
         LOG.info("Where n1,n2,n3.. is a comma separated list of page numbers where the document will be splitted at.");
@@ -134,7 +135,7 @@ public final class SplitByPages {
         public void onEvent(TaskExecutionFailedEvent event) {
             LOG.error("Task execution failed.");
             // rethrow it to the main
-            throw new RuntimeException(event.getFailingCause());
+            throw new SejdaRuntimeException(event.getFailingCause());
         }
     }
 
