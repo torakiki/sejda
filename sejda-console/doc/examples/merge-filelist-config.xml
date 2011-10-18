@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<filelist>
+	<file value="f:\pdf\inputFile.pdf" />
+	<file value="f:\pdf\inputFile2.pdf" password="secret123"/>
+	<fileset>
+		<!-- refers to files in the directory where this xml config file exists -->
+		<file value="inputFile1.pdf" />
+		<file value="inputFile2.pdf" />
+	</fileset>
+	<fileset dir="f:\tempdir\subdir">
+		<file value="inputFile1.pdf" />
+		<file value="inputFile2.pdf" />
+	</fileset>	
+	<fileset dir="f:\tempdir\subdir2">
+		<file value="inputFile1.pdf" password ="secret123" />
+		<file value="inputFile2.pdf" />
+	</fileset>	
+</filelist>

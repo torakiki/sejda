@@ -9,5 +9,9 @@
 			<directory>target/assembled/</directory>
 			<outputDirectory>/</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>doc/</directory>
+			<outputDirectory>/doc</outputDirectory>
+		</fileSet>
 	</fileSets>
 </assembly>
