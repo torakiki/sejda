@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation.service;
+package org.sejda.core.context;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,12 +32,12 @@ import org.sejda.core.manipulation.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public class DefaultTaskExecutionContextTest {
-    private TaskExecutionContext victim;
+public class DefaultSejdaContextTest {
+    private SejdaContext victim;
 
     @Before
     public void setUp() {
-        victim = new DefaultTaskExecutionContext();
+        victim = new DefaultSejdaContext();
     }
 
     @Test

@@ -17,6 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -31,7 +32,8 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfTextExtractor;
@@ -39,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task extracting text from a collection of {@link PdfSource}
+ * PDFBox implementation of a task extracting text from a list of {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
@@ -50,12 +52,11 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
 
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private MultipleOutputWriterSupport outputWriter;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PdfTextExtractor textExtractor;
 
     public void before(ExtractTextParameters parameters) throws TaskException {
-        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
@@ -70,7 +71,7 @@ public class ExtractTextTask implements Task<ExtractTextParameters> {
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
             documentHandler.setCreatorOnPDDocument();
 
-            File tmpFile = outputWriter.createTemporaryBuffer();
+            File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);

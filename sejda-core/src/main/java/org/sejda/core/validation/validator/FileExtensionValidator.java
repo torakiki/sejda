@@ -29,7 +29,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.validation.constraint.FileExtension;
 
 /**
- * Validates the extension of the a file
+ * Validates the extension of the a {@link File}.
  * 
  * @author Andrea Vacondio
  * 

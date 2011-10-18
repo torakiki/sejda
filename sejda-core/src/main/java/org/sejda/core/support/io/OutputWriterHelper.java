@@ -45,11 +45,11 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-final class OutputWriter {
+final class OutputWriterHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OutputWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OutputWriterHelper.class);
 
-    private OutputWriter() {
+    private OutputWriterHelper() {
         // util class
     }
 

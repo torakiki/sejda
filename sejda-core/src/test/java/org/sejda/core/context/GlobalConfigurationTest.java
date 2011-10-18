@@ -15,6 +15,6 @@ public class GlobalConfigurationTest {
     public void testConstructor() {
         GlobalConfiguration config = GlobalConfiguration.getInstance();
         Assert.assertTrue(config.isValidation());
-        Assert.assertEquals(1, config.getTaskRegistry().getTasks().size());
+        Assert.assertEquals(1, config.getTasksRegistry().getTasks().size());
     }
 }

@@ -76,9 +76,9 @@ public class ITextOutlineHandlerTest {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
             reader = new PdfReader(inputStream);
             OutlineHandler victim = new ITextOutlineHandler(reader, null);
-            assertTrue(victim.getGoToPageDestinationFroActionLevel(4).isEmpty());
-            assertEquals(2, victim.getGoToPageDestinationFroActionLevel(2).size());
-            assertEquals(1, victim.getGoToPageDestinationFroActionLevel(3).size());
+            assertTrue(victim.getGoToPageDestinationForActionLevel(4).isEmpty());
+            assertEquals(2, victim.getGoToPageDestinationForActionLevel(2).size());
+            assertEquals(1, victim.getGoToPageDestinationForActionLevel(3).size());
         } finally {
             IOUtils.closeQuietly(inputStream);
             if (reader != null) {

@@ -44,7 +44,7 @@ final class GlobalConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalConfiguration.class);
 
     private Class<? extends NotificationStrategy> notificationStrategy;
-    private TasksRegistry taskRegistry;
+    private TasksRegistry tasksRegistry;
     private boolean validation;
 
     private GlobalConfiguration() {
@@ -58,14 +58,14 @@ final class GlobalConfiguration {
     private void logConfiguredTasks() {
         LOG.trace("Configured tasks:");
         for (@SuppressWarnings("rawtypes")
-        Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : taskRegistry.getTasks().entrySet()) {
+        Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : tasksRegistry.getTasks().entrySet()) {
             LOG.trace(String.format("%s executed by -> %s", entry.getKey(), entry.getValue()));
         }
     }
 
     @SuppressWarnings("rawtypes")
     private void initialize() {
-        taskRegistry = new DefaultTasksRegistry();
+        tasksRegistry = new DefaultTasksRegistry();
         ConfigurationStrategy configStrategy;
         try {
             configStrategy = XmlConfigurationStrategy.newInstance(new XmlConfigurationStreamProvider());
@@ -78,7 +78,7 @@ final class GlobalConfiguration {
         LOG.trace("Validation: {}", validation);
         Map<Class<? extends TaskParameters>, Class<? extends Task>> userTasks = configStrategy.getTasksMap();
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()) {
-            taskRegistry.addTask(entry.getKey(), entry.getValue());
+            tasksRegistry.addTask(entry.getKey(), entry.getValue());
         }
     }
 
@@ -98,11 +98,8 @@ final class GlobalConfiguration {
         return notificationStrategy;
     }
 
-    /**
-     * @return the taskRegistry
-     */
-    TasksRegistry getTaskRegistry() {
-        return taskRegistry;
+    TasksRegistry getTasksRegistry() {
+        return tasksRegistry;
     }
 
     /**

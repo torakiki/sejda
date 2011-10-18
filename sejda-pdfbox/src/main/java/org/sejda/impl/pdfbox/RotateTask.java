@@ -17,6 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -31,14 +32,15 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task performing pages rotation on a list of {@link PdfSource}.
+ * PDFBox implementation of a task performing pages rotation on a list of {@link PdfSource}.
  * 
  * @author Nero Couvalli
  * 
@@ -49,11 +51,10 @@ public class RotateTask implements Task<RotateParameters> {
 
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private MultipleOutputWriterSupport outputWriter;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(RotateParameters parameters) {
-        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
@@ -68,7 +69,7 @@ public class RotateTask implements Task<RotateParameters> {
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
             documentHandler.setCreatorOnPDDocument();
 
-            File tmpFile = outputWriter.createTemporaryPdfBuffer();
+            File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             applyRotation(parameters.getRotation()).to(documentHandler.getUnderlyingPDDocument());

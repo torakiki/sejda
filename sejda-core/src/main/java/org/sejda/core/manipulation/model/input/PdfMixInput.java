@@ -80,7 +80,7 @@ public class PdfMixInput {
     }
 
     /**
-     * Holds the status of the process the enclosing a {@link PdfMixInput}
+     * Holds the status of the process for the enclosing a {@link PdfMixInput}
      * 
      * @author Andrea Vacondio
      * 

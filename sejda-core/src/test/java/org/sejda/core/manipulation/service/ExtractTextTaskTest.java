@@ -33,6 +33,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.Sejda;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.output.StreamOutput;
@@ -50,7 +52,7 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private ExtractTextParameters parameters;
     private ByteArrayOutputStream out;
 

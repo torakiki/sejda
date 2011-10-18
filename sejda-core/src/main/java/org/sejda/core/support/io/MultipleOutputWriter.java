@@ -22,35 +22,40 @@ import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 
 /**
- * DSL interface used to expose methods a single output task (tasks generating a single file as output) needs to write its output.
+ * DSL interface to expose methods a multiple output task (tasks generating multiple files as output) needs to write its output.
  * 
  * <pre>
  * {@code
- * PopulatedFileOutput singleOut = file(tmpFile).name("newName");
+ * MultipleOutputSupport outputWriter = ....
+ * outputWriter.addOutput(file(tmpFile).name("newName"));
+ * ....
  * AbstractPdfOutput output = ...
  * boolean overwrite = ...
- * singleOutput().flushSingleOutput(singleOut, output, overwrite);
+ * outputWriter.flushOutputs(output, overwrite);
  * }
  * </pre>
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface SingleOutputSupport {
+public interface MultipleOutputWriter {
 
     /**
-     * flush of the given {@link PopulatedFileOutput} to the output destination and deletes it.
+     * flush of the multiple outputs added to the output destination. Once flushed they are deleted and the collection emptied.
      * 
-     * @param fileOutput
-     *            the input file that will be written to the destination.
      * @param output
-     *            the destination.
+     *            manipulation output parameter where multiple outputs will be written.
      * @param overwrite
-     *            if true overwrite the destination of already exists.
+     *            true if the output should be overwritten if already exists
      * @throws TaskIOException
      *             in case of error
      */
-    void flushSingleOutput(PopulatedFileOutput fileOutput, TaskOutput output, boolean overwrite)
-            throws TaskIOException;
+    void flushOutputs(TaskOutput output, boolean overwrite) throws TaskIOException;
 
+    /**
+     * Adds the given file output (typically a temporary file) to the collection of multiple outputs ready to be flushed.
+     * 
+     * @param fileOutput
+     */
+    void addOutput(PopulatedFileOutput fileOutput);
 }

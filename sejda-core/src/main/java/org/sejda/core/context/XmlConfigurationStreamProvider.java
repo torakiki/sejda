@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
+class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationStreamProvider.class);
 

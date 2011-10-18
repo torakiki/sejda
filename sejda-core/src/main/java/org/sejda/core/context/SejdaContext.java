@@ -17,10 +17,13 @@
  */
 package org.sejda.core.context;
 
+import org.sejda.core.exception.TaskException;
+import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 
 /**
- * Parent Context interface. Provides a configuration for the application.
+ * Context where Sejda tasks are executed.
  * 
  * @author Andrea Vacondio
  * 
@@ -33,9 +36,15 @@ public interface SejdaContext {
     Class<? extends NotificationStrategy> getNotificationStrategy();
 
     /**
-     * @return the registry of the configured tasks
+     * Search among the configured tasks the implementation that better can execute the input parameters. Returns an instance of the found class.
+     * 
+     * @param parameters
+     *            Input parameters you want to search a task for.
+     * @return the most suitable {@link Task} instance for the input parameters class.
+     * @throws TaskException
+     *             if no task able to execute the input parameters class is found, or if an error occur while reflective instantiating the {@link Task}.
      */
-    TasksRegistry getTasksRegistry();
+    Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException;
 
     /**
      * @return true if validation should be performed on parameters instance during the task execution or false if incoming parameters instances are already validate externally.

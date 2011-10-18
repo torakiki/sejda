@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public abstract class BasePdfToImageTask<T extends AbstractPdfToImageParameters> implements Task<T> {
+abstract class BasePdfToImageTask<T extends AbstractPdfToImageParameters> implements Task<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 

@@ -18,7 +18,7 @@
 package org.sejda.core.manipulation.model.output;
 
 /**
- * Abstract implementation of a task output destination where the results of a manipulation will be written.
+ * Represents task output destination where results of a manipulation will be written.
  * 
  * @author Andrea Vacondio
  * 

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class LoggingPrefixProcessorDecorator implements PrefixProcessor {
+class LoggingPrefixProcessorDecorator implements PrefixProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(LoggingPrefixProcessorDecorator.class);
 

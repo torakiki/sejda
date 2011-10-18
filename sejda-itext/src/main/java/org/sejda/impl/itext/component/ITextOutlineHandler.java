@@ -62,7 +62,7 @@ public class ITextOutlineHandler implements OutlineHandler {
         return getMaxBookmarkLevel(bookmarks, 0);
     }
 
-    public OutlineGoToPageDestinations getGoToPageDestinationFroActionLevel(int goToActionLevel) {
+    public OutlineGoToPageDestinations getGoToPageDestinationForActionLevel(int goToActionLevel) {
         OutlineGoToPageDestinations destinations = new OutlineGoToPageDestinations();
         addPageIfBookmarkLevel(bookmarks, 1, destinations, goToActionLevel);
         return destinations;

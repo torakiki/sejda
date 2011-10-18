@@ -61,7 +61,7 @@ public final class TransitionUtils {
 
     /**
      * Mapping between Sejda transition style enum and iText constants.<br>
-     * No all the possible transition styles are available in iText so this method can return null if a mapping is not found.
+     * Not all the possible transition styles are available in iText so this method can return null if a mapping is not found.
      * 
      * @param transition
      * @return the iText constant or null of no constant is found.

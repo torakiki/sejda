@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrea Vacondio
  */
-public abstract class AbstractNotificationContext implements NotificationContext {
+abstract class AbstractNotificationContext implements NotificationContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractNotificationContext.class);
 

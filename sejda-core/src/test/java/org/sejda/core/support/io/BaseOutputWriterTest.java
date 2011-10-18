@@ -39,11 +39,11 @@ import org.sejda.core.manipulation.model.output.TaskOutput;
  * @author Andrea Vacondio
  * 
  */
-public class OutputWriterSupportTest {
+public class BaseOutputWriterTest {
 
     @Test(expected = TaskIOException.class)
     public void testWriteNonFile() throws TaskIOException {
-        OutputWriterSupport victim = new OutputWriterSupport();
+        BaseOutputWriter victim = new BaseOutputWriter();
         TaskOutput output = mock(TaskOutput.class);
         when(output.getOutputType()).thenReturn(OutputType.FILE_OUTPUT);
         victim.writeToNonFileDestination(output, true);
@@ -51,7 +51,7 @@ public class OutputWriterSupportTest {
 
     @Test
     public void testWriteStream() throws TaskIOException {
-        OutputWriterSupport victim = spy(new OutputWriterSupport());
+        BaseOutputWriter victim = spy(new BaseOutputWriter());
         OutputStream stream = mock(OutputStream.class);
         StreamOutput output = StreamOutput.newInstance(stream);
         ArgumentCaptor<Destination> destination = ArgumentCaptor.forClass(Destination.class);
@@ -63,7 +63,7 @@ public class OutputWriterSupportTest {
 
     @Test
     public void testWriteDirectory() throws TaskIOException {
-        OutputWriterSupport victim = spy(new OutputWriterSupport());
+        BaseOutputWriter victim = spy(new BaseOutputWriter());
         File file = mock(File.class);
         when(file.isDirectory()).thenReturn(Boolean.TRUE);
         when(file.exists()).thenReturn(Boolean.TRUE);

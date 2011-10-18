@@ -24,7 +24,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.sejda.core.validation.constraint.Directory;
 
 /**
- * Validator to verify that a file is an existing directory.
+ * Validator to verify that a {@link File} is an existing directory.
  * 
  * @author Andrea Vacondio
  * 

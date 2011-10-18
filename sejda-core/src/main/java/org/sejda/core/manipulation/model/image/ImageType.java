@@ -20,7 +20,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Model for an image type with helper methods related to the ability to support multiple images.
+ * Model for an image type with helper methods related to the ability of the image type to support multiple images written into the same file.
  * 
  * @author Andrea Vacondio
  * 
@@ -51,7 +51,6 @@ public enum ImageType {
     }
 
     /**
-     * 
      * @return a set containing only those {@link ImageType} supporting multiple image.
      */
     public static Set<ImageType> valuesSupportingMultipleImage() {

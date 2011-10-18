@@ -41,6 +41,8 @@ import com.lowagie.text.pdf.PdfStream;
 import com.lowagie.text.pdf.PdfString;
 
 /**
+ * {@link PdfCopier} implementation that includes form fields while coping pages and uses a {@link File} as output
+ * 
  * @author Andrea Vacondio
  * 
  */

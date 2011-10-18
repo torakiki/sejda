@@ -178,7 +178,7 @@ public final class ViewerPreferencesUtils {
     /**
      * @param mode
      * @param layout
-     * @return the int representing the ORed layout|mode that can be used to set the vewer preferences in the pdf stamper.
+     * @return the int representing the ORed layout|mode that can be used to set the viewer preferences in the pdf stamper.
      */
     public static int getViewerPreferences(PdfPageMode mode, PdfPageLayout layout) {
         return getPageMode(mode) | getPageLayout(layout);

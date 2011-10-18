@@ -26,7 +26,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
  * @author Andrea Vacondio
  * 
  */
-public class BaseBookmarkPrefixProcessor implements PrefixProcessor {
+class BaseBookmarkPrefixProcessor implements PrefixProcessor {
 
     private String prefixNameRegex;
     private String toBeReplacedRegex;

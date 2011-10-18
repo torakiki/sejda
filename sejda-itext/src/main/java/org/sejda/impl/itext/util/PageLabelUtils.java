@@ -55,7 +55,7 @@ public final class PageLabelUtils {
     }
 
     /**
-     * Maps a map of {@link PdfPageLabel} to a {@link PdfPageLabels} instance that can be used as input for the PdfCopy.
+     * Maps a map of {@link PdfPageLabel} to a {@link com.lowagie.text.pdf.PdfPageLabels} instance that can be used as input for the PdfCopy.
      * 
      * @param labels
      * @param totalPages

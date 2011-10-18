@@ -45,7 +45,7 @@ public final class PdfRotator implements OngoingRotation {
     /**
      * DSL entry point to apply a rotation
      * <p>
-     * <code>applyRotation(rotation).to(reader);</code>
+     * <code>applyRotation(rotation).to(document);</code>
      * </p>
      * 
      * @param rotation

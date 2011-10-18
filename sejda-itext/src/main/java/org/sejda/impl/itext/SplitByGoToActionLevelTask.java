@@ -56,7 +56,7 @@ public class SplitByGoToActionLevelTask implements Task<SplitByGoToActionLevelPa
         LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
         OutlineGoToPageDestinations goToPagesDestination = new ITextOutlineHandler(reader,
                 parameters.getMatchingTitleRegEx())
-                .getGoToPageDestinationFroActionLevel(parameters.getLevelToSplitAt());
+                .getGoToPageDestinationForActionLevel(parameters.getLevelToSplitAt());
         splitter = new GoToPageDestinationsPdfSplitter(reader, parameters, goToPagesDestination);
         LOG.debug("Starting split by GoTo Action level for {} ", parameters);
         splitter.split();

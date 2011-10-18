@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
@@ -25,7 +26,8 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.PdfAlternateMixer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +43,9 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
     private PdfAlternateMixer mixer = null;
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
 
     public void before(AlternateMixParameters parameters) throws TaskIOException {
-        outputWriter = new SingleOutputWriterSupport();
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
     }
 
@@ -54,7 +55,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.compressXrefStream(parameters.isCompressXref());
 
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
         mixer.saveDecryptedPDDocument(tmpFile);
 

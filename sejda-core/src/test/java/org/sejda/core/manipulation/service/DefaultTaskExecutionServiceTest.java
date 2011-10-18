@@ -33,6 +33,8 @@ import org.mockito.Matchers;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.NotificationContextException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
@@ -56,7 +58,7 @@ public class DefaultTaskExecutionServiceTest {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
     private TestTaskParameter parameters = new TestTaskParameter();
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private Task task = mock(Task.class);
 
     @Before
@@ -64,6 +66,7 @@ public class DefaultTaskExecutionServiceTest {
         OutputStream stream = mock(OutputStream.class);
         parameters.setOutput(StreamOutput.newInstance(stream));
         when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
+        when(context.isValidation()).thenReturn(Boolean.TRUE);
     }
 
     @Test

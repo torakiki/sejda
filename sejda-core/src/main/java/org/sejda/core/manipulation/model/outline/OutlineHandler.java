@@ -34,5 +34,5 @@ public interface OutlineHandler {
      * @param goToActionLevel
      * @return a set of page numbers found at the given GoTo Action level
      */
-    OutlineGoToPageDestinations getGoToPageDestinationFroActionLevel(int goToActionLevel);
+    OutlineGoToPageDestinations getGoToPageDestinationForActionLevel(int goToActionLevel);
 }

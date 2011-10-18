@@ -28,6 +28,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
@@ -58,7 +60,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         TestableTask<ViewerPreferencesParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
     @Before

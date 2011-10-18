@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
@@ -29,14 +30,15 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task setting metadata on an input {@link PdfSource}.
+ * PDFBox implementation of a task setting metadata on an input {@link PdfSource}.
  * 
  * @author Nero Couvalli
  * 
@@ -46,11 +48,10 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
     private PDDocumentHandler documentHandler = null;
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(SetMetadataParameters parameters) {
-        outputWriter = new SingleOutputWriterSupport();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -60,7 +61,7 @@ public class SetMetadataTask implements Task<SetMetadataParameters> {
         documentHandler = source.open(documentLoader);
         documentHandler.setCreatorOnPDDocument();
 
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
 
         LOG.debug("Setting metadata on temporary document.");

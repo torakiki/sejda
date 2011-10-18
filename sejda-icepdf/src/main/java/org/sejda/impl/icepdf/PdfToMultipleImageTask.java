@@ -17,6 +17,7 @@
 package org.sejda.impl.icepdf;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -29,7 +30,8 @@ import org.sejda.core.Sejda;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +48,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 
-    private MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
     private Document pdfDocument = null;
 
@@ -57,7 +59,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         LOG.trace("Found {} pages", numberOfPages);
 
         for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < pdfDocument.getNumberOfPages(); zeroBasedPageNumber++) {
-            File tmpFile = outputWriter.createTemporaryBuffer();
+            File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
 
             getWriter().openWriteDestination(tmpFile, parameters);

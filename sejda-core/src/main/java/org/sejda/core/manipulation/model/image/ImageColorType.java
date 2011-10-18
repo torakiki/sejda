@@ -21,7 +21,7 @@ import java.awt.image.BufferedImage;
 import org.sejda.core.support.DisplayNamedEnum;
 
 /**
- * The color type of an image.
+ * The color type for an image.
  * 
  * @author Andrea Vacondio
  * 

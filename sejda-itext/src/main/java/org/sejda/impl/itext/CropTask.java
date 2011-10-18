@@ -17,6 +17,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
@@ -31,7 +32,8 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.CropParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.slf4j.Logger;
@@ -55,11 +57,10 @@ public class CropTask implements Task<CropParameters> {
 
     private PdfReader reader = null;
     private DefaultPdfCopier copier = null;
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(CropParameters parameters) {
-        outputWriter = new SingleOutputWriterSupport();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
     }
 
@@ -69,7 +70,7 @@ public class CropTask implements Task<CropParameters> {
         reader = source.open(sourceOpener);
         int totalPages = reader.getNumberOfPages();
 
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());

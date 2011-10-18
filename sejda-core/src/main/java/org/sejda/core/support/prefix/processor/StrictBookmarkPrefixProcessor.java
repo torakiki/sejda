@@ -23,7 +23,7 @@ package org.sejda.core.support.prefix.processor;
  * @author Andrea Vacondio
  * 
  */
-public class StrictBookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
+class StrictBookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
 
     private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME_STRICT\\]";
     private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "(?i)[^A-Z0-9_]";

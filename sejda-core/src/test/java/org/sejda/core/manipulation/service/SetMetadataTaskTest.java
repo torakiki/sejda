@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
@@ -50,7 +52,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private SetMetadataParameters parameters = new SetMetadataParameters();
 
     @Before

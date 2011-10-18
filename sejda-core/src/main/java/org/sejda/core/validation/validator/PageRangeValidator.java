@@ -24,7 +24,7 @@ import org.sejda.core.manipulation.model.pdf.page.PageRange;
 import org.sejda.core.validation.constraint.EndGreaterThenOrEqualToStart;
 
 /**
- * Validator for the {@link EndGreaterThenOrEqualToStart} constraint.
+ * Validates that in a {@link PageRange} the end page is greater or equals the start page.
  * 
  * @author Andrea Vacondio
  * 

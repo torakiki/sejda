@@ -29,6 +29,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
@@ -51,7 +53,7 @@ import com.lowagie.text.pdf.PdfWriter;
 public abstract class EncryptTaskTest extends PdfOutEnabledTest implements TestableTask<EncryptParameters> {
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private EncryptParameters parameters;
 
     @Before

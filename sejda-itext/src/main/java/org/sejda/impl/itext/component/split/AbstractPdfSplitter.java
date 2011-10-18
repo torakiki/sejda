@@ -18,6 +18,7 @@
 package org.sejda.impl.itext.component.split;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -32,7 +33,8 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.impl.itext.component.PdfCopier;
@@ -56,7 +58,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
     private T parameters;
     private int totalPages;
     private OutlineSubsetProvider<Map<String, Object>> outlineSubsetProvider;
-    private MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
 
     /**
      * Creates a new splitter using the given reader.
@@ -101,7 +103,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
     }
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
 
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());

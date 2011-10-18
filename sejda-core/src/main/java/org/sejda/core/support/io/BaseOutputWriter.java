@@ -20,7 +20,6 @@ package org.sejda.core.support.io;
 import static org.sejda.core.support.io.OutputDestination.destination;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,13 +36,11 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
  * @author Andrea Vacondio
  * 
  */
-class OutputWriterSupport {
-
-    private static final String BUFFER_NAME = "SejdaTmpBuffer";
+class BaseOutputWriter {
 
     private Map<String, File> multipleFiles;
 
-    public OutputWriterSupport() {
+    public BaseOutputWriter() {
         this.multipleFiles = new HashMap<String, File>();
     }
 
@@ -73,7 +70,7 @@ class OutputWriterSupport {
      * @throws TaskIOException
      */
     void write(Destination destination) throws TaskIOException {
-        OutputWriter.executeCopyAndDelete(multipleFiles, destination);
+        OutputWriterHelper.executeCopyAndDelete(multipleFiles, destination);
     }
 
     /**
@@ -91,31 +88,5 @@ class OutputWriterSupport {
      */
     void clear() {
         multipleFiles.clear();
-    }
-
-    /**
-     * @return a temporary pdf file
-     * @throws TaskIOException
-     */
-    public File createTemporaryPdfBuffer() throws TaskIOException {
-        return createTemporaryBuffer(".pdf");
-    }
-
-    /**
-     * @return a temporary file
-     * @throws TaskIOException
-     */
-    public File createTemporaryBuffer() throws TaskIOException {
-        return createTemporaryBuffer(".tmp");
-    }
-
-    private File createTemporaryBuffer(String extension) throws TaskIOException {
-        try {
-            File buffer = File.createTempFile(BUFFER_NAME, extension);
-            buffer.deleteOnExit();
-            return buffer;
-        } catch (IOException e) {
-            throw new TaskIOException("Unable to create temporary buffer", e);
-        }
     }
 }

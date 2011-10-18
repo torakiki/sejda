@@ -18,6 +18,7 @@ package org.sejda.impl.itext;
 
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
@@ -29,7 +30,8 @@ import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.FormFieldsAwarePdfCopier;
 import org.sejda.impl.itext.component.PdfCopier;
@@ -49,7 +51,7 @@ public class MergeTask implements Task<MergeParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MergeTask.class);
 
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<PdfReader> sourceOpener;
     private PdfCopier copier = null;
     private PdfReader reader;
@@ -57,13 +59,12 @@ public class MergeTask implements Task<MergeParameters> {
 
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
-        outputWriter = new SingleOutputWriterSupport();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
     }
 
     public void execute(MergeParameters parameters) throws TaskException {
         int currentStep = 0;
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         for (PdfMergeInput input : parameters.getInputList()) {

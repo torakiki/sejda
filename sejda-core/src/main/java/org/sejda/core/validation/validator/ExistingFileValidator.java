@@ -25,7 +25,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.sejda.core.validation.constraint.ExistingFile;
 
 /**
- * Validates that the given file exists.
+ * Validates that the given {@link File} exists.
  * 
  * @author Andrea Vacondio
  * 

@@ -29,7 +29,7 @@ import org.sejda.core.manipulation.model.task.Task;
  * 
  */
 @SuppressWarnings("rawtypes")
-public interface TasksRegistry {
+interface TasksRegistry {
 
     /**
      * Search among the configured tasks the implementation that better can execute the input parameters class.

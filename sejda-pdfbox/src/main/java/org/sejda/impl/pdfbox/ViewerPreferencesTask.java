@@ -17,6 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -33,7 +34,8 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.slf4j.Logger;
@@ -51,11 +53,10 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
 
     private PDDocumentHandler documentHandler = null;
     private int totalSteps;
-    private MultipleOutputWriterSupport outputWriter;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(ViewerPreferencesParameters parameters) {
-        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
@@ -68,7 +69,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
             documentHandler = source.open(documentLoader);
             documentHandler.setCreatorOnPDDocument();
 
-            File tmpFile = outputWriter.createTemporaryPdfBuffer();
+            File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {} ...", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());

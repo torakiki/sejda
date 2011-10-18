@@ -31,6 +31,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.ImageTestUtils;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.image.ImageColorType;
 import org.sejda.core.manipulation.model.image.TiffCompressionType;
@@ -50,7 +52,7 @@ public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfTo
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
 
     @Before
     public void setUp() {

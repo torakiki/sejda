@@ -18,6 +18,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -32,7 +33,8 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.slf4j.Logger;
@@ -53,11 +55,10 @@ public class RotateTask implements Task<RotateParameters> {
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
-    private MultipleOutputWriterSupport outputWriter;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(RotateParameters parameters) {
-        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
     }
@@ -72,7 +73,7 @@ public class RotateTask implements Task<RotateParameters> {
 
             applyRotation(parameters.getRotation()).to(reader);
 
-            File tmpFile = outputWriter.createTemporaryPdfBuffer();
+            File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 

@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
@@ -29,7 +30,8 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PagesExtractor;
@@ -47,12 +49,11 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
     private PagesExtractor extractor = null;
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
 
     public void before(ExtractPagesParameters parameters) {
-        outputWriter = new SingleOutputWriterSupport();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -72,7 +73,7 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
         extractor.setVersionOnPDDocument(parameters.getVersion());
         extractor.compressXrefStream(parameters.isCompressXref());
 
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
         extractor.saveDecryptedPDDocument(tmpFile);
 

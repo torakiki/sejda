@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.itext.component;
 
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.ByteArrayInputStream;
@@ -31,7 +32,8 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.NullSafeSet;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +56,7 @@ public class PdfUnpacker {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfUnpacker.class);
 
-    private MultipleOutputWriterSupport outputWriter;
-
-    public PdfUnpacker() {
-        outputWriter = new MultipleOutputWriterSupport();
-    }
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
 
     public void unpack(PdfReader reader) throws TaskException {
         if (reader == null) {
@@ -91,7 +89,7 @@ public class PdfUnpacker {
     }
 
     private File copyToTemporaryFile(PRStream prs) throws TaskIOException {
-        File tmpFile = outputWriter.createTemporaryBuffer();
+        File tmpFile = createTemporaryBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
 
         ByteArrayInputStream inputStream = null;

@@ -25,7 +25,6 @@ import java.io.File;
  * 
  * <pre>
  * {
- *     &#064;code
  *     PopulatedFileOutput out = file(tmpFile).name(outName);
  * }
  * </pre>

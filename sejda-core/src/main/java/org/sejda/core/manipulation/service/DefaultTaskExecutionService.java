@@ -45,8 +45,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionService.class);
 
-    private final TaskExecutionContext context = new DefaultTaskExecutionContext();
-    private final SejdaContext sejdaContext = new DefaultSejdaContext();
+    private final SejdaContext context = new DefaultSejdaContext();
 
     public void execute(TaskParameters parameters) {
         StopWatch stopWatch = new StopWatch();
@@ -80,7 +79,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     }
 
     private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
-        if (sejdaContext.isValidation()) {
+        if (context.isValidation()) {
             LOG.debug("Validating parameters ({}).", parameters);
             Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                     .validate(parameters);

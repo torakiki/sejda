@@ -17,6 +17,7 @@
 package org.sejda.impl.pdfbox;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -29,14 +30,15 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.DecryptParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.MultipleOutputWriterSupport;
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Task performing decrypt of a list of encrypted {@link PdfSource}
+ * PDFBox implementation of a task performing decrypt of a list of encrypted {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
@@ -47,11 +49,11 @@ public class DecryptTask implements Task<DecryptParameters> {
 
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private MultipleOutputWriterSupport outputWriter;
+    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(DecryptParameters parameters) {
-        outputWriter = new MultipleOutputWriterSupport();
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
@@ -65,7 +67,7 @@ public class DecryptTask implements Task<DecryptParameters> {
             documentHandler.getPermissions().ensureOwnerPermissions();
             documentHandler.setCreatorOnPDDocument();
 
-            File tmpFile = outputWriter.createTemporaryPdfBuffer();
+            File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());

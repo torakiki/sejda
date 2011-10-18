@@ -17,6 +17,7 @@
 package org.sejda.impl.icepdf;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
@@ -27,7 +28,8 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +46,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
     private Document pdfDocument = null;
 
@@ -54,12 +56,11 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         if (!getWriter().supportMultiImage()) {
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
-        outputWriter = new SingleOutputWriterSupport();
     }
 
     public void execute(T parameters) throws TaskException {
 
-        File tmpFile = outputWriter.createTemporaryBuffer();
+        File tmpFile = createTemporaryBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         pdfDocument = parameters.getSource().open(sourceOpener);

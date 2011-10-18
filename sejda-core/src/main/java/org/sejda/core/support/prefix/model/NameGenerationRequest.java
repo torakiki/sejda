@@ -42,7 +42,7 @@ public final class NameGenerationRequest {
     }
 
     /**
-     * @return a newly created {@link NameGenerationRequest}
+     * @return a newly created {@link NameGenerationRequest} where the generated name will have a pdf extension.
      */
     public static NameGenerationRequest nameRequest() {
         return new NameGenerationRequest(Sejda.PDF_EXTENSION);

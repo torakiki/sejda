@@ -23,8 +23,7 @@ import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
 import org.sejda.core.validation.constraint.HasTransitions;
 
 /**
- * Makes sure that at least one trasition is set. Validator to validate a {@link SetPagesTransitionParameters} to make sure it has a default transition or a not empty set of
- * transitions.
+ * Validator to validate a {@link SetPagesTransitionParameters} to make sure it has a default transition or a not empty set of transitions.
  * 
  * @author Andrea Vacondio
  * 

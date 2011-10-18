@@ -17,6 +17,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
@@ -29,7 +30,8 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
 import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.support.io.SingleOutputWriterSupport;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.PdfCopier;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
@@ -48,19 +50,18 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
-    private SingleOutputWriterSupport outputWriter;
+    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
     private PdfSourceOpener<PdfReader> sourceOpener;
     private PdfCopier copier = null;
     private PdfReader reader;
 
     public void before(ExtractPagesParameters parameters) {
-        outputWriter = new SingleOutputWriterSupport();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
 
     }
 
     public void execute(ExtractPagesParameters parameters) throws TaskException {
-        File tmpFile = outputWriter.createTemporaryPdfBuffer();
+        File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         LOG.debug("Opening input {} ", parameters.getSource());

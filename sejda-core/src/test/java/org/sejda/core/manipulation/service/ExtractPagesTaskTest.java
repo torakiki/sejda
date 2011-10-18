@@ -27,6 +27,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.TestUtils;
+import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfStreamSource;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
@@ -47,7 +49,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
-    private TaskExecutionContext context = mock(DefaultTaskExecutionContext.class);
+    private SejdaContext context = mock(DefaultSejdaContext.class);
     private ExtractPagesParameters parameters;
 
     @Before
