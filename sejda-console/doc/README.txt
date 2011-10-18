@@ -9,7 +9,8 @@ Requirements
 Quick install & run
 * Extract the downloaded zip file
 * (Linux/Mac) Grant execution permissions: > chmod +x bin/sejda-console
-* Execute the console: > ./bin/sejda-console
+* (Linux/Mac) Execute the console: > ./bin/sejda-console
+* (Windows) Execute bin/sejda-console.bat
 
 License: Apache License 2.0
 Note: Application comes with ABSOLUTELY NO WARRANTY
