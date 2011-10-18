@@ -60,7 +60,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         PdfMergeInput firstInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
                 .getResourceAsStream("pdf/test_file.pdf"), "first_test_file.pdf"));
         PdfMergeInput secondInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/test_file.pdf"), "second_test_file.pdf"));
+                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf"));
         parameters = new MergeParameters();
         parameters.setOverwrite(true);
         parameters.setCompress(true);
@@ -79,7 +79,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(8, reader.getNumberOfPages());
+            assertEquals(310, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -97,7 +97,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(8, reader.getNumberOfPages());
+            assertEquals(310, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -108,8 +108,9 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {
-            input.addPageRange(new PageRange(1, 1));
-            input.addPageRange(new PageRange(3));
+            input.addPageRange(new PageRange(3, 10));
+            input.addPageRange(new PageRange(20, 23));
+            input.addPageRange(new PageRange(80, 90));
         }
         victim.execute(parameters);
         PdfReader reader = null;
@@ -117,7 +118,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(6, reader.getNumberOfPages());
+            assertEquals(25, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -129,8 +130,9 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         initializeNewFileOutput(parameters);
         TestUtils.setProperty(parameters, "copyFormFields", Boolean.TRUE);
         for (PdfMergeInput input : parameters.getInputList()) {
-            input.addPageRange(new PageRange(1, 1));
-            input.addPageRange(new PageRange(3));
+            input.addPageRange(new PageRange(3, 10));
+            input.addPageRange(new PageRange(20, 23));
+            input.addPageRange(new PageRange(80, 90));
         }
         victim.execute(parameters);
         PdfReader reader = null;
@@ -138,7 +140,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(6, reader.getNumberOfPages());
+            assertEquals(25, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }
