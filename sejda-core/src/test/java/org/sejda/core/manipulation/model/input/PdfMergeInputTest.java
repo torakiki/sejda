@@ -16,6 +16,14 @@
  */
 package org.sejda.core.manipulation.model.input;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.sejda.core.TestUtils;
@@ -26,10 +34,15 @@ import org.sejda.core.manipulation.model.pdf.page.PageRange;
  * 
  */
 public class PdfMergeInputTest {
+    private PdfSource source;
+
+    @Before
+    public void setUp() {
+        source = Mockito.mock(PdfSource.class);
+    }
 
     @Test
     public void testEqual() {
-        PdfSource source = Mockito.mock(PdfSource.class);
         PageRange range = new PageRange(10);
         PdfMergeInput eq1 = new PdfMergeInput(source);
         eq1.addPageRange(range);
@@ -39,5 +52,23 @@ public class PdfMergeInputTest {
         eq3.addPageRange(range);
         PdfMergeInput diff = new PdfMergeInput(source);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void isAllPages() {
+        PdfMergeInput victim = new PdfMergeInput(source);
+        assertTrue(victim.isAllPages());
+        victim.addPageRange(new PageRange(10));
+        assertFalse(victim.isAllPages());
+    }
+
+    @Test
+    public void getPages() {
+        PdfMergeInput victim = new PdfMergeInput(source);
+        List<PageRange> ranges = new ArrayList<PageRange>();
+        ranges.add(new PageRange(5, 8));
+        ranges.add(new PageRange(10, 11));
+        victim.addAllPageRanges(ranges);
+        assertEquals(6, victim.getPages(20).size());
     }
 }
