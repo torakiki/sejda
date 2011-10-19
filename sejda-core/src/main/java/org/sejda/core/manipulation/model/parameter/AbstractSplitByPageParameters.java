@@ -19,6 +19,7 @@ package org.sejda.core.manipulation.model.parameter;
 import java.util.Set;
 
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.core.manipulation.model.pdf.page.PagesSelection;
 
 /**
  * Skeletal implementation for a split by page parameter class.
@@ -26,7 +27,8 @@ import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleO
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters {
+public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters implements
+        PagesSelection {
 
     /**
      * @param upperLimit
