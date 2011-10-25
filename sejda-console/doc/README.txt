@@ -13,4 +13,6 @@ Quick install & run
 * (Windows) Execute bin/sejda-console.bat
 
 License: Apache License 2.0
+Feedbacks to: info@sejda.org
+
 Note: Application comes with ABSOLUTELY NO WARRANTY

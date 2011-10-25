@@ -17,28 +17,35 @@
  */
 package org.sejda.core.context;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.sejda.core.support.util.XMLUtils.nullSafeGetBooleanAttribute;
+import static org.sejda.core.support.util.XMLUtils.nullSafeGetStringAttribute;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Node;
-import org.dom4j.io.SAXReader;
 import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -51,13 +58,15 @@ import org.xml.sax.SAXException;
 final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
-    private static final String VALIDATION_XPATH = "/@validation";
-    private static final String NOTIFICATION_XPATH = "/notification/@async";
+    private static final String VALIDATION_ATTRIBUTENAME = "validation";
+    private static final String NOTIFICATION_XPATH = "/notification";
+    private static final String NOTIFICATION_ASYNC_ATTRIBUTENAME = "async";
     private static final String TASKS_XPATH = "/tasks/task";
-    private static final String TASK_PARAM_XPATH = "@parameters";
-    private static final String TASK_VALUE_XPATH = "@task";
+    private static final String TASK_PARAM_ATTRIBUTENAME = "parameters";
+    private static final String TASK_VALUE_ATTRIBUTENAME = "task";
     private static final String DEFAULT_SEJDA_CONFIG = "sejda.xsd";
 
+    private XPathFactory xpathFactory = XPathFactory.newInstance();
     private Class<? extends NotificationStrategy> notificationStrategy;
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasks;
@@ -76,29 +85,29 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     }
 
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
-        SAXParserFactory factory = SAXParserFactory.newInstance();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
             factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(ClassLoader
                     .getSystemResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
 
-            SAXReader reader = new SAXReader(factory.newSAXParser().getXMLReader());
-            reader.setValidation(false);
-
-            Document document = reader.read(input);
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(input);
 
             notificationStrategy = getNotificationStrategy(document);
             tasks = getTasksMap(document);
-            validation = getBooleanValueFromXPath(ROOT_NODE + VALIDATION_XPATH, document);
-        } catch (DocumentException e) {
-            throw new ConfigurationException("Error loading the xml input stream.", e);
+            validation = getValidation(document);
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
         } catch (SAXException e) {
-            throw new ConfigurationException("Error processing the xml schema input stream.", e);
+            throw new ConfigurationException(e);
         } catch (ParserConfigurationException e) {
-            throw new ConfigurationException("Unable to create SAX parser.", e);
+            throw new ConfigurationException("Unable to create DocumentBuilder.", e);
+        } catch (XPathExpressionException e) {
+            throw new ConfigurationException("Unable evaluate xpath expression.", e);
         }
-
     }
 
     public Class<? extends NotificationStrategy> getNotificationStrategy() {
@@ -116,13 +125,15 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
-            throws ConfigurationException {
+            throws ConfigurationException, XPathExpressionException {
         Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
-        @SuppressWarnings("unchecked")
-        List<Node> nodes = document.selectNodes(ROOT_NODE + TASKS_XPATH);
-        for (Node node : nodes) {
-            Class<? extends TaskParameters> paramClass = getClassFromNode(node, TASK_PARAM_XPATH, TaskParameters.class);
-            Class<? extends Task> taksClass = getClassFromNode(node, TASK_VALUE_XPATH, Task.class);
+        NodeList nodes = (NodeList) xpathFactory.newXPath().evaluate(ROOT_NODE + TASKS_XPATH, document,
+                XPathConstants.NODESET);
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            Class<? extends TaskParameters> paramClass = getClassFromNode(node, TASK_PARAM_ATTRIBUTENAME,
+                    TaskParameters.class);
+            Class<? extends Task> taksClass = getClassFromNode(node, TASK_VALUE_ATTRIBUTENAME, Task.class);
             retMap.put(paramClass, taksClass);
 
         }
@@ -136,21 +147,20 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
      * @param <T>
      * 
      * @param node
-     * @param xpath
+     * @param attributeName
      * @param assignableInterface
      * @return the retrieved class.
      * @throws ConfigurationException
      */
-    private <T> Class<? extends T> getClassFromNode(Node node, String xpath, Class<T> assignableInterface)
+    private <T> Class<? extends T> getClassFromNode(Node node, String attributeName, Class<T> assignableInterface)
             throws ConfigurationException {
-        Node paramsClassNode = node.selectSingleNode(xpath);
-        if (paramsClassNode != null) {
-            String paramClass = paramsClassNode.getText().trim();
+        String attributeValue = nullSafeGetStringAttribute(node, attributeName);
+        if (isNotBlank(attributeValue)) {
             Class<?> clazz;
             try {
-                clazz = Class.forName(paramClass);
+                clazz = Class.forName(attributeValue.trim());
             } catch (ClassNotFoundException e) {
-                throw new ConfigurationException(String.format("Unable to find the configured %s", paramClass), e);
+                throw new ConfigurationException(String.format("Unable to find the configured %s", attributeValue), e);
             }
             if (assignableInterface.isAssignableFrom(clazz)) {
                 return clazz.asSubclass(assignableInterface);
@@ -158,7 +168,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             throw new ConfigurationException(String.format("The configured %s is not a subtype of %s", clazz,
                     assignableInterface));
         }
-        throw new ConfigurationException(String.format("Missing %s configuration parameter.", xpath));
+        throw new ConfigurationException(String.format("Missing %s configuration parameter.", attributeName));
     }
 
     /**
@@ -166,26 +176,21 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
      * 
      * @param document
      * @return the class extending {@link NotificationStrategy} configured.
+     * @throws XPathExpressionException
      */
-    private Class<? extends NotificationStrategy> getNotificationStrategy(Document document) {
-        if (getBooleanValueFromXPath(ROOT_NODE + NOTIFICATION_XPATH, document)) {
+    private Class<? extends NotificationStrategy> getNotificationStrategy(Document document)
+            throws XPathExpressionException {
+        Node node = (Node) xpathFactory.newXPath().evaluate(ROOT_NODE + NOTIFICATION_XPATH, document,
+                XPathConstants.NODE);
+        if (nullSafeGetBooleanAttribute(node, NOTIFICATION_ASYNC_ATTRIBUTENAME)) {
             return AsyncNotificationStrategy.class;
         }
         return SyncNotificationStrategy.class;
     }
 
-    /**
-     * @param XPath
-     * @param document
-     * @return a boolean value from the given xpath that should point to a true/false attribute
-     */
-    private boolean getBooleanValueFromXPath(String xpath, Document document) {
-        boolean retVal = false;
-        Node node = document.selectSingleNode(xpath);
-        if (node != null) {
-            retVal = Boolean.parseBoolean(node.getText().trim());
-        }
-        return retVal;
+    private boolean getValidation(Document document) throws XPathExpressionException {
+        Node node = (Node) xpathFactory.newXPath().evaluate(ROOT_NODE, document, XPathConstants.NODE);
+        return nullSafeGetBooleanAttribute(node, VALIDATION_ATTRIBUTENAME);
     }
 
     /**

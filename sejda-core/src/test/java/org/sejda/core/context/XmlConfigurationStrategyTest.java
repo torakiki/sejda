@@ -18,6 +18,8 @@
 package org.sejda.core.context;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -33,6 +35,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.internal.matchers.Contains;
 import org.sejda.core.exception.ConfigurationException;
+import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 
 /**
@@ -60,6 +63,7 @@ public class XmlConfigurationStrategyTest {
         verify(stream, atLeastOnce()).close();
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
         assertEquals(1, victim.getTasksMap().size());
+        assertTrue(victim.isValidation());
     }
 
     @Test
@@ -86,5 +90,32 @@ public class XmlConfigurationStrategyTest {
         expected.expectMessage(new Contains("Unable to find the configured bla.bla.not.existing.Class"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
+    }
+
+    @Test
+    public void testPositiveNoValidation() throws ConfigurationException, IOException {
+        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-no-validation.xml"));
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
+        verify(stream, atLeastOnce()).close();
+        assertFalse(victim.isValidation());
+    }
+
+    @Test
+    public void testPositiveDefaultValidation() throws ConfigurationException, IOException {
+        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-default-validation.xml"));
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
+        verify(stream, atLeastOnce()).close();
+        assertFalse(victim.isValidation());
+    }
+
+    @Test
+    public void testPositiveAsyncNotification() throws ConfigurationException, IOException {
+        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-async-notification.xml"));
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
+        verify(stream, atLeastOnce()).close();
+        assertEquals(AsyncNotificationStrategy.class, victim.getNotificationStrategy());
     }
 }

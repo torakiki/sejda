@@ -145,8 +145,6 @@
 	<properties>
 		<junit.version>4.10</junit.version>
 		<slf4j.version>1.6.2</slf4j.version>
-		<dom4j.version>1.6.1</dom4j.version>
-		<jaxen.version>1.1.1</jaxen.version>
 		<commons.lang.version>3.0.1</commons.lang.version>
 		<commons.io.version>2.1</commons.io.version>
 		<commons.collections.version>3.2.1</commons.collections.version>
@@ -177,11 +175,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>dom4j</groupId>
-				<artifactId>dom4j</artifactId>
-				<version>${dom4j.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
 				<version>${validation.api.version}</version>
@@ -206,21 +199,6 @@
 				<artifactId>jdepend</artifactId>
 				<version>${jdepend.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>jaxen</groupId>
-				<artifactId>jaxen</artifactId>
-				<version>${jaxen.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>xom</groupId>
-						<artifactId>xom</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>jdom</groupId>
-						<artifactId>jdom</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
