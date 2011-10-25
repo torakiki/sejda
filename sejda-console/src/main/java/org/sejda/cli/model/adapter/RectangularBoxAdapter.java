@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.conversion.AdapterUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.RectangularBox;
 

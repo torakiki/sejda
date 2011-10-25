@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
@@ -36,7 +36,7 @@ public class PageRangeAdapter {
         try {
             pageRange = doParsePageRange(rawString);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Unparsable page range '" + rawString + "'. " + e.getMessage(), e);
+            throw new ConversionException("Unparsable page range '" + rawString + "'. " + e.getMessage(), e);
         }
     }
 
@@ -60,7 +60,7 @@ public class PageRangeAdapter {
         } else if (tokens.length == 2) {
             return new PageRange(parsePageNumber(tokens[0]), parsePageNumber(tokens[1]));
         } else {
-            throw new ArgumentValidationException(
+            throw new ConversionException(
                     "Ambiguous definition. Use following formats: [<page>] or [<page1>-<page2>] or [<page1>-]");
         }
     }

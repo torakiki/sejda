@@ -18,6 +18,8 @@ package org.sejda.cli.model.adapter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.conversion.AdapterUtils;
+import org.sejda.conversion.EnumUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;

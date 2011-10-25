@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.image.TiffCompressionType;
+import org.sejda.core.manipulation.model.pdf.PdfVersion;
 
 /**
- * Adapter class for enum {@link TiffCompressionType}. Provides initialization from string
+ * Adapter class for enum {@link PdfVersion}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class TiffCompressionTypeAdapter extends EnumAdapter<TiffCompressionType> {
+public class PdfVersionAdapter extends EnumAdapter<PdfVersion> {
 
-    public TiffCompressionTypeAdapter(String userFriendlyName) {
-        super(userFriendlyName, TiffCompressionType.class, "tiff compression type");
+    public PdfVersionAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfVersion.class, "pdf version");
     }
 }

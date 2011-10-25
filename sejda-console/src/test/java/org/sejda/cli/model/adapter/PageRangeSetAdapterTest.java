@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.sejda.conversion.PageRangeSetAdapter;
 import org.sejda.core.manipulation.model.pdf.page.PageRange;
 
 /**

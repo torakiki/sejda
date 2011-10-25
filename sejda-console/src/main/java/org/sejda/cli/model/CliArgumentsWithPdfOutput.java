@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.PdfVersionAdapter;
+import org.sejda.conversion.PdfVersionAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 

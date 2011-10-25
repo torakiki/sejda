@@ -1,5 +1,5 @@
 /*
- * Created on Oct 5, 2011
+ * Created on Oct 25, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,19 +14,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion.exception;
 
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.exception.SejdaRuntimeException;
 
 /**
- * Adapter class for enum {@link PdfVersion}. Provides initialization from string
- * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfVersionAdapter extends EnumAdapter<PdfVersion> {
+public class ConversionException extends SejdaRuntimeException {
 
-    public PdfVersionAdapter(String userFriendlyName) {
-        super(userFriendlyName, PdfVersion.class, "pdf version");
+    private static final long serialVersionUID = 1L;
+
+    public ConversionException() {
+        super();
+    }
+
+    public ConversionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ConversionException(String message) {
+        super(message);
+    }
+
+    public ConversionException(Throwable cause) {
+        super(cause);
     }
 }

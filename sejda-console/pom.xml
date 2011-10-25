@@ -113,6 +113,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
+			<artifactId>sejda-conversion</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
 			<artifactId>sejda-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>

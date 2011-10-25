@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import org.sejda.core.support.DisplayNamedEnum;
 
@@ -25,7 +25,7 @@ import org.sejda.core.support.DisplayNamedEnum;
  * 
  */
 // TODO: add support for ParameterizedTypeImpl in jewel-cli and reduce all classes extending this to one single class
-class EnumAdapter<T extends DisplayNamedEnum> {
+public class EnumAdapter<T extends DisplayNamedEnum> {
 
     private final T enumValue;
 

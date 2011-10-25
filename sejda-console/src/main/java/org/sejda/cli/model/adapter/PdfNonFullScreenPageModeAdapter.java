@@ -16,6 +16,7 @@
  */
 package org.sejda.cli.model.adapter;
 
+import org.sejda.conversion.EnumAdapter;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
 
 /**
