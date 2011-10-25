@@ -16,6 +16,8 @@
  */
 package org.sejda.cli.model.adapter;
 
+import static org.sejda.core.support.util.XMLUtils.nullSafeGetStringAttribute;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -28,10 +30,8 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -218,6 +218,8 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
 class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
     private static final Log LOG = LogFactory.getLog(XmlFileSourceListParser.class);
 
+    private XPathFactory xpathFactory = XPathFactory.newInstance();
+
     @Override
     protected List<String> parseFileNames(File file) {
         try {
@@ -259,7 +261,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             Node node = nodeList.item(i);
             Node fileSet = node.getParentNode();
 
-            String parentDirPath = nullSafeGetAttribute(fileSet, "dir");
+            String parentDirPath = nullSafeGetStringAttribute(fileSet, "dir");
             if (parentDirPath == null) {
                 parentDirPath = configFile.getAbsoluteFile().getParent();
             }
@@ -271,7 +273,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
                 LOG.warn("File "
                         + filePath
                         + " in fileset "
-                        + StringUtils.defaultIfBlank(nullSafeGetAttribute(fileSet, "dir"), "")
+                        + StringUtils.defaultIfBlank(nullSafeGetStringAttribute(fileSet, "dir"), "")
                         + " seems to be an absolute path. Will _not_ be resolved relative to the <fileset>, but as an absolute path. Normally you would want to use relative paths in a //filelist/fileset/file, and absolute paths in a //filelist/file.");
             }
 
@@ -282,17 +284,9 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
     }
 
     private String extractFilePath(Node fileNode) {
-        String password = nullSafeGetAttribute(fileNode, "password");
-        String value = nullSafeGetAttribute(fileNode, "value");
+        String password = nullSafeGetStringAttribute(fileNode, "password");
+        String value = nullSafeGetStringAttribute(fileNode, "value");
         return value + (password == null ? "" : PdfFileSourceAdapter.PASSWORD_SEPARATOR_CHARACTER + password);
-    }
-
-    private String nullSafeGetAttribute(Node node, String attributeName) {
-        if (node.getAttributes().getNamedItem(attributeName) == null) {
-            return null;
-        }
-
-        return node.getAttributes().getNamedItem(attributeName).getNodeValue();
     }
 
     /**
@@ -313,11 +307,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
         return result;
     }
 
-    private static NodeList getNodeListMatchingXpath(String xpathString, Document doc) throws XPathExpressionException {
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xpath = factory.newXPath();
-        XPathExpression expr = xpath.compile(xpathString);
-
-        return (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+    private NodeList getNodeListMatchingXpath(String xpathString, Document doc) throws XPathExpressionException {
+        return (NodeList) xpathFactory.newXPath().evaluate(xpathString, doc, XPathConstants.NODESET);
     }
 }
