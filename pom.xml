@@ -25,6 +25,7 @@
 		<module>sejda-image-writers</module>
 		<module>sejda-distribution</module>
 		<module>sejda-example</module>
+		<module>sejda-conversion</module>
 	</modules>
 	<profiles>
 		<profile>
