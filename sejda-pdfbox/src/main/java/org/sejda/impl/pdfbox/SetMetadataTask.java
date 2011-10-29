@@ -29,7 +29,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
 import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Nero Couvalli
  * 
  */
-public class SetMetadataTask implements Task<SetMetadataParameters> {
+public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 

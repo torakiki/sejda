@@ -1,7 +1,6 @@
 /*
- * Created on 12/mag/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 29/ott/2011
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,29 +14,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.manipulation;
+package org.sejda.core.manipulation.model.task;
 
-import org.junit.Ignore;
-import org.sejda.core.manipulation.model.task.BaseTask;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+import org.sejda.core.manipulation.TestTask;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-@Ignore
-public class TestTask extends BaseTask<TestTaskParameter> {
+public class BaseTaskTest {
 
-    public void after() {
-        // nothing
+    private TestTask victim = new TestTask();
 
+    @Test
+    public void testNotNullTaskMetadata() {
+        assertNotNull(victim.getNotifiableTaskMetadata());
     }
-
-    public void before(TestTaskParameter parameters) {
-        // nothing
-    }
-
-    public void execute(TestTaskParameter parameters) {
-        // nothing
-    }
-
 }

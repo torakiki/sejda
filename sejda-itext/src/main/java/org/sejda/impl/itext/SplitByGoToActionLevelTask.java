@@ -22,7 +22,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.outline.OutlineGoToPageDestinations;
 import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.impl.itext.component.ITextOutlineHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.impl.itext.component.split.GoToPageDestinationsPdfSplitter;
@@ -37,7 +37,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByGoToActionLevelTask implements Task<SplitByGoToActionLevelParameters> {
+public class SplitByGoToActionLevelTask extends BaseTask<SplitByGoToActionLevelParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitByGoToActionLevelTask.class);
 
@@ -59,7 +59,7 @@ public class SplitByGoToActionLevelTask implements Task<SplitByGoToActionLevelPa
                 .getGoToPageDestinationForActionLevel(parameters.getLevelToSplitAt());
         splitter = new GoToPageDestinationsPdfSplitter(reader, parameters, goToPagesDestination);
         LOG.debug("Starting split by GoTo Action level for {} ", parameters);
-        splitter.split();
+        splitter.split(getNotifiableTaskMetadata());
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }

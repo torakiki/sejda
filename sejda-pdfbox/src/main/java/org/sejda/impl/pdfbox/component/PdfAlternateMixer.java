@@ -29,6 +29,7 @@ import org.sejda.core.manipulation.model.input.PdfMixInput;
 import org.sejda.core.manipulation.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.util.ComponentsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,10 +59,12 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     /**
      * Perform the alternate mix on the given {@link PdfMixInput}s.
      * 
+     * @param taskMetadata
+     *            metadata of the task executing the mix.
      * @throws TaskException
      */
     @SuppressWarnings("unchecked")
-    public void mix() throws TaskException {
+    public void mix(NotifiableTaskMetadata taskMetadata) throws TaskException {
         firstDocumentHandler = openInput(firstInput);
         secondDocumentHandler = openInput(secondInput);
         setCreatorOnPDDocument();
@@ -79,11 +82,11 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
                 importPage(firstSourcePages.get(firstDocStatus.nextPage() - 1));
-                notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+                notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
                 importPage(secondSourcePages.get(secondDocStatus.nextPage() - 1));
-                notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+                notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
 

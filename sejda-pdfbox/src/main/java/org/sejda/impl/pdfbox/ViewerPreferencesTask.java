@@ -33,7 +33,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> {
+public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewerPreferencesTask.class);
 
@@ -86,7 +86,7 @@ public class ViewerPreferencesTask implements Task<ViewerPreferencesParameters> 
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

@@ -19,6 +19,7 @@
  */
 package org.sejda.core.notification.event;
 
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 
 /**
  * Event thrown when an execution fails
@@ -32,10 +33,8 @@ public class TaskExecutionFailedEvent extends AbstractNotificationEvent {
 
     private Exception failingCause;
 
-    /**
-     * @param failingCause
-     */
-    public TaskExecutionFailedEvent(Exception failingCause) {
+    public TaskExecutionFailedEvent(Exception failingCause, NotifiableTaskMetadata taskMetadata) {
+        super(taskMetadata);
         this.failingCause = failingCause;
     }
 

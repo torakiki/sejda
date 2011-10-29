@@ -72,7 +72,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                             .originalName(parameters.getSource().getName()).fileNumber(zeroBasedPageNumber + 1));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent().stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

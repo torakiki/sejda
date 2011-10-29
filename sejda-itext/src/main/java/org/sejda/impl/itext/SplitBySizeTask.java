@@ -21,7 +21,7 @@ import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.impl.itext.component.split.SizePdfSplitter;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class SplitBySizeTask implements Task<SplitBySizeParameters> {
+public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitBySizeTask.class);
 
@@ -53,7 +53,7 @@ public class SplitBySizeTask implements Task<SplitBySizeParameters> {
 
         splitter = new SizePdfSplitter(reader, parameters);
         LOG.debug("Starting split by size {} bytes", parameters.getSizeToSplitAt());
-        splitter.split();
+        splitter.split(getNotifiableTaskMetadata());
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }

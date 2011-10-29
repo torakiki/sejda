@@ -32,6 +32,11 @@ import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
 public interface Task<T extends TaskParameters> {
 
     /**
+     * @return The notifiable metadata for the task. All events sent for this task will include the task metadata.
+     */
+    NotifiableTaskMetadata getNotifiableTaskMetadata();
+
+    /**
      * Called before the actual execution of the task. Can be used to perform additional validation or initialization and to deny the execution in case some requirements are not
      * met throwing a {@link TaskException}.
      * 

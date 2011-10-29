@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.RectangularBox;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.CropParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
@@ -51,7 +51,7 @@ import com.lowagie.text.pdf.PdfRectangle;
  * @author Andrea Vacondio
  * 
  */
-public class CropTask implements Task<CropParameters> {
+public class CropTask extends BaseTask<CropParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(CropTask.class);
 
@@ -85,7 +85,7 @@ public class CropTask implements Task<CropParameters> {
                 dictionary.put(PdfName.CROPBOX, cropBox);
                 copier.addPage(reader, page);
             }
-            notifyEvent().stepsCompleted(page).outOf(totalPages);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(page).outOf(totalPages);
         }
         nullSafeCloseQuietly(copier);
         nullSafeClosePdfReader(reader);

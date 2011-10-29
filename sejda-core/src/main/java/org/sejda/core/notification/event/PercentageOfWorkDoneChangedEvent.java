@@ -22,6 +22,8 @@ package org.sejda.core.notification.event;
 import java.math.BigDecimal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 
 /**
  * Event used to notify about the increasing percentage of work executed by the task.
@@ -39,18 +41,22 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
     private BigDecimal percentage = BigDecimal.ZERO;
 
     /**
-     * Default constructor with percentage zero.
+     * creates and event with percentage zero.
+     * 
+     * @param taskMetadata
      */
-    public PercentageOfWorkDoneChangedEvent() {
-        super();
+    public PercentageOfWorkDoneChangedEvent(NotifiableTaskMetadata taskMetadata) {
+        super(taskMetadata);
     }
 
     /**
      * creates and event with the given percentage
      * 
      * @param percentage
+     * @param taskMetadata
      */
-    public PercentageOfWorkDoneChangedEvent(BigDecimal percentage) {
+    public PercentageOfWorkDoneChangedEvent(BigDecimal percentage, NotifiableTaskMetadata taskMetadata) {
+        super(taskMetadata);
         setPercentage(percentage);
     }
 
@@ -80,7 +86,8 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("percentage", percentage).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
+                .append("percentage", percentage).toString();
     }
 
 }

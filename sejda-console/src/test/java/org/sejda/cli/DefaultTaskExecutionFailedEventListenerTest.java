@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.sejda.core.TestUtils;
 import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.exception.TaskException;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.event.TaskExecutionFailedEvent;
 
 /**
@@ -50,7 +51,7 @@ public class DefaultTaskExecutionFailedEventListenerTest {
 
     public void assertOnEvent(Exception in, String expectedExceptionMessage) {
         try {
-            victim.onEvent(new TaskExecutionFailedEvent(in));
+            victim.onEvent(new TaskExecutionFailedEvent(in, NotifiableTaskMetadata.NULL));
             fail("Expected an exception to be propagated");
         } catch (SejdaRuntimeException actual) {
             assertThat(actual.getMessage(), containsString(expectedExceptionMessage));

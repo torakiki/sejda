@@ -33,6 +33,7 @@ import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
 import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
@@ -75,7 +76,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
         return totalPages;
     }
 
-    public void split() throws TaskException {
+    public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {
         nextOutputStrategy().ensureIsValid();
         PdfCopier pdfCopier = null;
         try {
@@ -87,7 +88,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
                     pdfCopier = open(page, outputDocumentsCounter);
                 }
                 pdfCopier.addPage(reader, page);
-                notifyEvent().stepsCompleted(page).outOf(totalPages);
+                notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     LOG.trace("Adding bookmarks to the temporary buffer");
                     pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider

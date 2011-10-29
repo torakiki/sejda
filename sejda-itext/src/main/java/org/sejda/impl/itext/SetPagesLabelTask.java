@@ -28,7 +28,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
@@ -44,7 +44,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesLabelTask implements Task<SetPagesLabelParameters> {
+public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetPagesLabelTask.class);
 

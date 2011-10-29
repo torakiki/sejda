@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.sejda.core.TestListenerFactory.TestListenerPercentage;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.exception.NotificationContextException;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.NotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
@@ -72,7 +73,8 @@ public class NotificationContextTest {
         TestListenerPercentage listener = newPercentageListener();
         victim.addListener(listener);
         BigDecimal value = new BigDecimal("32");
-        PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(value);
+        PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(value,
+                NotifiableTaskMetadata.NULL);
         assertFalse(event.isUndetermined());
         victim.notifyListeners(event);
         assertEquals(value, listener.getPercentage());

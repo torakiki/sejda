@@ -23,6 +23,7 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.mockito.Matchers;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
@@ -41,7 +42,7 @@ public class AsyncNotificationStrategyTest {
     @SuppressWarnings("rawtypes")
     public void testNotifyEvent() throws InterruptedException {
         EventListener listener = mock(EventListener.class);
-        victim.notifyListener(listener, new TaskExecutionCompletedEvent());
+        victim.notifyListener(listener, new TaskExecutionCompletedEvent(1L, NotifiableTaskMetadata.NULL));
         // FIXME
         // ugly but needed to give time for the async notification
         Thread.sleep(1000);

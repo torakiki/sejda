@@ -29,7 +29,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfMergeInput;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.MergeParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
@@ -47,7 +47,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class MergeTask implements Task<MergeParameters> {
+public class MergeTask extends BaseTask<MergeParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MergeTask.class);
 
@@ -83,7 +83,7 @@ public class MergeTask implements Task<MergeParameters> {
             copier.addAllPages(reader);
             copier.freeReader(reader);
 
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         closeResources();

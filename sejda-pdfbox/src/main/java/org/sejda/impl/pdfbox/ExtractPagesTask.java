@@ -29,7 +29,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class ExtractPagesTask implements Task<ExtractPagesParameters> {
+public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
@@ -69,7 +69,7 @@ public class ExtractPagesTask implements Task<ExtractPagesParameters> {
         }
         extractor = new PagesExtractor(sourceDocumentHandler);
         LOG.debug("Extracting pages {}", pages);
-        extractor.extractPages(pages);
+        extractor.extractPages(pages, getNotifiableTaskMetadata());
         extractor.setVersionOnPDDocument(parameters.getVersion());
         extractor.compressXrefStream(parameters.isCompressXref());
 

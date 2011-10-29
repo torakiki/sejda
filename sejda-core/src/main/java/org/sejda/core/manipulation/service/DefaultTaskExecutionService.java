@@ -30,6 +30,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.exception.InvalidTaskParametersException;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.slf4j.Logger;
@@ -49,33 +50,34 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     public void execute(TaskParameters parameters) {
         StopWatch stopWatch = new StopWatch();
-        preExecution(stopWatch);
         Task<? extends TaskParameters> task = null;
         try {
             validate(parameters);
             task = context.getTask(parameters);
             LOG.info("Starting task ({}) execution.", task);
+            preExecution(task, stopWatch);
             actualExecution(parameters, task);
-            postExecution(stopWatch);
+            postExecution(task, stopWatch);
             LOG.info("Task ({}) executed in {}", task,
                     DurationFormatUtils.formatDurationWords(stopWatch.getTime(), true, true));
         } catch (InvalidTaskParametersException i) {
             LOG.error("Task execution failed due to invalid parameters.", i);
-            executionFailed(i);
+            executionFailed(i, task);
         } catch (TaskException e) {
             LOG.error(String.format("Task (%s) execution failed.", task), e);
-            executionFailed(e);
+            executionFailed(e, task);
         } catch (RuntimeException e) {
-            executionFailed(e);
+            executionFailed(e, task);
             throw e;
         }
     }
 
-    /**
-     * @param e
-     */
-    private void executionFailed(Exception e) {
-        notifyEvent().taskFailed(e);
+    private void executionFailed(Exception e, Task<?> task) {
+        if (task == null) {
+            notifyEvent(NotifiableTaskMetadata.NULL).taskFailed(e);
+        } else {
+            notifyEvent(task.getNotifiableTaskMetadata()).taskFailed(e);
+        }
     }
 
     private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
@@ -99,19 +101,17 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     /**
      * operations needed before the actual execution
      */
-    private void preExecution(StopWatch stopWatch) {
+    private void preExecution(Task<?> task, StopWatch stopWatch) {
         stopWatch.start();
-        // notification of the starting task
-        notifyEvent().taskStarted();
+        notifyEvent(task.getNotifiableTaskMetadata()).taskStarted();
     }
 
     /**
      * operations needed after the actual execution
      */
-    private void postExecution(StopWatch stopWatch) {
+    private void postExecution(Task<?> task, StopWatch stopWatch) {
         stopWatch.stop();
-        // notification about completion
-        notifyEvent().taskCompleted(stopWatch.getTime());
+        notifyEvent(task.getNotifiableTaskMetadata()).taskCompleted(stopWatch.getTime());
     }
 
     /**

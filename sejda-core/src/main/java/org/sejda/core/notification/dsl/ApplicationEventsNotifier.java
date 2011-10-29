@@ -19,6 +19,7 @@ package org.sejda.core.notification.dsl;
 
 import java.math.BigDecimal;
 
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.notification.event.AbstractNotificationEvent;
@@ -42,9 +43,10 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventsNotifier.class);
 
     private BigDecimal percentage = BigDecimal.ZERO;
+    private NotifiableTaskMetadata taskMetadata;
 
-    private ApplicationEventsNotifier() {
-        // on purpose
+    private ApplicationEventsNotifier(NotifiableTaskMetadata taskMetadata) {
+        this.taskMetadata = taskMetadata;
     }
 
     /**
@@ -52,29 +54,30 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * <p>
      * Examples: <br />
      * <code>
-     * notifyEvent().stepsCompleted(2).outOf(10);
+     * NotifiableTaskMetadata taskMetadata = ...
+     * notifyEvent(taskMetadata).stepsCompleted(2).outOf(10);
      * </code> <br />
      * <code>
-     * notifyEvent().taskCompleted();
+     * notifyEvent(taskMetadata).taskCompleted();
      * </code>
      * </p>
      * 
      * @return the notifier
      */
-    public static Notifier notifyEvent() {
-        return new ApplicationEventsNotifier();
+    public static Notifier notifyEvent(NotifiableTaskMetadata taskMetadata) {
+        return new ApplicationEventsNotifier(taskMetadata);
     }
 
     public void taskFailed(Exception e) {
-        notifyListeners(new TaskExecutionFailedEvent(e));
+        notifyListeners(new TaskExecutionFailedEvent(e, taskMetadata));
     }
 
     public void taskCompleted(long executionTime) {
-        notifyListeners(new TaskExecutionCompletedEvent(executionTime));
+        notifyListeners(new TaskExecutionCompletedEvent(executionTime, taskMetadata));
     }
 
     public void taskStarted() {
-        notifyListeners(new TaskExecutionStartedEvent());
+        notifyListeners(new TaskExecutionStartedEvent(taskMetadata));
     }
 
     public OngoingNotification stepsCompleted(int completed) {
@@ -93,7 +96,8 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     public void outOf(BigDecimal total) {
         notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage.multiply(
-                PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN)));
+                PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN),
+                taskMetadata));
 
     }
 

@@ -34,7 +34,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.EncryptParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
@@ -51,7 +51,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class EncryptTask implements Task<EncryptParameters> {
+public class EncryptTask extends BaseTask<EncryptParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(EncryptTask.class);
 
@@ -93,7 +93,7 @@ public class EncryptTask implements Task<EncryptParameters> {
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

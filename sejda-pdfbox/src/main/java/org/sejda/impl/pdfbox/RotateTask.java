@@ -31,7 +31,7 @@ import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.RotateParameters;
 import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * @author Nero Couvalli
  * 
  */
-public class RotateTask implements Task<RotateParameters> {
+public class RotateTask extends BaseTask<RotateParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RotateTask.class);
 
@@ -84,7 +84,7 @@ public class RotateTask implements Task<RotateParameters> {
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent().stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

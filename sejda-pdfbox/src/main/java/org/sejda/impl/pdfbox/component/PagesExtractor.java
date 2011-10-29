@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.sejda.core.exception.TaskIOException;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.util.ComponentsUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +46,9 @@ public class PagesExtractor extends PDDocumentHandler {
         this.sourceDocumentHandler = sourceDocumentHandler;
     }
 
-    public void extractPages(Set<Integer> pages) throws TaskIOException {
+    public void extractPages(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
         initializeDocument();
-        doExtract(pages);
+        doExtract(pages, taskMetadata);
     }
 
     private void initializeDocument() {
@@ -60,7 +61,7 @@ public class PagesExtractor extends PDDocumentHandler {
         setCreatorOnPDDocument();
     }
 
-    private void doExtract(Set<Integer> pages) throws TaskIOException {
+    private void doExtract(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
         @SuppressWarnings("unchecked")
         List<PDPage> existingPages = sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAllPages();
         int currentStep = 0;
@@ -68,7 +69,7 @@ public class PagesExtractor extends PDDocumentHandler {
             PDPage existingPage = existingPages.get(page - 1);
             importPage(existingPage);
             LOG.trace("Imported page number {}", page);
-            notifyEvent().stepsCompleted(++currentStep).outOf(pages.size());
+            notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(pages.size());
         }
     }
 

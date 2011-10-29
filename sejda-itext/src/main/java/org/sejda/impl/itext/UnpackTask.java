@@ -23,7 +23,7 @@ import org.sejda.core.exception.TaskException;
 import org.sejda.core.manipulation.model.input.PdfSource;
 import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.UnpackParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.impl.itext.component.PdfUnpacker;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class UnpackTask implements Task<UnpackParameters> {
+public class UnpackTask extends BaseTask<UnpackParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnpackTask.class);
 
@@ -62,7 +62,7 @@ public class UnpackTask implements Task<UnpackParameters> {
             unpacker.unpack(reader);
 
             nullSafeClosePdfReader(reader);
-            notifyEvent().stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         unpacker.flushOutputs(parameters.getOutput(), parameters.isOverwrite());

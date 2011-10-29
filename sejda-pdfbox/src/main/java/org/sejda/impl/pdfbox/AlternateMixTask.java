@@ -25,7 +25,7 @@ import java.io.File;
 import org.sejda.core.exception.TaskException;
 import org.sejda.core.exception.TaskIOException;
 import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.PdfAlternateMixer;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class AlternateMixTask implements Task<AlternateMixParameters> {
+public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
@@ -51,7 +51,7 @@ public class AlternateMixTask implements Task<AlternateMixParameters> {
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
 
-        mixer.mix();
+        mixer.mix(getNotifiableTaskMetadata());
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.compressXrefStream(parameters.isCompressXref());
 

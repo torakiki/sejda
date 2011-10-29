@@ -35,7 +35,7 @@ import org.sejda.core.manipulation.model.input.PdfSourceOpener;
 import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
 import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
 import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.PdfStamperHandler;
@@ -51,7 +51,7 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters> {
+public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetPagesTransitionTask.class);
 
@@ -86,7 +86,7 @@ public class SetPagesTransitionTask implements Task<SetPagesTransitionParameters
         for (Entry<Integer, PdfPageTransition> entry : transitions.entrySet()) {
             LOG.trace("Applying transition {} to page {}", entry.getValue(), entry.getKey());
             stamperHandler.setTransitionOnStamper(entry.getKey(), entry.getValue());
-            notifyEvent().stepsCompleted(++currentStep).outOf(transitions.size());
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(transitions.size());
         }
 
         nullSafeClosePdfReader(reader);

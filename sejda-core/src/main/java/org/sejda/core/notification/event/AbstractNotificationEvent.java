@@ -22,6 +22,8 @@ package org.sejda.core.notification.event;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 
 /**
  * Abstract event that carries the timestamp when it has been created.
@@ -34,18 +36,25 @@ public abstract class AbstractNotificationEvent implements NotificationEvent, Se
     private static final long serialVersionUID = 3392179202226082364L;
 
     private Long eventTimestamp;
+    private NotifiableTaskMetadata notifiableTaskMetadata;
 
-    public AbstractNotificationEvent() {
+    AbstractNotificationEvent(NotifiableTaskMetadata notifiableTaskMetadata) {
         this.eventTimestamp = Long.valueOf(System.currentTimeMillis());
+        this.notifiableTaskMetadata = notifiableTaskMetadata;
     }
 
     public Long getEventTimestamp() {
         return eventTimestamp;
     }
 
+    public NotifiableTaskMetadata getNotifiableTaskMetadata() {
+        return notifiableTaskMetadata;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("eventTimestamp", eventTimestamp).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("eventTimestamp", eventTimestamp)
+                .append("taskMetadata", notifiableTaskMetadata).toString();
     }
 
 }

@@ -20,6 +20,8 @@
 package org.sejda.core.notification.event;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 
 /**
  * Event thrown when an execution completes without errors.
@@ -34,18 +36,13 @@ public class TaskExecutionCompletedEvent extends AbstractNotificationEvent {
     private long executionTime = -1;
 
     /**
-     * Creates an instance without specifying the execution time.
-     */
-    public TaskExecutionCompletedEvent() {
-        super();
-    }
-
-    /**
      * Creates an instance specifying the execution time, the number of millis from the task to complete.
      * 
      * @param executionTime
+     * @param taskMetadata
      */
-    public TaskExecutionCompletedEvent(long executionTime) {
+    public TaskExecutionCompletedEvent(long executionTime, NotifiableTaskMetadata taskMetadata) {
+        super(taskMetadata);
         this.executionTime = executionTime;
     }
 
@@ -59,7 +56,8 @@ public class TaskExecutionCompletedEvent extends AbstractNotificationEvent {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("executionTime", executionTime).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString())
+                .append("executionTime", executionTime).toString();
     }
 
 }

@@ -19,6 +19,8 @@
  */
 package org.sejda.core.notification.event;
 
+import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
+
 /**
  * Events notified when a task execution starts.
  * 
@@ -29,6 +31,8 @@ public class TaskExecutionStartedEvent extends AbstractNotificationEvent {
 
     private static final long serialVersionUID = -8143994205216959322L;
 
-    // define specific properties
+    public TaskExecutionStartedEvent(NotifiableTaskMetadata taskMetadata) {
+        super(taskMetadata);
+    }
 
 }
