@@ -35,7 +35,7 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
 
     private static final long serialVersionUID = -9123790950056705713L;
 
-    public static final BigDecimal UNDETERMINATE = new BigDecimal("-1");
+    public static final BigDecimal UNDETERMINED = new BigDecimal("-1");
     public static final BigDecimal MAX_PERGENTAGE = new BigDecimal("100");
 
     private BigDecimal percentage = BigDecimal.ZERO;
@@ -71,7 +71,7 @@ public class PercentageOfWorkDoneChangedEvent extends AbstractNotificationEvent 
      */
     public final void setPercentage(BigDecimal percentage) {
         if (BigDecimal.ZERO.compareTo(percentage) > 0) {
-            this.percentage = UNDETERMINATE;
+            this.percentage = UNDETERMINED;
         } else {
             this.percentage = MAX_PERGENTAGE.min(percentage);
         }

@@ -60,9 +60,6 @@ public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParam
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
         if (!(other instanceof PdfToMultipleTiffParameters)) {
             return false;
         }

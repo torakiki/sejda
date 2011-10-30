@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public final class TestUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
+    private static final NotInstanceOf NOT_INSTANCE_OF = new NotInstanceOf();
 
     private TestUtils() {
         // util
@@ -64,6 +65,9 @@ public final class TestUtils {
      *            not equal instance
      */
     public static <T> void testEqualsAndHashCodes(T eq1, T eq2, T eq3, T diff) {
+        // not instance of
+        assertFalse(eq1.equals(NOT_INSTANCE_OF));
+
         // reflexive
         assertTrue(eq1.equals(eq1));
         assertTrue(eq1.hashCode() == eq1.hashCode());
@@ -100,4 +104,13 @@ public final class TestUtils {
         Assert.assertFalse(violations.isEmpty());
     }
 
+    /**
+     * Class used to test instance of returning false.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static final class NotInstanceOf {
+        // nothing
+    }
 }
