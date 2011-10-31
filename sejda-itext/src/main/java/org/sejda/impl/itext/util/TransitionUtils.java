@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
+import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 
 import com.lowagie.text.pdf.PdfTransition;
 

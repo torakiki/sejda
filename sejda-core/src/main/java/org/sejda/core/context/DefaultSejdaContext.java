@@ -20,11 +20,11 @@ package org.sejda.core.context;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskNotFoundException;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.NotificationStrategy;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskNotFoundException;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Default implementation of the {@link SejdaContext}. It loads Sejda configuration from the xml configuration file specified by the system property <b>sejda.config.file</b> or

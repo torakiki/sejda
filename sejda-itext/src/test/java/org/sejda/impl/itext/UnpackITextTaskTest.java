@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.UnpackParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.UnpackTaskTest;
+import org.sejda.core.service.UnpackTaskTest;
 import org.sejda.impl.itext.UnpackTask;
+import org.sejda.model.parameter.UnpackParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

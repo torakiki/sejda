@@ -27,9 +27,9 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.pdf.PdfVersion;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;

@@ -29,17 +29,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.SetPagesTransitionParameters;
+import org.sejda.model.pdf.transition.PdfPageTransition;
+import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

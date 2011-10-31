@@ -23,8 +23,8 @@ import static org.sejda.impl.itext.util.EncryptionUtils.getAccessPermission;
 import static org.sejda.impl.itext.util.EncryptionUtils.getEncryptionAlgorithm;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.pdf.encryption.PdfEncryption;
 
 import com.lowagie.text.pdf.PdfWriter;
 

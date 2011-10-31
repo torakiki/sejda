@@ -30,9 +30,9 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.image.codec.util.SeekableOutputStream;
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.image.TiffCompressionType;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.image.TiffCompressionType;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

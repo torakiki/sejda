@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for a list of sets of {@link PageRange}s, providing initialization from {@link String}

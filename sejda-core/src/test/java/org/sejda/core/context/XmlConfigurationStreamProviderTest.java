@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.After;
 import org.junit.Test;
-import org.sejda.core.exception.ConfigurationException;
+import org.sejda.model.exception.ConfigurationException;
 
 /**
  * @author Andrea Vacondio

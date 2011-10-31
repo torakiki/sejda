@@ -24,8 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.sejda.core.manipulation.model.outline.OutlineGoToPageDestinations;
-import org.sejda.core.manipulation.model.outline.OutlineHandler;
+import org.sejda.model.outline.OutlineGoToPageDestinations;
+import org.sejda.model.outline.OutlineHandler;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;

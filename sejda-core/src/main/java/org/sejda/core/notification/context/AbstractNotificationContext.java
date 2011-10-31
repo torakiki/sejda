@@ -18,11 +18,11 @@
 package org.sejda.core.notification.context;
 
 import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

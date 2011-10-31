@@ -21,8 +21,8 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.OutputStream;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 
 /**
  * Interface for a writer capable of writing {@link RenderedImage}. A writer implementation is a statefull component which may or may not support write of multiple images on a

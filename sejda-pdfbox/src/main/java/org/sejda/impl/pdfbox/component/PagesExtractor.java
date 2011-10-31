@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.util.ComponentsUtility;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

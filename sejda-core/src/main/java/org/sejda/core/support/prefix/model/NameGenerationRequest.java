@@ -18,7 +18,7 @@
 package org.sejda.core.support.prefix.model;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.Sejda;
+import org.sejda.model.SejdaFileExtensions;
 
 /**
  * Request for a new name generation.
@@ -45,7 +45,7 @@ public final class NameGenerationRequest {
      * @return a newly created {@link NameGenerationRequest} where the generated name will have a pdf extension.
      */
     public static NameGenerationRequest nameRequest() {
-        return new NameGenerationRequest(Sejda.PDF_EXTENSION);
+        return new NameGenerationRequest(SejdaFileExtensions.PDF_EXTENSION);
     }
 
     /**

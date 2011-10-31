@@ -24,8 +24,8 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.sejda.core.manipulation.model.outline.OutlineHandler;
 import org.sejda.impl.itext.component.ITextOutlineHandler;
+import org.sejda.model.outline.OutlineHandler;
 
 import com.lowagie.text.pdf.PdfReader;
 

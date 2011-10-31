@@ -17,7 +17,7 @@
 package org.sejda.conversion;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * Cli adapters parsing utils

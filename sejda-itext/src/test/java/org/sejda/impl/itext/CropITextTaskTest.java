@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.CropParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.CropTaskTest;
+import org.sejda.core.service.CropTaskTest;
 import org.sejda.impl.itext.CropTask;
+import org.sejda.model.parameter.CropParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

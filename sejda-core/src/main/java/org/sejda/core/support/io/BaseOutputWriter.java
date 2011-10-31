@@ -23,12 +23,12 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.StreamOutput;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.StreamOutput;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.

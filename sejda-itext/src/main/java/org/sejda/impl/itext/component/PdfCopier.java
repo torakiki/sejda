@@ -21,8 +21,8 @@ import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 
 import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;

@@ -27,8 +27,8 @@ import java.io.Writer;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
 
 /**
  * Component responsible for extracting text from an input pdf document.

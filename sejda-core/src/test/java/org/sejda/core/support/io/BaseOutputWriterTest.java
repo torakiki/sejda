@@ -29,11 +29,11 @@ import java.io.OutputStream;
 
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.StreamOutput;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.StreamOutput;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * @author Andrea Vacondio

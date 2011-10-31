@@ -17,9 +17,9 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * DSL interface used to expose methods a single output task (tasks generating a single file as output) needs to write its output.

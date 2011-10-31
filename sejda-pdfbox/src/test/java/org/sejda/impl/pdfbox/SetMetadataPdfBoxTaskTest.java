@@ -16,10 +16,9 @@
  */
 package org.sejda.impl.pdfbox;
 
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SetMetadataTaskTest;
-import org.sejda.impl.pdfbox.SetMetadataTask;
+import org.sejda.core.service.SetMetadataTaskTest;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.task.Task;
 
 /**
  * set metadata task test for the pdfbox implementation

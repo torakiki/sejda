@@ -17,10 +17,10 @@
  */
 package org.sejda.impl.itext.component;
 
-import static org.sejda.core.manipulation.model.rotation.Rotation.getRotation;
+import static org.sejda.model.rotation.Rotation.getRotation;
 
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
+import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.rotation.RotationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

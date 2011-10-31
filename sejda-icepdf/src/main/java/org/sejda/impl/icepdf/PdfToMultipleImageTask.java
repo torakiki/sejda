@@ -26,13 +26,13 @@ import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBuffe
 import java.io.File;
 
 import org.icepdf.core.pobjects.Document;
-import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
+import org.sejda.model.SejdaFileExtensions;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             getWriter().closeDestination();
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(Sejda.TIF_EXTENSION).page(zeroBasedPageNumber)
+                    nameRequest(SejdaFileExtensions.TIF_EXTENSION).page(zeroBasedPageNumber)
                             .originalName(parameters.getSource().getName()).fileNumber(zeroBasedPageNumber + 1));
             outputWriter.addOutput(file(tmpFile).name(outName));
 

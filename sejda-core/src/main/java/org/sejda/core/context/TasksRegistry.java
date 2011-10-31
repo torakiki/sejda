@@ -19,8 +19,8 @@ package org.sejda.core.context;
 
 import java.util.Map;
 
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Registry of the configured tasks

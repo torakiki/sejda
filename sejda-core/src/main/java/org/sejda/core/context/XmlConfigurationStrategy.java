@@ -37,12 +37,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.sejda.core.exception.ConfigurationException;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.sejda.model.exception.ConfigurationException;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

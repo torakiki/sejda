@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.pdf.encryption.PdfEncryption;
 
 import com.lowagie.text.pdf.PdfWriter;
 

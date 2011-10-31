@@ -30,12 +30,12 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.FileOutput;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.StreamOutput;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.StreamOutput;
+import org.sejda.model.output.TaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

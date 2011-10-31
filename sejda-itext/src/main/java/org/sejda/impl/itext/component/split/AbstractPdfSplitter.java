@@ -28,17 +28,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
-import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.impl.itext.component.PdfCopier;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.outline.OutlineSubsetProvider;
+import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

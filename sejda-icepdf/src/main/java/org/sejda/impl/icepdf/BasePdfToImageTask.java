@@ -18,11 +18,11 @@ package org.sejda.impl.icepdf;
 
 import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.core.writer.model.ImageWriterContext;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sejda.core.exception.TaskExecutionException;
 import org.sejda.impl.itext.component.split.AbstractPdfSplitter.NextOutputStrategy;
+import org.sejda.model.exception.TaskExecutionException;
 
 /**
  * Strategy that holds the page numbers where the split process has to split.

@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-core</artifactId>
+			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- 
@@ -43,7 +43,7 @@
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-core</artifactId>
+			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>

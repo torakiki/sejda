@@ -20,9 +20,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * @author Andrea Vacondio

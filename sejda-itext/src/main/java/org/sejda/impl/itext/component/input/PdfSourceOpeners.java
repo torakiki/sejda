@@ -17,7 +17,7 @@
  */
 package org.sejda.impl.itext.component.input;
 
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
+import org.sejda.model.input.PdfSourceOpener;
 
 import com.lowagie.text.pdf.PdfReader;
 

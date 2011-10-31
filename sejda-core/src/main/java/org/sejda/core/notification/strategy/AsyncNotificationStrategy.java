@@ -22,8 +22,8 @@ package org.sejda.core.notification.strategy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

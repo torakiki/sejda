@@ -23,7 +23,7 @@ import org.icepdf.core.pobjects.Document;
 import org.icepdf.core.pobjects.PDimension;
 import org.icepdf.core.pobjects.Page;
 import org.icepdf.core.util.GraphicsRenderingHints;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 
 /**
  * ICEpdf component providing a conversion method for a {@link Document} page to a {@link BufferedImage}. current thread.

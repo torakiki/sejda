@@ -17,10 +17,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.EncryptTaskTest;
+import org.sejda.core.service.EncryptTaskTest;
 import org.sejda.impl.itext.EncryptTask;
+import org.sejda.model.parameter.EncryptParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Encrypt task test for the itext implementation

@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SplitByPageNumberTaskTest;
+import org.sejda.core.service.SplitByPageNumberTaskTest;
 import org.sejda.impl.itext.SplitByPageNumbersTask;
+import org.sejda.model.parameter.SplitByPagesParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

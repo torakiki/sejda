@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.support.DisplayNamedEnum;
+import org.sejda.common.DisplayNamedEnum;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * Utilities related to {@link Enum}s

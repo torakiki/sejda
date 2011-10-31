@@ -18,8 +18,8 @@ package org.sejda.impl.pdfbox.component;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
-import org.sejda.core.exception.TaskPermissionsException;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.exception.TaskPermissionsException;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
 
 /**
  * Wrapper around {@link AccessPermission} providing convenient methods to check permissions.

@@ -19,7 +19,7 @@ package org.sejda.core.support.io;
 import java.io.File;
 import java.io.IOException;
 
-import org.sejda.core.exception.TaskIOException;
+import org.sejda.model.exception.TaskIOException;
 
 /**
  * Provides IO utility methods.

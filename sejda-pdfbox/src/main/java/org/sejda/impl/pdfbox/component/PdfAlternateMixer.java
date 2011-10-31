@@ -22,15 +22,15 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.exception.TaskPermissionsException;
-import org.sejda.core.manipulation.model.input.PdfMixInput;
-import org.sejda.core.manipulation.model.input.PdfMixInput.PdfMixInputProcessStatus;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.support.util.ComponentsUtility;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskPermissionsException;
+import org.sejda.model.input.PdfMixInput;
+import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,18 +18,18 @@ package org.sejda.example;
 
 import java.io.File;
 
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
-import org.sejda.core.manipulation.service.TaskExecutionService;
-import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.context.GlobalNotificationContext;
-import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
-import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.sejda.core.service.DefaultTaskExecutionService;
+import org.sejda.core.service.TaskExecutionService;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.parameter.SplitByPagesParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

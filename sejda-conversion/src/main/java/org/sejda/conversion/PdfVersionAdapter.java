@@ -16,7 +16,7 @@
  */
 package org.sejda.conversion;
 
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.model.pdf.PdfVersion;
 
 /**
  * Adapter class for enum {@link PdfVersion}. Provides initialization from string

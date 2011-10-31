@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SetPagesLabelTaskTest;
+import org.sejda.core.service.SetPagesLabelTaskTest;
 import org.sejda.impl.itext.SetPagesLabelTask;
+import org.sejda.model.parameter.SetPagesLabelParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

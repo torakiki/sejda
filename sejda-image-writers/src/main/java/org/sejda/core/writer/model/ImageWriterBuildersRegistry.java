@@ -19,8 +19,8 @@ package org.sejda.core.writer.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.core.writer.model.ImageWriter.ImageWriterBuilder;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 
 /**
  * Type safe registry for {@link ImageWriterBuilder}s.

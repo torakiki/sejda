@@ -16,10 +16,9 @@
  */
 package org.sejda.impl.pdfbox;
 
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.RotateTaskTest;
-import org.sejda.impl.pdfbox.RotateTask;
+import org.sejda.core.service.RotateTaskTest;
+import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Nero Couvalli

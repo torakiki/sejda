@@ -23,10 +23,10 @@ import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
 import org.mockito.Matchers;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
-import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
 
 /**
  * Test unit for {@link AsyncNotificationStrategy}

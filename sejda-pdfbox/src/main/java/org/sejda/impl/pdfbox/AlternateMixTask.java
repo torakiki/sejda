@@ -22,18 +22,18 @@ import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly
 
 import java.io.File;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.PdfAlternateMixer;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of the AlternateMix task performing the mix of two given {@link org.sejda.core.manipulation.model.input.PdfMixInput}s.
+ * PDFBox implementation of the AlternateMix task performing the mix of two given {@link org.sejda.model.input.PdfMixInput}s.
  * 
  * @author Andrea Vacondio
  * 

@@ -19,12 +19,12 @@ package org.sejda.impl.itext.component.split;
 
 import java.io.File;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.parameter.AbstractSplitByPageParameters;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.PdfCopier;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.parameter.AbstractSplitByPageParameters;
+import org.sejda.model.pdf.PdfVersion;
 
 import com.lowagie.text.pdf.PdfReader;
 

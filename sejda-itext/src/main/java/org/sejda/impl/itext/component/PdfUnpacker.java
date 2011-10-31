@@ -28,12 +28,12 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.support.NullSafeSet;
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.TaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

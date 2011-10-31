@@ -20,13 +20,13 @@ package org.sejda.impl.itext.util;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
 import org.sejda.impl.itext.util.ViewerPreferencesUtils;
+import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
+import org.sejda.model.pdf.viewerpreference.PdfDirection;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
+import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfWriter;

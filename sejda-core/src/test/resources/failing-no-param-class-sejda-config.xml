@@ -2,6 +2,6 @@
 <sejda>
 	<notification async="false"/>
 	<tasks>
-		<task parameters="bla.bla.not.existing.Class" task="org.sejda.core.manipulation.TestTask" />
+		<task parameters="bla.bla.not.existing.Class" task="org.sejda.model.task.TestTask" />
 	</tasks>
 </sejda>

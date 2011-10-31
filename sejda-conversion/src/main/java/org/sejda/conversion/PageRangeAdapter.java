@@ -17,8 +17,8 @@
 package org.sejda.conversion;
 
 import org.sejda.conversion.exception.ConversionException;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for {@link PageRange}, providing initialization from {@link String}

@@ -22,8 +22,8 @@ import java.io.OutputStream;
 
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.apache.xmlgraphics.image.writer.internal.TIFFImageWriter;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
  * Adapts the xmlgraphics Tiff writer implementation to the Sejda {@link ImageWriter} interface. This writer is NOT capable of writing multiple images into a single output image.

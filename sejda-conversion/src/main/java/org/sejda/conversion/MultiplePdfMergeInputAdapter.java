@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for a list of {@link PdfMergeInput}s. Provides initialization from a list of {@link PdfFileSource}s and a iterator on a list of {@link PageRange} sets

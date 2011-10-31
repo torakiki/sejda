@@ -19,14 +19,14 @@ package org.sejda.core.notification.dsl;
 
 import java.math.BigDecimal;
 
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
-import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.core.notification.event.TaskExecutionCompletedEvent;
-import org.sejda.core.notification.event.TaskExecutionFailedEvent;
-import org.sejda.core.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

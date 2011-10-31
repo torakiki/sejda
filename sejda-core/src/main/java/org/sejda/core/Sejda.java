@@ -39,10 +39,6 @@ public final class Sejda {
 
     public static final String VERSION = new SejdaVersionLoader().getSejdaVersion();
     public static final String CREATOR = "Sejda (Ver. " + VERSION + ")";
-    public static final String PDF_EXTENSION = "pdf";
-    public static final String TXT_EXTENSION = "txt";
-    public static final String TIFF_EXTENSION = "tiff";
-    public static final String TIF_EXTENSION = "tif";
 
     /**
      * Loader for the sejda properties.

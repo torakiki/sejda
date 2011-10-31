@@ -35,11 +35,11 @@ import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageLayout;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
+import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

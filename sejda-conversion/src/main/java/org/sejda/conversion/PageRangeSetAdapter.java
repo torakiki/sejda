@@ -19,8 +19,8 @@ package org.sejda.conversion;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
-import org.sejda.core.support.NullSafeSet;
+import org.sejda.common.collection.NullSafeSet;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for a set of {@link PageRange}s, providing intialization from {@link String}

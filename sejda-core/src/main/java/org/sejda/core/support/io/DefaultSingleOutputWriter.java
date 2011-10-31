@@ -19,11 +19,11 @@ package org.sejda.core.support.io;
 
 import static org.sejda.core.support.io.OutputDestination.destination;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.FileOutput;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * Provides support methods to write output for those tasks writing a single output. When the task requires, it can flush to the output destination a single temporary file

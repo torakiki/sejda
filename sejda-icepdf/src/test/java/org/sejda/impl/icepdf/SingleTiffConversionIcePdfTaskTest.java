@@ -16,9 +16,9 @@
  */
 package org.sejda.impl.icepdf;
 
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SingleTiffConversionTaskTest;
+import org.sejda.core.service.SingleTiffConversionTaskTest;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

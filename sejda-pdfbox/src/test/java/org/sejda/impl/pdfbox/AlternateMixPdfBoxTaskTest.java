@@ -16,9 +16,9 @@
  */
 package org.sejda.impl.pdfbox;
 
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.AlternateMixTaskTest;
+import org.sejda.core.service.AlternateMixTaskTest;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

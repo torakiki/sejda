@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import org.junit.Test;
-import org.sejda.core.Sejda;
+import org.sejda.model.SejdaFileExtensions;
 
 /**
  * @author Andrea Vacondio
@@ -41,6 +41,6 @@ public class AppendExtensionPrefixProcessorTest {
     public void testProcessNonDefaultExtension() {
         String prefix = "blabla";
         String expected = "blabla.txt";
-        assertEquals(expected, victim.process(prefix, nameRequest(Sejda.TXT_EXTENSION)));
+        assertEquals(expected, victim.process(prefix, nameRequest(SejdaFileExtensions.TXT_EXTENSION)));
     }
 }

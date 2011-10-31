@@ -17,7 +17,7 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.manipulation.model.output.TaskOutput;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * Destination where the output will be written

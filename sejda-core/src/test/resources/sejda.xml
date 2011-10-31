@@ -2,6 +2,6 @@
 <sejda validation="true">
 	<notification async="false"/>
 	<tasks>
-		<task parameters="org.sejda.core.manipulation.TestTaskParameter" task="org.sejda.core.manipulation.TestTask"/>
+		<task parameters="org.sejda.model.task.TestTaskParameter" task="org.sejda.model.task.TestTask"/>
 	</tasks>
 </sejda>

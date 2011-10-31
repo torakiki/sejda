@@ -3,11 +3,11 @@ package org.sejda.impl.pdfbox.component;
 import java.io.IOException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.input.PdfURLSource;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.PdfURLSource;
 
 /**
  * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocumentHandler}.

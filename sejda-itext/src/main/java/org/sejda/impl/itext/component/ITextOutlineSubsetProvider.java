@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.outline.OutlineSubsetProvider;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.outline.OutlineSubsetProvider;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;

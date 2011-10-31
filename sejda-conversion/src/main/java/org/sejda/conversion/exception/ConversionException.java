@@ -16,7 +16,7 @@
  */
 package org.sejda.conversion.exception;
 
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * @author Eduard Weissmann

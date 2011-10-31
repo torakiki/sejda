@@ -16,10 +16,9 @@
  */
 package org.sejda.impl.pdfbox;
 
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.ExtractTextTaskTest;
-import org.sejda.impl.pdfbox.ExtractTextTask;
+import org.sejda.core.service.ExtractTextTaskTest;
+import org.sejda.model.parameter.ExtractTextParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

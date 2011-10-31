@@ -19,11 +19,11 @@ package org.sejda.core.notification.context;
 
 import java.util.List;
 
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
-import org.sejda.core.support.ListValueMap;
+import org.sejda.common.collection.ListValueMap;
 import org.sejda.core.support.util.ReflectionUtility;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 
 /**
  * Holds a list of listeners associated to the event class they are listening to.

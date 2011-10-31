@@ -17,10 +17,10 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.TaskOutput;
 
 /**
  * Provides support methods to write multiple output {@link TaskOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task and

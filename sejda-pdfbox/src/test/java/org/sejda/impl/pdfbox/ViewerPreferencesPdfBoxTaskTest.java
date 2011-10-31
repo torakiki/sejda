@@ -16,10 +16,9 @@
  */
 package org.sejda.impl.pdfbox;
 
-import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.ViewerPreferencesTaskTest;
-import org.sejda.impl.pdfbox.ViewerPreferencesTask;
+import org.sejda.core.service.ViewerPreferencesTaskTest;
+import org.sejda.model.parameter.ViewerPreferencesParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

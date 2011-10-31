@@ -23,8 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.model.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

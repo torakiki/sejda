@@ -23,8 +23,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.exception.TaskPermissionsException;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.exception.TaskPermissionsException;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
 
 /**
  * @author Andrea Vacondio

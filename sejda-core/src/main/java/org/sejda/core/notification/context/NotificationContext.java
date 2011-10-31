@@ -19,9 +19,9 @@
  */
 package org.sejda.core.notification.context;
 
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 
 /**
  * Interface providing notification configuration. {@link EventListener} can be registered to be notified.

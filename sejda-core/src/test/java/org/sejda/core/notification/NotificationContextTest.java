@@ -30,12 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.TestListenerFactory.TestListenerPercentage;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.NotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.core.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
 
 /**
  * @author Andrea Vacondio

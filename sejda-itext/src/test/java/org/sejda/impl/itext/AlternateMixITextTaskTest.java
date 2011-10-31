@@ -1,8 +1,8 @@
 package org.sejda.impl.itext;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.AlternateMixTaskTest;
+import org.sejda.core.service.AlternateMixTaskTest;
 import org.sejda.impl.itext.AlternateMixTask;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.task.Task;
 
 /*
  * Created on 25/dic/2010

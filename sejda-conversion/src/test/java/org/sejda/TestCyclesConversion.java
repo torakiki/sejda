@@ -1,6 +1,5 @@
 package org.sejda;
 
-import org.sejda.core.TestCycles;
 
 /**
  * Test for cycles.

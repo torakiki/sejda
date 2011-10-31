@@ -18,7 +18,7 @@ package org.sejda.core.context;
 
 import java.io.InputStream;
 
-import org.sejda.core.exception.ConfigurationException;
+import org.sejda.model.exception.ConfigurationException;
 
 /**
  * Component providing an input stream where the configuration will be read from.

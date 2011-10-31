@@ -23,8 +23,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.pdf.PdfVersion;
 
 import com.lowagie.text.pdf.PdfReader;
 

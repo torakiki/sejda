@@ -3,7 +3,7 @@
 	<notification async="false" />
 	<tasks>
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SplitByPagesParameters"
+			parameters="org.sejda.model.parameter.SplitByPagesParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 	</tasks>
 </sejda>

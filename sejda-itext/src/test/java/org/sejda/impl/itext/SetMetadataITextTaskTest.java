@@ -17,10 +17,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SetMetadataTaskTest;
+import org.sejda.core.service.SetMetadataTaskTest;
 import org.sejda.impl.itext.SetMetadataTask;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.task.Task;
 
 /**
  * set metadata task test for the itext implementation

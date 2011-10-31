@@ -16,12 +16,12 @@
  */
 package org.sejda.core.writer.model;
 
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
 import org.sejda.core.writer.model.ImageWriter.ImageWriterBuilder;
 import org.sejda.core.writer.model.XmlGraphicsMultipleOutputTiffImageWriterAdapter.XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder;
 import org.sejda.core.writer.model.XmlGraphicsSingleOutputTiffImageWriterAdapter.XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
  * {@link ImageWriterAbstractFactory} implementation returning {@link ImageWriter} XML Graphics implementations.

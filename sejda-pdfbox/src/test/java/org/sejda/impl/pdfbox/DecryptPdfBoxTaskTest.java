@@ -19,11 +19,10 @@ package org.sejda.impl.pdfbox;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.DecryptTaskTest;
-import org.sejda.impl.pdfbox.DecryptTask;
+import org.sejda.core.service.DecryptTaskTest;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.parameter.DecryptParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

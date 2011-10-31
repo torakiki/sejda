@@ -19,13 +19,13 @@ package org.sejda.impl.itext;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.UnpackParameters;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.impl.itext.component.PdfUnpacker;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.UnpackParameters;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

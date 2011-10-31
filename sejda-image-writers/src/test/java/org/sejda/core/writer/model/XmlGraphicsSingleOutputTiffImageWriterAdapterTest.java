@@ -35,10 +35,10 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sejda.core.ImageTestUtils;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.image.ImageColorType;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
 import org.sejda.core.writer.model.XmlGraphicsSingleOutputTiffImageWriterAdapter.XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
  * @author Andrea Vacondio

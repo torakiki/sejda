@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.SplitByGoToActionLevelTaskTest;
+import org.sejda.core.service.SplitByGoToActionLevelTaskTest;
 import org.sejda.impl.itext.SplitByGoToActionLevelTask;
+import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

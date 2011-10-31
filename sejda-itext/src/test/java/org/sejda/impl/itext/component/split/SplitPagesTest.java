@@ -4,8 +4,7 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.impl.itext.component.split.SplitPages;
+import org.sejda.model.exception.TaskExecutionException;
 
 public class SplitPagesTest {
 

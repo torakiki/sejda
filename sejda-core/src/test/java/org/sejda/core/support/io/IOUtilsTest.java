@@ -23,8 +23,8 @@ import java.util.Collections;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
-import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskIOException;
+import org.sejda.model.SejdaFileExtensions;
+import org.sejda.model.exception.TaskIOException;
 
 /**
  * @author Andrea Vacondio
@@ -46,6 +46,6 @@ public class IOUtilsTest {
         tmp.deleteOnExit();
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
-        assertTrue(FilenameUtils.isExtension(tmp.getName(), Collections.singleton(Sejda.PDF_EXTENSION)));
+        assertTrue(FilenameUtils.isExtension(tmp.getName(), Collections.singleton(SejdaFileExtensions.PDF_EXTENSION)));
     }
 }

@@ -19,8 +19,8 @@
  */
 package org.sejda.core.notification.strategy;
 
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 
 /**
  * Strategy to notify events synchronously

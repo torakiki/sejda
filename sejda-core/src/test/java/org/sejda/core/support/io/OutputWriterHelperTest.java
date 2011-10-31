@@ -31,10 +31,10 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.FileOutput;
-import org.sejda.core.manipulation.model.output.StreamOutput;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.StreamOutput;
 
 /**
  * Test unit for the {@link OutputWriterHelper}

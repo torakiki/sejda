@@ -20,13 +20,13 @@ package org.sejda.core.context;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskNotFoundException;
-import org.sejda.core.manipulation.ChildTestTaskParameter;
-import org.sejda.core.manipulation.TestTaskParameter;
-import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskNotFoundException;
+import org.sejda.model.output.TaskOutput;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.ChildTestTaskParameter;
+import org.sejda.model.task.Task;
+import org.sejda.model.task.TestTaskParameter;
 
 /**
  * @author Andrea Vacondio

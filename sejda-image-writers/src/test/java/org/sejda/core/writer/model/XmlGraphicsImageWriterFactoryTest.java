@@ -21,10 +21,10 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.image.ImageColorType;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
  * @author Andrea Vacondio

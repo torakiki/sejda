@@ -17,10 +17,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.RotateTaskTest;
+import org.sejda.core.service.RotateTaskTest;
 import org.sejda.impl.itext.RotateTask;
+import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Rotate task test for the itext implementation

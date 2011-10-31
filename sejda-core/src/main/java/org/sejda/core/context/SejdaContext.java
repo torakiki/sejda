@@ -17,10 +17,10 @@
  */
 package org.sejda.core.context;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.NotificationStrategy;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Context where Sejda tasks are executed.

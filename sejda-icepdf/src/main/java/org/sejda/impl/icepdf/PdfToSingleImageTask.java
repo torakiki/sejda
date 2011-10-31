@@ -24,13 +24,13 @@ import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBuffe
 import java.io.File;
 
 import org.icepdf.core.pobjects.Document;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskExecutionException;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

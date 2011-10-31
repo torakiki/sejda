@@ -27,11 +27,11 @@ import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.pdf.PdfMetadataKey;
+import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

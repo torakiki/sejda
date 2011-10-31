@@ -1,6 +1,6 @@
 package org.sejda.impl;
 
-import org.sejda.core.TestCycles;
+import org.sejda.TestCycles;
 
 
 /**

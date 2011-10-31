@@ -27,15 +27,15 @@ import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
 
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.DecryptParameters;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

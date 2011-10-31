@@ -27,11 +27,11 @@ import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.TestUtils;
-import org.sejda.core.exception.TaskException;
+import org.sejda.TestUtils;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.exception.TaskException;
 
 import com.lowagie.text.pdf.PdfReader;
 

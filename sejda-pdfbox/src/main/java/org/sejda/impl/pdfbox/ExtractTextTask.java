@@ -25,18 +25,18 @@ import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly
 
 import java.io.File;
 
-import org.sejda.core.Sejda;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.task.BaseTask;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfTextExtractor;
+import org.sejda.model.SejdaFileExtensions;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.ExtractTextParameters;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +76,8 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(Sejda.TXT_EXTENSION).originalName(source.getName()).fileNumber(currentStep));
+                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).originalName(source.getName()).fileNumber(
+                            currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closeResources();

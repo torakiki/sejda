@@ -16,12 +16,12 @@
  */
 package org.sejda.impl.pdfbox.component;
 
-import static org.sejda.core.manipulation.model.rotation.Rotation.getRotation;
+import static org.sejda.model.rotation.Rotation.getRotation;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
+import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.rotation.RotationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,11 +21,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.sejda.core.Sejda;
-import org.sejda.core.exception.ConfigurationException;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.task.Task;
 import org.sejda.core.notification.strategy.NotificationStrategy;
+import org.sejda.model.exception.ConfigurationException;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

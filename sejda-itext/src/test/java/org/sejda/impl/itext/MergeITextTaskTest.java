@@ -16,10 +16,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.MergeTaskTest;
+import org.sejda.core.service.MergeTaskTest;
 import org.sejda.impl.itext.MergeTask;
+import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio

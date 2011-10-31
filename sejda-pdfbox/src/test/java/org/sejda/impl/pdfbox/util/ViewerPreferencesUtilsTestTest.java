@@ -27,11 +27,11 @@ import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
+import org.sejda.model.pdf.viewerpreference.PdfDirection;
+import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 
 /**
  * @author Andrea Vacondio

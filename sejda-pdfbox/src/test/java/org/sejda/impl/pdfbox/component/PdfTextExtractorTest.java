@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.internal.matchers.Contains;
 import org.mockito.internal.matchers.StartsWith;
-import org.sejda.core.exception.TaskException;
+import org.sejda.model.exception.TaskException;
 
 /**
  * @author Andrea Vacondio

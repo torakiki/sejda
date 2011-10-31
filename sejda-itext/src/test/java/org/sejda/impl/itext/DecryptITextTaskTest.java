@@ -17,10 +17,10 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.task.Task;
-import org.sejda.core.manipulation.service.DecryptTaskTest;
+import org.sejda.core.service.DecryptTaskTest;
 import org.sejda.impl.itext.DecryptTask;
+import org.sejda.model.parameter.DecryptParameters;
+import org.sejda.model.task.Task;
 
 /**
  * Test for the decrypt task implemented with iText

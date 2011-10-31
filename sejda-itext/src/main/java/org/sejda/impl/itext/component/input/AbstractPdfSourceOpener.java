@@ -19,12 +19,12 @@ package org.sejda.impl.itext.component.input;
 
 import java.io.IOException;
 
-import org.sejda.core.exception.TaskIOException;
-import org.sejda.core.exception.TaskWrongPasswordException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfSourceOpener;
-import org.sejda.core.manipulation.model.input.PdfStreamSource;
-import org.sejda.core.manipulation.model.input.PdfURLSource;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskWrongPasswordException;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.PdfURLSource;
 
 import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.PdfReader;

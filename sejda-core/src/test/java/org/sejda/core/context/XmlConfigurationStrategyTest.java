@@ -34,9 +34,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.internal.matchers.Contains;
-import org.sejda.core.exception.ConfigurationException;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
+import org.sejda.model.exception.ConfigurationException;
 
 /**
  * Test unit
@@ -70,7 +70,7 @@ public class XmlConfigurationStrategyTest {
     public void testNegativeConstuctorWrongTask() throws ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-task-sejda-config.xml");
         expected.expectMessage(new Contains(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.task.Task"));
+                "The configured class java.lang.String is not a subtype of interface org.sejda.model.task.Task"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
     }
@@ -79,7 +79,7 @@ public class XmlConfigurationStrategyTest {
     public void testNegativeConstuctorWrongParam() throws ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-param-sejda-config.xml");
         expected.expectMessage(new Contains(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.core.manipulation.model.parameter.base.TaskParameters"));
+                "The configured class java.lang.String is not a subtype of interface org.sejda.model.parameter.base.TaskParameters"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
     }
