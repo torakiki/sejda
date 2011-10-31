@@ -17,6 +17,7 @@
 	
 	<modules>
 		<module>sejda-parent</module>
+		<module>sejda-model</module>
 		<module>sejda-core</module>
 		<module>sejda-itext</module>
 		<module>sejda-pdfbox</module>
