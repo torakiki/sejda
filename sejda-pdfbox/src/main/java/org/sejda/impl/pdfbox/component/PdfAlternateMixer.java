@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.sejda.core.support.util.ComponentsUtility;
+import org.sejda.common.ComponentsUtility;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskPermissionsException;

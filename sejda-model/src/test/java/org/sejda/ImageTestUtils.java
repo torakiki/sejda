@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core;
+package org.sejda;
+
+import static org.junit.Assert.fail;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -54,13 +56,19 @@ public final class ImageTestUtils {
      * @throws ImageException
      * @throws IOException
      */
-    public static RenderedImage loadImage(File image) throws ImageException, IOException {
+    public static RenderedImage loadImage(File image) throws IOException {
         ImageManager imageManager = new ImageManager(new DefaultImageContext());
         ImageSessionContext sessionContext = new DefaultImageSessionContext(imageManager.getImageContext(), null);
 
-        ImageInfo info = imageManager.preloadImage(image.toURI().toString(), sessionContext);
-        Image img = imageManager.getImage(info, ImageFlavor.RENDERED_IMAGE, sessionContext);
-
+        ImageInfo info = null;
+        Image img = null;
+        try {
+            info = imageManager.preloadImage(image.toURI().toString(), sessionContext);
+            img = imageManager.getImage(info, ImageFlavor.RENDERED_IMAGE, sessionContext);
+        } catch (ImageException e) {
+            fail(e.getMessage());
+            throw new RuntimeException(e);
+        }
         ImageRendered imageRend = (ImageRendered) img;
         return imageRend.getRenderedImage();
     }
@@ -73,16 +81,21 @@ public final class ImageTestUtils {
      * @throws ImageException
      * @throws IOException
      */
-    public static RenderedImage loadImage(InputStream image, String name) throws ImageException, IOException {
+    public static RenderedImage loadImage(InputStream image, String name) throws IOException {
         ImageManager imageManager = new ImageManager(new DefaultImageContext());
         ImageSessionContext sessionContext = new DefaultImageSessionContext(imageManager.getImageContext(), null);
         ImageInputStream imageInputStream = new MemoryCacheImageInputStream(image);
         Source source = new ImageSource(imageInputStream, name, true);
         sessionContext.returnSource(name, source);
-        ImageInfo info = imageManager.preloadImage(name, source);
-
-        Image img = imageManager.getImage(info, ImageFlavor.RENDERED_IMAGE, sessionContext);
-
+        ImageInfo info = null;
+        Image img = null;
+        try {
+            info = imageManager.preloadImage(name, source);
+            img = imageManager.getImage(info, ImageFlavor.RENDERED_IMAGE, sessionContext);
+        } catch (ImageException e) {
+            fail(e.getMessage());
+            throw new RuntimeException(e);
+        }
         ImageRendered imageRend = (ImageRendered) img;
         return imageRend.getRenderedImage();
     }

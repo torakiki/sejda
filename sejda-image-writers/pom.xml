@@ -18,15 +18,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-core</artifactId>
+			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
-			<artifactId>sejda-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>

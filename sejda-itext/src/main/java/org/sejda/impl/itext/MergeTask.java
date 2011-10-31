@@ -17,10 +17,10 @@
 package org.sejda.impl.itext;
 
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;

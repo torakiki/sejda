@@ -16,7 +16,7 @@
  */
 package org.sejda.impl.icepdf;
 
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.core.writer.model.ImageWriterContext;

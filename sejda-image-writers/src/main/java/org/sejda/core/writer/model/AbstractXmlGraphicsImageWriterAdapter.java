@@ -17,7 +17,7 @@
 package org.sejda.core.writer.model;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.core.support.util.ComponentsUtility.nullSafeClose;
+import static org.sejda.common.ComponentsUtility.nullSafeClose;
 
 import java.io.File;
 import java.io.FileNotFoundException;

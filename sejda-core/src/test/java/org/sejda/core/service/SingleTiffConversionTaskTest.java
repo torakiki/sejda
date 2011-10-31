@@ -25,12 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.xmlgraphics.image.loader.ImageException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.ImageTestUtils;
 import org.sejda.TestUtils;
-import org.sejda.core.ImageTestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
@@ -75,7 +74,7 @@ public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfTo
     }
 
     @Test
-    public void testExecuteStreamToSingleTiff() throws TaskException, IOException, ImageException {
+    public void testExecuteStreamToSingleTiff() throws TaskException, IOException {
         AbstractPdfToSingleImageParameters parameters = getSingleTiffParams();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         File out = File.createTempFile("SejdaTest", ".tiff");

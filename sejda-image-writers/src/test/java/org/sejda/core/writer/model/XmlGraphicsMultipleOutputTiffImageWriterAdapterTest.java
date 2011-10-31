@@ -29,13 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.xmlgraphics.image.loader.ImageException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.sejda.core.ImageTestUtils;
+import org.sejda.ImageTestUtils;
 import org.sejda.core.writer.model.XmlGraphicsMultipleOutputTiffImageWriterAdapter.XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
@@ -86,7 +85,7 @@ public class XmlGraphicsMultipleOutputTiffImageWriterAdapterTest {
     }
 
     @Test
-    public void write() throws IOException, ImageException, TaskIOException {
+    public void write() throws IOException, TaskIOException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.tiff");
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();

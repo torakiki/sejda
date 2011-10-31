@@ -28,12 +28,11 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.xmlgraphics.image.loader.ImageException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.ImageTestUtils;
 import org.sejda.TestUtils;
-import org.sejda.core.ImageTestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
@@ -79,7 +78,7 @@ public abstract class MultipleTiffConversionTaskTest implements TestableTask<Pdf
     }
 
     @Test
-    public void testExecuteStreamToMultipleTiff() throws TaskException, IOException, ImageException {
+    public void testExecuteStreamToMultipleTiff() throws TaskException, IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleTiffParams();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
