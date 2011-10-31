@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.exception;
 
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * General console exception

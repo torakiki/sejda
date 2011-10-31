@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.image.TiffCompressionType;
+import org.sejda.model.image.TiffCompressionType;
 
 /**
  * Adapter class for enum {@link TiffCompressionType}. Provides initialization from string

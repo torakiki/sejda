@@ -18,7 +18,7 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.EncryptTaskCliArguments;
 import org.sejda.cli.model.adapter.PdfAccessPermissionAdapter;
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
+import org.sejda.model.parameter.EncryptParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Encrypt task command line interface

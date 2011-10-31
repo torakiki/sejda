@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.exception;
 
-import org.sejda.core.exception.TaskException;
+import org.sejda.model.exception.TaskException;
 
 /**
  * Exception utils

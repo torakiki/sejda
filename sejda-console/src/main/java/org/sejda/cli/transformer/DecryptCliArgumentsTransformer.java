@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.DecryptTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.model.parameter.DecryptParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Decrypt task command line interface

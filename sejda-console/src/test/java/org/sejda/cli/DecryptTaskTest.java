@@ -19,7 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
+import org.sejda.model.parameter.DecryptParameters;
 
 /**
  * Tests for the DecryptTask command line interface

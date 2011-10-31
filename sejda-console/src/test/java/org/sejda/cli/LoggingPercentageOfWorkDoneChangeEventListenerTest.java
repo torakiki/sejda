@@ -17,7 +17,7 @@
 package org.sejda.cli;
 
 import org.junit.Test;
-import org.sejda.core.TestUtils;
+import org.sejda.TestUtils;
 
 /**
  * @author Eduard Weissmann

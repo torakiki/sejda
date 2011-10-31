@@ -19,9 +19,9 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
-import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
-import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
+import org.sejda.model.parameter.SetPagesLabelParameters;
+import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
+import org.sejda.model.pdf.label.PdfPageLabel;
 
 /**
  * Tests for SetPageLabels task cli

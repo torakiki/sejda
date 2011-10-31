@@ -24,8 +24,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.core.manipulation.model.pdf.PdfVersion;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.pdf.PdfVersion;
 
 /**
  * Test verifying that the --compressed and --pdfVersion flags can be specified for each task creating pdf outputs

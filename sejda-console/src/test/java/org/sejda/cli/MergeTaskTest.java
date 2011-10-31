@@ -38,10 +38,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Tests for the MergeTask command line interface

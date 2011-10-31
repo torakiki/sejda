@@ -20,9 +20,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.conversion.AdapterUtils;
 import org.sejda.conversion.EnumUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.pdf.label.PdfLabelNumberingStyle;
-import org.sejda.core.manipulation.model.pdf.label.PdfPageLabel;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
+import org.sejda.model.pdf.label.PdfPageLabel;
 
 /**
  * Adapter for a {@link PdfPageLabel} having a page number. Provides initialization from a String input, to be used in the cli interface

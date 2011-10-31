@@ -34,19 +34,19 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
-import org.sejda.core.manipulation.model.input.PdfSource;
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
-import org.sejda.core.manipulation.model.output.FileOutput;
-import org.sejda.core.manipulation.model.output.OutputType;
-import org.sejda.core.manipulation.model.output.TaskOutput;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
-import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
-import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.OutputType;
+import org.sejda.model.output.TaskOutput;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.TaskParameters;
 
 /**
  * Base class for test suites, provides helper methods to ease testing

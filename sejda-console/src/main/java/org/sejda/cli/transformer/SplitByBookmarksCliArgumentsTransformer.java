@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SplitByBookmarks task command line interface

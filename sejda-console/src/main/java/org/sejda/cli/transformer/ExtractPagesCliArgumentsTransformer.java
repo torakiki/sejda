@@ -18,7 +18,7 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.ExtractPagesTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
+import org.sejda.model.parameter.ExtractPagesParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the ExtractPages task command line interface

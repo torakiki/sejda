@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 

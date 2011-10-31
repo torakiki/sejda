@@ -2,57 +2,57 @@
 <sejda validation="true">
 	<notification async="false" />
 	<tasks>
-		<task parameters="org.sejda.core.manipulation.model.parameter.DecryptParameters"
+		<task parameters="org.sejda.model.parameter.DecryptParameters"
 			task="org.sejda.impl.itext.DecryptTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.EncryptParameters"
+		<task parameters="org.sejda.model.parameter.EncryptParameters"
 			task="org.sejda.impl.itext.EncryptTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.RotateParameters"
+		<task parameters="org.sejda.model.parameter.RotateParameters"
 			task="org.sejda.impl.itext.RotateTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters"
+			parameters="org.sejda.model.parameter.ViewerPreferencesParameters"
 			task="org.sejda.impl.itext.ViewerPreferencesTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.AlternateMixParameters"
+			parameters="org.sejda.model.parameter.AlternateMixParameters"
 			task="org.sejda.impl.itext.AlternateMixTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.UnpackParameters"
+		<task parameters="org.sejda.model.parameter.UnpackParameters"
 			task="org.sejda.impl.itext.UnpackTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.MergeParameters"
+		<task parameters="org.sejda.model.parameter.MergeParameters"
 			task="org.sejda.impl.itext.MergeTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters"
+			parameters="org.sejda.model.parameter.SplitByGoToActionLevelParameters"
 			task="org.sejda.impl.itext.SplitByGoToActionLevelTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SplitBySizeParameters"
+			parameters="org.sejda.model.parameter.SplitBySizeParameters"
 			task="org.sejda.impl.itext.SplitBySizeTask" />
 
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SplitByPagesParameters"
+			parameters="org.sejda.model.parameter.SplitByPagesParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SimpleSplitParameters"
+			parameters="org.sejda.model.parameter.SimpleSplitParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.ExtractPagesParameters"
+			parameters="org.sejda.model.parameter.ExtractPagesParameters"
 			task="org.sejda.impl.itext.ExtractPagesTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.ExtractTextParameters"
+			parameters="org.sejda.model.parameter.ExtractTextParameters"
 			task="org.sejda.impl.pdfbox.ExtractTextTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SetMetadataParameters"
+			parameters="org.sejda.model.parameter.SetMetadataParameters"
 			task="org.sejda.impl.itext.SetMetadataTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters"
+			parameters="org.sejda.model.parameter.SetPagesLabelParameters"
 			task="org.sejda.impl.itext.SetPagesLabelTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters"
+			parameters="org.sejda.model.parameter.SetPagesTransitionParameters"
 			task="org.sejda.impl.itext.SetPagesTransitionTask" />
-		<task parameters="org.sejda.core.manipulation.model.parameter.CropParameters"
+		<task parameters="org.sejda.model.parameter.CropParameters"
 			task="org.sejda.impl.itext.CropTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters"
+			parameters="org.sejda.model.parameter.image.PdfToSingleTiffParameters"
 			task="org.sejda.impl.icepdf.PdfToSingleImageTask" />
 		<task
-			parameters="org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters"
+			parameters="org.sejda.model.parameter.image.PdfToMultipleTiffParameters"
 			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />
 	</tasks>
 </sejda>

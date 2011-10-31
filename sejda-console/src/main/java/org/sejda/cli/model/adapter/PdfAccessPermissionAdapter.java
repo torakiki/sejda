@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
 
 /**
  * Adapter class for enum {@link PdfAccessPermission}. Provides initialization from string

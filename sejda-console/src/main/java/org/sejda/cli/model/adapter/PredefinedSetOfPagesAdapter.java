@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * Adapter class for enum {@link PredefinedSetOfPages}. Provides initialization from string

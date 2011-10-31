@@ -19,7 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
+import org.sejda.model.parameter.SplitBySizeParameters;
 
 /**
  * Tests for the SplitBySizeTask command line interface

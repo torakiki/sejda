@@ -23,9 +23,9 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 import java.util.Collections;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.core.manipulation.model.pdf.encryption.PdfEncryption;
+import org.sejda.model.parameter.EncryptParameters;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.pdf.encryption.PdfEncryption;
 
 /**
  * Tests for the EncryptTask command line interface

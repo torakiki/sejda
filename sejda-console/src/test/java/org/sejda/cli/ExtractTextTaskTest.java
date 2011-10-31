@@ -19,7 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
+import org.sejda.model.parameter.ExtractTextParameters;
 
 /**
  * Tests for various traits of the ExtractTextTask command line interface

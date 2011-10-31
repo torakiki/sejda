@@ -19,9 +19,9 @@ package org.sejda.cli;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.notification.EventListener;
-import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 
 /**
  * Default listener for the {@link TaskExecutionFailedEvent}

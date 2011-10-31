@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.UnpackTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.UnpackParameters;
+import org.sejda.model.parameter.UnpackParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Unpack task command line interface

@@ -18,7 +18,7 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
 import org.sejda.cli.model.adapter.PdfPageLabelAdapter;
-import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
+import org.sejda.model.parameter.SetPagesLabelParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SetPageLabels task command line interface

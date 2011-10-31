@@ -16,12 +16,12 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.exception.NotificationContextException;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.service.TaskExecutionService;
-import org.sejda.core.notification.EventListener;
 import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.service.TaskExecutionService;
+import org.sejda.model.exception.NotificationContextException;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.parameter.base.TaskParameters;
 
 /**
  * Default implementation of {@link TaskExecutionAdapter}

@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPrintScaling;
+import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 
 /**
  * Adapter class for enum {@link PdfPrintScaling}. Provides initialization from string

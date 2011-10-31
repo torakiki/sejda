@@ -18,8 +18,8 @@ package org.sejda.cli.model.adapter;
 
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.conversion.AdapterUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.pdf.transition.PdfPageTransition;
 
 /**
  * Adapter for a {@link PdfPageTransition} with a page number reference, providing String based initialization

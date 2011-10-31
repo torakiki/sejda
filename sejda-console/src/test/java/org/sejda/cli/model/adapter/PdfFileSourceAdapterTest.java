@@ -27,8 +27,8 @@ import java.io.File;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.cli.AbstractTestSuite;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.input.PdfFileSource;
 
 /**
  * Tests for {@link PdfFileSourceAdapter}

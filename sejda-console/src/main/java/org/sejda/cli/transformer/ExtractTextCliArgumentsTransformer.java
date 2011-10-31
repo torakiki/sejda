@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.ExtractTextTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
+import org.sejda.model.parameter.ExtractTextParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the ExtractText task command line interface

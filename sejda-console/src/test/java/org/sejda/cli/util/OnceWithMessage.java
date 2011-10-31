@@ -21,7 +21,7 @@ import org.mockito.internal.verification.api.VerificationData;
 import org.mockito.internal.verification.checkers.MissingInvocationChecker;
 import org.mockito.internal.verification.checkers.NumberOfInvocationsChecker;
 import org.mockito.verification.VerificationMode;
-import org.sejda.core.exception.SejdaRuntimeException;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * Custom Mockito verification mode that allows specifying a custom failure message

@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDirection;
+import org.sejda.model.pdf.viewerpreference.PdfDirection;
 
 /**
  * Adapter class for enum {@link PdfDirection}. Provides initialization from string

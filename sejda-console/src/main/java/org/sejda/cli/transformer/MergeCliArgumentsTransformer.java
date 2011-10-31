@@ -23,10 +23,10 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.sejda.cli.model.MergeTaskCliArguments;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.conversion.MultiplePdfMergeInputAdapter;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
-import org.sejda.core.manipulation.model.input.PdfMergeInput;
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.parameter.MergeParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Merge task command line interface

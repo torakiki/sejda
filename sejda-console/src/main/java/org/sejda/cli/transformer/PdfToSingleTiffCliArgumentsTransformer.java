@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the PdfToSingleTiff task command line interface

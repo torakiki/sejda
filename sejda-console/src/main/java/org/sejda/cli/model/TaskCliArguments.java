@@ -23,7 +23,7 @@ import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
 /**
- * Base interface for specifications of the command line interface for {@link org.sejda.core.manipulation.model.task.Task}s
+ * Base interface for specifications of the command line interface for {@link org.sejda.model.task.Task}s
  * 
  * @author Eduard Weissmann
  * 

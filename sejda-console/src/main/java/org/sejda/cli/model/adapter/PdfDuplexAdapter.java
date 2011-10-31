@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfDuplex;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 
 /**
  * Adapter class for enum {@link PdfDuplex}. Provides initialization from string

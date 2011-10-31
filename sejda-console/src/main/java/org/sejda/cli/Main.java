@@ -16,7 +16,7 @@
  */
 package org.sejda.cli;
 
-import org.sejda.core.manipulation.service.DefaultTaskExecutionService;
+import org.sejda.core.service.DefaultTaskExecutionService;
 
 /**
  * Main entry point for the sejda console executable

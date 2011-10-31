@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 
 /**
  * For tasks that support single file as input, test various scenarios related to this trait

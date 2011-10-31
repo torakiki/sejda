@@ -24,8 +24,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.image.TiffCompressionType;
-import org.sejda.core.manipulation.model.parameter.image.PdfToTiffParameters;
+import org.sejda.model.image.TiffCompressionType;
+import org.sejda.model.parameter.image.PdfToTiffParameters;
 
 /**
  * Tests for tasks having pdf as input and tiff image format as output

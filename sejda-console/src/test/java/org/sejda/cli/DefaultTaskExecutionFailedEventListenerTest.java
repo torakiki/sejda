@@ -21,11 +21,11 @@ import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import org.junit.Test;
-import org.sejda.core.TestUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.exception.TaskException;
-import org.sejda.core.manipulation.model.task.NotifiableTaskMetadata;
-import org.sejda.core.notification.event.TaskExecutionFailedEvent;
+import org.sejda.TestUtils;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
 
 /**
  * @author Eduard Weissmann

@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SplitBySizeTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
+import org.sejda.model.parameter.SplitBySizeParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SplitBySize task command line interface

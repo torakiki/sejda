@@ -26,14 +26,14 @@ import org.sejda.cli.model.CliArgumentsWithPdfOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.core.manipulation.model.parameter.base.AbstractParameters;
-import org.sejda.core.manipulation.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.core.manipulation.model.parameter.base.MultipleOutputTaskParameters;
-import org.sejda.core.manipulation.model.parameter.base.MultiplePdfSourceTaskParameters;
-import org.sejda.core.manipulation.model.parameter.base.SinglePdfSourceTaskParameters;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToMultipleImageParameters;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToSingleImageParameters;
+import org.sejda.model.parameter.base.AbstractParameters;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 
 /**
  * @author Eduard Weissmann

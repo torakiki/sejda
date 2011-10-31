@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.image.ImageColorType;
+import org.sejda.model.image.ImageColorType;
 
 /**
  * Adapter class for enum {@link ImageColorType}. Provides initialization from string

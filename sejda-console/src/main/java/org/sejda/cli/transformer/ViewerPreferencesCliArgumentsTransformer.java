@@ -17,8 +17,8 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfBooleanPreference;
+import org.sejda.model.parameter.ViewerPreferencesParameters;
+import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the ViewerPreferences task command line interface

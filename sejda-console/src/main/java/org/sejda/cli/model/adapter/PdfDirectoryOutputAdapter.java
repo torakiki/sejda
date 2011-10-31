@@ -18,7 +18,7 @@ package org.sejda.cli.model.adapter;
 
 import java.io.File;
 
-import org.sejda.core.manipulation.model.output.DirectoryOutput;
+import org.sejda.model.output.DirectoryOutput;
 
 /**
  * Adapter for {@link DirectoryOutput}. Main role is to be a string-based constructor for the underlying model object

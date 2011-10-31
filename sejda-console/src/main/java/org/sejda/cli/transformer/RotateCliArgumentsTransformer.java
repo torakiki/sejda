@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.RotateTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
+import org.sejda.model.parameter.RotateParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface

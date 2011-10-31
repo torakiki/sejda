@@ -21,8 +21,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.RectangularBox;
-import org.sejda.core.manipulation.model.parameter.CropParameters;
+import org.sejda.model.RectangularBox;
+import org.sejda.model.parameter.CropParameters;
 
 /**
  * Tests for the Crop task

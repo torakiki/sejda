@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the PdfToMultipleTiff task command line interface

@@ -19,10 +19,10 @@ package org.sejda.cli.model.adapter;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.conversion.AdapterUtils;
 import org.sejda.conversion.EnumUtils;
-import org.sejda.core.exception.SejdaRuntimeException;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.Rotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.rotation.Rotation;
+import org.sejda.model.rotation.RotationType;
 
 /**
  * 

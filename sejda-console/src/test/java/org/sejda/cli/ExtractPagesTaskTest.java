@@ -19,8 +19,8 @@ package org.sejda.cli;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
-import org.sejda.core.manipulation.model.pdf.page.PageRange;
+import org.sejda.model.parameter.ExtractPagesParameters;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Tests for the ExtractPagesTask command line interface

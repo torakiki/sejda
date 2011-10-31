@@ -19,10 +19,10 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
-import org.sejda.core.manipulation.model.rotation.PageRotation;
-import org.sejda.core.manipulation.model.rotation.Rotation;
-import org.sejda.core.manipulation.model.rotation.RotationType;
+import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.rotation.Rotation;
+import org.sejda.model.rotation.RotationType;
 
 /**
  * Tests for the RotateTask command line interface

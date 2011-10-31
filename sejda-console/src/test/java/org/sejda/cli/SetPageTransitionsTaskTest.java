@@ -21,9 +21,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransition;
-import org.sejda.core.manipulation.model.pdf.transition.PdfPageTransitionStyle;
+import org.sejda.model.parameter.SetPagesTransitionParameters;
+import org.sejda.model.pdf.transition.PdfPageTransition;
+import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 
 /**
  * Tests for SetPageTransitions task cli

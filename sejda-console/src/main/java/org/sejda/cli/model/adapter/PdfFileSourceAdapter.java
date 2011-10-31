@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.core.manipulation.model.input.PdfFileSource;
+import org.sejda.model.input.PdfFileSource;
 
 /**
  * 

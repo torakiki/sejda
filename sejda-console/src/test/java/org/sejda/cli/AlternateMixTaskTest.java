@@ -21,7 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixParameters;
 
 /**
  * Tests for the AlternateMixTask command line interface

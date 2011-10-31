@@ -18,8 +18,8 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.SetMetadataTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.pdf.PdfMetadataKey;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SetMetadata task command line interface

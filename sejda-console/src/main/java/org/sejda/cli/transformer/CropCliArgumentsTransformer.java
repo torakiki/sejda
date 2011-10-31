@@ -18,7 +18,7 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.CropTaskCliArguments;
 import org.sejda.cli.model.adapter.RectangularBoxAdapter;
-import org.sejda.core.manipulation.model.parameter.CropParameters;
+import org.sejda.model.parameter.CropParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Crop task command line interface

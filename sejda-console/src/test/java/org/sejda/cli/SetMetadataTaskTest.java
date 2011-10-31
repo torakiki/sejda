@@ -21,8 +21,8 @@ import static org.junit.Assert.fail;
 import java.util.Map.Entry;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.pdf.PdfMetadataKey;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.pdf.PdfMetadataKey;
 
 /**
  * Tests for the ExtractPagesTask command line interface

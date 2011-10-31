@@ -19,7 +19,7 @@ package org.sejda.cli;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
+import org.sejda.model.parameter.SplitByPagesParameters;
 
 /**
  * Tests for the SplitByPagesTask command line interface

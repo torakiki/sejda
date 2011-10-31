@@ -21,7 +21,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.model.parameter.base.TaskParameters;
 
 /**
  * For tasks that support a folder as output, test various scenarios related to this trait

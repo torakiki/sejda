@@ -19,7 +19,7 @@ package org.sejda.cli;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
+import org.sejda.model.parameter.SimpleSplitParameters;
 
 /**
  * Tests for the SimpleSplitTask command line interface

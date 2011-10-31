@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SimpleSplitTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
+import org.sejda.model.parameter.SimpleSplitParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SimpleSplit task command line interface

@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 
 /**
  * Adapter class for enum {@link PdfPageMode}. Provides initialization from string

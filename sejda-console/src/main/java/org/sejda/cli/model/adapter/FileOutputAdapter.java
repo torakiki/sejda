@@ -18,7 +18,7 @@ package org.sejda.cli.model.adapter;
 
 import java.io.File;
 
-import org.sejda.core.manipulation.model.output.FileOutput;
+import org.sejda.model.output.FileOutput;
 
 /**
  * Adapter for {@link FileOutput}. Main role is to be a string-based constructor for the underlying model object

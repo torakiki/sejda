@@ -17,7 +17,7 @@
 package org.sejda.cli.model.adapter;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.core.manipulation.model.pdf.viewerpreferences.PdfNonFullScreenPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 
 /**
  * Adapter class for enum {@link PdfNonFullScreenPageMode}. Provides initialization from string

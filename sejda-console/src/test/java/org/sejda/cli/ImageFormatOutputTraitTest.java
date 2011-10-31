@@ -25,8 +25,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.sejda.core.manipulation.model.image.ImageColorType;
-import org.sejda.core.manipulation.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 
 /**
  * Test verifying that the --colorType and --resolution flags can be specified for each task creating image outputs

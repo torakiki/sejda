@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SplitByPagesTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
+import org.sejda.model.parameter.SplitByPagesParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SplitByPages task command line interface

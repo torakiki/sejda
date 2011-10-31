@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.TaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
+import org.sejda.model.parameter.base.TaskParameters;
 
 /**
  * Transformation component that knows how to transform command line arguments {@link TaskCliArguments} into task parameters {@link TaskParameters}

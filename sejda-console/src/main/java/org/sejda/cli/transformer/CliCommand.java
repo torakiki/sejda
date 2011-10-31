@@ -43,26 +43,26 @@ import org.sejda.cli.model.SplitBySizeTaskCliArguments;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.cli.model.UnpackTaskCliArguments;
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
-import org.sejda.core.manipulation.model.parameter.AlternateMixParameters;
-import org.sejda.core.manipulation.model.parameter.CropParameters;
-import org.sejda.core.manipulation.model.parameter.DecryptParameters;
-import org.sejda.core.manipulation.model.parameter.EncryptParameters;
-import org.sejda.core.manipulation.model.parameter.ExtractPagesParameters;
-import org.sejda.core.manipulation.model.parameter.ExtractTextParameters;
-import org.sejda.core.manipulation.model.parameter.MergeParameters;
-import org.sejda.core.manipulation.model.parameter.RotateParameters;
-import org.sejda.core.manipulation.model.parameter.SetMetadataParameters;
-import org.sejda.core.manipulation.model.parameter.SetPagesLabelParameters;
-import org.sejda.core.manipulation.model.parameter.SetPagesTransitionParameters;
-import org.sejda.core.manipulation.model.parameter.SimpleSplitParameters;
-import org.sejda.core.manipulation.model.parameter.SplitByGoToActionLevelParameters;
-import org.sejda.core.manipulation.model.parameter.SplitByPagesParameters;
-import org.sejda.core.manipulation.model.parameter.SplitBySizeParameters;
-import org.sejda.core.manipulation.model.parameter.UnpackParameters;
-import org.sejda.core.manipulation.model.parameter.ViewerPreferencesParameters;
-import org.sejda.core.manipulation.model.parameter.base.TaskParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToMultipleTiffParameters;
-import org.sejda.core.manipulation.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.CropParameters;
+import org.sejda.model.parameter.DecryptParameters;
+import org.sejda.model.parameter.EncryptParameters;
+import org.sejda.model.parameter.ExtractPagesParameters;
+import org.sejda.model.parameter.ExtractTextParameters;
+import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.parameter.SetPagesLabelParameters;
+import org.sejda.model.parameter.SetPagesTransitionParameters;
+import org.sejda.model.parameter.SimpleSplitParameters;
+import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByPagesParameters;
+import org.sejda.model.parameter.SplitBySizeParameters;
+import org.sejda.model.parameter.UnpackParameters;
+import org.sejda.model.parameter.ViewerPreferencesParameters;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 import uk.co.flamingpenguin.jewel.cli.Cli;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
@@ -312,7 +312,7 @@ public enum CliCommand {
 }
 
 /**
- * Base class defining the contract for {@link org.sejda.core.manipulation.model.task.Task}s with a cli interface
+ * Base class defining the contract for {@link org.sejda.model.task.Task}s with a cli interface
  * 
  * @author Eduard Weissmann
  * 
