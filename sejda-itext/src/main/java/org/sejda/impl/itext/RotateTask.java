@@ -33,7 +33,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.task.BaseTask;
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task performing pages rotation on a list of {@link PdfSource}.
+ * Task performing pages rotation on a list of {@link AbstractPdfSource}.
  * 
  * @author Andrea Vacondio
  * 
@@ -66,7 +66,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
     public void execute(RotateParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        for (PdfSource source : parameters.getSourceList()) {
+        for (AbstractPdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

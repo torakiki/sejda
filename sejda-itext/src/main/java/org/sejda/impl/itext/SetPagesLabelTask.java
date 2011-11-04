@@ -29,7 +29,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.task.BaseTask;
@@ -58,7 +58,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
     }
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
-        PdfSource source = parameters.getSource();
+        AbstractPdfSource source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 
