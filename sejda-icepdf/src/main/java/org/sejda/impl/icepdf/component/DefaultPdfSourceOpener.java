@@ -26,7 +26,7 @@ import org.icepdf.core.pobjects.Document;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.PdfURLSource;
@@ -86,7 +86,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         return document;
     }
 
-    private Document newDocument(final PdfSource source) {
+    private Document newDocument(final AbstractPdfSource source) {
         Document document = new Document();
         if (StringUtils.isNotBlank(source.getPassword())) {
             document.setSecurityCallback(new PdfSourceSecurityCallback(source));
@@ -95,15 +95,15 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     }
 
     /**
-     * ICEpdf security callback binded to a {@link PdfSource}.
+     * ICEpdf security callback binded to a {@link AbstractPdfSource}.
      * 
      * @author Andrea Vacondio
      * 
      */
     private static final class PdfSourceSecurityCallback implements SecurityCallback {
-        private final PdfSource source;
+        private final AbstractPdfSource source;
 
-        private PdfSourceSecurityCallback(PdfSource source) {
+        private PdfSourceSecurityCallback(AbstractPdfSource source) {
             this.source = source;
         }
 

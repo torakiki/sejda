@@ -23,7 +23,7 @@ import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
@@ -70,7 +70,7 @@ public class SetPagesLabelParametersTest {
         TaskOutput output = mock(TaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
-        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        AbstractPdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         victim.setSource(input);
         TestUtils.assertInvalidParameters(victim);
     }

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.output.TaskOutput;
 
 /**
@@ -53,14 +53,14 @@ public class MultiplePdfSourceParametersTest {
     @Test
     public void testAdd() {
 
-        PdfSource source = mock(PdfSource.class);
+        AbstractPdfSource source = mock(AbstractPdfSource.class);
         victim.addSource(source);
         assertEquals(1, victim.getSourceList().size());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableList() {
-        PdfSource source = mock(PdfSource.class);
+        AbstractPdfSource source = mock(AbstractPdfSource.class);
         victim.addSource(source);
         victim.getSourceList().clear();
     }

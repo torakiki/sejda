@@ -37,7 +37,7 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 
 /**
- * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the view preferences will be applied.
+ * Parameter class for the set viewer preferences manipulation. Accepts a list of {@link org.sejda.model.input.AbstractPdfSource} where the view preferences will be applied.
  * 
  * @author Andrea Vacondio
  * 

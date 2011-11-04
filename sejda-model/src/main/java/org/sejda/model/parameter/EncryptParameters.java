@@ -31,7 +31,7 @@ import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.pdf.encryption.PdfEncryption;
 
 /**
- * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} that will be encrypted using the same parameters.
+ * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.model.input.AbstractPdfSource} that will be encrypted using the same parameters.
  * 
  * @author Andrea Vacondio
  * 

@@ -24,12 +24,12 @@ import javax.validation.constraints.NotNull;
 import org.sejda.model.exception.TaskIOException;
 
 /**
- * {@link PdfSource} from a {@link InputStream}
+ * {@link AbstractPdfSource} from a {@link InputStream}
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfStreamSource extends PdfSource {
+public final class PdfStreamSource extends AbstractPdfSource {
 
     @NotNull
     private final InputStream stream;

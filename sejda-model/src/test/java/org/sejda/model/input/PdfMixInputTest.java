@@ -32,7 +32,7 @@ public class PdfMixInputTest {
 
     @Test
     public void testStatus() {
-        PdfSource source = mock(PdfSource.class);
+        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(10);
         assertTrue(status.hasNextPage());
@@ -41,7 +41,7 @@ public class PdfMixInputTest {
 
     @Test
     public void testStatusReverse() {
-        PdfSource source = mock(PdfSource.class);
+        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source, true, 1);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(10);
         assertTrue(status.hasNextPage());
@@ -50,7 +50,7 @@ public class PdfMixInputTest {
 
     @Test
     public void testStatusNoNextPage() {
-        PdfSource source = mock(PdfSource.class);
+        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(2);
         assertTrue(status.hasNextPage());

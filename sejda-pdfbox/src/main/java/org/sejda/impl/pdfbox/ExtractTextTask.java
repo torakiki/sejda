@@ -32,7 +32,7 @@ import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfTextExtractor;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractTextParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task extracting text from a list of {@link PdfSource}
+ * PDFBox implementation of a task extracting text from a list of {@link AbstractPdfSource}
  * 
  * @author Andrea Vacondio
  * 
@@ -64,7 +64,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
     public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
-        for (PdfSource source : parameters.getSourceList()) {
+        for (AbstractPdfSource source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);

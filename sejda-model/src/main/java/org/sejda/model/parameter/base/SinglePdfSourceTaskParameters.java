@@ -16,7 +16,7 @@
  */
 package org.sejda.model.parameter.base;
 
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 
 /**
  * A parameter with a single source as input for the task.
@@ -29,12 +29,12 @@ public interface SinglePdfSourceTaskParameters {
     /**
      * @return the source for this parameter.
      */
-    PdfSource getSource();
+    AbstractPdfSource getSource();
 
     /**
      * Set the source for this parameter.
      * 
      * @param source
      */
-    void setSource(PdfSource source);
+    void setSource(AbstractPdfSource source);
 }

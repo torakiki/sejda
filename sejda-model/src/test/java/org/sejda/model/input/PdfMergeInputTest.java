@@ -34,11 +34,11 @@ import org.sejda.model.pdf.page.PageRange;
  * 
  */
 public class PdfMergeInputTest {
-    private PdfSource source;
+    private AbstractPdfSource source;
 
     @Before
     public void setUp() {
-        source = Mockito.mock(PdfSource.class);
+        source = Mockito.mock(AbstractPdfSource.class);
     }
 
     @Test

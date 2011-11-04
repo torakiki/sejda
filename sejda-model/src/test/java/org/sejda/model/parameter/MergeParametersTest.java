@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfMergeInput;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.pdf.page.PageRange;
@@ -66,7 +66,7 @@ public class MergeParametersTest {
         victim.setOutput(output);
         victim.setOutputName("name");
         InputStream stream = mock(InputStream.class);
-        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        AbstractPdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         PdfMergeInput mergeInput = new PdfMergeInput(input);
         PageRange range = new PageRange(3, 2);
         mergeInput.addPageRange(range);
@@ -79,7 +79,7 @@ public class MergeParametersTest {
         MergeParameters victim = new MergeParameters(false);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
-        PdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        AbstractPdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         PdfMergeInput mergeInput = new PdfMergeInput(input);
         PageRange range1 = new PageRange(1, 20);
         PageRange range2 = new PageRange(10, 30);

@@ -25,12 +25,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskIOException;
 
 /**
- * {@link PdfSource} from a {@link URL}
+ * {@link AbstractPdfSource} from a {@link URL}
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfURLSource extends PdfSource {
+public final class PdfURLSource extends AbstractPdfSource {
 
     @NotNull
     private final URL url;

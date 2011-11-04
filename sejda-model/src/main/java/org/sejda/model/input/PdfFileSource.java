@@ -23,12 +23,12 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.PdfFile;
 
 /**
- * {@link PdfSource} from a {@link File}
+ * {@link AbstractPdfSource} from a {@link File}
  * 
  * @author Andrea Vacondio
  * 
  */
-public final class PdfFileSource extends PdfSource {
+public final class PdfFileSource extends AbstractPdfSource {
 
     @PdfFile
     private final File file;

@@ -24,7 +24,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.ImageType;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.AbstractPdfSource;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 
@@ -44,13 +44,13 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     private ImageColorType outputImageColorType;
     @Valid
     @NotNull
-    private PdfSource source;
+    private AbstractPdfSource source;
 
-    public PdfSource getSource() {
+    public AbstractPdfSource getSource() {
         return source;
     }
 
-    public void setSource(PdfSource source) {
+    public void setSource(AbstractPdfSource source) {
         this.source = source;
     }
 

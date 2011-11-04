@@ -25,12 +25,12 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
- * Model for a pdf input source
+ * Skeletal implementation for a pdf input source.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class PdfSource {
+public abstract class AbstractPdfSource {
 
     private String password;
     @NotEmpty
@@ -43,7 +43,7 @@ public abstract class PdfSource {
      * @throws IllegalArgumentException
      *             if the name is blank
      */
-    PdfSource(String name) {
+    public AbstractPdfSource(String name) {
         if (isBlank(name)) {
             throw new IllegalArgumentException("A not blank name are expected.");
         }
@@ -58,7 +58,7 @@ public abstract class PdfSource {
      * @throws IllegalArgumentException
      *             if the name is blank
      */
-    PdfSource(String name, String password) {
+    public AbstractPdfSource(String name, String password) {
         this(name);
         this.password = password;
     }

@@ -26,7 +26,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.rotation.PageRotation;
 
 /**
- * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the {@link PageRotation} will be applied.
+ * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.AbstractPdfSource} where the {@link PageRotation} will be applied.
  * 
  * @author Andrea Vacondio
  * 
