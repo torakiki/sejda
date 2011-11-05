@@ -20,7 +20,7 @@ package org.sejda.model.input;
 import org.sejda.model.exception.TaskIOException;
 
 /**
- * Double Dispatch interface to open a {@link AbstractPdfSource}.
+ * Double Dispatch interface to open a {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * @param <T>

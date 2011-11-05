@@ -26,7 +26,7 @@ import org.icepdf.core.pobjects.Document;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.PdfURLSource;
@@ -44,7 +44,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     public Document open(PdfURLSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
-            document.setUrl(source.getUrl());
+            document.setUrl(source.getSource());
         } catch (PDFException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
@@ -59,7 +59,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     public Document open(PdfFileSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
-            document.setFile(source.getFile().getAbsolutePath());
+            document.setFile(source.getSource().getAbsolutePath());
         } catch (PDFException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
@@ -74,7 +74,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     public Document open(PdfStreamSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
-            document.setInputStream(source.getStream(), source.getName());
+            document.setInputStream(source.getSource(), source.getName());
         } catch (PDFException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
@@ -86,7 +86,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         return document;
     }
 
-    private Document newDocument(final AbstractPdfSource source) {
+    private Document newDocument(final PdfSource<?> source) {
         Document document = new Document();
         if (StringUtils.isNotBlank(source.getPassword())) {
             document.setSecurityCallback(new PdfSourceSecurityCallback(source));
@@ -95,15 +95,15 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
     }
 
     /**
-     * ICEpdf security callback binded to a {@link AbstractPdfSource}.
+     * ICEpdf security callback binded to a {@link PdfSource}.
      * 
      * @author Andrea Vacondio
      * 
      */
     private static final class PdfSourceSecurityCallback implements SecurityCallback {
-        private final AbstractPdfSource source;
+        private final PdfSource<?> source;
 
-        private PdfSourceSecurityCallback(AbstractPdfSource source) {
+        private PdfSourceSecurityCallback(PdfSource<?> source) {
             this.source = source;
         }
 

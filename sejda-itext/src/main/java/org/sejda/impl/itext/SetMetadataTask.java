@@ -31,7 +31,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task setting metadata on an input {@link AbstractPdfSource}.
+ * Task setting metadata on an input {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
@@ -61,7 +61,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
-        AbstractPdfSource source = parameters.getSource();
+        PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 

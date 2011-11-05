@@ -37,7 +37,7 @@ import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.impl.itext.util.ViewerPreferencesUtils;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
@@ -51,7 +51,7 @@ import com.lowagie.text.pdf.PdfObject;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task setting viewer preferences on a list of {@link AbstractPdfSource}.
+ * Task setting viewer preferences on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
@@ -86,7 +86,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        for (AbstractPdfSource source : parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

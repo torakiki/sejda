@@ -23,8 +23,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
- * Model representation of a input parameter for the Alternate Mix task. Contains a {@link AbstractPdfSource}, the mix step and a parameter indicating if the document should be processed
- * in reverse mode.
+ * Model representation of a input parameter for the Alternate Mix task. Contains a {@link AbstractPdfSource}, the mix step and a parameter indicating if the document should be
+ * processed in reverse mode.
  * 
  * @author Andrea Vacondio
  * 
@@ -33,12 +33,12 @@ public class PdfMixInput {
 
     @NotNull
     @Valid
-    private final AbstractPdfSource source;
+    private final PdfSource<?> source;
     private boolean reverse = false;
     @Min(value = 1)
     private int step = 1;
 
-    public PdfMixInput(AbstractPdfSource source, boolean reverse, int step) {
+    public PdfMixInput(PdfSource<?> source, boolean reverse, int step) {
         this.source = source;
         this.reverse = reverse;
         this.step = step;
@@ -49,11 +49,11 @@ public class PdfMixInput {
      * 
      * @param source
      */
-    public PdfMixInput(AbstractPdfSource source) {
+    public PdfMixInput(PdfSource<?> source) {
         this.source = source;
     }
 
-    public AbstractPdfSource getSource() {
+    public PdfSource<?> getSource() {
         return source;
     }
 

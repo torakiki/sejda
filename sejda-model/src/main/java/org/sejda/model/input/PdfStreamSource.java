@@ -29,7 +29,7 @@ import org.sejda.model.exception.TaskIOException;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfStreamSource extends AbstractPdfSource {
+public final class PdfStreamSource extends AbstractPdfSource<InputStream> {
 
     @NotNull
     private final InputStream stream;
@@ -39,11 +39,10 @@ public final class PdfStreamSource extends AbstractPdfSource {
         this.stream = stream;
     }
 
-    public InputStream getStream() {
+    public InputStream getSource() {
         return stream;
     }
 
-    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

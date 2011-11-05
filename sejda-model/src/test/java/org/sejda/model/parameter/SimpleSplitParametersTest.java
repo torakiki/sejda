@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
@@ -48,7 +48,7 @@ public class SimpleSplitParametersTest {
         TaskOutput output = mock(TaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
-        AbstractPdfSource input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         victim.setSource(input);
         TestUtils.assertInvalidParameters(victim);
     }

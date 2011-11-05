@@ -22,10 +22,10 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 
 /**
- * Base parameters class for manipulations with a single {@link AbstractPdfSource}
+ * Base parameters class for manipulations with a single {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
@@ -34,13 +34,13 @@ abstract class SinglePdfSourceParameters extends AbstractPdfOutputParameters imp
 
     @Valid
     @NotNull
-    private AbstractPdfSource source;
+    private PdfSource<?> source;
 
-    public AbstractPdfSource getSource() {
+    public PdfSource<?> getSource() {
         return source;
     }
 
-    public void setSource(AbstractPdfSource source) {
+    public void setSource(PdfSource<?> source) {
         this.source = source;
     }
 

@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.OutputType;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.AbstractParameters;
@@ -33,7 +33,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 
 /**
- * Parameter class for the unpack manipulation. Accepts a list of {@link org.sejda.model.input.AbstractPdfSource} that will be unpacked.
+ * Parameter class for the unpack manipulation. Accepts a list of {@link PdfSource} that will be unpacked.
  * 
  * @author Andrea Vacondio
  * 
@@ -45,7 +45,7 @@ public class UnpackParameters extends AbstractParameters implements MultiplePdfS
     private final TaskOutput output;
     @NotEmpty
     @Valid
-    private final List<AbstractPdfSource> sourceList = new ArrayList<AbstractPdfSource>();
+    private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
 
     public UnpackParameters(TaskOutput output) {
         this.output = output;
@@ -60,14 +60,14 @@ public class UnpackParameters extends AbstractParameters implements MultiplePdfS
      * 
      * @param input
      */
-    public void addSource(AbstractPdfSource input) {
+    public void addSource(PdfSource<?> input) {
         sourceList.add(input);
     }
 
     /**
      * @return an unmodifiable view of the source list
      */
-    public List<AbstractPdfSource> getSourceList() {
+    public List<PdfSource<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }
 

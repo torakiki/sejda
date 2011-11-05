@@ -21,7 +21,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
@@ -30,7 +29,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfSource {
+public abstract class AbstractPdfSource<T> implements PdfSource<T> {
 
     private String password;
     @NotEmpty
@@ -84,18 +83,6 @@ public abstract class AbstractPdfSource {
     public String getName() {
         return name;
     }
-
-    /**
-     * Dispatch method to open the source.
-     * 
-     * @param <T>
-     *            generic type as result of the open action.
-     * @param opener
-     * @return result of the open action as a type defined by the dispatcher.
-     * @throws TaskIOException
-     *             in case of error opening the source.
-     */
-    public abstract <T> T open(PdfSourceOpener<T> opener) throws TaskIOException;
 
     @Override
     public String toString() {

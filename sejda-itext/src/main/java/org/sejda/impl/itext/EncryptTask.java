@@ -34,7 +34,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
@@ -46,7 +46,7 @@ import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Perform encryption of the input {@link AbstractPdfSource} list using input parameters.
+ * Perform encryption of the input {@link PdfSource} list using input parameters.
  * 
  * @author Andrea Vacondio
  * 
@@ -72,7 +72,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
 
     public void execute(EncryptParameters parameters) throws TaskException {
         int currentStep = 0;
-        for (AbstractPdfSource source : parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

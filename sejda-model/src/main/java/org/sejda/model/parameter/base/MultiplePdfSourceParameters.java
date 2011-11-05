@@ -25,11 +25,11 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
- * Base parameters class for manipulations with a list of {@link AbstractPdfSource}.
+ * Base parameters class for manipulations with a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
@@ -39,21 +39,21 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
 
     @NotEmpty
     @Valid
-    private final List<AbstractPdfSource> sourceList = new ArrayList<AbstractPdfSource>();
+    private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
 
     /**
      * adds the input source to the source list.
      * 
      * @param input
      */
-    public void addSource(AbstractPdfSource input) {
+    public void addSource(PdfSource<?> input) {
         sourceList.add(input);
     }
 
     /**
      * @return an unmodifiable view of the source list
      */
-    public List<AbstractPdfSource> getSourceList() {
+    public List<PdfSource<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }
 

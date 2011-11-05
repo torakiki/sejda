@@ -47,7 +47,7 @@ public class PdfFileSourceAdapterTest extends AbstractTestSuite {
     public void windowsFileWithPassword() {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret123").getPdfFileSource();
         assertThat(result.getPassword(), is("secret123"));
-        assertThat(result.getFile(),
+        assertThat(result.getSource(),
                 either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 
@@ -55,7 +55,7 @@ public class PdfFileSourceAdapterTest extends AbstractTestSuite {
     public void windowsFileNoPassword() {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf").getPdfFileSource();
         assertNull(result.getPassword());
-        assertThat(result.getFile(),
+        assertThat(result.getSource(),
                 either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 
@@ -63,7 +63,7 @@ public class PdfFileSourceAdapterTest extends AbstractTestSuite {
     public void protectedFileWithPasswordContainingSeparator() {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret.pdf:password").getPdfFileSource();
         assertThat(result.getPassword(), is("secret.pdf:password"));
-        assertThat(result.getFile(),
+        assertThat(result.getSource(),
                 either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 

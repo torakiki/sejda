@@ -68,7 +68,6 @@ public class NameGeneratorTest {
     @Test(expected = IllegalArgumentException.class)
     public void testNullRequest() {
         String prefix = "BLA_";
-        String expected = "BLA_Original.pdf";
         nameGenerator(prefix).generate(null);
     }
 }

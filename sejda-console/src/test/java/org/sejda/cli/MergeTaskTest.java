@@ -216,7 +216,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         for (int i = 0; i < parameters.getInputList().size(); i++) {
             PdfMergeInput each = parameters.getInputList().get(i);
             PdfFileSource pdfFileSource = (PdfFileSource) each.getSource();
-            actualFileList.add(pdfFileSource.getFile());
+            actualFileList.add(pdfFileSource.getSource());
             actualPasswords.add(pdfFileSource.getPassword());
         }
 

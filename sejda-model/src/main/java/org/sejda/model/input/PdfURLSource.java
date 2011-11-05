@@ -30,7 +30,7 @@ import org.sejda.model.exception.TaskIOException;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfURLSource extends AbstractPdfSource {
+public final class PdfURLSource extends AbstractPdfSource<URL> {
 
     @NotNull
     private final URL url;
@@ -40,11 +40,10 @@ public final class PdfURLSource extends AbstractPdfSource {
         this.url = url;
     }
 
-    public URL getUrl() {
+    public URL getSource() {
         return url;
     }
 
-    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

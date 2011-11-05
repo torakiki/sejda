@@ -34,7 +34,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.transition.PdfPageTransition;
@@ -65,7 +65,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
     }
 
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
-        AbstractPdfSource source = parameters.getSource();
+        PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
 

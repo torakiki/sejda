@@ -39,7 +39,7 @@ class RawArguments {
      * @return only arguments relevant for the {@link org.sejda.cli.model.TaskCliArguments}
      */
     String[] getCommandArguments() {
-        return (String[]) ArrayUtils.subarray(arguments, 1, arguments.length);
+        return ArrayUtils.subarray(arguments, 1, arguments.length);
     }
 
     @Override

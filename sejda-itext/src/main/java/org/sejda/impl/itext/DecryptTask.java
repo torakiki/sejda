@@ -32,7 +32,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.DecryptParameters;
 import org.sejda.model.task.BaseTask;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Task performing decrypt of a list of encrypted {@link AbstractPdfSource}
+ * Task performing decrypt of a list of encrypted {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 
@@ -64,7 +64,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
 
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
-        for (AbstractPdfSource source : parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

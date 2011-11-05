@@ -29,7 +29,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task setting metadata on an input {@link AbstractPdfSource}.
+ * PDFBox implementation of a task setting metadata on an input {@link PdfSource}.
  * 
  * @author Nero Couvalli
  * 
@@ -56,7 +56,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
-        AbstractPdfSource source = parameters.getSource();
+        PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
         documentHandler.setCreatorOnPDDocument();

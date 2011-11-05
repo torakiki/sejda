@@ -30,7 +30,7 @@ import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PagesExtractor;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
@@ -58,7 +58,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     }
 
     public void execute(ExtractPagesParameters parameters) throws TaskException {
-        AbstractPdfSource source = parameters.getSource();
+        PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
         sourceDocumentHandler = source.open(documentLoader);
         sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);

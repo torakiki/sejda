@@ -35,9 +35,8 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.model.exception.SejdaRuntimeException;
-import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.DirectoryOutput;
 import org.sejda.model.output.FileOutput;
 import org.sejda.model.output.OutputType;
@@ -127,7 +126,7 @@ public abstract class AbstractTestSuite {
     }
 
     protected void assertHasFileSource(MergeParameters parameters, File file, String password) {
-        List<AbstractPdfSource> sourcesList = new ArrayList<AbstractPdfSource>();
+        List<PdfSource<?>> sourcesList = new ArrayList<PdfSource<?>>();
         for (PdfMergeInput eachInput : parameters.getInputList()) {
             sourcesList.add(eachInput.getSource());
         }
@@ -145,9 +144,9 @@ public abstract class AbstractTestSuite {
         assertHasFileSource(parameters.getSourceList(), file, password);
     }
 
-    protected void assertHasFileSource(Collection<AbstractPdfSource> parametersPdfSources, File file, String password) {
+    protected void assertHasFileSource(Collection<PdfSource<?>> parametersPdfSources, File file, String password) {
         boolean found = false;
-        for (AbstractPdfSource each : parametersPdfSources) {
+        for (PdfSource<?> each : parametersPdfSources) {
             if (matchesPdfFileSource(file, password, each)) {
                 found = true;
             }
@@ -157,8 +156,8 @@ public abstract class AbstractTestSuite {
                 + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
     }
 
-    protected boolean matchesPdfFileSource(File file, String password, AbstractPdfSource each) {
-        return ((PdfFileSource) each).getFile().equals(file) && StringUtils.equals(each.getPassword(), password);
+    protected boolean matchesPdfFileSource(File file, String password, PdfSource<?> each) {
+        return (each.getSource().equals(file) && StringUtils.equals(each.getPassword(), password));
     }
 
     protected void assertOutputFolder(TaskParameters result, File outputFolder) {

@@ -18,7 +18,7 @@ package org.sejda.model.parameter.base;
 
 import java.util.List;
 
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 
 /**
  * A parameter whose execution inputs consists of a list of pdf documents.
@@ -33,10 +33,10 @@ public interface MultiplePdfSourceTaskParameters {
      * 
      * @param input
      */
-    void addSource(AbstractPdfSource input);
+    void addSource(PdfSource<?> input);
 
     /**
      * @return a view of the source list
      */
-    List<AbstractPdfSource> getSourceList();
+    List<PdfSource<?>> getSourceList();
 }

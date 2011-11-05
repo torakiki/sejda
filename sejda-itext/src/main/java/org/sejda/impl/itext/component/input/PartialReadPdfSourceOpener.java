@@ -36,17 +36,18 @@ class PartialReadPdfSourceOpener extends AbstractPdfSourceOpener {
 
     @Override
     PdfReader openSource(PdfURLSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getUrl()), source.getPasswordBytes());
+        return new PdfReader(new RandomAccessFileOrArray(source.getSource()), source.getPasswordBytes());
     }
 
     @Override
     PdfReader openSource(PdfFileSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getFile().getAbsolutePath()), source.getPasswordBytes());
+        return new PdfReader(new RandomAccessFileOrArray(source.getSource().getAbsolutePath()),
+                source.getPasswordBytes());
     }
 
     @Override
     PdfReader openSource(PdfStreamSource source) throws IOException {
-        return new PdfReader(new RandomAccessFileOrArray(source.getStream()), source.getPasswordBytes());
+        return new PdfReader(new RandomAccessFileOrArray(source.getSource()), source.getPasswordBytes());
     }
 
 }

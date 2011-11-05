@@ -43,15 +43,15 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
 
     @NotNull
     @Valid
-    private final AbstractPdfSource source;
+    private final PdfSource<?> source;
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
 
-    public PdfMergeInput(AbstractPdfSource source) {
+    public PdfMergeInput(PdfSource<?> source) {
         this.source = source;
     }
 
-    public AbstractPdfSource getSource() {
+    public PdfSource<?> getSource() {
         return source;
     }
 

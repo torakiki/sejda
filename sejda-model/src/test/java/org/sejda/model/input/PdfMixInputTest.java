@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
 
@@ -30,9 +31,15 @@ import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
  */
 public class PdfMixInputTest {
 
+    private PdfSource<?> source;
+
+    @Before
+    public void setUp() {
+        source = mock(PdfSource.class);
+    }
+
     @Test
     public void testStatus() {
-        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(10);
         assertTrue(status.hasNextPage());
@@ -41,7 +48,6 @@ public class PdfMixInputTest {
 
     @Test
     public void testStatusReverse() {
-        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source, true, 1);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(10);
         assertTrue(status.hasNextPage());
@@ -50,7 +56,6 @@ public class PdfMixInputTest {
 
     @Test
     public void testStatusNoNextPage() {
-        AbstractPdfSource source = mock(AbstractPdfSource.class);
         PdfMixInput victim = new PdfMixInput(source);
         PdfMixInputProcessStatus status = victim.newProcessingStatus(2);
         assertTrue(status.hasNextPage());

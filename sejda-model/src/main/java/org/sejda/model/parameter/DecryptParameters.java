@@ -22,7 +22,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 
 /**
- * Parameter class for the decrypt manipulation. Accepts multiple {@link org.sejda.model.input.AbstractPdfSource} to be decrypted.
+ * Parameter class for the decrypt manipulation. Accepts multiple {@link org.sejda.model.input.PdfSource} to be decrypted.
  * 
  * @author Andrea Vacondio
  * 

@@ -32,7 +32,7 @@ import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.task.BaseTask;
@@ -65,7 +65,7 @@ public class CropTask extends BaseTask<CropParameters> {
     }
 
     public void execute(CropParameters parameters) throws TaskException {
-        AbstractPdfSource source = parameters.getSource();
+        PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);
         int totalPages = reader.getNumberOfPages();

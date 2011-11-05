@@ -20,7 +20,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
     public PDDocumentHandler open(PdfURLSource source) throws TaskIOException {
         PDDocument document = null;
         try {
-            document = PDDocument.load(source.getUrl());
+            document = PDDocument.load(source.getSource());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
@@ -30,7 +30,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
     public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
         PDDocument document = null;
         try {
-            document = PDDocument.load(source.getFile());
+            document = PDDocument.load(source.getSource());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
@@ -40,7 +40,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
     public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
         PDDocument document = null;
         try {
-            document = PDDocument.load(source.getStream());
+            document = PDDocument.load(source.getSource());
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }

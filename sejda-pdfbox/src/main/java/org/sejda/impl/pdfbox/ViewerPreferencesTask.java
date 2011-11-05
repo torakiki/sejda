@@ -34,7 +34,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.task.BaseTask;
@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task setting viewer preferences on a list of {@link AbstractPdfSource}.
+ * PDFBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 
@@ -63,7 +63,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
-        for (AbstractPdfSource source : parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ...", source);
             documentHandler = source.open(documentLoader);

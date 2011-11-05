@@ -40,19 +40,20 @@ class FullReadPdfSourceOpener extends AbstractPdfSourceOpener {
 
     @Override
     PdfReader openSource(PdfURLSource source) throws IOException {
-        return new PdfReader(new BufferedInputStream(source.getUrl().openStream()), source.getPasswordBytes());
+        return new PdfReader(new BufferedInputStream(source.getSource().openStream()), source.getPasswordBytes());
 
     }
 
     @Override
     PdfReader openSource(PdfFileSource source) throws IOException {
-        return new PdfReader(new BufferedInputStream(new FileInputStream(source.getFile())), source.getPasswordBytes());
+        return new PdfReader(new BufferedInputStream(new FileInputStream(source.getSource())),
+                source.getPasswordBytes());
 
     }
 
     @Override
     PdfReader openSource(PdfStreamSource source) throws IOException {
-        return new PdfReader(new BufferedInputStream(source.getStream()), source.getPasswordBytes());
+        return new PdfReader(new BufferedInputStream(source.getSource()), source.getPasswordBytes());
     }
 
 }

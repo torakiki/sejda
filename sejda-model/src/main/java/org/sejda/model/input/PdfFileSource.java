@@ -28,7 +28,7 @@ import org.sejda.model.validation.constraint.PdfFile;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfFileSource extends AbstractPdfSource {
+public final class PdfFileSource extends AbstractPdfSource<File> {
 
     @PdfFile
     private final File file;
@@ -38,11 +38,10 @@ public final class PdfFileSource extends AbstractPdfSource {
         this.file = file;
     }
 
-    public File getFile() {
+    public File getSource() {
         return file;
     }
 
-    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

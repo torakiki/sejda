@@ -24,7 +24,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.input.AbstractPdfSource;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.OutputType;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.AbstractParameters;
@@ -34,7 +34,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 
 /**
- * Parameter class for the extract text manipulation. Accepts a list of {@link org.sejda.model.input.AbstractPdfSource} from which the text will be extracted.
+ * Parameter class for the extract text manipulation. Accepts a list of {@link PdfSource} from which the text will be extracted.
  * 
  * @author Andrea Vacondio
  * 
@@ -48,7 +48,7 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
     private TaskOutput output;
     @NotEmpty
     @Valid
-    private List<AbstractPdfSource> sourceList = new ArrayList<AbstractPdfSource>();
+    private List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
     private String textEncoding;
 
     public ExtractTextParameters(TaskOutput output) {
@@ -80,14 +80,14 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
      * 
      * @param input
      */
-    public void addSource(AbstractPdfSource input) {
+    public void addSource(PdfSource<?> input) {
         sourceList.add(input);
     }
 
     /**
      * @return an unmodifiable view of the source list
      */
-    public List<AbstractPdfSource> getSourceList() {
+    public List<PdfSource<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }
 
