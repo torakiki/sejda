@@ -17,16 +17,14 @@
 package org.sejda.impl.itext.component.split;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.doThrow;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.spy;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +36,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.sejda.impl.itext.component.PdfCopier;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
+import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.task.NotifiableTaskMetadata;
 
 import com.lowagie.text.pdf.PdfReader;
@@ -53,25 +53,25 @@ import com.lowagie.text.pdf.SimpleBookmark;
 @PrepareForTest(SimpleBookmark.class)
 public class PagesPdfSplitterTest {
 
-    private SimpleSplitParameters params;
+    private SimpleSplitParameters params = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
     private PdfReader reader;
+    private PdfSource source;
 
     @Before
     public void setUp() {
-        params = mock(SimpleSplitParameters.class);
         reader = mock(PdfReader.class);
-        PdfSource source = mock(PdfSource.class);
+        source = mock(PdfSource.class);
         when(source.getName()).thenReturn("name");
-        when(params.getSource()).thenReturn(source);
+        params.setSource(source);
         when(reader.getNumberOfPages()).thenReturn(10);
-        when(params.getPages(anyInt())).thenReturn(Collections.singleton(5));
         PowerMockito.mockStatic(SimpleBookmark.class, Answers.RETURNS_SMART_NULLS.get());
     }
 
     @Test(expected = OutOfMemoryError.class)
     // issue #80
     public void testFinallyDoesntSwallowErrors() throws IOException, TaskException {
-        PagesPdfSplitter<SimpleSplitParameters> victim = spy(new PagesPdfSplitter<SimpleSplitParameters>(reader, params));
+        PagesPdfSplitter<AbstractSplitByPageParameters> victim = spy(new PagesPdfSplitter<AbstractSplitByPageParameters>(
+                reader, params));
         PdfCopier mockCopier = mock(PdfCopier.class);
         doReturn(mockCopier).when(victim).openCopier(any(PdfReader.class), any(File.class), any(PdfVersion.class));
         doThrow(new RuntimeException()).when(mockCopier).close();
