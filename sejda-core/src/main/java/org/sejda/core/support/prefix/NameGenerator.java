@@ -19,6 +19,7 @@ package org.sejda.core.support.prefix;
 
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 
@@ -34,7 +35,7 @@ public final class NameGenerator {
     private PrefixTypesChain prefixTypesChain;
 
     private NameGenerator(String prefix) {
-        this.prefix = prefix;
+        this.prefix = StringUtils.defaultString(prefix);
         this.prefixTypesChain = new PrefixTypesChain(prefix);
     }
 
