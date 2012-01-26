@@ -127,25 +127,29 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     }
 
     @Test
-    public void testExecuteMergeRangesCopyFields() throws TaskException, IOException {
+    public void testExecuteMergeRangesWithBlankPage() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
-        TestUtils.setProperty(parameters, "copyFormFields", Boolean.TRUE);
         for (PdfMergeInput input : parameters.getInputList()) {
-            input.addPageRange(new PageRange(3, 10));
-            input.addPageRange(new PageRange(20, 23));
-            input.addPageRange(new PageRange(80, 90));
+            input.addPageRange(new PageRange(2, 4));
         }
+        parameters.setBlankPageIfOdd(true);
         victim.execute(parameters);
         PdfReader reader = null;
         try {
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(25, reader.getNumberOfPages());
+            assertEquals(8, reader.getNumberOfPages());
         } finally {
             nullSafeCloseReader(reader);
         }
+    }
+
+    @Test
+    public void testExecuteMergeRangesCopyFields() throws TaskException, IOException {
+        TestUtils.setProperty(parameters, "copyFormFields", Boolean.TRUE);
+        testExecuteMergeRanges();
     }
 
     protected MergeParameters getParameters() {

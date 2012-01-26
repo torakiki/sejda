@@ -53,6 +53,22 @@ public interface PdfCopier extends Closeable {
     void addAllPages(PdfReader reader) throws TaskException;
 
     /**
+     * Adds a blank page to the current underlying document.
+     * 
+     * @param reader
+     *            the reader to use to get page size and rotation.
+     */
+    void addBlankPage(PdfReader reader);
+
+    /**
+     * Adds a blank page to the current underlying document if the total number of written pages is odd.
+     * 
+     * @param reader
+     *            the reader to use to get page size and rotation.
+     */
+    void addBlankPageIfOdd(PdfReader reader);
+
+    /**
      * Enables compression of the xref streams if compress is true.
      * 
      * @param compress

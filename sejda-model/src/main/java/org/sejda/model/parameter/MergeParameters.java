@@ -45,6 +45,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @Valid
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
     private boolean copyFormFields;
+    private boolean blankPageIfOdd;
     private String outputName;
     @Valid
     @NotNull
@@ -52,6 +53,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
 
     public MergeParameters() {
         this.copyFormFields = false;
+        this.blankPageIfOdd = false;
     }
 
     public MergeParameters(boolean copyFormFields) {
@@ -100,10 +102,23 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         return copyFormFields;
     }
 
+    public boolean isBlankPageIfOdd() {
+        return blankPageIfOdd;
+    }
+
+    /**
+     * Setting this true tells the task to add a blank page after each merged document if the number of pages is odd. It can be useful to print the document double-sided.
+     * 
+     * @param blankPageIfOdd
+     */
+    public void setBlankPageIfOdd(boolean blankPageIfOdd) {
+        this.blankPageIfOdd = blankPageIfOdd;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(copyFormFields)
-                .append(outputName).toHashCode();
+                .append(blankPageIfOdd).append(outputName).toHashCode();
     }
 
     @Override
@@ -115,8 +130,9 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
             return false;
         }
         MergeParameters parameter = (MergeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(copyFormFields, parameter.isCopyFormFields()).append(inputList, parameter.getInputList())
-                .append(outputName, parameter.getOutputName()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList())
+                .append(copyFormFields, parameter.isCopyFormFields())
+                .append(blankPageIfOdd, parameter.isBlankPageIfOdd()).append(outputName, parameter.getOutputName())
+                .isEquals();
     }
 }

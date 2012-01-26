@@ -75,12 +75,17 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             if (!input.isAllPages()) {
                 String selection = join(input.getPageSelection(), ',');
-                LOG.debug("Setting pages selection ");
+                LOG.debug("Setting pages selection");
                 reader.selectPages(selection);
                 LOG.trace("Pages selection set to {}", selection);
             }
 
             copier.addAllPages(reader);
+
+            if (parameters.isBlankPageIfOdd()) {
+                LOG.debug("Adding blank page if required");
+                copier.addBlankPageIfOdd(reader);
+            }
             copier.freeReader(reader);
 
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);

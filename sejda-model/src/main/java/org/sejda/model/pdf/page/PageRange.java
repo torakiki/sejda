@@ -43,7 +43,7 @@ public class PageRange implements PagesSelection {
     private int end;
 
     /**
-     * Creates a page range that goes from start to end.
+     * Creates a page range that goes from start to end (comprehended).
      * 
      * @param start
      * @param end

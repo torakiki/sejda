@@ -30,6 +30,8 @@ import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfCopyFields;
@@ -47,6 +49,8 @@ import com.lowagie.text.pdf.PdfString;
  * 
  */
 public class FormFieldsAwarePdfCopier implements PdfCopier {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FormFieldsAwarePdfCopier.class);
 
     private PdfCopyFields pdfCopy;
     private OutputStream outputStream;
@@ -117,6 +121,16 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     public void setOutline(List<Map<String, Object>> outline) {
         if (outline != null) {
             pdfCopy.setOutlines(outline);
+        }
+    }
+
+    public void addBlankPage(PdfReader reader) {
+        LOG.warn("Add blank page not implemented for FormFieldsAwarePdfCopier");
+    }
+
+    public void addBlankPageIfOdd(PdfReader reader) {
+        if (reader.getNumberOfPages() % 2 != 0) {
+            addBlankPage(reader);
         }
     }
 

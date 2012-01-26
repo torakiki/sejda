@@ -83,6 +83,16 @@ abstract class AbstractPdfCopier implements PdfCopier {
         }
     }
 
+    public void addBlankPage(PdfReader reader) {
+        pdfCopy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
+    }
+
+    public void addBlankPageIfOdd(PdfReader reader) {
+        if (reader.getNumberOfPages() % 2 != 0) {
+            addBlankPage(reader);
+        }
+    }
+
     /**
      * Adds to the {@link PdfSmartCopy} all the pages from the input reader
      * 
