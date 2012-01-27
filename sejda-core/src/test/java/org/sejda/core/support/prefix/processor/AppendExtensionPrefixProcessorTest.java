@@ -43,4 +43,11 @@ public class AppendExtensionPrefixProcessorTest {
         String expected = "blabla.txt";
         assertEquals(expected, victim.process(prefix, nameRequest(SejdaFileExtensions.TXT_EXTENSION)));
     }
+
+    @Test
+    public void testProcessNullRequest() {
+        String prefix = "blabla";
+        assertEquals(prefix, victim.process(prefix, null));
+    }
+
 }
