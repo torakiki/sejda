@@ -17,6 +17,7 @@
 package org.sejda.model.notification.event;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
@@ -34,6 +35,15 @@ public class PercentageOfWorkDoneChangedEventTest {
     public void zeroPercentageConstructor() {
         PercentageOfWorkDoneChangedEvent victim = new PercentageOfWorkDoneChangedEvent(NotifiableTaskMetadata.NULL);
         assertEquals(BigDecimal.ZERO, victim.getPercentage());
+        assertFalse(victim.isUndetermined());
+    }
+
+    @Test
+    public void percentageConstructor() {
+        PercentageOfWorkDoneChangedEvent victim = new PercentageOfWorkDoneChangedEvent(BigDecimal.ONE,
+                NotifiableTaskMetadata.NULL);
+        assertEquals(BigDecimal.ONE, victim.getPercentage());
+        assertFalse(victim.isUndetermined());
     }
 
     @Test
