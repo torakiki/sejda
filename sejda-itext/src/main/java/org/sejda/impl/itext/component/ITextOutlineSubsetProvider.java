@@ -49,7 +49,7 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<Map<Str
         }
 
         this.totalNumberOfPages = reader.getNumberOfPages();
-        bookmarks = getBookmarksOrEmpty(reader);
+        this.bookmarks = getBookmarksOrEmpty(reader);
     }
 
     private List<Object> getBookmarksOrEmpty(PdfReader reader) {
