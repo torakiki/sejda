@@ -89,8 +89,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
         try {
             SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
 
-            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(ClassLoader
-                    .getSystemResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
 
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
