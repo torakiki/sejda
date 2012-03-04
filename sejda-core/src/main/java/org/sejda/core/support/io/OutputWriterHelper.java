@@ -68,11 +68,11 @@ final class OutputWriterHelper {
             TaskOutput outputDestination = destination.getOutputDestination();
             OutputType type = destination.getOutputDestination().getOutputType();
             if (OutputType.STREAM_OUTPUT.equals(type)) {
-                copyToStream(files, ((StreamOutput) outputDestination).getStream());
+                copyToStream(files, outputDestination.getStream());
             } else if (OutputType.FILE_OUTPUT.equals(type)) {
-                copyToFile(files, ((FileOutput) outputDestination).getFile(), destination.isOverwrite());
+                copyToFile(files, outputDestination.getFile(), destination.isOverwrite());
             } else {
-                copyToDirectory(files, ((DirectoryOutput) outputDestination).getDirectory(), destination.isOverwrite());
+                copyToDirectory(files, outputDestination.getDirectory(), destination.isOverwrite());
             }
         } else {
             throw new TaskIOException("Destination for the output handler has not been set.");
@@ -107,7 +107,7 @@ final class OutputWriterHelper {
      * Copy the input files to the output directory
      * 
      * @param files
-     * @param out
+     * @param outputDirectory
      * @param overwrite
      *            true to overwrite if already exists
      * @throws TaskIOException
@@ -135,7 +135,7 @@ final class OutputWriterHelper {
      * 
      * @param input
      *            input file
-     * @param out
+     * @param output
      *            output file
      * @param overwrite
      *            true to overwrite if already exists

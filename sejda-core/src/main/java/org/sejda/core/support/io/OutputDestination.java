@@ -52,41 +52,13 @@ final class OutputDestination implements OverwriteFileDestination, FileDestinati
     private TaskOutput outputDestination;
     private boolean overwrite = false;
 
+    public OutputDestination(TaskOutput outputDestination, boolean overwrite) {
+        this.outputDestination = outputDestination;
+        this.overwrite = overwrite;
+    }
+
     private OutputDestination(TaskOutput outputDestination) {
         this.outputDestination = outputDestination;
-    }
-
-    /**
-     * Entry point to create a file destination that can be overwritten
-     * 
-     * @param output
-     *            where the input source will be written.
-     * @return the destination
-     */
-    static OverwriteFileDestination destination(FileOutput output) {
-        return new OutputDestination(output);
-    }
-
-    /**
-     * Entry point to create a directory destination that can be overwritten
-     * 
-     * @param output
-     *            where the input source will be written.
-     * @return the destination
-     */
-    static OverwriteDestination destination(DirectoryOutput output) {
-        return new OutputDestination(output);
-    }
-
-    /**
-     * Entry point to create a destination that cannot be overwritten
-     * 
-     * @param output
-     *            where the input source will be written.
-     * @return the destination
-     */
-    static Destination destination(StreamOutput output) {
-        return new OutputDestination(output);
     }
 
     public TaskOutput getOutputDestination() {

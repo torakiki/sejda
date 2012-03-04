@@ -17,8 +17,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.OutputDestination.destination;
-
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.FileOutput;
@@ -49,7 +47,7 @@ class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutput
         add(fileOutput);
         try {
             if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-                write(destination((FileOutput) output).overwriting(overwrite));
+                write(new OutputDestination(output, overwrite));
             } else {
                 writeToNonFileDestination(output, overwrite);
             }

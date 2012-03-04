@@ -17,6 +17,7 @@
 package org.sejda.model.output;
 
 import java.io.File;
+import java.io.OutputStream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -40,6 +41,14 @@ public final class FileOutput implements TaskOutput {
 
     public File getFile() {
         return file;
+    }
+
+    public File getDirectory() {
+        return null;
+    }
+
+    public OutputStream getStream() {
+        return null;
     }
 
     public OutputType getOutputType() {

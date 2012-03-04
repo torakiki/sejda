@@ -18,6 +18,7 @@
 package org.sejda.model.output;
 
 import java.io.File;
+import java.io.OutputStream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,12 +31,12 @@ import org.sejda.model.validation.constraint.Directory;
  * @author Andrea Vacondio
  * 
  */
-public final class DirectoryOutput implements TaskOutput {
+public class DirectoryOutput implements TaskOutput {
 
     @Directory
     private final File directory;
 
-    private DirectoryOutput(File directory) {
+    protected DirectoryOutput(File directory) {
         this.directory = directory;
 
     }
@@ -44,8 +45,16 @@ public final class DirectoryOutput implements TaskOutput {
         return directory;
     }
 
+    public OutputStream getStream() {
+        return null;
+    }
+
     public OutputType getOutputType() {
         return OutputType.DIRECTORY_OUTPUT;
+    }
+
+    public File getFile() {
+        return null;
     }
 
     @Override

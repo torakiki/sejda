@@ -17,8 +17,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.sejda.core.support.io.OutputDestination.destination;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,9 +55,9 @@ class BaseOutputWriter {
         }
 
         if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
-            write(destination((DirectoryOutput) output).overwriting(overwrite));
+            write(new OutputDestination(output, overwrite));
         } else {
-            write(destination((StreamOutput) output));
+            write(new OutputDestination(output, false));
         }
     }
 

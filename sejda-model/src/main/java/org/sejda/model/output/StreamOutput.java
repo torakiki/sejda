@@ -17,6 +17,7 @@
  */
 package org.sejda.model.output;
 
+import java.io.File;
 import java.io.OutputStream;
 
 import javax.validation.constraints.NotNull;
@@ -46,6 +47,14 @@ public final class StreamOutput implements TaskOutput {
 
     public OutputType getOutputType() {
         return OutputType.STREAM_OUTPUT;
+    }
+
+    public File getFile() {
+        return null;
+    }
+
+    public File getDirectory() {
+        return null;
     }
 
     @Override
