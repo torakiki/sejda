@@ -42,6 +42,10 @@ public class PageRange implements PagesSelection {
     @Min(1)
     private int end;
 
+    PageRange() {
+        // spring data PreferredConstructorDiscoverer
+    }
+
     /**
      * Creates a page range that goes from start to end (comprehended).
      * 
