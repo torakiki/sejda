@@ -19,42 +19,26 @@ package org.sejda.core.support.io;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.FileTaskOutput;
 
 /**
- * Provides support methods to write multiple output {@link TaskOutput} for those tasks writing multiple outputs. Can hold multiple output temporary files created by a task and
- * write them to the destination when the task requires to flush.
- * 
- * <pre>
- * {@code
- * MultipleOutputWriterSupport outputWriter = new MultipleOutputWriterSupport();
- * outputWriter.addOutput(file(tmpFile).name("newName"));
- * ....
- * AbstractPdfOutput output = ...
- * boolean overwrite = ...
- * outputWriter.flushOutputs(output, overwrite);
- * }
- * </pre>
- * 
+ * Multiple writer default implementation
  * 
  * @author Andrea Vacondio
  * 
  */
 class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOutputWriter {
 
-    public void flushOutputs(TaskOutput output, boolean overwrite) throws TaskIOException {
-        try {
-            if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-                throw new TaskIOException("Unsupported file ouput for a multiple output task.");
-            }
-            writeToNonFileDestination(output, overwrite);
-        } finally {
-            clear();
-        }
+    DefaultMultipleOutputWriter(boolean overwrite) {
+        super(overwrite);
     }
 
     public void addOutput(PopulatedFileOutput fileOutput) {
         add(fileOutput);
+    }
+
+    @Override
+    public void dispatch(FileTaskOutput output) throws TaskIOException {
+        throw new TaskIOException("Unsupported file ouput for a multiple output task.");
     }
 }

@@ -30,41 +30,51 @@ import org.sejda.TestUtils;
  * @author Andrea Vacondio
  * 
  */
-public class DirectoryOutputTest {
+public class FileTaskOutputTest {
 
-    private File directory;
+    private File file;
 
     @Before
     public void setUp() {
-        directory = mock(File.class);
-        when(directory.isDirectory()).thenReturn(Boolean.TRUE);
+        file = mock(File.class);
+        when(file.isFile()).thenReturn(Boolean.TRUE);
+        when(file.exists()).thenReturn(Boolean.TRUE);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
-        DirectoryOutput.newInstance(null);
+        new FileTaskOutput(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidDirectory() {
-        when(directory.isDirectory()).thenReturn(Boolean.FALSE);
-        DirectoryOutput.newInstance(directory);
+    public void testInvalidFile() {
+        when(file.isFile()).thenReturn(Boolean.FALSE);
+        new FileTaskOutput(file);
     }
 
     @Test
-    public void testValidDirectory() {
-        DirectoryOutput instance = DirectoryOutput.newInstance(directory);
+    public void testValidFile_exists() {
+        FileTaskOutput instance = new FileTaskOutput(file);
+        assertNotNull(instance);
+    }
+
+    @Test
+    public void testValidFile_doesntExist() {
+        when(file.isFile()).thenReturn(Boolean.FALSE);
+        when(file.exists()).thenReturn(Boolean.FALSE);
+
+        FileTaskOutput instance = new FileTaskOutput(file);
         assertNotNull(instance);
     }
 
     @Test
     public void testEquals() {
-        File diffDirectory = mock(File.class);
-        when(diffDirectory.isDirectory()).thenReturn(Boolean.TRUE);
-        DirectoryOutput eq1 = DirectoryOutput.newInstance(directory);
-        DirectoryOutput eq2 = DirectoryOutput.newInstance(directory);
-        DirectoryOutput eq3 = DirectoryOutput.newInstance(directory);
-        DirectoryOutput diff = DirectoryOutput.newInstance(diffDirectory);
+        File diffFile = mock(File.class);
+        when(diffFile.isFile()).thenReturn(Boolean.TRUE);
+        FileTaskOutput eq1 = new FileTaskOutput(file);
+        FileTaskOutput eq2 = new FileTaskOutput(file);
+        FileTaskOutput eq3 = new FileTaskOutput(file);
+        FileTaskOutput diff = new FileTaskOutput(diffFile);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

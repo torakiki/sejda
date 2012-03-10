@@ -1,7 +1,6 @@
 /*
- * Created on 29/ago/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 09/mar/2012
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -15,24 +14,14 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.io;
-
-import org.sejda.core.support.io.model.PopulatedFileOutput;
+package org.sejda.model.output;
 
 /**
- * Single writer default implementation.
+ * Represent the output for a task generating a single output.
  * 
  * @author Andrea Vacondio
  * 
  */
-class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutputWriter {
-
-    DefaultSingleOutputWriter(boolean overwrite) {
-        super(overwrite);
-    }
-
-    public void setOutput(PopulatedFileOutput fileOutput) {
-        add(fileOutput);
-    }
-
+public interface SingleTaskOutput<T> extends TaskOutput<T> {
+    // define further methods
 }

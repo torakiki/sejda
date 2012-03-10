@@ -57,6 +57,7 @@ public class SetMetadataCliArgumentsTransformer extends BaseCliArgumentsTransfor
 
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
 
         return parameters;
     }

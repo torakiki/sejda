@@ -38,6 +38,7 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
         RotateParameters parameters = new RotateParameters(taskCliArguments.getPageRotation().getPageRotation());
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
         return parameters;
     }

@@ -17,11 +17,11 @@
 package org.sejda.model.output;
 
 import java.io.File;
-import java.io.OutputStream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.IsFile;
 
 /**
@@ -30,39 +30,41 @@ import org.sejda.model.validation.constraint.IsFile;
  * @author Andrea Vacondio
  * 
  */
-public final class FileOutput implements TaskOutput {
+public class FileTaskOutput implements SingleTaskOutput<File> {
 
     @IsFile
     private final File file;
 
-    private FileOutput(File file) {
+    /**
+     * Creates a new instance of a {@link FileTaskOutput} using the input file.
+     * 
+     * @param file
+     * @throws IllegalArgumentException
+     *             if the input file is null or not a file
+     */
+    public FileTaskOutput(File file) {
+        if (file == null || (file.exists() && !file.isFile())) {
+            throw new IllegalArgumentException("A valid instance is expected (not null or existing file).");
+        }
         this.file = file;
     }
 
-    public File getFile() {
+    public File getDestination() {
         return file;
     }
 
-    public File getDirectory() {
-        return null;
-    }
-
-    public OutputStream getStream() {
-        return null;
-    }
-
-    public OutputType getOutputType() {
-        return OutputType.FILE_OUTPUT;
+    public void accept(TaskOutputDispatcher writer) throws TaskIOException {
+        writer.dispatch(this);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).append(getFile()).toString();
+        return new ToStringBuilder(this).append(getDestination()).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getFile()).toHashCode();
+        return new HashCodeBuilder().append(getDestination()).toHashCode();
     }
 
     @Override
@@ -70,25 +72,11 @@ public final class FileOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FileOutput)) {
+        if (!(other instanceof FileTaskOutput)) {
             return false;
         }
-        FileOutput output = (FileOutput) other;
-        return new EqualsBuilder().append(getFile(), output.getFile()).isEquals();
+        FileTaskOutput output = (FileTaskOutput) other;
+        return new EqualsBuilder().append(file, output.getDestination()).isEquals();
     }
 
-    /**
-     * Creates a new instance of a {@link FileOutput} using the input file.
-     * 
-     * @param file
-     * @return the newly created instance
-     * @throws IllegalArgumentException
-     *             if the input file is null or not a file
-     */
-    public static FileOutput newInstance(File file) {
-        if (file == null || (file.exists() && !file.isFile())) {
-            throw new IllegalArgumentException("A valid instance is expected (not null or existing file).");
-        }
-        return new FileOutput(file);
-    }
 }

@@ -30,51 +30,41 @@ import org.sejda.TestUtils;
  * @author Andrea Vacondio
  * 
  */
-public class FileOutputTest {
+public class DirectoryTaskOutputTest {
 
-    private File file;
+    private File directory;
 
     @Before
     public void setUp() {
-        file = mock(File.class);
-        when(file.isFile()).thenReturn(Boolean.TRUE);
-        when(file.exists()).thenReturn(Boolean.TRUE);
+        directory = mock(File.class);
+        when(directory.isDirectory()).thenReturn(Boolean.TRUE);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
-        FileOutput.newInstance(null);
+        new DirectoryTaskOutput(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidFile() {
-        when(file.isFile()).thenReturn(Boolean.FALSE);
-        FileOutput.newInstance(file);
+    public void testInvalidDirectory() {
+        when(directory.isDirectory()).thenReturn(Boolean.FALSE);
+        new DirectoryTaskOutput(directory);
     }
 
     @Test
-    public void testValidFile_exists() {
-        FileOutput instance = FileOutput.newInstance(file);
-        assertNotNull(instance);
-    }
-
-    @Test
-    public void testValidFile_doesntExist() {
-        when(file.isFile()).thenReturn(Boolean.FALSE);
-        when(file.exists()).thenReturn(Boolean.FALSE);
-
-        FileOutput instance = FileOutput.newInstance(file);
+    public void testValidDirectory() {
+        DirectoryTaskOutput instance = new DirectoryTaskOutput(directory);
         assertNotNull(instance);
     }
 
     @Test
     public void testEquals() {
-        File diffFile = mock(File.class);
-        when(diffFile.isFile()).thenReturn(Boolean.TRUE);
-        FileOutput eq1 = FileOutput.newInstance(file);
-        FileOutput eq2 = FileOutput.newInstance(file);
-        FileOutput eq3 = FileOutput.newInstance(file);
-        FileOutput diff = FileOutput.newInstance(diffFile);
+        File diffDirectory = mock(File.class);
+        when(diffDirectory.isDirectory()).thenReturn(Boolean.TRUE);
+        DirectoryTaskOutput eq1 = new DirectoryTaskOutput(directory);
+        DirectoryTaskOutput eq2 = new DirectoryTaskOutput(directory);
+        DirectoryTaskOutput eq3 = new DirectoryTaskOutput(directory);
+        DirectoryTaskOutput diff = new DirectoryTaskOutput(diffDirectory);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

@@ -55,12 +55,13 @@ public class RotateTask extends BaseTask<RotateParameters> {
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(RotateParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(RotateParameters parameters) throws TaskException {
@@ -90,7 +91,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 

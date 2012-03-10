@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -47,7 +48,7 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
-    public void positive() {
+    public void positive() throws TaskException {
         TaskParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
         assertOutputFolder(result, new File("./outputs"));
     }

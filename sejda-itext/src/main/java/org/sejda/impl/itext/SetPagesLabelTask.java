@@ -50,11 +50,12 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
     private PdfReader reader = null;
     private DefaultPdfCopier copier = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(SetPagesLabelParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
@@ -77,8 +78,8 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
         nullSafeCloseQuietly(copier);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }
 

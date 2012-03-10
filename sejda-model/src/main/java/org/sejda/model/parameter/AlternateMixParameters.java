@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfMixInput;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
@@ -38,7 +38,7 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
 
     @Valid
     @NotNull
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
     @NotNull
     @Valid
     private PdfMixInput firstInput;
@@ -61,13 +61,11 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
         this.outputName = outputName;
     }
 
-    @Override
-    public TaskOutput getOutput() {
+    public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
-    @Override
-    public void setOutput(TaskOutput output) {
+    public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
 

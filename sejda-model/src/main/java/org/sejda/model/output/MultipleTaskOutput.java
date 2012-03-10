@@ -1,7 +1,6 @@
 /*
- * Created on 30/mag/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 09/mar/2012
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -18,13 +17,11 @@
 package org.sejda.model.output;
 
 /**
- * Output types
+ * Represent the output for a task generating a multiple outputs.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum OutputType {
-    FILE_OUTPUT(),
-    DIRECTORY_OUTPUT(),
-    STREAM_OUTPUT();
+public interface MultipleTaskOutput<T> extends TaskOutput<T> {
+    // define further methods
 }

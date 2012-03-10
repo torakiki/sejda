@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 
@@ -41,7 +41,7 @@ public class SetPagesTransitionParametersTest {
     public void testInvalidParameters() {
         SetPagesTransitionParameters victim = new SetPagesTransitionParameters(null);
         victim.setOutputName("test.pdf");
-        TaskOutput output = mock(TaskOutput.class);
+        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

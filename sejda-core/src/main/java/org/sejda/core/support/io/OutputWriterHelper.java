@@ -31,11 +31,6 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.DirectoryOutput;
-import org.sejda.model.output.FileOutput;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.StreamOutput;
-import org.sejda.model.output.TaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,32 +49,6 @@ final class OutputWriterHelper {
     }
 
     /**
-     * Executes the copy of all the files in the input map to the given destination and deletes the input files once copied.
-     * 
-     * @param files
-     *            map containing the new file names as key and the files as value
-     * @param destination
-     *            destination to copy
-     * @throws TaskIOException
-     *             if an error occur or if there is an inconsistency with the input parameters (Ex. multiple file and a OutputType.FILE_OUTPUT destination)
-     */
-    public static void executeCopyAndDelete(Map<String, File> files, Destination destination) throws TaskIOException {
-        if (destination != null) {
-            TaskOutput outputDestination = destination.getOutputDestination();
-            OutputType type = destination.getOutputDestination().getOutputType();
-            if (OutputType.STREAM_OUTPUT.equals(type)) {
-                copyToStream(files, outputDestination.getStream());
-            } else if (OutputType.FILE_OUTPUT.equals(type)) {
-                copyToFile(files, outputDestination.getFile(), destination.isOverwrite());
-            } else {
-                copyToDirectory(files, outputDestination.getDirectory(), destination.isOverwrite());
-            }
-        } else {
-            throw new TaskIOException("Destination for the output handler has not been set.");
-        }
-    }
-
-    /**
      * copy the input file contained in the input map (single file) to the output file
      * 
      * @param files
@@ -88,7 +57,7 @@ final class OutputWriterHelper {
      *            true to overwrite if already exists
      * @throws TaskIOException
      */
-    private static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
+    static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
         if (outputFile.exists() && !outputFile.isFile()) {
             throw new TaskIOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
@@ -112,7 +81,7 @@ final class OutputWriterHelper {
      *            true to overwrite if already exists
      * @throws TaskIOException
      */
-    private static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
+    static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
             throws TaskIOException {
         if (!outputDirectory.isDirectory()) {
             throw new TaskIOException(String.format("Wrong output destination %s, must be a directory.",
@@ -163,7 +132,7 @@ final class OutputWriterHelper {
      * @param out
      * @throws TaskIOException
      */
-    private static void copyToStream(Map<String, File> files, OutputStream out) throws TaskIOException {
+    static void copyToStream(Map<String, File> files, OutputStream out) throws TaskIOException {
         ZipOutputStream zipOut = new ZipOutputStream(out);
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;

@@ -19,6 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.ByteArrayInputStream;
@@ -35,12 +36,14 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.output.DirectoryOutput;
-import org.sejda.model.output.FileOutput;
-import org.sejda.model.output.OutputType;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
@@ -160,14 +163,44 @@ public abstract class AbstractTestSuite {
         return (each.getSource().equals(file) && StringUtils.equals(each.getPassword(), password));
     }
 
-    protected void assertOutputFolder(TaskParameters result, File outputFolder) {
-        assertEquals(result.getOutput().getOutputType(), OutputType.DIRECTORY_OUTPUT);
-        assertEquals(((DirectoryOutput) result.getOutput()).getDirectory(), outputFolder);
+    protected void assertOutputFolder(TaskParameters result, final File outputFolder) throws TaskException {
+        result.getOutput().accept(new TaskOutputDispatcher() {
+
+            @Override
+            public void dispatch(StreamTaskOutput output) {
+                fail("wrong dispached method");
+            }
+
+            @Override
+            public void dispatch(DirectoryTaskOutput output) {
+                assertEquals(output.getDestination(), outputFolder);
+            }
+
+            @Override
+            public void dispatch(FileTaskOutput output) {
+                fail("wrong dispached method");
+            }
+        });
     }
 
-    protected void assertOutputFile(TaskOutput output, File outputFile) {
-        assertEquals(output.getOutputType(), OutputType.FILE_OUTPUT);
-        assertEquals(((FileOutput) output).getFile(), outputFile);
+    protected void assertOutputFile(TaskOutput<?> output, final File outputFile) throws TaskException {
+        output.accept(new TaskOutputDispatcher() {
+
+            @Override
+            public void dispatch(StreamTaskOutput output) {
+                fail("wrong dispached method");
+            }
+
+            @Override
+            public void dispatch(DirectoryTaskOutput output) {
+                fail("wrong dispached method");
+            }
+
+            @Override
+            public void dispatch(FileTaskOutput output) {
+                assertEquals(output.getDestination(), outputFile);
+            }
+        });
     }
 
     public static void assertConsoleOutputContains(String commandLine, String... expectedOutputContainedLines) {

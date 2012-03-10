@@ -82,7 +82,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     @Test
     public void testExecuteStream() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
+        initializeNewStreamSingleOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("outName.pdf");
         assertCreator(reader);

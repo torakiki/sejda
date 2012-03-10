@@ -40,6 +40,7 @@ import org.sejda.model.validation.validator.SingleOutputExtensionsValidator;
  * @author Andrea Vacondio
  * 
  */
+@ValidSingleOutput
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER, TYPE })
 @Retention(RUNTIME)
 @Constraint(validatedBy = SingleOutputExtensionsValidator.class)

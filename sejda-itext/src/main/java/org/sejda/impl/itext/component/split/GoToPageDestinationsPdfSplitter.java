@@ -49,8 +49,7 @@ public class GoToPageDestinationsPdfSplitter extends AbstractPdfSplitter<SplitBy
      */
     public GoToPageDestinationsPdfSplitter(PdfReader reader, SplitByGoToActionLevelParameters parameters,
             OutlineGoToPageDestinations outlineDestinations) {
-        super(reader);
-        setParameters(parameters);
+        super(reader, parameters);
         this.splitPages = new SplitPages(outlineDestinations.getPages());
         this.outlineDestinations = outlineDestinations;
     }

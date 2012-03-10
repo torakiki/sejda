@@ -57,11 +57,12 @@ public class CropTask extends BaseTask<CropParameters> {
 
     private PdfReader reader = null;
     private DefaultPdfCopier copier = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(CropParameters parameters) {
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(CropParameters parameters) throws TaskException {
@@ -90,8 +91,8 @@ public class CropTask extends BaseTask<CropParameters> {
         nullSafeCloseQuietly(copier);
         nullSafeClosePdfReader(reader);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Crop areas applied to {}", parameters.getOutput());
     }
 

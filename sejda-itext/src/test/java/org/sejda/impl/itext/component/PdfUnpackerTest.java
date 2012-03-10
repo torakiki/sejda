@@ -41,14 +41,14 @@ import com.lowagie.text.pdf.PdfReader;
  */
 public class PdfUnpackerTest {
 
-    private PdfUnpacker victim = new PdfUnpacker();
+    private PdfUnpacker victim = new PdfUnpacker(true);
     private InputStream is;
     private MultipleOutputWriter outputWriter;
 
     @Before
     public void setUp() {
         is = getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf");
-        outputWriter = spy(OutputWriters.newMultipleOutputWriter());
+        outputWriter = spy(OutputWriters.newMultipleOutputWriter(true));
         TestUtils.setProperty(victim, "outputWriter", outputWriter);
     }
 

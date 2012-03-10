@@ -17,12 +17,12 @@
 package org.sejda.core.support.io;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
+import java.io.File;
 
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.FileTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -30,12 +30,11 @@ import org.sejda.model.output.TaskOutput;
  */
 public class DefaultMultipleOutputWriterTest {
 
-    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(true);
 
     @Test(expected = TaskIOException.class)
-    public void fileDestinationFlush() throws TaskIOException {
-        TaskOutput output = mock(TaskOutput.class);
-        when(output.getOutputType()).thenReturn(OutputType.FILE_OUTPUT);
-        victim.flushOutputs(output, true);
+    public void testWriteNonFile() throws TaskIOException {
+        File outputFile = mock(File.class);
+        new FileTaskOutput(outputFile).accept(victim);
     }
 }

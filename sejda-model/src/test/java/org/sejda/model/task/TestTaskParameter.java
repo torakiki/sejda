@@ -20,29 +20,30 @@ package org.sejda.model.task;
 import javax.validation.Valid;
 
 import org.junit.Ignore;
-import org.sejda.model.output.OutputType;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public class TestTaskParameter extends AbstractPdfOutputParameters {
+public class TestTaskParameter extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
 
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
     @Valid
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
 
-    @Override
-    public TaskOutput getOutput() {
+    public TaskOutput<?> getOutput() {
         return output;
     }
 
-    @Override
-    public void setOutput(TaskOutput output) {
+    public String getOutputName() {
+        return "test";
+    }
+
+    public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
 

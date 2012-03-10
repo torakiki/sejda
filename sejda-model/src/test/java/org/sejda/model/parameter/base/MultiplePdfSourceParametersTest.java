@@ -37,14 +37,8 @@ public class MultiplePdfSourceParametersTest {
     public void setUp() {
         victim = new MultiplePdfSourceParameters() {
 
-            @Override
-            public TaskOutput getOutput() {
+            public TaskOutput<?> getOutput() {
                 return null;
-            }
-
-            @Override
-            public void setOutput(TaskOutput output) {
-                // nothing
             }
 
         };

@@ -36,7 +36,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
@@ -79,7 +79,7 @@ public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfTo
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         File out = File.createTempFile("SejdaTest", ".tiff");
         out.deleteOnExit();
-        parameters.setOutput(FileOutput.newInstance(out));
+        parameters.setOutput(new FileTaskOutput(out));
         victim.execute(parameters);
         RenderedImage ri = ImageTestUtils.loadImage(out);
         assertTrue(ri.getHeight() > 0);

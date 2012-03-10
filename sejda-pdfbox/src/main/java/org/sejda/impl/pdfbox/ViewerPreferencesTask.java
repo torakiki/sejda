@@ -53,12 +53,13 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
     private PDDocumentHandler documentHandler = null;
     private int totalSteps;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(ViewerPreferencesParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
@@ -89,7 +90,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
 
     }

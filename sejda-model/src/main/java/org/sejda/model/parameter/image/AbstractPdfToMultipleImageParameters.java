@@ -17,14 +17,13 @@
 package org.sejda.model.parameter.image;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
-import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to multiple images of a specified type.
@@ -41,8 +40,8 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
 
     private String outputPrefix = "";
     @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
+    @NotNull
+    private MultipleTaskOutput<?> output;
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -52,11 +51,11 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
         this.outputPrefix = outputPrefix;
     }
 
-    public TaskOutput getOutput() {
+    public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 
-    public void setOutput(TaskOutput output) {
+    public void setOutput(MultipleTaskOutput<?> output) {
         this.output = output;
     }
 

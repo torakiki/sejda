@@ -59,17 +59,19 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
     private T parameters;
     private int totalPages;
     private OutlineSubsetProvider<Map<String, Object>> outlineSubsetProvider;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
 
     /**
      * Creates a new splitter using the given reader.
      * 
      * @param reader
      */
-    AbstractPdfSplitter(PdfReader reader) {
+    AbstractPdfSplitter(PdfReader reader, T parameters) {
         this.reader = reader;
+        this.parameters = parameters;
         this.totalPages = reader.getNumberOfPages();
         this.outlineSubsetProvider = new ITextOutlineSubsetProvider(reader);
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     int getTotalNumberOfPages() {
@@ -100,7 +102,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
         } finally {
             nullSafeCloseQuietly(pdfCopier);
         }
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
     }
 
     private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {

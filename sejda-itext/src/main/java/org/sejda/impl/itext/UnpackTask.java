@@ -47,7 +47,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
     private int totalSteps;
 
     public void before(UnpackParameters parameters) {
-        unpacker = new PdfUnpacker();
+        unpacker = new PdfUnpacker(parameters.isOverwrite());
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         totalSteps = parameters.getSourceList().size();
     }
@@ -65,7 +65,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
-        unpacker.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        unpacker.write(parameters.getOutput());
         LOG.debug("Attachments unpacked and written to {}", parameters.getOutput());
     }
 

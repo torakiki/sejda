@@ -57,11 +57,12 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
 
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(SetPagesTransitionParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
@@ -92,8 +93,8 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(stamperHandler);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
 
         LOG.debug("Transitions set on {}", parameters.getOutput());
     }

@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -44,7 +44,7 @@ public class SplitBySizeParametersTest {
     @Test
     public void testInvalidParameters() {
         SplitBySizeParameters victim = new SplitBySizeParameters(-10);
-        TaskOutput output = mock(TaskOutput.class);
+        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.validation.constraint.ValidSingleOutput;
 
@@ -37,19 +38,17 @@ public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSou
     private String outputName;
     @Valid
     @NotNull
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
 
     public String getOutputName() {
         return outputName;
     }
 
-    @Override
-    public TaskOutput getOutput() {
+    public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
-    @Override
-    public void setOutput(TaskOutput output) {
+    public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
 

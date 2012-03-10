@@ -18,11 +18,11 @@
 package org.sejda.model.output;
 
 import java.io.File;
-import java.io.OutputStream;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.Directory;
 
 /**
@@ -31,35 +31,36 @@ import org.sejda.model.validation.constraint.Directory;
  * @author Andrea Vacondio
  * 
  */
-public class DirectoryOutput implements TaskOutput {
+public class DirectoryTaskOutput implements MultipleTaskOutput<File> {
 
     @Directory
     private final File directory;
 
-    protected DirectoryOutput(File directory) {
+    /**
+     * Creates a new instance of a {@link DirectoryTaskOutput} using the input directory
+     * 
+     * @param directory
+     * @throws IllegalArgumentException
+     *             if the input directory is null or not a directory
+     */
+    public DirectoryTaskOutput(File directory) {
+        if (directory == null || !directory.isDirectory()) {
+            throw new IllegalArgumentException("A not null directory instance is expected.");
+        }
         this.directory = directory;
-
     }
 
-    public File getDirectory() {
+    public File getDestination() {
         return directory;
     }
 
-    public OutputStream getStream() {
-        return null;
-    }
-
-    public OutputType getOutputType() {
-        return OutputType.DIRECTORY_OUTPUT;
-    }
-
-    public File getFile() {
-        return null;
+    public void accept(TaskOutputDispatcher writer) throws TaskIOException {
+        writer.dispatch(this);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).append(directory).toString();
+        return new ToStringBuilder(this).append(directory).toString();
     }
 
     @Override
@@ -72,25 +73,10 @@ public class DirectoryOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof DirectoryOutput)) {
+        if (!(other instanceof DirectoryTaskOutput)) {
             return false;
         }
-        DirectoryOutput output = (DirectoryOutput) other;
-        return new EqualsBuilder().append(directory, output.getDirectory()).isEquals();
-    }
-
-    /**
-     * Creates a new instance of a PdfOutput using the input directory
-     * 
-     * @param directory
-     * @return the newly created instance
-     * @throws IllegalArgumentException
-     *             if the input directory is null or not a directory
-     */
-    public static DirectoryOutput newInstance(File directory) {
-        if (directory == null || !directory.isDirectory()) {
-            throw new IllegalArgumentException("A not null directory instance is expected.");
-        }
-        return new DirectoryOutput(directory);
+        DirectoryTaskOutput output = (DirectoryTaskOutput) other;
+        return new EqualsBuilder().append(directory, output.getDestination()).isEquals();
     }
 }

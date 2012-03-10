@@ -26,7 +26,7 @@ import org.sejda.TestUtils;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
@@ -35,11 +35,11 @@ import org.sejda.model.pdf.page.PageRange;
  */
 public class MergeParametersTest {
 
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
 
     @Before
     public void setUp() {
-        output = mock(TaskOutput.class);
+        output = mock(SingleTaskOutput.class);
     }
 
     @Test

@@ -31,9 +31,10 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
-import org.sejda.model.output.FileOutput;
-import org.sejda.model.output.StreamOutput;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
+import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -52,13 +53,19 @@ public class PdfOutEnabledTest {
     private File outFile;
 
     /**
-     * Initialize the input parameters with a new {@link StreamOutput}
+     * Initialize the input parameters with a new {@link StreamTaskOutput}
      * 
      * @param parameters
      */
-    void initializeNewStreamOutput(AbstractPdfOutputParameters parameters) {
+    void initializeNewStreamOutput(MultipleOutputTaskParameters parameters) {
         out = new ByteArrayOutputStream();
-        StreamOutput pdfOut = StreamOutput.newInstance(out);
+        StreamTaskOutput pdfOut = new StreamTaskOutput(out);
+        parameters.setOutput(pdfOut);
+    }
+
+    void initializeNewStreamSingleOutput(SingleOutputTaskParameters parameters) {
+        out = new ByteArrayOutputStream();
+        StreamTaskOutput pdfOut = new StreamTaskOutput(out);
         parameters.setOutput(pdfOut);
     }
 
@@ -68,10 +75,10 @@ public class PdfOutEnabledTest {
      * @param parameters
      * @throws IOException
      */
-    void initializeNewFileOutput(AbstractPdfOutputParameters parameters) throws IOException {
+    void initializeNewFileOutput(SingleOutputTaskParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
         outFile.deleteOnExit();
-        FileOutput pdfOut = FileOutput.newInstance(outFile);
+        FileTaskOutput pdfOut = new FileTaskOutput(outFile);
         parameters.setOutput(pdfOut);
     }
 

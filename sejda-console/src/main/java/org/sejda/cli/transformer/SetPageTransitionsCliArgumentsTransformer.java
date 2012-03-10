@@ -53,6 +53,7 @@ public class SetPageTransitionsCliArgumentsTransformer extends BaseCliArgumentsT
         }
 
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
 
         return parameters;

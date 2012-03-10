@@ -28,7 +28,7 @@ import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
-import org.sejda.model.output.DirectoryOutput;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +82,7 @@ public final class SplitByPages {
                 params.setSource(PdfFileSource.newInstanceNoPassword(inputFile));
             } else if ("-o".equals(args[i])) {
                 File outputDirectory = new File(args[++i]);
-                params.setOutput(DirectoryOutput.newInstance(outputDirectory));
+                params.setOutput(new DirectoryTaskOutput(outputDirectory));
             } else if ("-s".equals(args[i])) {
                 String[] pages = args[++i].split(",");
                 for (int j = 0; j < pages.length; j++) {

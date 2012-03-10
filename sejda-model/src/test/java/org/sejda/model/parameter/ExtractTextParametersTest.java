@@ -16,31 +16,21 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.model.output.TaskOutput;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 public class ExtractTextParametersTest {
-    private TaskOutput output;
-
-    @Before
-    public void setUp() {
-        output = mock(TaskOutput.class);
-    }
 
     @Test
     public void testEquals() {
-        ExtractTextParameters eq1 = new ExtractTextParameters(output);
-        ExtractTextParameters eq2 = new ExtractTextParameters(output);
-        ExtractTextParameters eq3 = new ExtractTextParameters(output);
-        ExtractTextParameters diff = new ExtractTextParameters(output);
+        ExtractTextParameters eq1 = new ExtractTextParameters();
+        ExtractTextParameters eq2 = new ExtractTextParameters();
+        ExtractTextParameters eq3 = new ExtractTextParameters();
+        ExtractTextParameters diff = new ExtractTextParameters();
         diff.setOverwrite(true);
         diff.setTextEncoding("UTF-8");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
@@ -48,7 +38,7 @@ public class ExtractTextParametersTest {
 
     @Test
     public void testInvalidParametersEmptySourceList() {
-        ExtractTextParameters victim = new ExtractTextParameters(output);
+        ExtractTextParameters victim = new ExtractTextParameters();
         TestUtils.assertInvalidParameters(victim);
     }
 }

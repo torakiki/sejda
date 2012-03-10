@@ -49,12 +49,13 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
     private PagesExtractor extractor = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
 
     public void before(ExtractPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(ExtractPagesParameters parameters) throws TaskException {
@@ -79,8 +80,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
         closeResource();
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Pages extracted and written to {}", parameters.getOutput());
     }
 

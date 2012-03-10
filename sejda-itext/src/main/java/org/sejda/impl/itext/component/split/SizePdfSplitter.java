@@ -41,8 +41,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
     private OutputSizeStrategy nextOutputStrategy;
 
     public SizePdfSplitter(PdfReader reader, SplitBySizeParameters parameters) {
-        super(reader);
-        setParameters(parameters);
+        super(reader, parameters);
         nextOutputStrategy = new OutputSizeStrategy(parameters.getSizeToSplitAt());
     }
 

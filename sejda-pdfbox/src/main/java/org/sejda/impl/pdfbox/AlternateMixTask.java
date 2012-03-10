@@ -43,10 +43,11 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
     private PdfAlternateMixer mixer = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
 
     public void before(AlternateMixParameters parameters) throws TaskIOException {
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
@@ -59,8 +60,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         LOG.debug("Created output temporary buffer {}", tmpFile);
         mixer.saveDecryptedPDDocument(tmpFile);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
 
         LOG.debug("Alternate mix with step first document {} and step second document {} completed.", parameters
                 .getFirstInput().getStep(), parameters.getSecondInput().getStep());

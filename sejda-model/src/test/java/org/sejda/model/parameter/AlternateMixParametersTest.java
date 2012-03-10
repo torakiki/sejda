@@ -18,6 +18,7 @@ package org.sejda.model.parameter;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
 import java.io.InputStream;
 
 import org.junit.Before;
@@ -25,7 +26,8 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -33,11 +35,12 @@ import org.sejda.model.output.TaskOutput;
  */
 public class AlternateMixParametersTest {
 
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
 
     @Before
     public void setUp() {
-        output = mock(TaskOutput.class);
+        File outFile = mock(File.class);
+        output = new FileTaskOutput(outFile);
     }
 
     @Test
@@ -61,7 +64,6 @@ public class AlternateMixParametersTest {
         victim.setOutput(output);
         TestUtils.assertInvalidParameters(victim);
         AlternateMixParameters victim2 = new AlternateMixParameters(null, input, "name.pdf");
-
         victim2.setOutput(output);
         TestUtils.assertInvalidParameters(victim2);
 

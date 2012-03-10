@@ -28,17 +28,17 @@ import org.sejda.TestUtils;
  * @author Andrea Vacondio
  * 
  */
-public class StreamOutputTest {
+public class StreamTaskOutputTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullStream() {
-        StreamOutput.newInstance(null);
+        new StreamTaskOutput(null);
     }
 
     @Test
     public void testValidStream() {
         OutputStream stream = mock(OutputStream.class);
-        StreamOutput instance = StreamOutput.newInstance(stream);
+        StreamTaskOutput instance = new StreamTaskOutput(stream);
         assertNotNull(instance);
     }
 
@@ -46,10 +46,10 @@ public class StreamOutputTest {
     public void testEquals() {
         OutputStream stream = mock(OutputStream.class);
         OutputStream diffStream = mock(OutputStream.class);
-        StreamOutput eq1 = StreamOutput.newInstance(stream);
-        StreamOutput eq2 = StreamOutput.newInstance(stream);
-        StreamOutput eq3 = StreamOutput.newInstance(stream);
-        StreamOutput diff = StreamOutput.newInstance(diffStream);
+        StreamTaskOutput eq1 = new StreamTaskOutput(stream);
+        StreamTaskOutput eq2 = new StreamTaskOutput(stream);
+        StreamTaskOutput eq3 = new StreamTaskOutput(stream);
+        StreamTaskOutput diff = new StreamTaskOutput(diffStream);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

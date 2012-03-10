@@ -43,6 +43,7 @@ public class SetPageLabelsCliArgumentsTransformer extends BaseCliArgumentsTransf
         }
 
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
 
         return parameters;

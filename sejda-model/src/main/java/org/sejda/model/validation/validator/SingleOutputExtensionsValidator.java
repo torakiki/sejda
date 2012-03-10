@@ -20,20 +20,22 @@ import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.indexOfExtension;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
-import java.io.File;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.sejda.model.output.FileOutput;
-import org.sejda.model.output.OutputType;
+import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
- * Validates that the input single output task parameter has a {@link FileOutput} whose file is of the expected type (extension) or, if not a {@link FileOutput}, the outputName is
- * of the expected type (extension).
+ * Validates that the input single output task parameter has a {@link FileTaskOutput} whose file is of the expected type (extension) or, if not a {@link FileTaskOutput}, the
+ * outputName is of the expected type (extension).
  * 
  * @author Andrea Vacondio
  * 
@@ -74,14 +76,48 @@ public class SingleOutputExtensionsValidator implements
     }
 
     private String getOutputFileName(SingleOutputTaskParameters value) {
-        if (value.getOutput().getOutputType() == OutputType.FILE_OUTPUT) {
-            File outputFile = ((FileOutput) value.getOutput()).getFile();
-            if (outputFile != null) {
-                return outputFile.getName();
-            }
-        } else {
-            return value.getOutputName();
+        NameRetriever retriever = new NameRetriever(value.getOutputName());
+        try {
+            value.getOutput().accept(retriever);
+        } catch (TaskException e) {
+            // should never happen
+            throw new SejdaRuntimeException(e);
         }
-        return "";
+        return retriever.getOutputName();
+    }
+
+    /**
+     * Retrieves the name to validate depending on the runtime type of the task output.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    private static class NameRetriever implements TaskOutputDispatcher {
+
+        private String outputName;
+
+        private NameRetriever(String outputName) {
+            this.outputName = outputName;
+        }
+
+        @Override
+        public void dispatch(FileTaskOutput output) {
+            this.outputName = output.getDestination().getName();
+        }
+
+        @Override
+        public void dispatch(DirectoryTaskOutput output) {
+            // do nothing
+        }
+
+        @Override
+        public void dispatch(StreamTaskOutput output) {
+            // do nothing
+        }
+
+        String getOutputName() {
+            return outputName;
+        }
+
     }
 }

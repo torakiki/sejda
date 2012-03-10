@@ -48,11 +48,12 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
     private PDDocumentHandler documentHandler = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(SetMetadataParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
@@ -76,8 +77,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         documentHandler.savePDDocument(tmpFile);
         nullSafeCloseQuietly(documentHandler);
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
 
         LOG.debug("Metadata set on {}", parameters.getOutput());
 

@@ -30,7 +30,7 @@ public interface TaskParameters {
     /**
      * @return output destination where the result of the manipulation is placed
      */
-    TaskOutput getOutput();
+    TaskOutput<?> getOutput();
 
     /**
      * @return true if the tasks' outputs should overwrite any existing file, false otherwise
