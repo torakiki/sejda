@@ -30,6 +30,7 @@ import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
@@ -47,26 +48,35 @@ public class BaseCliArgumentsTransformer {
     }
 
     /**
-     * Populates common parameters for a task with output pdf files into a directory
+     * Populates task output parameters for a task with output pdf files into a directory
      * 
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
+    protected void populateOutputTaskParameters(MultipleOutputTaskParameters parameters,
             CliArgumentsWithPdfAndDirectoryOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
-        populateCommonPdfOutputParameters(parameters, taskCliArguments);
     }
 
     /**
-     * Populates common parameters for a task with output a single pdf file
+     * Populates task output parameters for a task with output a single pdf file
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateOutputTaskParameters(SingleOutputTaskParameters parameters,
+            CliArgumentsWithPdfFileOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+    }
+
+    /**
+     * Populate commons parameter for {@link AbstractPdfOutputParameters}s
      * 
      * @param parameters
      * @param taskCliArguments
      */
     protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
-            CliArgumentsWithPdfFileOutput taskCliArguments) {
-        parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+            CliArgumentsWithPdfOutput taskCliArguments) {
         populateCommonPdfOutputParameters(parameters, taskCliArguments);
     }
 

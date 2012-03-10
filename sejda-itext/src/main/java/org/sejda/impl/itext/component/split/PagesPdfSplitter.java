@@ -40,8 +40,7 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
     private SplitPages splitPages;
 
     public PagesPdfSplitter(PdfReader reader, T parameters) {
-        super(reader);
-        setParameters(parameters);
+        super(reader, parameters);
         this.splitPages = new SplitPages(parameters.getPages(super.getTotalNumberOfPages()));
     }
 

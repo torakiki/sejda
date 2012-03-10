@@ -31,6 +31,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.slf4j.Logger;
@@ -48,9 +49,15 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
     private Document pdfDocument = null;
+
+    @Override
+    public void before(T parameters) throws TaskExecutionException {
+        super.before(parameters);
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+    }
 
     public void execute(T parameters) throws TaskException {
         pdfDocument = parameters.getSource().open(sourceOpener);
@@ -75,7 +82,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
     }
 

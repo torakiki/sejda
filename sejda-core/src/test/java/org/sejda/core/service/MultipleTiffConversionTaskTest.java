@@ -39,7 +39,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.StreamOutput;
+import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
@@ -82,7 +82,7 @@ public abstract class MultipleTiffConversionTaskTest implements TestableTask<Pdf
         AbstractPdfToMultipleImageParameters parameters = getMultipleTiffParams();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        parameters.setOutput(StreamOutput.newInstance(out));
+        parameters.setOutput(new StreamTaskOutput(out));
         victim.execute(parameters);
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);

@@ -33,7 +33,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,11 @@ public class PdfUnpacker {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfUnpacker.class);
 
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
+
+    public PdfUnpacker(boolean overwrite) {
+        outputWriter = OutputWriters.newMultipleOutputWriter(overwrite);
+    }
 
     public void unpack(PdfReader reader) throws TaskException {
         if (reader == null) {
@@ -106,14 +110,13 @@ public class PdfUnpacker {
     }
 
     /**
-     * Flush the unpacked files.
+     * writes to the output
      * 
      * @param output
-     * @param overwrite
      * @throws TaskIOException
      */
-    public void flushOutputs(TaskOutput output, boolean overwrite) throws TaskIOException {
-        outputWriter.flushOutputs(output, overwrite);
+    public void write(MultipleTaskOutput<?> output) throws TaskException {
+        output.accept(outputWriter);
     }
 
     private Set<PdfDictionary> getAttachmentsDictionaries(PdfReader reader) {

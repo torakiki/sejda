@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfMergeInput;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
@@ -49,7 +49,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private String outputName;
     @Valid
     @NotNull
-    private TaskOutput output;
+    private SingleTaskOutput<?> output;
 
     public MergeParameters() {
         this.copyFormFields = false;
@@ -60,13 +60,11 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.copyFormFields = copyFormFields;
     }
 
-    @Override
-    public TaskOutput getOutput() {
+    public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
-    @Override
-    public void setOutput(TaskOutput output) {
+    public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
 

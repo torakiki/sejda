@@ -16,6 +16,8 @@
  */
 package org.sejda.model.parameter.base;
 
+import org.sejda.model.output.SingleTaskOutput;
+
 /**
  * A {@link TaskParameters} parameter whose execution result in a single output pdf document.
  * 
@@ -28,4 +30,11 @@ public interface SingleOutputTaskParameters extends TaskParameters {
      * @return the output file name to be used when the TaskOutput is not a File output.
      */
     String getOutputName();
+
+    /**
+     * Sets the output destination
+     * 
+     * @param output
+     */
+    public void setOutput(SingleTaskOutput<?> output);
 }

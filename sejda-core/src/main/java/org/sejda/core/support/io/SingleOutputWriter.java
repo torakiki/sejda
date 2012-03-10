@@ -18,38 +18,20 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
- * DSL interface used to expose methods a single output task (tasks generating a single file as output) needs to write its output.
- * 
- * <pre>
- * {@code
- * PopulatedFileOutput singleOut = file(tmpFile).name("newName");
- * AbstractPdfOutput output = ...
- * boolean overwrite = ...
- * singleOutput().flushSingleOutput(singleOut, output, overwrite);
- * }
- * </pre>
+ * Statefull component responsible for writing multiple task generated files to a task output.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface SingleOutputWriter {
+public interface SingleOutputWriter extends TaskOutputDispatcher {
 
     /**
-     * flush of the given {@link PopulatedFileOutput} to the output destination and deletes it.
+     * Sets the given file output (typically a temporary file) as the output ready to be written.
      * 
      * @param fileOutput
-     *            the input file that will be written to the destination.
-     * @param output
-     *            the destination.
-     * @param overwrite
-     *            if true overwrite the destination of already exists.
-     * @throws TaskIOException
-     *             in case of error
      */
-    void flushSingleOutput(PopulatedFileOutput fileOutput, TaskOutput output, boolean overwrite) throws TaskIOException;
-
+    void setOutput(PopulatedFileOutput fileOutput);
 }

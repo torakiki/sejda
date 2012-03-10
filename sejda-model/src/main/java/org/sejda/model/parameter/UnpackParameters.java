@@ -21,16 +21,15 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
-import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the unpack manipulation. Accepts a list of {@link PdfSource} that will be unpacked.
@@ -41,17 +40,17 @@ import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 public class UnpackParameters extends AbstractParameters implements MultiplePdfSourceTaskParameters {
 
     @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private final TaskOutput output;
+    @NotNull
+    private final MultipleTaskOutput<?> output;
     @NotEmpty
     @Valid
     private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
 
-    public UnpackParameters(TaskOutput output) {
+    public UnpackParameters(MultipleTaskOutput<?> output) {
         this.output = output;
     }
 
-    public TaskOutput getOutput() {
+    public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 

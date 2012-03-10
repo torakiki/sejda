@@ -46,6 +46,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
     public MergeParameters toTaskParameters(MergeTaskCliArguments taskCliArguments) {
         MergeParameters parameters = new MergeParameters(taskCliArguments.isCopyFields());
         populateAbstractParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
 
         MultiplePdfMergeInputAdapter mergeInputsAdapter = extractPdfMergeInputs(taskCliArguments);
 

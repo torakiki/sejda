@@ -53,6 +53,7 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
                 taskCliArguments.getSecondStep());
 
         AlternateMixParameters parameters = new AlternateMixParameters(input1, input2, null);
+        populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
         return parameters;
     }

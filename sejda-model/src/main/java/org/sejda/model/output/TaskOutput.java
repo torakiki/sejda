@@ -17,34 +17,31 @@
  */
 package org.sejda.model.output;
 
-import java.io.File;
-import java.io.OutputStream;
+import org.sejda.model.exception.TaskException;
 
 /**
  * Represents task output destination where results of a manipulation will be written.
  * 
+ * @param <T>
+ *            the generic type for the output
  * @author Andrea Vacondio
  * 
+ * 
  */
-public interface TaskOutput {
+public interface TaskOutput<T> {
 
     /**
-     * @return the type of this output
+     * @return the output destination for the task
      */
-    OutputType getOutputType();
+    T getDestination();
 
     /**
-     * @return the file output, if output type is OutputType.FILE_OUTPUT, null otherwise
+     * Accept a dispatcher dispatching the correct method implementation
+     * 
+     * @param dispatcher
+     * @throws TaskException
+     *             in case of error
      */
-    File getFile();
+    void accept(TaskOutputDispatcher dispatcher) throws TaskException;
 
-    /**
-     * @return the directory output, if output type is OutputType.DIRECTORY_OUTPUT, null otherwise
-     */
-    File getDirectory();
-
-    /**
-     * @return the outputStream output, if output type is OutputType.STREAM_OUTPUT, null otherwise
-     */
-    OutputStream getStream();
 }

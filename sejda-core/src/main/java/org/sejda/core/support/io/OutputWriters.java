@@ -31,18 +31,22 @@ public final class OutputWriters {
     /**
      * Factory method for a {@link SingleOutputWriter}.
      * 
+     * @param overwrite
+     *            true if the writer should overwrite existing output
      * @return a new instace of the default {@link SingleOutputWriter}
      */
-    public static SingleOutputWriter newSingleOutputWriter() {
-        return new DefaultSingleOutputWriter();
+    public static SingleOutputWriter newSingleOutputWriter(boolean overwrite) {
+        return new DefaultSingleOutputWriter(overwrite);
     }
 
     /**
      * Factory method for a {@link MultipleOutputWriter}.
      * 
+     * @param overwrite
+     *            true if the writer should overwrite existing output
      * @return a new instace of the default {@link MultipleOutputWriter}
      */
-    public static MultipleOutputWriter newMultipleOutputWriter() {
-        return new DefaultMultipleOutputWriter();
+    public static MultipleOutputWriter newMultipleOutputWriter(boolean overwrite) {
+        return new DefaultMultipleOutputWriter(overwrite);
     }
 }

@@ -59,12 +59,13 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
     private int permissions = 0;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(EncryptParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
         for (PdfAccessPermission permission : parameters.getPermissions()) {
             permissions |= getAccessPermission(permission);
         }
@@ -96,7 +97,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents encrypted and written to {}", parameters.getOutput());
         LOG.debug("Permissions {}", PdfEncryptor.getPermissionsVerbose(permissions));
     }

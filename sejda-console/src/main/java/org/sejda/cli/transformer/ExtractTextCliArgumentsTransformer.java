@@ -35,8 +35,8 @@ public class ExtractTextCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * @return populated task parameters
      */
     public ExtractTextParameters toTaskParameters(ExtractTextTaskCliArguments taskCliArguments) {
-        final ExtractTextParameters parameters = new ExtractTextParameters(taskCliArguments.getOutput()
-                .getPdfDirectoryOutput());
+        final ExtractTextParameters parameters = new ExtractTextParameters();
+        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
         populateOutputPrefix(parameters, taskCliArguments);
 
         parameters.setOverwrite(taskCliArguments.getOverwrite());

@@ -18,42 +18,18 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
- * DSL interface to expose methods a multiple output task (tasks generating multiple files as output) needs to write its output.
- * 
- * <pre>
- * {@code
- * MultipleOutputSupport outputWriter = ....
- * outputWriter.addOutput(file(tmpFile).name("newName"));
- * ....
- * AbstractPdfOutput output = ...
- * boolean overwrite = ...
- * outputWriter.flushOutputs(output, overwrite);
- * }
- * </pre>
+ * Statefull component responsible for writing multiple task generated files to a task output.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface MultipleOutputWriter {
+public interface MultipleOutputWriter extends TaskOutputDispatcher {
 
     /**
-     * flush of the multiple outputs added to the output destination. Once flushed they are deleted and the collection emptied.
-     * 
-     * @param output
-     *            manipulation output parameter where multiple outputs will be written.
-     * @param overwrite
-     *            true if the output should be overwritten if already exists
-     * @throws TaskIOException
-     *             in case of error
-     */
-    void flushOutputs(TaskOutput output, boolean overwrite) throws TaskIOException;
-
-    /**
-     * Adds the given file output (typically a temporary file) to the collection of multiple outputs ready to be flushed.
+     * Adds the given file output (typically a temporary file) to the collection of multiple outputs ready to be written.
      * 
      * @param fileOutput
      */

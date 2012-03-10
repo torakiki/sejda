@@ -46,7 +46,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
     private Document pdfDocument = null;
 
@@ -56,6 +56,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         if (!getWriter().supportMultiImage()) {
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(T parameters) throws TaskException {
@@ -76,9 +77,8 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         }
         getWriter().closeDestination();
 
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
-
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
     }
 

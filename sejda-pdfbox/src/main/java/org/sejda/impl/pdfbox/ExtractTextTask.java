@@ -52,7 +52,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PdfTextExtractor textExtractor;
 
@@ -60,6 +60,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(ExtractTextParameters parameters) throws TaskException {
@@ -85,7 +86,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Text extracted from input documents and written to {}", parameters.getOutput());
 
     }

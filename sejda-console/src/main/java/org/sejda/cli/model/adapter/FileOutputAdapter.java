@@ -18,26 +18,26 @@ package org.sejda.cli.model.adapter;
 
 import java.io.File;
 
-import org.sejda.model.output.FileOutput;
+import org.sejda.model.output.FileTaskOutput;
 
 /**
- * Adapter for {@link FileOutput}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link FileTaskOutput}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
  */
 public class FileOutputAdapter {
 
-    private final FileOutput fileOutput;
+    private final FileTaskOutput fileOutput;
 
     public FileOutputAdapter(String path) {
-        this.fileOutput = FileOutput.newInstance(new File(path));
+        this.fileOutput = new FileTaskOutput(new File(path));
     }
 
     /**
      * @return the fileOutput
      */
-    public FileOutput getFileOutput() {
+    public FileTaskOutput getFileOutput() {
         return fileOutput;
     }
 }

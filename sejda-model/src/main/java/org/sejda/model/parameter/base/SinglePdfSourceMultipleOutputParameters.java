@@ -17,12 +17,11 @@
 package org.sejda.model.parameter.base;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
-import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
+import org.sejda.model.output.MultipleTaskOutput;
 
 /**
  * Provides a skeletal implementation for the parameter classes having a single pdf source as input and generating multiple output.
@@ -35,8 +34,8 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
 
     private String outputPrefix = "";
     @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
+    @NotNull
+    private MultipleTaskOutput<?> output;
 
     public String getOutputPrefix() {
         return outputPrefix;
@@ -46,13 +45,11 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
         this.outputPrefix = outputPrefix;
     }
 
-    @Override
-    public TaskOutput getOutput() {
+    public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 
-    @Override
-    public void setOutput(TaskOutput output) {
+    public void setOutput(MultipleTaskOutput<?> output) {
         this.output = output;
     }
 

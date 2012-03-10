@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.rotation.PageRotation;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.rotation.RotationType;
@@ -52,7 +52,7 @@ public class RotateParametersTest {
     @Test
     public void testInvalidParameters() {
         RotateParameters victim = new RotateParameters(null);
-        TaskOutput output = mock(TaskOutput.class);
+        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

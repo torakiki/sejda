@@ -23,6 +23,7 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -43,7 +44,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
-    public void positive() {
+    public void positive() throws TaskException {
         assertFalse(new File("./outputs/fileOutput.pdf").exists());
 
         TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();

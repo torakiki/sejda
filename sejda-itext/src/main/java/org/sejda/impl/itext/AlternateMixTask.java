@@ -52,11 +52,12 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private PdfReader firstReader = null;
     private PdfReader secondReader = null;
     private PdfCopier copier = null;
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(AlternateMixParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(AlternateMixParameters parameters) throws TaskException {
@@ -90,9 +91,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         }
 
         closeResources();
-
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
 
         LOG.debug("Alternate mix with step first document {} and step second document {} completed.", parameters
                 .getFirstInput().getStep(), parameters.getSecondInput().getStep());

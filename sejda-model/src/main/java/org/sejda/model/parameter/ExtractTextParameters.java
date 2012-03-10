@@ -21,17 +21,16 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
-import org.sejda.model.validation.constraint.TaskOutputAllowedTypes;
 
 /**
  * Parameter class for the extract text manipulation. Accepts a list of {@link PdfSource} from which the text will be extracted.
@@ -44,16 +43,12 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
 
     private String outputPrefix = "";
     @Valid
-    @TaskOutputAllowedTypes(values = { OutputType.DIRECTORY_OUTPUT, OutputType.STREAM_OUTPUT })
-    private TaskOutput output;
+    @NotNull
+    private MultipleTaskOutput<?> output;
     @NotEmpty
     @Valid
     private List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
     private String textEncoding;
-
-    public ExtractTextParameters(TaskOutput output) {
-        this.output = output;
-    }
 
     public String getTextEncoding() {
         return textEncoding;
@@ -63,8 +58,12 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
         this.textEncoding = textEncoding;
     }
 
-    public TaskOutput getOutput() {
+    public MultipleTaskOutput<?> getOutput() {
         return output;
+    }
+
+    public void setOutput(MultipleTaskOutput<?> output) {
+        this.output = output;
     }
 
     public String getOutputPrefix() {

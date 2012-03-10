@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.MultipleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -29,11 +29,11 @@ import org.sejda.model.output.TaskOutput;
  */
 public class UnpackParametersTest {
 
-    private TaskOutput output;
+    private MultipleTaskOutput<?> output;
 
     @Before
     public void setUp() {
-        output = mock(TaskOutput.class);
+        output = mock(MultipleTaskOutput.class);
     }
 
     @Test

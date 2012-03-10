@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
 
@@ -67,7 +67,7 @@ public class SetPagesLabelParametersTest {
     @Test
     public void testInvalidParameters() {
         SetPagesLabelParameters victim = new SetPagesLabelParameters();
-        TaskOutput output = mock(TaskOutput.class);
+        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

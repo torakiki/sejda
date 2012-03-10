@@ -54,12 +54,13 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
     private PdfReader reader = null;
     private PdfStamperHandler stamperHandler = null;
     private int totalSteps;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(DecryptParameters parameters) throws TaskException {
@@ -86,7 +87,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
     }
 

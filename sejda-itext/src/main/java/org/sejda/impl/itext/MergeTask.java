@@ -51,7 +51,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MergeTask.class);
 
-    private SingleOutputWriter outputWriter = OutputWriters.newSingleOutputWriter();
+    private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
     private PdfCopier copier = null;
     private PdfReader reader;
@@ -60,6 +60,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(MergeParameters parameters) throws TaskException {
@@ -92,8 +93,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
         }
 
         closeResources();
-        outputWriter.flushSingleOutput(file(tmpFile).name(parameters.getOutputName()), parameters.getOutput(),
-                parameters.isOverwrite());
+        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
     }
 

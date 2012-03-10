@@ -39,9 +39,9 @@ import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.output.FileOutput;
-import org.sejda.model.output.StreamOutput;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -64,7 +64,7 @@ public class DefaultTaskExecutionServiceTest {
     @Before
     public void setUp() throws TaskException {
         OutputStream stream = mock(OutputStream.class);
-        parameters.setOutput(StreamOutput.newInstance(stream));
+        parameters.setOutput(new StreamTaskOutput(stream));
         when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
         when(context.isValidation()).thenReturn(Boolean.TRUE);
     }
@@ -88,7 +88,7 @@ public class DefaultTaskExecutionServiceTest {
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
-        TaskOutput output = mock(TaskOutput.class);
+        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         parameters.setOutput(output);
         TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
@@ -103,7 +103,9 @@ public class DefaultTaskExecutionServiceTest {
         File file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.TRUE);
         when(file.getName()).thenReturn("name.pdf");
-        parameters.setOutput(FileOutput.newInstance(file));
+        when(file.exists()).thenReturn(Boolean.TRUE);
+        parameters.setOutput(new FileTaskOutput(file));
+        when(file.isFile()).thenReturn(Boolean.FALSE);
         victim.execute(parameters);
         verify(task, never()).before(parameters);
         verify(task, never()).after();

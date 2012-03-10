@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.PdfMetadataKey;
 
 /**
@@ -66,7 +66,7 @@ public class SetMetadataParametersTest {
     @Test
     public void testInvalidParameters() {
         SetMetadataParameters victim = new SetMetadataParameters();
-        TaskOutput output = mock(TaskOutput.class);
+        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

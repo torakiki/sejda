@@ -1,5 +1,5 @@
 /*
- * Created on 14/set/2011
+ * Created on 09/mar/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,34 +14,40 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.model.parameter.base;
+package org.sejda.model.output;
 
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.exception.TaskIOException;
 
 /**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
+ * Double-dispatch interface to dispatch to the correct implementation of a {@link TaskOutput}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public interface MultipleOutputTaskParameters extends TaskParameters {
+public interface TaskOutputDispatcher {
 
     /**
-     * @return the prefix to be used to generate names of the multiple outputs.
-     */
-    String getOutputPrefix();
-
-    /**
-     * Set the prefix to be used to generate names of the multiple outputs for this parameter.
-     * 
-     * @param outputPrefix
-     */
-    void setOutputPrefix(String outputPrefix);
-
-    /**
-     * Sets the output destination
+     * writes to a {@link FileTaskOutput} destination.
      * 
      * @param output
+     * @throws TaskIOException
      */
-    public void setOutput(MultipleTaskOutput<?> output);
+    void dispatch(FileTaskOutput output) throws TaskIOException;
+
+    /**
+     * writes to a {@link DirectoryTaskOutput} destination.
+     * 
+     * @param output
+     * @throws TaskIOException
+     */
+    void dispatch(DirectoryTaskOutput output) throws TaskIOException;
+
+    /**
+     * writes to a {@link StreamTaskOutput} destination.
+     * 
+     * @param output
+     * @throws TaskIOException
+     */
+    void dispatch(StreamTaskOutput output) throws TaskIOException;
+
 }

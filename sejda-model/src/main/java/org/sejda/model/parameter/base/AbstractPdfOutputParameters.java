@@ -19,7 +19,6 @@ package org.sejda.model.parameter.base;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.output.TaskOutput;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.validation.constraint.ValidPdfVersion;
 
@@ -55,10 +54,6 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
     public void setVersion(PdfVersion version) {
         this.version = version;
     }
-
-    public abstract TaskOutput getOutput();
-
-    public abstract void setOutput(TaskOutput output);
 
     /**
      * @return the min output pdf version required by this parameter object depending on its attributes. Each extending class is responsible for the implementation of this method.

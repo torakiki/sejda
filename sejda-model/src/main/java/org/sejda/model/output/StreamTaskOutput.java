@@ -17,7 +17,6 @@
  */
 package org.sejda.model.output;
 
-import java.io.File;
 import java.io.OutputStream;
 
 import javax.validation.constraints.NotNull;
@@ -25,6 +24,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.exception.TaskIOException;
 
 /**
  * {@link OutputStream} output destination for a task.
@@ -32,34 +32,36 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public final class StreamOutput implements TaskOutput {
+public final class StreamTaskOutput implements MultipleTaskOutput<OutputStream>, SingleTaskOutput<OutputStream> {
 
     @NotNull
     private final OutputStream stream;
 
-    private StreamOutput(OutputStream stream) {
+    /**
+     * Creates a new instance of a {@link StreamTaskOutput} using the input stream
+     * 
+     * @param stream
+     * @throws IllegalArgumentException
+     *             if the input stream is null
+     */
+    public StreamTaskOutput(OutputStream stream) {
+        if (stream == null) {
+            throw new IllegalArgumentException("A not null stream instance is expected.");
+        }
         this.stream = stream;
     }
 
-    public OutputStream getStream() {
+    public OutputStream getDestination() {
         return stream;
     }
 
-    public OutputType getOutputType() {
-        return OutputType.STREAM_OUTPUT;
-    }
-
-    public File getFile() {
-        return null;
-    }
-
-    public File getDirectory() {
-        return null;
+    public void accept(TaskOutputDispatcher writer) throws TaskIOException {
+        writer.dispatch(this);
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getOutputType()).toString();
+        return new ToStringBuilder(this).toString();
     }
 
     @Override
@@ -72,25 +74,10 @@ public final class StreamOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof StreamOutput)) {
+        if (!(other instanceof StreamTaskOutput)) {
             return false;
         }
-        StreamOutput output = (StreamOutput) other;
-        return new EqualsBuilder().append(stream, output.getStream()).isEquals();
-    }
-
-    /**
-     * Creates a new instance of a PdfOutput using the input stream
-     * 
-     * @param stream
-     * @return the newly created instance
-     * @throws IllegalArgumentException
-     *             if the input stream is null
-     */
-    public static StreamOutput newInstance(OutputStream stream) {
-        if (stream == null) {
-            throw new IllegalArgumentException("A not null stream instance is expected.");
-        }
-        return new StreamOutput(stream);
+        StreamTaskOutput output = (StreamTaskOutput) other;
+        return new EqualsBuilder().append(stream, output.getDestination()).isEquals();
     }
 }

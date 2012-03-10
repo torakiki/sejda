@@ -47,6 +47,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
         }
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
 
         return parameters;
     }

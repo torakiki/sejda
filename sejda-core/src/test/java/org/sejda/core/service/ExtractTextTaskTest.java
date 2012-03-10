@@ -37,7 +37,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.StreamOutput;
+import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.ExtractTextParameters;
 import org.sejda.model.task.Task;
 
@@ -68,7 +68,8 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
      * 
      */
     private void setUpParameters() {
-        parameters = new ExtractTextParameters(StreamOutput.newInstance(out));
+        parameters = new ExtractTextParameters();
+        parameters.setOutput(new StreamTaskOutput(out));
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_test_test_file.pdf");
         parameters.addSource(source);

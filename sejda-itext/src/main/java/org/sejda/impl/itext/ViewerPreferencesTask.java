@@ -65,7 +65,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     private int totalSteps;
     private int preferences;
     private Map<PdfName, PdfObject> configuredPreferences;
-    private MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter();
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
     public void before(ViewerPreferencesParameters parameters) {
@@ -81,6 +81,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             LOG.trace("Page mode = {}", parameters.getPageMode());
             LOG.trace("Page layout = {}", parameters.getPageLayout());
         }
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
@@ -115,7 +116,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        outputWriter.flushOutputs(parameters.getOutput(), parameters.isOverwrite());
+        parameters.getOutput().accept(outputWriter);
         LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
 
     }

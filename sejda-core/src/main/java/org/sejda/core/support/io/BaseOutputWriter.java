@@ -23,10 +23,10 @@ import java.util.Map;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.DirectoryOutput;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.StreamOutput;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
  * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.
@@ -34,41 +34,28 @@ import org.sejda.model.output.TaskOutput;
  * @author Andrea Vacondio
  * 
  */
-class BaseOutputWriter {
+class BaseOutputWriter implements TaskOutputDispatcher {
 
     private Map<String, File> multipleFiles;
+    private boolean overwrite = false;
 
-    public BaseOutputWriter() {
+    public BaseOutputWriter(boolean overwrite) {
         this.multipleFiles = new HashMap<String, File>();
+        this.overwrite = overwrite;
     }
 
-    /**
-     * writes to the given destination throwing an exception if the given destination is a file destination
-     * 
-     * @param output
-     * @param overwrite
-     * @throws TaskIOException
-     */
-    void writeToNonFileDestination(TaskOutput output, boolean overwrite) throws TaskIOException {
-        if (OutputType.FILE_OUTPUT.equals(output.getOutputType())) {
-            throw new TaskIOException("Unsupported file output for a multiple output task.");
-        }
+    public void dispatch(FileTaskOutput output) throws TaskIOException {
+        OutputWriterHelper.copyToFile(multipleFiles, output.getDestination(), overwrite);
 
-        if (OutputType.DIRECTORY_OUTPUT.equals(output.getOutputType())) {
-            write(new OutputDestination(output, overwrite));
-        } else {
-            write(new OutputDestination(output, false));
-        }
     }
 
-    /**
-     * Writes the stored files to the destination
-     * 
-     * @param destination
-     * @throws TaskIOException
-     */
-    void write(Destination destination) throws TaskIOException {
-        OutputWriterHelper.executeCopyAndDelete(multipleFiles, destination);
+    public void dispatch(DirectoryTaskOutput output) throws TaskIOException {
+        OutputWriterHelper.copyToDirectory(multipleFiles, output.getDestination(), overwrite);
+
+    }
+
+    public void dispatch(StreamTaskOutput output) throws TaskIOException {
+        OutputWriterHelper.copyToStream(multipleFiles, output.getDestination());
     }
 
     /**

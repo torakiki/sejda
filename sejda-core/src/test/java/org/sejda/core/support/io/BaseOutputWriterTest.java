@@ -16,24 +16,16 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.OutputStream;
+import java.io.IOException;
 
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+import org.sejda.core.support.io.model.FileOutput;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.DirectoryOutput;
-import org.sejda.model.output.OutputType;
-import org.sejda.model.output.StreamOutput;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.FileTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -41,38 +33,17 @@ import org.sejda.model.output.TaskOutput;
  */
 public class BaseOutputWriterTest {
 
-    @Test(expected = TaskIOException.class)
-    public void testWriteNonFile() throws TaskIOException {
-        BaseOutputWriter victim = new BaseOutputWriter();
-        TaskOutput output = mock(TaskOutput.class);
-        when(output.getOutputType()).thenReturn(OutputType.FILE_OUTPUT);
-        victim.writeToNonFileDestination(output, true);
-    }
-
     @Test
-    public void testWriteStream() throws TaskIOException {
-        BaseOutputWriter victim = spy(new BaseOutputWriter());
-        OutputStream stream = mock(OutputStream.class);
-        StreamOutput output = StreamOutput.newInstance(stream);
-        ArgumentCaptor<Destination> destination = ArgumentCaptor.forClass(Destination.class);
-        victim.writeToNonFileDestination(output, true);
-        verify(victim).write(destination.capture());
-        assertFalse(destination.getValue().isOverwrite());
-        assertEquals(output, destination.getValue().getOutputDestination());
-    }
+    public void testWriteFile() throws TaskIOException, IOException {
+        BaseOutputWriter victim = spy(new BaseOutputWriter(true));
+        File tempFile = File.createTempFile("srcTest", "");
+        victim.add(FileOutput.file(tempFile).name("newName"));
 
-    @Test
-    public void testWriteDirectory() throws TaskIOException {
-        BaseOutputWriter victim = spy(new BaseOutputWriter());
-        File file = mock(File.class);
-        when(file.isDirectory()).thenReturn(Boolean.TRUE);
-        when(file.exists()).thenReturn(Boolean.TRUE);
-        DirectoryOutput output = DirectoryOutput.newInstance(file);
-        ArgumentCaptor<Destination> destination = ArgumentCaptor.forClass(Destination.class);
-        victim.writeToNonFileDestination(output, true);
-        verify(victim).write(destination.capture());
-        assertTrue(destination.getValue().isOverwrite());
-        assertEquals(output, destination.getValue().getOutputDestination());
+        File outFile = File.createTempFile("outTemp", "");
+        FileTaskOutput output = new FileTaskOutput(outFile);
+
+        output.accept(victim);
+        assertFalse("temporary file not deleted", tempFile.exists());
     }
 
 }

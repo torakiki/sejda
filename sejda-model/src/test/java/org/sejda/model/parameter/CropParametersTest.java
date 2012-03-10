@@ -28,7 +28,7 @@ import org.sejda.TestUtils;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -62,7 +62,7 @@ public class CropParametersTest {
     @Test
     public void testInvalidParameters() {
         CropParameters victim = new CropParameters();
-        TaskOutput output = mock(TaskOutput.class);
+        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

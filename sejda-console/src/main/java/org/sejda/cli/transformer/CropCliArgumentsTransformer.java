@@ -43,6 +43,7 @@ public class CropCliArgumentsTransformer extends BaseCliArgumentsTransformer imp
         }
 
         populateSourceParameters(parameters, taskCliArguments);
+        populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
 
         return parameters;
