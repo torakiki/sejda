@@ -7,6 +7,10 @@ target/**
 .classpath
 .checkstyle
 .settings/**
+# Intellij IDEA files
+.idea/*
+*.iml
+.DS_Store
 
 syntax: regexp
 \.cld$
