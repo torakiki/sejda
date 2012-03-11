@@ -33,10 +33,14 @@ public class PdfMixInput {
 
     @NotNull
     @Valid
-    private final PdfSource<?> source;
+    private PdfSource<?> source;
     private boolean reverse = false;
     @Min(value = 1)
     private int step = 1;
+
+    PdfMixInput() {
+        // default constructor for persistence
+    }
 
     public PdfMixInput(PdfSource<?> source, boolean reverse, int step) {
         this.source = source;

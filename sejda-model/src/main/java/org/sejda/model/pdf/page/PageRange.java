@@ -42,6 +42,10 @@ public class PageRange implements PagesSelection {
     @Min(1)
     private int end;
 
+    PageRange() {
+        // default constructor for persistence
+    }
+
     /**
      * Creates a page range that goes from start to end (comprehended).
      * 
@@ -105,6 +109,11 @@ public class PageRange implements PagesSelection {
         if (isUnbounded()) {
             return String.format("%s-", start);
         }
+
+        if(start == end) {
+            return String.format("%s", start);
+        }
+
         return String.format("%s-%s", start, end);
     }
 

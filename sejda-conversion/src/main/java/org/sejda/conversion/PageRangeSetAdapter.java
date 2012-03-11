@@ -37,6 +37,7 @@ public class PageRangeSetAdapter {
 
     public PageRangeSetAdapter(String rawString) {
         if (isAllPages(rawString)) {
+            pageRangeSet.add(new PageRange(1));
             return;
         }
 
