@@ -47,13 +47,13 @@ public class MergeParametersTest {
         MergeParameters eq1 = new MergeParameters();
         MergeParameters eq2 = new MergeParameters();
         MergeParameters eq3 = new MergeParameters();
-        MergeParameters diff = new MergeParameters(true);
+        MergeParameters diff = new MergeParameters(true, true);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testInvalidParametersNullSource() {
-        MergeParameters victim = new MergeParameters(false);
+        MergeParameters victim = new MergeParameters(false, true);
 
         victim.setOutput(output);
         victim.addInput(new PdfMergeInput(null));
@@ -62,7 +62,7 @@ public class MergeParametersTest {
 
     @Test
     public void testInvalidParametersInvalidRange() {
-        MergeParameters victim = new MergeParameters(false);
+        MergeParameters victim = new MergeParameters();
         victim.setOutput(output);
         victim.setOutputName("name");
         InputStream stream = mock(InputStream.class);
@@ -76,7 +76,7 @@ public class MergeParametersTest {
 
     @Test
     public void testInvalidParametersIntersectingRanges() {
-        MergeParameters victim = new MergeParameters(false);
+        MergeParameters victim = new MergeParameters();
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

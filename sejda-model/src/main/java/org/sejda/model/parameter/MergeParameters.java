@@ -56,8 +56,9 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.blankPageIfOdd = false;
     }
 
-    public MergeParameters(boolean copyFormFields) {
+    public MergeParameters(boolean copyFormFields, boolean blankPageIfOdd) {
         this.copyFormFields = copyFormFields;
+        this.blankPageIfOdd = blankPageIfOdd;
     }
 
     public SingleTaskOutput<?> getOutput() {
