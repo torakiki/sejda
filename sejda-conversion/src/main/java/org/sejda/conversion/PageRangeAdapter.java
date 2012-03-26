@@ -16,15 +16,15 @@
  */
 package org.sejda.conversion;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for {@link PageRange}, providing initialization from {@link String}
- * 
+ *
  * @author Eduard Weissmann
- * 
  */
 public class PageRangeAdapter {
 
@@ -38,6 +38,10 @@ public class PageRangeAdapter {
         } catch (SejdaRuntimeException e) {
             throw new ConversionException("Unparsable page range '" + rawString + "'. " + e.getMessage(), e);
         }
+
+        if (pageRange.getStart() > pageRange.getEnd()) {
+            throw new ConversionException("Invalid page range '" + rawString + "', ends before starting");
+        }
     }
 
     public PageRange getPageRange() {
@@ -45,8 +49,7 @@ public class PageRangeAdapter {
     }
 
     /**
-     * @param rawString
-     *            string representation of the {@link PageRange}
+     * @param rawString string representation of the {@link PageRange}
      */
     private PageRange doParsePageRange(String rawString) {
         String[] tokens = AdapterUtils.splitAndTrim(rawString, SEPARATOR);
@@ -58,7 +61,9 @@ public class PageRangeAdapter {
             // 23
             return new PageRange(parsePageNumber(tokens[0]), parsePageNumber(tokens[0]));
         } else if (tokens.length == 2) {
-            return new PageRange(parsePageNumber(tokens[0]), parsePageNumber(tokens[1]));
+            int token0 = parsePageNumber(tokens[0]);
+            int token1 = parsePageNumber(tokens[1]);
+            return new PageRange(token0, token1);
         } else {
             throw new ConversionException(
                     "Ambiguous definition. Use following formats: [<page>] or [<page1>-<page2>] or [<page1>-]");
@@ -66,6 +71,6 @@ public class PageRangeAdapter {
     }
 
     private int parsePageNumber(String s) {
-        return AdapterUtils.parseInt(s, "page number");
+        return AdapterUtils.parseInt(StringUtils.trim(s), "page number");
     }
 }

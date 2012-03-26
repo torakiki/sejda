@@ -15,7 +15,7 @@ then
 fi
 
 # EDIT HERE THE VERSIONS BEFORE RUNNING THE SCRIPT
-RELEASE_VERSION="1.0.0-BETA"
+RELEASE_VERSION="1.0.0.BETA2"
 NEXT_DEV_VERSION="1.0.0-RC1-SNAPSHOT"
 
 echo "Enter your gpg passphrase:"
@@ -37,7 +37,7 @@ rm -fr /tmp/sejda-release-staging/*
 cd /tmp/sejda-release-staging
 hg clone $REPO
 
-cd /tmp/sejda-release-staging/sejda-dev
+cd /tmp/sejda-release-staging/sejda
 
 # maven-release-plugin black magic
 # :prepare (do a dry-run first, no touching of the poms or repo - if this fails, there's nothing to rollback)
@@ -55,9 +55,9 @@ mvn release:perform -Darguments="-Dgpg.passphrase=$YOUR_GPG_PASSPHRASE -Psonatyp
 echo "\nRelease is done. Next steps are:
  1) log in to OSS Nexus and close the staging repository. Log in at https://oss.sonatype.org/ with username sejda, click "Staging Repositories". Select the last release performed (should be Open) and perform 'Close'. You expect no validation error and a successful close. After that, you can do 'Release', BEWARE this is a point of no return for Maven Central binaries.
 
- 2) push changes from the /tmp/sejda-release-staging/sejda-dev to your workspace repository, and then from there upstream to bitbucket.
+ 2) push changes from the /tmp/sejda-release-staging/sejda to your workspace repository, and then from there upstream to bitbucket.
  3) upload released binaries to bitbucket download page:
- 3a) - console binaries: /tmp/sejda-release-staging/sejda-dev/target/checkout/sejda-console/target/sejda-console-*-bin.zip
- 3b) - zip containing all jars for the rest of the modules: /tmp/sejda-release-staging/sejda-dev/target/checkout/sejda-distribution/target/sejda-distribution-*-bin.zip
+ 3a) - console binaries: /tmp/sejda-release-staging/sejda/target/checkout/sejda-console/target/sejda-console-*-bin.zip
+ 3b) - zip containing all jars for the rest of the modules: /tmp/sejda-release-staging/sejda/target/checkout/sejda-distribution/target/sejda-distribution-*-bin.zip
  3c) - upload javadocs to website "
 

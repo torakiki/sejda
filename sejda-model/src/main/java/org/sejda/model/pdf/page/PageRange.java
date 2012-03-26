@@ -43,7 +43,7 @@ public class PageRange implements PagesSelection {
     private int end;
 
     PageRange() {
-        // spring data PreferredConstructorDiscoverer
+        // default constructor for persistence
     }
 
     /**
