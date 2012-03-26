@@ -44,7 +44,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
      * @return populated task parameters
      */
     public MergeParameters toTaskParameters(MergeTaskCliArguments taskCliArguments) {
-        MergeParameters parameters = new MergeParameters(taskCliArguments.isCopyFields());
+        MergeParameters parameters = new MergeParameters(taskCliArguments.isCopyFields(), taskCliArguments.isAddBlanks());
         populateAbstractParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
 

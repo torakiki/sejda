@@ -95,9 +95,21 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void onAddBlanks() {
+        MergeParameters parameters = defaultCommandLine().withFlag("--addBlanks").invokeSejdaConsole();
+        assertTrue(parameters.isBlankPageIfOdd());
+    }
+
+    @Test
     public void offCopyFields() {
         MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertFalse(parameters.isCopyFormFields());
+    }
+
+    @Test
+    public void offAddBlankss() {
+        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.isBlankPageIfOdd());
     }
 
     @Test

@@ -37,6 +37,9 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     @Option(description = "input pdf documents contain forms (high memory usage) (optional)")
     boolean isCopyFields();
 
+    @Option(description = "add a blank page after each merged document if the number of pages is odd (optional)")
+    boolean isAddBlanks();
+
     @Option(shortName = "d", description = "directory containing pdf files to merge. Files will be merged in alphabetical order. (optional)")
     PdfFileSourceListAdapter getDirectory();
 
