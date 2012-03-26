@@ -12,10 +12,12 @@
 			<!-- Now, select which projects to include in this module-set. -->
 			<includes>
 				<include>org.sejda:sejda-core</include>
+				<include>org.sejda:sejda-conversion</include>
 				<include>org.sejda:sejda-itext</include>
 				<include>org.sejda:sejda-pdfbox</include>
 				<include>org.sejda:sejda-icepdf</include>
 				<include>org.sejda:sejda-image-writers</include>
+				<include>org.sejda:sejda-model</include>
 				<include>org.sejda:sejda-example</include>
 			</includes>
 			<outputDirectory>/</outputDirectory>
