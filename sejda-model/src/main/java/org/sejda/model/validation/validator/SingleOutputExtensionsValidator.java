@@ -92,7 +92,7 @@ public class SingleOutputExtensionsValidator implements
      * @author Andrea Vacondio
      * 
      */
-    private static class NameRetriever implements TaskOutputDispatcher {
+    private static final class NameRetriever implements TaskOutputDispatcher {
 
         private String outputName;
 
@@ -100,17 +100,14 @@ public class SingleOutputExtensionsValidator implements
             this.outputName = outputName;
         }
 
-        @Override
         public void dispatch(FileTaskOutput output) {
             this.outputName = output.getDestination().getName();
         }
 
-        @Override
         public void dispatch(DirectoryTaskOutput output) {
             // do nothing
         }
 
-        @Override
         public void dispatch(StreamTaskOutput output) {
             // do nothing
         }

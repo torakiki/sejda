@@ -75,18 +75,15 @@ public class SingleOutputValidator implements ConstraintValidator<ValidSingleOut
             this.outputName = outputName;
         }
 
-        @Override
         public void dispatch(FileTaskOutput output) {
             this.valid = true;
         }
 
-        @Override
         public void dispatch(DirectoryTaskOutput output) {
             this.valid = StringUtils.isNotBlank(outputName);
 
         }
 
-        @Override
         public void dispatch(StreamTaskOutput output) {
             this.valid = StringUtils.isNotBlank(outputName);
         }

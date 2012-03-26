@@ -27,7 +27,8 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * Skeletal implementation for a pdf input source.
  * 
  * @author Andrea Vacondio
- * 
+ * @param <T>
+ *            the generic type of the source
  */
 public abstract class AbstractPdfSource<T> implements PdfSource<T> {
 

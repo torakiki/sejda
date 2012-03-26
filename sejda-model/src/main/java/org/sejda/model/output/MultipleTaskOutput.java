@@ -20,7 +20,8 @@ package org.sejda.model.output;
  * Represent the output for a task generating a multiple outputs.
  * 
  * @author Andrea Vacondio
- * 
+ * @param <T>
+ *            generic type for the output destination
  */
 public interface MultipleTaskOutput<T> extends TaskOutput<T> {
     // define further methods

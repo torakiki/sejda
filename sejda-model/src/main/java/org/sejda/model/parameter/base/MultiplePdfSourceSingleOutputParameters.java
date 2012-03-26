@@ -22,11 +22,10 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.output.TaskOutput;
 import org.sejda.model.validation.constraint.ValidSingleOutput;
 
 /**
- * Provides a skeletal implementation for parameter classes having multiple pdf source as input and producing a single {@link TaskOutput}.
+ * Provides a skeletal implementation for parameter classes having multiple pdf source as input and producing a {@link SingleTaskOutput}.
  * 
  * @author Andrea Vacondio
  * 
