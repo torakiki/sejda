@@ -19,6 +19,7 @@ package org.sejda.core.notification;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.sejda.core.TestListenerFactory.newPercentageListener;
 import static org.sejda.core.TestListenerFactory.newStartListener;
 
@@ -66,6 +67,7 @@ public class NotificationContextTest {
     public void testNotificationContextNotify() throws NotificationContextException {
         for (NotificationContext victim : contexts) {
             testNotificationContextNotify(victim);
+            testNotificationContextUndetermined(victim);
         }
     }
 
@@ -78,6 +80,17 @@ public class NotificationContextTest {
         assertFalse(event.isUndetermined());
         victim.notifyListeners(event);
         assertEquals(value, listener.getPercentage());
+        assertFalse(listener.isUndeterminate());
+    }
+
+    private void testNotificationContextUndetermined(NotificationContext victim) throws NotificationContextException {
+        TestListenerPercentage listener = newPercentageListener();
+        victim.addListener(listener);
+        PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(
+                PercentageOfWorkDoneChangedEvent.UNDETERMINED, NotifiableTaskMetadata.NULL);
+        assertTrue(event.isUndetermined());
+        victim.notifyListeners(event);
+        assertTrue(listener.isUndeterminate());
     }
 
     private void testNotificationContextAddListener(NotificationContext victim) throws NotificationContextException {

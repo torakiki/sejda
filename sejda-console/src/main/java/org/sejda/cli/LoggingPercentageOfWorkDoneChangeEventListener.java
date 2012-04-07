@@ -33,7 +33,11 @@ final class LoggingPercentageOfWorkDoneChangeEventListener implements EventListe
     private static final Logger LOG = LoggerFactory.getLogger(LoggingPercentageOfWorkDoneChangeEventListener.class);
 
     public void onEvent(PercentageOfWorkDoneChangedEvent event) {
-        LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
+        if (event.isUndetermined()) {
+            LOG.info("Task in progress");
+        } else {
+            LOG.info("Task progress: " + event.getPercentage().toPlainString() + "% done");
+        }
     }
 
     @Override

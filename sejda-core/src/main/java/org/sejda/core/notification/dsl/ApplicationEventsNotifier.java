@@ -80,6 +80,11 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
         notifyListeners(new TaskExecutionStartedEvent(taskMetadata));
     }
 
+    public void progressUndetermined() {
+        notifyListeners(new PercentageOfWorkDoneChangedEvent(PercentageOfWorkDoneChangedEvent.UNDETERMINED,
+                taskMetadata));
+    }
+
     public OngoingNotification stepsCompleted(int completed) {
         this.percentage = new BigDecimal(completed);
         return this;

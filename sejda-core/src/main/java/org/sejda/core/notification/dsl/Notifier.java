@@ -49,6 +49,11 @@ public interface Notifier {
     void taskStarted();
 
     /**
+     * Notifies about a task progress which is undetermined
+     */
+    void progressUndetermined();
+
+    /**
      * Notifies about a certain amount of steps completed: <br />
      * <code>
      * notifyEvent().stepsCompleted(2).outOf(10);

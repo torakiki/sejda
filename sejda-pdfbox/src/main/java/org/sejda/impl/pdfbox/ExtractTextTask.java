@@ -70,7 +70,6 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
-            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);

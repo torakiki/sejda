@@ -18,6 +18,7 @@
 package org.sejda.impl.itext;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
@@ -62,6 +63,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
 
     public void execute(SetMetadataParameters parameters) throws TaskException {
+        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {} ", source);
         reader = source.open(sourceOpener);

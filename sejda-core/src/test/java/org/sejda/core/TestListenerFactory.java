@@ -51,13 +51,19 @@ public final class TestListenerFactory {
     public static class TestListenerPercentage implements EventListener<PercentageOfWorkDoneChangedEvent> {
 
         private BigDecimal percentage;
+        private boolean undeterminate;
 
         public void onEvent(PercentageOfWorkDoneChangedEvent event) {
             percentage = event.getPercentage();
+            undeterminate = event.isUndetermined();
         }
 
         public BigDecimal getPercentage() {
             return percentage;
+        }
+
+        public boolean isUndeterminate() {
+            return undeterminate;
         }
 
     }
@@ -99,6 +105,5 @@ public final class TestListenerFactory {
         public boolean isFailed() {
             return failed;
         }
-
     }
 }
