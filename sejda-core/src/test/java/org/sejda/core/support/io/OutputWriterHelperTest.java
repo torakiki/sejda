@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
 
 /**
  * Test unit for the {@link OutputWriterHelper}
@@ -49,7 +48,7 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyStream() throws TaskIOException {
+    public void testExecuteCopyStream() throws IOException {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -68,7 +67,7 @@ public class OutputWriterHelperTest {
         try {
             OutputWriterHelper.copyToFile(files, outFile, true);
             fail("Exception expected");
-        } catch (TaskIOException e) {
+        } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
         }
     }
@@ -85,7 +84,7 @@ public class OutputWriterHelperTest {
         try {
             OutputWriterHelper.copyToFile(files, outFile, true);
             fail("Exception expected");
-        } catch (TaskIOException e) {
+        } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
         }
     }
@@ -102,7 +101,7 @@ public class OutputWriterHelperTest {
         try {
             OutputWriterHelper.copyToFile(files, outFile, false);
             fail("Exception expected");
-        } catch (TaskIOException e) {
+        } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to overwrite the"));
         }
     }
@@ -118,7 +117,7 @@ public class OutputWriterHelperTest {
         try {
             OutputWriterHelper.copyToDirectory(files, outFile, true);
             fail("Exception expected");
-        } catch (TaskIOException e) {
+        } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
         }
     }
@@ -136,7 +135,7 @@ public class OutputWriterHelperTest {
         try {
             OutputWriterHelper.copyToDirectory(files, outFile, true);
             fail("Exception expected");
-        } catch (TaskIOException e) {
+        } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));
         }
     }

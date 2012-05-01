@@ -1,5 +1,5 @@
 /*
- * Created on 19/ott/2011
+ * Created on 01/mag/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,27 +14,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.io;
-
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
-
-import org.junit.Test;
-import org.sejda.model.exception.TaskOutputVisitException;
-import org.sejda.model.output.FileTaskOutput;
+package org.sejda.model.exception;
 
 /**
+ * Exception thrown when visiting a TaskOutput
+ * 
  * @author Andrea Vacondio
  * 
  */
-public class DefaultMultipleOutputWriterTest {
+public class TaskOutputVisitException extends TaskException {
 
-    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(true);
+    private static final long serialVersionUID = -5954396440602246066L;
 
-    @Test(expected = TaskOutputVisitException.class)
-    public void testWriteNonFile() throws TaskOutputVisitException {
-        File outputFile = mock(File.class);
-        new FileTaskOutput(outputFile).accept(victim);
+    public TaskOutputVisitException() {
+        super();
+    }
+
+    public TaskOutputVisitException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public TaskOutputVisitException(String message) {
+        super(message);
+    }
+
+    public TaskOutputVisitException(Throwable cause) {
+        super(cause);
     }
 }

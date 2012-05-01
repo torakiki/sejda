@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.sejda.core.support.io.model.FileOutput;
-import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.output.FileTaskOutput;
 
 /**
@@ -34,7 +34,7 @@ import org.sejda.model.output.FileTaskOutput;
 public class BaseOutputWriterTest {
 
     @Test
-    public void testWriteFile() throws TaskIOException, IOException {
+    public void testWriteFile() throws IOException, TaskOutputVisitException {
         BaseOutputWriter victim = spy(new BaseOutputWriter(true));
         File tempFile = File.createTempFile("srcTest", "");
         victim.add(FileOutput.file(tempFile).name("newName"));

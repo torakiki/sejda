@@ -17,11 +17,12 @@
 package org.sejda.model.output;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.validation.constraint.IsFile;
 
 /**
@@ -53,8 +54,12 @@ public class FileTaskOutput implements SingleTaskOutput<File> {
         return file;
     }
 
-    public void accept(TaskOutputDispatcher writer) throws TaskIOException {
-        writer.dispatch(this);
+    public void accept(TaskOutputDispatcher writer) throws TaskOutputVisitException {
+        try {
+            writer.dispatch(this);
+        } catch (IOException e) {
+            throw new TaskOutputVisitException("Exception dispatching the file task output.", e);
+        }
     }
 
     @Override

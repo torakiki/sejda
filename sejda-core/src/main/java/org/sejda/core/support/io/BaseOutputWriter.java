@@ -18,11 +18,11 @@
 package org.sejda.core.support.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
@@ -44,17 +44,17 @@ class BaseOutputWriter implements TaskOutputDispatcher {
         this.overwrite = overwrite;
     }
 
-    public void dispatch(FileTaskOutput output) throws TaskIOException {
+    public void dispatch(FileTaskOutput output) throws IOException {
         OutputWriterHelper.copyToFile(multipleFiles, output.getDestination(), overwrite);
 
     }
 
-    public void dispatch(DirectoryTaskOutput output) throws TaskIOException {
+    public void dispatch(DirectoryTaskOutput output) throws IOException {
         OutputWriterHelper.copyToDirectory(multipleFiles, output.getDestination(), overwrite);
 
     }
 
-    public void dispatch(StreamTaskOutput output) throws TaskIOException {
+    public void dispatch(StreamTaskOutput output) throws IOException {
         OutputWriterHelper.copyToStream(multipleFiles, output.getDestination());
     }
 

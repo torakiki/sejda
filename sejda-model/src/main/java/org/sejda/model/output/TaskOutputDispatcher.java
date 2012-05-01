@@ -16,7 +16,7 @@
  */
 package org.sejda.model.output;
 
-import org.sejda.model.exception.TaskIOException;
+import java.io.IOException;
 
 /**
  * Double-dispatch interface to dispatch to the correct implementation of a {@link TaskOutput}.
@@ -30,24 +30,24 @@ public interface TaskOutputDispatcher {
      * writes to a {@link FileTaskOutput} destination.
      * 
      * @param output
-     * @throws TaskIOException
+     * @throws IOException
      */
-    void dispatch(FileTaskOutput output) throws TaskIOException;
+    void dispatch(FileTaskOutput output) throws IOException;
 
     /**
      * writes to a {@link DirectoryTaskOutput} destination.
      * 
      * @param output
-     * @throws TaskIOException
+     * @throws IOException
      */
-    void dispatch(DirectoryTaskOutput output) throws TaskIOException;
+    void dispatch(DirectoryTaskOutput output) throws IOException;
 
     /**
      * writes to a {@link StreamTaskOutput} destination.
      * 
      * @param output
-     * @throws TaskIOException
+     * @throws IOException
      */
-    void dispatch(StreamTaskOutput output) throws TaskIOException;
+    void dispatch(StreamTaskOutput output) throws IOException;
 
 }

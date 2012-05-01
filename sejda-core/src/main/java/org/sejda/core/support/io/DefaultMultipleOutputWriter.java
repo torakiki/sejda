@@ -17,8 +17,9 @@
  */
 package org.sejda.core.support.io;
 
+import java.io.IOException;
+
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.FileTaskOutput;
 
 /**
@@ -38,7 +39,7 @@ class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOu
     }
 
     @Override
-    public void dispatch(FileTaskOutput output) throws TaskIOException {
-        throw new TaskIOException("Unsupported file ouput for a multiple output task.");
+    public void dispatch(FileTaskOutput output) throws IOException {
+        throw new IOException("Unsupported file ouput for a multiple output task.");
     }
 }

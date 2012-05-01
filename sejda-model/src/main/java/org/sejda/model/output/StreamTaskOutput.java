@@ -17,6 +17,7 @@
  */
 package org.sejda.model.output;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.validation.constraints.NotNull;
@@ -24,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskOutputVisitException;
 
 /**
  * {@link OutputStream} output destination for a task.
@@ -55,8 +56,12 @@ public final class StreamTaskOutput implements MultipleTaskOutput<OutputStream>,
         return stream;
     }
 
-    public void accept(TaskOutputDispatcher writer) throws TaskIOException {
-        writer.dispatch(this);
+    public void accept(TaskOutputDispatcher writer) throws TaskOutputVisitException {
+        try {
+            writer.dispatch(this);
+        } catch (IOException e) {
+            throw new TaskOutputVisitException("Exception dispatching the stream task output.", e);
+        }
     }
 
     @Override

@@ -17,7 +17,7 @@
  */
 package org.sejda.model.output;
 
-import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskOutputVisitException;
 
 /**
  * Represents task output destination where results of a manipulation will be written.
@@ -39,9 +39,9 @@ public interface TaskOutput<T> {
      * Accept a dispatcher dispatching the correct method implementation
      * 
      * @param dispatcher
-     * @throws TaskException
+     * @throws TaskOutputVisitException
      *             in case of error
      */
-    void accept(TaskOutputDispatcher dispatcher) throws TaskException;
+    void accept(TaskOutputDispatcher dispatcher) throws TaskOutputVisitException;
 
 }

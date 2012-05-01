@@ -30,7 +30,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.sejda.model.exception.TaskIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,14 +54,14 @@ final class OutputWriterHelper {
      * @param outputFile
      * @param overwrite
      *            true to overwrite if already exists
-     * @throws TaskIOException
+     * @throws IOException
      */
-    static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws TaskIOException {
+    static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws IOException {
         if (outputFile.exists() && !outputFile.isFile()) {
-            throw new TaskIOException(String.format("Wrong output destination %s, must be a file.", outputFile));
+            throw new IOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
         if (files.size() != 1) {
-            throw new TaskIOException(String.format(
+            throw new IOException(String.format(
                     "Wrong files map size %d, must be 1 to copy to the selected destination %s", files.size(),
                     outputFile));
         }
@@ -79,20 +78,18 @@ final class OutputWriterHelper {
      * @param outputDirectory
      * @param overwrite
      *            true to overwrite if already exists
-     * @throws TaskIOException
+     * @throws IOException
      */
-    static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite)
-            throws TaskIOException {
+    static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite) throws IOException {
         if (!outputDirectory.isDirectory()) {
-            throw new TaskIOException(String.format("Wrong output destination %s, must be a directory.",
-                    outputDirectory));
+            throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
         }
         if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
-            throw new TaskIOException(String.format("Unable to make destination directory tree %s.", outputDirectory));
+            throw new IOException(String.format("Unable to make destination directory tree %s.", outputDirectory));
         }
         for (Entry<String, File> entry : files.entrySet()) {
             if (isBlank(entry.getKey())) {
-                throw new TaskIOException(String.format(
+                throw new IOException(String.format(
                         "Unable to copy %s to the output directory, no output name specified.", entry.getValue()));
             }
             copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
@@ -108,18 +105,16 @@ final class OutputWriterHelper {
      *            output file
      * @param overwrite
      *            true to overwrite if already exists
-     * @throws TaskIOException
+     * @throws IOException
      */
-    private static void copyFile(File input, File output, boolean overwrite) throws TaskIOException {
+    private static void copyFile(File input, File output, boolean overwrite) throws IOException {
         if (!overwrite && output.exists()) {
-            throw new TaskIOException(String.format(
+            throw new IOException(String.format(
                     "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
         }
         try {
             LOG.debug("Copying {} to {}.", input, output);
             FileUtils.copyFile(input, output);
-        } catch (IOException e) {
-            throw new TaskIOException("Unable to copy the input file to the output file", e);
         } finally {
             delete(input);
         }
@@ -130,14 +125,14 @@ final class OutputWriterHelper {
      * 
      * @param files
      * @param out
-     * @throws TaskIOException
+     * @throws IOException
      */
-    static void copyToStream(Map<String, File> files, OutputStream out) throws TaskIOException {
+    static void copyToStream(Map<String, File> files, OutputStream out) throws IOException {
         ZipOutputStream zipOut = new ZipOutputStream(out);
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;
             if (isBlank(entry.getKey())) {
-                throw new TaskIOException(String.format(
+                throw new IOException(String.format(
                         "Unable to copy %s to the output stream, no output name specified.", entry.getValue()));
             }
             try {
@@ -145,8 +140,6 @@ final class OutputWriterHelper {
                 zipOut.putNextEntry(new ZipEntry(entry.getKey()));
                 LOG.debug("Copying {} to zip stream {}.", entry.getValue(), entry.getKey());
                 IOUtils.copy(input, zipOut);
-            } catch (IOException e) {
-                throw new TaskIOException("Unable to copy the temporary file to the zip output stream", e);
             } finally {
                 IOUtils.closeQuietly(input);
                 delete(entry.getValue());
