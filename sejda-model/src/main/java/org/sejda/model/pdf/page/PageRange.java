@@ -109,6 +109,11 @@ public class PageRange implements PagesSelection {
         if (isUnbounded()) {
             return String.format("%s-", start);
         }
+
+        if(start == end) {
+            return String.format("%s", start);
+        }
+
         return String.format("%s-%s", start, end);
     }
 

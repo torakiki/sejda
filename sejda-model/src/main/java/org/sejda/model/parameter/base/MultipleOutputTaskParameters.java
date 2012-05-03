@@ -43,5 +43,5 @@ public interface MultipleOutputTaskParameters extends TaskParameters {
      * 
      * @param output
      */
-    public void setOutput(MultipleTaskOutput<?> output);
+    void setOutput(MultipleTaskOutput<?> output);
 }

@@ -36,5 +36,5 @@ public interface SingleOutputTaskParameters extends TaskParameters {
      * 
      * @param output
      */
-    public void setOutput(SingleTaskOutput<?> output);
+    void setOutput(SingleTaskOutput<?> output);
 }

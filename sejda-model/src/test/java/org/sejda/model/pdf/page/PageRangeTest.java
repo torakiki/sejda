@@ -65,4 +65,11 @@ public class PageRangeTest {
         PageRange victim2 = new PageRange(10);
         assertEquals(16, victim2.getPages(25).size());
     }
+
+    @Test
+    public void testToString() {
+        assertEquals("1-2", new PageRange(1, 2).toString());
+        assertEquals("2", new PageRange(2, 2).toString());
+        assertEquals("2-", new PageRange(2).toString());
+    }
 }
