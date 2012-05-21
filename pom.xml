@@ -6,7 +6,44 @@
 	<packaging>pom</packaging>
 	<name>sejda</name>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.</description>
-	<!-- Meta top level (root) pom of Sejda, containing all the modules. Defeats the release-plugin and makes it work (!) -->
+
+    <issueManagement>
+        <system>BitBucket</system>
+        <url>https://bitbucket.org/torakiki/sejda/issues/</url>
+    </issueManagement>
+
+    <organization>
+        <name>sejda</name>
+        <url>http://www.sejda.org</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+            <comments>ASLv2</comments>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:hg:https://bitbucket.org/torakiki/sejda</connection>
+        <developerConnection>scm:hg:https://bitbucket.org/torakiki/sejda</developerConnection>
+        <url>https://bitbucket.org/torakiki/sejda/src</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>torakiki</id>
+            <name>Andrea Vacondio</name>
+            <email>andrea.vacondio@gmail.com</email>
+        </developer>
+        <developer>
+            <id>ediweissmann</id>
+            <name>Eduard Weissmann</name>
+            <email>edi.weissmann@gmail.com</email>
+        </developer>
+    </developers>
 
 	<parent>
 		<groupId>org.sejda</groupId>

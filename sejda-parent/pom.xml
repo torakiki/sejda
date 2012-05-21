@@ -16,44 +16,6 @@
 		<version>7</version>
 	</parent>
 
-	<issueManagement>
-		<system>BitBucket</system>
-		<url>https://bitbucket.org/torakiki/sejda/issues/</url>
-	</issueManagement>
-
-	<organization>
-		<name>sejda</name>
-		<url>http://www.sejda.org</url>
-	</organization>
-
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
-			<distribution>repo</distribution>
-			<comments>ASLv2</comments>
-		</license>
-	</licenses>
-
-	<scm>
-		<connection>scm:hg:https://bitbucket.org/torakiki/sejda</connection>
-		<developerConnection>scm:hg:https://bitbucket.org/torakiki/sejda</developerConnection>
-		<url>https://bitbucket.org/torakiki/sejda/src</url>
-	</scm>
-
-	<developers>
-		<developer>
-			<id>torakiki</id>
-			<name>Andrea Vacondio</name>
-			<email>andrea.vacondio@gmail.com</email>
-		</developer>
-		<developer>
-			<id>ediweissmann</id>
-			<name>Eduard Weissmann</name>
-			<email>edi.weissmann@gmail.com</email>
-		</developer>
-	</developers>
-
 	<build>
 		<extensions>
 			<extension>
