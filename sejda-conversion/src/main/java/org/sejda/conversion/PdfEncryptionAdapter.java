@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import org.sejda.conversion.EnumAdapter;
-import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.pdf.encryption.PdfEncryption;
 
 /**
- * Adapter class for enum {@link PdfAccessPermission}. Provides initialization from string
+ * Adapter class for enum {@link PdfEncryption}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfAccessPermissionAdapter extends EnumAdapter<PdfAccessPermission> {
+public class PdfEncryptionAdapter extends EnumAdapter<PdfEncryption> {
 
-    public PdfAccessPermissionAdapter(String userFriendlyName) {
-        super(userFriendlyName, PdfAccessPermission.class, "pdf permission");
+    public PdfEncryptionAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfEncryption.class, "encryption type");
     }
 }

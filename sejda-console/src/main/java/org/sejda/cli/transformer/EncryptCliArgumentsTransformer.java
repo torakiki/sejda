@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.EncryptTaskCliArguments;
-import org.sejda.cli.model.adapter.PdfAccessPermissionAdapter;
+import org.sejda.conversion.PdfAccessPermissionAdapter;
 import org.sejda.model.parameter.EncryptParameters;
 
 /**
