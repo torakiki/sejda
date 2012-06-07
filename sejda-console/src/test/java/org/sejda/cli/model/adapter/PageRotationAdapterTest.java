@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import org.junit.Test;
+import org.sejda.conversion.PageRotationAdapter;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.rotation.PageRotation;
 import org.sejda.model.rotation.Rotation;

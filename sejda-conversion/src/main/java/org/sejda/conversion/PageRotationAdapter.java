@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.conversion.AdapterUtils;
-import org.sejda.conversion.EnumUtils;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.rotation.PageRotation;
 import org.sejda.model.rotation.Rotation;
@@ -38,7 +36,7 @@ public class PageRotationAdapter {
         try {
             doParse(input);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Unparsable page rotation definition: '" + input + "'. "
+            throw new ConversionException("Unparsable page rotation definition: '" + input + "'. "
                     + e.getMessage(), e);
         }
     }
@@ -49,7 +47,7 @@ public class PageRotationAdapter {
     private void doParse(String input) {
         final String[] tokens = AdapterUtils.splitAndTrim(input);
         if (tokens.length < 2) {
-            throw new ArgumentValidationException("Invalid input: '" + input
+            throw new ConversionException("Invalid input: '" + input
                     + "'. Expected format: 'pageDefinition:rotation'");
         }
 
@@ -58,7 +56,7 @@ public class PageRotationAdapter {
 
         final Rotation rotation = EnumUtils.valueOfSilently(Rotation.class, rotationToken);
         if (rotation == null) {
-            throw new ArgumentValidationException("Unknown rotation: '" + rotationToken + "'");
+            throw new ConversionException("Unknown rotation: '" + rotationToken + "'");
         }
 
         RotationType rotationType = EnumUtils.valueOfSilently(RotationType.class, pageToken);
@@ -70,7 +68,7 @@ public class PageRotationAdapter {
         }
 
         if (rotationType.isSinglePage() && pageNumber == null) {
-            throw new ArgumentValidationException("Unknown page definition: '" + pageToken + "'");
+            throw new ConversionException("Unknown page definition: '" + pageToken + "'");
         }
 
         this.pageRotation = rotationType.isSinglePage() ? PageRotation.createSinglePageRotation(pageNumber, rotation)

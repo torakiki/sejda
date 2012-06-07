@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.PageRotationAdapter;
+import org.sejda.conversion.PageRotationAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
