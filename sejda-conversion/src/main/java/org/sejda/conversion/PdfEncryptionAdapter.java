@@ -16,7 +16,6 @@
  */
 package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
 import org.sejda.model.pdf.encryption.PdfEncryption;
 
 /**
