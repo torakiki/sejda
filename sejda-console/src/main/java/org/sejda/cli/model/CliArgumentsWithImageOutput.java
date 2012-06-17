@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.ImageColorTypeAdapter;
+import org.sejda.conversion.ImageColorTypeAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
