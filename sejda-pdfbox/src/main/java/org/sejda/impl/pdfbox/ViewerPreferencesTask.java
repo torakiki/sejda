@@ -23,12 +23,18 @@ import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getDirection;
+import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getDuplex;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getNFSMode;
+import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPrintScaling;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.setBooleanPreferences;
 
 import java.io.File;
 
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -99,11 +105,21 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         PDViewerPreferences preferences = documentHandler.getViewerPreferences();
         setBooleanPreferences(preferences, parameters.getEnabledPreferences());
         if (parameters.getDirection() != null) {
-            String direction = getDirection(parameters.getDirection());
+            READING_DIRECTION direction = getDirection(parameters.getDirection());
             preferences.setReadingDirection(direction);
             LOG.trace("Direction set to '{}'.", direction);
         }
-        String nfsMode = getNFSMode(parameters.getNfsMode());
+        if (parameters.getDuplex() != null) {
+            DUPLEX duplex = getDuplex(parameters.getDuplex());
+            preferences.setDuplex(duplex);
+            LOG.trace("Duplex set to '{}'.", duplex);
+        }
+        if (parameters.getPrintScaling() != null) {
+            PRINT_SCALING printScaling = getPrintScaling(parameters.getPrintScaling());
+            preferences.setPrintScaling(printScaling);
+            LOG.trace("PrintScaling set to '{}'.", printScaling);
+        }
+        NON_FULL_SCREEN_PAGE_MODE nfsMode = getNFSMode(parameters.getNfsMode());
         preferences.setNonFullScreenPageMode(nfsMode);
         LOG.trace("Non full screen mode set to '{}'.", nfsMode);
         documentHandler.setViewerPreferences(preferences);

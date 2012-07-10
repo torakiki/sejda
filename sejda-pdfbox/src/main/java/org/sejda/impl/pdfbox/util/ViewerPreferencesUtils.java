@@ -23,12 +23,18 @@ import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,15 +52,14 @@ public final class ViewerPreferencesUtils {
         // hide utility constructor
     }
 
-    private static final Map<PdfNonFullScreenPageMode, String> NFS_MODE_CACHE;
+    private static final Map<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE> NFS_MODE_CACHE;
     static {
-        Map<PdfNonFullScreenPageMode, String> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, String>();
-        nfsModeCache.put(PdfNonFullScreenPageMode.USE_NONE, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_NONE);
-        nfsModeCache.put(PdfNonFullScreenPageMode.USE_OC,
-                PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_OPTIONAL_CONTENT);
+        Map<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE>();
+        nfsModeCache.put(PdfNonFullScreenPageMode.USE_NONE, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseNone);
+        nfsModeCache.put(PdfNonFullScreenPageMode.USE_OC, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseOC);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OUTLINES,
-                PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES);
-        nfsModeCache.put(PdfNonFullScreenPageMode.USE_THUMNS, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS);
+                PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseOutlines);
+        nfsModeCache.put(PdfNonFullScreenPageMode.USE_THUMNS, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseThumbs);
         NFS_MODE_CACHE = Collections.unmodifiableMap(nfsModeCache);
     }
 
@@ -82,13 +87,22 @@ public final class ViewerPreferencesUtils {
         PAGE_MODE_CACHE = Collections.unmodifiableMap(pageModeCache);
     }
 
+    private static final Map<PdfDuplex, DUPLEX> DUPLEX_CACHE;
+    static {
+        Map<PdfDuplex, DUPLEX> duplexCache = new HashMap<PdfDuplex, DUPLEX>();
+        duplexCache.put(PdfDuplex.SIMPLEX, PDViewerPreferences.DUPLEX.Simplex);
+        duplexCache.put(PdfDuplex.DUPLEX_FLIP_LONG_EDGE, PDViewerPreferences.DUPLEX.DuplexFlipLongEdge);
+        duplexCache.put(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE, PDViewerPreferences.DUPLEX.DuplexFlipShortEdge);
+        DUPLEX_CACHE = Collections.unmodifiableMap(duplexCache);
+    }
+
     /**
      * Mapping between Sejda and PDFBox non full screen mode constants
      * 
      * @param nfsMode
      * @return the PDFBox non full screen mode constant.
      */
-    public static String getNFSMode(PdfNonFullScreenPageMode nfsMode) {
+    public static NON_FULL_SCREEN_PAGE_MODE getNFSMode(PdfNonFullScreenPageMode nfsMode) {
         return NFS_MODE_CACHE.get(nfsMode);
     }
 
@@ -118,11 +132,34 @@ public final class ViewerPreferencesUtils {
      * @param direction
      * @return the PDFBox direction constant
      */
-    public static String getDirection(PdfDirection direction) {
+    public static READING_DIRECTION getDirection(PdfDirection direction) {
         if (PdfDirection.RIGHT_TO_LEFT.equals(direction)) {
-            return PDViewerPreferences.READING_DIRECTION_R2L;
+            return PDViewerPreferences.READING_DIRECTION.R2L;
         }
-        return PDViewerPreferences.READING_DIRECTION_L2R;
+        return PDViewerPreferences.READING_DIRECTION.L2R;
+    }
+
+    /**
+     * Mapping between Sejda and PDFBox duplex constants
+     * 
+     * @param duplex
+     * @return the PDFBox duplex constant
+     */
+    public static DUPLEX getDuplex(PdfDuplex duplex) {
+        return DUPLEX_CACHE.get(duplex);
+    }
+
+    /**
+     * Mapping between Sejda and PDFBox print scaling constants
+     * 
+     * @param scaling
+     * @return the PDFBox print scaling constant
+     */
+    public static PRINT_SCALING getPrintScaling(PdfPrintScaling scaling) {
+        if (PdfPrintScaling.NONE.equals(scaling)) {
+            return PDViewerPreferences.PRINT_SCALING.None;
+        }
+        return PDViewerPreferences.PRINT_SCALING.AppDefault;
     }
 
     /**

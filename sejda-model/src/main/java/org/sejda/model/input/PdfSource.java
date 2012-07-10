@@ -53,5 +53,5 @@ public interface PdfSource<T> {
      * @throws TaskIOException
      *             in case of error opening the source.
      */
-    public abstract <R> R open(PdfSourceOpener<R> opener) throws TaskIOException;
+    <R> R open(PdfSourceOpener<R> opener) throws TaskIOException;
 }

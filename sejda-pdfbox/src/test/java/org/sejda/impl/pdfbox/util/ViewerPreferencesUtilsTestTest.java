@@ -40,9 +40,9 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 public class ViewerPreferencesUtilsTestTest {
     @Test
     public void testGetDirection() {
-        assertEquals(PDViewerPreferences.READING_DIRECTION_L2R,
+        assertEquals(PDViewerPreferences.READING_DIRECTION.L2R,
                 ViewerPreferencesUtils.getDirection(PdfDirection.LEFT_TO_RIGHT));
-        assertEquals(PDViewerPreferences.READING_DIRECTION_R2L,
+        assertEquals(PDViewerPreferences.READING_DIRECTION.R2L,
                 ViewerPreferencesUtils.getDirection(PdfDirection.RIGHT_TO_LEFT));
     }
 
@@ -60,13 +60,13 @@ public class ViewerPreferencesUtilsTestTest {
 
     @Test
     public void testGetNFSMode() {
-        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_NONE,
+        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseNone,
                 ViewerPreferencesUtils.getNFSMode(PdfNonFullScreenPageMode.USE_NONE));
-        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_OPTIONAL_CONTENT,
+        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseOC,
                 ViewerPreferencesUtils.getNFSMode(PdfNonFullScreenPageMode.USE_OC));
-        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_OUTLINES,
+        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseOutlines,
                 ViewerPreferencesUtils.getNFSMode(PdfNonFullScreenPageMode.USE_OUTLINES));
-        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE_USE_THUMBS,
+        assertEquals(PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseThumbs,
                 ViewerPreferencesUtils.getNFSMode(PdfNonFullScreenPageMode.USE_THUMNS));
     }
 
