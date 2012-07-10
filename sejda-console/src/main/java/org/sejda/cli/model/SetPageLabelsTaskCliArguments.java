@@ -19,7 +19,7 @@ package org.sejda.cli.model;
 import java.util.List;
 
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.cli.model.adapter.PdfPageLabelAdapter;
+import org.sejda.conversion.PdfPageLabelAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;

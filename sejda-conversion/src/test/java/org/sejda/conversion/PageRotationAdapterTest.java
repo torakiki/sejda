@@ -1,6 +1,5 @@
 package org.sejda.conversion;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.sejda.model.rotation.PageRotation;
 import org.sejda.model.rotation.Rotation;

@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.conversion.AdapterUtils;
-import org.sejda.conversion.EnumUtils;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
@@ -43,7 +41,7 @@ public class PdfPageLabelAdapter {
         try {
             doParseInput(input);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Could not parse input: '" + input + "'. " + e.getMessage(), e);
+            throw new ConversionException("Could not parse input: '" + input + "'. " + e.getMessage(), e);
         }
     }
 
@@ -51,7 +49,7 @@ public class PdfPageLabelAdapter {
         String[] tokens = AdapterUtils.split(input);
 
         if (tokens.length < MIN_TOKENS) {
-            throw new ArgumentValidationException(
+            throw new ConversionException(
                     "Format expected is: pageNumber(mandatory):numberingStyle(mandatory):logicalPageNumber(mandatory):labelPrefix(optional)'");
         }
 
