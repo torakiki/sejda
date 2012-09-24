@@ -102,7 +102,7 @@ public final class NameGenerationRequest {
             throw new IllegalArgumentException("Original name cannot be blank");
         }
         // check if the filename contains '.' and it's at least in second position (Ex. a.pdf)
-        if (originalName.lastIndexOf('.') > 1) {
+        if (originalName.lastIndexOf('.') >= 1) {
             this.originalName = originalName.substring(0, originalName.lastIndexOf('.'));
         } else {
             this.originalName = originalName;

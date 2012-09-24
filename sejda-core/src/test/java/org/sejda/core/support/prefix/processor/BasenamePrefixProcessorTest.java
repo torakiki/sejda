@@ -48,6 +48,14 @@ public class BasenamePrefixProcessorTest extends BasePrefixProcessorTest {
         assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
     }
 
+    @Test
+    public void testComplexProcessStripExtensionOneCharName() {
+        String prefix = "prefix_[BASENAME]";
+        String originalName = "x.pdf";
+        String expected = "prefix_x";
+        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+    }
+
     @Override
     PrefixProcessor getProcessor() {
         return victim;
