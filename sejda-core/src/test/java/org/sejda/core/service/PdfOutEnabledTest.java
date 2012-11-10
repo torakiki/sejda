@@ -181,4 +181,8 @@ public class PdfOutEnabledTest {
             reader.close();
         }
     }
+
+    public File getResultFile() {
+        return outFile;
+    }
 }
