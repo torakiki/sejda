@@ -62,8 +62,8 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
      */
     private void setUpParameters() {
         parameters = new SetFooterParameters();
-        PdfFooterLabel label1 = new PdfFooterLabel("Introduction", FooterNumberingStyle.EMPTY, -1);
-        PdfFooterLabel label3 = new PdfFooterLabel(FooterNumberingStyle.ARABIC, 100);
+        PdfFooterLabel label1 = PdfFooterLabel.newInstanceTextOnly("Introduction");
+        PdfFooterLabel label3 = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
         parameters.putLabel(1, label1);
         parameters.putLabel(3, label3);
 

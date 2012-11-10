@@ -24,8 +24,8 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class SetFooterParametersTest extends TestCase {
-    PdfFooterLabel label1 = new PdfFooterLabel("Prefix1 ", FooterNumberingStyle.ARABIC, 100);
-    PdfFooterLabel label2 = new PdfFooterLabel("Prefix2 ", FooterNumberingStyle.EMPTY, -100);
+    PdfFooterLabel label1 = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ", FooterNumberingStyle.ARABIC, 100);
+    PdfFooterLabel label2 = PdfFooterLabel.newInstanceTextOnly("Prefix2 ");
 
     public SetFooterParameters parameters() {
         SetFooterParameters params = new SetFooterParameters();

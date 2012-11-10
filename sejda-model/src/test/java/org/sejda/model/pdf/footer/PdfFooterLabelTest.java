@@ -23,17 +23,17 @@ import static org.junit.Assert.assertThat;
 public class PdfFooterLabelTest extends TestCase {
 
     public void testFormatForLabelWithoutPrefix() throws Exception {
-        PdfFooterLabel label = new PdfFooterLabel(FooterNumberingStyle.ARABIC, 100);
+        PdfFooterLabel label = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
         assertThat(label.formatFor(10), is("110"));
     }
 
     public void testFormatForLabelWithPrefix() throws Exception {
-        PdfFooterLabel label = new PdfFooterLabel("Prefix ", FooterNumberingStyle.ARABIC, 100);
+        PdfFooterLabel label = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix ", FooterNumberingStyle.ARABIC, 100);
         assertThat(label.formatFor(10), is("Prefix 110"));
     }
 
     public void testFormatForEmptyNumberingStyle() throws Exception {
-        PdfFooterLabel label = new PdfFooterLabel("Prefix", FooterNumberingStyle.EMPTY, -1);
+        PdfFooterLabel label = PdfFooterLabel.newInstanceTextOnly("Prefix");
         assertThat(label.formatFor(99), is("Prefix"));
     }
 }

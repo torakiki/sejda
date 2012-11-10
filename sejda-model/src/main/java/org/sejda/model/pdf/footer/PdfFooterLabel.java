@@ -38,10 +38,6 @@ public class PdfFooterLabel {
         this.logicalPageNumber = logicalPageNumber;
     }
 
-    public PdfFooterLabel(FooterNumberingStyle numberingStyle, int logicalPageNumber) {
-        this(null, numberingStyle, logicalPageNumber);
-    }
-
     public String getLabelPrefix() {
         return labelPrefix;
     }
@@ -79,5 +75,17 @@ public class PdfFooterLabel {
         } else {
             return labelPrefix + actualPageNumber;
         }
+    }
+
+    public static PdfFooterLabel newInstanceNoLabelPrefix(FooterNumberingStyle numberingStyle, int logicalPageNumber) {
+        return new PdfFooterLabel(null, numberingStyle, logicalPageNumber);
+    }
+
+    public static PdfFooterLabel newInstanceTextOnly(String labelPrefix) {
+        return new PdfFooterLabel(labelPrefix, FooterNumberingStyle.EMPTY, 1);
+    }
+
+    public static PdfFooterLabel newInstanceWithLabelPrefixAndNumbering(String labelPrefix, FooterNumberingStyle numberingStyle, int logicalPageNumber) {
+        return new PdfFooterLabel(labelPrefix, numberingStyle, logicalPageNumber);
     }
 }
