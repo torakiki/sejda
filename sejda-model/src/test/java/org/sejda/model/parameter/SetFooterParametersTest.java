@@ -15,7 +15,7 @@
  */
 package org.sejda.model.parameter;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 import org.sejda.model.pdf.footer.FooterNumberingStyle;
 import org.sejda.model.pdf.footer.PdfFooterLabel;
 
@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class SetFooterParametersTest extends TestCase {
+public class SetFooterParametersTest {
     PdfFooterLabel label1 = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ", FooterNumberingStyle.ARABIC, 100);
     PdfFooterLabel label2 = PdfFooterLabel.newInstanceTextOnly("Prefix2 ");
 
@@ -34,6 +34,7 @@ public class SetFooterParametersTest extends TestCase {
         return params;
     }
 
+    @Test
     public void testPutLabel() throws Exception {
         SetFooterParameters params = new SetFooterParameters();
         params.putLabel(8, label1);
@@ -41,10 +42,12 @@ public class SetFooterParametersTest extends TestCase {
         assertThat(params.putLabel(8, label2), is(label1));
     }
 
+    @Test
     public void testFormatLabelForUnlabeledPage() throws Exception {
         assertThat(parameters().formatLabelFor(1), is(nullValue()));
     }
 
+    @Test
     public void testFormatLabel() {
         assertThat(parameters().formatLabelFor(8), is("Prefix1 100"));
         assertThat(parameters().formatLabelFor(9), is("Prefix1 101"));
