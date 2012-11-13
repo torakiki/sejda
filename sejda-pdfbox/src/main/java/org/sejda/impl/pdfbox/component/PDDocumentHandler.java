@@ -16,21 +16,24 @@
  */
 package org.sejda.impl.pdfbox.component;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageLayout;
+import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageMode;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.CryptographyException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.encryption.BadSecurityHandlerException;
 import org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial;
 import org.apache.pdfbox.pdmodel.encryption.StandardDecryptionMaterial;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
-import org.apache.pdfbox.util.PDFTextStripperByArea;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -40,18 +43,9 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageLayout;
-import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageMode;
-
 /**
  * Wrapper over a {@link PDDocument}.
- *
+ * 
  * @author Andrea Vacondio
  */
 public class PDDocumentHandler implements Closeable {
@@ -63,7 +57,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
-     *
+     * 
      * @param document
      * @param password
      * @throws TaskIOException
@@ -79,7 +73,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a new handler with an empty underlying {@link PDDocument}.
-     *
+     * 
      * @throws TaskIOException
      */
     public PDDocumentHandler() throws TaskIOException {
@@ -116,7 +110,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Set the document information on the underlying {@link PDDocument}
-     *
+     * 
      * @param info
      */
     public void setDocumentInformation(PDDocumentInformation info) {
@@ -132,7 +126,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page layout on the underlying {@link PDDocument}.
-     *
+     * 
      * @param layout
      */
     public void setPageLayoutOnDocument(PdfPageLayout layout) {
@@ -142,7 +136,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page mode on the underlying {@link PDDocument}.
-     *
+     * 
      * @param mode
      */
     public void setPageModeOnDocument(PdfPageMode mode) {
@@ -152,7 +146,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the version on the underlying {@link PDDocument}.
-     *
+     * 
      * @param version
      */
     public void setVersionOnPDDocument(PdfVersion version) {
@@ -165,7 +159,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Set compression of the XRef table on underlying {@link PDDocument}.
-     *
+     * 
      * @param compress
      */
     public void compressXrefStream(boolean compress) {
@@ -195,7 +189,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} removing security from it.
-     *
+     * 
      * @param file
      * @throws TaskException
      */
@@ -205,7 +199,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} to the given file.
-     *
+     * 
      * @param file
      * @throws TaskException
      */
@@ -237,7 +231,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Import an existing page to the underlying {@link PDDocument}
-     *
+     * 
      * @param page
      * @throws TaskIOException
      */
@@ -258,57 +252,4 @@ public class PDDocumentHandler implements Closeable {
         return (PDPage) document.getDocumentCatalog().getAllPages().get(pageNumber - 1);
     }
 
-    public void writeFooter(int pageNumber, String label) throws TaskIOException {
-        PDFont font = PDType1Font.HELVETICA;
-        float fontSize = 10.0f;
-
-        PDPage page = getPage(pageNumber);
-        PDRectangle pageSize = page.findMediaBox();
-        try {
-            float stringWidth = font.getStringWidth(label);
-            float centeredPosition = (pageSize.getWidth() - (stringWidth * fontSize) / 1000f) / 2f;
-            PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true);
-            contentStream.beginText();
-            contentStream.setFont(font, fontSize);
-            contentStream.moveTextPositionByAmount(centeredPosition, 30);
-            contentStream.drawString(label);
-            contentStream.endText();
-            contentStream.close();
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred writing the footer of the page.", e);
-        }
-    }
-
-    public String extractFooterText(int pageNumber) throws TaskIOException {
-        return extractTextFromArea(getFooterAreaRectangle(pageNumber), pageNumber);
-    }
-
-    private Rectangle getFooterAreaRectangle(int pageNumber) {
-        PDPage page = getPage(pageNumber);
-        PDRectangle pageSize = page.findMediaBox();
-        int pageHeight = (int) pageSize.getHeight();
-        int pageWidth = (int) pageSize.getWidth();
-        int footerHeight = 50;
-
-        return new Rectangle(0, pageHeight - footerHeight, pageWidth, footerHeight);
-    }
-
-    /**
-     * Extracts the text found in a specific page bound to a specific rectangle area
-     * Eg: extract footer text from a certain page
-     */
-    String extractTextFromArea(Rectangle area, int pageNumber) throws TaskIOException {
-        try {
-            PDFTextStripperByArea stripper = new PDFTextStripperByArea();
-
-            stripper.setSortByPosition(true);
-
-            stripper.addRegion("area1", area);
-            stripper.extractRegions(getPage(pageNumber));
-
-            return stripper.getTextForRegion("area1");
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred extracting text from page.", e);
-        }
-    }
 }

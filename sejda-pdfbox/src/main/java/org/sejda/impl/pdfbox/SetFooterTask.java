@@ -16,29 +16,32 @@
  */
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+
+import java.io.File;
+
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
+import org.sejda.impl.pdfbox.component.PdfFooterWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetFooterParameters;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-
 /**
  * PDFBox implementation of a task adding footer labels to pages
- *
+ * 
  * @author Eduard Weissmann
- *
+ * 
  */
 public class SetFooterTask extends BaseTask<SetFooterParameters> {
 
@@ -46,6 +49,7 @@ public class SetFooterTask extends BaseTask<SetFooterParameters> {
 
     private PDDocumentHandler documentHandler = null;
     private SingleOutputWriter outputWriter;
+    private PdfFooterWriter footerWriter = null;
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
@@ -55,10 +59,12 @@ public class SetFooterTask extends BaseTask<SetFooterParameters> {
     }
 
     public void execute(SetFooterParameters parameters) throws TaskException {
+        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
-        documentHandler.getPermissions().ensureOwnerPermissions();
+        documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
         documentHandler.setCreatorOnPDDocument();
 
         File tmpFile = createTemporaryPdfBuffer();
@@ -67,12 +73,8 @@ public class SetFooterTask extends BaseTask<SetFooterParameters> {
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.compressXrefStream(parameters.isCompressXref());
 
-        for(int pageNumber = 1; pageNumber <= documentHandler.getNumberOfPages(); pageNumber++){
-            String label = parameters.formatLabelFor(pageNumber);
-            if(label != null){
-                documentHandler.writeFooter(pageNumber, label);
-            }
-        }
+        footerWriter = new PdfFooterWriter(documentHandler);
+        footerWriter.writeFooter(parameters);
 
         documentHandler.savePDDocument(tmpFile);
 
@@ -81,7 +83,7 @@ public class SetFooterTask extends BaseTask<SetFooterParameters> {
         nullSafeCloseQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
-        LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
+        LOG.debug("Footer added and document written to {}", parameters.getOutput());
     }
 
     public void after() {

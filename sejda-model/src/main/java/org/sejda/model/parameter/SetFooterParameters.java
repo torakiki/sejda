@@ -15,18 +15,20 @@
  */
 package org.sejda.model.parameter;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
-import org.sejda.model.pdf.footer.PdfFooterLabel;
-import org.sejda.model.validation.constraint.NotEmpty;
-import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
-
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
+
+import javax.validation.Valid;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
+import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.footer.PdfFooterLabel;
+import org.sejda.model.validation.constraint.NotEmpty;
+import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameters configuring how to label the footer of pages
@@ -40,9 +42,11 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
     @NotEmpty
     @Valid
     private final Map<Integer, PdfFooterLabel> labels = new HashMap<Integer, PdfFooterLabel>();
+    private StandardType1Font font;
 
     /**
      * Apply label for all pages starting with pageNumber
+     * 
      * @return previous label associated with pageNumber starting point
      */
     public PdfFooterLabel putLabel(int pageNumber, PdfFooterLabel label) {
@@ -56,9 +60,17 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         return Collections.unmodifiableMap(labels);
     }
 
+    public StandardType1Font getFont() {
+        return font;
+    }
+
+    public void setFont(StandardType1Font font) {
+        this.font = font;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(labels).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(labels).toHashCode();
     }
 
     @Override
@@ -70,16 +82,16 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
             return false;
         }
         SetFooterParameters parameter = (SetFooterParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(getLabels(), parameter.getLabels())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(getFont(), parameter.getFont())
+                .append(getLabels(), parameter.getLabels()).isEquals();
     }
 
     /**
-     * Return the footer label to be applied to a pdf page number
+     * @return the footer label to be applied to a pdf page number
      */
     public String formatLabelFor(int pageNumber) {
         int labelDefStartPage = getLabelDefinitionStartPageFor(pageNumber);
-        if(labelDefStartPage <= 0) {
+        if (labelDefStartPage <= 0) {
             return null;
         }
 
@@ -88,27 +100,25 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         return label.formatFor(offset);
     }
 
-
     /**
-     * Find a page number x, for starting with which, the user defined a label that should be applied also to input pageNumber
-     * Eg: user defines label1 for pages starting at 10 and label2 for pages starting with 100. key page for 12 would be 1, key page for 101 would be 100, key page for 9 would be 0
+     * Find a page number x, for starting with which, the user defined a label that should be applied also to input pageNumber Eg: user defines label1 for pages starting at 10 and
+     * label2 for pages starting with 100. key page for 12 would be 1, key page for 101 would be 100, key page for 9 would be 0
      */
     private int getLabelDefinitionStartPageFor(int pageNumber) {
-        if(pageNumber <= 0) {
+        if (pageNumber <= 0) {
             return pageNumber;
         }
 
-        if(labels.containsKey(pageNumber)){
+        if (labels.containsKey(pageNumber)) {
             return pageNumber;
-        } else {
-            return getLabelDefinitionStartPageFor(findHighestStartPageLowerThan(pageNumber - 1));
         }
+        return getLabelDefinitionStartPageFor(findHighestStartPageLowerThan(pageNumber - 1));
     }
 
     private int findHighestStartPageLowerThan(int page) {
         int prevStartPage = 0;
-        for(int startPage : new TreeSet<Integer>(labels.keySet())) {
-            if(startPage > page) {
+        for (int startPage : new TreeSet<Integer>(labels.keySet())) {
+            if (startPage > page) {
                 return prevStartPage;
             }
 

@@ -16,18 +16,36 @@
  */
 package org.sejda.model.pdf.footer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.RomanNumbersUtils;
 
 /**
  * Numbering styles for footer labels.
- *
+ * 
  * @author Eduard Weissmann
  * 
  */
 public enum FooterNumberingStyle implements DisplayNamedEnum {
-    // TODO: maybe the roman and alphabetic stuff too someday
-    ARABIC("arabic"),
-    EMPTY("empty"); // no page number is added
+    // TODO: maybe the alphabetic stuff too someday
+    ARABIC("arabic") {
+        @Override
+        public String toStyledString(int number) {
+            return Integer.toString(number);
+        }
+    },
+    EMPTY("empty") {
+        @Override
+        public String toStyledString(int number) {
+            return StringUtils.EMPTY;
+        }
+    },
+    ROMAN("roman") {
+        @Override
+        public String toStyledString(int number) {
+            return RomanNumbersUtils.toRoman(number);
+        }
+    };
 
     private String displayName;
 
@@ -38,4 +56,11 @@ public enum FooterNumberingStyle implements DisplayNamedEnum {
     public String getDisplayName() {
         return displayName;
     }
+
+    /**
+     * 
+     * @param number
+     * @return a string representing the given number.
+     */
+    public abstract String toStyledString(int number);
 }

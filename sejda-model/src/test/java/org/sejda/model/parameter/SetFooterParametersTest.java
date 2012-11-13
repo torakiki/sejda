@@ -15,16 +15,19 @@
  */
 package org.sejda.model.parameter;
 
-import org.junit.Test;
-import org.sejda.model.pdf.footer.FooterNumberingStyle;
-import org.sejda.model.pdf.footer.PdfFooterLabel;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
+import org.junit.Test;
+import org.sejda.TestUtils;
+import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.footer.FooterNumberingStyle;
+import org.sejda.model.pdf.footer.PdfFooterLabel;
+
 public class SetFooterParametersTest {
-    PdfFooterLabel label1 = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ", FooterNumberingStyle.ARABIC, 100);
+    PdfFooterLabel label1 = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ",
+            FooterNumberingStyle.ARABIC, 100);
     PdfFooterLabel label2 = PdfFooterLabel.newInstanceTextOnly("Prefix2 ");
 
     public SetFooterParameters parameters() {
@@ -35,7 +38,7 @@ public class SetFooterParametersTest {
     }
 
     @Test
-    public void testPutLabel() throws Exception {
+    public void testPutLabel() {
         SetFooterParameters params = new SetFooterParameters();
         params.putLabel(8, label1);
 
@@ -43,8 +46,22 @@ public class SetFooterParametersTest {
     }
 
     @Test
-    public void testFormatLabelForUnlabeledPage() throws Exception {
+    public void testFormatLabelForUnlabeledPage() {
         assertThat(parameters().formatLabelFor(1), is(nullValue()));
+    }
+
+    @Test
+    public void testEquals() {
+        SetFooterParameters eq1 = new SetFooterParameters();
+        SetFooterParameters eq2 = new SetFooterParameters();
+        SetFooterParameters eq3 = new SetFooterParameters();
+        SetFooterParameters diff = new SetFooterParameters();
+        eq1.putLabel(8, label1);
+        eq2.putLabel(8, label1);
+        eq3.putLabel(8, label1);
+        diff.putLabel(8, label1);
+        diff.setFont(StandardType1Font.CURIER_BOLD);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
@@ -52,8 +69,8 @@ public class SetFooterParametersTest {
         assertThat(parameters().formatLabelFor(8), is("Prefix1 100"));
         assertThat(parameters().formatLabelFor(9), is("Prefix1 101"));
         assertThat(parameters().formatLabelFor(15), is("Prefix1 107"));
-        assertThat(parameters().formatLabelFor(16), is("Prefix2 "));
-        assertThat(parameters().formatLabelFor(17), is("Prefix2 "));
-        assertThat(parameters().formatLabelFor(179663782), is("Prefix2 "));
+        assertThat(parameters().formatLabelFor(16), is("Prefix2"));
+        assertThat(parameters().formatLabelFor(17), is("Prefix2"));
+        assertThat(parameters().formatLabelFor(179663782), is("Prefix2"));
     }
 }

@@ -15,7 +15,14 @@
  */
 package org.sejda.core.service;
 
-import com.lowagie.text.pdf.PdfReader;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,17 +33,12 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.footer.FooterNumberingStyle;
 import org.sejda.model.pdf.footer.PdfFooterLabel;
 import org.sejda.model.task.Task;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.lowagie.text.pdf.PdfReader;
 
 /**
  * @author Eduard Weissmann
@@ -52,7 +54,6 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
@@ -69,6 +70,7 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
 
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setFont(StandardType1Font.CURIER_BOLD_OBLIQUE);
 
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
@@ -76,8 +78,36 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
         parameters.setOverwrite(true);
     }
 
+    private void setUpParametersEncrypted() {
+        parameters = new SetFooterParameters();
+        PdfFooterLabel label1 = PdfFooterLabel.newInstanceTextOnly("Introduction");
+        PdfFooterLabel label3 = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
+        parameters.putLabel(1, label1);
+        parameters.putLabel(3, label3);
+
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
+        parameters.setSource(source);
+        parameters.setOverwrite(true);
+    }
+
     @Test
     public void testExecute() throws TaskException, IOException {
+        setUpParameters();
+        doTestExecute();
+    }
+
+    // TODO investigate the NPE from PDFBox
+    @Ignore
+    public void testExecuteencrypted() throws TaskException, IOException {
+        setUpParametersEncrypted();
+        doTestExecute();
+    }
+
+    private void doTestExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         victim.execute(parameters);

@@ -25,13 +25,14 @@ import java.util.Set;
 
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 
 /**
  * @author Andrea Vacondio
@@ -47,15 +48,20 @@ public class ViewerPreferencesUtilsTestTest {
     }
 
     @Test
-    @Ignore
     public void testGetDuplex() {
-        // not yet supported by PDFBox
+        assertEquals(PDViewerPreferences.DUPLEX.Simplex, ViewerPreferencesUtils.getDuplex(PdfDuplex.SIMPLEX));
+        assertEquals(PDViewerPreferences.DUPLEX.DuplexFlipLongEdge,
+                ViewerPreferencesUtils.getDuplex(PdfDuplex.DUPLEX_FLIP_LONG_EDGE));
+        assertEquals(PDViewerPreferences.DUPLEX.DuplexFlipShortEdge,
+                ViewerPreferencesUtils.getDuplex(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE));
     }
 
     @Test
-    @Ignore
     public void testGetPrintScaling() {
-        // not yet supported by PDFBox
+        assertEquals(PDViewerPreferences.PRINT_SCALING.None,
+                ViewerPreferencesUtils.getPrintScaling(PdfPrintScaling.NONE));
+        assertEquals(PDViewerPreferences.PRINT_SCALING.AppDefault,
+                ViewerPreferencesUtils.getPrintScaling(PdfPrintScaling.APP_DEFAULT));
     }
 
     @Test

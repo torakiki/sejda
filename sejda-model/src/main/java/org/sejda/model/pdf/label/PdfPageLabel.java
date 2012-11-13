@@ -36,6 +36,7 @@ public final class PdfPageLabel {
 
     @NotNull
     private String labelPrefix;
+    @NotNull
     private PdfLabelNumberingStyle numberingStyle;
     @Min(value = 1)
     private int logicalPageNumber;

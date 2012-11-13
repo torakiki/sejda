@@ -15,25 +15,31 @@
  */
 package org.sejda.model.pdf.footer;
 
-import org.apache.commons.lang3.StringUtils;
+import java.security.InvalidParameterException;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Labeling information for the footer of the page
- *
+ * 
  * @author Eduard Weissmann
  */
-public class PdfFooterLabel {
+public final class PdfFooterLabel {
     @NotNull
     private String labelPrefix;
+    @NotNull
     private FooterNumberingStyle numberingStyle;
     @Min(value = 1)
     private int logicalPageNumber; // start numbering from
 
-    public PdfFooterLabel(String labelPrefix, FooterNumberingStyle numberingStyle, int logicalPageNumber) {
+    private PdfFooterLabel(String labelPrefix, FooterNumberingStyle numberingStyle, int logicalPageNumber) {
         this.labelPrefix = StringUtils.defaultString(labelPrefix, "");
+        if (numberingStyle == null) {
+            throw new InvalidParameterException("Input numbering style cannot be null.");
+        }
         this.numberingStyle = numberingStyle;
         this.logicalPageNumber = logicalPageNumber;
     }
@@ -52,7 +58,8 @@ public class PdfFooterLabel {
 
     @Override
     public int hashCode() {
-        return new org.apache.commons.lang3.builder.HashCodeBuilder().append(this.labelPrefix).append(this.numberingStyle).append(this.logicalPageNumber).toHashCode();
+        return new org.apache.commons.lang3.builder.HashCodeBuilder().append(this.labelPrefix)
+                .append(this.numberingStyle).append(this.logicalPageNumber).toHashCode();
     }
 
     @Override
@@ -64,17 +71,13 @@ public class PdfFooterLabel {
             return false;
         }
         final PdfFooterLabel other = (PdfFooterLabel) obj;
-        return new org.apache.commons.lang3.builder.EqualsBuilder().append(this.labelPrefix, other.labelPrefix).append(this.numberingStyle, other.numberingStyle)
+        return new org.apache.commons.lang3.builder.EqualsBuilder().append(this.labelPrefix, other.labelPrefix)
+                .append(this.numberingStyle, other.numberingStyle)
                 .append(this.logicalPageNumber, other.logicalPageNumber).isEquals();
     }
 
     public String formatFor(int offset) {
-        int actualPageNumber = logicalPageNumber + offset;
-        if(numberingStyle == FooterNumberingStyle.EMPTY) {
-            return labelPrefix;
-        } else {
-            return labelPrefix + actualPageNumber;
-        }
+        return String.format("%s%s", labelPrefix, numberingStyle.toStyledString(logicalPageNumber + offset)).trim();
     }
 
     public static PdfFooterLabel newInstanceNoLabelPrefix(FooterNumberingStyle numberingStyle, int logicalPageNumber) {
@@ -85,7 +88,8 @@ public class PdfFooterLabel {
         return new PdfFooterLabel(labelPrefix, FooterNumberingStyle.EMPTY, 1);
     }
 
-    public static PdfFooterLabel newInstanceWithLabelPrefixAndNumbering(String labelPrefix, FooterNumberingStyle numberingStyle, int logicalPageNumber) {
+    public static PdfFooterLabel newInstanceWithLabelPrefixAndNumbering(String labelPrefix,
+            FooterNumberingStyle numberingStyle, int logicalPageNumber) {
         return new PdfFooterLabel(labelPrefix, numberingStyle, logicalPageNumber);
     }
 }
