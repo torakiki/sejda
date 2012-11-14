@@ -34,6 +34,7 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.footer.FooterAlign;
 import org.sejda.model.pdf.footer.FooterNumberingStyle;
 import org.sejda.model.pdf.footer.PdfFooterLabel;
 import org.sejda.model.task.Task;
@@ -76,6 +77,7 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
+        parameters.setAlign(FooterAlign.LEFT);
     }
 
     private void setUpParametersEncrypted() {

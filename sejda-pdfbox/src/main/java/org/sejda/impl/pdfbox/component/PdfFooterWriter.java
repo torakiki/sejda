@@ -30,6 +30,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetFooterParameters;
+import org.sejda.model.pdf.footer.FooterAlign;
 
 /**
  * Component providing footer related functionalities.
@@ -38,6 +39,9 @@ import org.sejda.model.parameter.SetFooterParameters;
  * 
  */
 public class PdfFooterWriter implements Closeable {
+
+    // TODO define as a params member
+    private static final Float DEFAULT_MARGIN = 30F;
 
     private PDDocumentHandler documentHandler;
 
@@ -57,15 +61,16 @@ public class PdfFooterWriter implements Closeable {
                 float fontSize = 10.0f;
 
                 PDPage page = documentHandler.getPage(pageNumber);
-                PDRectangle pageSize = page.findMediaBox();
+                PDRectangle pageSize = page.findCropBox();
                 try {
-                    float stringWidth = font.getStringWidth(label);
-                    float centeredPosition = (pageSize.getWidth() - (stringWidth * fontSize) / 1000f) / 2f;
+                    float stringWidth = font.getStringWidth(label) * fontSize / 1000f;
+                    float position = defaultIfNull(parameters.getAlign(), FooterAlign.CENTER).horizontalPosition(
+                            pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
                     PDPageContentStream contentStream = new PDPageContentStream(
                             documentHandler.getUnderlyingPDDocument(), page, true, true);
                     contentStream.beginText();
                     contentStream.setFont(font, fontSize);
-                    contentStream.moveTextPositionByAmount(centeredPosition, 30);
+                    contentStream.moveTextPositionByAmount(position, DEFAULT_MARGIN);
                     contentStream.drawString(label);
                     contentStream.endText();
                     contentStream.close();
