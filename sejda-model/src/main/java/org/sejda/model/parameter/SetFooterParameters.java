@@ -15,17 +15,20 @@
  */
 package org.sejda.model.parameter;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.footer.FooterAlign;
 import org.sejda.model.pdf.footer.PdfFooterLabel;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
@@ -42,7 +45,10 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
     @NotEmpty
     @Valid
     private final Map<Integer, PdfFooterLabel> labels = new HashMap<Integer, PdfFooterLabel>();
-    private StandardType1Font font;
+    private StandardType1Font font = StandardType1Font.HELVETICA;
+    private FooterAlign align = FooterAlign.CENTER;
+    @Min(1)
+    private BigDecimal fontSize = new BigDecimal("10");
 
     /**
      * Apply label for all pages starting with pageNumber
@@ -68,9 +74,31 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         this.font = font;
     }
 
+    public FooterAlign getAlign() {
+        return align;
+    }
+
+    public void setAlign(FooterAlign align) {
+        this.align = align;
+    }
+
+    public BigDecimal getFontSize() {
+        return fontSize;
+    }
+
+    /**
+     * Set the font size in pts
+     * 
+     * @param fontSize
+     */
+    public void setFontSize(BigDecimal fontSize) {
+        this.fontSize = fontSize;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(labels).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(align).append(fontSize)
+                .append(labels).toHashCode();
     }
 
     @Override
@@ -83,6 +111,7 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         }
         SetFooterParameters parameter = (SetFooterParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getFont(), parameter.getFont())
+                .append(getAlign(), parameter.getAlign()).append(getFontSize(), parameter.getFontSize())
                 .append(getLabels(), parameter.getLabels()).isEquals();
     }
 

@@ -21,6 +21,7 @@ import static org.sejda.impl.pdfbox.util.FontUtils.getStandardType1Font;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -54,22 +55,22 @@ public class PdfFooterWriter implements Closeable {
     }
 
     public void writeFooter(SetFooterParameters parameters) throws TaskIOException {
+        PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
+        BigDecimal fontSize = defaultIfNull(parameters.getFontSize(), new BigDecimal("10"));
+        FooterAlign alignment = defaultIfNull(parameters.getAlign(), FooterAlign.CENTER);
+
         for (int pageNumber = 1; pageNumber <= documentHandler.getNumberOfPages(); pageNumber++) {
             String label = parameters.formatLabelFor(pageNumber);
             if (label != null) {
-                PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
-                float fontSize = 10.0f;
-
                 PDPage page = documentHandler.getPage(pageNumber);
                 PDRectangle pageSize = page.findCropBox();
                 try {
-                    float stringWidth = font.getStringWidth(label) * fontSize / 1000f;
-                    float position = defaultIfNull(parameters.getAlign(), FooterAlign.CENTER).horizontalPosition(
-                            pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
+                    float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
+                    float position = alignment.horizontalPosition(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
                     PDPageContentStream contentStream = new PDPageContentStream(
                             documentHandler.getUnderlyingPDDocument(), page, true, true);
                     contentStream.beginText();
-                    contentStream.setFont(font, fontSize);
+                    contentStream.setFont(font, fontSize.floatValue());
                     contentStream.moveTextPositionByAmount(position, DEFAULT_MARGIN);
                     contentStream.drawString(label);
                     contentStream.endText();

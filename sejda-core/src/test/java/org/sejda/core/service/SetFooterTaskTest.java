@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -78,6 +79,7 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
         parameters.setSource(source);
         parameters.setOverwrite(true);
         parameters.setAlign(FooterAlign.LEFT);
+        parameters.setFontSize(new BigDecimal("7"));
     }
 
     private void setUpParametersEncrypted() {
@@ -91,7 +93,8 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
         parameters.setVersion(PdfVersion.VERSION_1_6);
 
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
+        // PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_with_modify_perm.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
         parameters.setSource(source);
         parameters.setOverwrite(true);
     }
