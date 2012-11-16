@@ -14,40 +14,40 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.model.pdf.footer;
+package org.sejda.model;
 
 import org.sejda.common.DisplayNamedEnum;
 
 /**
- * Possible footer alignments.
+ * Possible horizontal alignments.
  * 
  * @author Andrea Vacondio
  * 
  */
-public enum FooterAlign implements DisplayNamedEnum {
+public enum HorizontalAlign implements DisplayNamedEnum {
 
     CENTER("center") {
         @Override
-        public float horizontalPosition(float pageWidth, float labelWidth, float margin) {
+        public float position(float pageWidth, float labelWidth, float margin) {
             return (pageWidth - labelWidth) / 2f;
         }
     },
     RIGHT("right") {
         @Override
-        public float horizontalPosition(float pageWidth, float labelWidth, float margin) {
+        public float position(float pageWidth, float labelWidth, float margin) {
             return (pageWidth - labelWidth - margin);
         }
     },
     LEFT("left") {
         @Override
-        public float horizontalPosition(float pageWidth, float labelWidth, float margin) {
+        public float position(float pageWidth, float labelWidth, float margin) {
             return margin;
         }
     };
 
     private String displayName;
 
-    private FooterAlign(String displayName) {
+    private HorizontalAlign(String displayName) {
         this.displayName = displayName;
     }
 
@@ -64,5 +64,5 @@ public enum FooterAlign implements DisplayNamedEnum {
      *            margin to use. Relevant only in non central alignment.
      * @return the horizontal position of a label with the given width in a page of the given width
      */
-    public abstract float horizontalPosition(float pageWidth, float stringWidth, float margin);
+    public abstract float position(float pageWidth, float stringWidth, float margin);
 }

@@ -29,9 +29,10 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.sejda.model.HorizontalAlign;
+import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.parameter.SetFooterParameters;
-import org.sejda.model.pdf.footer.FooterAlign;
+import org.sejda.model.parameter.SetHeaderFooterParameters;
 
 /**
  * Component providing footer related functionalities.
@@ -39,7 +40,7 @@ import org.sejda.model.pdf.footer.FooterAlign;
  * @author Andrea Vacondio
  * 
  */
-public class PdfFooterWriter implements Closeable {
+public class PdfHeaderFooterWriter implements Closeable {
 
     // TODO define as a params member
     private static final Float DEFAULT_MARGIN = 30F;
@@ -50,14 +51,15 @@ public class PdfFooterWriter implements Closeable {
      * @param documentHandler
      *            the document handler holding the document where we want to write the footer
      */
-    public PdfFooterWriter(PDDocumentHandler documentHandler) {
+    public PdfHeaderFooterWriter(PDDocumentHandler documentHandler) {
         this.documentHandler = documentHandler;
     }
 
-    public void writeFooter(SetFooterParameters parameters) throws TaskIOException {
+    public void writeFooter(SetHeaderFooterParameters parameters) throws TaskIOException {
         PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
         BigDecimal fontSize = defaultIfNull(parameters.getFontSize(), new BigDecimal("10"));
-        FooterAlign alignment = defaultIfNull(parameters.getAlign(), FooterAlign.CENTER);
+        HorizontalAlign horAlignment = defaultIfNull(parameters.getHorizontalAlign(), HorizontalAlign.CENTER);
+        VerticalAlign verAlignment = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
 
         for (int pageNumber = 1; pageNumber <= documentHandler.getNumberOfPages(); pageNumber++) {
             String label = parameters.formatLabelFor(pageNumber);
@@ -66,12 +68,13 @@ public class PdfFooterWriter implements Closeable {
                 PDRectangle pageSize = page.findCropBox();
                 try {
                     float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
-                    float position = alignment.horizontalPosition(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
+                    float xPosition = horAlignment.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
+                    float yPosition = verAlignment.position(pageSize.getHeight(), DEFAULT_MARGIN);
                     PDPageContentStream contentStream = new PDPageContentStream(
                             documentHandler.getUnderlyingPDDocument(), page, true, true);
                     contentStream.beginText();
                     contentStream.setFont(font, fontSize.floatValue());
-                    contentStream.moveTextPositionByAmount(position, DEFAULT_MARGIN);
+                    contentStream.moveTextPositionByAmount(xPosition, yPosition);
                     contentStream.drawString(label);
                     contentStream.endText();
                     contentStream.close();

@@ -27,11 +27,11 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
-import org.sejda.impl.pdfbox.component.PdfFooterWriter;
+import org.sejda.impl.pdfbox.component.PdfHeaderFooterWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.parameter.SetFooterParameters;
+import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
@@ -43,22 +43,22 @@ import org.slf4j.LoggerFactory;
  * @author Eduard Weissmann
  * 
  */
-public class SetFooterTask extends BaseTask<SetFooterParameters> {
+public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SetFooterTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetHeaderFooterTask.class);
 
     private PDDocumentHandler documentHandler = null;
     private SingleOutputWriter outputWriter;
-    private PdfFooterWriter footerWriter = null;
+    private PdfHeaderFooterWriter footerWriter = null;
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
-    public void before(SetFooterParameters parameters) {
+    public void before(SetHeaderFooterParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
-    public void execute(SetFooterParameters parameters) throws TaskException {
+    public void execute(SetHeaderFooterParameters parameters) throws TaskException {
         notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();
@@ -73,7 +73,7 @@ public class SetFooterTask extends BaseTask<SetFooterParameters> {
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.compressXrefStream(parameters.isCompressXref());
 
-        footerWriter = new PdfFooterWriter(documentHandler);
+        footerWriter = new PdfHeaderFooterWriter(documentHandler);
         footerWriter.writeFooter(parameters);
 
         documentHandler.savePDDocument(tmpFile);

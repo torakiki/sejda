@@ -22,16 +22,16 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.footer.FooterNumberingStyle;
-import org.sejda.model.pdf.footer.PdfFooterLabel;
+import org.sejda.model.pdf.headerfooter.NumberingStyle;
+import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
 
-public class SetFooterParametersTest {
-    PdfFooterLabel label1 = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ",
-            FooterNumberingStyle.ARABIC, 100);
-    PdfFooterLabel label2 = PdfFooterLabel.newInstanceTextOnly("Prefix2 ");
+public class SetHeaderFooterParametersTest {
+    PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ",
+            NumberingStyle.ARABIC, 100);
+    PdfHeaderFooterLabel label2 = PdfHeaderFooterLabel.newInstanceTextOnly("Prefix2 ");
 
-    public SetFooterParameters parameters() {
-        SetFooterParameters params = new SetFooterParameters();
+    public SetHeaderFooterParameters parameters() {
+        SetHeaderFooterParameters params = new SetHeaderFooterParameters();
         params.putLabel(8, label1);
         params.putLabel(16, label2);
         return params;
@@ -39,7 +39,7 @@ public class SetFooterParametersTest {
 
     @Test
     public void testPutLabel() {
-        SetFooterParameters params = new SetFooterParameters();
+        SetHeaderFooterParameters params = new SetHeaderFooterParameters();
         params.putLabel(8, label1);
 
         assertThat(params.putLabel(8, label2), is(label1));
@@ -52,10 +52,10 @@ public class SetFooterParametersTest {
 
     @Test
     public void testEquals() {
-        SetFooterParameters eq1 = new SetFooterParameters();
-        SetFooterParameters eq2 = new SetFooterParameters();
-        SetFooterParameters eq3 = new SetFooterParameters();
-        SetFooterParameters diff = new SetFooterParameters();
+        SetHeaderFooterParameters eq1 = new SetHeaderFooterParameters();
+        SetHeaderFooterParameters eq2 = new SetHeaderFooterParameters();
+        SetHeaderFooterParameters eq3 = new SetHeaderFooterParameters();
+        SetHeaderFooterParameters diff = new SetHeaderFooterParameters();
         eq1.putLabel(8, label1);
         eq2.putLabel(8, label1);
         eq3.putLabel(8, label1);

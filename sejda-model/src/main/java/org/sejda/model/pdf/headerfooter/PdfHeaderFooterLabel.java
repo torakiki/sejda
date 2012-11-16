@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sejda.model.pdf.footer;
+package org.sejda.model.pdf.headerfooter;
 
 import java.security.InvalidParameterException;
 
@@ -23,19 +23,19 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Labeling information for the footer of the page
+ * Labeling information for the header or footer of the page.
  * 
  * @author Eduard Weissmann
  */
-public final class PdfFooterLabel {
+public final class PdfHeaderFooterLabel {
     @NotNull
     private String labelPrefix;
     @NotNull
-    private FooterNumberingStyle numberingStyle;
+    private NumberingStyle numberingStyle;
     @Min(value = 1)
     private int logicalPageNumber; // start numbering from
 
-    private PdfFooterLabel(String labelPrefix, FooterNumberingStyle numberingStyle, int logicalPageNumber) {
+    private PdfHeaderFooterLabel(String labelPrefix, NumberingStyle numberingStyle, int logicalPageNumber) {
         this.labelPrefix = StringUtils.defaultString(labelPrefix, "");
         if (numberingStyle == null) {
             throw new InvalidParameterException("Input numbering style cannot be null.");
@@ -48,7 +48,7 @@ public final class PdfFooterLabel {
         return labelPrefix;
     }
 
-    public FooterNumberingStyle getNumberingStyle() {
+    public NumberingStyle getNumberingStyle() {
         return numberingStyle;
     }
 
@@ -70,7 +70,7 @@ public final class PdfFooterLabel {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final PdfFooterLabel other = (PdfFooterLabel) obj;
+        final PdfHeaderFooterLabel other = (PdfHeaderFooterLabel) obj;
         return new org.apache.commons.lang3.builder.EqualsBuilder().append(this.labelPrefix, other.labelPrefix)
                 .append(this.numberingStyle, other.numberingStyle)
                 .append(this.logicalPageNumber, other.logicalPageNumber).isEquals();
@@ -80,16 +80,16 @@ public final class PdfFooterLabel {
         return String.format("%s%s", labelPrefix, numberingStyle.toStyledString(logicalPageNumber + offset)).trim();
     }
 
-    public static PdfFooterLabel newInstanceNoLabelPrefix(FooterNumberingStyle numberingStyle, int logicalPageNumber) {
-        return new PdfFooterLabel(null, numberingStyle, logicalPageNumber);
+    public static PdfHeaderFooterLabel newInstanceNoLabelPrefix(NumberingStyle numberingStyle, int logicalPageNumber) {
+        return new PdfHeaderFooterLabel(null, numberingStyle, logicalPageNumber);
     }
 
-    public static PdfFooterLabel newInstanceTextOnly(String labelPrefix) {
-        return new PdfFooterLabel(labelPrefix, FooterNumberingStyle.EMPTY, 1);
+    public static PdfHeaderFooterLabel newInstanceTextOnly(String labelPrefix) {
+        return new PdfHeaderFooterLabel(labelPrefix, NumberingStyle.EMPTY, 1);
     }
 
-    public static PdfFooterLabel newInstanceWithLabelPrefixAndNumbering(String labelPrefix,
-            FooterNumberingStyle numberingStyle, int logicalPageNumber) {
-        return new PdfFooterLabel(labelPrefix, numberingStyle, logicalPageNumber);
+    public static PdfHeaderFooterLabel newInstanceWithLabelPrefixAndNumbering(String labelPrefix,
+            NumberingStyle numberingStyle, int logicalPageNumber) {
+        return new PdfHeaderFooterLabel(labelPrefix, numberingStyle, logicalPageNumber);
     }
 }

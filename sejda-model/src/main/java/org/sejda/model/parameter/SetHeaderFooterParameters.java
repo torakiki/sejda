@@ -26,10 +26,11 @@ import javax.validation.constraints.Min;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.HorizontalAlign;
+import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.footer.FooterAlign;
-import org.sejda.model.pdf.footer.PdfFooterLabel;
+import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -40,13 +41,14 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @SingleOutputAllowedExtensions
-public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
+public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParameters {
 
     @NotEmpty
     @Valid
-    private final Map<Integer, PdfFooterLabel> labels = new HashMap<Integer, PdfFooterLabel>();
+    private final Map<Integer, PdfHeaderFooterLabel> labels = new HashMap<Integer, PdfHeaderFooterLabel>();
     private StandardType1Font font = StandardType1Font.HELVETICA;
-    private FooterAlign align = FooterAlign.CENTER;
+    private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
+    private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
     @Min(1)
     private BigDecimal fontSize = new BigDecimal("10");
 
@@ -55,14 +57,14 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
      * 
      * @return previous label associated with pageNumber starting point
      */
-    public PdfFooterLabel putLabel(int pageNumber, PdfFooterLabel label) {
+    public PdfHeaderFooterLabel putLabel(int pageNumber, PdfHeaderFooterLabel label) {
         return this.labels.put(pageNumber, label);
     }
 
     /**
      * @return an unmodifiable view of the labels in this parameter.
      */
-    public Map<Integer, PdfFooterLabel> getLabels() {
+    public Map<Integer, PdfHeaderFooterLabel> getLabels() {
         return Collections.unmodifiableMap(labels);
     }
 
@@ -74,12 +76,20 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         this.font = font;
     }
 
-    public FooterAlign getAlign() {
-        return align;
+    public HorizontalAlign getHorizontalAlign() {
+        return horizontalAlign;
     }
 
-    public void setAlign(FooterAlign align) {
-        this.align = align;
+    public void setHorizontalAlign(HorizontalAlign align) {
+        this.horizontalAlign = align;
+    }
+
+    public VerticalAlign getVerticalAlign() {
+        return verticalAlign;
+    }
+
+    public void setVerticalAlign(VerticalAlign verticalAlign) {
+        this.verticalAlign = verticalAlign;
     }
 
     public BigDecimal getFontSize() {
@@ -97,8 +107,8 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(align).append(fontSize)
-                .append(labels).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
+                .append(verticalAlign).append(fontSize).append(labels).toHashCode();
     }
 
     @Override
@@ -106,13 +116,14 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SetFooterParameters)) {
+        if (!(other instanceof SetHeaderFooterParameters)) {
             return false;
         }
-        SetFooterParameters parameter = (SetFooterParameters) other;
+        SetHeaderFooterParameters parameter = (SetHeaderFooterParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getFont(), parameter.getFont())
-                .append(getAlign(), parameter.getAlign()).append(getFontSize(), parameter.getFontSize())
-                .append(getLabels(), parameter.getLabels()).isEquals();
+                .append(getHorizontalAlign(), parameter.getHorizontalAlign())
+                .append(getVerticalAlign(), parameter.getVerticalAlign())
+                .append(getFontSize(), parameter.getFontSize()).append(getLabels(), parameter.getLabels()).isEquals();
     }
 
     /**
@@ -125,7 +136,7 @@ public class SetFooterParameters extends SinglePdfSourceSingleOutputParameters {
         }
 
         int offset = pageNumber - labelDefStartPage;
-        PdfFooterLabel label = getLabels().get(labelDefStartPage);
+        PdfHeaderFooterLabel label = getLabels().get(labelDefStartPage);
         return label.formatFor(offset);
     }
 

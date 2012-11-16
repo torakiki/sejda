@@ -43,12 +43,21 @@ public class PdfTextExtractorByArea {
         return extractTextFromArea(page, getFooterAreaRectangle(page));
     }
 
+    public String extractHeaderText(PDPage page) throws TaskIOException {
+        return extractTextFromArea(page, getHeaderAreaRectangle(page));
+    }
+
     private Rectangle getFooterAreaRectangle(PDPage page) {
-        PDRectangle pageSize = page.findMediaBox();
+        PDRectangle pageSize = page.findCropBox();
         int pageHeight = (int) pageSize.getHeight();
         int pageWidth = (int) pageSize.getWidth();
-        int footerHeight = STANDARD_FOOTER_HEIGHT;
-        return new Rectangle(0, pageHeight - footerHeight, pageWidth, footerHeight);
+        return new Rectangle(0, pageHeight - STANDARD_FOOTER_HEIGHT, pageWidth, STANDARD_FOOTER_HEIGHT);
+    }
+
+    private Rectangle getHeaderAreaRectangle(PDPage page) {
+        PDRectangle pageSize = page.findCropBox();
+        int pageWidth = (int) pageSize.getWidth();
+        return new Rectangle(0, 0, pageWidth, STANDARD_FOOTER_HEIGHT);
     }
 
     /**

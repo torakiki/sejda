@@ -13,38 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sejda.model.pdf.footer;
+package org.sejda.model.pdf.headerfooter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
+import org.sejda.model.pdf.headerfooter.NumberingStyle;
+import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
 
-public class PdfFooterLabelTest {
+public class PdfHeaderFooterLabelTest {
 
     @Test
     public void testFormatForLabelWithoutPrefix() {
-        PdfFooterLabel label = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
+        PdfHeaderFooterLabel label = PdfHeaderFooterLabel.newInstanceNoLabelPrefix(NumberingStyle.ARABIC, 100);
         assertThat(label.formatFor(10), is("110"));
     }
 
     @Test
     public void testFormatForLabelWithPrefix() {
-        PdfFooterLabel label = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix ",
-                FooterNumberingStyle.ARABIC, 100);
+        PdfHeaderFooterLabel label = PdfHeaderFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix ",
+                NumberingStyle.ARABIC, 100);
         assertThat(label.formatFor(10), is("Prefix 110"));
     }
 
     @Test
     public void testFormatForEmptyNumberingStyle() {
-        PdfFooterLabel label = PdfFooterLabel.newInstanceTextOnly("Prefix");
+        PdfHeaderFooterLabel label = PdfHeaderFooterLabel.newInstanceTextOnly("Prefix");
         assertThat(label.formatFor(99), is("Prefix"));
     }
 
     @Test
     public void testFormatForLabelWithPrefixRomans() {
-        PdfFooterLabel label = PdfFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix ",
-                FooterNumberingStyle.ROMAN, 100);
+        PdfHeaderFooterLabel label = PdfHeaderFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix ",
+                NumberingStyle.ROMAN, 100);
         assertThat(label.formatFor(10), is("Prefix CX"));
     }
 }

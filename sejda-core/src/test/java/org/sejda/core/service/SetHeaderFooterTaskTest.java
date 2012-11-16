@@ -30,14 +30,15 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.model.HorizontalAlign;
+import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.parameter.SetFooterParameters;
+import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.footer.FooterAlign;
-import org.sejda.model.pdf.footer.FooterNumberingStyle;
-import org.sejda.model.pdf.footer.PdfFooterLabel;
+import org.sejda.model.pdf.headerfooter.NumberingStyle;
+import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
 import org.sejda.model.task.Task;
 
 import com.lowagie.text.pdf.PdfReader;
@@ -47,12 +48,12 @@ import com.lowagie.text.pdf.PdfReader;
  * 
  */
 @Ignore
-public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements TestableTask<SetFooterParameters> {
+public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implements TestableTask<SetHeaderFooterParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
     private SejdaContext context = mock(DefaultSejdaContext.class);
-    private SetFooterParameters parameters;
+    private SetHeaderFooterParameters parameters;
 
     @Before
     public void setUp() {
@@ -63,10 +64,10 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
      * Set up of the set page labels parameters
      * 
      */
-    private void setUpParameters() {
-        parameters = new SetFooterParameters();
-        PdfFooterLabel label1 = PdfFooterLabel.newInstanceTextOnly("Introduction");
-        PdfFooterLabel label3 = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
+    private void setUpParameters(VerticalAlign vAlign) {
+        parameters = new SetHeaderFooterParameters();
+        PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceTextOnly("Introduction");
+        PdfHeaderFooterLabel label3 = PdfHeaderFooterLabel.newInstanceNoLabelPrefix(NumberingStyle.ARABIC, 100);
         parameters.putLabel(1, label1);
         parameters.putLabel(3, label3);
 
@@ -78,14 +79,15 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
-        parameters.setAlign(FooterAlign.LEFT);
+        parameters.setHorizontalAlign(HorizontalAlign.LEFT);
+        parameters.setVerticalAlign(vAlign);
         parameters.setFontSize(new BigDecimal("7"));
     }
 
     private void setUpParametersEncrypted() {
-        parameters = new SetFooterParameters();
-        PdfFooterLabel label1 = PdfFooterLabel.newInstanceTextOnly("Introduction");
-        PdfFooterLabel label3 = PdfFooterLabel.newInstanceNoLabelPrefix(FooterNumberingStyle.ARABIC, 100);
+        parameters = new SetHeaderFooterParameters();
+        PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceTextOnly("Introduction");
+        PdfHeaderFooterLabel label3 = PdfHeaderFooterLabel.newInstanceNoLabelPrefix(NumberingStyle.ARABIC, 100);
         parameters.putLabel(1, label1);
         parameters.putLabel(3, label3);
 
@@ -100,14 +102,22 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        setUpParameters();
+    public void testExecuteFooter() throws TaskException, IOException {
+        setUpParameters(VerticalAlign.BOTTOM);
         doTestExecute();
+        assertSpecificFooterExpectations(getResultFile());
+    }
+
+    @Test
+    public void testExecuteHeader() throws TaskException, IOException {
+        setUpParameters(VerticalAlign.TOP);
+        doTestExecute();
+        assertSpecificHeaderExpectations(getResultFile());
     }
 
     // TODO investigate the NPE from PDFBox
     @Ignore
-    public void testExecuteencrypted() throws TaskException, IOException {
+    public void testExecuteEncrypted() throws TaskException, IOException {
         setUpParametersEncrypted();
         doTestExecute();
     }
@@ -125,12 +135,13 @@ public abstract class SetFooterTaskTest extends PdfOutEnabledTest implements Tes
 
         reader.close();
 
-        assertSpecificFooterExpectations(getResultFile());
     }
 
-    protected abstract void assertSpecificFooterExpectations(File result) throws TaskException, IOException;
+    protected abstract void assertSpecificFooterExpectations(File result) throws TaskException;
 
-    protected SetFooterParameters getParameters() {
+    protected abstract void assertSpecificHeaderExpectations(File result) throws TaskException;
+
+    protected SetHeaderFooterParameters getParameters() {
         return parameters;
     }
 

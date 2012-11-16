@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.model.pdf.footer;
+package org.sejda.model.pdf.headerfooter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.DisplayNamedEnum;
@@ -26,7 +26,7 @@ import org.sejda.common.RomanNumbersUtils;
  * @author Eduard Weissmann
  * 
  */
-public enum FooterNumberingStyle implements DisplayNamedEnum {
+public enum NumberingStyle implements DisplayNamedEnum {
     // TODO: maybe the alphabetic stuff too someday
     ARABIC("arabic") {
         @Override
@@ -49,7 +49,7 @@ public enum FooterNumberingStyle implements DisplayNamedEnum {
 
     private String displayName;
 
-    private FooterNumberingStyle(String displayName) {
+    private NumberingStyle(String displayName) {
         this.displayName = displayName;
     }
 
