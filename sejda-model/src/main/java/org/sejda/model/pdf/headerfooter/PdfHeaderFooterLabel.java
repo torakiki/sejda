@@ -15,8 +15,6 @@
  */
 package org.sejda.model.pdf.headerfooter;
 
-import java.security.InvalidParameterException;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -35,10 +33,10 @@ public final class PdfHeaderFooterLabel {
     @Min(value = 1)
     private int logicalPageNumber; // start numbering from
 
-    private PdfHeaderFooterLabel(String labelPrefix, NumberingStyle numberingStyle, int logicalPageNumber) {
+    public PdfHeaderFooterLabel(String labelPrefix, NumberingStyle numberingStyle, int logicalPageNumber) {
         this.labelPrefix = StringUtils.defaultString(labelPrefix, "");
         if (numberingStyle == null) {
-            throw new InvalidParameterException("Input numbering style cannot be null.");
+            throw new IllegalArgumentException("Input numbering style cannot be null.");
         }
         this.numberingStyle = numberingStyle;
         this.logicalPageNumber = logicalPageNumber;
