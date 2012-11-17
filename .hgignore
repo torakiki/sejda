@@ -8,7 +8,7 @@ target/**
 .checkstyle
 .settings/**
 # Intellij IDEA files
-.idea/*
+glob:.idea/*
 *.iml
 .DS_Store
 
