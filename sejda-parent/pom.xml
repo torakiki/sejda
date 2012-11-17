@@ -5,7 +5,7 @@
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>1.0.0.M3</version>
+	<version>1.0.0.M4-SNAPSHOT</version>
 	<url>http://www.sejda.org</url>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.</description>
 
