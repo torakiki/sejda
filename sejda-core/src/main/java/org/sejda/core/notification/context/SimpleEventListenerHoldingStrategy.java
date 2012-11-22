@@ -20,7 +20,7 @@ package org.sejda.core.notification.context;
 import java.util.List;
 
 import org.sejda.common.collection.ListValueMap;
-import org.sejda.core.support.util.ReflectionUtility;
+import org.sejda.core.support.util.ReflectionUtils;
 import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
@@ -54,7 +54,7 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
     private <T extends AbstractNotificationEvent> Class<T> getListenerEventClass(EventListener<T> listener)
             throws NotificationContextException {
         @SuppressWarnings("unchecked")
-        Class<T> eventClass = ReflectionUtility.inferParameterClass(listener.getClass(), "onEvent");
+        Class<T> eventClass = ReflectionUtils.inferParameterClass(listener.getClass(), "onEvent");
         if (eventClass == null) {
             throw new NotificationContextException("Unable to infer the listened event class.");
         }
