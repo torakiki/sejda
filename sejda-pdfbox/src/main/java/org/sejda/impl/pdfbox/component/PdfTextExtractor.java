@@ -40,9 +40,11 @@ public class PdfTextExtractor implements Closeable {
 
     private PDFTextStripper textStripper = null;
     private Writer outputWriter;
+    private String encoding;
 
     public PdfTextExtractor(String encoding) throws TaskException {
         try {
+            this.encoding = encoding;
             textStripper = new PDFTextStripper(encoding);
         } catch (IOException e) {
             throw new TaskException("Unable to create text extractor.", e);
@@ -65,7 +67,7 @@ public class PdfTextExtractor implements Closeable {
                     output));
         }
         try {
-            outputWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output)));
+            outputWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), encoding));
             textStripper.writeText(document, outputWriter);
         } catch (IOException e) {
             throw new TaskExecutionException("An error occurred extracting text from a pdf source.", e);

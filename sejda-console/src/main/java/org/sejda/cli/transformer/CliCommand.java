@@ -167,7 +167,7 @@ public enum CliCommand {
             return new ExtractTextCliArgumentsTransformer();
         }
 
-    }, "Given a collection of pdf documents, creates a collection of text files containing text extracted from them.", "extracttext -f /tmp/file1.pdf -o /tmp -e \"ISO 8859-1\""),
+    }, "Given a collection of pdf documents, creates a collection of text files containing text extracted from them.", "extracttext -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\""),
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override
