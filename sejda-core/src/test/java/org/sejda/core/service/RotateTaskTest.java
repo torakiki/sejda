@@ -58,7 +58,6 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
@@ -78,8 +77,34 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters.setOverwrite(true);
     }
 
+    private void setUpParametersEncrypted() {
+        parameters = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_180,
+                RotationType.ALL_PAGES));
+        parameters.setCompress(true);
+        parameters.setOutputPrefix("test_prefix_");
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
+        // PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_with_modify_perm.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
+        parameters.addSource(source);
+        parameters.setOverwrite(true);
+    }
+
     @Test
     public void testExecute() throws TaskException, IOException {
+        setUpParameters();
+        doExecute();
+    }
+
+    // investigate NPE
+    @Ignore
+    public void testExecuteEncrypted() throws TaskException, IOException {
+        setUpParametersEncrypted();
+        doExecute();
+    }
+
+    private void doExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -89,10 +114,6 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         assertEquals(4, reader.getNumberOfPages());
         assertEquals(180, reader.getPageRotation(2));
         reader.close();
-    }
-
-    protected RotateParameters getParameters() {
-        return parameters;
     }
 
 }

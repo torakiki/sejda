@@ -31,7 +31,7 @@ import org.sejda.model.notification.event.AbstractNotificationEvent;
  */
 interface EventListenerHoldingStrategy {
     /**
-     * Adds the input listeners on the input event
+     * Adds the input {@link EventListener} to listen on the event type inferred from it's declaration.
      * 
      * @param <T>
      *            type of the event listened
@@ -40,6 +40,16 @@ interface EventListenerHoldingStrategy {
      *             if an error occurs inferring the type of the event
      */
     <T extends AbstractNotificationEvent> void add(EventListener<T> listener) throws NotificationContextException;
+
+    /**
+     * Adds the input {@link EventListener} to listen on the input event class.
+     * 
+     * @param <T>
+     * @param eventClass
+     *            event to listen for
+     * @param listener
+     */
+    <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener);
 
     /**
      * Removes the input listener from the input event.

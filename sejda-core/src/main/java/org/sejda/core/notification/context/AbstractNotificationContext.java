@@ -61,6 +61,13 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
+    public <T extends AbstractNotificationEvent> void addListener(Class<T> eventClass, EventListener<T> listener) {
+        synchronized (holder) {
+            LOG.trace("Adding event listener {} on event {}", listener, eventClass);
+            holder.add(eventClass, listener);
+        }
+    }
+
     public <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener)
             throws NotificationContextException {
         synchronized (holder) {

@@ -45,6 +45,10 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners.put(eventClass, listener);
     }
 
+    public <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener) {
+        listeners.put(eventClass, listener);
+    }
+
     public <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener)
             throws NotificationContextException {
         Class<T> eventClass = getListenerEventClass(listener);

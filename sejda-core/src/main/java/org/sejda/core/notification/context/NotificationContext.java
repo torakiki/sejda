@@ -34,12 +34,24 @@ public interface NotificationContext {
     /**
      * Adds the input listeners to the context.
      * 
+     * @param <T>
+     *            type of the event
      * @param listener
      * @throws NotificationContextException
      *             if unable to infer the listened {@link AbstractNotificationEvent} subclass
      */
     <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
             throws NotificationContextException;
+
+    /**
+     * Adds the input listeners to the context to listen on the input event class.
+     * 
+     * @param <T>
+     *            type of the event
+     * @param eventClass
+     * @param listener
+     */
+    <T extends AbstractNotificationEvent> void addListener(Class<T> eventClass, EventListener<T> listener);
 
     /**
      * Remove the input listener from the context .

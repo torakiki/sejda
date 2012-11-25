@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import org.junit.Ignore;
 import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.notification.event.TaskExecutionStartedEvent;
@@ -40,6 +41,33 @@ public final class TestListenerFactory {
      */
     public static TestListenerFailed newFailedListener() {
         return new TestListenerFailed();
+    }
+
+    /**
+     * @return a general listener that can listen on any event to use in tests.
+     */
+    public static <T extends AbstractNotificationEvent> TestListenerAny<T> newGeneralListener() {
+        return new TestListenerAny<T>();
+    }
+
+    /**
+     * Simple listener to use during tests. General purpose, can listen on any event
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    public static class TestListenerAny<T extends AbstractNotificationEvent> implements EventListener<T> {
+
+        private boolean listened = false;
+
+        public void onEvent(T event) {
+            listened = true;
+        }
+
+        public boolean hasListened() {
+            return listened;
+        }
+
     }
 
     /**
