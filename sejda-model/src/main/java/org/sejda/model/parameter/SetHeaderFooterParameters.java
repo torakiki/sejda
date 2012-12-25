@@ -50,7 +50,7 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
     @Min(1)
-    private BigDecimal fontSize = new BigDecimal("10");
+    private BigDecimal fontSize = BigDecimal.TEN;
 
     /**
      * Apply label for all pages starting with pageNumber

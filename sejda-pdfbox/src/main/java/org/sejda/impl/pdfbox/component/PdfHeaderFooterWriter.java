@@ -57,7 +57,7 @@ public class PdfHeaderFooterWriter implements Closeable {
 
     public void writeFooter(SetHeaderFooterParameters parameters) throws TaskIOException {
         PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
-        BigDecimal fontSize = defaultIfNull(parameters.getFontSize(), new BigDecimal("10"));
+        BigDecimal fontSize = defaultIfNull(parameters.getFontSize(), BigDecimal.TEN);
         HorizontalAlign horAlignment = defaultIfNull(parameters.getHorizontalAlign(), HorizontalAlign.CENTER);
         VerticalAlign verAlignment = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
 

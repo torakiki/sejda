@@ -49,7 +49,6 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
     private PDDocumentHandler documentHandler = null;
     private SingleOutputWriter outputWriter;
-    private PdfHeaderFooterWriter footerWriter = null;
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
@@ -73,7 +72,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.compressXrefStream(parameters.isCompressXref());
 
-        footerWriter = new PdfHeaderFooterWriter(documentHandler);
+        PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
         footerWriter.writeFooter(parameters);
 
         documentHandler.savePDDocument(tmpFile);
