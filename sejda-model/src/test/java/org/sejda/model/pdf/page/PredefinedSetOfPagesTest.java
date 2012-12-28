@@ -31,5 +31,6 @@ public class PredefinedSetOfPagesTest {
         assertEquals(10, PredefinedSetOfPages.ALL_PAGES.getPages(10).size());
         assertEquals(5, PredefinedSetOfPages.EVEN_PAGES.getPages(10).size());
         assertEquals(5, PredefinedSetOfPages.ODD_PAGES.getPages(10).size());
+        assertEquals(0, PredefinedSetOfPages.NONE.getPages(0).size());
     }
 }

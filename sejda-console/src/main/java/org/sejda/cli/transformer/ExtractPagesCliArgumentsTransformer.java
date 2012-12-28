@@ -19,6 +19,7 @@ package org.sejda.cli.transformer;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.ExtractPagesTaskCliArguments;
 import org.sejda.model.parameter.ExtractPagesParameters;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the ExtractPages task command line interface
@@ -37,10 +38,12 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
      */
     public ExtractPagesParameters toTaskParameters(ExtractPagesTaskCliArguments taskCliArguments) {
         final ExtractPagesParameters parameters;
-        if (taskCliArguments.isPredefinedPages()) {
+        if (taskCliArguments.isPredefinedPages()
+                && taskCliArguments.getPredefinedPages().getEnumValue() != PredefinedSetOfPages.NONE) {
             parameters = new ExtractPagesParameters(taskCliArguments.getPredefinedPages().getEnumValue());
         } else if (taskCliArguments.isPageSelection()) {
-            parameters = new ExtractPagesParameters(taskCliArguments.getPageSelection().getPageRangeSet());
+            parameters = new ExtractPagesParameters();
+            parameters.addPredefinedSetOfPages(taskCliArguments.getPageSelection().getPageRangeSet());
         } else {
             throw new ArgumentValidationException(
                     "Please specify at least one option that defines pages to be extracted");

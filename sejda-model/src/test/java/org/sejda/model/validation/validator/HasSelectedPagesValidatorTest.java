@@ -64,7 +64,7 @@ public class HasSelectedPagesValidatorTest {
 
     @Test
     public void testHasNone() {
-        when(params.getPredefinedSetOfPages()).thenReturn(null);
+        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.NONE);
         when(params.getPageSelection()).thenReturn(Collections.EMPTY_SET);
         assertFalse(victim.isValid(params, null));
     }

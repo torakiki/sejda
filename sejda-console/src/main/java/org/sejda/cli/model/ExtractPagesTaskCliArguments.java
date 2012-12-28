@@ -19,8 +19,8 @@ package org.sejda.cli.model;
 import java.util.List;
 
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 import org.sejda.conversion.PageRangeSetAdapter;
+import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -34,13 +34,13 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extractpages")
 public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(shortName = "p", description = "predefined pages mode {all, odd or even} (optional)")
+    @Option(shortName = "p", description = "predefined pages mode {odd or even} (optional)")
     PredefinedSetOfPagesAdapter getPredefinedPages();
 
     boolean isPredefinedPages();
 
-    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
-            + " 'num-' or 'num1,num2-num3..' (EX. -s all or -s 4,12-14,8,20-)s (optional)")
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Order of the pages is relevant. Accepted values: 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-)s (optional)")
     PageRangeSetAdapter getPageSelection();
 
     boolean isPageSelection();

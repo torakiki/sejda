@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -32,6 +33,7 @@ import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.HasSelectedPages;
 import org.sejda.model.validation.constraint.NoIntersections;
+import org.sejda.model.validation.constraint.NotAllowed;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
@@ -47,9 +49,18 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters implements PageRangeSelection,
         PagesSelection {
 
+    @NotNull
+    @NotAllowed(disallow = { PredefinedSetOfPages.ALL_PAGES })
     private PredefinedSetOfPages predefinedSetOfPages;
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+
+    /**
+     * Creates and empty instance where page selection can be set
+     */
+    public ExtractPagesParameters() {
+        this.predefinedSetOfPages = PredefinedSetOfPages.NONE;
+    }
 
     /**
      * Creates an instance using a predefined set of pages to extract.
@@ -61,11 +72,11 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
     }
 
     /**
-     * Creates an instance using the input page ranges selection.
+     * Adds the given page ranges.
      * 
      * @param pageRanges
      */
-    public ExtractPagesParameters(Collection<PageRange> pageRanges) {
+    public void addPredefinedSetOfPages(Collection<PageRange> pageRanges) {
         this.pageSelection.addAll(pageRanges);
     }
 
@@ -88,7 +99,7 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
      * @see PagesSelection#getPages(int)
      */
     public Set<Integer> getPages(int upperLimit) {
-        if (predefinedSetOfPages != null) {
+        if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
             return predefinedSetOfPages.getPages(upperLimit);
         }
         Set<Integer> retSet = new NullSafeSet<Integer>();

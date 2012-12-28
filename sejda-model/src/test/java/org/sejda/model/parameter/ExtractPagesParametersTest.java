@@ -42,7 +42,8 @@ public class ExtractPagesParametersTest {
         ExtractPagesParameters eq1 = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         ExtractPagesParameters eq2 = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         ExtractPagesParameters eq3 = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
-        ExtractPagesParameters diff = new ExtractPagesParameters(Collections.singletonList(new PageRange(12)));
+        ExtractPagesParameters diff = new ExtractPagesParameters();
+        diff.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
@@ -50,7 +51,8 @@ public class ExtractPagesParametersTest {
     public void testGetPageSelection() {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         assertTrue(victim.getPageSelection().isEmpty());
-        ExtractPagesParameters victim2 = new ExtractPagesParameters(Collections.singletonList(new PageRange(12)));
+        ExtractPagesParameters victim2 = new ExtractPagesParameters();
+        victim2.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
         assertFalse(victim2.getPageSelection().isEmpty());
     }
 
@@ -58,7 +60,8 @@ public class ExtractPagesParametersTest {
     public void getPages() {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         assertEquals(5, victim.getPages(10).size());
-        ExtractPagesParameters victim2 = new ExtractPagesParameters(Collections.singletonList(new PageRange(12)));
+        ExtractPagesParameters victim2 = new ExtractPagesParameters();
+        victim2.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
         assertEquals(4, victim2.getPages(15).size());
     }
 

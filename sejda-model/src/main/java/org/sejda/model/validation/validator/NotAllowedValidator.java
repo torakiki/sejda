@@ -1,5 +1,5 @@
 /*
- * Created on 02/ott/2011
+ * Created on 27/dic/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -16,28 +16,31 @@
  */
 package org.sejda.model.validation.validator;
 
+import java.util.Arrays;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-import org.sejda.model.validation.constraint.HasSelectedPages;
+import org.sejda.model.validation.constraint.NotAllowed;
 
 /**
- * Validator for an {@link ExtractPagesParameters} to make sure that a predefined set of pages or some page selection has been set.
+ * Validator for an {@link Enum} annotated field or method where some of the values are not allowed.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class HasSelectedPagesValidator implements ConstraintValidator<HasSelectedPages, ExtractPagesParameters> {
+public class NotAllowedValidator implements ConstraintValidator<NotAllowed, PredefinedSetOfPages> {
 
-    public void initialize(HasSelectedPages constraintAnnotation) {
-        // nothing to do
+    private PredefinedSetOfPages[] disallow;
+
+    public void initialize(NotAllowed constraintAnnotation) {
+        disallow = constraintAnnotation.disallow();
     }
 
-    public boolean isValid(ExtractPagesParameters value, ConstraintValidatorContext context) {
-        if (value != null) {
-            return value.getPredefinedSetOfPages() != PredefinedSetOfPages.NONE || !value.getPageSelection().isEmpty();
+    public boolean isValid(PredefinedSetOfPages value, ConstraintValidatorContext context) {
+        if (value != null && disallow != null) {
+            return !Arrays.asList(disallow).contains(value);
         }
         return true;
     }

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.model.validation.constraint.NotAllowed;
 
 /**
  * Parameter class for a simple split task. Used to perform split types which have a predefined set of pages based on the selected split type.
@@ -35,6 +36,7 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
 public class SimpleSplitParameters extends AbstractSplitByPageParameters {
 
     @NotNull
+    @NotAllowed(disallow = { PredefinedSetOfPages.NONE })
     private PredefinedSetOfPages setOfPages;
 
     public SimpleSplitParameters(PredefinedSetOfPages setOfPages) {

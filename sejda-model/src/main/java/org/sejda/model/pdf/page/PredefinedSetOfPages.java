@@ -41,6 +41,13 @@ public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
             }
             return retSet;
         }
+
+    },
+    NONE("none") {
+        @Override
+        public SortedSet<Integer> getPages(int totalNumberOfPage) {
+            return new TreeSet<Integer>();
+        }
     };
 
     /**

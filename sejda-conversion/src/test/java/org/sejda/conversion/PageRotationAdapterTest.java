@@ -1,24 +1,28 @@
 package org.sejda.conversion;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.fail;
+import static org.sejda.model.rotation.Rotation.DEGREES_0;
+import static org.sejda.model.rotation.Rotation.DEGREES_180;
+import static org.sejda.model.rotation.Rotation.DEGREES_270;
+import static org.sejda.model.rotation.Rotation.DEGREES_90;
+
 import org.junit.Test;
 import org.sejda.model.rotation.PageRotation;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.rotation.RotationType;
 
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
-import static org.sejda.model.rotation.Rotation.*;
-import static org.junit.Assert.fail;
-
 /**
  * Created on 6/7/12 10:02 PM
- *
+ * 
  * @author: Edi Weissmann
  */
 public class PageRotationAdapterTest {
 
     @Test
-    public void testGetPageRotation() throws Exception {
+    public void testGetPageRotation() {
 
         assertSinglePageRotation("2:90", 2, DEGREES_90);
         assertSinglePageRotation("1:0", 1, DEGREES_0);
@@ -52,7 +56,7 @@ public class PageRotationAdapterTest {
         try {
             new PageRotationAdapter(input).getPageRotation();
             fail("expected a conversion exception");
-        } catch (Exception e){
+        } catch (Exception e) {
             assertThat(e.getMessage(), containsString(expectedMessage));
         }
     }
