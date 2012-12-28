@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
@@ -43,9 +43,9 @@ public final class EnumUtils {
      * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
      *         Does not throw an exception if enum value is not found, returns null
      */
-    public static <T extends DisplayNamedEnum> T valueOfSilently(Class<T> enumClass, String displayName) {
+    public static <T extends FriendlyNamed> T valueOfSilently(Class<T> enumClass, String displayName) {
         for (T each : enumClass.getEnumConstants()) {
-            if (StringUtils.equalsIgnoreCase(each.getDisplayName(), displayName)) {
+            if (StringUtils.equalsIgnoreCase(each.getFriendlyName(), displayName)) {
                 return each;
             }
         }
@@ -61,7 +61,7 @@ public final class EnumUtils {
      * @throws SejdaRuntimeException
      *             if enum value is not found, mentioning the valid values in the message
      */
-    public static <T extends DisplayNamedEnum> T valueOf(Class<T> enumClass, String displayName,
+    public static <T extends FriendlyNamed> T valueOf(Class<T> enumClass, String displayName,
             String describedEnumClass) {
         T result = valueOfSilently(enumClass, displayName);
 
@@ -73,11 +73,11 @@ public final class EnumUtils {
         return result;
     }
 
-    private static Collection<String> findValidValues(Class<? extends DisplayNamedEnum> enumClass) {
+    private static Collection<String> findValidValues(Class<? extends FriendlyNamed> enumClass) {
         List<String> result = new ArrayList<String>();
 
-        for (DisplayNamedEnum each : enumClass.getEnumConstants()) {
-            result.add(each.getDisplayName());
+        for (FriendlyNamed each : enumClass.getEnumConstants()) {
+            result.add(each.getFriendlyName());
         }
 
         Collections.sort(result);

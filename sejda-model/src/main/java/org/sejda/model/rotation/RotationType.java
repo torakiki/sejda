@@ -17,7 +17,7 @@
  */
 package org.sejda.model.rotation;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Types of rotation
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum RotationType implements DisplayNamedEnum {
+public enum RotationType implements FriendlyNamed {
     SINGLE_PAGE("single"),
     ODD_PAGES("odd"),
     EVEN_PAGES("even"),
@@ -37,7 +37,7 @@ public enum RotationType implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

@@ -16,7 +16,7 @@
  */
 package org.sejda.model;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Possible vertical alignments
@@ -24,7 +24,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum VerticalAlign implements DisplayNamedEnum {
+public enum VerticalAlign implements FriendlyNamed {
 
     TOP("top") {
         @Override
@@ -44,7 +44,7 @@ public enum VerticalAlign implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

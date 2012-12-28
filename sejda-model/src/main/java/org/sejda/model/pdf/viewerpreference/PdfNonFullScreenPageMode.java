@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Possible values for the document’s page mode, specifying how to display the document on exiting full-screen mode.<br>
@@ -28,7 +28,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfNonFullScreenPageMode implements DisplayNamedEnum {
+public enum PdfNonFullScreenPageMode implements FriendlyNamed {
     USE_NONE("nfsnone"),
     USE_OUTLINES("nfsoutlines"),
     USE_THUMNS("nfsthumbs"),
@@ -40,7 +40,7 @@ public enum PdfNonFullScreenPageMode implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

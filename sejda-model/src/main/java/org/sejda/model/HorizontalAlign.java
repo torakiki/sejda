@@ -16,7 +16,7 @@
  */
 package org.sejda.model;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Possible horizontal alignments.
@@ -24,7 +24,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum HorizontalAlign implements DisplayNamedEnum {
+public enum HorizontalAlign implements FriendlyNamed {
 
     CENTER("center") {
         @Override
@@ -51,7 +51,7 @@ public enum HorizontalAlign implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

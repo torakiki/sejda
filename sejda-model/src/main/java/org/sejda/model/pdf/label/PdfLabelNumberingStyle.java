@@ -16,7 +16,7 @@
  */
 package org.sejda.model.pdf.label;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Possible values for a numbering style to be used for page labels.<br>
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfLabelNumberingStyle implements DisplayNamedEnum {
+public enum PdfLabelNumberingStyle implements FriendlyNamed {
     ARABIC("arabic"),
     UPPERCASE_ROMANS("uroman"),
     LOWERCASE_ROMANS("lroman"),
@@ -39,7 +39,7 @@ public enum PdfLabelNumberingStyle implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -28,7 +28,7 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPrintScaling implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfPrintScaling implements MinRequiredVersion, FriendlyNamed {
     NONE(PdfVersion.VERSION_1_6, "none"),
     APP_DEFAULT(PdfVersion.VERSION_1_6, "app_default");
 
@@ -44,7 +44,7 @@ public enum PdfPrintScaling implements MinRequiredVersion, DisplayNamedEnum {
         return minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

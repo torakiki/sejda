@@ -17,7 +17,7 @@
 package org.sejda.model.pdf.headerfooter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.common.RomanNumbersUtils;
 
 /**
@@ -26,7 +26,7 @@ import org.sejda.common.RomanNumbersUtils;
  * @author Eduard Weissmann
  * 
  */
-public enum NumberingStyle implements DisplayNamedEnum {
+public enum NumberingStyle implements FriendlyNamed {
     // TODO: maybe the alphabetic stuff too someday
     ARABIC("arabic") {
         @Override
@@ -53,7 +53,7 @@ public enum NumberingStyle implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

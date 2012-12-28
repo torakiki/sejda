@@ -3,7 +3,7 @@ package org.sejda.model.pdf.page;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Represent a predefined set of pages like odd or even pages.
@@ -11,7 +11,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
+public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
     ALL_PAGES("all") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
@@ -64,7 +64,7 @@ public enum PredefinedSetOfPages implements PagesSelection, DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.encryption;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Access permissions correspond to various operations that can be allowed/disallowed when encrypting a pdf document.<br>
@@ -26,7 +26,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfAccessPermission implements DisplayNamedEnum {
+public enum PdfAccessPermission implements FriendlyNamed {
     MODIFY("modify"),
     COPY_AND_EXTRACT("copy"),
     ANNOTATION("modifyannotations"),
@@ -42,7 +42,7 @@ public enum PdfAccessPermission implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

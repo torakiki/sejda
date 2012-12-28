@@ -17,15 +17,15 @@
 package org.sejda.common;
 
 /**
- * Designates an {@link Enum} that has a user friendly string representation for its value
+ * Designates an entity that has a user friendly string representation usually used for UI purpose.
  * 
  * @author Eduard Weissmann
  * 
  */
-public interface DisplayNamedEnum {
+public interface FriendlyNamed {
 
     /**
-     * @return the user friendly name of the enum, to be used as a representation for an user
+     * @return the friendly name of the entity, to be usually used as a representation for an user.
      */
-    String getDisplayName();
+    String getFriendlyName();
 }

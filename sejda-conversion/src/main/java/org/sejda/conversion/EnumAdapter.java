@@ -16,7 +16,7 @@
  */
 package org.sejda.conversion;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Base class for adapters for sejda {@link Enum}s. Provides common boiler plate code to initialize the actual enum value from it's user friendly display name
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * 
  */
 // TODO: add support for ParameterizedTypeImpl in jewel-cli and reduce all classes extending this to one single class
-public class EnumAdapter<T extends DisplayNamedEnum> {
+public class EnumAdapter<T extends FriendlyNamed> {
 
     private final T enumValue;
 

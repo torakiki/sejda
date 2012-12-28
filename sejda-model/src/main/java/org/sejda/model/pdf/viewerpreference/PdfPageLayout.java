@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -28,7 +28,7 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPageLayout implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfPageLayout implements MinRequiredVersion, FriendlyNamed {
     SINGLE_PAGE("singlepage", PdfVersion.VERSION_1_2),
     ONE_COLUMN("onecolumn", PdfVersion.VERSION_1_2),
     TWO_COLUMN_LEFT("twocolumnl", PdfVersion.VERSION_1_2),
@@ -44,7 +44,7 @@ public enum PdfPageLayout implements MinRequiredVersion, DisplayNamedEnum {
         this.minVersion = minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -27,7 +27,7 @@ import org.sejda.model.pdf.PdfVersion;
  * 
  * @author Andrea Vacondio
  */
-public enum PdfDirection implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfDirection implements MinRequiredVersion, FriendlyNamed {
     LEFT_TO_RIGHT("l2r", PdfVersion.VERSION_1_3),
     RIGHT_TO_LEFT("r2l", PdfVersion.VERSION_1_3);
 
@@ -39,7 +39,7 @@ public enum PdfDirection implements MinRequiredVersion, DisplayNamedEnum {
         this.minVersion = minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

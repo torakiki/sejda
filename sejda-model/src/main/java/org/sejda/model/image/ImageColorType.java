@@ -18,7 +18,7 @@ package org.sejda.model.image;
 
 import java.awt.image.BufferedImage;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * The color type for an image.
@@ -26,7 +26,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum ImageColorType implements DisplayNamedEnum {
+public enum ImageColorType implements FriendlyNamed {
     BLACK_AND_WHITE("black_and_white", BufferedImage.TYPE_BYTE_BINARY),
     GRAY_SCALE("gray_scale", BufferedImage.TYPE_BYTE_GRAY),
     COLOR_RGB("color_rgb", BufferedImage.TYPE_INT_RGB);
@@ -39,7 +39,7 @@ public enum ImageColorType implements DisplayNamedEnum {
         this.bufferedImageType = bufferedImageType;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

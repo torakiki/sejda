@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.encryption;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -27,7 +27,7 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfEncryption implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfEncryption implements MinRequiredVersion, FriendlyNamed {
     STANDARD_ENC_40("rc4_40", PdfVersion.VERSION_1_2),
     STANDARD_ENC_128("rc4_128", PdfVersion.VERSION_1_2),
     AES_ENC_128("aes_128", PdfVersion.VERSION_1_6);
@@ -44,7 +44,7 @@ public enum PdfEncryption implements MinRequiredVersion, DisplayNamedEnum {
         return minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

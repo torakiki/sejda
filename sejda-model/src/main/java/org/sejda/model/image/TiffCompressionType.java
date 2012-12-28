@@ -16,7 +16,7 @@
  */
 package org.sejda.model.image;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Types of compression for the TIFF format.
@@ -24,7 +24,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum TiffCompressionType implements DisplayNamedEnum {
+public enum TiffCompressionType implements FriendlyNamed {
     NONE("none"),
     CCITT_GROUP_3_1D("ccitt_group_3_1d"),
     CCITT_GROUP_3_2D("ccitt_group_3_2d"),
@@ -40,7 +40,7 @@ public enum TiffCompressionType implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -28,7 +28,7 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfDuplex implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfDuplex implements MinRequiredVersion, FriendlyNamed {
     SIMPLEX("simplex", PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_SHORT_EDGE("duplex_flip_short_edge", PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_LONG_EDGE("duplex_flip_long_edge", PdfVersion.VERSION_1_7);
@@ -41,7 +41,7 @@ public enum PdfDuplex implements MinRequiredVersion, DisplayNamedEnum {
         this.minVersion = minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

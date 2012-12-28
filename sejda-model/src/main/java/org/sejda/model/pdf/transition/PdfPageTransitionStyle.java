@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf.transition;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -28,7 +28,7 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfPageTransitionStyle implements MinRequiredVersion, DisplayNamedEnum {
+public enum PdfPageTransitionStyle implements MinRequiredVersion, FriendlyNamed {
 
     SPLIT_HORIZONTAL_INWARD("split_horizontal_inward", PdfVersion.VERSION_1_1),
     SPLIT_HORIZONTAL_OUTWARD("split_horizontal_outward", PdfVersion.VERSION_1_1),
@@ -65,7 +65,7 @@ public enum PdfPageTransitionStyle implements MinRequiredVersion, DisplayNamedEn
         this.minVersion = minVersion;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

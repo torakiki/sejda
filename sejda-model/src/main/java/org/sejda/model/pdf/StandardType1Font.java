@@ -16,7 +16,7 @@
  */
 package org.sejda.model.pdf;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Standard font type 1 fonts.<br>
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum StandardType1Font implements DisplayNamedEnum {
+public enum StandardType1Font implements FriendlyNamed {
 
     TIMES_ROMAN("Times−Roman"),
     TIMES_BOLD("Times−Bold"),
@@ -48,7 +48,7 @@ public enum StandardType1Font implements DisplayNamedEnum {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 }

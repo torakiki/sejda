@@ -17,7 +17,7 @@
  */
 package org.sejda.model.pdf;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * pdf versions
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum PdfVersion implements DisplayNamedEnum {
+public enum PdfVersion implements FriendlyNamed {
 
     VERSION_1_0(0, 1.0d, "%PDF-1.0"),
     VERSION_1_1(1, 1.1d, "%PDF-1.1"),
@@ -48,7 +48,7 @@ public enum PdfVersion implements DisplayNamedEnum {
         this.versionHeader = versionHeader;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 

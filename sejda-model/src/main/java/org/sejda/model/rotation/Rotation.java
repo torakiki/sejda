@@ -17,7 +17,7 @@
  */
 package org.sejda.model.rotation;
 
-import org.sejda.common.DisplayNamedEnum;
+import org.sejda.common.FriendlyNamed;
 
 /**
  * Enum to model a page rotation.
@@ -25,7 +25,7 @@ import org.sejda.common.DisplayNamedEnum;
  * @author Andrea Vacondio
  * 
  */
-public enum Rotation implements DisplayNamedEnum {
+public enum Rotation implements FriendlyNamed {
     DEGREES_0(0),
     DEGREES_90(90),
     DEGREES_180(180),
@@ -43,7 +43,7 @@ public enum Rotation implements DisplayNamedEnum {
         this.degrees = degrees;
     }
 
-    public String getDisplayName() {
+    public String getFriendlyName() {
         return displayName;
     }
 
