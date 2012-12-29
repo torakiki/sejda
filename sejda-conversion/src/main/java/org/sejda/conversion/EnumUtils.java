@@ -43,7 +43,7 @@ public final class EnumUtils {
      * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
      *         Does not throw an exception if enum value is not found, returns null
      */
-    public static <T extends FriendlyNamed> T valueOfSilently(Class<T> enumClass, String displayName) {
+    public static <T extends Enum<?> & FriendlyNamed> T valueOfSilently(Class<T> enumClass, String displayName) {
         for (T each : enumClass.getEnumConstants()) {
             if (StringUtils.equalsIgnoreCase(each.getFriendlyName(), displayName)) {
                 return each;
@@ -61,7 +61,7 @@ public final class EnumUtils {
      * @throws SejdaRuntimeException
      *             if enum value is not found, mentioning the valid values in the message
      */
-    public static <T extends FriendlyNamed> T valueOf(Class<T> enumClass, String displayName,
+    public static <T extends Enum<?> & FriendlyNamed> T valueOf(Class<T> enumClass, String displayName,
             String describedEnumClass) {
         T result = valueOfSilently(enumClass, displayName);
 
@@ -73,7 +73,7 @@ public final class EnumUtils {
         return result;
     }
 
-    private static Collection<String> findValidValues(Class<? extends FriendlyNamed> enumClass) {
+    private static <T extends Enum<?> & FriendlyNamed> Collection<String> findValidValues(Class<T> enumClass) {
         List<String> result = new ArrayList<String>();
 
         for (FriendlyNamed each : enumClass.getEnumConstants()) {

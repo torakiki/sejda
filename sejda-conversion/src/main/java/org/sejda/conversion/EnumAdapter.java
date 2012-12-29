@@ -22,10 +22,11 @@ import org.sejda.common.FriendlyNamed;
  * Base class for adapters for sejda {@link Enum}s. Provides common boiler plate code to initialize the actual enum value from it's user friendly display name
  * 
  * @author Eduard Weissmann
- * 
+ * @param <T>
+ *            type of the enum we are converting
  */
 // TODO: add support for ParameterizedTypeImpl in jewel-cli and reduce all classes extending this to one single class
-public class EnumAdapter<T extends FriendlyNamed> {
+public class EnumAdapter<T extends Enum<?> & FriendlyNamed> {
 
     private final T enumValue;
 
