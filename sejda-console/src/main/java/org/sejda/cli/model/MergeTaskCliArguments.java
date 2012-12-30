@@ -46,7 +46,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     boolean isDirectory();
 
     // TODO: make sure optional options are reflected in the jewelcli produced help output, add isXXX
-    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge as a colon separated list of page selections. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -f /tmp/file1.pdf /tmp/file2.pdf -s all:all:), "
             + "(EX. -f /tmp/file1.pdf /tmp/file2.pdf /tmp/file3.pdf -s all:12-14:32,12-14,4,34-:) to merge file1.pdf, pages 12,13,14 of file2.pdf and pages 32,12,13,14,4,34,35.. of file3.pdf. "
             + "If -s is not set default behaviour is to merge document completely (optional)", defaultValue = "")

@@ -23,16 +23,18 @@ import org.sejda.model.pdf.page.PageRange;
 
 /**
  * Adapter for {@link PageRange}, providing initialization from {@link String}
- *
+ * 
  * @author Eduard Weissmann
  */
-public class PageRangeAdapter {
+public class BasePageRangeAdapter {
 
     private static final String SEPARATOR = "-";
+    private boolean acceptAllString = false;
 
     private PageRange pageRange;
 
-    public PageRangeAdapter(String rawString) {
+    public BasePageRangeAdapter(String rawString, boolean acceptAllString) {
+        this.acceptAllString = acceptAllString;
         try {
             pageRange = doParsePageRange(rawString);
         } catch (SejdaRuntimeException e) {
@@ -49,9 +51,13 @@ public class PageRangeAdapter {
     }
 
     /**
-     * @param rawString string representation of the {@link PageRange}
+     * @param rawString
+     *            string representation of the {@link PageRange}
      */
     private PageRange doParsePageRange(String rawString) {
+        if (acceptAllString && AdapterUtils.isAllPages(rawString)) {
+            return new PageRange(1);
+        }
         String[] tokens = AdapterUtils.splitAndTrim(rawString, SEPARATOR);
         if (tokens.length == 1) {
             if (rawString.contains(SEPARATOR)) {
@@ -72,5 +78,33 @@ public class PageRangeAdapter {
 
     private int parsePageNumber(String s) {
         return AdapterUtils.parseInt(StringUtils.trim(s), "page number");
+    }
+
+    /**
+     * A {@link PageRange} adapter not allowing the 'all' string.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    public static final class PageRangeAdapter extends BasePageRangeAdapter {
+
+        public PageRangeAdapter(String rawString) {
+            super(rawString, false);
+        }
+
+    }
+
+    /**
+     * A {@link PageRange} adapter allowing the 'all' string.
+     * 
+     * @author Andrea Vacondio
+     * 
+     */
+    public static final class PageRangeWithAllAdapter extends BasePageRangeAdapter {
+
+        public PageRangeWithAllAdapter(String rawString) {
+            super(rawString, true);
+        }
+
     }
 }

@@ -27,6 +27,8 @@ import org.sejda.model.exception.SejdaRuntimeException;
  */
 public final class AdapterUtils {
 
+    private static final String ALL = "all";
+
     private AdapterUtils() {
         // utils are not instantiated, use statically
     }
@@ -96,5 +98,14 @@ public final class AdapterUtils {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    /**
+     * 
+     * @param rawString
+     * @return true if the input raw string represent the sejda-console convention string for 'all', where 'all' is usually used when defining page selection to select all pages.
+     */
+    public static boolean isAllPages(String rawString) {
+        return StringUtils.equalsIgnoreCase(ALL, rawString);
     }
 }

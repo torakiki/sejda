@@ -33,6 +33,7 @@ import org.sejda.cli.model.MergeTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
 import org.sejda.cli.model.RotateTaskCliArguments;
+import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
 import org.sejda.cli.model.SetMetadataTaskCliArguments;
 import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
 import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
@@ -51,6 +52,7 @@ import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.parameter.ExtractTextParameters;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
@@ -211,7 +213,14 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> getArgumentsTransformer() {
             return new PdfToMultipleTiffCliArgumentsTransformer();
         }
-    }, "Converts a pdf document to multiple TIFF images (one image per page).", "pdftomultipletiff -f /tmp/file1.pdf -o /tmp --compressionType ccitt_group_3_2d --colorType gray_scale");
+    }, "Converts a pdf document to multiple TIFF images (one image per page).", "pdftomultipletiff -f /tmp/file1.pdf -o /tmp --compressionType ccitt_group_3_2d --colorType gray_scale"),
+    SET_HEADER_FOOTER("setheaderfooter", new CliInterfacedTask<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> getArgumentsTransformer() {
+            return new SetHeaderFooterCliArgumentsTransformer();
+        }
+    }, "Adds a header or a footer to a pdf document or part of it", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -ha right -t Curier -n 1:arabic -l \"some text\"");
 
     private String displayName;
     private String description;

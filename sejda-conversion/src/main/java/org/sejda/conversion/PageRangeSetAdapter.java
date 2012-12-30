@@ -18,12 +18,12 @@ package org.sejda.conversion;
 
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.collection.NullSafeSet;
+import org.sejda.conversion.BasePageRangeAdapter.PageRangeAdapter;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
- * Adapter for a set of {@link PageRange}s, providing intialization from {@link String}
+ * Adapter for a set of {@link PageRange}s, providing initialization from {@link String}
  * 
  * @author Eduard Weissmann
  * 
@@ -31,12 +31,11 @@ import org.sejda.model.pdf.page.PageRange;
 public class PageRangeSetAdapter {
 
     private static final String SEPARATOR = ",";
-    private static final String ALL = "all";
 
     private final Set<PageRange> pageRangeSet = new NullSafeSet<PageRange>();
 
     public PageRangeSetAdapter(String rawString) {
-        if (isAllPages(rawString)) {
+        if (AdapterUtils.isAllPages(rawString)) {
             pageRangeSet.add(new PageRange(1));
             return;
         }
@@ -45,10 +44,6 @@ public class PageRangeSetAdapter {
         for (String eachToken : tokens) {
             pageRangeSet.add(new PageRangeAdapter(eachToken).getPageRange());
         }
-    }
-
-    private boolean isAllPages(String rawString) {
-        return StringUtils.equalsIgnoreCase(ALL, rawString);
     }
 
     public Set<PageRange> getPageRangeSet() {

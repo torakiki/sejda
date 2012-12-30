@@ -35,7 +35,7 @@ public interface SetPageLabelsTaskCliArguments extends CliArgumentsWithPdfFileOu
 
     // pdfsam-incompatibility with extra labelPrefix option in the string format
     @Option(shortName = "l", description = "labels definition. Accepted string is \"pageFrom:numberingStyle:labelSuffixStartNumber:labelPrefix\" where "
-            + "pagefrom is the index of the starting page within the document, numberingStyle is the suffix label number style "
+            + "pageFrom is the index of the starting page within the document, numberingStyle is the suffix label number style "
             + "('arabic', 'uroman', 'lroman', 'uletter', 'lletter', 'empty'), "
             + "labelSuffixStartNumber is usually 1 and represents the number from where the labels start to increment from, labelPrefix is optional and defines "
             + "the text to be appended before the label numbering (required)")

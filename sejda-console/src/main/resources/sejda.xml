@@ -8,51 +8,38 @@
 			task="org.sejda.impl.itext.EncryptTask" />
 		<task parameters="org.sejda.model.parameter.RotateParameters"
 			task="org.sejda.impl.itext.RotateTask" />
-		<task
-			parameters="org.sejda.model.parameter.ViewerPreferencesParameters"
+		<task parameters="org.sejda.model.parameter.ViewerPreferencesParameters"
 			task="org.sejda.impl.itext.ViewerPreferencesTask" />
-		<task
-			parameters="org.sejda.model.parameter.AlternateMixParameters"
+		<task parameters="org.sejda.model.parameter.AlternateMixParameters"
 			task="org.sejda.impl.itext.AlternateMixTask" />
 		<task parameters="org.sejda.model.parameter.UnpackParameters"
 			task="org.sejda.impl.itext.UnpackTask" />
 		<task parameters="org.sejda.model.parameter.MergeParameters"
 			task="org.sejda.impl.itext.MergeTask" />
-		<task
-			parameters="org.sejda.model.parameter.SplitByGoToActionLevelParameters"
+		<task parameters="org.sejda.model.parameter.SplitByGoToActionLevelParameters"
 			task="org.sejda.impl.itext.SplitByGoToActionLevelTask" />
-		<task
-			parameters="org.sejda.model.parameter.SplitBySizeParameters"
+		<task parameters="org.sejda.model.parameter.SplitBySizeParameters"
 			task="org.sejda.impl.itext.SplitBySizeTask" />
-
-		<task
-			parameters="org.sejda.model.parameter.SplitByPagesParameters"
+		<task parameters="org.sejda.model.parameter.SplitByPagesParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
-		<task
-			parameters="org.sejda.model.parameter.SimpleSplitParameters"
+		<task parameters="org.sejda.model.parameter.SimpleSplitParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
-		<task
-			parameters="org.sejda.model.parameter.ExtractPagesParameters"
+		<task parameters="org.sejda.model.parameter.ExtractPagesParameters"
 			task="org.sejda.impl.itext.ExtractPagesTask" />
-		<task
-			parameters="org.sejda.model.parameter.ExtractTextParameters"
+		<task parameters="org.sejda.model.parameter.ExtractTextParameters"
 			task="org.sejda.impl.pdfbox.ExtractTextTask" />
-		<task
-			parameters="org.sejda.model.parameter.SetMetadataParameters"
+		<task parameters="org.sejda.model.parameter.SetMetadataParameters"
 			task="org.sejda.impl.itext.SetMetadataTask" />
-		<task
-			parameters="org.sejda.model.parameter.SetPagesLabelParameters"
+		<task parameters="org.sejda.model.parameter.SetPagesLabelParameters"
 			task="org.sejda.impl.itext.SetPagesLabelTask" />
-		<task
-			parameters="org.sejda.model.parameter.SetPagesTransitionParameters"
+		<task parameters="org.sejda.model.parameter.SetPagesTransitionParameters"
 			task="org.sejda.impl.itext.SetPagesTransitionTask" />
-		<task parameters="org.sejda.model.parameter.CropParameters"
-			task="org.sejda.impl.itext.CropTask" />
-		<task
-			parameters="org.sejda.model.parameter.image.PdfToSingleTiffParameters"
+		<task parameters="org.sejda.model.parameter.CropParameters" task="org.sejda.impl.itext.CropTask" />
+		<task parameters="org.sejda.model.parameter.image.PdfToSingleTiffParameters"
 			task="org.sejda.impl.icepdf.PdfToSingleImageTask" />
-		<task
-			parameters="org.sejda.model.parameter.image.PdfToMultipleTiffParameters"
+		<task parameters="org.sejda.model.parameter.image.PdfToMultipleTiffParameters"
 			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />
+		<task parameters="org.sejda.model.parameter.SetHeaderFooterParameters"
+			task="org.sejda.impl.pdfbox.SetHeaderFooterTask" />
 	</tasks>
 </sejda>
