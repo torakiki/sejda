@@ -46,8 +46,6 @@ public class SetHeaderFooterPdfBoxTaskTest extends SetHeaderFooterTaskTest {
         PdfSource<?> source = PdfFileSource.newInstanceNoPassword(result);
         PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
         try {
-            assertThat(extractor.extractFooterText(handler.getPage(1)).trim(), is("Introduction"));
-            assertThat(extractor.extractFooterText(handler.getPage(2)).trim(), is("Introduction"));
             assertThat(extractor.extractFooterText(handler.getPage(3)).trim(), is("100"));
             assertThat(extractor.extractFooterText(handler.getPage(4)).trim(), is("101"));
         } finally {
@@ -60,8 +58,6 @@ public class SetHeaderFooterPdfBoxTaskTest extends SetHeaderFooterTaskTest {
         PdfSource<?> source = PdfFileSource.newInstanceNoPassword(result);
         PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
         try {
-            assertThat(extractor.extractHeaderText(handler.getPage(1)).trim(), is("Introduction"));
-            assertThat(extractor.extractHeaderText(handler.getPage(2)).trim(), is("Introduction"));
             assertThat(extractor.extractHeaderText(handler.getPage(3)).trim(), is("100"));
             assertThat(extractor.extractHeaderText(handler.getPage(4)).trim(), is("101"));
         } finally {

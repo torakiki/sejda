@@ -110,7 +110,7 @@ public class PageRange implements PagesSelection {
             return String.format("%s-", start);
         }
 
-        if(start == end) {
+        if (start == end) {
             return String.format("%s", start);
         }
 

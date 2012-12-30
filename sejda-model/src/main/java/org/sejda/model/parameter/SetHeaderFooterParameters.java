@@ -15,14 +15,13 @@
  */
 package org.sejda.model.parameter;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,42 +29,54 @@ import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
-import org.sejda.model.validation.constraint.NotEmpty;
+import org.sejda.model.pdf.headerfooter.Numbering;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.validation.constraint.HasHeaderFooterDefinition;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
- * Parameters configuring how to label the footer of pages
+ * Parameters configuring how to label the header/footer of a set of pages in a given pdf document.
  * 
  * @author Eduard Weissmann
  * 
  */
 @SingleOutputAllowedExtensions
+@HasHeaderFooterDefinition
 public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParameters {
 
-    @NotEmpty
+    @NotNull
     @Valid
-    private final Map<Integer, PdfHeaderFooterLabel> labels = new HashMap<Integer, PdfHeaderFooterLabel>();
+    private PageRange pageRange;
     private StandardType1Font font = StandardType1Font.HELVETICA;
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
     @Min(1)
     private BigDecimal fontSize = BigDecimal.TEN;
+    @NotNull
+    @Valid
+    private Numbering numbering = Numbering.NULL;
+    private String labelPrefix;
 
-    /**
-     * Apply label for all pages starting with pageNumber
-     * 
-     * @return previous label associated with pageNumber starting point
-     */
-    public PdfHeaderFooterLabel putLabel(int pageNumber, PdfHeaderFooterLabel label) {
-        return this.labels.put(pageNumber, label);
+    public PageRange getPageRange() {
+        return pageRange;
     }
 
     /**
-     * @return an unmodifiable view of the labels in this parameter.
+     * Set the page range where the header/footer will be applied
+     * 
+     * @param pageRange
      */
-    public Map<Integer, PdfHeaderFooterLabel> getLabels() {
-        return Collections.unmodifiableMap(labels);
+    public void setPageRange(PageRange pageRange) {
+        this.pageRange = pageRange;
+    }
+
+    /**
+     * 
+     * @param pageNumber
+     * @return the styled label for the given page number
+     */
+    public String styledLabelFor(int pageNumber) {
+        return String.format("%s%s", defaultString(labelPrefix, ""), numbering.styledLabelFor(pageNumber)).trim();
     }
 
     public StandardType1Font getFont() {
@@ -96,6 +107,26 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
         return fontSize;
     }
 
+    public Numbering getNumbering() {
+        return numbering;
+    }
+
+    public void setNumbering(Numbering numbering) {
+        if (numbering == null) {
+            this.numbering = Numbering.NULL;
+        } else {
+            this.numbering = numbering;
+        }
+    }
+
+    public String getLabelPrefix() {
+        return labelPrefix;
+    }
+
+    public void setLabelPrefix(String labelPrefix) {
+        this.labelPrefix = labelPrefix;
+    }
+
     /**
      * Set the font size in pts
      * 
@@ -108,7 +139,8 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
-                .append(verticalAlign).append(fontSize).append(labels).toHashCode();
+                .append(verticalAlign).append(fontSize).append(pageRange).append(numbering).append(labelPrefix)
+                .toHashCode();
     }
 
     @Override
@@ -123,49 +155,8 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getFont(), parameter.getFont())
                 .append(getHorizontalAlign(), parameter.getHorizontalAlign())
                 .append(getVerticalAlign(), parameter.getVerticalAlign())
-                .append(getFontSize(), parameter.getFontSize()).append(getLabels(), parameter.getLabels()).isEquals();
-    }
-
-    /**
-     * @return the footer label to be applied to a pdf page number
-     */
-    public String formatLabelFor(int pageNumber) {
-        int labelDefStartPage = getLabelDefinitionStartPageFor(pageNumber);
-        if (labelDefStartPage <= 0) {
-            return null;
-        }
-
-        int offset = pageNumber - labelDefStartPage;
-        PdfHeaderFooterLabel label = getLabels().get(labelDefStartPage);
-        return label.formatFor(offset);
-    }
-
-    /**
-     * Find a page number x, for starting with which, the user defined a label that should be applied also to input pageNumber Eg: user defines label1 for pages starting at 10 and
-     * label2 for pages starting with 100. key page for 12 would be 1, key page for 101 would be 100, key page for 9 would be 0
-     */
-    private int getLabelDefinitionStartPageFor(int pageNumber) {
-        if (pageNumber <= 0) {
-            return pageNumber;
-        }
-
-        if (labels.containsKey(pageNumber)) {
-            return pageNumber;
-        }
-        return getLabelDefinitionStartPageFor(findHighestStartPageLowerThan(pageNumber - 1));
-    }
-
-    private int findHighestStartPageLowerThan(int page) {
-        int prevStartPage = 0;
-        for (int startPage : new TreeSet<Integer>(labels.keySet())) {
-            if (startPage > page) {
-                return prevStartPage;
-            }
-
-            prevStartPage = startPage;
-        }
-
-        return prevStartPage;
+                .append(getFontSize(), parameter.getFontSize()).append(getPageRange(), parameter.getPageRange())
+                .append(numbering, parameter.getNumbering()).append(labelPrefix, parameter.getLabelPrefix()).isEquals();
     }
 
 }

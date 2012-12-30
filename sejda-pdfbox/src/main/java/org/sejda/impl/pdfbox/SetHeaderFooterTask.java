@@ -82,7 +82,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         nullSafeCloseQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
-        LOG.debug("Footer added and document written to {}", parameters.getOutput());
+        LOG.debug("Header or footer added and document written to {}", parameters.getOutput());
     }
 
     public void after() {

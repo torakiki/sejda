@@ -22,6 +22,7 @@ import static org.sejda.impl.pdfbox.util.FontUtils.getStandardType1Font;
 import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -33,6 +34,8 @@ import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component providing footer related functionalities.
@@ -41,6 +44,8 @@ import org.sejda.model.parameter.SetHeaderFooterParameters;
  * 
  */
 public class PdfHeaderFooterWriter implements Closeable {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PdfHeaderFooterWriter.class);
 
     // TODO define as a params member
     private static final Float DEFAULT_MARGIN = 30F;
@@ -60,28 +65,29 @@ public class PdfHeaderFooterWriter implements Closeable {
         BigDecimal fontSize = defaultIfNull(parameters.getFontSize(), BigDecimal.TEN);
         HorizontalAlign horAlignment = defaultIfNull(parameters.getHorizontalAlign(), HorizontalAlign.CENTER);
         VerticalAlign verAlignment = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
-
-        for (int pageNumber = 1; pageNumber <= documentHandler.getNumberOfPages(); pageNumber++) {
-            String label = parameters.formatLabelFor(pageNumber);
-            if (label != null) {
-                PDPage page = documentHandler.getPage(pageNumber);
-                PDRectangle pageSize = page.findCropBox();
-                try {
-                    float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
-                    float xPosition = horAlignment.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
-                    float yPosition = verAlignment.position(pageSize.getHeight(), DEFAULT_MARGIN);
-                    PDPageContentStream contentStream = new PDPageContentStream(
-                            documentHandler.getUnderlyingPDDocument(), page, true, true);
-                    contentStream.beginText();
-                    contentStream.setFont(font, fontSize.floatValue());
-                    contentStream.moveTextPositionByAmount(xPosition, yPosition);
-                    contentStream.drawString(label);
-                    contentStream.endText();
-                    contentStream.close();
-                } catch (IOException e) {
-                    throw new TaskIOException("An error occurred writing the footer of the page.", e);
-                }
+        SortedSet<Integer> pages = parameters.getPageRange().getPages(documentHandler.getNumberOfPages());
+        LOG.debug("Found {} pages to apply header or footer", pages.size());
+        Integer labelPageNumber = parameters.getNumbering().getLogicalPageNumber();
+        for (Integer pageNumber : pages) {
+            String label = parameters.styledLabelFor(labelPageNumber);
+            PDPage page = documentHandler.getPage(pageNumber);
+            PDRectangle pageSize = page.findCropBox();
+            try {
+                float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
+                float xPosition = horAlignment.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
+                float yPosition = verAlignment.position(pageSize.getHeight(), DEFAULT_MARGIN);
+                PDPageContentStream contentStream = new PDPageContentStream(documentHandler.getUnderlyingPDDocument(),
+                        page, true, true);
+                contentStream.beginText();
+                contentStream.setFont(font, fontSize.floatValue());
+                contentStream.moveTextPositionByAmount(xPosition, yPosition);
+                contentStream.drawString(label);
+                contentStream.endText();
+                contentStream.close();
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
             }
+            labelPageNumber++;
         }
 
     }

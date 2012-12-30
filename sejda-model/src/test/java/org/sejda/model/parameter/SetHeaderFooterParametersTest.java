@@ -16,38 +16,29 @@
 package org.sejda.model.parameter;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
+import java.io.InputStream;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.headerfooter.Numbering;
 import org.sejda.model.pdf.headerfooter.NumberingStyle;
-import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
 
 public class SetHeaderFooterParametersTest {
-    PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceWithLabelPrefixAndNumbering("Prefix1 ",
-            NumberingStyle.ARABIC, 100);
-    PdfHeaderFooterLabel label2 = PdfHeaderFooterLabel.newInstanceTextOnly("Prefix2 ");
+    private Numbering numbering = new Numbering(NumberingStyle.ARABIC, 100);
+    private Numbering roman = new Numbering(NumberingStyle.ROMAN, 100);
+    private SingleTaskOutput<?> output;
 
-    public SetHeaderFooterParameters parameters() {
-        SetHeaderFooterParameters params = new SetHeaderFooterParameters();
-        params.putLabel(8, label1);
-        params.putLabel(16, label2);
-        return params;
-    }
-
-    @Test
-    public void testPutLabel() {
-        SetHeaderFooterParameters params = new SetHeaderFooterParameters();
-        params.putLabel(8, label1);
-
-        assertThat(params.putLabel(8, label2), is(label1));
-    }
-
-    @Test
-    public void testFormatLabelForUnlabeledPage() {
-        assertThat(parameters().formatLabelFor(1), is(nullValue()));
+    @Before
+    public void setUp() {
+        output = mock(SingleTaskOutput.class);
     }
 
     @Test
@@ -56,21 +47,45 @@ public class SetHeaderFooterParametersTest {
         SetHeaderFooterParameters eq2 = new SetHeaderFooterParameters();
         SetHeaderFooterParameters eq3 = new SetHeaderFooterParameters();
         SetHeaderFooterParameters diff = new SetHeaderFooterParameters();
-        eq1.putLabel(8, label1);
-        eq2.putLabel(8, label1);
-        eq3.putLabel(8, label1);
-        diff.putLabel(8, label1);
+        eq1.setNumbering(numbering);
+        eq2.setNumbering(numbering);
+        eq3.setNumbering(numbering);
+        diff.setNumbering(numbering);
         diff.setFont(StandardType1Font.CURIER_BOLD);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
-    public void testFormatLabel() {
-        assertThat(parameters().formatLabelFor(8), is("Prefix1 100"));
-        assertThat(parameters().formatLabelFor(9), is("Prefix1 101"));
-        assertThat(parameters().formatLabelFor(15), is("Prefix1 107"));
-        assertThat(parameters().formatLabelFor(16), is("Prefix2"));
-        assertThat(parameters().formatLabelFor(17), is("Prefix2"));
-        assertThat(parameters().formatLabelFor(179663782), is("Prefix2"));
+    public void testInvalidParameters() {
+        SetHeaderFooterParameters victim = new SetHeaderFooterParameters();
+        victim.setOutput(output);
+        victim.setNumbering(numbering);
+        InputStream stream = mock(InputStream.class);
+        PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.setSource(input);
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void testFormatForLabelWithPrefix() {
+        SetHeaderFooterParameters victim = new SetHeaderFooterParameters();
+        victim.setNumbering(numbering);
+        victim.setLabelPrefix("Prefix ");
+        assertThat(victim.styledLabelFor(110), is("Prefix 110"));
+    }
+
+    @Test
+    public void testFormatForEmptyNumberingStyle() {
+        SetHeaderFooterParameters victim = new SetHeaderFooterParameters();
+        victim.setLabelPrefix("Prefix");
+        assertThat(victim.styledLabelFor(99), is("Prefix"));
+    }
+
+    @Test
+    public void testFormatForLabelWithPrefixRomans() {
+        SetHeaderFooterParameters victim = new SetHeaderFooterParameters();
+        victim.setLabelPrefix("Prefix ");
+        victim.setNumbering(roman);
+        assertThat(victim.styledLabelFor(110), is("Prefix CX"));
     }
 }

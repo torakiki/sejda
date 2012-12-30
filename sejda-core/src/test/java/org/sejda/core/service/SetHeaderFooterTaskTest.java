@@ -37,8 +37,9 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.headerfooter.Numbering;
 import org.sejda.model.pdf.headerfooter.NumberingStyle;
-import org.sejda.model.pdf.headerfooter.PdfHeaderFooterLabel;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
 
 import com.lowagie.text.pdf.PdfReader;
@@ -48,7 +49,8 @@ import com.lowagie.text.pdf.PdfReader;
  * 
  */
 @Ignore
-public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implements TestableTask<SetHeaderFooterParameters> {
+public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implements
+        TestableTask<SetHeaderFooterParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
@@ -66,10 +68,8 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
      */
     private void setUpParameters(VerticalAlign vAlign) {
         parameters = new SetHeaderFooterParameters();
-        PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceTextOnly("Introduction");
-        PdfHeaderFooterLabel label3 = PdfHeaderFooterLabel.newInstanceNoLabelPrefix(NumberingStyle.ARABIC, 100);
-        parameters.putLabel(1, label1);
-        parameters.putLabel(3, label3);
+        parameters.setNumbering(new Numbering(NumberingStyle.ARABIC, 100));
+        parameters.setPageRange(new PageRange(3));
 
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -86,10 +86,8 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
 
     private void setUpParametersEncrypted() {
         parameters = new SetHeaderFooterParameters();
-        PdfHeaderFooterLabel label1 = PdfHeaderFooterLabel.newInstanceTextOnly("Introduction");
-        PdfHeaderFooterLabel label3 = PdfHeaderFooterLabel.newInstanceNoLabelPrefix(NumberingStyle.ARABIC, 100);
-        parameters.putLabel(1, label1);
-        parameters.putLabel(3, label3);
+        parameters.setNumbering(new Numbering(NumberingStyle.ARABIC, 100));
+        parameters.setPageRange(new PageRange(3));
 
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
