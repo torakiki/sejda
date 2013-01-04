@@ -19,26 +19,7 @@
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-		<!-- 
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-		</dependency>
-		 -->
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>[${logback.version},]</version>
-		</dependency>
+		</dependency>		
 
 		<!-- test dependencies -->
 		<dependency>
