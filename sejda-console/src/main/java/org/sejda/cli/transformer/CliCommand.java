@@ -98,7 +98,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> getArgumentsTransformer() {
             return new RotateCliArgumentsTransformer();
         }
-    }, "Apply page rotation to a collection of pdf documents. Rotation can be applied to a specified set of pages or to a predefined set (all, even pages, odd pages)", "rotate -f /tmp/file1.pdf -o /tmp -r all:180"),
+    }, "Apply page rotation to a collection of pdf documents. Rotation can be applied to a specified set of pages or to a predefined set (all, even pages, odd pages).", "rotate -f /tmp/file1.pdf -o /tmp -r all:180"),
     SET_VIEWER_PREFERENCES("setviewerpreferences", new CliInterfacedTask<ViewerPreferencesTaskCliArguments, ViewerPreferencesParameters>() {
 
         @Override
@@ -133,7 +133,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
             return new SplitByBookmarksCliArgumentsTransformer();
         }
-    }, "Splits a given pdf document at pages where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression), ", "splitbybookmarks -f /tmp/file1.pdf -o /tmp -l 2 -e \".+(page)+.+\""),
+    }, "Splits a given pdf document at pages where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression).", "splitbybookmarks -f /tmp/file1.pdf -o /tmp -l 2 -e \".+(page)+.+\""),
     SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
 
         @Override
@@ -220,7 +220,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> getArgumentsTransformer() {
             return new SetHeaderFooterCliArgumentsTransformer();
         }
-    }, "Adds a header or a footer to a pdf document or part of it", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -ha right -t Curier -n 1:arabic -l \"some text\"");
+    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -ha right -t Curier -n 1:arabic -l \"some text\"");
 
     private String displayName;
     private String description;
