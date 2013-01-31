@@ -52,6 +52,9 @@ public enum TestableTask {
     CROP(new CropDefaultsProvider()),
     PDF_TO_SINGLE_TIFF(new PdfToSingleTiffDefaultsProvider()),
     PDF_TO_MULTIPLE_TIFF(new PdfToMultipleTiffDefaultsProvider());
+    // TODO PDFBox fails with a NPE using encrypted input files
+    // see https://issues.apache.org/jira/browse/PDFBOX-1453
+    // SET_HEADER_FOOTER(new SetHeaderFooterDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -226,6 +229,13 @@ class SetPageLabelsDefaultsProvider extends SingleInputAndFileOutputDefaultsProv
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-l", "99:uroman:1:Chapter");
+    }
+}
+
+class SetHeaderFooterDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-l", "label").with("-s", "all");
     }
 }
 

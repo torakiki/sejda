@@ -29,7 +29,6 @@ import org.sejda.model.parameter.SetHeaderFooterParameters;
 public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> {
 
-    @Override
     public SetHeaderFooterParameters toTaskParameters(SetHeaderFooterTaskCliArguments taskCliArguments) {
         if (!taskCliArguments.isNumbering() && !taskCliArguments.isLabel()) {
             throw new SejdaRuntimeException("No header or footer definition, numbering or label required.");

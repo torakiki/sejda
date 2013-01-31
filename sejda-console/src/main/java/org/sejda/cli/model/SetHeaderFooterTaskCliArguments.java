@@ -51,8 +51,8 @@ public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfFile
     boolean isVerticalAlign();
 
     @Option(shortName = "t", description = "font as a standard font type 1, defined in Pdf reference 1.7, section 5.5.1. "
-            + "{ Times−Roman, Times−Bold, Times−Italic, Times−BoldItalic, Helvetica, Helvetica−Bold, Helvetica−Oblique, Helvetica−BoldOblique, Courier, Courier−Bold"
-            + ", Courier−Oblique, Courier−BoldOblique, Symbol, ZapfDingbats }. Default is 'Helvetica' (optional)", defaultValue = "Helvetica")
+            + "{ Times-Roman, Times-Bold, Times-Italic, Times-BoldItalic, Helvetica, Helvetica-Bold, Helvetica-Oblique, Helvetica-BoldOblique, Courier, Courier-Bold"
+            + ", Courier-Oblique, Courier-BoldOblique, Symbol, ZapfDingbats }. Default is 'Helvetica' (optional)", defaultValue = "Helvetica")
     StandardType1FontAdapter getFont();
 
     boolean isFont();

@@ -220,7 +220,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> getArgumentsTransformer() {
             return new SetHeaderFooterCliArgumentsTransformer();
         }
-    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -ha right -t Curier -n 1:arabic -l \"some text\"");
+    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -x right -t Courier -n 1:arabic -l \"some text\"");
 
     private String displayName;
     private String description;
