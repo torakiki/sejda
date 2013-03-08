@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -27,18 +27,18 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
- * Adapts the xmlgraphics Tiff writer implementation to the Sejda {@link ImageWriter} interface. This writer is capable of writing multiple images into a single output image.
+ * Adapts the xmlgraphics Tiff writer implementation to the Sejda {@link org.sejda.core.writer.model.ImageWriter} interface. This writer is capable of writing multiple images into
+ * a single output image.
  * 
  * @author Andrea Vacondio
  * 
  */
 // PMD reports a false positive on this class (https://sourceforge.net/tracker/?func=detail&aid=3110548&group_id=56262&atid=479921)
-final class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
-        AbstractXmlGraphicsImageWriterAdapter<PdfToSingleTiffParameters> {
+final class SingleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapter<PdfToSingleTiffParameters> {
 
     private MultiImageWriter adaptedWriter = null;
 
-    private XmlGraphicsSingleOutputTiffImageWriterAdapter() {
+    private SingleOutputTiffImageWriterAdapter() {
         // hide, constructed using builder
     }
 
@@ -91,17 +91,16 @@ final class XmlGraphicsSingleOutputTiffImageWriterAdapter extends
     }
 
     /**
-     * Builder for the {@link XmlGraphicsSingleOutputTiffImageWriterAdapter}.
+     * Builder for the {@link SingleOutputTiffImageWriterAdapter}.
      * 
      * @author Andrea Vacondio
      * 
      */
-    static final class XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder implements
+    static final class SingleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToSingleTiffParameters> {
 
-        public XmlGraphicsSingleOutputTiffImageWriterAdapter build() {
-            return new XmlGraphicsSingleOutputTiffImageWriterAdapter();
+        public SingleOutputTiffImageWriterAdapter build() {
+            return new SingleOutputTiffImageWriterAdapter();
         }
-
     }
 }

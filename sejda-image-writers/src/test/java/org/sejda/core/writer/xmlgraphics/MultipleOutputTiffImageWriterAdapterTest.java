@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
@@ -34,30 +35,30 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.sejda.ImageTestUtils;
-import org.sejda.core.writer.model.XmlGraphicsSingleOutputTiffImageWriterAdapter.XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder;
+import org.sejda.core.writer.xmlgraphics.MultipleOutputTiffImageWriterAdapter.MultipleOutputTiffImageWriterAdapterBuilder;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(XmlGraphicsSingleOutputTiffImageWriterAdapter.class)
-public class XmlGraphicsSingleOutputTiffImageWriterAdapterTest {
+@PrepareForTest(MultipleOutputTiffImageWriterAdapter.class)
+public class MultipleOutputTiffImageWriterAdapterTest {
 
-    private XmlGraphicsSingleOutputTiffImageWriterAdapter victim;
+    private MultipleOutputTiffImageWriterAdapter victim;
 
     @Before
     public void setUp() {
-        victim = spy(new XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder().build());
+        victim = spy(new MultipleOutputTiffImageWriterAdapterBuilder().build());
     }
 
     @Test
-    public void openStreamDestination() throws TaskIOException {
+    public void openStreamDestination() {
         OutputStream destination = mock(OutputStream.class);
-        PdfToSingleTiffParameters params = mock(PdfToSingleTiffParameters.class);
+        PdfToMultipleTiffParameters params = mock(PdfToMultipleTiffParameters.class);
         victim.openWriteDestination(destination, params);
         verify(victim).setOutputStream(destination);
     }
@@ -66,21 +67,21 @@ public class XmlGraphicsSingleOutputTiffImageWriterAdapterTest {
     public void openFileDestination() throws TaskIOException, IOException {
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
-        PdfToSingleTiffParameters params = mock(PdfToSingleTiffParameters.class);
+        PdfToMultipleTiffParameters params = mock(PdfToMultipleTiffParameters.class);
         victim.openWriteDestination(destination, params);
         verify(victim).setOutputStream(any(OutputStream.class));
     }
 
     @Test(expected = TaskIOException.class)
     public void writeNotOpened() throws TaskIOException {
-        PdfToSingleTiffParameters params = mock(PdfToSingleTiffParameters.class);
+        PdfToMultipleTiffParameters params = mock(PdfToMultipleTiffParameters.class);
         RenderedImage image = mock(RenderedImage.class);
         victim.write(image, params);
     }
 
     @Test
     public void supportMultiImage() {
-        assertTrue(victim.supportMultiImage());
+        assertFalse(victim.supportMultiImage());
     }
 
     @Test
@@ -88,7 +89,7 @@ public class XmlGraphicsSingleOutputTiffImageWriterAdapterTest {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.tiff");
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
-        PdfToSingleTiffParameters params = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);
+        PdfToMultipleTiffParameters params = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
         RenderedImage image = ImageTestUtils.loadImage(stream, "test.tiff");
         victim.openWriteDestination(destination, params);
         victim.write(image, params);

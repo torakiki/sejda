@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -26,18 +26,18 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
- * Adapts the xmlgraphics Tiff writer implementation to the Sejda {@link ImageWriter} interface. This writer is NOT capable of writing multiple images into a single output image.
+ * Adapts the xmlgraphics Tiff writer implementation to the Sejda {@link org.sejda.core.writer.model.ImageWriter} interface. This writer is NOT capable of writing multiple images
+ * into a single output image.
  * 
  * @author Andrea Vacondio
  * 
  */
 // PMD reports a false positive on this class (https://sourceforge.net/tracker/?func=detail&aid=3110548&group_id=56262&atid=479921)
-final class XmlGraphicsMultipleOutputTiffImageWriterAdapter extends
-        AbstractXmlGraphicsImageWriterAdapter<PdfToMultipleTiffParameters> {
+final class MultipleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapter<PdfToMultipleTiffParameters> {
 
     private org.apache.xmlgraphics.image.writer.ImageWriter adaptedWriter;
 
-    private XmlGraphicsMultipleOutputTiffImageWriterAdapter() {
+    private MultipleOutputTiffImageWriterAdapter() {
         adaptedWriter = new TIFFImageWriter();
     }
 
@@ -69,16 +69,16 @@ final class XmlGraphicsMultipleOutputTiffImageWriterAdapter extends
     }
 
     /**
-     * Builder for the {@link XmlGraphicsMultipleOutputTiffImageWriterAdapter}.
+     * Builder for the {@link MultipleOutputTiffImageWriterAdapter}.
      * 
      * @author Andrea Vacondio
      * 
      */
-    static final class XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder implements
+    static final class MultipleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToMultipleTiffParameters> {
 
-        public XmlGraphicsMultipleOutputTiffImageWriterAdapter build() {
-            return new XmlGraphicsMultipleOutputTiffImageWriterAdapter();
+        public MultipleOutputTiffImageWriterAdapter build() {
+            return new MultipleOutputTiffImageWriterAdapter();
         }
     }
 }

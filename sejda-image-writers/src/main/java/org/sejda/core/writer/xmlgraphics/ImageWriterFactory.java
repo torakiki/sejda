@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
+import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.core.writer.model.ImageWriter.ImageWriterBuilder;
-import org.sejda.core.writer.model.XmlGraphicsMultipleOutputTiffImageWriterAdapter.XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder;
-import org.sejda.core.writer.model.XmlGraphicsSingleOutputTiffImageWriterAdapter.XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder;
+import org.sejda.core.writer.model.ImageWriterAbstractFactory;
+import org.sejda.core.writer.xmlgraphics.JpegImageWriterAdapter.JpegImageWriterAdapterBuilder;
+import org.sejda.core.writer.xmlgraphics.MultipleOutputTiffImageWriterAdapter.MultipleOutputTiffImageWriterAdapterBuilder;
+import org.sejda.core.writer.xmlgraphics.SingleOutputTiffImageWriterAdapter.SingleOutputTiffImageWriterAdapterBuilder;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
@@ -29,15 +33,16 @@ import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
  * @author Andrea Vacondio
  * 
  */
-class XmlGraphicsImageWriterFactory implements ImageWriterAbstractFactory {
+public class ImageWriterFactory implements ImageWriterAbstractFactory {
 
     private static final ImageWriterBuildersRegistry BUILDERS_REGISTRY = new ImageWriterBuildersRegistry();
 
     static {
         BUILDERS_REGISTRY.addBuilder(PdfToMultipleTiffParameters.class,
-                new XmlGraphicsMultipleOutputTiffImageWriterAdapterBuilder());
-        BUILDERS_REGISTRY.addBuilder(PdfToSingleTiffParameters.class,
-                new XmlGraphicsSingleOutputTiffImageWriterAdapterBuilder());
+                new MultipleOutputTiffImageWriterAdapterBuilder());
+        BUILDERS_REGISTRY.addBuilder(PdfToSingleTiffParameters.class, new SingleOutputTiffImageWriterAdapterBuilder());
+        BUILDERS_REGISTRY.addBuilder(PdfToJpegParameters.class, new JpegImageWriterAdapterBuilder());
+
     }
 
     public <T extends AbstractPdfToImageParameters> ImageWriter<T> createImageWriter(T params) {

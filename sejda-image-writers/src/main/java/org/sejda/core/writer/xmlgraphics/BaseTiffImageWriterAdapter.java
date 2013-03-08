@@ -1,5 +1,5 @@
 /*
- * Created on 19/set/2011
+ * Created on 01/mar/2013
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -14,39 +14,31 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.common.ComponentsUtility.nullSafeClose;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlgraphics.image.codec.util.SeekableOutputStream;
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract implementation of an adapter for an xml graphics image writer
+ * Base implementation for an ImageWriter writing TIFF images
  * 
  * @param <T>
- *            task parameter
+ *            task parameter this writer can write
  * @author Andrea Vacondio
  * 
  */
-abstract class AbstractXmlGraphicsImageWriterAdapter<T extends AbstractPdfToImageParameters> implements ImageWriter<T> {
+abstract class BaseTiffImageWriterAdapter<T extends AbstractPdfToImageParameters> extends AbstractImageWriterAdapter<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractXmlGraphicsImageWriterAdapter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTiffImageWriterAdapter.class);
 
     private static final Map<TiffCompressionType, String> TIFF_COMPRESSION_TYPE_CACHE;
     static {
@@ -56,28 +48,6 @@ abstract class AbstractXmlGraphicsImageWriterAdapter<T extends AbstractPdfToImag
         compressionTypesCache.put(TiffCompressionType.JPEG_TTN2, "JPEG");
         compressionTypesCache.put(TiffCompressionType.DEFLATE, "Deflate");
         TIFF_COMPRESSION_TYPE_CACHE = Collections.unmodifiableMap(compressionTypesCache);
-    }
-
-    private OutputStream outputDestination;
-
-    public void openWriteDestination(File destination, T params) throws TaskIOException {
-        try {
-            openWriteDestination(new SeekableOutputStream(new RandomAccessFile(destination, "rw")), params);
-        } catch (FileNotFoundException e) {
-            throw new TaskIOException("Unable to find destination file.", e);
-        }
-    }
-
-    public void setOutputStream(OutputStream destination) {
-        this.outputDestination = destination;
-    }
-
-    public void closeDestination() throws TaskIOException {
-        try {
-            nullSafeClose(outputDestination);
-        } catch (IOException e) {
-            throw new TaskIOException(e);
-        }
     }
 
     /**
@@ -96,17 +66,5 @@ abstract class AbstractXmlGraphicsImageWriterAdapter<T extends AbstractPdfToImag
             LOG.warn("{} compression type is currently not supported by XML Graphics.", compressionType);
         }
         return imageWriterParams;
-    }
-
-    /**
-     * 
-     * @return the opened write destination or null if not opened
-     */
-    OutputStream getOutputDestination() {
-        return outputDestination;
-    }
-
-    public void close() throws IOException {
-        nullSafeClose(getOutputDestination());
     }
 }

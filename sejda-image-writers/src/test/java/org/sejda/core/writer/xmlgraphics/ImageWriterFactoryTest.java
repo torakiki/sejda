@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.xmlgraphics;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
+import org.sejda.core.writer.xmlgraphics.ImageWriterFactory;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
@@ -30,9 +31,9 @@ import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
  * @author Andrea Vacondio
  * 
  */
-public class XmlGraphicsImageWriterFactoryTest {
+public class ImageWriterFactoryTest {
 
-    private XmlGraphicsImageWriterFactory victim = new XmlGraphicsImageWriterFactory();
+    private ImageWriterFactory victim = new ImageWriterFactory();
 
     @Test
     public void testCreateImageWriter() {

@@ -1,5 +1,5 @@
 /*
- * Created on 26/set/2011
+ * Created on 08/mar/2013
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -19,25 +19,21 @@ package org.sejda.core.service;
 import java.io.InputStream;
 
 import org.junit.Ignore;
-import org.sejda.model.image.ImageColorType;
-import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class MultipleTiffConversionTaskTest extends
-        MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
+public abstract class MultipleJpegConversionTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override
-    PdfToMultipleTiffParameters getMultipleImageParameters() {
-        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
-        parameters.setCompressionType(TiffCompressionType.PACKBITS);
+    PdfToJpegParameters getMultipleImageParameters() {
+        PdfToJpegParameters parameters = new PdfToJpegParameters();
         parameters.setOutputPrefix("[CURRENTPAGE]");
-        parameters.setResolutionInDpi(96);
+        parameters.setResolutionInDpi(160);
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
         parameters.setSource(source);

@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.context;
 
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.sejda.core.writer.context.ImageWriterContext;
 
 /**
  * @author Andrea Vacondio

@@ -18,8 +18,8 @@ package org.sejda.impl.icepdf;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
+import org.sejda.core.writer.context.ImageWriterContext;
 import org.sejda.core.writer.model.ImageWriter;
-import org.sejda.core.writer.model.ImageWriterContext;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.task.BaseTask;
@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base ICEpdf implementation providing common behavior methods for tasks coverting pdf documents to image format.
+ * Base ICEpdf implementation providing common behavior methods for tasks converting pdf documents to image format.
  * 
  * @param <T>
  *            the type of parameters.

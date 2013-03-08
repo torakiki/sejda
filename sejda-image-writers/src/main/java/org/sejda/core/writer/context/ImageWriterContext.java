@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.writer.model;
+package org.sejda.core.writer.context;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import org.sejda.core.writer.model.ImageWriterAbstractFactory;
+import org.sejda.core.writer.xmlgraphics.ImageWriterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ public final class ImageWriterContext {
 
     private ImageWriterContext() {
         factory = newImageWriterFactory();
-        defaultFactory = new XmlGraphicsImageWriterFactory();
+        defaultFactory = new ImageWriterFactory();
     }
 
     /**
@@ -69,7 +71,7 @@ public final class ImageWriterContext {
             return retVal;
         }
         LOG.trace("Creating default ImageWriterAbstractFactory.");
-        return new XmlGraphicsImageWriterFactory();
+        return new ImageWriterFactory();
     }
 
     private static ImageWriterAbstractFactory newNonDefaultFactory() {

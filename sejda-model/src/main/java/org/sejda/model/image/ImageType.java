@@ -26,16 +26,18 @@ import java.util.Set;
  * 
  */
 public enum ImageType {
-    PNG("image/png", false),
-    JPEG("image/jpeg", false),
-    GIF("image/gif", true),
-    TIFF("image/tiff", true);
+    PNG("image/png", "png", false),
+    JPEG("image/jpeg", "jpg", false),
+    GIF("image/gif", "gif", true),
+    TIFF("image/tiff", "tif", true);
 
     private String mimeType;
+    private String extension;
     private boolean supportMultiImage;
 
-    private ImageType(String mimeType, boolean supportMultiImage) {
+    private ImageType(String mimeType, String extension, boolean supportMultiImage) {
         this.mimeType = mimeType;
+        this.extension = extension;
         this.supportMultiImage = supportMultiImage;
     }
 
@@ -48,6 +50,10 @@ public enum ImageType {
      */
     public boolean isSupportMultiImage() {
         return supportMultiImage;
+    }
+
+    public String getExtension() {
+        return extension;
     }
 
     /**

@@ -29,7 +29,6 @@ import org.icepdf.core.pobjects.Document;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
-import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSourceOpener;
@@ -75,7 +74,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             getWriter().closeDestination();
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(SejdaFileExtensions.TIF_EXTENSION).page(zeroBasedPageNumber)
+                    nameRequest(parameters.getOutputImageType().getExtension()).page(zeroBasedPageNumber)
                             .originalName(parameters.getSource().getName()).fileNumber(zeroBasedPageNumber + 1));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
