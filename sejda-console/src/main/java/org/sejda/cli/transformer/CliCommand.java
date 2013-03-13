@@ -30,6 +30,7 @@ import org.sejda.cli.model.EncryptTaskCliArguments;
 import org.sejda.cli.model.ExtractPagesTaskCliArguments;
 import org.sejda.cli.model.ExtractTextTaskCliArguments;
 import org.sejda.cli.model.MergeTaskCliArguments;
+import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
 import org.sejda.cli.model.RotateTaskCliArguments;
@@ -63,6 +64,7 @@ import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
@@ -220,7 +222,14 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> getArgumentsTransformer() {
             return new SetHeaderFooterCliArgumentsTransformer();
         }
-    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -x right -t Courier -n 1:arabic -l \"some text\"");
+    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /output.pdf -s 5- -x right -t Courier -n 1:arabic -l \"some text\""),
+    PDF_TO_JPEG("pdftojpeg", new CliInterfacedTask<PdfToJpegTaskCliArguments, PdfToJpegParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<PdfToJpegTaskCliArguments, PdfToJpegParameters> getArgumentsTransformer() {
+            return new PdfToJpegCliArgumentsTransformer();
+        }
+    }, "Converts a pdf document to multiple JPEG images (one image per page).", "pdftojpeg -f /tmp/file1.pdf -o /tmp");
 
     private String displayName;
     private String description;

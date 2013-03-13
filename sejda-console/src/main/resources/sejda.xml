@@ -41,5 +41,7 @@
 			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />
 		<task parameters="org.sejda.model.parameter.SetHeaderFooterParameters"
 			task="org.sejda.impl.pdfbox.SetHeaderFooterTask" />
+		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters"
+			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />			
 	</tasks>
 </sejda>

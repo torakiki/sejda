@@ -29,7 +29,7 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
         CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> {
 
     /**
-     * Transforms {@link PdfToMultipleTiffParameters} to {@link PdfToMultipleTiffParameters}
+     * Transforms {@link PdfToMultipleTiffTaskCliArguments} to {@link PdfToMultipleTiffParameters}
      * 
      * @param taskCliArguments
      * @return populated task parameters
