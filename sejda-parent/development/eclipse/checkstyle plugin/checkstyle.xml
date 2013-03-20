@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: Sejda
+    Checkstyle-Configuration: SejdaEx
     Description: none
 -->
 <module name="Checker">
@@ -30,9 +30,6 @@
       <property name="max" value="7"/>
     </module>
     <module name="DefaultComesLast">
-      <property name="severity" value="error"/>
-    </module>
-    <module name="DoubleCheckedLocking">
       <property name="severity" value="error"/>
     </module>
     <module name="EmptyStatement"/>
@@ -122,6 +119,6 @@
   <module name="SuppressionCommentFilter"/>
   <module name="FileLength"/>
   <module name="SuppressionFilter">
-    <property name="file" value="/media/LACIE/sejda-repo/sejda/sejda-parent/development/suppression.xml"/>
+    <property name="file" value="/media/torakiki/LACIE/sejda-repo/sejda/sejda-parent/development/eclipse/checkstyle plugin/suppression.xml"/>
   </module>
 </module>
