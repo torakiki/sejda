@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -87,9 +88,10 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread()
+                    .getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
 
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
