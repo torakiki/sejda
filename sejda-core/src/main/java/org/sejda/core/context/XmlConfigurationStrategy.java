@@ -58,6 +58,11 @@ import org.xml.sax.SAXException;
 
 final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
+    /**
+     * system property as a switch to disable schema validation
+     */
+    private static final String PERFORM_SCHEMA_VALIDATION_PROPERTY = "sejda.perform.schema.validation";
+
     private static final String ROOT_NODE = "/sejda";
     private static final String VALIDATION_ATTRIBUTENAME = "validation";
     private static final String NOTIFICATION_XPATH = "/notification";
@@ -88,12 +93,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread()
-                    .getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
-
-            factory.setNamespaceAware(true);
+            initializeSchemaValidation(factory);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(input);
 
@@ -108,6 +108,17 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             throw new ConfigurationException("Unable to create DocumentBuilder.", e);
         } catch (XPathExpressionException e) {
             throw new ConfigurationException("Unable evaluate xpath expression.", e);
+        }
+    }
+
+    private void initializeSchemaValidation(DocumentBuilderFactory factory) throws SAXException {
+        if (Boolean.valueOf(System.getProperty(PERFORM_SCHEMA_VALIDATION_PROPERTY, "true"))) {
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread()
+                    .getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
+
+            factory.setNamespaceAware(true);
         }
     }
 
