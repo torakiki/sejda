@@ -36,7 +36,6 @@ import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.GlobalNotificationContext;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.output.FileTaskOutput;
@@ -70,7 +69,7 @@ public class DefaultTaskExecutionServiceTest {
     }
 
     @Test
-    public void testExecute() throws NotificationContextException {
+    public void testExecute() {
         TestListenerStart listener = TestListenerFactory.newStartListener();
         GlobalNotificationContext.getContext().addListener(listener);
         victim.execute(parameters);

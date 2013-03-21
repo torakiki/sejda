@@ -18,8 +18,6 @@ package org.sejda.cli;
 
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.service.TaskExecutionService;
-import org.sejda.model.exception.NotificationContextException;
-import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.parameter.base.TaskParameters;
 
@@ -39,29 +37,24 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     }
 
     private void registerListeners() {
-        try {
-            doRegisterProcessListener();
-            doRegisterTaskFailureListener();
-        } catch (NotificationContextException e) {
-            throw new SejdaRuntimeException("Could not register listeners. Reason: " + e.getMessage(), e);
-        }
+        doRegisterProcessListener();
+        doRegisterTaskFailureListener();
     }
 
-    private void doRegisterProcessListener() throws NotificationContextException {
+    private void doRegisterProcessListener() {
         LoggingPercentageOfWorkDoneChangeEventListener listener = new LoggingPercentageOfWorkDoneChangeEventListener();
         addEnsuringOnlyOne(listener);
     }
 
-    private void doRegisterTaskFailureListener() throws NotificationContextException {
+    private void doRegisterTaskFailureListener() {
         DefaultTaskExecutionFailedEventListener listener = new DefaultTaskExecutionFailedEventListener();
         addEnsuringOnlyOne(listener);
     }
 
     /**
      * @param listener
-     * @throws NotificationContextException
      */
-    private void addEnsuringOnlyOne(EventListener<?> listener) throws NotificationContextException {
+    private void addEnsuringOnlyOne(EventListener<?> listener) {
         GlobalNotificationContext.getContext().removeListener(listener);
         GlobalNotificationContext.getContext().addListener(listener);
     }

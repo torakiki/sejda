@@ -21,7 +21,6 @@ import java.io.File;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.service.DefaultTaskExecutionService;
 import org.sejda.core.service.TaskExecutionService;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.notification.EventListener;
@@ -52,9 +51,8 @@ public final class SplitByPages {
 
     /**
      * @param args
-     * @throws NotificationContextException
      */
-    public static void main(String[] args) throws NotificationContextException {
+    public static void main(String[] args) {
         if (args.length < MIN_EXPECTED_ARGS_NUM) {
             printUsage();
             return;
@@ -95,15 +93,15 @@ public final class SplitByPages {
         return params;
     }
 
-    private static void registerProgressListener() throws NotificationContextException {
+    private static void registerProgressListener() {
         GlobalNotificationContext.getContext().addListener(new ProgressListener());
     }
 
-    private static void registerFailureListener() throws NotificationContextException {
+    private static void registerFailureListener() {
         GlobalNotificationContext.getContext().addListener(new FailureListener());
     }
 
-    private static void registerCompletedListener() throws NotificationContextException {
+    private static void registerCompletedListener() {
         GlobalNotificationContext.getContext().addListener(new CompletionListener());
     }
 

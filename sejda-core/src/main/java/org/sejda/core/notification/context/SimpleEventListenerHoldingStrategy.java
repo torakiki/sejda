@@ -39,8 +39,7 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
     }
 
-    public <T extends AbstractNotificationEvent> void add(EventListener<T> listener)
-            throws NotificationContextException {
+    public <T extends AbstractNotificationEvent> void add(EventListener<T> listener) {
         Class<T> eventClass = getListenerEventClass(listener);
         listeners.put(eventClass, listener);
     }
@@ -49,14 +48,12 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners.put(eventClass, listener);
     }
 
-    public <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener)
-            throws NotificationContextException {
+    public <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener) {
         Class<T> eventClass = getListenerEventClass(listener);
         return listeners.remove(eventClass, listener);
     }
 
-    private <T extends AbstractNotificationEvent> Class<T> getListenerEventClass(EventListener<T> listener)
-            throws NotificationContextException {
+    private <T extends AbstractNotificationEvent> Class<T> getListenerEventClass(EventListener<T> listener) {
         @SuppressWarnings("unchecked")
         Class<T> eventClass = ReflectionUtils.inferParameterClass(listener.getClass(), "onEvent");
         if (eventClass == null) {

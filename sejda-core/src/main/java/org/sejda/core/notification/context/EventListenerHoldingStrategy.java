@@ -19,7 +19,6 @@ package org.sejda.core.notification.context;
 
 import java.util.List;
 
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 
@@ -36,10 +35,10 @@ interface EventListenerHoldingStrategy {
      * @param <T>
      *            type of the event listened
      * @param listener
-     * @throws NotificationContextException
+     * @throws org.sejda.model.exception.NotificationContextException
      *             if an error occurs inferring the type of the event
      */
-    <T extends AbstractNotificationEvent> void add(EventListener<T> listener) throws NotificationContextException;
+    <T extends AbstractNotificationEvent> void add(EventListener<T> listener);
 
     /**
      * Adds the input {@link EventListener} to listen on the input event class.
@@ -58,10 +57,10 @@ interface EventListenerHoldingStrategy {
      *            type of the event listened
      * @param listener
      * @return true if the listener was found and removed
-     * @throws NotificationContextException
+     * @throws org.sejda.model.exception.NotificationContextException
      *             if an error occurs inferring the type of the event
      */
-    <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener) throws NotificationContextException;
+    <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener);
 
     /**
      * Clears the list of listeners

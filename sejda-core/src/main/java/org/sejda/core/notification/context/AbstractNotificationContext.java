@@ -20,7 +20,6 @@ package org.sejda.core.notification.context;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.slf4j.Logger;
@@ -53,8 +52,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
-    public <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener)
-            throws NotificationContextException {
+    public <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener) {
         synchronized (holder) {
             LOG.trace("Adding event listener: {}", listener);
             holder.add(listener);
@@ -68,8 +66,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
-    public <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener)
-            throws NotificationContextException {
+    public <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener) {
         synchronized (holder) {
             LOG.trace("Removing event listener: {}", listener);
             return holder.remove(listener);

@@ -17,14 +17,13 @@
  */
 package org.sejda.model.exception;
 
-
 /**
  * Exception related to the NotificationContext features
  * 
  * @author Andrea Vacondio
  * 
  */
-public class NotificationContextException extends Exception {
+public class NotificationContextException extends SejdaRuntimeException {
 
     private static final long serialVersionUID = 117114938076275862L;
 

@@ -31,7 +31,6 @@ import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
@@ -94,7 +93,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
     }
 
     @Test
-    public void testExecuteLevel4() throws TaskException, NotificationContextException {
+    public void testExecuteLevel4() throws TaskException {
         SplitByGoToActionLevelParameters parameters = setUpParameters(4, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);

@@ -37,7 +37,6 @@ import org.sejda.cli.util.SystemOutRecordingStream;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.service.DefaultTaskExecutionService;
 import org.sejda.core.service.TaskExecutionService;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
@@ -232,17 +231,13 @@ class CommandLineExecuteTestHelper {
 
     public void assertTaskCompletes(String commandLine) {
         final MutableBoolean taskCompleted = new MutableBoolean(false);
-        try {
-            GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionCompletedEvent>() {
+        GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionCompletedEvent>() {
 
-                public void onEvent(TaskExecutionCompletedEvent event) {
-                    taskCompleted.setValue(true);
-                }
+            public void onEvent(TaskExecutionCompletedEvent event) {
+                taskCompleted.setValue(true);
+            }
 
-            });
-        } catch (NotificationContextException e) {
-            throw new SejdaRuntimeException("Registering notification listener failed. Reason: " + e.getMessage(), e);
-        }
+        });
 
         String consoleOutput = invokeConsoleAndReturnSystemOut(commandLine);
         assertThat("Task did not complete. Console output was:\n" + consoleOutput, taskCompleted.toBoolean(), is(true));

@@ -36,7 +36,6 @@ import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.NotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.task.NotifiableTaskMetadata;
@@ -56,7 +55,7 @@ public class NotificationContextTest {
     }
 
     @Test
-    public void testAddAndClear() throws NotificationContextException {
+    public void testAddAndClear() {
         for (NotificationContext victim : contexts) {
             victim.clearListeners();
             assertEquals(0, victim.size());
@@ -67,14 +66,14 @@ public class NotificationContextTest {
     }
 
     @Test
-    public void testNotificationContextNotify() throws NotificationContextException {
+    public void testNotificationContextNotify() {
         for (NotificationContext victim : contexts) {
             testNotificationContextNotify(victim);
             testNotificationContextUndetermined(victim);
         }
     }
 
-    private void testNotificationContextNotify(NotificationContext victim) throws NotificationContextException {
+    private void testNotificationContextNotify(NotificationContext victim) {
         TestListenerPercentage listener = newPercentageListener();
         TestListenerAny<PercentageOfWorkDoneChangedEvent> secondListener = newGeneralListener();
         TestListenerAny<TaskExecutionFailedEvent> thirdListener = newGeneralListener();
@@ -92,7 +91,7 @@ public class NotificationContextTest {
         assertFalse(thirdListener.hasListened());
     }
 
-    private void testNotificationContextUndetermined(NotificationContext victim) throws NotificationContextException {
+    private void testNotificationContextUndetermined(NotificationContext victim) {
         TestListenerPercentage listener = newPercentageListener();
         victim.addListener(listener);
         PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(
@@ -102,7 +101,7 @@ public class NotificationContextTest {
         assertTrue(listener.isUndeterminate());
     }
 
-    private void testNotificationContextAddListener(NotificationContext victim) throws NotificationContextException {
+    private void testNotificationContextAddListener(NotificationContext victim) {
         victim.addListener(newStartListener());
         assertEquals(1, victim.size());
         TestListenerAny<PercentageOfWorkDoneChangedEvent> listener = newGeneralListener();
@@ -110,7 +109,7 @@ public class NotificationContextTest {
         assertEquals(2, victim.size());
     }
 
-    private void testNotificationContextRemoveListener(NotificationContext victim) throws NotificationContextException {
+    private void testNotificationContextRemoveListener(NotificationContext victim) {
         TestListenerStart listener = newStartListener();
         victim.addListener(listener);
         assertEquals(1, victim.size());
