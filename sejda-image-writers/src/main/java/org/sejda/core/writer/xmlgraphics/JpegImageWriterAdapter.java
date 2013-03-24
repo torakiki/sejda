@@ -26,6 +26,8 @@ import org.apache.xmlgraphics.image.writer.imageio.ImageIOJPEGImageWriter;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
+import javax.imageio.ImageWriteParam;
+
 /**
  * Adapts the xmlgraphics JPEG writer implementation to the Sejda {@link org.sejda.core.writer.model.ImageWriter} interface. This writer is NOT capable of writing multiple images
  * into a single output image.
@@ -38,7 +40,20 @@ final class JpegImageWriterAdapter extends AbstractImageWriterAdapter<PdfToJpegP
     private ImageWriter adaptedWriter;
 
     private JpegImageWriterAdapter() {
-        adaptedWriter = new ImageIOJPEGImageWriter();
+        adaptedWriter = new ImageIOJPEGImageWriter()
+        {
+
+            @Override
+            protected ImageWriteParam getDefaultWriteParam(
+                    javax.imageio.ImageWriter iiowriter, RenderedImage image,
+                    ImageWriterParams params) {
+                ImageWriteParam param = super.getDefaultWriteParam(iiowriter, image, params);
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(1.0f);
+                return param;
+            }
+        }
+        ;
     }
 
     public void openWriteDestination(OutputStream destination, PdfToJpegParameters params) {

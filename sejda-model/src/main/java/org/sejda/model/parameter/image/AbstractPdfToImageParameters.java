@@ -45,6 +45,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Valid
     @NotNull
     private PdfSource<?> source;
+    private float userZoom = 1.0f;
 
     public PdfSource<?> getSource() {
         return source;
@@ -60,6 +61,18 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
 
     public ImageColorType getOutputImageColorType() {
         return outputImageColorType;
+    }
+
+    public float getUserZoom() {
+        return userZoom;
+    }
+
+    /**
+     * Controls the resolution of the resulting images. Works well with vector pdf files, not with the ones that already have images embedded.
+     * @param userZoom how much should the pdf page be zoomed in before it gets rendered as an image.
+     */
+    public void setUserZoom(float userZoom) {
+        this.userZoom = userZoom;
     }
 
     /**
@@ -79,7 +92,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(resolutionInDpi).append(outputImageColorType)
-                .append(getOutputImageType()).append(source).toHashCode();
+                .append(getOutputImageType()).append(source).append(userZoom).toHashCode();
     }
 
     @Override
@@ -94,6 +107,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(resolutionInDpi, parameter.getResolutionInDpi())
                 .append(outputImageColorType, parameter.getOutputImageColorType())
+                .append(userZoom, parameter.getUserZoom())
                 .append(getOutputImageType(), parameter.getOutputImageType()).append(source, parameter.getSource())
                 .isEquals();
     }

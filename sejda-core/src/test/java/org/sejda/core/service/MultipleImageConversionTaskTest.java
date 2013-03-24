@@ -23,7 +23,9 @@ import static org.mockito.Mockito.when;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -35,6 +37,7 @@ import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.task.Task;
@@ -74,6 +77,17 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
             zip.closeEntry();
             entry = zip.getNextEntry();
         }
+    }
 
+    @Ignore("In place of a better way to check image quality with automated tests")
+    public void testImageConversion() throws TaskException, IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParameters();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+
+        File out = new File("/tmp/" + new Date().getTime());
+        out.mkdir();
+        parameters.setOutput(new DirectoryTaskOutput(out));
+        victim.execute(parameters);
+        System.out.println("Images generated to: " + out.getAbsolutePath());
     }
 }
