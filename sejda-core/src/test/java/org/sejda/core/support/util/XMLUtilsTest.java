@@ -32,7 +32,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.core.support.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -68,5 +67,11 @@ public class XMLUtilsTest {
         Node node = (Node) XPathFactory.newInstance().newXPath().evaluate("/test", doc, XPathConstants.NODE);
         assertTrue(XMLUtils.nullSafeGetBooleanAttribute(node, "boolVal"));
         assertFalse(XMLUtils.nullSafeGetBooleanAttribute(node, "chuckNorris"));
+    }
+
+    @Test
+    public void nullSafeGetBooleanAttributeWithDefault() throws XPathExpressionException {
+        Node node = (Node) XPathFactory.newInstance().newXPath().evaluate("/test", doc, XPathConstants.NODE);
+        assertTrue(XMLUtils.nullSafeGetBooleanAttribute(node, "chuckNorris", true));
     }
 }

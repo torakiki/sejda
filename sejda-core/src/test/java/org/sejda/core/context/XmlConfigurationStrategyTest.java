@@ -64,6 +64,7 @@ public class XmlConfigurationStrategyTest {
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
         assertEquals(1, victim.getTasksMap().size());
         assertTrue(victim.isValidation());
+        assertTrue(victim.isIgnoreXmlConfiguration());
     }
 
     @Test
@@ -108,6 +109,7 @@ public class XmlConfigurationStrategyTest {
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
         verify(stream, atLeastOnce()).close();
         assertFalse(victim.isValidation());
+        assertFalse(victim.isIgnoreXmlConfiguration());
     }
 
     @Test

@@ -46,6 +46,7 @@ final class GlobalConfiguration {
     private Class<? extends NotificationStrategy> notificationStrategy;
     private TasksRegistry tasksRegistry;
     private boolean validation;
+    private boolean ignoreXmlConfiguration;
 
     private GlobalConfiguration() {
         LOG.info("Configuring Sejda {}", Sejda.VERSION);
@@ -76,6 +77,8 @@ final class GlobalConfiguration {
         LOG.trace("Notification strategy: {}", notificationStrategy);
         validation = configStrategy.isValidation();
         LOG.trace("Validation: {}", validation);
+        ignoreXmlConfiguration = configStrategy.isIgnoreXmlConfiguration();
+        LOG.trace("Validation, ignore xml configuration: {}", ignoreXmlConfiguration);
         Map<Class<? extends TaskParameters>, Class<? extends Task>> userTasks = configStrategy.getTasksMap();
         for (Entry<Class<? extends TaskParameters>, Class<? extends Task>> entry : userTasks.entrySet()) {
             tasksRegistry.addTask(entry.getKey(), entry.getValue());
@@ -107,6 +110,13 @@ final class GlobalConfiguration {
      */
     boolean isValidation() {
         return validation;
+    }
+
+    /**
+     * @return true if the validator should ignore <i>META-INF/validation.xml</i>.
+     */
+    boolean isIgnoreXmlConfiguration() {
+        return ignoreXmlConfiguration;
     }
 
     /**

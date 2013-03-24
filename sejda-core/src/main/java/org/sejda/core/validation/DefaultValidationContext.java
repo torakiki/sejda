@@ -22,6 +22,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
+import org.sejda.core.context.DefaultSejdaContext;
+
 /**
  * Default implementation of {@link ValidationContext}
  * 
@@ -34,7 +36,9 @@ public final class DefaultValidationContext implements ValidationContext {
 
     private DefaultValidationContext() {
         Configuration<?> validationConfig = Validation.byDefaultProvider().configure();
-        validationConfig.ignoreXmlConfiguration();
+        if (new DefaultSejdaContext().isIgnoreXmlConfiguration()) {
+            validationConfig.ignoreXmlConfiguration();
+        }
         ValidatorFactory factory = validationConfig.buildValidatorFactory();
         validator = factory.getValidator();
     }

@@ -65,6 +65,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     private static final String ROOT_NODE = "/sejda";
     private static final String VALIDATION_ATTRIBUTENAME = "validation";
+    private static final String IGNORE_XML_CONFIG_VALIDATION_ATTRIBUTENAME = "ignore_xml_config";
     private static final String NOTIFICATION_XPATH = "/notification";
     private static final String NOTIFICATION_ASYNC_ATTRIBUTENAME = "async";
     private static final String TASKS_XPATH = "/tasks/task";
@@ -77,6 +78,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasks;
     private boolean validation = false;
+    private boolean ignoreXmlConfig = true;
 
     /**
      * Creates an instance initialized with the given input stream. The stream is not closed.
@@ -100,6 +102,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             notificationStrategy = getNotificationStrategy(document);
             tasks = getTasksMap(document);
             validation = getValidation(document);
+            ignoreXmlConfig = getIgnoreXmlConfig(document);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         } catch (SAXException e) {
@@ -133,6 +136,10 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     public boolean isValidation() {
         return validation;
+    }
+
+    public boolean isIgnoreXmlConfiguration() {
+        return ignoreXmlConfig;
     }
 
     @SuppressWarnings("rawtypes")
@@ -203,6 +210,11 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private boolean getValidation(Document document) throws XPathExpressionException {
         Node node = (Node) xpathFactory.newXPath().evaluate(ROOT_NODE, document, XPathConstants.NODE);
         return nullSafeGetBooleanAttribute(node, VALIDATION_ATTRIBUTENAME);
+    }
+
+    private boolean getIgnoreXmlConfig(Document document) throws XPathExpressionException {
+        Node node = (Node) xpathFactory.newXPath().evaluate(ROOT_NODE, document, XPathConstants.NODE);
+        return nullSafeGetBooleanAttribute(node, IGNORE_XML_CONFIG_VALIDATION_ATTRIBUTENAME, true);
     }
 
     /**

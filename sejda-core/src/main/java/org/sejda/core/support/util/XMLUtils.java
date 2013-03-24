@@ -46,16 +46,25 @@ public final class XMLUtils {
     }
 
     /**
-     * 
      * @param node
      * @param attributeName
      * @return the boolean value of the given attribute. false if the attribute is not found.
      */
     public static boolean nullSafeGetBooleanAttribute(Node node, String attributeName) {
+        return nullSafeGetBooleanAttribute(node, attributeName, false);
+    }
+
+    /**
+     * @param node
+     * @param attributeName
+     * @param defaultValue
+     * @return the boolean value of the given attribute. the defaultValue if the attribute is not found.
+     */
+    public static boolean nullSafeGetBooleanAttribute(Node node, String attributeName, boolean defaultValue) {
         String value = nullSafeGetStringAttribute(node, attributeName);
         if (StringUtils.isNotBlank(value)) {
             return Boolean.parseBoolean(value);
         }
-        return false;
+        return defaultValue;
     }
 }

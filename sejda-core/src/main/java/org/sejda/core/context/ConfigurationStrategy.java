@@ -45,8 +45,13 @@ interface ConfigurationStrategy {
     Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap();
 
     /**
-     * 
      * @return true if the validation has to be performed by the framework, false otherwise (incoming requests are already validated externally)
      */
     boolean isValidation();
+
+    /**
+     * @return true if the validator should set {@link javax.validation.Configuration#ignoreXmlConfiguration()} to ignore <i>META-INF/validation.xml</i>. This is true by default to
+     *         allow a typical configuration (Hibernate-validator and JDK5) to run smooth, it would require JAXB otherwise.
+     */
+    boolean isIgnoreXmlConfiguration();
 }

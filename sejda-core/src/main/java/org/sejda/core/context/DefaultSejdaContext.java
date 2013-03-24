@@ -45,6 +45,10 @@ public class DefaultSejdaContext implements SejdaContext {
         return GlobalConfiguration.getInstance().isValidation();
     }
 
+    public boolean isIgnoreXmlConfiguration() {
+        return GlobalConfiguration.getInstance().isIgnoreXmlConfiguration();
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException {
         Class<? extends TaskParameters> parametersClass = parameters.getClass();
