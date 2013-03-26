@@ -16,6 +16,8 @@
  */
 package org.sejda.model.parameter.image;
 
+import java.math.BigDecimal;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -27,6 +29,7 @@ import org.sejda.model.image.ImageType;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
+import org.sejda.model.validation.constraint.Positive;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to an image of a specified type.
@@ -45,7 +48,8 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Valid
     @NotNull
     private PdfSource<?> source;
-    private float userZoom = 1.0f;
+    @Positive
+    private BigDecimal userZoom = BigDecimal.ONE;
 
     public PdfSource<?> getSource() {
         return source;
@@ -63,15 +67,17 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         return outputImageColorType;
     }
 
-    public float getUserZoom() {
+    public BigDecimal getUserZoom() {
         return userZoom;
     }
 
     /**
      * Controls the resolution of the resulting images. Works well with vector pdf files, not with the ones that already have images embedded.
-     * @param userZoom how much should the pdf page be zoomed in before it gets rendered as an image.
+     * 
+     * @param userZoom
+     *            how much should the pdf page be zoomed in before it gets rendered as an image.
      */
-    public void setUserZoom(float userZoom) {
+    public void setUserZoom(BigDecimal userZoom) {
         this.userZoom = userZoom;
     }
 
@@ -107,8 +113,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(resolutionInDpi, parameter.getResolutionInDpi())
                 .append(outputImageColorType, parameter.getOutputImageColorType())
-                .append(userZoom, parameter.getUserZoom())
-                .append(getOutputImageType(), parameter.getOutputImageType()).append(source, parameter.getSource())
-                .isEquals();
+                .append(userZoom, parameter.getUserZoom()).append(getOutputImageType(), parameter.getOutputImageType())
+                .append(source, parameter.getSource()).isEquals();
     }
 }

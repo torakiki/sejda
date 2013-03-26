@@ -80,7 +80,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     }
 
     @Ignore("In place of a better way to check image quality with automated tests")
-    public void testImageConversion() throws TaskException, IOException {
+    public void testImageConversion() throws TaskException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParameters();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
 
