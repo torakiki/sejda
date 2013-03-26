@@ -47,12 +47,11 @@ public final class PdfToBufferedImageProvider {
      */
     public static BufferedImage toBufferedImage(Document document, int page, AbstractPdfToImageParameters parameters) {
         Page currentPage = document.getPageTree().getPage(page, document);
-        PDimension pageDimensions = currentPage.getSize(0, parameters.getUserZoom().floatValue());
+        PDimension pageDimensions = currentPage.getSize(0, parameters.getUserZoom());
         BufferedImage currentImage = parameters.getOutputImageColorType().createBufferedImage(
                 (int) pageDimensions.getWidth(), (int) pageDimensions.getHeight());
         Graphics2D g = currentImage.createGraphics();
-        currentPage.paint(g, GraphicsRenderingHints.PRINT, Page.BOUNDARY_CROPBOX, 0, parameters.getUserZoom()
-                .floatValue());
+        currentPage.paint(g, GraphicsRenderingHints.PRINT, Page.BOUNDARY_CROPBOX, 0, parameters.getUserZoom());
         g.dispose();
         return currentImage;
     }

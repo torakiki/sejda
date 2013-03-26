@@ -109,6 +109,9 @@ public class BaseCliArgumentsTransformer {
         if (taskCliArguments.isResolution()) {
             parameters.setResolutionInDpi(taskCliArguments.getResolution());
         }
+        if (taskCliArguments.isUserZoom()) {
+            parameters.setUserZoom(taskCliArguments.getUserZoom());
+        }
 
         // todo: hmmm, should populate also taskCliArguments.getColorType() but it's wired by constructor not setter... hmmm
 

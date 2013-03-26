@@ -16,8 +16,6 @@
  */
 package org.sejda.model.parameter.image;
 
-import java.math.BigDecimal;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -49,7 +47,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @NotNull
     private PdfSource<?> source;
     @Positive
-    private BigDecimal userZoom = BigDecimal.ONE;
+    private float userZoom = 1.0f;
 
     public PdfSource<?> getSource() {
         return source;
@@ -67,7 +65,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         return outputImageColorType;
     }
 
-    public BigDecimal getUserZoom() {
+    public float getUserZoom() {
         return userZoom;
     }
 
@@ -77,7 +75,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
      * @param userZoom
      *            how much should the pdf page be zoomed in before it gets rendered as an image.
      */
-    public void setUserZoom(BigDecimal userZoom) {
+    public void setUserZoom(float userZoom) {
         this.userZoom = userZoom;
     }
 
