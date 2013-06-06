@@ -72,6 +72,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             throw new TaskExecutionException("No page has been selected for extraction.");
         }
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
+        copier.setCompression(parameters.isCompressXref());
         LOG.trace("Created DefaultPdfCopier");
 
         int currentStep = 0;
