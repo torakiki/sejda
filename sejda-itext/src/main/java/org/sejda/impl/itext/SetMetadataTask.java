@@ -73,7 +73,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         LOG.debug("Created output temporary buffer {} ", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-        stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
+        stamperHandler.setCompressionOnStamper(parameters.isCompress());
 
         LOG.debug("Setting metadata on temporary document.");
         @SuppressWarnings("unchecked")

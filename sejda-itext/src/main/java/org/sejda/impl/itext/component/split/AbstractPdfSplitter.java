@@ -110,7 +110,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
         LOG.debug("Created output temporary buffer {}", tmpFile);
 
         PdfCopier pdfCopier = openCopier(reader, tmpFile, parameters.getVersion());
-        pdfCopier.setCompression(parameters.isCompressXref());
+        pdfCopier.setCompression(parameters.isCompress());
 
         String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                 enrichNameGenerationRequest(nameRequest().page(page).originalName(parameters.getSource().getName())

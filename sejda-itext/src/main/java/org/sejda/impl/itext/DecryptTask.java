@@ -74,7 +74,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
             LOG.debug("Created output temporary buffer {} ", tmpFile);
             stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-            stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
+            stamperHandler.setCompressionOnStamper(parameters.isCompress());
             stamperHandler.setCreatorOnStamper(reader);
 
             nullSafeClosePdfReader(reader);

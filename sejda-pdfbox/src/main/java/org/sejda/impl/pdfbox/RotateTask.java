@@ -76,7 +76,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
             applyRotation(parameters.getRotation()).to(documentHandler.getUnderlyingPDDocument());
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
-            documentHandler.compressXrefStream(parameters.isCompressXref());
+            documentHandler.compressXrefStream(parameters.isCompress());
             documentHandler.savePDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(

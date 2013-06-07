@@ -31,15 +31,15 @@ import org.sejda.model.validation.constraint.ValidPdfVersion;
 @ValidPdfVersion
 public abstract class AbstractPdfOutputParameters extends AbstractParameters {
 
-    private boolean compressXref = false;
+    private boolean compress = false;
     private PdfVersion version;
 
-    public boolean isCompressXref() {
-        return compressXref;
+    public boolean isCompress() {
+        return compress;
     }
 
-    public void setCompress(boolean compressXref) {
-        this.compressXref = compressXref;
+    public void setCompress(boolean compress) {
+        this.compress = compress;
     }
 
     public PdfVersion getVersion() {
@@ -59,13 +59,13 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
      * @return the min output pdf version required by this parameter object depending on its attributes. Each extending class is responsible for the implementation of this method.
      */
     public PdfVersion getMinRequiredPdfVersion() {
-        return isCompressXref() ? PdfVersion.VERSION_1_5 : PdfVersion.VERSION_1_0;
+        return isCompress() ? PdfVersion.VERSION_1_5 : PdfVersion.VERSION_1_0;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(compressXref).append(version)
-                .append(getOutput()).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(compress).append(version).append(getOutput())
+                .toHashCode();
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
             return false;
         }
         AbstractPdfOutputParameters parameter = (AbstractPdfOutputParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(compressXref, parameter.isCompressXref())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(compress, parameter.isCompress())
                 .append(version, parameter.getVersion()).append(getOutput(), parameter.getOutput()).isEquals();
     }
 }

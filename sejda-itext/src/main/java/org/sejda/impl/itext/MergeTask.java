@@ -116,7 +116,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
                 LOG.debug("Created DefaultPdfCopier");
             }
-            copier.setCompression(parameters.isCompressXref());
+            copier.setCompression(parameters.isCompress());
         }
     }
 }

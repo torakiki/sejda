@@ -74,7 +74,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         LOG.debug("Created output temporary buffer {} ", tmpFile);
         stamperHandler = new PdfStamperHandler(reader, tmpFile, parameters.getVersion());
 
-        stamperHandler.setCompressionOnStamper(parameters.isCompressXref());
+        stamperHandler.setCompressionOnStamper(parameters.isCompress());
         stamperHandler.setCreatorOnStamper(reader);
         if (parameters.isFullScreen()) {
             LOG.debug("Setting fullscreen mode");

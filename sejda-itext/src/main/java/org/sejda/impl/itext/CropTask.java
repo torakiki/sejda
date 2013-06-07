@@ -75,7 +75,7 @@ public class CropTask extends BaseTask<CropParameters> {
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-        copier.setCompression(parameters.isCompressXref());
+        copier.setCompression(parameters.isCompress());
 
         Set<PdfRectangle> cropAreas = getPdfRectangles(parameters.getCropAreas());
         for (int page = 1; page <= totalPages; page++) {

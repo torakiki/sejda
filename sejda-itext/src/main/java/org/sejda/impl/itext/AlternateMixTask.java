@@ -70,7 +70,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         LOG.debug("Created output temporary buffer {} ", tmpFile);
         copier = new DefaultPdfCopier(firstReader, tmpFile, parameters.getVersion());
 
-        copier.setCompression(parameters.isCompressXref());
+        copier.setCompression(parameters.isCompress());
 
         PdfMixInputProcessStatus firstDocStatus = parameters.getFirstInput().newProcessingStatus(
                 firstReader.getNumberOfPages());

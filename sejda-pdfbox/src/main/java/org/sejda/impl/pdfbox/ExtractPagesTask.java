@@ -72,7 +72,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         LOG.debug("Extracting pages {}", pages);
         extractor.extractPages(pages, getNotifiableTaskMetadata());
         extractor.setVersionOnPDDocument(parameters.getVersion());
-        extractor.compressXrefStream(parameters.isCompressXref());
+        extractor.compressXrefStream(parameters.isCompress());
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);

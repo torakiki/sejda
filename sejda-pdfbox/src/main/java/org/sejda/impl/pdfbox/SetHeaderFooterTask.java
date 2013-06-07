@@ -70,7 +70,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         LOG.debug("Created output on temporary buffer {}", tmpFile);
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
-        documentHandler.compressXrefStream(parameters.isCompressXref());
+        documentHandler.compressXrefStream(parameters.isCompress());
 
         PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
         footerWriter.writeFooter(parameters);

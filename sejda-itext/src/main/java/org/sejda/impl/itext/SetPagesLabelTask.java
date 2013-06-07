@@ -70,7 +70,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         copier = new DefaultPdfCopier(reader, tmpFile, parameters.getVersion());
-        copier.setCompression(parameters.isCompressXref());
+        copier.setCompression(parameters.isCompress());
 
         copier.addAllPages(reader);
 
