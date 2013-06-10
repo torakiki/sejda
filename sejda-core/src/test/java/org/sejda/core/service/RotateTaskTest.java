@@ -85,8 +85,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters.setVersion(PdfVersion.VERSION_1_6);
 
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        // PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
         parameters.addSource(source);
         parameters.setOverwrite(true);
     }
@@ -97,8 +96,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         doExecute();
     }
 
-    // investigate NPE
-    @Ignore
+    @Test
     public void testExecuteEncrypted() throws TaskException, IOException {
         setUpParametersEncrypted();
         doExecute();

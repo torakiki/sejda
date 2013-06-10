@@ -32,6 +32,7 @@ import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
@@ -66,6 +67,18 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
      * 
      */
     private void setUpParameters() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        setUpParams(source);
+    }
+
+    private void setUpParametersEncrypted() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
+        setUpParams(source);
+    }
+
+    private void setUpParams(PdfSource<?> source) {
         parameters.setCompress(true);
         parameters.setOutputName("outName.pdf");
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -73,30 +86,23 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
         parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");
         parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
         parameters.put(PdfMetadataKey.TITLE, "test_title");
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
     }
 
     @Test
-    public void testExecuteStream() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamSingleOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("outName.pdf");
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        HashMap<String, String> meta = reader.getInfo();
-        assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
-        assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
-        assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
-        assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
-        reader.close();
+    public void testExecute() throws TaskException, IOException {
+        setUpParameters();
+        doExecute();
     }
 
     @Test
-    public void testExecuteFile() throws TaskException, IOException {
+    public void testExecuteEncrypted() throws TaskException, IOException {
+        setUpParametersEncrypted();
+        doExecute();
+    }
+
+    private void doExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         victim.execute(parameters);

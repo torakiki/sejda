@@ -31,6 +31,7 @@ import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -65,15 +66,10 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the set metadata parameters
-     * 
-     */
-    private void setUpParameters() {
+    private void setUpParams(PdfSource<?> source) {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
@@ -84,14 +80,35 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         parameters.setPrintScaling(PdfPrintScaling.APP_DEFAULT);
         parameters.addEnabledPreference(PdfBooleanPreference.CENTER_WINDOW);
         parameters.addEnabledPreference(PdfBooleanPreference.HIDE_MENUBAR);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
         parameters.setOverwrite(true);
     }
 
+    private void setUpParameters() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        setUpParams(source);
+    }
+
+    private void setUpParametersEncrypted() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
+        setUpParams(source);
+    }
+
     @Test
-    public void testExecuteStream() throws TaskException, IOException {
+    public void testExecute() throws TaskException, IOException {
+        setUpParameters();
+        doExecute();
+    }
+
+    @Test
+    public void testExecuteEncrypted() throws TaskException, IOException {
+        setUpParametersEncrypted();
+        doExecute();
+    }
+
+    public void doExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -100,11 +117,9 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         assertVersion(reader, PdfVersion.VERSION_1_7);
         PdfDictionary catalog = PdfViewerPreferencesImp.getViewerPreferences(reader.getCatalog())
                 .getViewerPreferences();
-        // TODO once PDFBox has it
-        // assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
+        assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
         assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
-        // TODO once PDFBox has it
-        // assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
+        assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
         assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
         assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));

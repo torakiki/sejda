@@ -33,6 +33,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -66,7 +67,7 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
      * Set up of the set page labels parameters
      * 
      */
-    private void setUpParameters(VerticalAlign vAlign) {
+    private void setUpParams(VerticalAlign vAlign, PdfSource<?> source) {
         parameters = new SetHeaderFooterParameters();
         parameters.setNumbering(new Numbering(NumberingStyle.ARABIC, 100));
         parameters.setPageRange(new PageRange(3));
@@ -75,8 +76,6 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setFont(StandardType1Font.CURIER_BOLD_OBLIQUE);
 
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
         parameters.setHorizontalAlign(HorizontalAlign.LEFT);
@@ -84,19 +83,16 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setFontSize(new BigDecimal("7"));
     }
 
-    private void setUpParametersEncrypted() {
-        parameters = new SetHeaderFooterParameters();
-        parameters.setNumbering(new Numbering(NumberingStyle.ARABIC, 100));
-        parameters.setPageRange(new PageRange(3));
+    private void setUpParameters(VerticalAlign vAlign) {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        setUpParams(vAlign, source);
+    }
 
-        parameters.setCompress(true);
-        parameters.setVersion(PdfVersion.VERSION_1_6);
-
+    private void setUpParametersEncrypted(VerticalAlign vAlign) {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        // PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
-        parameters.setSource(source);
-        parameters.setOverwrite(true);
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
+        setUpParams(vAlign, source);
     }
 
     @Test
@@ -113,11 +109,18 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         assertSpecificHeaderExpectations(getResultFile());
     }
 
-    // TODO investigate the NPE from PDFBox
-    @Ignore
-    public void testExecuteEncrypted() throws TaskException, IOException {
-        setUpParametersEncrypted();
+    @Test
+    public void testExecuteFooterEnc() throws TaskException, IOException {
+        setUpParametersEncrypted(VerticalAlign.BOTTOM);
         doTestExecute();
+        assertSpecificFooterExpectations(getResultFile());
+    }
+
+    @Test
+    public void testExecuteHeaderEnc() throws TaskException, IOException {
+        setUpParametersEncrypted(VerticalAlign.TOP);
+        doTestExecute();
+        assertSpecificHeaderExpectations(getResultFile());
     }
 
     private void doTestExecute() throws TaskException, IOException {
