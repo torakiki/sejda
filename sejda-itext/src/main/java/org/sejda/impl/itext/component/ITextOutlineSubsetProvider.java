@@ -69,6 +69,14 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<Map<Str
         return getOutlineUntillPageWithOffset(endPage, 0);
     }
 
+    public Collection<Map<String, Object>> getOutlineWithOffset(int offset) {
+        List<Map<String, Object>> books = getDeepCopyBookmarks(bookmarks);
+        if (offset != 0) {
+            SimpleBookmark.shiftPageNumbers(books, offset, null);
+        }
+        return books;
+    }
+
     public Collection<Map<String, Object>> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException {
         if (startPage < 0 || startPage > endPage) {
             throw new TaskException(

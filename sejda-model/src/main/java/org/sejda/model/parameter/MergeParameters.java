@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
@@ -46,6 +47,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
     private boolean copyFormFields;
     private boolean blankPageIfOdd;
+    @NotNull
+    private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
     private String outputName;
     @Valid
     @NotNull
@@ -114,10 +117,23 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.blankPageIfOdd = blankPageIfOdd;
     }
 
+    public OutlinePolicy getOutlinePolicy() {
+        return outlinePolicy;
+    }
+
+    /**
+     * The policy that the merge task should use when handling the outline tree (bookmarks)
+     * 
+     * @param outlinePolicy
+     */
+    public void setOutlinePolicy(OutlinePolicy outlinePolicy) {
+        this.outlinePolicy = outlinePolicy;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(copyFormFields)
-                .append(blankPageIfOdd).append(outputName).toHashCode();
+                .append(blankPageIfOdd).append(outlinePolicy).append(outputName).toHashCode();
     }
 
     @Override
@@ -131,7 +147,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         MergeParameters parameter = (MergeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList())
                 .append(copyFormFields, parameter.isCopyFormFields())
-                .append(blankPageIfOdd, parameter.isBlankPageIfOdd()).append(outputName, parameter.getOutputName())
+                .append(blankPageIfOdd, parameter.isBlankPageIfOdd())
+                .append(outlinePolicy, parameter.getOutlinePolicy()).append(outputName, parameter.getOutputName())
                 .isEquals();
     }
 }

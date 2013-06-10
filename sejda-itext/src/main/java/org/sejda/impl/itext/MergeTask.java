@@ -53,6 +53,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
+    private OutlineMerger outlineMerger;
     private PdfCopier copier = null;
     private PdfReader reader;
     private int totalSteps;
@@ -61,6 +62,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         totalSteps = parameters.getInputList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }
 
     public void execute(MergeParameters parameters) throws TaskException {
@@ -73,6 +75,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             reader = input.getSource().open(sourceOpener);
 
             createCopierIfNeeded(parameters, tmpFile);
+            outlineMerger.updateOutline(reader, input, copier.getNumberOfCopiedPages());
 
             if (!input.isAllPages()) {
                 String selection = join(input.getPageSelection(), ',');
@@ -91,7 +94,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
-
+        copier.setOutline(outlineMerger.getOutline());
         closeResources();
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);

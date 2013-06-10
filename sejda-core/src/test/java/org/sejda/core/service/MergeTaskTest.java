@@ -17,10 +17,16 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -31,12 +37,14 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
 
 import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
  * Test for the merge task
@@ -60,7 +68,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     private void setUpParameters() {
         PdfMergeInput firstInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/test_file.pdf"), "first_test_file.pdf"));
+                .getResourceAsStream("pdf/large_outline.pdf"), "first_test_file.pdf"));
         PdfMergeInput secondInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
                 .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf"));
         parameters = new MergeParameters();
@@ -69,6 +77,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addInput(firstInput);
         parameters.addInput(secondInput);
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
     }
 
     @Test
@@ -81,7 +90,8 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(310, reader.getNumberOfPages());
+            assertEquals(311, reader.getNumberOfPages());
+            assertNotNull(SimpleBookmark.getBookmark(reader));
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -89,6 +99,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     @Test
     public void testExecuteMergeAllCopyFields() throws TaskException, IOException {
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         // TODO use input with forms
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
@@ -99,7 +110,8 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(310, reader.getNumberOfPages());
+            assertEquals(311, reader.getNumberOfPages());
+            assertNull(SimpleBookmark.getBookmark(reader));
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -120,10 +132,29 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(25, reader.getNumberOfPages());
+            assertEquals(26, reader.getNumberOfPages());
+            List<Map<String, Object>> bookmarks = SimpleBookmark.getBookmark(reader);
+            assertNotNull(bookmarks);
+            assertBookmarksMerged(bookmarks);
         } finally {
             nullSafeCloseReader(reader);
         }
+    }
+
+    private void assertBookmarksMerged(List<Map<String, Object>> bookmarks) {
+        boolean found = false;
+        if (bookmarks != null) {
+            for (Map<String, Object> bookmark : bookmarks) {
+                if ("GoTo".equals(bookmark.get("Action"))) {
+                    String title = bookmark.get("Title").toString();
+                    assertFalse(title.equals("Bookmark1"));
+                    if ("Bookmark27".equals(title)) {
+                        found = true;
+                    }
+                }
+            }
+        }
+        assertTrue("Bookmark27 expected but not found", found);
     }
 
     @Test

@@ -97,4 +97,9 @@ public interface PdfCopier extends Closeable {
      */
     void setOutline(List<Map<String, Object>> outline);
 
+    /**
+     * @return the number of pages this copier has copied
+     */
+    int getNumberOfCopiedPages();
+
 }

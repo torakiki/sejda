@@ -51,10 +51,19 @@ public interface OutlineSubsetProvider<T> {
      * 
      * @param endPage
      *            end page till which the component will provide bookmarks.
+     * @param offset
+     *            page numbers should be shifted
      * @return collection of item representing the document outline from start page to the provided end page with the offset applied.
      * @throws TaskException
      *             if the start page is not set or the end page is before the start.
      */
     Collection<T> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException;
+
+    /**
+     * @param offset
+     *            page numbers should be shifted
+     * @return collection of item representing the whole document outline with the offset applied.
+     */
+    Collection<T> getOutlineWithOffset(int offset);
 
 }

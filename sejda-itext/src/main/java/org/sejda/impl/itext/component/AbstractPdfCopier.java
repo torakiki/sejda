@@ -45,6 +45,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
     private PdfSmartCopy pdfCopy = null;
     private Document pdfDocument = null;
     private boolean closed = false;
+    private int numberOfCopiedPages = 0;
 
     /**
      * Opens the copier using the given reader and the given output version.
@@ -74,6 +75,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addPage(pdfCopy.getImportedPage(reader, pageNumber));
+            numberOfCopiedPages++;
         } catch (BadPdfFormatException e) {
             throw new TaskException(String.format("An error occurred adding page %d to the PdfSmartCopy.", pageNumber),
                     e);
@@ -85,6 +87,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
 
     public void addBlankPage(PdfReader reader) {
         pdfCopy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
+        numberOfCopiedPages++;
     }
 
     public void addBlankPageIfOdd(PdfReader reader) {
@@ -135,12 +138,16 @@ abstract class AbstractPdfCopier implements PdfCopier {
     }
 
     public void setOutline(List<Map<String, Object>> outline) {
-        if (outline != null) {
+        if (outline != null && outline.size() > 0) {
             pdfCopy.setOutlines(outline);
         }
     }
 
     public boolean isClosed() {
         return closed;
+    }
+
+    public int getNumberOfCopiedPages() {
+        return numberOfCopiedPages;
     }
 }

@@ -17,13 +17,17 @@
 package org.sejda.impl.itext.component;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.sejda.impl.itext.component.ITextOutlineUtils.KIDS_KEY;
+import static org.sejda.impl.itext.component.ITextOutlineUtils.getMaxBookmarkLevel;
+import static org.sejda.impl.itext.component.ITextOutlineUtils.getPageNumber;
+import static org.sejda.impl.itext.component.ITextOutlineUtils.isGoToAction;
+import static org.sejda.impl.itext.component.ITextOutlineUtils.nullSafeGetTitle;
 
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.sejda.model.outline.OutlineGoToPageDestinations;
 import org.sejda.model.outline.OutlineHandler;
 
@@ -37,14 +41,6 @@ import com.lowagie.text.pdf.SimpleBookmark;
  * 
  */
 public class ITextOutlineHandler implements OutlineHandler {
-
-    private static final String GOTO_KEY = "GoTo";
-    private static final String ACTION_KEY = "Action";
-    private static final String PAGE_KEY = "Page";
-    private static final String KIDS_KEY = "Kids";
-    private static final String TITLE_KEY = "Title";
-
-    private static final Pattern PAGE_NUMBER_MATCHING_PATTERN = Pattern.compile("(\\d+)(.*)");
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private List<Map<String, Object>> bookmarks;
@@ -112,40 +108,4 @@ public class ITextOutlineHandler implements OutlineHandler {
         }
     }
 
-    private static int getMaxBookmarkLevel(List<Map<String, Object>> bookmarks, int parentLevel) {
-        int maxLevel = parentLevel;
-        if (bookmarks != null) {
-            for (Map<String, Object> bookmark : bookmarks) {
-                if (isGoToAction(bookmark)) {
-                    @SuppressWarnings("unchecked")
-                    int maxBookmarkBranchLevel = getMaxBookmarkLevel(
-                            (List<Map<String, Object>>) bookmark.get(KIDS_KEY), parentLevel + 1);
-                    if (maxBookmarkBranchLevel > maxLevel) {
-                        maxLevel = maxBookmarkBranchLevel;
-                    }
-                }
-            }
-        }
-        return maxLevel;
-    }
-
-    private static String nullSafeGetTitle(Map<String, Object> bookmark) {
-        return ObjectUtils.toString(bookmark.get(TITLE_KEY));
-    }
-
-    private static int getPageNumber(Map<String, Object> bookmark) {
-        Object page = bookmark.get(PAGE_KEY);
-        if (page == null) {
-            return -1;
-        }
-        Matcher matcher = PAGE_NUMBER_MATCHING_PATTERN.matcher(page.toString());
-        if (matcher.matches()) {
-            return Integer.parseInt(matcher.group(1));
-        }
-        return -1;
-    }
-
-    private static boolean isGoToAction(Map<String, Object> bookmark) {
-        return bookmark != null && GOTO_KEY.equals(bookmark.get(ACTION_KEY));
-    }
 }

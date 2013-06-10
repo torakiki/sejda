@@ -37,7 +37,6 @@ import com.lowagie.text.pdf.PdfReader;
 public class CountingPdfCopier extends AbstractPdfCopier {
 
     private CountingOutputStream outputStream;
-    private long numberOfWrittenPages = 0;
 
     /**
      * Creates a copier that writes to the given output file counting the written bytes.
@@ -56,12 +55,6 @@ public class CountingPdfCopier extends AbstractPdfCopier {
         } catch (FileNotFoundException e) {
             throw new TaskException(String.format("Unable to find the output file %s", outputFile.getPath()), e);
         }
-    }
-
-    @Override
-    public void addPage(PdfReader reader, int pageNumber) throws TaskException {
-        super.addPage(reader, pageNumber);
-        numberOfWrittenPages++;
     }
 
     @Override
@@ -85,6 +78,6 @@ public class CountingPdfCopier extends AbstractPdfCopier {
      * @return an estimation of the size of the output document if a new pages is added.
      */
     public long getEstimatedSizeAfterNextPage() {
-        return getByteCount() + (getByteCount() / numberOfWrittenPages);
+        return getByteCount() + (getByteCount() / getNumberOfCopiedPages());
     }
 }

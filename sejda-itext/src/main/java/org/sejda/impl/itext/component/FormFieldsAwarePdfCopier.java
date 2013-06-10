@@ -54,6 +54,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
 
     private PdfCopyFields pdfCopy;
     private OutputStream outputStream;
+    private int numberOfCopiedPages = 0;
 
     public FormFieldsAwarePdfCopier(File outputFile, PdfVersion version) throws TaskException {
         try {
@@ -81,6 +82,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addDocument(reader, Collections.singletonList(Integer.valueOf(pageNumber)));
+            numberOfCopiedPages++;
         } catch (DocumentException e) {
             throw new TaskException(String.format("An error occurred adding page %d.", pageNumber), e);
         } catch (IOException e) {
@@ -92,6 +94,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     public void addAllPages(PdfReader reader) throws TaskException {
         try {
             pdfCopy.addDocument(reader);
+            numberOfCopiedPages += reader.getNumberOfPages();
         } catch (DocumentException e) {
             throw new TaskException("An error occurred adding all pages.", e);
         } catch (IOException e) {
@@ -119,7 +122,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     }
 
     public void setOutline(List<Map<String, Object>> outline) {
-        if (outline != null) {
+        if (outline != null && outline.size() > 0) {
             pdfCopy.setOutlines(outline);
         }
     }
@@ -132,6 +135,10 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         if (reader.getNumberOfPages() % 2 != 0) {
             addBlankPage(reader);
         }
+    }
+
+    public int getNumberOfCopiedPages() {
+        return numberOfCopiedPages;
     }
 
 }
