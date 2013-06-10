@@ -75,7 +75,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
         footerWriter.writeFooter(parameters);
 
-        documentHandler.savePDDocument(tmpFile);
+        documentHandler.saveDecryptedPDDocument(tmpFile);
 
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
 

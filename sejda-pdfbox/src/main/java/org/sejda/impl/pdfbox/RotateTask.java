@@ -77,7 +77,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.compressXrefStream(parameters.isCompress());
-            documentHandler.savePDDocument(tmpFile);
+            documentHandler.saveDecryptedPDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
