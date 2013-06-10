@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.page.PageRange;
 
@@ -98,6 +99,24 @@ public class MergeTaskTest extends AbstractTaskTest {
     public void onAddBlanks() {
         MergeParameters parameters = defaultCommandLine().withFlag("--addBlanks").invokeSejdaConsole();
         assertTrue(parameters.isBlankPageIfOdd());
+    }
+
+    @Test
+    public void onDiscardBookmarks() {
+        MergeParameters parameters = defaultCommandLine().with("-b", "discard").invokeSejdaConsole();
+        assertEquals(OutlinePolicy.DISCARD, parameters.getOutlinePolicy());
+    }
+
+    @Test
+    public void onOneEachDoc() {
+        MergeParameters parameters = defaultCommandLine().with("-b", "one_entry_each_doc").invokeSejdaConsole();
+        assertEquals(OutlinePolicy.ONE_ENTRY_EACH_DOC, parameters.getOutlinePolicy());
+    }
+
+    @Test
+    public void onDefaultOutlinePolicy() {
+        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(OutlinePolicy.RETAIN, parameters.getOutlinePolicy());
     }
 
     @Test

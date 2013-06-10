@@ -21,6 +21,7 @@ import java.util.List;
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.cli.model.adapter.PdfFileSourceListAdapter;
 import org.sejda.conversion.MultiplePageRangeSetAdapter;
+import org.sejda.conversion.OutlinePolicyAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -62,5 +63,8 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     PdfFileSourceListAdapter getFilesListConfig();
 
     boolean isFilesListConfig();
+
+    @Option(shortName = "b", description = "bookmarks merge policy. {discard, retain, one_entry_each_doc }. Default is 'retain' (optional)", defaultValue = "retain")
+    OutlinePolicyAdapter getBookmarks();
 
 }
