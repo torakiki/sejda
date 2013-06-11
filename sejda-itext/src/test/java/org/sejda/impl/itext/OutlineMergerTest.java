@@ -19,6 +19,7 @@ package org.sejda.impl.itext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
@@ -46,6 +47,7 @@ public class OutlineMergerTest {
     public void setUp() throws IOException {
         reader = new PdfReader(getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf"));
         AbstractPdfSource<?> source = mock(AbstractPdfSource.class);
+        when(source.getName()).thenReturn("large_outline.pdf");
         input = new PdfMergeInput(source);
     }
 
@@ -61,6 +63,13 @@ public class OutlineMergerTest {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         victim.updateOutline(reader, input, 0);
         assertEquals(SimpleBookmark.getBookmark(reader).size(), victim.getOutline().size());
+    }
+
+    @Test
+    public void testOnePerDoc() throws TaskException {
+        OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+        victim.updateOutline(reader, input, 0);
+        assertEquals(1, victim.getOutline().size());
     }
 
     @Test

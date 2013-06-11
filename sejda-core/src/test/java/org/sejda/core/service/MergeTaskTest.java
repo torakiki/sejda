@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,26 +63,108 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     @Before
     public void setUp() {
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
-    private void setUpParameters() {
-        PdfMergeInput firstInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_outline.pdf"), "first_test_file.pdf"));
-        PdfMergeInput secondInput = new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf"));
+    private void setUpParameters(List<PdfMergeInput> input) {
         parameters = new MergeParameters();
         parameters.setOverwrite(true);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addInput(firstInput);
-        parameters.addInput(secondInput);
+        for (PdfMergeInput current : input) {
+            parameters.addInput(current);
+        }
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
     }
 
+    private List<PdfMergeInput> getInputWithOutline() {
+        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/large_outline.pdf"), "first_test_file.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
+        return input;
+    }
+
+    private List<PdfMergeInput> getInputWithEncrypted() {
+        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceWithPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/enc_with_modify_perm.pdf"), "enc_with_modify_perm.pdf", "test")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
+        return input;
+    }
+
+    private List<PdfMergeInput> getInput() {
+        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/test_no_outline.pdf"), "first_test_file.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/attachments.pdf"), "second_test.pdf")));
+        return input;
+    }
+
     @Test
-    public void testExecuteMergeAll() throws TaskException, IOException {
+    public void executeMergeAllWithOutlineRetainingOutline() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        doExecuteMergeAll(true, 311);
+    }
+
+    @Test
+    public void executeMergeAllWithEncryptedRetainingOutline() throws TaskException, IOException {
+        setUpParameters(getInputWithEncrypted());
+        doExecuteMergeAll(true, 310);
+    }
+
+    @Test
+    public void executeMergeAllRetainingOutline() throws TaskException, IOException {
+        setUpParameters(getInput());
+        doExecuteMergeAll(false, 4);
+    }
+
+    @Test
+    public void executeMergeAllWithOutlineDiscardingOutline() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        doExecuteMergeAll(false, 311);
+    }
+
+    @Test
+    public void executeMergeAllDiscardingOutline() throws TaskException, IOException {
+        setUpParameters(getInput());
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        doExecuteMergeAll(false, 4);
+    }
+
+    @Test
+    public void executeMergeAllWithEncryptedDiscardingOutline() throws TaskException, IOException {
+        setUpParameters(getInputWithEncrypted());
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        doExecuteMergeAll(false, 310);
+    }
+
+    @Test
+    public void executeMergeAllWithOutlineOnePerDoc() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+        doExecuteMergeAll(true, 311);
+    }
+
+    @Test
+    public void executeMergeAllOnePerDoc() throws TaskException, IOException {
+        setUpParameters(getInput());
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+        doExecuteMergeAll(true, 4);
+    }
+
+    @Test
+    public void executeMergeAllWithEncryptedOnePerDoc() throws TaskException, IOException {
+        setUpParameters(getInputWithEncrypted());
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+        doExecuteMergeAll(true, 310);
+    }
+
+    void doExecuteMergeAll(boolean hasBookmarks, int pages) throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         victim.execute(parameters);
@@ -90,8 +173,12 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(311, reader.getNumberOfPages());
-            assertNotNull(SimpleBookmark.getBookmark(reader));
+            assertEquals(pages, reader.getNumberOfPages());
+            if (hasBookmarks) {
+                assertNotNull(SimpleBookmark.getBookmark(reader));
+            } else {
+                assertNull(SimpleBookmark.getBookmark(reader));
+            }
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -99,6 +186,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     @Test
     public void testExecuteMergeAllCopyFields() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         // TODO use input with forms
         when(context.getTask(parameters)).thenReturn((Task) getTask());
@@ -118,7 +206,18 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     }
 
     @Test
-    public void testExecuteMergeRanges() throws TaskException, IOException {
+    public void executeMergeRangesCopyFields() throws TaskException, IOException {
+        doExecuteMergeRanges(true);
+    }
+
+    @Test
+    public void executeMergeRanges() throws TaskException, IOException {
+        doExecuteMergeRanges(false);
+    }
+
+    public void doExecuteMergeRanges(boolean copyFields) throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        TestUtils.setProperty(parameters, "copyFormFields", copyFields);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {
@@ -159,6 +258,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     @Test
     public void testExecuteMergeRangesWithBlankPage() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {
@@ -175,12 +275,6 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         } finally {
             nullSafeCloseReader(reader);
         }
-    }
-
-    @Test
-    public void testExecuteMergeRangesCopyFields() throws TaskException, IOException {
-        TestUtils.setProperty(parameters, "copyFormFields", Boolean.TRUE);
-        testExecuteMergeRanges();
     }
 
     protected MergeParameters getParameters() {

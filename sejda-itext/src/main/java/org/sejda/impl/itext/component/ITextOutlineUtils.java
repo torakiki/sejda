@@ -30,13 +30,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author Andrea Vacondio
  * 
  */
-final class ITextOutlineUtils {
+public final class ITextOutlineUtils {
 
-    static final String GOTO_KEY = "GoTo";
-    static final String ACTION_KEY = "Action";
-    static final String PAGE_KEY = "Page";
-    static final String KIDS_KEY = "Kids";
-    static final String TITLE_KEY = "Title";
+    public static final String GOTO_VALUE = "GoTo";
+    public static final String ACTION_KEY = "Action";
+    public static final String PAGE_KEY = "Page";
+    public static final String KIDS_KEY = "Kids";
+    public static final String TITLE_KEY = "Title";
     private static final Pattern PAGE_NUMBER_MATCHING_PATTERN = Pattern.compile("(\\d+)(.*)");
 
     private ITextOutlineUtils() {
@@ -80,6 +80,6 @@ final class ITextOutlineUtils {
     }
 
     static boolean isGoToAction(Map<String, Object> bookmark) {
-        return bookmark != null && GOTO_KEY.equals(bookmark.get(ACTION_KEY));
+        return bookmark != null && GOTO_VALUE.equals(bookmark.get(ACTION_KEY));
     }
 }
