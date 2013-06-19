@@ -85,13 +85,13 @@
 
 	<properties>
 		<junit.version>4.10</junit.version>
-		<slf4j.version>1.7.2</slf4j.version>
+		<slf4j.version>1.7.5</slf4j.version>
 		<commons.lang.version>3.1</commons.lang.version>
-		<commons.io.version>2.1</commons.io.version>
+		<commons.io.version>2.2</commons.io.version>
 		<commons.collections.version>3.2.1</commons.collections.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
-		<mockito.version>1.9.0</mockito.version>
-		<powermock.version>1.4.11</powermock.version>
+		<mockito.version>1.9.5</mockito.version>
+		<powermock.version>1.5</powermock.version>
 		<itextpdf.version>2.1.7</itextpdf.version>
 		<logback.version>1.0.9</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
@@ -108,7 +108,7 @@
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>true</enabled>
+				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
