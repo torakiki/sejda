@@ -43,7 +43,7 @@ public final class ReflectionUtils {
     public static Class inferParameterClass(Class clazz, String methodName) {
         Method[] methods = clazz.getMethods();
         for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
+            if (method.getName().equals(methodName) && !method.isBridge()) {
                 Type[] types = method.getGenericParameterTypes();
                 for (Type type : types) {
                     if (type instanceof Class && !((Class) type).isInterface()) {
