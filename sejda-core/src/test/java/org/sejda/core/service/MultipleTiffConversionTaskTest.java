@@ -16,12 +16,9 @@
  */
 package org.sejda.core.service;
 
-import java.io.InputStream;
-
 import org.junit.Ignore;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
@@ -33,14 +30,11 @@ public abstract class MultipleTiffConversionTaskTest extends
         MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
 
     @Override
-    PdfToMultipleTiffParameters getMultipleImageParameters() {
+    PdfToMultipleTiffParameters getMultipleImageParametersWithoutSource() {
         PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
         parameters.setCompressionType(TiffCompressionType.PACKBITS);
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(96);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        parameters.setSource(source);
         parameters.setOverwrite(true);
         return parameters;
     }

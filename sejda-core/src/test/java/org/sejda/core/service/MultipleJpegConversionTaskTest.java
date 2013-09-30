@@ -16,10 +16,7 @@
  */
 package org.sejda.core.service;
 
-import java.io.InputStream;
-
 import org.junit.Ignore;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
@@ -30,14 +27,11 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 public abstract class MultipleJpegConversionTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override
-    PdfToJpegParameters getMultipleImageParameters() {
+    PdfToJpegParameters getMultipleImageParametersWithoutSource() {
         PdfToJpegParameters parameters = new PdfToJpegParameters();
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(300);
         parameters.setUserZoom(1.5f);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        parameters.setSource(source);
         parameters.setOverwrite(true);
         return parameters;
     }

@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -37,6 +38,7 @@ import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
@@ -58,11 +60,27 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         TestUtils.setProperty(victim, "context", context);
     }
 
-    abstract T getMultipleImageParameters();
+    abstract T getMultipleImageParametersWithoutSource();
 
     @Test
-    public void testExecuteStreamToMultipleTiff() throws TaskException, IOException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParameters();
+    public void testExecuteEncryptedStreamToMultipleTiff() throws TaskException, IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
+        parameters.setSource(source);
+        doExecute(parameters);
+    }
+
+    @Test
+    public void testExecuteJpegEmbeddedStreamToMultipleTiff() throws TaskException, IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_jpg.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_jpg.pdf");
+        parameters.setSource(source);
+        doExecute(parameters);
+    }
+
+    private void doExecute(AbstractPdfToMultipleImageParameters parameters) throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         parameters.setOutput(new StreamTaskOutput(out));
@@ -81,7 +99,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
 
     @Ignore("In place of a better way to check image quality with automated tests")
     public void testImageConversion() throws TaskException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParameters();
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
 
         File out = new File("/tmp/" + new Date().getTime());
