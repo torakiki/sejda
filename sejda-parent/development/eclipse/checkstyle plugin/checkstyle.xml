@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: SejdaEx
+    Checkstyle-Configuration: sejda
     Description: none
 -->
 <module name="Checker">
@@ -111,6 +111,7 @@
   </module>
   <module name="FileTabCharacter">
     <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java"/>
   </module>
   <module name="StrictDuplicateCode">
     <property name="severity" value="ignore"/>
