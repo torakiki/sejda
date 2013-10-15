@@ -17,6 +17,8 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import java.util.regex.Pattern;
+
 /**
  * Enum for the types of prefix. It contains information about the prefix type like:
  * <ul>
@@ -39,12 +41,12 @@ enum PrefixType {
     BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", StrictBookmarkPrefixProcessor.class);
 
     private boolean ensureUniqueNames;
-    private String matchingRegexp;
+    private Pattern pattern;
     private Class<? extends PrefixProcessor> processor;
 
     private PrefixType(boolean ensureUniqueNames, String matchingRegexp, Class<? extends PrefixProcessor> processor) {
         this.ensureUniqueNames = ensureUniqueNames;
-        this.matchingRegexp = matchingRegexp;
+        this.pattern = Pattern.compile(matchingRegexp);
         this.processor = processor;
     }
 
@@ -55,11 +57,8 @@ enum PrefixType {
         return ensureUniqueNames;
     }
 
-    /**
-     * @return the regexp to find in a prefix string.
-     */
-    public String getMatchingRegexp() {
-        return matchingRegexp;
+    public boolean isFoundIn(String toBeSearched) {
+        return pattern.matcher(toBeSearched).find();
     }
 
     /**

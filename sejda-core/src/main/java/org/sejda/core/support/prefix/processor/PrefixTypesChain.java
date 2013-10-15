@@ -19,8 +19,6 @@ package org.sejda.core.support.prefix.processor;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
@@ -51,8 +49,7 @@ public class PrefixTypesChain {
     public PrefixTypesChain(String prefix) {
         if (StringUtils.isNotBlank(prefix)) {
             for (PrefixType type : PrefixType.values()) {
-                Matcher m = Pattern.compile(type.getMatchingRegexp()).matcher(prefix);
-                if (m.find()) {
+                if (type.isFoundIn(prefix)) {
                     if (type.isEnsureUniqueNames()) {
                         firstLevelPrefixChain.add(type);
                     } else {
