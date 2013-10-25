@@ -5,6 +5,8 @@
 .settings/
 target/
 *.iml
+*.ipr
+.idea
 .DS_Store
 
 # Package Files #
