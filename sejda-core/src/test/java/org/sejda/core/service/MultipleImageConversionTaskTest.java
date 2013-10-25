@@ -37,6 +37,7 @@ import org.sejda.ImageTestUtils;
 import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.DirectoryTaskOutput;
@@ -102,8 +103,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
 
-        File out = new File("/tmp/" + new Date().getTime());
-        out.mkdir();
+        File out = IOUtils.createTemporaryFolder();
         parameters.setOutput(new DirectoryTaskOutput(out));
         victim.execute(parameters);
         System.out.println("Images generated to: " + out.getAbsolutePath());

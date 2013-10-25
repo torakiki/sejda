@@ -18,7 +18,9 @@ package org.sejda.core.support.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
+import org.apache.commons.io.FileUtils;
 import org.sejda.model.exception.TaskIOException;
 
 /**
@@ -59,5 +61,11 @@ public final class IOUtils {
         } catch (IOException e) {
             throw new TaskIOException("Unable to create temporary buffer", e);
         }
+    }
+
+    public static File createTemporaryFolder() {
+        File folder = new File(FileUtils.getTempDirectory(), "sejdaTmp" + new Date().getTime());
+        folder.mkdirs();
+        return folder;
     }
 }

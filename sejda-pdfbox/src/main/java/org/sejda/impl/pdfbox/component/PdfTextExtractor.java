@@ -43,9 +43,14 @@ public class PdfTextExtractor implements Closeable {
     private String encoding;
 
     public PdfTextExtractor(String encoding) throws TaskException {
+        this(encoding, 1, Integer.MAX_VALUE);
+    }
+    public PdfTextExtractor(String encoding, int startPageOneBased, int endPageIncluding) throws TaskException {
         try {
             this.encoding = encoding;
             textStripper = new PDFTextStripper(encoding);
+            textStripper.setStartPage(startPageOneBased);
+            textStripper.setEndPage(endPageIncluding);
         } catch (IOException e) {
             throw new TaskException("Unable to create text extractor.", e);
         }

@@ -65,7 +65,7 @@ public class DirectoryTaskOutput implements MultipleTaskOutput<File> {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(directory).toString();
+        return directory.toString();
     }
 
     @Override
