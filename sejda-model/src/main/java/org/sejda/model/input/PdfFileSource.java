@@ -72,4 +72,9 @@ public final class PdfFileSource extends AbstractPdfSource<File> {
         return new PdfFileSource(file, password);
     }
 
+    @Override
+    public String toString() {
+        return file.getAbsolutePath();
+    }
+
 }
