@@ -21,48 +21,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.model.AlternateMixTaskCliArguments;
-import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
-import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
-import org.sejda.cli.model.CropTaskCliArguments;
-import org.sejda.cli.model.DecryptTaskCliArguments;
-import org.sejda.cli.model.EncryptTaskCliArguments;
-import org.sejda.cli.model.ExtractPagesTaskCliArguments;
-import org.sejda.cli.model.ExtractTextTaskCliArguments;
-import org.sejda.cli.model.MergeTaskCliArguments;
-import org.sejda.cli.model.PdfToJpegTaskCliArguments;
-import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
-import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
-import org.sejda.cli.model.RotateTaskCliArguments;
-import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
-import org.sejda.cli.model.SetMetadataTaskCliArguments;
-import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
-import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
-import org.sejda.cli.model.SimpleSplitTaskCliArguments;
-import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
-import org.sejda.cli.model.SplitByPagesTaskCliArguments;
-import org.sejda.cli.model.SplitBySizeTaskCliArguments;
-import org.sejda.cli.model.TaskCliArguments;
-import org.sejda.cli.model.UnpackTaskCliArguments;
-import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
-import org.sejda.model.parameter.AlternateMixParameters;
-import org.sejda.model.parameter.CropParameters;
-import org.sejda.model.parameter.DecryptParameters;
-import org.sejda.model.parameter.EncryptParameters;
-import org.sejda.model.parameter.ExtractPagesParameters;
-import org.sejda.model.parameter.ExtractTextParameters;
-import org.sejda.model.parameter.MergeParameters;
-import org.sejda.model.parameter.RotateParameters;
-import org.sejda.model.parameter.SetHeaderFooterParameters;
-import org.sejda.model.parameter.SetMetadataParameters;
-import org.sejda.model.parameter.SetPagesLabelParameters;
-import org.sejda.model.parameter.SetPagesTransitionParameters;
-import org.sejda.model.parameter.SimpleSplitParameters;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
-import org.sejda.model.parameter.SplitByPagesParameters;
-import org.sejda.model.parameter.SplitBySizeParameters;
-import org.sejda.model.parameter.UnpackParameters;
-import org.sejda.model.parameter.ViewerPreferencesParameters;
+import org.sejda.cli.model.*;
+import org.sejda.model.parameter.*;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
@@ -172,6 +132,14 @@ public enum CliCommand {
         }
 
     }, "Given a collection of pdf documents, creates a collection of text files containing text extracted from them.", "extracttext -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\""),
+    EXTRACT_TEXT_BY_PAGES("extracttextbypages", new CliInterfacedTask<ExtractTextByPagesTaskCliArguments, ExtractTextByPagesParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<ExtractTextByPagesTaskCliArguments, ExtractTextByPagesParameters> getArgumentsTransformer() {
+            return new ExtractTextByPagesCliArgumentsTransformer();
+        }
+
+    }, "Extracts text from a pdf document, splitting output text files by pages", "extracttextbypages -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\" -n 1 3 5 99"),
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override

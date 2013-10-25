@@ -28,6 +28,8 @@
 			task="org.sejda.impl.itext.ExtractPagesTask" />
 		<task parameters="org.sejda.model.parameter.ExtractTextParameters"
 			task="org.sejda.impl.pdfbox.ExtractTextTask" />
+        <task parameters="org.sejda.model.parameter.ExtractTextByPagesParameters"
+              task="org.sejda.impl.pdfbox.ExtractTextByPagesTask" />
 		<task parameters="org.sejda.model.parameter.SetMetadataParameters"
 			task="org.sejda.impl.itext.SetMetadataTask" />
 		<task parameters="org.sejda.model.parameter.SetPagesLabelParameters"

@@ -14,5 +14,6 @@ Quick install & run
 
 License: Apache License 2.0
 Feedbacks to: info@sejda.org
+Issue tracker: https://github.com/torakiki/sejda/issues
 
 Note: Application comes with ABSOLUTELY NO WARRANTY
