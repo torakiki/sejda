@@ -16,12 +16,12 @@
  */
 package org.sejda.cli;
 
-import org.junit.Test;
-import org.sejda.model.parameter.ExtractTextByPagesParameters;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.sejda.model.parameter.ExtractTextByPagesParameters;
 
 /**
  * Tests for various traits of the ExtractTextByPagesTask command line interface

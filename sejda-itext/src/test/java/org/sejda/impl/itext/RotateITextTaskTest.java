@@ -18,7 +18,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.RotateTaskTest;
-import org.sejda.impl.itext.RotateTask;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.task.Task;
 

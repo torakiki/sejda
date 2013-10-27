@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
-import org.sejda.core.writer.xmlgraphics.ImageWriterFactory;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;

@@ -20,7 +20,6 @@ package org.sejda.impl.itext.util;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.impl.itext.util.ViewerPreferencesUtils;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
 import org.sejda.model.pdf.viewerpreference.PdfDuplex;

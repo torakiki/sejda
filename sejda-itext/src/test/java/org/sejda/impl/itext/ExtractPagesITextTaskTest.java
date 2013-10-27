@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.ExtractPagesTaskTest;
-import org.sejda.impl.itext.ExtractPagesTask;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.task.Task;
 

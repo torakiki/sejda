@@ -1,6 +1,5 @@
 package org.sejda.impl.itext;
 import org.sejda.core.service.AlternateMixTaskTest;
-import org.sejda.impl.itext.AlternateMixTask;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.task.Task;
 

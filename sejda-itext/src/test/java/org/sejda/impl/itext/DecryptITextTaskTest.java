@@ -18,7 +18,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.DecryptTaskTest;
-import org.sejda.impl.itext.DecryptTask;
 import org.sejda.model.parameter.DecryptParameters;
 import org.sejda.model.task.Task;
 

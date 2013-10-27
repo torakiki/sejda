@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.validation.constraint.Directory;
 

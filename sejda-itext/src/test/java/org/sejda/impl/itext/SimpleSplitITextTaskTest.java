@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.SimpleSplitTaskTest;
-import org.sejda.impl.itext.SplitByPageNumbersTask;
 import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.task.Task;
 

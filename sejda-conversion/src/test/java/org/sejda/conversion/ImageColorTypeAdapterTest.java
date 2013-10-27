@@ -1,11 +1,11 @@
 package org.sejda.conversion;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import org.junit.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.image.ImageColorType;
-
-import static org.hamcrest.MatcherAssert.*;
-import static org.hamcrest.Matchers.*;
 
 /**
  * Created on 6/16/12 3:11 PM

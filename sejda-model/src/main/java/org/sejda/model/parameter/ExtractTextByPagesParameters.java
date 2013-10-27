@@ -15,15 +15,15 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
-
-import java.util.Collection;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Parameters for extract text by pages manipulation. Accepts a set of page numbers, where the split occurs.

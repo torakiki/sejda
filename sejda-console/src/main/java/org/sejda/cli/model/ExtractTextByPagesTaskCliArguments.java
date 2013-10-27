@@ -16,11 +16,12 @@
  */
 package org.sejda.cli.model;
 
+import java.util.List;
+
 import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
+
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
-
-import java.util.List;
 
 /**
  * Specifications for command line options of the ExtractTextByPages task

@@ -18,7 +18,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.ViewerPreferencesTaskTest;
-import org.sejda.impl.itext.ViewerPreferencesTask;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.task.Task;
 

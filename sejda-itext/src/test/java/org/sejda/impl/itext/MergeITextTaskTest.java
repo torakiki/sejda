@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.MergeTaskTest;
-import org.sejda.impl.itext.MergeTask;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.Task;
 

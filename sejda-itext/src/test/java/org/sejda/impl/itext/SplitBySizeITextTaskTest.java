@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.SplitBySizeTaskTest;
-import org.sejda.impl.itext.SplitBySizeTask;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.task.Task;
 

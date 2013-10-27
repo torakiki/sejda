@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.CropTaskTest;
-import org.sejda.impl.itext.CropTask;
 import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.task.Task;
 

@@ -18,7 +18,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.EncryptTaskTest;
-import org.sejda.impl.itext.EncryptTask;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.task.Task;
 

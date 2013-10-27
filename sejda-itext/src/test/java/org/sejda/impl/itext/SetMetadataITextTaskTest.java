@@ -18,7 +18,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.SetMetadataTaskTest;
-import org.sejda.impl.itext.SetMetadataTask;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.task.Task;
 

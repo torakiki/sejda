@@ -17,7 +17,6 @@
 package org.sejda.impl.itext;
 
 import org.sejda.core.service.UnpackTaskTest;
-import org.sejda.impl.itext.UnpackTask;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.Task;
 

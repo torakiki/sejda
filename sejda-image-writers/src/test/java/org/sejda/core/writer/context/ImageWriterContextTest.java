@@ -19,7 +19,6 @@ package org.sejda.core.writer.context;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
-import org.sejda.core.writer.context.ImageWriterContext;
 
 /**
  * @author Andrea Vacondio

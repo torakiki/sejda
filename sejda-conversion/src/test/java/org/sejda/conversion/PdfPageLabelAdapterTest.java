@@ -1,10 +1,10 @@
 package org.sejda.conversion;
 
-import org.junit.Test;
-import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import org.junit.Test;
+import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 
 /**
  * Created on 6/16/12 3:17 PM

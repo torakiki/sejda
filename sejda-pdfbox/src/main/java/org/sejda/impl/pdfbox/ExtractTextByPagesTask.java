@@ -16,6 +16,16 @@
  */
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.io.File;
+import java.util.Set;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
@@ -31,20 +41,10 @@ import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.Set;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
 /**
- * Extract text from pdf input, splitting input file by pages.
- * Example: input.pdf -> page1-4.txt, page5-10.txt, page11.txt
- * Implemented using PdfBox
+ * Extract text from pdf input, splitting input file by pages. Example: input.pdf -> page1-4.txt, page5-10.txt, page11.txt Implemented using PdfBox
+ * 
+ * @author Eduard Weissmann
  */
 public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameters> {
 
@@ -54,13 +54,12 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
-    public void before(ExtractTextByPagesParameters parameters) throws TaskException {
+    public void before(ExtractTextByPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(ExtractTextByPagesParameters parameters) throws TaskException {
-        System.out.println("ExtractTextByPagesTask");
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
@@ -77,7 +76,7 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
 
         for (Integer nextSplitPage : splitAtPages) {
             int endPage = nextSplitPage - 1;
-            if(startPage == endPage) {
+            if (startPage == endPage) {
                 LOG.debug("Extracting text from page {}", startPage);
             } else {
                 LOG.debug("Extracting text from pages {} to {}", startPage, endPage);
@@ -88,10 +87,9 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
 
             PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), startPage, endPage);
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
-            String outName = nameGenerator(parameters.getOutputPrefix())
-                    .generate(nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(startPage)
-                            .originalName(parameters.getSource().getName())
-                            .fileNumber(outputDocumentsCounter));
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(startPage)
+                            .originalName(parameters.getSource().getName()).fileNumber(outputDocumentsCounter));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             // close resource
