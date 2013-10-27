@@ -29,7 +29,7 @@ public final class FormattingUtils {
     }
 
     public static String justifyLeft(int width, String input) {
-        StringBuffer buf = new StringBuffer(input);
+        StringBuilder buf = new StringBuilder(input);
         int lastspace = -1;
         int linestart = 0;
         int i = 0;
@@ -58,7 +58,7 @@ public final class FormattingUtils {
     }
 
     public static String leftPadMultiline(String input, char padChar, int padWidth) {
-        StringBuffer buf = new StringBuffer(input);
+        StringBuilder buf = new StringBuilder(input);
         String paddingString = repeatedChar(padChar, padWidth);
         int i = 0;
 
