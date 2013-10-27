@@ -85,5 +85,9 @@ target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/tes
 target/assembled/bin/sejda-console setheaderfooter -h
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/headerfooter.pdf -s 5- -x right -t Courier -n 1:arabic -l "my footer" --overwrite -v 4
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/headerfooter.pdf -s all -x right -y top -t Times-Bold -n 1:roman --overwrite -v 4
+target/assembled/bin/sejda-console pdftojpeg -h
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 --overwrite
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -z 1.3 --overwrite
+target/assembled/bin/sejda-console extracttextbypages -h
+target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -n 1 3 
+
