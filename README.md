@@ -14,9 +14,14 @@ A platform independent CLI (command line interface) is available for download wi
 
 A web interface is available at [sejda.com] where the most commonly used tasks are available as online services.
 
+Quality
+----
+We put a great effort trying to keep high quality standard for our code base, all the details on [SonarQube]
+
 License
 ----
 
 Apache License, Version 2.0
 
   [sejda.com]: http://sejda.com  
+  [SonarQube]: http://nemo.sonarqube.org/dashboard/index/org.sejda:sejda
