@@ -122,7 +122,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
     }
 
     public void setOutline(List<Map<String, Object>> outline) {
-        if (outline != null && outline.size() > 0) {
+        if (outline != null && !outline.isEmpty()) {
             pdfCopy.setOutlines(outline);
         }
     }

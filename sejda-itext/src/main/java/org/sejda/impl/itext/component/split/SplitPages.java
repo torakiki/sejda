@@ -47,7 +47,7 @@ class SplitPages implements NextOutputStrategy {
     }
 
     public void ensureIsValid() throws TaskExecutionException {
-        if (closingPages.size() <= 0) {
+        if (closingPages.isEmpty()) {
             throw new TaskExecutionException("Unable to split, no page number given.");
         }
     }
