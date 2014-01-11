@@ -28,7 +28,7 @@ import com.lowagie.text.pdf.PdfPageLabels;
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Prodvides functionalities to copy pages from a given {@link PdfReader}.
+ * Provides functionalities to copy pages from a given {@link PdfReader}.
  * 
  * @author Andrea Vacondio
  * 
