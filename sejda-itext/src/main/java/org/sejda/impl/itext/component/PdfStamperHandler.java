@@ -116,7 +116,7 @@ public final class PdfStamperHandler implements Closeable {
     }
 
     /**
-     * Adds the creator to the metadata in input and it sets it to the {@link PdfStamper}
+     * Sets to the {@link PdfStamper} the input map as document metadata adding the creator to it.
      * 
      * @param meta
      */
