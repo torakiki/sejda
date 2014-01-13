@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 
 /**
@@ -30,9 +31,22 @@ import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 public class ReflectionUtilsTest {
 
     @Test
-    public void testInfer() {
+    public void testFailingInfer() {
         TestListener<TaskExecutionFailedEvent> victim = new TestListener<TaskExecutionFailedEvent>();
         assertEquals(null, ReflectionUtils.inferParameterClass(victim.getClass(), "onEvent"));
+    }
+
+    @Test
+    public void testInfer() {
+        SecondTestListener victim = new SecondTestListener();
+        assertEquals(PercentageOfWorkDoneChangedEvent.class,
+                ReflectionUtils.inferParameterClass(victim.getClass(), "onEvent"));
+    }
+
+    private class SecondTestListener implements EventListener<PercentageOfWorkDoneChangedEvent> {
+        public void onEvent(PercentageOfWorkDoneChangedEvent event) {
+            // nothing
+        }
     }
 
     private class TestListener<T extends AbstractNotificationEvent> implements EventListener<T> {
