@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class CurrentPagePrefixProcessorTest extends BasePrefixProcessorTest {
 
-    private CurrentPagePrefixProcessor victim = new CurrentPagePrefixProcessor();
+    private NumberPrefixProcessor victim = new CurrentPagePrefixProcessor();
     private Integer page = Integer.valueOf("5");
 
     @Override
@@ -40,6 +40,20 @@ public class CurrentPagePrefixProcessorTest extends BasePrefixProcessorTest {
     public void testComplexProcess() {
         String prefix = "prefix_[CURRENTPAGE]_[BASENAME]";
         String expected = "prefix_5_[BASENAME]";
+        assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
+    }
+
+    @Test
+    public void testComplexProcessStartingPage() {
+        String prefix = "prefix_[CURRENTPAGE12]_[BASENAME]";
+        String expected = "prefix_17_[BASENAME]";
+        assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
+    }
+
+    @Test
+    public void testComplexProcessWithPatterStartingPage() {
+        String prefix = "prefix_[CURRENTPAGE###10]_[BASENAME]";
+        String expected = "prefix_015_[BASENAME]";
         assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
     }
 
@@ -61,6 +75,20 @@ public class CurrentPagePrefixProcessorTest extends BasePrefixProcessorTest {
     public void testComplexProcessDoubleSinglePattern() {
         String prefix = "prefix_[CURRENTPAGE###]_[CURRENTPAGE]";
         String expected = "prefix_005_5";
+        assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
+    }
+
+    @Test
+    public void testComplexProcessDoubleSinglePatternStartingPage() {
+        String prefix = "prefix_[CURRENTPAGE###23]_[CURRENTPAGE32]";
+        String expected = "prefix_028_37";
+        assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
+    }
+
+    @Test
+    public void testComplexProcessDoubleSinglePatternNegativeStartingPage() {
+        String prefix = "prefix_[CURRENTPAGE###-23]_[CURRENTPAGE-5]";
+        String expected = "prefix_-018_0";
         assertEquals(expected, victim.process(prefix, nameRequest().page(page)));
     }
 

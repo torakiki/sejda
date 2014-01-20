@@ -23,14 +23,14 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 import org.junit.Test;
 
 /**
- * Test unit for the {@link FileNumberPrefixProcessor}
+ * Test unit for the {@link NumberPrefixProcessor}
  * 
  * @author Andrea Vacondio
  * 
  */
 public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
 
-    private FileNumberPrefixProcessor victim = new FileNumberPrefixProcessor();
+    private NumberPrefixProcessor victim = new FileNumberPrefixProcessor();
     private Integer fileNumber = Integer.valueOf("5");
 
     @Override
@@ -84,6 +84,13 @@ public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
     public void testComplexProcessDoubleSinglePatternStartingPage() {
         String prefix = "prefix_[FILENUMBER###23]_[FILENUMBER32]";
         String expected = "prefix_028_37";
+        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+    }
+
+    @Test
+    public void testComplexProcessDoubleSinglePatternNegativeStartingPage() {
+        String prefix = "prefix_[FILENUMBER###-23]_[FILENUMBER-2]";
+        String expected = "prefix_-018_3";
         assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
     }
 

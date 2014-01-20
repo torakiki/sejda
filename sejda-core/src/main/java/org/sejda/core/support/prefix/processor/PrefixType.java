@@ -34,8 +34,8 @@ import java.util.regex.Pattern;
 enum PrefixType {
 
     BASENAME(false, "\\[BASENAME\\]", new BasenamePrefixProcessor()),
-    CURRENTPAGE(true, "\\[CURRENTPAGE(#*)\\]", new CurrentPagePrefixProcessor()),
-    FILENUMBER(true, "\\[FILENUMBER(#*)(\\d*)\\]", new FileNumberPrefixProcessor()),
+    CURRENTPAGE(true, "\\[CURRENTPAGE(#*)(-?[0-9]*)\\]", new CurrentPagePrefixProcessor()),
+    FILENUMBER(true, "\\[FILENUMBER(#*)(-?[0-9]*)\\]", new FileNumberPrefixProcessor()),
     TIMESTAMP(true, "\\[TIMESTAMP\\]", new TimestampPrefixProcessor()),
     BOOKMARK(true, "\\[BOOKMARK_NAME\\]", new BookmarkPrefixProcessor()),
     BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", new StrictBookmarkPrefixProcessor());
