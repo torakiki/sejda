@@ -18,6 +18,7 @@ package org.sejda.model.parameter.base;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 /**
  * @author Andrea Vacondio
@@ -55,5 +56,10 @@ public abstract class AbstractParameters implements TaskParameters {
         }
         AbstractParameters parameter = (AbstractParameters) other;
         return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).isEquals();
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

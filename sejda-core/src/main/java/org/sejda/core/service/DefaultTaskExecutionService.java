@@ -51,6 +51,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     public void execute(TaskParameters parameters) {
         StopWatch stopWatch = new StopWatch();
         Task<? extends TaskParameters> task = null;
+        LOG.trace("Starting exectution for {}", parameters);
         try {
             validate(parameters);
             task = context.getTask(parameters);
