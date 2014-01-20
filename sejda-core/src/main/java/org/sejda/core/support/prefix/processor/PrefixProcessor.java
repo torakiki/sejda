@@ -20,7 +20,8 @@ package org.sejda.core.support.prefix.processor;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
- * A Processor takes a prefix string and applies the transformation it's designed for.
+ * A Processor takes a prefix string and applies the transformation it's designed for. Please consider that we currently reuse instances across multiple parameters execution
+ * therefor implementations have to be stateless to avoid unexpected behavior.
  * 
  * @author Andrea Vacondio
  */

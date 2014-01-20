@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.sejda.model.exception.SejdaRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,17 +84,7 @@ public class PrefixTypesChain {
     private String processChain(String prefix, NameGenerationRequest request, Set<PrefixType> chain) {
         String retVal = prefix;
         for (PrefixType type : chain) {
-            PrefixProcessor processor;
-            try {
-                processor = new LoggingPrefixProcessorDecorator(type.getProcessor().newInstance());
-            } catch (InstantiationException e) {
-                throw new SejdaRuntimeException(
-                        String.format("Unable to instantiate processor %s", type.getProcessor()), e);
-            } catch (IllegalAccessException e) {
-                throw new SejdaRuntimeException(
-                        String.format("Unable to instantiate processor %s", type.getProcessor()), e);
-            }
-            retVal = processor.process(retVal, request);
+            retVal = new LoggingPrefixProcessorDecorator(type.getProcessor()).process(retVal, request);
         }
         return retVal;
     }

@@ -33,18 +33,18 @@ import java.util.regex.Pattern;
  */
 enum PrefixType {
 
-    BASENAME(false, "\\[BASENAME\\]", BasenamePrefixProcessor.class),
-    CURRENTPAGE(true, "\\[CURRENTPAGE(#*)\\]", CurrentPagePrefixProcessor.class),
-    FILENUMBER(true, "\\[FILENUMBER(#*)(\\d*)\\]", FileNumberPrefixProcessor.class),
-    TIMESTAMP(true, "\\[TIMESTAMP\\]", TimestampPrefixProcessor.class),
-    BOOKMARK(true, "\\[BOOKMARK_NAME\\]", BookmarkPrefixProcessor.class),
-    BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", StrictBookmarkPrefixProcessor.class);
+    BASENAME(false, "\\[BASENAME\\]", new BasenamePrefixProcessor()),
+    CURRENTPAGE(true, "\\[CURRENTPAGE(#*)\\]", new CurrentPagePrefixProcessor()),
+    FILENUMBER(true, "\\[FILENUMBER(#*)(\\d*)\\]", new FileNumberPrefixProcessor()),
+    TIMESTAMP(true, "\\[TIMESTAMP\\]", new TimestampPrefixProcessor()),
+    BOOKMARK(true, "\\[BOOKMARK_NAME\\]", new BookmarkPrefixProcessor()),
+    BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", new StrictBookmarkPrefixProcessor());
 
     private boolean ensureUniqueNames;
     private Pattern pattern;
-    private Class<? extends PrefixProcessor> processor;
+    private PrefixProcessor processor;
 
-    private PrefixType(boolean ensureUniqueNames, String matchingRegexp, Class<? extends PrefixProcessor> processor) {
+    private PrefixType(boolean ensureUniqueNames, String matchingRegexp, PrefixProcessor processor) {
         this.ensureUniqueNames = ensureUniqueNames;
         this.pattern = Pattern.compile(matchingRegexp);
         this.processor = processor;
@@ -64,7 +64,7 @@ enum PrefixType {
     /**
      * @return the processor for this prefix type
      */
-    public Class<? extends PrefixProcessor> getProcessor() {
+    public PrefixProcessor getProcessor() {
         return processor;
     }
 
