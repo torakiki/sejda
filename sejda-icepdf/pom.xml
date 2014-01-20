@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.icepdf</groupId>
 			<artifactId>icepdf-core</artifactId>
-			<version>5.0.3</version>
+			<version>5.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
