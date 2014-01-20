@@ -52,10 +52,6 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the set page labels parameters
-     * 
-     */
     private void setUpParameters(PredefinedSetOfPages type) {
         parameters = new SimpleSplitParameters(type);
         parameters.setCompress(true);

@@ -25,7 +25,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
  * Process the input prefix replacing all the [FILENUMBER] or [FILENUMBERE##] or [FILENUMBER##11] or [FILENUMBER11] occurrences with the input file number (formatted with the given
- * pattern identified by the number of # and incremeted by the starting nmber if found). Ex:
+ * pattern identified by the number of # and incremented by the starting nmber if found). Ex:
  * <p>
  * <b>[FILENUMBER]_BLA_[FILENUMBERE###]_LAB_[FILENUMBER####100]</b> and given file number <b>2</b> will produce <b>2_BLA_002_LAB_0102</b>
  * </p>
