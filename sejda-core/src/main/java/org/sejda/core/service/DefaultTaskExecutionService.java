@@ -83,7 +83,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
         if (context.isValidation()) {
-            LOG.debug("Validating parameters ({}).", parameters);
+            LOG.debug("Validating parameters.");
             Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                     .validate(parameters);
             if (!violations.isEmpty()) {
