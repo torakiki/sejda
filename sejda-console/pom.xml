@@ -51,6 +51,15 @@
 
 	<build>
 		<plugins>
+ <plugin>
+        <groupId>net.sf.debian-maven</groupId>
+        <artifactId>debian-maven-plugin</artifactId>
+        <version>1.0.6</version>
+        <configuration>
+          <packageName>sejda-console</packageName>
+          <packageVersion>1.0.0.M9-SNAPSHOT</packageVersion>
+        </configuration>
+      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

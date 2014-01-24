@@ -46,6 +46,11 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     boolean isDirectory();
 
+    @Option(shortName = "e", description = "regular expression the file names have to match when the directory input is used (Ex -e \"test(.*).pdf\"). (optional)")
+    String getMatchingRegEx();
+
+    boolean isMatchingRegEx();
+
     // TODO: make sure optional options are reflected in the jewelcli produced help output, add isXXX
     @Option(shortName = "s", description = "page selection script. You can set a subset of pages to merge as a colon separated list of page selections. Order of the pages is relevant. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -f /tmp/file1.pdf /tmp/file2.pdf -s all:all:), "

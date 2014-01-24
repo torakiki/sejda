@@ -63,7 +63,13 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
         // input files can be specified in 3 ways: explicitly, via a folder or via a config file
         List<PdfFileSource> inputFiles = null;
         if (taskCliArguments.isDirectory()) {
-            inputFiles = taskCliArguments.getDirectory().getFileSourceList();
+            if (taskCliArguments.isMatchingRegEx()) {
+                inputFiles = taskCliArguments.getDirectory().filter(taskCliArguments.getMatchingRegEx())
+                        .getFileSourceList();
+            } else {
+                inputFiles = taskCliArguments.getDirectory().getFileSourceList();
+            }
+
         } else if (taskCliArguments.isFiles()) {
             inputFiles = extractFiles(taskCliArguments.getFiles());
         } else if (taskCliArguments.isFilesListConfig()) {

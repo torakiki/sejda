@@ -142,6 +142,21 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void folderInputWithRegexp() {
+        MergeParameters parameters = defaultCommandLine().without("-f").with("-d", "/tmp/merge")
+                .with("-e", "([^\\s]+(1|4)(?i)(\\.pdf)$)").invokeSejdaConsole();
+
+        assertPdfMergeInputsFilesList(parameters, filesList("/tmp/merge/file1.pdf", "/tmp/merge/file4.pdf"));
+    }
+
+    @Test
+    public void folderInputWithRegexpFilteringEverythig() {
+        defaultCommandLine().without("-f").with("-d", "/tmp/merge").with("-e", "([^\\s]+(\\.(norris))$)")
+                .assertConsoleOutputContains("No input files specified in");
+
+    }
+
+    @Test
     public void folderInput_emptyFolder() {
         defaultCommandLine().with("-d", "/tmp/emptyFolder").assertConsoleOutputContains("No input files specified in");
     }
@@ -221,7 +236,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     @Test
     public void input_tooManyOptionsGiven() {
         defaultCommandLine().without("-f").with("-d", "/tmp/merge").with("-l", "./location/filenames.xls")
-                .assertConsoleOutputContains("Unsupported file format: xls");
+                .assertConsoleOutputContains("Too many options given");
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,

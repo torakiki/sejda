@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -40,11 +42,11 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -58,51 +60,62 @@ import org.xml.sax.SAXException;
  */
 public class PdfFileSourceListAdapter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PdfFileSourceListAdapter.class);
+
     private final PdfInputFilesSourceFactory parserFactory = new PdfInputFilesSourceFactory();
     private final List<PdfFileSource> fileSourceList = new ArrayList<PdfFileSource>();
+    private final File file;
+    private Pattern pattern = Pattern.compile(".+");
 
     public PdfFileSourceListAdapter(String filePath) {
-        File file = new File(filePath);
+        file = new File(filePath);
 
         if (!file.exists()) {
             throw new ArgumentValidationException("File '" + file.getPath() + "' does not exist");
         }
+    }
 
-        fileSourceList.addAll(parserFactory.createSource(file).getInputFiles(file));
-
-        if (fileSourceList.isEmpty()) {
-            throw new ArgumentValidationException("No input files specified in '" + filePath + "'");
+    public PdfFileSourceListAdapter filter(String filterRegExp) {
+        if (StringUtils.isNotBlank(filterRegExp)) {
+            LOG.debug("Applying regular expression: {}", filterRegExp);
+            pattern = Pattern.compile(filterRegExp);
         }
+        return this;
     }
 
     public List<PdfFileSource> getFileSourceList() {
+        fileSourceList.addAll(parserFactory.createSource(file).getInputFiles(file));
+
+        if (fileSourceList.isEmpty()) {
+            throw new ArgumentValidationException("No input files specified in '" + file.getPath() + "'");
+        }
         return fileSourceList;
     }
-}
 
-/**
- * Factory for {@link PdfInputFilesSource}s. Depending on input {@link File} (folder, csv file, xml file), a different source will be created.
- * 
- * @author Eduard Weissmann
- * 
- */
-class PdfInputFilesSourceFactory {
-    private static final String XML_EXTENSION = "xml";
-    private static final String CSV_EXTENSION = "csv";
+    /**
+     * Factory for {@link PdfInputFilesSource}s. Depending on input {@link File} (folder, csv file, xml file), a different source will be created.
+     * 
+     * @author Eduard Weissmann
+     * 
+     */
+    class PdfInputFilesSourceFactory {
+        private static final String XML_EXTENSION = "xml";
+        private static final String CSV_EXTENSION = "csv";
 
-    PdfInputFilesSource createSource(File file) {
-        String extension = FilenameUtils.getExtension(file.getName());
+        PdfInputFilesSource createSource(File file) {
+            String extension = FilenameUtils.getExtension(file.getName());
 
-        if (file.isDirectory()) {
-            return new FolderFileSourceListParser();
-        } else if (CSV_EXTENSION.equalsIgnoreCase(extension)) {
-            return new CsvFileSourceListParser();
-        } else if (XML_EXTENSION.equalsIgnoreCase(extension)) {
-            return new XmlFileSourceListParser();
+            if (file.isDirectory()) {
+                return new FolderFileSourceListParser(PdfFileSourceListAdapter.this.pattern);
+            } else if (CSV_EXTENSION.equalsIgnoreCase(extension)) {
+                return new CsvFileSourceListParser();
+            } else if (XML_EXTENSION.equalsIgnoreCase(extension)) {
+                return new XmlFileSourceListParser();
+            }
+
+            throw new SejdaRuntimeException("Cannot read input file names from config file '" + file.getName()
+                    + "'. Unsupported file format: " + extension);
         }
-
-        throw new SejdaRuntimeException("Cannot read input file names from config file '" + file.getName()
-                + "'. Unsupported file format: " + extension);
     }
 }
 
@@ -124,7 +137,7 @@ interface PdfInputFilesSource {
  * 
  */
 abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
-    private static final Log LOG = LogFactory.getLog(AbstractPdfInputFilesSource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfInputFilesSource.class);
 
     public List<PdfFileSource> getInputFiles(File file) {
         List<String> filenames = parseFileNames(file);
@@ -149,13 +162,20 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
 
     protected static final String PDF_EXTENSION = "pdf";
 
+    private Pattern pattern;
+
+    FolderFileSourceListParser(Pattern pattern) {
+        this.pattern = pattern;
+    }
+
     @Override
     protected List<String> parseFileNames(File file) {
         List<File> files = Arrays.asList(file.listFiles(new FilenameFilter() {
 
             public boolean accept(File dir, String filename) {
+                Matcher matcher = pattern.matcher(filename);
                 String extension = FilenameUtils.getExtension(filename);
-                return StringUtils.equalsIgnoreCase(extension, PDF_EXTENSION);
+                return StringUtils.equalsIgnoreCase(extension, PDF_EXTENSION) && matcher.matches();
             }
 
         }));
@@ -183,7 +203,7 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
  * 
  */
 class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
-    private static final Log LOG = LogFactory.getLog(CsvFileSourceListParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CsvFileSourceListParser.class);
 
     @Override
     protected List<String> parseFileNames(File file) {
@@ -216,7 +236,7 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
  * 
  */
 class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
-    private static final Log LOG = LogFactory.getLog(XmlFileSourceListParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlFileSourceListParser.class);
 
     private XPathFactory xpathFactory = XPathFactory.newInstance();
 
