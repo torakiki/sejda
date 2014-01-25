@@ -1,0 +1,17 @@
+<filelist>
+	<file value="/tmp/pdf/inputFile.pdf" />
+	<file value="/tmp/pdf/inputFile2.pdf" password="test" />
+	<fileset usecurrentdir="true">
+		<file value="inputFile1.pdf" />
+		<file value="inputFile2.pdf" />
+	</fileset>
+	<fileset dir="/tmp/subdir" usecurrentdir="false">
+		<file value="inputFile1.pdf" />
+		<file value="/tmp/subdir3/inputFile2.pdf" />
+	</fileset>
+	<fileset dir="/tmp/subdir2/">
+		<file value="inputFile1.pdf" />
+		<file value="inputFile2.pdf" password="secret2" />
+		<file value="inputFile3.pdf" />
+	</fileset>
+</filelist>
