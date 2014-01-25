@@ -20,10 +20,6 @@
 			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-		</dependency>
 
 		<!-- test dependencies -->
 		<dependency>

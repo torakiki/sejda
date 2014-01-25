@@ -88,7 +88,6 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<commons.lang.version>3.1</commons.lang.version>
 		<commons.io.version>2.2</commons.io.version>
-		<commons.collections.version>3.2.1</commons.collections.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
 		<mockito.version>1.9.5</mockito.version>
 		<powermock.version>1.5</powermock.version>
@@ -130,11 +129,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>${commons.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-collections</groupId>
-				<artifactId>commons-collections</artifactId>
-				<version>${commons.collections.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>jdepend</groupId>

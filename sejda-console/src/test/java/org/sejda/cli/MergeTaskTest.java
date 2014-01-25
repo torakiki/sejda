@@ -31,8 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
@@ -163,20 +161,14 @@ public class MergeTaskTest extends AbstractTaskTest {
 
     private static List<Matcher<Iterable<File>>> filesList(String... filenames) {
         List<Matcher<Iterable<File>>> result = new ArrayList<Matcher<Iterable<File>>>();
-        CollectionUtils.collect(Arrays.asList(filenames), new Transformer() {
-
-            public Object transform(Object input) {
-                String filename = input.toString();
-                if (FilenameUtils.getPrefixLength(filename) > 0) {
-                    return either(hasItem(new File(filename))).or(
-                            hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename))));
-                }
-
-                return hasItem(new File(filename));
-
+        for (String current : filenames) {
+            String filename = current.toString();
+            if (FilenameUtils.getPrefixLength(filename) > 0) {
+                result.add(either(hasItem(new File(filename))).or(
+                        hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
             }
-        }, result);
-
+            result.add(hasItem(new File(filename)));
+        }
         return result;
     }
 

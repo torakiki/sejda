@@ -37,8 +37,6 @@ import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -181,13 +179,9 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
         }));
 
         List<String> filenames = new ArrayList<String>();
-        CollectionUtils.collect(files, new Transformer() {
-
-            public Object transform(Object input) {
-                return ((File) input).getAbsolutePath();
-            }
-
-        }, filenames);
+        for (File current : files) {
+            filenames.add(current.getAbsolutePath());
+        }
 
         Collections.sort(filenames);
 
