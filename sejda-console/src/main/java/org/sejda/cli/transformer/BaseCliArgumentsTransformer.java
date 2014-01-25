@@ -25,7 +25,7 @@ import org.sejda.cli.model.CliArgumentsWithPdfFileOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.TaskCliArguments;
-import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
+import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;

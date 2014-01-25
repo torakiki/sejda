@@ -18,8 +18,8 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
-import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.cli.model.adapter.RectangularBoxAdapter;
+import org.sejda.conversion.PdfFileSourceAdapter;
+import org.sejda.conversion.RectangularBoxAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;

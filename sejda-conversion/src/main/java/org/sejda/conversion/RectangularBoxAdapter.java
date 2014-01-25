@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.conversion.AdapterUtils;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.SejdaRuntimeException;
 
@@ -44,18 +43,15 @@ public class RectangularBoxAdapter {
         try {
             doParse(input);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Unparsable rectangular box: '" + input + "'. " + e.getMessage(), e);
+            throw new ConversionException("Unparsable rectangular box: '" + input + "'. " + e.getMessage(), e);
         }
     }
 
-    /**
-     * @param input
-     */
     private void doParse(String input) {
         String[] tokens = doubleSplit(input.replaceFirst("^\\[", "").replaceFirst("\\]$", ""), "\\]\\[", ":");
 
         if (tokens.length < MIN_TOKENS) {
-            throw new ArgumentValidationException("Expected format is: '[bottom:left][top:right]'");
+            throw new ConversionException("Expected format is: '[bottom:left][top:right]'");
         }
 
         int bottom = AdapterUtils.parseInt(tokens[INDEX_OF_BOTTOM_TOKEN], "bottom");

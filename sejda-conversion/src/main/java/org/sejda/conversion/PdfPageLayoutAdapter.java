@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
-import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 
 /**
- * Adapter class for enum {@link PdfPageMode}. Provides initialization from string
+ * Adapter class for enum {@link PdfPageLayout}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfPageModeAdapter extends EnumAdapter<PdfPageMode> {
+public class PdfPageLayoutAdapter extends EnumAdapter<PdfPageLayout> {
 
-    public PdfPageModeAdapter(String userFriendlyName) {
-        super(userFriendlyName, PdfPageMode.class, "page mode");
+    public PdfPageLayoutAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfPageLayout.class, "page layout");
     }
 }

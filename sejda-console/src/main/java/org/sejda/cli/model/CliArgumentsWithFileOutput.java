@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.FileOutputAdapter;
+import org.sejda.conversion.FileOutputAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 

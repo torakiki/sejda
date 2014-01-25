@@ -1,11 +1,11 @@
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.input.PdfFileSource;
 
 /**
@@ -37,7 +37,7 @@ public class PdfFileSourceAdapter {
         String password = extractPassword(filePathAndPassword);
 
         if (!file.exists()) {
-            throw new ArgumentValidationException("File '" + file.getPath() + "' does not exist");
+            throw new ConversionException("File '" + file.getPath() + "' does not exist");
         }
 
         this.pdfFileSource = StringUtils.isBlank(password) ? PdfFileSource.newInstanceNoPassword(file) : PdfFileSource

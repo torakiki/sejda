@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.sejda.cli.model.MergeTaskCliArguments;
-import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
 import org.sejda.conversion.MultiplePdfMergeInputAdapter;
+import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;

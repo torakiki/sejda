@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.core.support.util;
+package org.sejda.common;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;

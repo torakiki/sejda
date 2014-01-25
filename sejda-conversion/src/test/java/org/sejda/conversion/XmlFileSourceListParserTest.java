@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.either;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.sejda.cli.AbstractTestSuite;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * Tests for {@link XmlFileSourceListParser}
@@ -33,16 +38,33 @@ import org.sejda.cli.AbstractTestSuite;
  * @author Eduard Weissmann
  * 
  */
-public class XmlFileSourceListParserTest extends AbstractTestSuite {
+public class XmlFileSourceListParserTest {
 
     private final XmlFileSourceListParser victim = new XmlFileSourceListParser();
+    private File file;
+
+    @Before
+    public void setUp() {
+        InputStream contents = getClass().getResourceAsStream("/merge-filelist-config.xml");
+        file = new File("/tmp/merge-filelist-config.xml");
+        file.deleteOnExit();
+        try {
+            FileUtils.copyInputStreamToFile(contents, file);
+        } catch (IOException e) {
+            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
+        }
+    }
+
+    @After
+    public void tearDown() {
+        if (file != null) {
+            file.delete();
+        }
+    }
 
     @Test
     public void parseFileNames() {
-        File config = createTestTextFile("/tmp/merge-filelist-config.xml",
-                getClass().getResourceAsStream("/merge-filelist-config.xml"));
-
-        List<String> result = victim.parseFileNames(config);
+        List<String> result = victim.parseFileNames(file);
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
         assertThat(result, either(hasItem("/tmp/inputFile1.pdf")).or(hasItem("C:\\tmp\\inputFile1.pdf")));

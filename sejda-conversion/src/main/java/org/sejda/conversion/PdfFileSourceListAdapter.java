@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import static org.sejda.core.support.util.XMLUtils.nullSafeGetStringAttribute;
+import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +42,7 @@ import org.apache.commons.collections.Transformer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class PdfFileSourceListAdapter {
         file = new File(filePath);
 
         if (!file.exists()) {
-            throw new ArgumentValidationException("File '" + file.getPath() + "' does not exist");
+            throw new ConversionException("File '" + file.getPath() + "' does not exist");
         }
     }
 
@@ -87,7 +87,7 @@ public class PdfFileSourceListAdapter {
         fileSourceList.addAll(parserFactory.createSource(file).getInputFiles(file));
 
         if (fileSourceList.isEmpty()) {
-            throw new ArgumentValidationException("No input files specified in '" + file.getPath() + "'");
+            throw new ConversionException("No input files specified in '" + file.getPath() + "'");
         }
         return fileSourceList;
     }
@@ -145,7 +145,7 @@ abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
         try {
             return PdfFileSourceAdapter.fromStrings(filenames);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Invalid filename found: " + e.getMessage(), e);
+            throw new ConversionException("Invalid filename found: " + e.getMessage(), e);
         }
     }
 
@@ -211,7 +211,7 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
             return doParseFileNames(file);
         } catch (Exception e) {
             LOG.error("Can't extract filesnames", e);
-            throw new ArgumentValidationException("Can't extract filenames from '" + file.getName() + "'. Reason:"
+            throw new ConversionException("Can't extract filenames from '" + file.getName() + "'. Reason:"
                     + e.getMessage(), e);
         }
     }
@@ -246,7 +246,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             return doParseFileNames(file);
         } catch (Exception e) {
             LOG.error("Can't extract filenames", e);
-            throw new ArgumentValidationException("Can't extract filenames from '" + file.getName() + "'. Reason:"
+            throw new ConversionException("Can't extract filenames from '" + file.getName() + "'. Reason:"
                     + e.getMessage(), e);
         }
     }

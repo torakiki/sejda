@@ -14,30 +14,36 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import java.io.File;
 
-import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.DirectoryTaskOutput;
 
 /**
- * Adapter for {@link FileTaskOutput}. Main role is to be a string-based constructor for the underlying model object
+ * Adapter for {@link DirectoryTaskOutput}. Main role is to be a string-based constructor for the underlying model object
  * 
  * @author Eduard Weissmann
  * 
  */
-public class FileOutputAdapter {
+public class PdfDirectoryOutputAdapter {
 
-    private final FileTaskOutput fileOutput;
+    private final DirectoryTaskOutput pdfDirectoryOutput;
 
-    public FileOutputAdapter(String path) {
-        this.fileOutput = new FileTaskOutput(new File(path));
+    public PdfDirectoryOutputAdapter(String directoryPath) {
+        File directory = new File(directoryPath);
+
+        if (!directory.exists()) {
+            throw new IllegalArgumentException("Path '" + directoryPath + "' does not exist");
+        }
+
+        this.pdfDirectoryOutput = new DirectoryTaskOutput(new File(directoryPath));
     }
 
     /**
-     * @return the fileOutput
+     * @return the pdfDirectoryOutput
      */
-    public FileTaskOutput getFileOutput() {
-        return fileOutput;
+    public DirectoryTaskOutput getPdfDirectoryOutput() {
+        return pdfDirectoryOutput;
     }
 }

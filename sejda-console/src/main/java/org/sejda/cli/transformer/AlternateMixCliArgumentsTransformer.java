@@ -18,7 +18,7 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
-import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
+import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.parameter.AlternateMixParameters;
 

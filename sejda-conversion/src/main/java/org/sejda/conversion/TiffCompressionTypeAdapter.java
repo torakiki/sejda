@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
 import org.sejda.model.image.TiffCompressionType;
 
 /**

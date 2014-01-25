@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.cli.exception.ArgumentValidationException;
-import org.sejda.conversion.AdapterUtils;
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 
@@ -37,8 +36,8 @@ public class PageNumberWithPdfPageTransitionAdapter {
         try {
             doParse(input);
         } catch (SejdaRuntimeException e) {
-            throw new ArgumentValidationException("Unparsable page transition definition: '" + input + "'. "
-                    + e.getMessage(), e);
+            throw new ConversionException("Unparsable page transition definition: '" + input + "'. " + e.getMessage(),
+                    e);
         }
     }
 
@@ -46,7 +45,7 @@ public class PageNumberWithPdfPageTransitionAdapter {
         String[] tokens = AdapterUtils.splitAndTrim(input);
 
         if (tokens.length < MIN_SEPARATOR_OCCURENCES) {
-            throw new ArgumentValidationException(
+            throw new ConversionException(
                     "Expected format is: 'transitionType:transitionDurationInSec:pageDisplayDurationInSec:pageNumber'");
         }
 

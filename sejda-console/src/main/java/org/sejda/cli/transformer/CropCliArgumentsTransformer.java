@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.CropTaskCliArguments;
-import org.sejda.cli.model.adapter.RectangularBoxAdapter;
+import org.sejda.conversion.RectangularBoxAdapter;
 import org.sejda.model.parameter.CropParameters;
 
 /**

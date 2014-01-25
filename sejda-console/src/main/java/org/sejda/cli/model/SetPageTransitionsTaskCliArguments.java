@@ -18,9 +18,9 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
-import org.sejda.cli.model.adapter.PageNumberWithPdfPageTransitionAdapter;
-import org.sejda.cli.model.adapter.PdfFileSourceAdapter;
-import org.sejda.cli.model.adapter.PdfPageTransitionAdapter;
+import org.sejda.conversion.PageNumberWithPdfPageTransitionAdapter;
+import org.sejda.conversion.PdfFileSourceAdapter;
+import org.sejda.conversion.PdfPageTransitionAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;

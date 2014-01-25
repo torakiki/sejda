@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
-import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
+import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 
 /**
- * Adapter class for enum {@link PdfNonFullScreenPageMode}. Provides initialization from string
+ * Adapter class for enum {@link PdfPrintScaling}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfNonFullScreenPageModeAdapter extends EnumAdapter<PdfNonFullScreenPageMode> {
+public class PdfPrintScalingAdapter extends EnumAdapter<PdfPrintScaling> {
 
-    public PdfNonFullScreenPageModeAdapter(String userFriendlyName) {
-        super(userFriendlyName, PdfNonFullScreenPageMode.class, "non fullscreen mode");
+    public PdfPrintScalingAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfPrintScaling.class, "print scaling");
     }
 }

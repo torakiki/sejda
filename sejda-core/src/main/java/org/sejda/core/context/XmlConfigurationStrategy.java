@@ -18,8 +18,8 @@
 package org.sejda.core.context;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.core.support.util.XMLUtils.nullSafeGetBooleanAttribute;
-import static org.sejda.core.support.util.XMLUtils.nullSafeGetStringAttribute;
+import static org.sejda.common.XMLUtils.nullSafeGetBooleanAttribute;
+import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
 
 import java.io.IOException;
 import java.io.InputStream;

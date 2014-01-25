@@ -16,12 +16,12 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.cli.model.adapter.PdfDirectionAdapter;
-import org.sejda.cli.model.adapter.PdfDuplexAdapter;
-import org.sejda.cli.model.adapter.PdfNonFullScreenPageModeAdapter;
-import org.sejda.cli.model.adapter.PdfPageLayoutAdapter;
-import org.sejda.cli.model.adapter.PdfPageModeAdapter;
-import org.sejda.cli.model.adapter.PdfPrintScalingAdapter;
+import org.sejda.conversion.PdfDirectionAdapter;
+import org.sejda.conversion.PdfDuplexAdapter;
+import org.sejda.conversion.PdfNonFullScreenPageModeAdapter;
+import org.sejda.conversion.PdfPageLayoutAdapter;
+import org.sejda.conversion.PdfPageModeAdapter;
+import org.sejda.conversion.PdfPrintScalingAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;

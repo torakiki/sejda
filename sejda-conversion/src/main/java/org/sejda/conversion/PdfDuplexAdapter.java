@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
-import org.sejda.conversion.EnumAdapter;
-import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 
 /**
- * Adapter class for enum {@link PdfPrintScaling}. Provides initialization from string
+ * Adapter class for enum {@link PdfDuplex}. Provides initialization from string
  * 
  * @author Eduard Weissmann
  * 
  */
-public class PdfPrintScalingAdapter extends EnumAdapter<PdfPrintScaling> {
+public class PdfDuplexAdapter extends EnumAdapter<PdfDuplex> {
 
-    public PdfPrintScalingAdapter(String userFriendlyName) {
-        super(userFriendlyName, PdfPrintScaling.class, "print scaling");
+    public PdfDuplexAdapter(String userFriendlyName) {
+        super(userFriendlyName, PdfDuplex.class, "duplex");
     }
 }

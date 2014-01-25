@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.cli.model.adapter;
+package org.sejda.conversion;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
@@ -23,10 +23,13 @@ import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.either;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.cli.AbstractTestSuite;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 
@@ -36,11 +39,27 @@ import org.sejda.model.input.PdfFileSource;
  * @author Eduard Weissmann
  * 
  */
-public class PdfFileSourceAdapterTest extends AbstractTestSuite {
+public class PdfFileSourceAdapterTest {
+
+    private File file;
 
     @Before
     public void setUp() {
-        createTestPdfFile("/tmp/inputFile1.pdf");
+        InputStream contents = getClass().getResourceAsStream("/pdf/test_outline.pdf");
+        file = new File("/tmp/inputFile1.pdf");
+        file.deleteOnExit();
+        try {
+            FileUtils.copyInputStreamToFile(contents, file);
+        } catch (IOException e) {
+            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
+        }
+    }
+
+    @After
+    public void tearDown() {
+        if (file != null) {
+            file.delete();
+        }
     }
 
     @Test

@@ -16,6 +16,7 @@
  */
 package org.sejda.cli.exception;
 
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.TaskException;
 
 /**
@@ -36,7 +37,7 @@ public final class ExceptionUtils {
      *         occur if input is incorrect, not an unexpected failure)
      */
     public static boolean isExpectedConsoleException(Throwable e) {
-        return e instanceof ConsoleException;
+        return e instanceof ConsoleException || e instanceof ConversionException;
     }
 
     /**

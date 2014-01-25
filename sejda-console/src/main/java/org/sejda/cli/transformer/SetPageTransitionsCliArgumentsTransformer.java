@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
-import org.sejda.cli.model.adapter.PageNumberWithPdfPageTransitionAdapter;
+import org.sejda.conversion.PageNumberWithPdfPageTransitionAdapter;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 
 /**
