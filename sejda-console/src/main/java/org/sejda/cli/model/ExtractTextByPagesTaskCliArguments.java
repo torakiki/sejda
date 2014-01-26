@@ -18,6 +18,7 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
+import org.sejda.conversion.PageRangeSetAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
@@ -36,10 +37,13 @@ public interface ExtractTextByPagesTaskCliArguments extends CliArgumentsWithText
     @Option(shortName = "e", description = "text encoding, default is UTF-8 (optional)", defaultValue = "UTF-8")
     String getTextEncoding();
 
-    @Option(shortName = "n", description = "page number(s) to split at (required)")
-    List<Integer> getPageNumbers();
+    @Option(shortName = "s", description = "page selection script. You can set a subset of pages to extract. Accepted values: 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")
+    PageRangeSetAdapter getPageSelection();
 
-    // override default -f option that is decribed as expecting a list of files with a description stating that it is expecting a single file
+    boolean isPageSelection();
+
+    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
     List<PdfFileSourceAdapter> getFiles();
 }

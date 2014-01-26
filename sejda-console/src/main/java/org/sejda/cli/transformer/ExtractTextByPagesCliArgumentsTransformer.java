@@ -21,9 +21,9 @@ import org.sejda.model.parameter.ExtractTextByPagesParameters;
 
 /**
  * {@link org.sejda.cli.transformer.CommandCliArgumentsTransformer} for the ExtractTextByPages task command line interface
- *
+ * 
  * @author Edi Weissmann
- *
+ * 
  */
 public class ExtractTextByPagesCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<ExtractTextByPagesTaskCliArguments, ExtractTextByPagesParameters> {
@@ -41,7 +41,9 @@ public class ExtractTextByPagesCliArgumentsTransformer extends BaseCliArgumentsT
 
         parameters.setOverwrite(taskCliArguments.getOverwrite());
         parameters.setTextEncoding(taskCliArguments.getTextEncoding());
-        parameters.addPages(taskCliArguments.getPageNumbers());
+        if (taskCliArguments.isPageSelection()) {
+            parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
+        }
 
         populateSourceParameters(parameters, taskCliArguments);
 

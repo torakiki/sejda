@@ -45,6 +45,7 @@ public class PdfTextExtractor implements Closeable {
     public PdfTextExtractor(String encoding) throws TaskException {
         this(encoding, 1, Integer.MAX_VALUE);
     }
+
     public PdfTextExtractor(String encoding, int startPageOneBased, int endPageIncluding) throws TaskException {
         try {
             this.encoding = encoding;

@@ -37,13 +37,9 @@ public class ExtractTextByPagesTaskTest extends AbstractTaskTest {
 
     @Test
     public void pages_Specified() {
-        ExtractTextByPagesParameters parameters = defaultCommandLine().with("-n", "1 2 56 99 101").invokeSejdaConsole();
+        ExtractTextByPagesParameters parameters = defaultCommandLine().with("-s", "1-2,56,99,101").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 2, 56, 99, 101), parameters.getPages(Integer.MAX_VALUE));
-    }
-
-    @Test
-    public void mandatoryParams() {
-        defaultCommandLine().without("-n").assertConsoleOutputContains("Option is mandatory: --pageNumbers");
+        assertEquals(5, parameters.getPages(Integer.MAX_VALUE).size());
     }
 
     @Test

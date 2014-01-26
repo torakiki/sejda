@@ -65,40 +65,27 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
         documentHandler = source.open(documentLoader);
         documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
 
-        Set<Integer> splitAtPages = parameters.getPages(documentHandler.getNumberOfPages());
-        splitAtPages.remove(1);
-        splitAtPages.add(documentHandler.getNumberOfPages() + 1);
+        Set<Integer> pages = parameters.getPages(documentHandler.getNumberOfPages());
 
-        int startPage = 1;
-        int outputDocumentsCounter = 1;
-        int currentStep = 1;
-        int totalSteps = splitAtPages.size() + 1;
+        int currentStep = 0;
+        int totalSteps = pages.size();
 
-        for (Integer nextSplitPage : splitAtPages) {
-            int endPage = nextSplitPage - 1;
-            if (startPage == endPage) {
-                LOG.debug("Extracting text from page {}", startPage);
-            } else {
-                LOG.debug("Extracting text from pages {} to {}", startPage, endPage);
-            }
+        for (Integer current : pages) {
+            currentStep++;
+            LOG.debug("Extracting text from page {}", current);
 
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), startPage, endPage);
+            PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), current, current);
             textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(startPage)
-                            .originalName(parameters.getSource().getName()).fileNumber(outputDocumentsCounter));
+                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(current)
+                            .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             // close resource
             nullSafeCloseQuietly(textExtractor);
-
-            outputDocumentsCounter++;
-            currentStep++;
-            startPage = nextSplitPage;
-
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 

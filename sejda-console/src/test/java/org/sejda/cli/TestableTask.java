@@ -207,7 +207,7 @@ class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsPro
 class ExtractTextPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-n", "1 2 3 9 23 78");
+        return super.provideDefaults(taskName).with("-s", "4,12-14,8,20-");
     }
 }
 

@@ -16,12 +16,12 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.either;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.either;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -159,8 +159,8 @@ public class MergeTaskTest extends AbstractTaskTest {
         defaultCommandLine().with("-d", "/tmp/emptyFolder").assertConsoleOutputContains("No input files specified in");
     }
 
-    private static List<Matcher<Iterable<File>>> filesList(String... filenames) {
-        List<Matcher<Iterable<File>>> result = new ArrayList<Matcher<Iterable<File>>>();
+    private static List<Matcher<Iterable<? super File>>> filesList(String... filenames) {
+        List<Matcher<Iterable<? super File>>> result = new ArrayList<Matcher<Iterable<? super File>>>();
         for (String current : filenames) {
             String filename = current.toString();
             if (FilenameUtils.getPrefixLength(filename) > 0) {
@@ -232,7 +232,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,
-            Collection<Matcher<Iterable<File>>> expectedFilesMatchers) {
+            Collection<Matcher<Iterable<? super File>>> expectedFilesMatchers) {
         assertPdfMergeInputsFilesList(parameters, expectedFilesMatchers, nullsFilledList(parameters.getInputList()
                 .size()));
     }
@@ -247,7 +247,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,
-            Collection<Matcher<Iterable<File>>> expectedFilesMatchers, List<String> expectedFilesPasswords) {
+            Collection<Matcher<Iterable<? super File>>> expectedFilesMatchers, List<String> expectedFilesPasswords) {
         List<File> actualFileList = new ArrayList<File>();
         List<String> actualPasswords = new ArrayList<String>();
 
@@ -258,7 +258,7 @@ public class MergeTaskTest extends AbstractTaskTest {
             actualPasswords.add(pdfFileSource.getPassword());
         }
 
-        for (Matcher<Iterable<File>> expectedFileMatcher : expectedFilesMatchers) {
+        for (Matcher<Iterable<? super File>> expectedFileMatcher : expectedFilesMatchers) {
             assertThat(actualFileList, expectedFileMatcher);
         }
         assertEquals(expectedFilesPasswords, actualPasswords);

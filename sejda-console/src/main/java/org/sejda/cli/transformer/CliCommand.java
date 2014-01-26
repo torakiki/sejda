@@ -181,7 +181,7 @@ public enum CliCommand {
             return new ExtractTextByPagesCliArgumentsTransformer();
         }
 
-    }, "Extracts text from a pdf document, splitting output text files by pages", "extracttextbypages -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\" -n 1 3 5 99"),
+    }, "Extracts text from a single pdf document creating a collection of text files each containing text extracted from a single page.", "extracttextbypages -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\" -s \"4,12-14\""),
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override

@@ -49,7 +49,7 @@ public class NoIntersectionsValidator implements ConstraintValidator<NoIntersect
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate(
                                 String.format("Invalid page ranges, found an intersection between %s and %s", range,
-                                        current)).addNode("pdfMergeInput").addConstraintViolation();
+                                        current)).addNode("page ranges").addConstraintViolation();
                         return false;
                     }
                 }
