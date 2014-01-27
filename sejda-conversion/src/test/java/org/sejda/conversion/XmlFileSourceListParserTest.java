@@ -16,21 +16,15 @@
  */
 package org.sejda.conversion;
 
+import static org.hamcrest.CoreMatchers.either;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.either;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.conversion.exception.ConversionException;
 
 /**
  * Tests for {@link XmlFileSourceListParser}
@@ -38,33 +32,13 @@ import org.sejda.model.exception.SejdaRuntimeException;
  * @author Eduard Weissmann
  * 
  */
-public class XmlFileSourceListParserTest {
+public class XmlFileSourceListParserTest extends BaseFileSourceListParserTest {
 
     private final XmlFileSourceListParser victim = new XmlFileSourceListParser();
-    private File file;
-
-    @Before
-    public void setUp() {
-        InputStream contents = getClass().getResourceAsStream("/merge-filelist-config.xml");
-        file = new File("/tmp/merge-filelist-config.xml");
-        file.deleteOnExit();
-        try {
-            FileUtils.copyInputStreamToFile(contents, file);
-        } catch (IOException e) {
-            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
-        }
-    }
-
-    @After
-    public void tearDown() {
-        if (file != null) {
-            file.delete();
-        }
-    }
 
     @Test
     public void parseFileNames() {
-        List<String> result = victim.parseFileNames(file);
+        List<String> result = victim.parseFileNames(xmlFile);
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
         assertThat(result, either(hasItem("/tmp/inputFile1.pdf")).or(hasItem("C:\\tmp\\inputFile1.pdf")));
@@ -74,5 +48,10 @@ public class XmlFileSourceListParserTest {
         assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile1.pdf")));
         assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile2.pdf:secret2")));
         assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile3.pdf")));
+    }
+
+    @Test(expected = ConversionException.class)
+    public void testNegative() {
+        victim.parseFileNames(emptyFile);
     }
 }

@@ -87,7 +87,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
         }
 
         MultiplePdfMergeInputAdapter mergeInputsAdapter = new MultiplePdfMergeInputAdapter(inputFiles, taskCliArguments
-                .getPageSelection().iterator());
+                .getPageSelection().ranges());
         return mergeInputsAdapter;
     }
 

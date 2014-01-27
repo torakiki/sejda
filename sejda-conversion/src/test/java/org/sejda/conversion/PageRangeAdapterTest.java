@@ -24,6 +24,7 @@ public class PageRangeAdapterTest {
         assertThat(new PageRangeAdapter("7-").getPageRange(), is(new PageRange(7)));
         assertThat(new PageRangeAdapter("7 -8 ").getPageRange(), is(new PageRange(7, 8)));
         assertThat(new PageRangeWithAllAdapter("all").getPageRange(), is(new PageRange(1)));
+        assertThat(new PageRangeWithAllAdapter("1-3").getPageRange(), is(new PageRange(1, 3)));
     }
 
     @Test
@@ -31,6 +32,7 @@ public class PageRangeAdapterTest {
         failsWith("1,3", "Unparsable page range '1,3'");
         failsWith("all", "Unparsable page range 'all'");
         failsWith("4-3", "Invalid page range '4-3', ends before starting");
+        failsWith("1-3-4", "Unparsable page range '1-3-4'");
     }
 
     private void failsWith(String input, String expectedMsg) {

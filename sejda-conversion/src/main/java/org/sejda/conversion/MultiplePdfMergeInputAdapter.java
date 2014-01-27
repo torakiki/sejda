@@ -35,8 +35,8 @@ public class MultiplePdfMergeInputAdapter {
 
     private final List<PdfMergeInput> pdfMergeInputs = new ArrayList<PdfMergeInput>();
 
-    public MultiplePdfMergeInputAdapter(List<PdfFileSource> inputFiles, Iterator<Set<PageRange>> pageRangeSetIterator) {
-
+    public MultiplePdfMergeInputAdapter(List<PdfFileSource> inputFiles, List<Set<PageRange>> pageRanges) {
+        Iterator<Set<PageRange>> pageRangeSetIterator = pageRanges.iterator();
         for (PdfFileSource eachFile : inputFiles) {
             PdfMergeInput pdfMergeInput = new PdfMergeInput(eachFile);
             if (pageRangeSetIterator.hasNext()) {

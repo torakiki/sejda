@@ -1,6 +1,6 @@
 /*
- * Created on 30/dic/2012
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 27/gen/2014
+ * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -21,32 +21,28 @@ import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
 import org.sejda.conversion.exception.ConversionException;
-import org.sejda.model.pdf.headerfooter.NumberingStyle;
+import org.sejda.model.RectangularBox;
 
 /**
  * @author Andrea Vacondio
- * 
+ *
  */
-public class NumberingAdapterTest {
-
+public class RectangularBoxAdapterTest {
     @Test
-    public void positives() {
-        assertThat(new NumberingAdapter("22:arabic").getNumbering().getLogicalPageNumber(), is(22));
-        assertThat(new NumberingAdapter("1:arabic").getNumbering().getNumberingStyle(), is(NumberingStyle.ARABIC));
+    public void testPositive() {
+        assertThat(new RectangularBoxAdapter("[2:3][10:20]").getRectangularBox(),
+                is(RectangularBox.newInstance(2, 3, 10, 20)));
     }
 
     @Test(expected = ConversionException.class)
-    public void invalidNumber() {
-        new NumberingAdapter("a:arabic");
+    public void missingPoint() {
+        assertThat(new RectangularBoxAdapter("[2:3][10:]").getRectangularBox(),
+                is(RectangularBox.newInstance(2, 3, 10, 20)));
     }
 
     @Test(expected = ConversionException.class)
-    public void invalidStyle() {
-        new NumberingAdapter("1:noStyle");
-    }
-
-    @Test(expected = ConversionException.class)
-    public void invalidTokens() {
-        new NumberingAdapter("1:arabic:chuck");
+    public void missingPointAgain() {
+        assertThat(new RectangularBoxAdapter("[2:3][10]").getRectangularBox(),
+                is(RectangularBox.newInstance(2, 3, 10, 20)));
     }
 }

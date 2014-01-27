@@ -36,8 +36,8 @@ public class PdfDirectoryOutputAdapter {
         if (!directory.exists()) {
             throw new IllegalArgumentException("Path '" + directoryPath + "' does not exist");
         }
-
-        this.pdfDirectoryOutput = new DirectoryTaskOutput(new File(directoryPath));
+        
+        this.pdfDirectoryOutput = new DirectoryTaskOutput(directory);
     }
 
     /**

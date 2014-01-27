@@ -17,7 +17,6 @@
 package org.sejda.conversion;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +38,7 @@ public class MultiplePageRangeSetAdapter {
         }
     }
 
-    public Iterator<Set<PageRange>> iterator() {
-        return listOfPageRangeSets.iterator();
+    public List<Set<PageRange>> ranges() {
+        return listOfPageRangeSets;
     }
 }
