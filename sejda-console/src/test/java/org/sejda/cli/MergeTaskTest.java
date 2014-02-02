@@ -16,7 +16,6 @@
  */
 package org.sejda.cli;
 
-import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -34,6 +33,7 @@ import java.util.Set;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hamcrest.Matcher;
+import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.input.PdfFileSource;
@@ -164,7 +164,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         for (String current : filenames) {
             String filename = current.toString();
             if (FilenameUtils.getPrefixLength(filename) > 0) {
-                result.add(either(hasItem(new File(filename))).or(
+                result.add(CombinableMatcher.<Iterable<? super File>> either(hasItem(new File(filename))).or(
                         hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
             }
             result.add(hasItem(new File(filename)));

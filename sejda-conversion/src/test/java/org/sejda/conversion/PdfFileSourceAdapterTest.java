@@ -17,7 +17,6 @@
 package org.sejda.conversion;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.either;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -27,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.core.CombinableMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +67,8 @@ public class PdfFileSourceAdapterTest {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret123").getPdfFileSource();
         assertThat(result.getPassword(), is("secret123"));
         assertThat(result.getSource(),
-                either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
+                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
+                        is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 
     @Test
@@ -75,7 +76,8 @@ public class PdfFileSourceAdapterTest {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf").getPdfFileSource();
         assertNull(result.getPassword());
         assertThat(result.getSource(),
-                either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
+                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
+                        is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 
     @Test
@@ -83,7 +85,8 @@ public class PdfFileSourceAdapterTest {
         PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret.pdf:password").getPdfFileSource();
         assertThat(result.getPassword(), is("secret.pdf:password"));
         assertThat(result.getSource(),
-                either(is(new File("/tmp/inputFile1.pdf"))).or(is(new File("c:\\tmp\\inputFile1.pdf"))));
+                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
+                        is(new File("c:\\tmp\\inputFile1.pdf"))));
     }
 
     @Test
