@@ -48,7 +48,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>1.0.0.M9</version>
+		<version>1.0.0.RELEASE-SNAPSHOT</version>
 		<relativePath>sejda-parent/pom.xml</relativePath>
 	</parent>
 
