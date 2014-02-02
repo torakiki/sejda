@@ -1,0 +1,12 @@
+Package: sejda-console
+Version: [[version]]-1
+Section: utils
+Priority: optional
+Architecture: all
+Homepage: http://www.sejda.org
+Recommends: openjdk-7-jre | openjdk-6-jre | java7-runtime | java6-runtime | java5-runtime
+Maintainer: Andrea Vacondio <info@sejda.org>
+Description: Shell interface for performing pdf manipulations 
+  The sejda-console is a shell interface for Sejda, to be able 
+  to perform pdf manipulation tasks such as merge or split 
+  through the command line.
