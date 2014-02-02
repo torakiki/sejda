@@ -22,12 +22,14 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
  * @author Andrea Vacondio
  * 
  */
+@Ignore
 public class BaseFileSourceListParserTest {
     File xmlFile;
     File csvFile;
