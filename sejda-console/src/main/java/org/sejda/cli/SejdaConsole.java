@@ -125,7 +125,7 @@ public class SejdaConsole {
     private void printVersionAndLicense() {
         StringBuilder info = new StringBuilder(String.format("\nSejda Console (Version %s)\n", Sejda.VERSION));
         info.append("(see http://www.sejda.org for more information)\n\n");
-        info.append("Copyright 2011 by Andrea Vacondio, Eduard Weissmann and others.\n" + "\n"
+        info.append("Copyright 2011-2014 by Andrea Vacondio, Eduard Weissmann.\n" + "\n"
                 + "Licensed under the Apache License, Version 2.0 (the \"License\");\n"
                 + "you may not use this file except in compliance with the License.\n"
                 + "You may obtain a copy of the License at \n" + "\n" + "http://www.apache.org/licenses/LICENSE-2.0\n"
