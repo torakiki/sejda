@@ -39,7 +39,7 @@ public interface PdfSource<T> {
     String getName();
 
     /**
-     * @return password needed to open the source. Cna be null.
+     * @return password needed to open the source. Can be null.
      */
     String getPassword();
 
