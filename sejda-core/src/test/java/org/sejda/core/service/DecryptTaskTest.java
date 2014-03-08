@@ -17,6 +17,7 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,37 +58,67 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the decrypt parameters
-     * 
-     */
     private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        parameters.addSource(source);
         parameters.setOverwrite(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
     }
 
+    private void setUpInput() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
+        parameters.addSource(source);
+    }
+
+    private void setUpInputNoPwd() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_empty_pwd.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_empty_pwd.pdf", "");
+        parameters.addSource(source);
+    }
+
+    private void setUpInputSamePwd() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_usr_own_same_pwd.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_usr_own_same_pwd.pdf", "test");
+        parameters.addSource(source);
+    }
+
+    @Test
+    public void testExecuteNoPwd() throws TaskException, IOException {
+        setUpInputNoPwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_empty_pwd.pdf");
+        assertCreator(reader);
+        assertFalse(reader.isEncrypted());
+        assertVersion(reader, PdfVersion.VERSION_1_6);
+        reader.close();
+    }
+
+    @Test
+    public void testExecuteSamePwd() throws TaskException, IOException {
+        setUpInputSamePwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_usr_own_same_pwd.pdf");
+        assertCreator(reader);
+        assertFalse(reader.isEncrypted());
+        assertVersion(reader, PdfVersion.VERSION_1_6);
+        reader.close();
+    }
+
     @Test
     public void testExecute() throws TaskException, IOException {
+        setUpInput();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
         assertCreator(reader);
+        assertFalse(reader.isEncrypted());
         assertVersion(reader, PdfVersion.VERSION_1_6);
         reader.close();
     }
-
-    /**
-     * 
-     * @return the parameters
-     */
-    protected DecryptParameters getParameters() {
-        return parameters;
-    }
-
 }

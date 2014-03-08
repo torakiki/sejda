@@ -16,11 +16,7 @@
  */
 package org.sejda.impl.pdfbox;
 
-import java.io.InputStream;
-
-import org.junit.Before;
 import org.sejda.core.service.DecryptTaskTest;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.DecryptParameters;
 import org.sejda.model.task.Task;
 
@@ -29,15 +25,6 @@ import org.sejda.model.task.Task;
  * 
  */
 public class DecryptPdfBoxTaskTest extends DecryptTaskTest {
-
-    @Override
-    @Before
-    public void setUp() {
-        super.setUp();
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        getParameters().addSource(source);
-    }
 
     public Task<DecryptParameters> getTask() {
         return new DecryptTask();
