@@ -18,13 +18,17 @@
 package org.sejda.impl.itext.component.input;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
+import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.PdfURLSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lowagie.text.exceptions.BadPasswordException;
 import com.lowagie.text.pdf.PdfReader;
@@ -37,10 +41,13 @@ import com.lowagie.text.pdf.PdfReader;
  */
 abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSourceOpener.class);
+    public static final String UNETHICAL_PROPERTY_NAME = "org.sejda.impl.itext.unethicalread";
+
     public PdfReader open(PdfURLSource source) throws TaskIOException {
         PdfReader reader;
         try {
-            reader = openSource(source);
+            reader = makeUnethicalIfRequired(openSource(source));
         } catch (BadPasswordException bpe) {
             throw new TaskWrongPasswordException("Unable to open the document due to a wrong password.", bpe);
         } catch (IOException e) {
@@ -54,7 +61,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
     public PdfReader open(PdfFileSource source) throws TaskIOException {
         PdfReader reader;
         try {
-            reader = openSource(source);
+            reader = makeUnethicalIfRequired(openSource(source));
         } catch (BadPasswordException bpe) {
             throw new TaskWrongPasswordException("Unable to open the document due to a wrong password.", bpe);
         } catch (IOException e) {
@@ -68,7 +75,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
     public PdfReader open(PdfStreamSource source) throws TaskIOException {
         PdfReader reader;
         try {
-            reader = openSource(source);
+            reader = makeUnethicalIfRequired(openSource(source));
         } catch (BadPasswordException bpe) {
             throw new TaskWrongPasswordException("Unable to open the document due to a wrong password.", bpe);
         } catch (IOException e) {
@@ -76,6 +83,23 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
         }
         reader.removeUnusedObjects();
         reader.consolidateNamedDestinations();
+        return reader;
+    }
+
+    private PdfReader makeUnethicalIfRequired(PdfReader reader) {
+        if (Boolean.getBoolean(UNETHICAL_PROPERTY_NAME) && !reader.isOpenedWithFullPermissions()) {
+            Field field;
+            try {
+                field = PdfReader.class.getDeclaredField("encrypted");
+                field.setAccessible(true);
+                field.setBoolean(reader, false);
+            } catch (NoSuchFieldException e) {
+                // this should not happen
+                throw new SejdaRuntimeException("Error making PdfReader unethical", e);
+            } catch (IllegalAccessException e) {
+                LOG.warn("Unable to make the reader unethical", e);
+            }
+        }
         return reader;
     }
 
