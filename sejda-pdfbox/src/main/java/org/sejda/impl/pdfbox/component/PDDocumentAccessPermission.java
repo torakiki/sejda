@@ -18,6 +18,7 @@ package org.sejda.impl.pdfbox.component;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 
@@ -45,7 +46,7 @@ public class PDDocumentAccessPermission {
      *             if not owner permissions are granted.
      */
     public void ensureOwnerPermissions() throws TaskPermissionsException {
-        if (!permissions.isOwnerPermission()) {
+        if (!Boolean.getBoolean(Sejda.UNETHICAL_READ_PROPERTY_NAME) && !permissions.isOwnerPermission()) {
             throw new TaskPermissionsException("Owner permission is required.");
         }
     }
@@ -58,7 +59,8 @@ public class PDDocumentAccessPermission {
      *             if not granted.
      */
     public void ensurePermission(PdfAccessPermission required) throws TaskPermissionsException {
-        if (!ForwardingPdfAccessPermission.valueFromPdfAccessPermission(required).isAllowed(permissions)) {
+        if (!Boolean.getBoolean(Sejda.UNETHICAL_READ_PROPERTY_NAME)
+                && !ForwardingPdfAccessPermission.valueFromPdfAccessPermission(required).isAllowed(permissions)) {
             throw new TaskPermissionsException(String.format("Permission %s is not granted.", required));
         }
     }

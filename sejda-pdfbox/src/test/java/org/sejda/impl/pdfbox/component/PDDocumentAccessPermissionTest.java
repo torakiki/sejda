@@ -23,6 +23,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.junit.Before;
 import org.junit.Test;
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 
@@ -60,6 +61,14 @@ public class PDDocumentAccessPermissionTest {
         victim.ensureOwnerPermissions();
     }
 
+    @Test
+    public void testOwnerUnethical() throws TaskPermissionsException {
+        when(permission.isOwnerPermission()).thenReturn(Boolean.FALSE);
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
+        victim.ensureOwnerPermissions();
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+    }
+
     @Test(expected = TaskPermissionsException.class)
     public void testNotPrint() throws TaskPermissionsException {
         when(permission.canPrint()).thenReturn(Boolean.FALSE);
@@ -70,6 +79,14 @@ public class PDDocumentAccessPermissionTest {
     public void testPrint() throws TaskPermissionsException {
         when(permission.canPrint()).thenReturn(Boolean.TRUE);
         victim.ensurePermission(PdfAccessPermission.PRINT);
+    }
+
+    @Test
+    public void testPrintUnethical() throws TaskPermissionsException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
+        when(permission.canPrint()).thenReturn(Boolean.FALSE);
+        victim.ensurePermission(PdfAccessPermission.PRINT);
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
     }
 
     @Test(expected = TaskPermissionsException.class)

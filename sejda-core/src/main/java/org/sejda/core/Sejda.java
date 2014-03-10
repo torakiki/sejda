@@ -30,8 +30,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public final class Sejda {
-
     private static final Logger LOG = LoggerFactory.getLogger(Sejda.class);
+
+    public static final String UNETHICAL_READ_PROPERTY_NAME = "org.sejda.unethical.read";
 
     private Sejda() {
         // on purpose
