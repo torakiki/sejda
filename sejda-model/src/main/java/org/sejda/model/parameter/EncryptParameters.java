@@ -29,6 +29,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.pdf.encryption.PdfEncryption;
+import org.sejda.model.validation.constraint.HasAPassword;
 
 /**
  * Parameters for the encrypt manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} that will be encrypted using the same parameters.
@@ -36,6 +37,7 @@ import org.sejda.model.pdf.encryption.PdfEncryption;
  * @author Andrea Vacondio
  * 
  */
+@HasAPassword
 public class EncryptParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     private String ownerPassword = "";
