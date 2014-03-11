@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 
 import org.junit.Test;
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfStreamSource;
 
@@ -40,20 +41,20 @@ public class AbstractPdfSourceOpenerTest {
 
     @Test
     public void testUnethicalFull() throws TaskIOException {
-        System.setProperty(AbstractPdfSourceOpener.UNETHICAL_PROPERTY_NAME, "false");
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
         PdfReader encReader = PdfSourceOpeners.newFullReadOpener().open(getSource());
         assertTrue(encReader.isEncrypted());
-        System.setProperty(AbstractPdfSourceOpener.UNETHICAL_PROPERTY_NAME, "true");
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
         PdfReader reader = PdfSourceOpeners.newFullReadOpener().open(getSource());
         assertFalse(reader.isEncrypted());
     }
 
     @Test
     public void testUnethicalPartial() throws TaskIOException {
-        System.setProperty(AbstractPdfSourceOpener.UNETHICAL_PROPERTY_NAME, "false");
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
         PdfReader encReader = PdfSourceOpeners.newPartialReadOpener().open(getSource());
         assertTrue(encReader.isEncrypted());
-        System.setProperty(AbstractPdfSourceOpener.UNETHICAL_PROPERTY_NAME, "true");
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
         PdfReader reader = PdfSourceOpeners.newPartialReadOpener().open(getSource());
         assertFalse(reader.isEncrypted());
     }

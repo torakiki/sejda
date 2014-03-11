@@ -20,6 +20,7 @@ package org.sejda.impl.itext.component.input;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
@@ -42,7 +43,6 @@ import com.lowagie.text.pdf.PdfReader;
 abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSourceOpener.class);
-    public static final String UNETHICAL_PROPERTY_NAME = "org.sejda.impl.itext.unethicalread";
 
     public PdfReader open(PdfURLSource source) throws TaskIOException {
         PdfReader reader;
@@ -87,7 +87,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
     }
 
     private PdfReader makeUnethicalIfRequired(PdfReader reader) {
-        if (Boolean.getBoolean(UNETHICAL_PROPERTY_NAME) && !reader.isOpenedWithFullPermissions()) {
+        if (Boolean.getBoolean(Sejda.UNETHICAL_READ_PROPERTY_NAME) && !reader.isOpenedWithFullPermissions()) {
             Field field;
             try {
                 field = PdfReader.class.getDeclaredField("encrypted");
