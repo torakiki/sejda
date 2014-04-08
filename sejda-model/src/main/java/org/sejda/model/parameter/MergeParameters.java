@@ -45,24 +45,14 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @NotEmpty
     @Valid
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
-    private boolean copyFormFields;
-    private boolean blankPageIfOdd;
+    private boolean copyFormFields = false;
+    private boolean blankPageIfOdd = false;
     @NotNull
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
     private String outputName;
     @Valid
     @NotNull
     private SingleTaskOutput<?> output;
-
-    public MergeParameters() {
-        this.copyFormFields = false;
-        this.blankPageIfOdd = false;
-    }
-
-    public MergeParameters(boolean copyFormFields, boolean blankPageIfOdd) {
-        this.copyFormFields = copyFormFields;
-        this.blankPageIfOdd = blankPageIfOdd;
-    }
 
     public SingleTaskOutput<?> getOutput() {
         return output;
@@ -115,6 +105,15 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
      */
     public void setBlankPageIfOdd(boolean blankPageIfOdd) {
         this.blankPageIfOdd = blankPageIfOdd;
+    }
+
+    /**
+     * Setting this true tells the task to try to merge form fields if any of the input document has forms.
+     * 
+     * @param copyFormFields
+     */
+    public void setCopyFormFields(boolean copyFormFields) {
+        this.copyFormFields = copyFormFields;
     }
 
     public OutlinePolicy getOutlinePolicy() {

@@ -47,13 +47,15 @@ public class MergeParametersTest {
         MergeParameters eq1 = new MergeParameters();
         MergeParameters eq2 = new MergeParameters();
         MergeParameters eq3 = new MergeParameters();
-        MergeParameters diff = new MergeParameters(true, true);
+        MergeParameters diff = new MergeParameters();
+        diff.setBlankPageIfOdd(true);
+        diff.setCopyFormFields(true);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testInvalidParametersNullSource() {
-        MergeParameters victim = new MergeParameters(false, true);
+        MergeParameters victim = new MergeParameters();
 
         victim.setOutput(output);
         victim.addInput(new PdfMergeInput(null));
