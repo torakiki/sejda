@@ -22,7 +22,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
-import java.util.Collections;
 
 import org.junit.Test;
 import org.sejda.TestUtils;
@@ -43,7 +42,7 @@ public class ExtractPagesParametersTest {
         ExtractPagesParameters eq2 = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         ExtractPagesParameters eq3 = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         ExtractPagesParameters diff = new ExtractPagesParameters();
-        diff.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
+        diff.addPageRange(new PageRange(12));
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
@@ -52,7 +51,7 @@ public class ExtractPagesParametersTest {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         assertTrue(victim.getPageSelection().isEmpty());
         ExtractPagesParameters victim2 = new ExtractPagesParameters();
-        victim2.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
+        victim2.addPageRange(new PageRange(12));
         assertFalse(victim2.getPageSelection().isEmpty());
     }
 
@@ -61,7 +60,7 @@ public class ExtractPagesParametersTest {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         assertEquals(5, victim.getPages(10).size());
         ExtractPagesParameters victim2 = new ExtractPagesParameters();
-        victim2.addPredefinedSetOfPages(Collections.singletonList(new PageRange(12)));
+        victim2.addPageRange(new PageRange(12));
         assertEquals(4, victim2.getPages(15).size());
     }
 

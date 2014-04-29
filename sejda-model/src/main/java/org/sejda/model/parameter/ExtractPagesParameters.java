@@ -71,13 +71,12 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         this.predefinedSetOfPages = predefinedSetOfPages;
     }
 
-    /**
-     * Adds the given page ranges.
-     * 
-     * @param pageRanges
-     */
-    public void addPredefinedSetOfPages(Collection<PageRange> pageRanges) {
-        this.pageSelection.addAll(pageRanges);
+    public void addPageRange(PageRange range) {
+        pageSelection.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        pageSelection.addAll(ranges);
     }
 
     public PredefinedSetOfPages getPredefinedSetOfPages() {

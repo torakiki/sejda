@@ -43,7 +43,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
             parameters = new ExtractPagesParameters(taskCliArguments.getPredefinedPages().getEnumValue());
         } else if (taskCliArguments.isPageSelection()) {
             parameters = new ExtractPagesParameters();
-            parameters.addPredefinedSetOfPages(taskCliArguments.getPageSelection().getPageRangeSet());
+            parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
         } else {
             throw new ArgumentValidationException(
                     "Please specify at least one option that defines pages to be extracted");

@@ -67,13 +67,11 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
     }
 
     private void setUpParametersPageRangesPages() {
-        PageRange ristRange = new PageRange(1, 1);
+        PageRange firstRange = new PageRange(1, 1);
         PageRange secondRange = new PageRange(3);
-        Set<PageRange> ranges = new HashSet<PageRange>();
-        ranges.add(ristRange);
-        ranges.add(secondRange);
         parameters = new ExtractPagesParameters();
-        parameters.addPredefinedSetOfPages(ranges);
+        parameters.addPageRange(firstRange);
+        parameters.addPageRange(secondRange);
         parameters.setOverwrite(true);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -92,7 +90,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
         ranges.add(thirdRange);
         ranges.add(fourthRange);
         parameters = new ExtractPagesParameters();
-        parameters.addPredefinedSetOfPages(ranges);
+        parameters.addAllPageRanges(ranges);
         parameters.setOverwrite(true);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
