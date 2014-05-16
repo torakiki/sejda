@@ -24,7 +24,7 @@ import org.sejda.model.input.PdfSource;
  * @author Andrea Vacondio
  * 
  */
-public interface SinglePdfSourceTaskParameters {
+public interface SinglePdfSourceTaskParameters extends TaskParameters {
 
     /**
      * @return the source for this parameter.

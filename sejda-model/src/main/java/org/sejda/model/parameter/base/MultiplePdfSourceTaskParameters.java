@@ -26,7 +26,7 @@ import org.sejda.model.input.PdfSource;
  * @author Eduard Weissmann
  * 
  */
-public interface MultiplePdfSourceTaskParameters {
+public interface MultiplePdfSourceTaskParameters extends TaskParameters {
 
     /**
      * adds the input source to the source list.
