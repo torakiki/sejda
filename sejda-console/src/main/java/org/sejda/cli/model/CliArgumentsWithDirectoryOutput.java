@@ -16,7 +16,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.PdfDirectoryOutputAdapter;
+import org.sejda.conversion.DirectoryOutputAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -30,5 +30,5 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface CliArgumentsWithDirectoryOutput extends TaskCliArguments {
 
     @Option(shortName = "o", description = "output directory (required)")
-    PdfDirectoryOutputAdapter getOutput();
+    DirectoryOutputAdapter getOutput();
 }

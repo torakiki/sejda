@@ -26,11 +26,11 @@ import org.sejda.model.output.DirectoryTaskOutput;
  * @author Eduard Weissmann
  * 
  */
-public class PdfDirectoryOutputAdapter {
+public class DirectoryOutputAdapter {
 
     private final DirectoryTaskOutput pdfDirectoryOutput;
 
-    public PdfDirectoryOutputAdapter(String directoryPath) {
+    public DirectoryOutputAdapter(String directoryPath) {
         File directory = new File(directoryPath);
 
         if (!directory.exists()) {

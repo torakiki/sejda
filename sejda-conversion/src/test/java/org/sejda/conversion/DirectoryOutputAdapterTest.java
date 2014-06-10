@@ -28,18 +28,18 @@ import org.junit.rules.TemporaryFolder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfDirectoryOutputAdapterTest {
+public class DirectoryOutputAdapterTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
     @Test(expected = IllegalArgumentException.class)
     public void testNegative() {
-        new PdfDirectoryOutputAdapter("/I/dont/exist");
+        new DirectoryOutputAdapter("/I/dont/exist");
     }
 
     @Test
     public void testPositive() throws IOException {
-        assertNotNull(new PdfDirectoryOutputAdapter(folder.newFolder().getAbsolutePath()).getPdfDirectoryOutput());
+        assertNotNull(new DirectoryOutputAdapter(folder.newFolder().getAbsolutePath()).getPdfDirectoryOutput());
     }
 }
