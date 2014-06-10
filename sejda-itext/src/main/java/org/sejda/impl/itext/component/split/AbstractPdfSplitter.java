@@ -34,10 +34,10 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.itext.component.ITextOutlineSubsetProvider;
 import org.sejda.impl.itext.component.PdfCopier;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.outline.OutlineSubsetProvider;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,34 +142,5 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
         this.parameters = parameters;
     }
 
-    /**
-     * Strategy used by the {@link AbstractPdfSplitter} to know when it's time to close the ongoing output and open a new one.
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    interface NextOutputStrategy {
 
-        /**
-         * Ensures that the strategy implementation is in a valid state.
-         * 
-         * @throws TaskExecutionException
-         *             if not in a valid state.
-         */
-        void ensureIsValid() throws TaskExecutionException;
-
-        /**
-         * @param page
-         *            the current processing page
-         * @return true if the splitter should open a new output, false otherwise.
-         */
-        boolean isOpening(Integer page);
-
-        /**
-         * @param page
-         *            the current processing page
-         * @return true if the splitter should close the current output, false otherwise.
-         */
-        boolean isClosing(Integer page);
-    }
 }

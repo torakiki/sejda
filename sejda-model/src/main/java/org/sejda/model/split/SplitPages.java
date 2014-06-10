@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.impl.itext.component.split;
+package org.sejda.model.split;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.sejda.impl.itext.component.split.AbstractPdfSplitter.NextOutputStrategy;
 import org.sejda.model.exception.TaskExecutionException;
 
 /**
@@ -29,21 +28,26 @@ import org.sejda.model.exception.TaskExecutionException;
  * @author Andrea Vacondio
  * 
  */
-class SplitPages implements NextOutputStrategy {
+public class SplitPages implements NextOutputStrategy {
 
     private Set<Integer> closingPages = new HashSet<Integer>();
     private Set<Integer> openingPages = new HashSet<Integer>();
 
-    SplitPages(Collection<Integer> pages) {
+    public SplitPages(Collection<Integer> pages) {
+        this(pages.toArray(new Integer[pages.size()]));
+
+    }
+
+    public SplitPages(Integer... pages) {
         openingPages.add(1);
         for (Integer page : pages) {
             add(page);
         }
     }
 
-    private void add(Integer page) {
-        closingPages.add(page - 1);
-        openingPages.add(page);
+    void add(Integer page) {
+        closingPages.add(page);
+        openingPages.add(page + 1);
     }
 
     public void ensureIsValid() throws TaskExecutionException {

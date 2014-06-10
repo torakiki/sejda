@@ -137,7 +137,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
             return new SplitByBookmarksCliArgumentsTransformer();
         }
-    }, "Splits a given pdf document at pages where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression).", "splitbybookmarks -f /tmp/file1.pdf -o /tmp -l 2 -e \".+(page)+.+\""),
+    }, "Splits a given pdf document before each page where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression).", "splitbybookmarks -f /tmp/file1.pdf -o /tmp -l 2 -e \".+(page)+.+\""),
     SPLIT_BY_SIZE("splitbysize", new CliInterfacedTask<SplitBySizeTaskCliArguments, SplitBySizeParameters>() {
 
         @Override
@@ -151,7 +151,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SplitByPagesTaskCliArguments, SplitByPagesParameters> getArgumentsTransformer() {
             return new SplitByPagesCliArgumentsTransformer();
         }
-    }, "Splits a given pdf document at a selected set of page numbers.", "splitbypages -f /tmp/file1.pdf -o /tmp -n 1 3 5 99"),
+    }, "Splits a given pdf document after each one of the selected page numbers.", "splitbypages -f /tmp/file1.pdf -o /tmp -n 1 3 5 99"),
     SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
 
         @Override

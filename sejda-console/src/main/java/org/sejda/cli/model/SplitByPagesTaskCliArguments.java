@@ -33,7 +33,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface SplitByPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
         CliArgumentsWithPrefixableOutput {
 
-    @Option(shortName = "n", description = "page number(s) to split at (required)")
+    @Option(shortName = "n", description = "page number(s) to split at, the document will be splitted between 'n' and 'n+1' (required)")
     List<Integer> getPageNumbers();
 
     // override default -f option that is decribed as expecting a list of files with a description stating that it is expecting a single file

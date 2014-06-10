@@ -25,6 +25,8 @@ import org.sejda.impl.itext.component.PdfCopier;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.split.NextOutputStrategy;
+import org.sejda.model.split.SplitPages;
 
 import com.lowagie.text.pdf.PdfReader;
 

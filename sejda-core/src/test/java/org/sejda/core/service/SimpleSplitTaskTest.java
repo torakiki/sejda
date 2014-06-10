@@ -77,7 +77,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        assertOutputContainsDocuments(3);
+        assertOutputContainsDocuments(2);
     }
 
     @Test
@@ -86,7 +86,7 @@ public abstract class SimpleSplitTaskTest extends PdfOutEnabledTest implements T
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        assertOutputContainsDocuments(3);
     }
 
 }

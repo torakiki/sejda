@@ -58,8 +58,8 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_outline.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/bigger_outline_test.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "bigger_outline_test.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
         return parameters;
@@ -84,12 +84,32 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
     }
 
     @Test
-    public void testExecuteLevel2MatchingregEx() throws TaskException, IOException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(2, ".+(page)+.+");
+    public void testExecuteLevel1() throws TaskException, IOException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(1, null);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(4);
+    }
+
+    @Test
+    public void testExecuteLevel1MatchingregEx() throws TaskException, IOException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(1, "(Second)+.+");
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         assertOutputContainsDocuments(2);
+    }
+
+    @Test
+    public void testExecuteLevel1NotMatchingregEx() throws TaskException {
+        SplitByGoToActionLevelParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
     @Test

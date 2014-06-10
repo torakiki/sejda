@@ -25,6 +25,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.split.NextOutputStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
