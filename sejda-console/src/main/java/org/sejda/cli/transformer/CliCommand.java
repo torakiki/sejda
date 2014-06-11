@@ -41,6 +41,7 @@ import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
 import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
 import org.sejda.cli.model.SimpleSplitTaskCliArguments;
 import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
+import org.sejda.cli.model.SplitByEveryXPagesTaskCliArguments;
 import org.sejda.cli.model.SplitByPagesTaskCliArguments;
 import org.sejda.cli.model.SplitBySizeTaskCliArguments;
 import org.sejda.cli.model.TaskCliArguments;
@@ -60,6 +61,7 @@ import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.parameter.SimpleSplitParameters;
+import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.parameter.SplitBySizeParameters;
@@ -152,6 +154,13 @@ public enum CliCommand {
             return new SplitByPagesCliArgumentsTransformer();
         }
     }, "Splits a given pdf document after each one of the selected page numbers.", "splitbypages -f /tmp/file1.pdf -o /tmp -n 1 3 5 99"),
+    SPLIT_BY_EVERY("splitbyevery", new CliInterfacedTask<SplitByEveryXPagesTaskCliArguments, SplitByEveryXPagesParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitByEveryXPagesTaskCliArguments, SplitByEveryXPagesParameters> getArgumentsTransformer() {
+            return new SplitByEveryXPagesCliArgumentsTransformer();
+        }
+    }, "Splits a given pdf document every 'n' pages creating documents of 'n' pages each.", "splitbyevery -f /tmp/file1.pdf -o /tmp -n 2"),
     SIMPLE_SPLIT("simplesplit", new CliInterfacedTask<SimpleSplitTaskCliArguments, SimpleSplitParameters>() {
 
         @Override

@@ -22,14 +22,16 @@
 			task="org.sejda.impl.itext.SplitBySizeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByPagesParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+		<task parameters="org.sejda.model.parameter.SplitByEveryXPagesParameters"
+			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.SimpleSplitParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.ExtractPagesParameters"
 			task="org.sejda.impl.itext.ExtractPagesTask" />
 		<task parameters="org.sejda.model.parameter.ExtractTextParameters"
 			task="org.sejda.impl.pdfbox.ExtractTextTask" />
-        <task parameters="org.sejda.model.parameter.ExtractTextByPagesParameters"
-              task="org.sejda.impl.pdfbox.ExtractTextByPagesTask" />
+		<task parameters="org.sejda.model.parameter.ExtractTextByPagesParameters"
+			task="org.sejda.impl.pdfbox.ExtractTextByPagesTask" />
 		<task parameters="org.sejda.model.parameter.SetMetadataParameters"
 			task="org.sejda.impl.itext.SetMetadataTask" />
 		<task parameters="org.sejda.model.parameter.SetPagesLabelParameters"
@@ -44,6 +46,6 @@
 		<task parameters="org.sejda.model.parameter.SetHeaderFooterParameters"
 			task="org.sejda.impl.pdfbox.SetHeaderFooterTask" />
 		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters"
-			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />			
+			task="org.sejda.impl.icepdf.PdfToMultipleImageTask" />
 	</tasks>
 </sejda>
