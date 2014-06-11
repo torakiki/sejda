@@ -60,7 +60,7 @@ public class SplitByPagesParameters extends AbstractSplitByPageParameters {
     public Set<Integer> getPages(int upperLimit) {
         Set<Integer> filteredSet = new HashSet<Integer>();
         for (Integer page : pages) {
-            if (page != null && page <= upperLimit && page > 0) {
+            if (page <= upperLimit && page > 0) {
                 filteredSet.add(page);
             }
         }
