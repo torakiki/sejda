@@ -52,13 +52,10 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
      * 
      * @param firstInput
      * @param secondInput
-     * @param outputName
-     *            output name to be used only when the output is written to a non file destination
      */
-    public AlternateMixParameters(PdfMixInput firstInput, PdfMixInput secondInput, String outputName) {
+    public AlternateMixParameters(PdfMixInput firstInput, PdfMixInput secondInput) {
         this.firstInput = firstInput;
         this.secondInput = secondInput;
-        this.outputName = outputName;
     }
 
     public SingleTaskOutput<?> getOutput() {
@@ -75,6 +72,14 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
 
     public PdfMixInput getSecondInput() {
         return secondInput;
+    }
+
+    /**
+     * @param outputName
+     *            the outputName to be used when the output is not a file destination
+     */
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
     }
 
     public String getOutputName() {

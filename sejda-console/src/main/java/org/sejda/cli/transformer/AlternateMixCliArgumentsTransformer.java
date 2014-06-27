@@ -52,7 +52,7 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
         PdfMixInput input2 = new PdfMixInput(f2.getPdfFileSource(), taskCliArguments.isReverseSecond(),
                 taskCliArguments.getSecondStep());
 
-        AlternateMixParameters parameters = new AlternateMixParameters(input1, input2, null);
+        AlternateMixParameters parameters = new AlternateMixParameters(input1, input2);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
         return parameters;

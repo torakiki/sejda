@@ -47,10 +47,14 @@ public class AlternateMixParametersTest {
     public void testEquals() {
         PdfMixInput firstInput = mock(PdfMixInput.class);
         PdfMixInput secondInput = mock(PdfMixInput.class);
-        AlternateMixParameters eq1 = new AlternateMixParameters(firstInput, secondInput, "name");
-        AlternateMixParameters eq2 = new AlternateMixParameters(firstInput, secondInput, "name");
-        AlternateMixParameters eq3 = new AlternateMixParameters(firstInput, secondInput, "name");
-        AlternateMixParameters diff = new AlternateMixParameters(firstInput, secondInput, "diffName");
+        AlternateMixParameters eq1 = new AlternateMixParameters(firstInput, secondInput);
+        eq1.setOutputName("name.pdf");
+        AlternateMixParameters eq2 = new AlternateMixParameters(firstInput, secondInput);
+        eq2.setOutputName("name.pdf");
+        AlternateMixParameters eq3 = new AlternateMixParameters(firstInput, secondInput);
+        eq3.setOutputName("name.pdf");
+        AlternateMixParameters diff = new AlternateMixParameters(firstInput, secondInput);
+        diff.setOutputName("diff.pdf");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
@@ -59,23 +63,26 @@ public class AlternateMixParametersTest {
         InputStream stream = mock(InputStream.class);
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "source.pdf");
         PdfMixInput input = new PdfMixInput(source, false, 1);
-        AlternateMixParameters victim = new AlternateMixParameters(input, null, "name.pdf");
-
+        AlternateMixParameters victim = new AlternateMixParameters(input, null);
+        victim.setOutputName("name.pdf");
         victim.setOutput(output);
+
         TestUtils.assertInvalidParameters(victim);
-        AlternateMixParameters victim2 = new AlternateMixParameters(null, input, "name.pdf");
+        AlternateMixParameters victim2 = new AlternateMixParameters(null, input);
+        victim2.setOutputName("name.pdf");
         victim2.setOutput(output);
         TestUtils.assertInvalidParameters(victim2);
 
-        AlternateMixParameters victim3 = new AlternateMixParameters(null, null, "name.pdf");
+        AlternateMixParameters victim3 = new AlternateMixParameters(null, null);
+        victim3.setOutputName("name.pdf");
         TestUtils.assertInvalidParameters(victim3);
     }
 
     @Test
     public void testInvalidParametersNullSource() {
         PdfMixInput input = new PdfMixInput(null, false, 1);
-        AlternateMixParameters victim = new AlternateMixParameters(input, input, "name.pdf");
-
+        AlternateMixParameters victim = new AlternateMixParameters(input, input);
+        victim.setOutputName("name.pdf");
         victim.setOutput(output);
         TestUtils.assertInvalidParameters(victim);
     }
