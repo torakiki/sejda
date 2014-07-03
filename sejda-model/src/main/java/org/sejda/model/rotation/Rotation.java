@@ -31,7 +31,7 @@ public enum Rotation implements FriendlyNamed {
     DEGREES_180(180),
     DEGREES_270(270);
 
-    public static final int D_360 = 360;
+    private static final int D_360 = 360;
     private static final int D_90 = 90;
     private static final int D_270 = 270;
 
