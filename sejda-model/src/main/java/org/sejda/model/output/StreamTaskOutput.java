@@ -33,7 +33,7 @@ import org.sejda.model.exception.TaskOutputVisitException;
  * @author Andrea Vacondio
  * 
  */
-public final class StreamTaskOutput implements MultipleTaskOutput<OutputStream>, SingleTaskOutput<OutputStream> {
+public class StreamTaskOutput implements MultipleTaskOutput<OutputStream>, SingleTaskOutput<OutputStream> {
 
     @NotNull
     private final OutputStream stream;
