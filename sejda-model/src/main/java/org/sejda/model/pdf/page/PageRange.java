@@ -87,7 +87,8 @@ public class PageRange implements PagesSelection {
      * @return <code>true</code> if the input range intersect this {@link PageRange} instance.
      */
     public boolean intersects(PageRange range) {
-        return ((range.getStart() >= start && range.getStart() <= end) || (range.getEnd() >= start && range.getEnd() <= end));
+        return (range.getStart() >= start && range.getStart() <= end)
+                || (range.getEnd() >= start && range.getEnd() <= end);
     }
 
     /**
@@ -98,7 +99,7 @@ public class PageRange implements PagesSelection {
      */
     public SortedSet<Integer> getPages(int totalNumberOfPage) {
         SortedSet<Integer> retSet = new TreeSet<Integer>();
-        for (int i = start; (i <= totalNumberOfPage && i <= end); i++) {
+        for (int i = start; i <= totalNumberOfPage && i <= end; i++) {
             retSet.add(i);
         }
         return retSet;

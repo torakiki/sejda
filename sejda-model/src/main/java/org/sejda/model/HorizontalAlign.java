@@ -35,7 +35,7 @@ public enum HorizontalAlign implements FriendlyNamed {
     RIGHT("right") {
         @Override
         public float position(float pageWidth, float labelWidth, float margin) {
-            return (pageWidth - labelWidth - margin);
+            return pageWidth - labelWidth - margin;
         }
     },
     LEFT("left") {

@@ -61,7 +61,7 @@ public enum Rotation implements FriendlyNamed {
      *         returned.
      */
     public static Rotation getRotation(int degrees) {
-        int actualRotation = (degrees % D_360);
+        int actualRotation = degrees % D_360;
         for (Rotation rotation : Rotation.values()) {
             if (rotation.getDegrees() == actualRotation) {
                 return rotation;

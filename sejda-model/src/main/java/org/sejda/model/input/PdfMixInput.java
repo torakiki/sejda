@@ -116,7 +116,7 @@ public class PdfMixInput {
          * @return true if there is another page to be processed
          */
         public boolean hasNextPage() {
-            return (currentPage > 0 && currentPage <= numberOfPages);
+            return currentPage > 0 && currentPage <= numberOfPages;
         }
     }
 }

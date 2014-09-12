@@ -47,7 +47,7 @@ public final class ReflectionUtils {
                 Type[] types = method.getGenericParameterTypes();
                 for (Type type : types) {
                     if (type instanceof Class && !((Class) type).isInterface()) {
-                        return ((Class) type);
+                        return (Class) type;
                     }
                 }
             }

@@ -35,13 +35,13 @@ public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion,
     }
 
     public boolean isValid(AbstractPdfOutputParameters value, ConstraintValidatorContext context) {
-        boolean isValid = value.getVersion() == null
+        boolean isValid = value == null || value.getVersion() == null
                 || value.getVersion().compareTo(value.getMinRequiredPdfVersion()) >= 0;
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
-                    String.format("Invalid version %s. Minimum version required is %s.", value.getVersion(), value
-                            .getMinRequiredPdfVersion())).addNode("parameters").addConstraintViolation();
+                    String.format("Invalid version %s. Minimum version required is %s.", value.getVersion(),
+                            value.getMinRequiredPdfVersion())).addNode("parameters").addConstraintViolation();
         }
         return isValid;
     }
