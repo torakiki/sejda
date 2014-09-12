@@ -33,8 +33,10 @@ public class Numbering {
 
     @NotNull
     private NumberingStyle numberingStyle;
+
+    // start numbering from
     @Min(value = 1)
-    private int logicalPageNumber; // start numbering from
+    private int logicalPageNumber;
 
     public Numbering(NumberingStyle numberingStyle, int logicalPageNumber) {
         if (numberingStyle == null) {

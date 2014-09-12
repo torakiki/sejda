@@ -38,4 +38,8 @@ public class NumberingTest {
         assertThat(victim.styledLabelFor(110), is("CX"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testRequiredStyle() {
+        new Numbering(null, 100);
+    }
 }
