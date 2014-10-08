@@ -1,12 +1,11 @@
 Sejda (http://www.sejda.org)
 =====
+[![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
+[![License](http://img.shields.io/badge/license-APLv2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+
 An extendible and configurable PDF manipulation layer library written in Java. A ready to use java library to perform PDF document manipulation without having to deal with the low level API.
 
 Sejda offers many "ready to go" manipulations implemented using iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.
-
-Status
-----
-[![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
 
 Interface
 ----
