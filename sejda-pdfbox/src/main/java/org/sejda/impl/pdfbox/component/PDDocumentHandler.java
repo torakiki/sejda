@@ -76,12 +76,8 @@ public class PDDocumentHandler implements Closeable {
      * 
      * @throws TaskIOException
      */
-    public PDDocumentHandler() throws TaskIOException {
-        try {
-            this.document = new PDDocument();
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred creating the PDDocument.", e);
-        }
+    public PDDocumentHandler() {
+        this.document = new PDDocument();
         permissions = new PDDocumentAccessPermission(document);
     }
 

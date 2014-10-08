@@ -41,8 +41,7 @@ public class PagesExtractor extends PDDocumentHandler {
 
     private PDDocumentHandler sourceDocumentHandler;
 
-    public PagesExtractor(PDDocumentHandler sourceDocumentHandler) throws TaskIOException {
-        super();
+    public PagesExtractor(PDDocumentHandler sourceDocumentHandler) {
         this.sourceDocumentHandler = sourceDocumentHandler;
     }
 

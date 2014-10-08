@@ -50,8 +50,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     private PDDocumentHandler secondDocumentHandler;
     private PdfSourceOpener<PDDocumentHandler> documentLoader = new DefaultPdfSourceOpener();
 
-    public PdfAlternateMixer(PdfMixInput firstInput, PdfMixInput secondInput) throws TaskIOException {
-        super();
+    public PdfAlternateMixer(PdfMixInput firstInput, PdfMixInput secondInput) {
         this.firstInput = firstInput;
         this.secondInput = secondInput;
     }

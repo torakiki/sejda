@@ -26,7 +26,6 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.PdfAlternateMixer;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private PdfAlternateMixer mixer = null;
     private SingleOutputWriter outputWriter;
 
-    public void before(AlternateMixParameters parameters) throws TaskIOException {
+    public void before(AlternateMixParameters parameters) {
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
