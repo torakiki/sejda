@@ -3,7 +3,7 @@ System properties
 A list of system properties that users can configure to alter Sejda behavior.
 
 **sejda.config.file**  
-*values:* a string with the configuration filename
+*values:* a string with the configuration filename  
 *default:* sejda.xml  
 *description:* let the user specify the name of the Sejda config file. If specified, the file is searched in the classpath first and on the filesystem as fallback, if not specified the default 'sejda.xml' is searched in the classpath.  
 
