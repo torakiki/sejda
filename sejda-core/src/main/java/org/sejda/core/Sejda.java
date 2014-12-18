@@ -32,7 +32,9 @@ import org.slf4j.LoggerFactory;
 public final class Sejda {
     private static final Logger LOG = LoggerFactory.getLogger(Sejda.class);
 
-    public static final String UNETHICAL_READ_PROPERTY_NAME = "org.sejda.unethical.read";
+    public static final String UNETHICAL_READ_PROPERTY_NAME = "sejda.unethical.read";
+    public static final String USER_CONFIG_FILE_PROPERTY_NAME = "sejda.config.file";
+    public static final String PERFORM_SCHEMA_VALIDATION_PROPERTY_NAME = "sejda.perform.schema.validation";
 
     private Sejda() {
         // on purpose

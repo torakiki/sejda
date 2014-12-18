@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,6 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationStreamProvider.class);
 
     private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
-    private static final String USER_CONFIG_FILE_PROPERTY = "sejda.config.file";
 
     public InputStream getConfigurationStream() throws ConfigurationException {
         InputStream configurationStream = getConfiguration();
@@ -54,7 +54,7 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     }
 
     private InputStream getConfiguration() throws ConfigurationException {
-        String userConfigFileName = System.getProperty(USER_CONFIG_FILE_PROPERTY);
+        String userConfigFileName = System.getProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME);
         if (isNotBlank(userConfigFileName)) {
             return getCustomConfigurationStream(userConfigFileName);
         }

@@ -38,6 +38,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.sejda.core.Sejda;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
@@ -57,11 +58,6 @@ import org.xml.sax.SAXException;
  */
 
 final class XmlConfigurationStrategy implements ConfigurationStrategy {
-
-    /**
-     * system property as a switch to disable schema validation
-     */
-    private static final String PERFORM_SCHEMA_VALIDATION_PROPERTY = "sejda.perform.schema.validation";
 
     private static final String ROOT_NODE = "/sejda";
     private static final String VALIDATION_ATTRIBUTENAME = "validation";
@@ -115,7 +111,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     }
 
     private void initializeSchemaValidation(DocumentBuilderFactory factory) throws SAXException {
-        if (Boolean.valueOf(System.getProperty(PERFORM_SCHEMA_VALIDATION_PROPERTY, "true"))) {
+        if (Boolean.getBoolean(Sejda.PERFORM_SCHEMA_VALIDATION_PROPERTY_NAME)) {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
             factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread()

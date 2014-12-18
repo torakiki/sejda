@@ -16,6 +16,7 @@
  */
 package org.sejda.core.writer.context;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.lang.reflect.Constructor;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Image Writer Context used to get the proper {@link ImageWriterAbstractFactory}. A custom factory class can be supplied using the system property
- * "org.sejda.image.writer.factory.class". If a custom factory class is provided and an error occur during the creation, the default factory is used.
+ * "sejda.image.writer.factory.class". If a custom factory class is provided and an error occur during the creation, the default factory is used.
  * 
  * @author Andrea Vacondio
  * 
@@ -37,7 +38,11 @@ public final class ImageWriterContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageWriterContext.class);
 
-    private static final String IMAGE_WRITER_FACTORY_CLASS = "org.sejda.image.writer.factory.class";
+    private static final String IMAGE_WRITER_FACTORY_CLASS = "sejda.image.writer.factory.class";
+    /**
+     * @deprecated use IMAGE_WRITER_FACTORY_CLASS
+     */
+    private static final String OLD_IMAGE_WRITER_FACTORY_CLASS = "org.sejda.image.writer.factory.class";
 
     private final ImageWriterAbstractFactory factory;
     private final ImageWriterAbstractFactory defaultFactory;
@@ -76,7 +81,8 @@ public final class ImageWriterContext {
 
     private static ImageWriterAbstractFactory newNonDefaultFactory() {
         ImageWriterAbstractFactory retVal = null;
-        String factoryClassString = System.getProperty(IMAGE_WRITER_FACTORY_CLASS);
+        String factoryClassString = defaultString(System.getProperty(IMAGE_WRITER_FACTORY_CLASS),
+                System.getProperty(OLD_IMAGE_WRITER_FACTORY_CLASS));
 
         if (isNotBlank(factoryClassString)) {
             LOG.trace("Instantiating custom ImageWriterAbstractFactory: {}", factoryClassString);
