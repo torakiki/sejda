@@ -17,6 +17,7 @@
 package org.sejda.cli;
 
 import org.sejda.core.service.DefaultTaskExecutionService;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * Main entry point for the sejda console executable
@@ -31,6 +32,9 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        // bridging between jul and slf4j
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
         new SejdaConsole(args, getTaskExecutionAdapter()).execute();
     }
 

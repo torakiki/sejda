@@ -1,4 +1,7 @@
 <configuration>
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
 
 	<!-- This is the default sejda-console logging configuration -->
 	<!-- by default, this config provides logging to stdout -->
@@ -16,6 +19,7 @@
 
 	<logger name="org.sejda" level="DEBUG" />
 	<logger name="org.apache.pdfbox" level="WARN" />
+	<logger name="org.icepdf" level="WARN" />
 	<logger name="org.hibernate.validator" level="INFO" />
 
 	<root level="INFO">

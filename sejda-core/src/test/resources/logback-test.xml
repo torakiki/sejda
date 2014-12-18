@@ -9,6 +9,7 @@
 
 	<logger name="org.sejda" level="TRACE" />
 	<logger name="org.apache.pdfbox" level="INFO" />
+	<logger name="org.icepdf" level="INFO" />
 	<logger name="org.hibernate" level="INFO" />
 
 	<root level="WARN">

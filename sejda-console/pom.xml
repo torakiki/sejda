@@ -241,6 +241,11 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-icepdf</artifactId>
 			<version>${project.version}</version>
