@@ -3,7 +3,7 @@ package org.sejda.impl.itext.component;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -12,31 +12,25 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.sejda.impl.itext.util.ITextUtils;
 import org.sejda.model.exception.TaskException;
 
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
  * 
  * @author Andrea Vacondio
  * 
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SimpleBookmark.class)
 public class ITextOutlineSubsetProviderTest {
 
     private PdfReader reader;
 
-    @Before
-    public void setUp() {
-        reader = mock(PdfReader.class);
+    @After
+    public void tearDown() {
+        ITextUtils.nullSafeClosePdfReader(reader);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -57,40 +51,53 @@ public class ITextOutlineSubsetProviderTest {
             assertFalse(retList.isEmpty());
         } finally {
             IOUtils.closeQuietly(inputStream);
-            if (reader != null) {
-                reader.close();
-            }
         }
     }
 
     @Test
-    public void getOutlineUntillPageEmptyBookmarks() throws TaskException {
-        PowerMockito.mockStatic(SimpleBookmark.class);
-        PowerMockito.when(SimpleBookmark.getBookmark(reader)).thenReturn(null);
-        ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
-        verify(reader).getNumberOfPages();
-        victim.startPage(0);
-        Collection<Map<String, Object>> retList = victim.getOutlineUntillPage(1);
-        assertNotNull(retList);
-        assertTrue(retList.isEmpty());
+    public void getOutlineUntillPageEmptyBookmarks() throws TaskException, IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
+            reader = spy(new PdfReader(inputStream));
+            ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
+            verify(reader).getNumberOfPages();
+            victim.startPage(0);
+            Collection<Map<String, Object>> retList = victim.getOutlineUntillPage(1);
+            assertNotNull(retList);
+            assertTrue(retList.isEmpty());
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 
     @Test(expected = TaskException.class)
-    public void getOutlineUntillPageNoStart() throws TaskException {
-        PowerMockito.mockStatic(SimpleBookmark.class);
-        PowerMockito.when(SimpleBookmark.getBookmark(reader)).thenReturn(null);
-        ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
-        verify(reader).getNumberOfPages();
-        victim.getOutlineUntillPage(1);
+    public void getOutlineUntillPageNoStart() throws TaskException, IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
+            reader = spy(new PdfReader(inputStream));
+            ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
+            verify(reader).getNumberOfPages();
+            victim.getOutlineUntillPage(1);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 
     @Test(expected = TaskException.class)
-    public void getOutlineUntillPageStartGTEnd() throws TaskException {
-        PowerMockito.mockStatic(SimpleBookmark.class);
-        PowerMockito.when(SimpleBookmark.getBookmark(reader)).thenReturn(null);
-        ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
-        verify(reader).getNumberOfPages();
-        victim.startPage(5);
-        victim.getOutlineUntillPage(1);
+    public void getOutlineUntillPageStartGTEnd() throws TaskException, IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
+            reader = spy(new PdfReader(inputStream));
+            ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
+            verify(reader).getNumberOfPages();
+            victim.startPage(5);
+            victim.getOutlineUntillPage(1);
+            victim.getOutlineUntillPage(1);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }

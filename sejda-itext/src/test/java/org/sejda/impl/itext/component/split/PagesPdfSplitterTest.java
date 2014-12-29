@@ -25,15 +25,14 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Answers;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.sejda.impl.itext.component.PdfCopier;
+import org.sejda.impl.itext.util.ITextUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
@@ -43,14 +42,11 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.task.NotifiableTaskMetadata;
 
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(SimpleBookmark.class)
 public class PagesPdfSplitterTest {
 
     private SimpleSplitParameters params = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
@@ -59,24 +55,33 @@ public class PagesPdfSplitterTest {
 
     @Before
     public void setUp() {
-        reader = mock(PdfReader.class);
         source = mock(PdfSource.class);
         when(source.getName()).thenReturn("name");
         params.setSource(source);
-        when(reader.getNumberOfPages()).thenReturn(10);
-        PowerMockito.mockStatic(SimpleBookmark.class, Answers.RETURNS_SMART_NULLS.get());
+    }
+
+    @After
+    public void tearDown() {
+        ITextUtils.nullSafeClosePdfReader(reader);
     }
 
     @Test(expected = OutOfMemoryError.class)
     // issue #80
     public void testFinallyDoesntSwallowErrors() throws IOException, TaskException {
-        PagesPdfSplitter<AbstractSplitByPageParameters> victim = spy(new PagesPdfSplitter<AbstractSplitByPageParameters>(
-                reader, params));
-        PdfCopier mockCopier = mock(PdfCopier.class);
-        doReturn(mockCopier).when(victim).openCopier(any(PdfReader.class), any(File.class), any(PdfVersion.class));
-        doThrow(new RuntimeException()).when(mockCopier).close();
-        doThrow(new OutOfMemoryError()).when(mockCopier).addPage(reader, 1);
-        NotifiableTaskMetadata taskMetadata = mock(NotifiableTaskMetadata.class);
-        victim.split(taskMetadata);
+        InputStream inputStream = null;
+        try {
+            inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
+            reader = new PdfReader(inputStream);
+            PagesPdfSplitter<AbstractSplitByPageParameters> victim = spy(new PagesPdfSplitter<AbstractSplitByPageParameters>(
+                    reader, params));
+            PdfCopier mockCopier = mock(PdfCopier.class);
+            doReturn(mockCopier).when(victim).openCopier(any(PdfReader.class), any(File.class), any(PdfVersion.class));
+            doThrow(new RuntimeException()).when(mockCopier).close();
+            doThrow(new OutOfMemoryError()).when(mockCopier).addPage(reader, 1);
+            NotifiableTaskMetadata taskMetadata = mock(NotifiableTaskMetadata.class);
+            victim.split(taskMetadata);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
     }
 }
