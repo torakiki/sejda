@@ -93,7 +93,7 @@
 		<commons.io.version>2.2</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
 		<mockito.version>1.10.8</mockito.version>
-		<powermock.version>1.6.0</powermock.version>
+		<powermock.version>1.5.6</powermock.version>
 		<itextpdf.version>2.1.7</itextpdf.version>
 		<logback.version>1.1.2</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
@@ -176,6 +176,13 @@
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-module-junit4</artifactId>
 			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- this is required because javassist 3.18 require jdk 1.6 -->
+		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.16.1-GA</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
