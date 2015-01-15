@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
@@ -58,5 +59,14 @@ public class PdfToJpegTraitTest extends AbstractTaskTraitTest {
     public void userZoom() {
         PdfToJpegParameters result = defaultCommandLine().with("-z", "1.5").invokeSejdaConsole();
         assertThat(result.getUserZoom(), is(1.5f));
+    }
+
+    @Test
+    public void pageRanges() {
+        PdfToJpegParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
+                .invokeSejdaConsole();
+
+        assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
+                new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
     }
 }

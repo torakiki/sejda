@@ -24,6 +24,7 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
 import java.io.File;
+import java.util.Set;
 
 import org.icepdf.core.pobjects.Document;
 import org.sejda.core.support.io.MultipleOutputWriter;
@@ -64,7 +65,9 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         int numberOfPages = pdfDocument.getNumberOfPages();
         LOG.trace("Found {} pages", numberOfPages);
 
-        for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < pdfDocument.getNumberOfPages(); zeroBasedPageNumber++) {
+        Set<Integer> requestedPages = parameters.getPages(numberOfPages);
+        for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < numberOfPages; zeroBasedPageNumber++) {
+            if(!requestedPages.contains(zeroBasedPageNumber + 1)) continue;
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
 

@@ -18,6 +18,11 @@ package org.sejda.model.parameter.image;
 
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.pdf.page.PageRange;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Andrea Vacondio
@@ -32,5 +37,23 @@ public class PdfToJpegParametersTest {
         PdfToJpegParameters diff = new PdfToJpegParameters();
         diff.setResolutionInDpi(120);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void testGetPageSelection() {
+        PdfToJpegParameters victim = new PdfToJpegParameters();
+        assertTrue(victim.getPageSelection().isEmpty());
+        PdfToJpegParameters victim2 = new PdfToJpegParameters();
+        victim2.addPageRange(new PageRange(12));
+        assertFalse(victim2.getPageSelection().isEmpty());
+    }
+
+    @Test
+    public void getPages() {
+        PdfToJpegParameters victim = new PdfToJpegParameters();
+        assertEquals(10, victim.getPages(10).size());
+        PdfToJpegParameters victim2 = new PdfToJpegParameters();
+        victim2.addPageRange(new PageRange(12));
+        assertEquals(4, victim2.getPages(15).size());
     }
 }

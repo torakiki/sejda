@@ -38,6 +38,11 @@ public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransforme
         populateSourceParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
+
+        if (taskCliArguments.isPageSelection()) {
+            parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
+        }
+
         return parameters;
     }
 
