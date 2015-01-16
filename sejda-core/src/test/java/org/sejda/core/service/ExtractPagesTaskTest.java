@@ -17,6 +17,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,8 +28,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.ExtractPagesParameters;
@@ -96,6 +100,28 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(PdfStreamSource.newInstanceNoPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "test.pdf"));
+    }
+
+    private void setUpParametersWrongPageRanges() {
+        PageRange range = new PageRange(10);
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(range);
+        parameters.setOverwrite(true);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setSource(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test.pdf"));
+    }
+
+    @Test
+    public void testExecuteExtractWrongPageRages() throws TaskException, IOException {
+        setUpParametersWrongPageRanges();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewFileOutput(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
     @Test

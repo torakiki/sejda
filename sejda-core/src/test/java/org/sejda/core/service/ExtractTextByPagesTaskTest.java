@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.hasItemInArray;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -33,8 +34,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
@@ -72,6 +76,16 @@ public abstract class ExtractTextByPagesTaskTest implements TestableTask<Extract
         parameters.setOverwrite(true);
         parameters.setTextEncoding("UTF-8");
 
+    }
+
+    @Test
+    public void testExecuteWrongRange() throws TaskException {
+        parameters.addPageRange(new PageRange(10));
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
     @Test

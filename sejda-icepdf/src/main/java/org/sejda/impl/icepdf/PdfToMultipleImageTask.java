@@ -63,6 +63,10 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         pdfDocument = parameters.getSource().open(sourceOpener);
 
         Set<Integer> requestedPages = parameters.getPages(pdfDocument.getNumberOfPages());
+        if (requestedPages == null || requestedPages.isEmpty()) {
+            throw new TaskExecutionException("No page has been selected for convertion.");
+        }
+
         int currentStep = 0;
         int totalSteps = requestedPages.size();
         LOG.trace("Found {} pages to convert", totalSteps);

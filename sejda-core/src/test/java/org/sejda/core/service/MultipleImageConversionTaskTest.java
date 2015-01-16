@@ -35,8 +35,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.ImageTestUtils;
 import org.sejda.TestUtils;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
@@ -93,6 +96,20 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         parameters.addPageRange(new PageRange(2, 3));
         int converted = doExecute(parameters);
         assertEquals(2, converted);
+    }
+
+    @Test
+    public void testWrongPageSelection() throws TaskException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.setSource(source);
+        parameters.addPageRange(new PageRange(10));
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
     private int doExecute(AbstractPdfToMultipleImageParameters parameters) throws TaskException, IOException {

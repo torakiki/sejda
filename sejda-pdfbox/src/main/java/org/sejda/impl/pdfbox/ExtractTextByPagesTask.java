@@ -33,6 +33,7 @@ import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfTextExtractor;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractTextByPagesParameters;
@@ -66,6 +67,9 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
         documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
 
         Set<Integer> pages = parameters.getPages(documentHandler.getNumberOfPages());
+        if (pages == null || pages.isEmpty()) {
+            throw new TaskExecutionException("No page has been selected for extraction.");
+        }
 
         int currentStep = 0;
         int totalSteps = pages.size();
