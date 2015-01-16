@@ -30,7 +30,8 @@
 		<connection>scm:git:git@github.com:torakiki/sejda.git</connection>
 		<developerConnection>scm:git:git@github.com:torakiki/sejda.git</developerConnection>
 		<url>scm:git:git@github.com:torakiki/sejda.git</url>
-	</scm>
+	  <tag>v1.0.0.M10</tag>
+  </scm>
 
 	<developers>
 		<developer>
@@ -48,7 +49,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>1.0.0.M10-SNAPSHOT</version>
+		<version>1.0.0.M10</version>
 		<relativePath>sejda-parent/pom.xml</relativePath>
 	</parent>
 
