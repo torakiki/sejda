@@ -205,9 +205,7 @@ public class PDDocumentHandler implements Closeable {
 
     private void savePDDocument(File file, boolean decrypted) throws TaskException {
         try {
-            if (decrypted) {
-                document.setAllSecurityToBeRemoved(decrypted);
-            }
+            document.setAllSecurityToBeRemoved(decrypted);
             LOG.trace("Saving document to {}", file);
             document.save(file.getAbsolutePath());
         } catch (COSVisitorException e) {
