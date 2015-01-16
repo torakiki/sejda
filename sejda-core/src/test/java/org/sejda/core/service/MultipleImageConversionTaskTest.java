@@ -16,6 +16,7 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,6 +43,7 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
 
 /**
@@ -63,24 +65,37 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     abstract T getMultipleImageParametersWithoutSource();
 
     @Test
-    public void testExecuteEncryptedStreamToMultipleTiff() throws TaskException, IOException {
+    public void testExecuteEncryptedStreamToMultipleImage() throws TaskException, IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
         parameters.setSource(source);
-        doExecute(parameters);
+        int converted = doExecute(parameters);
+        assertEquals(4, converted);
     }
 
     @Test
-    public void testExecuteJpegEmbeddedStreamToMultipleTiff() throws TaskException, IOException {
+    public void testExecuteStreamToMultipleImage() throws TaskException, IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_jpg.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_jpg.pdf");
         parameters.setSource(source);
-        doExecute(parameters);
+        int converted = doExecute(parameters);
+        assertEquals(1, converted);
     }
 
-    private void doExecute(AbstractPdfToMultipleImageParameters parameters) throws TaskException, IOException {
+    @Test
+    public void testExecuteStreamToMultipleImageWithPageSelection() throws TaskException, IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.setSource(source);
+        parameters.addPageRange(new PageRange(2, 3));
+        int converted = doExecute(parameters);
+        assertEquals(2, converted);
+    }
+
+    private int doExecute(AbstractPdfToMultipleImageParameters parameters) throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         parameters.setOutput(new StreamTaskOutput(out));
@@ -88,13 +103,17 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
+        int entries = 0;
         while (entry != null) {
             RenderedImage ri = ImageTestUtils.loadImage(zip, entry.getName());
             assertTrue(ri.getHeight() > 0);
             assertTrue(ri.getWidth() > 0);
             zip.closeEntry();
             entry = zip.getNextEntry();
+            entries++;
         }
+        input.close();
+        return entries;
     }
 
     @Ignore("In place of a better way to check image quality with automated tests")
