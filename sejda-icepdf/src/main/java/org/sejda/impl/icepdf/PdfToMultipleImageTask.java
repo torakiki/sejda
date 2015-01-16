@@ -62,26 +62,28 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     public void execute(T parameters) throws TaskException {
         pdfDocument = parameters.getSource().open(sourceOpener);
 
-        int numberOfPages = pdfDocument.getNumberOfPages();
-        LOG.trace("Found {} pages", numberOfPages);
+        Set<Integer> requestedPages = parameters.getPages(pdfDocument.getNumberOfPages());
+        int currentStep = 0;
+        int totalSteps = requestedPages.size();
+        LOG.trace("Found {} pages to convert", totalSteps);
 
-        Set<Integer> requestedPages = parameters.getPages(numberOfPages);
-        for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < numberOfPages; zeroBasedPageNumber++) {
-            if(!requestedPages.contains(zeroBasedPageNumber + 1)) continue;
+        for (int currentPage : requestedPages) {
+            currentStep++;
+
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
 
             getWriter().openWriteDestination(tmpFile, parameters);
-            LOG.trace("Writing page {}", zeroBasedPageNumber + 1);
-            getWriter().write(toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters), parameters);
+            LOG.trace("Writing page {}", currentPage);
+            getWriter().write(toBufferedImage(pdfDocument, zeroBased(currentPage), parameters), parameters);
             getWriter().closeDestination();
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(parameters.getOutputImageType().getExtension()).page(zeroBasedPageNumber)
-                            .originalName(parameters.getSource().getName()).fileNumber(zeroBasedPageNumber + 1));
+                    nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
+                            .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);
@@ -94,5 +96,9 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         if (pdfDocument != null) {
             pdfDocument.dispose();
         }
+    }
+
+    private int zeroBased(int oneBased) {
+        return oneBased - 1;
     }
 }
