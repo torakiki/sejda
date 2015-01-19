@@ -16,7 +16,7 @@
  */
 package org.sejda.impl.pdfbox.component;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.pdfbox.util.ViewerPreferencesUtils.getPageMode;
 
@@ -82,8 +82,8 @@ public class PDDocumentHandler implements Closeable {
     }
 
     private void decryptPDDocumentIfNeeded(String password) throws TaskIOException {
-        if (document.isEncrypted() && isNotBlank(password)) {
-            DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(password);
+        if (document.isEncrypted()) {
+            DecryptionMaterial decryptionMaterial = new StandardDecryptionMaterial(defaultString(password));
             LOG.trace("Decrypting input document");
             try {
                 document.openProtection(decryptionMaterial);

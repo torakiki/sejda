@@ -18,6 +18,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,8 +29,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.core.Sejda;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.DecryptParameters;
@@ -83,42 +88,133 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         parameters.addSource(source);
     }
 
+    private void setUpInputOwnerCompressed() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_owner_compressed.pdf");
+        parameters.addSource(PdfStreamSource.newInstanceWithPassword(stream, "enc_owner_compressed.pdf", "test"));
+    }
+
+    private void setUpInputOwnerUncompressed() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_owner_uncompressed.pdf");
+        parameters.addSource(PdfStreamSource.newInstanceWithPassword(stream, "enc_owner_uncompressed.pdf", "test"));
+    }
+
+    private void setUpInputOwnerCompressedNoPwd() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_owner_compressed.pdf");
+        parameters.addSource(PdfStreamSource.newInstanceNoPassword(stream, "enc_owner_compressed.pdf"));
+    }
+
+    private void setUpInputOwnerUncompressedNoPwd() {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_owner_uncompressed.pdf");
+        parameters.addSource(PdfStreamSource.newInstanceNoPassword(stream, "enc_owner_uncompressed.pdf"));
+    }
+
     @Test
-    public void testExecuteNoPwd() throws TaskException, IOException {
+    public void executeNoPwd() throws TaskException, IOException {
         setUpInputNoPwd();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_enc_empty_pwd.pdf");
-        assertCreator(reader);
-        assertFalse(reader.isEncrypted());
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        reader.close();
+        assertCommonsAndClose(reader);
     }
 
     @Test
-    public void testExecuteSamePwd() throws TaskException, IOException {
+    public void executeSamePwd() throws TaskException, IOException {
         setUpInputSamePwd();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_enc_usr_own_same_pwd.pdf");
-        assertCreator(reader);
-        assertFalse(reader.isEncrypted());
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        reader.close();
+        assertCommonsAndClose(reader);
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
+    public void execute() throws TaskException, IOException {
         setUpInput();
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
-        assertCreator(reader);
-        assertFalse(reader.isEncrypted());
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        reader.close();
+        assertCommonsAndClose(reader);
+    }
+
+    @Test
+    public void executeOwnerCompressed() throws TaskException, IOException {
+        setUpInputOwnerCompressed();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
+        assertCommonsAndClose(reader);
+    }
+
+    @Test
+    public void executeOwnerUnompressed() throws TaskException, IOException {
+        setUpInputOwnerUncompressed();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
+        assertCommonsAndClose(reader);
+    }
+
+    @Test
+    public void executeOwnerCompressedUnethical() throws TaskException, IOException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
+        setUpInputOwnerCompressedNoPwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
+        assertCommonsAndClose(reader);
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+    }
+
+    @Test
+    public void failingExecuteOwnerCompresseNotUnethical() throws TaskException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        setUpInputOwnerCompressedNoPwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
+    }
+
+    @Test
+    public void executeOwnerUnompressedUnethical() throws TaskException, IOException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
+        setUpInputOwnerUncompressedNoPwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
+        assertCommonsAndClose(reader);
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+    }
+
+    @Test
+    public void failingExecuteOwnerUncompresseNotUnethical() throws TaskException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        setUpInputOwnerUncompressedNoPwd();
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
+    }
+
+    private void assertCommonsAndClose(PdfReader reader) {
+        try {
+            assertCreator(reader);
+            assertFalse(reader.isEncrypted());
+            assertVersion(reader, PdfVersion.VERSION_1_6);
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
     }
 }

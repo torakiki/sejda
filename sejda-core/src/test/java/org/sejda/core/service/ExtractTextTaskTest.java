@@ -32,8 +32,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.core.Sejda;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
@@ -78,7 +82,8 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
     }
 
     @Test
-    public void testExecuteStream() throws TaskException, IOException {
+    public void executeUnethicalExtract() throws TaskException, IOException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         victim.execute(parameters);
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
@@ -91,5 +96,16 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
             entry = zip.getNextEntry();
         }
         assertEquals(1, counter);
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+    }
+
+    @Test
+    public void failedExtractMissingPermission() throws TaskException {
+        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        victim.execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 }
