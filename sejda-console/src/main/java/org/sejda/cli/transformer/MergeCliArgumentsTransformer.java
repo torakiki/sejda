@@ -77,6 +77,12 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
             inputFiles = taskCliArguments.getFilesListConfig().getFileSourceList();
         }
 
+        if (!BooleanUtils.or(new boolean[] { taskCliArguments.isDirectory(), taskCliArguments.isFiles(),
+                taskCliArguments.isFilesListConfig() })) {
+            throw new SejdaRuntimeException(
+                    "No option given for input. Please use one of the following options: --directory --filesListConfig --file");
+        }
+
         if (!BooleanUtils.xor(new boolean[] { taskCliArguments.isDirectory(), taskCliArguments.isFiles(),
                 taskCliArguments.isFilesListConfig() })) {
             throw new SejdaRuntimeException(

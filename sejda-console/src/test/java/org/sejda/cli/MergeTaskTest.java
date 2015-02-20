@@ -226,6 +226,12 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void input_noOptionGiven() {
+        defaultCommandLine().without("-f").without("-d").without("-l")
+                .assertConsoleOutputContains("No option given for input");
+    }
+
+    @Test
     public void input_tooManyOptionsGiven() {
         defaultCommandLine().without("-f").with("-d", "/tmp/merge").with("-l", "./location/filenames.xls")
                 .assertConsoleOutputContains("Too many options given");
