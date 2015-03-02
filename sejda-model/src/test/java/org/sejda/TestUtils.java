@@ -69,6 +69,9 @@ public final class TestUtils {
      *            not equal instance
      */
     public static <T> void testEqualsAndHashCodes(T eq1, T eq2, T eq3, T diff) {
+        // null safe
+        assertFalse(eq1.equals(null));
+
         // not instance of
         assertFalse(eq1.equals(NOT_INSTANCE_OF));
 
