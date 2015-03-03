@@ -42,7 +42,7 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 
-        parameters.setOwnerPassword(taskCliArguments.getAdminstratorPassword());
+        parameters.setOwnerPassword(taskCliArguments.getAdministratorPassword());
         parameters.setUserPassword(taskCliArguments.getUserPassword());
         if (taskCliArguments.isAllow()) {
             for (PdfAccessPermissionAdapter eachAllowedPermissionAdapter : taskCliArguments.getAllow()) {
