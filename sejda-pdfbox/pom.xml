@@ -15,14 +15,6 @@
 
 	<name>sejda pdfbox</name>
 
-	<repositories>
-		<repository>
-			<id>JBOSS</id>
-			<name>JBoss Repository</name>
-			<url>http://maven.ala.org.au/repository/</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
