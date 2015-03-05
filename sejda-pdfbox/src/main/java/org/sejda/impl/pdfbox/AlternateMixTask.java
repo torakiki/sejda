@@ -58,6 +58,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
         mixer.saveDecryptedPDDocument(tmpFile);
+        nullSafeCloseQuietly(mixer);
 
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
