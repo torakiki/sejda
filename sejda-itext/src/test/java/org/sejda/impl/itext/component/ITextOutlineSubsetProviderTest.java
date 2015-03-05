@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -46,7 +47,7 @@ public class ITextOutlineSubsetProviderTest {
             reader = new PdfReader(inputStream);
             ITextOutlineSubsetProvider victim = new ITextOutlineSubsetProvider(reader);
             victim.startPage(2);
-            Collection<Map<String, Object>> retList = victim.getOutlineUntillPage(2);
+            List<Map<String, Object>> retList = victim.getOutlineUntillPage(2);
             assertNotNull(retList);
             assertFalse(retList.isEmpty());
         } finally {

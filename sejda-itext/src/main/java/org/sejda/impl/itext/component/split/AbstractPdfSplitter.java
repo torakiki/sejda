@@ -25,7 +25,7 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
@@ -58,7 +58,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
     private PdfReader reader;
     private T parameters;
     private int totalPages;
-    private OutlineSubsetProvider<Map<String, Object>> outlineSubsetProvider;
+    private OutlineSubsetProvider<List<Map<String, Object>>> outlineSubsetProvider;
     private MultipleOutputWriter outputWriter;
 
     /**
@@ -93,8 +93,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
                 notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     LOG.trace("Adding bookmarks to the temporary buffer");
-                    pdfCopier.setOutline(new ArrayList<Map<String, Object>>(outlineSubsetProvider
-                            .getOutlineUntillPage(page)));
+                    pdfCopier.setOutline(outlineSubsetProvider.getOutlineUntillPage(page));
                     nullSafeCloseQuietly(pdfCopier);
                     LOG.debug("Ending split at page {} of the original document", page);
                 }

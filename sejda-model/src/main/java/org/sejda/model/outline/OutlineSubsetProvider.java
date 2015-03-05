@@ -17,8 +17,6 @@
  */
 package org.sejda.model.outline;
 
-import java.util.Collection;
-
 import org.sejda.model.exception.TaskException;
 
 /**
@@ -41,11 +39,11 @@ public interface OutlineSubsetProvider<T> {
      * 
      * @param endPage
      *            end page till which the component will provide bookmarks.
-     * @return collection of item representing the document outline from start page to the provided end page.
+     * @return the document outline from start page to the provided end page.
      * @throws TaskException
      *             if the start page is not set or the end page is before the start.
      */
-    Collection<T> getOutlineUntillPage(int endPage) throws TaskException;
+    T getOutlineUntillPage(int endPage) throws TaskException;
 
     /**
      * 
@@ -53,17 +51,17 @@ public interface OutlineSubsetProvider<T> {
      *            end page till which the component will provide bookmarks.
      * @param offset
      *            page numbers should be shifted
-     * @return collection of item representing the document outline from start page to the provided end page with the offset applied.
+     * @return the document outline from start page to the provided end page with the offset applied.
      * @throws TaskException
      *             if the start page is not set or the end page is before the start.
      */
-    Collection<T> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException;
+    T getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException;
 
     /**
      * @param offset
      *            page numbers should be shifted
-     * @return collection of item representing the whole document outline with the offset applied.
+     * @return the whole document outline with the offset applied.
      */
-    Collection<T> getOutlineWithOffset(int offset);
+    T getOutlineWithOffset(int offset);
 
 }

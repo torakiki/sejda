@@ -18,7 +18,6 @@
 package org.sejda.impl.itext.component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +36,7 @@ import com.lowagie.text.pdf.SimpleBookmark;
  * @author Andrea Vacondio
  * 
  */
-public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<Map<String, Object>> {
+public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<List<Map<String, Object>>> {
 
     private int totalNumberOfPages;
     private List<Object> bookmarks;
@@ -65,11 +64,11 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<Map<Str
         this.startPage = startPage;
     }
 
-    public Collection<Map<String, Object>> getOutlineUntillPage(int endPage) throws TaskException {
+    public List<Map<String, Object>> getOutlineUntillPage(int endPage) throws TaskException {
         return getOutlineUntillPageWithOffset(endPage, 0);
     }
 
-    public Collection<Map<String, Object>> getOutlineWithOffset(int offset) {
+    public List<Map<String, Object>> getOutlineWithOffset(int offset) {
         List<Map<String, Object>> books = getDeepCopyBookmarks(bookmarks);
         if (offset != 0) {
             SimpleBookmark.shiftPageNumbers(books, offset, null);
@@ -77,7 +76,7 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<Map<Str
         return books;
     }
 
-    public Collection<Map<String, Object>> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException {
+    public List<Map<String, Object>> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException {
         if (startPage < 0 || startPage > endPage) {
             throw new TaskException(
                     "Unable to process document bookmarks: start page is negative or higher then end page.");
