@@ -58,4 +58,16 @@ public class AbstractPdfSourceOpenerTest {
         PdfReader reader = PdfSourceOpeners.newPartialReadOpener().open(getSource());
         assertFalse(reader.isEncrypted());
     }
+
+    @Test(expected = TaskIOException.class)
+    public void wrongPdfFull() throws TaskIOException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/not_a_pdf.pdf");
+        PdfSourceOpeners.newFullReadOpener().open(PdfStreamSource.newInstanceNoPassword(stream, "not_a_pdf.pdf"));
+    }
+
+    @Test(expected = TaskIOException.class)
+    public void wrongPdfPartial() throws TaskIOException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/not_a_pdf.pdf");
+        PdfSourceOpeners.newPartialReadOpener().open(PdfStreamSource.newInstanceNoPassword(stream, "not_a_pdf.pdf"));
+    }
 }
