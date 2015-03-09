@@ -73,7 +73,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
         parameters.setOutputName("outName.pdf");
         parameters.setOverwrite(true);
         parameters.setCompress(true);
-        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setVersion(PdfVersion.VERSION_1_4);
     }
 
     @Test
@@ -83,7 +83,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
         victim.execute(parameters);
         PdfReader reader = getReaderFromResultFile();
         assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
+        assertVersion(reader, PdfVersion.VERSION_1_4);
         assertEquals(8, reader.getNumberOfPages());
         reader.close();
     }
