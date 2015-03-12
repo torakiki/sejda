@@ -30,14 +30,14 @@ import org.sejda.model.output.MultipleTaskOutput;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByGoToActionLevelParametersTest {
+public class SplitByOutlineLevelParametersTest {
 
     @Test
     public void testEquals() {
-        SplitByGoToActionLevelParameters eq1 = new SplitByGoToActionLevelParameters(10);
-        SplitByGoToActionLevelParameters eq2 = new SplitByGoToActionLevelParameters(10);
-        SplitByGoToActionLevelParameters eq3 = new SplitByGoToActionLevelParameters(10);
-        SplitByGoToActionLevelParameters diff = new SplitByGoToActionLevelParameters(1);
+        SplitByOutlineLevelParameters eq1 = new SplitByOutlineLevelParameters(10);
+        SplitByOutlineLevelParameters eq2 = new SplitByOutlineLevelParameters(10);
+        SplitByOutlineLevelParameters eq3 = new SplitByOutlineLevelParameters(10);
+        SplitByOutlineLevelParameters diff = new SplitByOutlineLevelParameters(1);
         diff.setOutputPrefix("prefix");
         diff.setMatchingTitleRegEx("string");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
@@ -45,7 +45,7 @@ public class SplitByGoToActionLevelParametersTest {
 
     @Test
     public void testInvalidParameters() {
-        SplitByGoToActionLevelParameters victim = new SplitByGoToActionLevelParameters(-1);
+        SplitByOutlineLevelParameters victim = new SplitByOutlineLevelParameters(-1);
         MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);

@@ -132,14 +132,4 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
      */
     abstract NextOutputStrategy nextOutputStrategy();
 
-    /**
-     * Sets the parameters to use during the split process. Parameters are mandatory to be able to perform the split.
-     * 
-     * @param parameters
-     */
-    void setParameters(T parameters) {
-        this.parameters = parameters;
-    }
-
-
 }

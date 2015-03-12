@@ -27,19 +27,19 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.outline.OutlineGoToPageDestinations;
+import org.sejda.model.outline.OutlinePageDestinations;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class GoToPageDestinationsSplitPagesTest {
+public class PageDestinationsSplitPagesTest {
 
-    private OutlineGoToPageDestinations destinations;
+    private OutlinePageDestinations destinations;
 
     @Before
     public void setUp() {
-        destinations = mock(OutlineGoToPageDestinations.class);
+        destinations = mock(OutlinePageDestinations.class);
         Set<Integer> pages = new HashSet<Integer>();
         pages.add(3);
         pages.add(4);
@@ -49,7 +49,7 @@ public class GoToPageDestinationsSplitPagesTest {
 
     @Test
     public void firstPageIsOpening() throws TaskExecutionException {
-        GoToPageDestinationsSplitPages victim = new GoToPageDestinationsSplitPages(destinations);
+        PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
         victim.ensureIsValid();
         Assert.assertTrue(victim.isOpening(1));
         Assert.assertFalse(victim.isClosing(1));
@@ -57,7 +57,7 @@ public class GoToPageDestinationsSplitPagesTest {
 
     @Test
     public void allPages() {
-        GoToPageDestinationsSplitPages victim = new GoToPageDestinationsSplitPages(destinations);
+        PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
         Assert.assertTrue(victim.isClosing(2));
         Assert.assertTrue(victim.isOpening(3));
         Assert.assertTrue(victim.isClosing(3));
@@ -71,7 +71,7 @@ public class GoToPageDestinationsSplitPagesTest {
     @Test(expected = TaskExecutionException.class)
     public void invalid() throws TaskExecutionException {
         when(destinations.getPages()).thenReturn(Collections.EMPTY_SET);
-        GoToPageDestinationsSplitPages victim = new GoToPageDestinationsSplitPages(destinations);
+        PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
         victim.ensureIsValid();
     }
 }

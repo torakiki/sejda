@@ -28,25 +28,25 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.sejda.model.outline.OutlineGoToPageDestinations;
-import org.sejda.model.outline.OutlineHandler;
+import org.sejda.model.outline.OutlineLevelsHandler;
+import org.sejda.model.outline.OutlinePageDestinations;
 
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.SimpleBookmark;
 
 /**
- * iText implementation of an {@link OutlineHandler}.
+ * iText implementation of an {@link OutlineLevelsHandler}.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class ITextOutlineHandler implements OutlineHandler {
+public class ITextOutlineLevelsHandler implements OutlineLevelsHandler {
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private List<Map<String, Object>> bookmarks;
 
     @SuppressWarnings({ "cast", "unchecked" })
-    public ITextOutlineHandler(PdfReader reader, String matchingTitleRegEx) {
+    public ITextOutlineLevelsHandler(PdfReader reader, String matchingTitleRegEx) {
         reader.consolidateNamedDestinations();
         this.bookmarks = (List<Map<String, Object>>) SimpleBookmark.getBookmark(reader);
         if (isNotBlank(matchingTitleRegEx)) {
@@ -54,27 +54,24 @@ public class ITextOutlineHandler implements OutlineHandler {
         }
     }
 
-    public int getMaxGoToActionDepth() {
+    public int getMaxOutlineDepth() {
         return getMaxBookmarkLevel(bookmarks, 0);
     }
 
-    public OutlineGoToPageDestinations getGoToPageDestinationForActionLevel(int goToActionLevel) {
-        OutlineGoToPageDestinations destinations = new OutlineGoToPageDestinations();
+    public OutlinePageDestinations getPageDestinationsForLevel(int goToActionLevel) {
+        OutlinePageDestinations destinations = new OutlinePageDestinations();
         addPageIfBookmarkLevel(bookmarks, 1, destinations, goToActionLevel);
         return destinations;
     }
 
     @SuppressWarnings("unchecked")
     private void addPageIfBookmarkLevel(List<Map<String, Object>> bookmarks, int currentLevel,
-            OutlineGoToPageDestinations destinations, int levelToAdd) {
+            OutlinePageDestinations destinations, int levelToAdd) {
         if (bookmarks != null) {
             for (Map<String, Object> bookmark : bookmarks) {
                 if (currentLevel <= levelToAdd && isGoToAction(bookmark)) {
-                    if (isFirstPageBookmark(currentLevel, bookmark)) {
-                        addFirstPageBookmark(destinations, bookmark);
-                    }
                     if (isLevelToBeAdded(currentLevel, levelToAdd)) {
-                        addPageIfValidOrFirstPage(destinations, bookmark);
+                        addPageIfValid(destinations, bookmark);
                     } else {
                         addPageIfBookmarkLevel((List<Map<String, Object>>) bookmark.get(KIDS_KEY), currentLevel + 1,
                                 destinations, levelToAdd);
@@ -84,22 +81,11 @@ public class ITextOutlineHandler implements OutlineHandler {
         }
     }
 
-    private boolean isFirstPageBookmark(int currentLevel, Map<String, Object> bookmark) {
-        return currentLevel == 1 && getPageNumber(bookmark) == 1;
-    }
-
-    private void addFirstPageBookmark(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
-        String title = nullSafeGetTitle(bookmark);
-        if (isNotBlank(title)) {
-            destinations.addFirstPageTitle(title);
-        }
-    }
-
     private boolean isLevelToBeAdded(int currentLevel, int levelToAdd) {
         return currentLevel == levelToAdd;
     }
 
-    private void addPageIfValidOrFirstPage(OutlineGoToPageDestinations destinations, Map<String, Object> bookmark) {
+    private void addPageIfValid(OutlinePageDestinations destinations, Map<String, Object> bookmark) {
         int page = getPageNumber(bookmark);
         String title = nullSafeGetTitle(bookmark);
         Matcher matcher = titleMatchingPattern.matcher(title);

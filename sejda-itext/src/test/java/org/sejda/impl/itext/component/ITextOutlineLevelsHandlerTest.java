@@ -24,7 +24,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.sejda.model.outline.OutlineHandler;
+import org.sejda.model.outline.OutlineLevelsHandler;
 
 import com.lowagie.text.pdf.PdfReader;
 
@@ -32,16 +32,16 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public class ITextOutlineHandlerTest {
+public class ITextOutlineLevelsHandlerTest {
     @Test
-    public void testPositiveGetGoToBookmarkMaxDepth() throws IOException {
+    public void testPositiveGetOutlineMaxDepth() throws IOException {
         PdfReader reader = null;
         InputStream inputStream = null;
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader, null);
-            assertEquals(3, victim.getMaxGoToActionDepth());
+            OutlineLevelsHandler victim = new ITextOutlineLevelsHandler(reader, null);
+            assertEquals(3, victim.getMaxOutlineDepth());
         } finally {
             IOUtils.closeQuietly(inputStream);
             if (reader != null) {
@@ -51,14 +51,14 @@ public class ITextOutlineHandlerTest {
     }
 
     @Test
-    public void testNegativeGetGoToBookmarkMaxDepth() throws IOException {
+    public void testNegativeGetOutlineMaxDepth() throws IOException {
         PdfReader reader = null;
         InputStream inputStream = null;
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader, null);
-            assertEquals(0, victim.getMaxGoToActionDepth());
+            OutlineLevelsHandler victim = new ITextOutlineLevelsHandler(reader, null);
+            assertEquals(0, victim.getMaxOutlineDepth());
         } finally {
             IOUtils.closeQuietly(inputStream);
             if (reader != null) {
@@ -68,16 +68,16 @@ public class ITextOutlineHandlerTest {
     }
 
     @Test
-    public void testGetPageNumbersAtGoToActionLevel() throws IOException {
+    public void testGetPageNumbersAtOutlineLevel() throws IOException {
         PdfReader reader = null;
         InputStream inputStream = null;
         try {
             inputStream = getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf");
             reader = new PdfReader(inputStream);
-            OutlineHandler victim = new ITextOutlineHandler(reader, null);
-            assertTrue(victim.getGoToPageDestinationForActionLevel(4).isEmpty());
-            assertEquals(2, victim.getGoToPageDestinationForActionLevel(2).size());
-            assertEquals(1, victim.getGoToPageDestinationForActionLevel(3).size());
+            OutlineLevelsHandler victim = new ITextOutlineLevelsHandler(reader, null);
+            assertTrue(victim.getPageDestinationsForLevel(4).getPages().isEmpty());
+            assertEquals(2, victim.getPageDestinationsForLevel(2).getPages().size());
+            assertEquals(1, victim.getPageDestinationsForLevel(3).getPages().size());
         } finally {
             IOUtils.closeQuietly(inputStream);
             if (reader != null) {

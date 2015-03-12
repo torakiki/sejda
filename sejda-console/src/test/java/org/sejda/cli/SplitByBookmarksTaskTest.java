@@ -19,7 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 
 /**
  * Tests for the SplitByBookmarksTask command line interface
@@ -35,7 +35,7 @@ public class SplitByBookmarksTaskTest extends AbstractTaskTest {
 
     @Test
     public void bookmarksLevel_Specified() {
-        SplitByGoToActionLevelParameters parameters = defaultCommandLine().with("-l", "3").invokeSejdaConsole();
+        SplitByOutlineLevelParameters parameters = defaultCommandLine().with("-l", "3").invokeSejdaConsole();
         assertEquals(3, parameters.getLevelToSplitAt());
     }
 
@@ -46,7 +46,7 @@ public class SplitByBookmarksTaskTest extends AbstractTaskTest {
 
     @Test
     public void matchingRegExp_Specified() {
-        SplitByGoToActionLevelParameters parameters = defaultCommandLine().with("--matchingRegEx", "[Chapter*]")
+        SplitByOutlineLevelParameters parameters = defaultCommandLine().with("--matchingRegEx", "[Chapter*]")
                 .invokeSejdaConsole();
         assertEquals("[Chapter*]", parameters.getMatchingTitleRegEx());
     }

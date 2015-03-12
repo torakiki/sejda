@@ -26,32 +26,26 @@ import org.junit.Test;
  * @author Andrea Vacondio
  * 
  */
-public class OutlineGoToPageDestinationsTest {
+public class OutlinePageDestinationsTest {
 
     @Test
     public void testAdd() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
-        assertTrue(victim.isEmpty());
+        OutlinePageDestinations victim = new OutlinePageDestinations();
+        assertTrue(victim.getPages().isEmpty());
         victim.addPage(1, "Title1");
-        assertFalse(victim.isEmpty());
-        assertEquals(1, victim.size());
+        assertFalse(victim.getPages().isEmpty());
+        assertEquals(1, victim.getPages().size());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddNull() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
+        OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(null, "Title1");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddNegative() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
-        victim.addPage(-3, "Title1");
     }
 
     @Test
     public void testGetPages() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
+        OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(1, "Title1");
         victim.addPage(2, "Title2");
         assertEquals(2, victim.getPages().size());
@@ -59,14 +53,14 @@ public class OutlineGoToPageDestinationsTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiablePagesSet() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
+        OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(1, "Title1");
         victim.addPage(2, "Title2");
         victim.getPages().add(3);
     }
 
     public void testGetTitle() {
-        OutlineGoToPageDestinations victim = new OutlineGoToPageDestinations();
+        OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(1, "Title1");
         assertEquals("Title1", victim.getTitle(1));
     }

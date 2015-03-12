@@ -22,15 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Holder for a collection of document outline GoTo page destinations. Keeps information about the association between page number and outline title.
+ * Holder for a collection of document outline page destinations. Keeps information about the association between the destinations and the outline title associated with that.
  * 
  * @author Andrea Vacondio
- * 
  */
-public class OutlineGoToPageDestinations {
+public class OutlinePageDestinations {
 
     private Map<Integer, String> destinations = new HashMap<Integer, String>();
-    private String firstPageTitle;
 
     /**
      * Adds the given page destination with the given title.
@@ -41,8 +39,8 @@ public class OutlineGoToPageDestinations {
      *             if the page number is null or negative.
      */
     public void addPage(Integer page, String title) {
-        if (page == null || page < 1) {
-            throw new IllegalArgumentException("Unable to add the given invalid page number %d to the destinations.");
+        if (page == null) {
+            throw new IllegalArgumentException("Unable to add a null page to the destinations.");
         }
         destinations.put(page, title);
     }
@@ -59,35 +57,6 @@ public class OutlineGoToPageDestinations {
      * @return the title corresponding to the input page.
      */
     public String getTitle(Integer page) {
-        if (page == 1) {
-            return firstPageTitle;
-        }
         return destinations.get(page);
     }
-
-    /**
-     * @return the number of destinations held.
-     * @see java.util.Map#size()
-     */
-    public int size() {
-        return destinations.size();
-    }
-
-    /**
-     * @return true if there is no destination.
-     * @see java.util.Map#isEmpty()
-     */
-    public boolean isEmpty() {
-        return destinations.isEmpty();
-    }
-
-    /**
-     * Adds the title for the first page. This page has a special meaning since we might need it even if it's not a split destination.
-     * 
-     * @param title
-     */
-    public void addFirstPageTitle(String title) {
-        this.firstPageTitle = title;
-    }
-
 }

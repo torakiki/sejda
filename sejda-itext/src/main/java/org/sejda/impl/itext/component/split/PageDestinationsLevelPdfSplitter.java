@@ -22,24 +22,24 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.itext.component.DefaultPdfCopier;
 import org.sejda.impl.itext.component.PdfCopier;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.outline.OutlineGoToPageDestinations;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.outline.OutlinePageDestinations;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.split.GoToPageDestinationsSplitPages;
 import org.sejda.model.split.NextOutputStrategy;
+import org.sejda.model.split.PageDestinationsSplitPages;
 
 import com.lowagie.text.pdf.PdfReader;
 
 /**
- * Splitter implementation to split at pages that have a GoTo action pointing to them.
+ * Splitter implementation to split at pages that have an outline item pointing to them.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class GoToPageDestinationsPdfSplitter extends AbstractPdfSplitter<SplitByGoToActionLevelParameters> {
+public class PageDestinationsLevelPdfSplitter extends AbstractPdfSplitter<SplitByOutlineLevelParameters> {
 
-    private GoToPageDestinationsSplitPages splitPages;
-    private OutlineGoToPageDestinations outlineDestinations;
+    private PageDestinationsSplitPages splitPages;
+    private OutlinePageDestinations outlineDestinations;
 
     /**
      * @param reader
@@ -48,10 +48,10 @@ public class GoToPageDestinationsPdfSplitter extends AbstractPdfSplitter<SplitBy
      * @param outlineDestinations
      *            holder for the outline destinations the splitter has to split at.
      */
-    public GoToPageDestinationsPdfSplitter(PdfReader reader, SplitByGoToActionLevelParameters parameters,
-            OutlineGoToPageDestinations outlineDestinations) {
+    public PageDestinationsLevelPdfSplitter(PdfReader reader, SplitByOutlineLevelParameters parameters,
+            OutlinePageDestinations outlineDestinations) {
         super(reader, parameters);
-        this.splitPages = new GoToPageDestinationsSplitPages(outlineDestinations);
+        this.splitPages = new PageDestinationsSplitPages(outlineDestinations);
         this.outlineDestinations = outlineDestinations;
     }
 

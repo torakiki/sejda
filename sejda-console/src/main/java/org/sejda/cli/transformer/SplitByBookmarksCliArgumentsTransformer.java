@@ -17,7 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SplitByBookmarks task command line interface
@@ -26,16 +26,16 @@ import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
  * 
  */
 public class SplitByBookmarksCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> {
+        CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByOutlineLevelParameters> {
 
     /**
-     * Transforms {@link SplitByBookmarksTaskCliArguments} to {@link SplitByGoToActionLevelParameters}
+     * Transforms {@link SplitByBookmarksTaskCliArguments} to {@link SplitByOutlineLevelParameters}
      * 
      * @param taskCliArguments
      * @return populated task parameters
      */
-    public SplitByGoToActionLevelParameters toTaskParameters(SplitByBookmarksTaskCliArguments taskCliArguments) {
-        SplitByGoToActionLevelParameters parameters = new SplitByGoToActionLevelParameters(
+    public SplitByOutlineLevelParameters toTaskParameters(SplitByBookmarksTaskCliArguments taskCliArguments) {
+        SplitByOutlineLevelParameters parameters = new SplitByOutlineLevelParameters(
                 taskCliArguments.getBookmarkLevel());
 
         if (taskCliArguments.isMatchingRegEx()) {

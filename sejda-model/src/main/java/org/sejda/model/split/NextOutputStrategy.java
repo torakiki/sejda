@@ -22,7 +22,6 @@ import org.sejda.model.exception.TaskExecutionException;
  * Strategy used by the by the split implementations to know when it's time to close the ongoing output and open a new one.
  * 
  * @author Andrea Vacondio
- * 
  */
 public interface NextOutputStrategy {
 

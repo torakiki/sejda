@@ -16,23 +16,21 @@
  */
 package org.sejda.model.outline;
 
-
 /**
- * Provides methods to deal with a pdf document outline.
+ * Component providing methods to retrieve outline information based on depth level.
  * 
  * @author Andrea Vacondio
- * 
  */
-public interface OutlineHandler {
+public interface OutlineLevelsHandler {
 
     /**
-     * @return the max depth level for GoTo action in the pdf document outline associated to this handler.
+     * @return the max depth level in the pdf document outline associated to this handler.
      */
-    int getMaxGoToActionDepth();
+    int getMaxOutlineDepth();
 
     /**
-     * @param goToActionLevel
-     * @return a set of page numbers found at the given GoTo Action level
+     * @param level
+     * @return page destinations found at the given outline level
      */
-    OutlineGoToPageDestinations getGoToPageDestinationForActionLevel(int goToActionLevel);
+    OutlinePageDestinations getPageDestinationsForLevel(int level);
 }

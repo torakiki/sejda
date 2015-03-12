@@ -16,18 +16,18 @@
  */
 package org.sejda.impl.itext;
 
-import org.sejda.core.service.SplitByGoToActionLevelTaskTest;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.core.service.SplitByOutlineLevelTaskTest;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class SplitByGoToActionLevelITextTaskTest extends SplitByGoToActionLevelTaskTest {
+public class SplitByOutlineLevelITextTaskTest extends SplitByOutlineLevelTaskTest {
 
-    public Task<SplitByGoToActionLevelParameters> getTask() {
-        return new SplitByGoToActionLevelTask();
+    public Task<SplitByOutlineLevelParameters> getTask() {
+        return new SplitByOutlineLevelTask();
     }
 
 }

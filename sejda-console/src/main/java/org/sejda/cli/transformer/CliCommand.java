@@ -62,7 +62,7 @@ import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.parameter.UnpackParameters;
@@ -133,10 +133,10 @@ public enum CliCommand {
             return new MergeCliArgumentsTransformer();
         }
     }, "Given a collection of pdf documents, creates a single output pdf document composed by the selected pages of each input document taken in the given order.", "merge -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp/output.pdf -s all:12-14:32,12-14,4,34-:"),
-    SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters>() {
+    SPLIT_BY_BOOKMARKS("splitbybookmarks", new CliInterfacedTask<SplitByBookmarksTaskCliArguments, SplitByOutlineLevelParameters>() {
 
         @Override
-        protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByGoToActionLevelParameters> getArgumentsTransformer() {
+        protected CommandCliArgumentsTransformer<SplitByBookmarksTaskCliArguments, SplitByOutlineLevelParameters> getArgumentsTransformer() {
             return new SplitByBookmarksCliArgumentsTransformer();
         }
     }, "Splits a given pdf document before each page where exists a GoTo action in the document outline (bookmarks) at the specified level (optionally matching a provided regular expression).", "splitbybookmarks -f /tmp/file1.pdf -o /tmp -l 2 -e \".+(page)+.+\""),

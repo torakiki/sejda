@@ -24,18 +24,18 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
- * Parameter class for a split by GoTo Action level task.
+ * Parameter class to split a PDF document at a given outline level.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class SplitByGoToActionLevelParameters extends SinglePdfSourceMultipleOutputParameters {
+public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutputParameters {
 
     @Min(1)
     private int levelToSplitAt;
     private String matchingTitleRegEx;
 
-    public SplitByGoToActionLevelParameters(int levelToSplitAt) {
+    public SplitByOutlineLevelParameters(int levelToSplitAt) {
         this.levelToSplitAt = levelToSplitAt;
     }
 
@@ -68,10 +68,10 @@ public class SplitByGoToActionLevelParameters extends SinglePdfSourceMultipleOut
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitByGoToActionLevelParameters)) {
+        if (!(other instanceof SplitByOutlineLevelParameters)) {
             return false;
         }
-        SplitByGoToActionLevelParameters parameter = (SplitByGoToActionLevelParameters) other;
+        SplitByOutlineLevelParameters parameter = (SplitByOutlineLevelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(levelToSplitAt, parameter.getLevelToSplitAt())
                 .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();

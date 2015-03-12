@@ -33,7 +33,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.parameter.SplitByGoToActionLevelParameters;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
 
@@ -41,8 +41,8 @@ import org.sejda.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest implements
-        TestableTask<SplitByGoToActionLevelParameters> {
+public abstract class SplitByOutlineLevelTaskTest extends PdfOutEnabledTest implements
+        TestableTask<SplitByOutlineLevelParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
@@ -53,8 +53,8 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
         TestUtils.setProperty(victim, "context", context);
     }
 
-    private SplitByGoToActionLevelParameters setUpParameters(int level, String regEx) {
-        SplitByGoToActionLevelParameters parameters = new SplitByGoToActionLevelParameters(level);
+    private SplitByOutlineLevelParameters setUpParameters(int level, String regEx) {
+        SplitByOutlineLevelParameters parameters = new SplitByOutlineLevelParameters(level);
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -67,7 +67,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel3() throws TaskException, IOException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(3, null);
+        SplitByOutlineLevelParameters parameters = setUpParameters(3, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -76,7 +76,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel2() throws TaskException, IOException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(2, null);
+        SplitByOutlineLevelParameters parameters = setUpParameters(2, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -85,7 +85,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel1() throws TaskException, IOException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(1, null);
+        SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -94,7 +94,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel1MatchingregEx() throws TaskException, IOException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(1, "(Second)+.+");
+        SplitByOutlineLevelParameters parameters = setUpParameters(1, "(Second)+.+");
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
@@ -103,7 +103,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel1NotMatchingregEx() throws TaskException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
+        SplitByOutlineLevelParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
@@ -114,7 +114,7 @@ public abstract class SplitByGoToActionLevelTaskTest extends PdfOutEnabledTest i
 
     @Test
     public void testExecuteLevel4() throws TaskException {
-        SplitByGoToActionLevelParameters parameters = setUpParameters(4, null);
+        SplitByOutlineLevelParameters parameters = setUpParameters(4, null);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();

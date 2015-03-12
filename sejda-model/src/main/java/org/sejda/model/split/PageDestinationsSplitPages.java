@@ -17,20 +17,20 @@
 package org.sejda.model.split;
 
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.outline.OutlineGoToPageDestinations;
+import org.sejda.model.outline.OutlinePageDestinations;
 
 /**
- * Strategy to define opening and closing page numbers from an {@link OutlineGoToPageDestinations}. The logic behind is that if a GoTo points to page x and the user splits at the
- * level of that GoTo, he probably wants to split at page x-1 (i.e. the end of the preceding chapter or paragraph), resulting in a pdf document per chapter (or paragraph...).
+ * Strategy to define opening and closing page numbers from an {@link OutlinePageDestinations}. The logic behind is that if a destination points to page x and the user splits at
+ * the level, he probably wants to split at page x-1 (i.e. the end of the preceding chapter or paragraph), resulting in a pdf document per chapter (or paragraph...).
  * 
  * @author Andrea Vacondio
  * 
  */
-public class GoToPageDestinationsSplitPages implements NextOutputStrategy {
+public class PageDestinationsSplitPages implements NextOutputStrategy {
 
     private SplitPages delegate = new SplitPages();
 
-    public GoToPageDestinationsSplitPages(OutlineGoToPageDestinations destinations) {
+    public PageDestinationsSplitPages(OutlinePageDestinations destinations) {
         for (Integer page : destinations.getPages()) {
             delegate.add(page - 1);
         }
