@@ -1,5 +1,9 @@
 Release howto
 
+* Release another snapshot version to OSS Sonatype
+
+mvn clean deploy -Psonatype-oss-snapshots
+
 * Maven release
 
 mvn release:prepare -DautoVersionSubModules=true

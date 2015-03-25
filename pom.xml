@@ -81,5 +81,20 @@
 				</plugins>
 			</build>
 		</profile>
+        <profile>
+            <!-- setup for using oss.sonatype.org to hold snapshots -->
+            <!-- should be active for all sessions except where the release plugin
+                   is being used. We keep this in a profile since central sync up requires no
+                   <repository> tags at the top level of the POM. -->
+            <id>sonatype-oss-snapshots</id>
+
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <name>Sonatype Nexus Snapshots</name>
+                    <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
 	</profiles>
 </project>
