@@ -265,7 +265,7 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>[${logback.version},]</version>
+			<version>${logback.version}</version>
 		</dependency>
 		<!-- http://jira.codehaus.org/browse/MNG-4156 -->
 		<dependency>
