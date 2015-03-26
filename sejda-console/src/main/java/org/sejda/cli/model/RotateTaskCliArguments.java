@@ -16,8 +16,10 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.PageRotationAdapter;
+import org.sejda.conversion.PageRangeSetAdapter;
+import org.sejda.conversion.RotationAdapter;
 
+import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -30,9 +32,17 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " rotate")
 public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
 
-    @Option(shortName = "r", description = "pages rotation. You can set pages rotation. Accepted string is "
-            + "\"pages:rotationdegrees\" where pages can be one among 'all',"
-            + "'odd', 'even' and where rotationdegrees can be '90', '180' or"
-            + "'270'. Pages will be rotate clockwise (required)")
-    PageRotationAdapter getPageRotation();
+    @Option(shortName = "r", description = "rotation degrees: 90, 180 or 270. Pages will be rotated clockwise (required)")
+    RotationAdapter getRotation();
+
+    @Option(shortName = "m", description = "predefined pages: all, odd or even (optional)")
+    PredefinedSetOfPagesAdapter getPredefinedPages();
+
+    boolean isPredefinedPages();
+
+    @Option(shortName = "s", description = "page selection. You can set a subset of pages to rotate. Order of the pages is relevant. Accepted values: 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")
+    PageRangeSetAdapter getPageSelection();
+
+    boolean isPageSelection();
 }

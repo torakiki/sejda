@@ -148,7 +148,7 @@ interface DefaultsProvider {
 class RotateDefaultsProvider extends DefaultDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-r", "1:90");
+        return super.provideDefaults(taskName).with("-r", "90").with("-m", "all");
     }
 }
 

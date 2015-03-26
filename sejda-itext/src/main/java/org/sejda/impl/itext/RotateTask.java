@@ -72,7 +72,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
-            applyRotation(parameters.getRotation()).to(reader);
+            applyRotation(parameters.getRotation(), parameters.getPages(reader.getNumberOfPages())).to(reader);
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);

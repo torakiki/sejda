@@ -20,9 +20,10 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.sejda.model.parameter.RotateParameters;
-import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.model.rotation.RotationType;
+
+import java.util.Arrays;
 
 /**
  * Tests for the RotateTask command line interface
@@ -49,36 +50,51 @@ public class RotateTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void pageRotation_singlePage() {
-        RotateParameters parameters = defaultCommandLine().with("-r", "34:90").invokeSejdaConsole();
-        assertEquals(PageRotation.createSinglePageRotation(34, Rotation.DEGREES_90), parameters.getRotation());
-    }
-
-    @Test
-    public void pageRotation_multiplePages() {
-        RotateParameters parameters = defaultCommandLine().with("-r", "odd:0").invokeSejdaConsole();
-        assertEquals(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0, RotationType.ODD_PAGES),
-                parameters.getRotation());
+    public void rotation_90() {
+        RotateParameters parameters = defaultCommandLine().with("-r", "90").invokeSejdaConsole();
+        assertEquals(Rotation.DEGREES_90, parameters.getRotation());
     }
 
     @Test
     public void pageRotation_invalidRotationType() {
-        defaultCommandLine().with("-r", "odd:99990").assertConsoleOutputContains("Unknown rotation: '99990'");
+        defaultCommandLine().with("-r", "99990").assertConsoleOutputContains("Invalid value '99990' for rotation");
     }
 
     @Test
-    public void pageRotation_invalidPageDefinition() {
-        defaultCommandLine().with("-r", "abc:0").assertConsoleOutputContains("Unknown page definition: 'abc'");
+    public void predefinedPages_ALL_PAGES() {
+        RotateParameters parameters = defaultCommandLine().with("-m", "all").invokeSejdaConsole();
+        assertContainsAll(Arrays.asList(1, 2, 3, 4, 5), parameters.getPages(5));
     }
 
     @Test
-    public void pageRotation_invalidOption() {
-        defaultCommandLine().with("-r", "invalid").assertConsoleOutputContains(
-                "Invalid input: 'invalid'. Expected format: 'pageDefinition:rotation'");
+    public void predefinedPages_ODD_PAGES() {
+        RotateParameters parameters = defaultCommandLine().with("-m", "odd").invokeSejdaConsole();
+        assertContainsAll(Arrays.asList(1, 3, 5), parameters.getPages(5));
+    }
+
+    @Test
+    public void predefinedPages_EVEN_PAGES() {
+        RotateParameters parameters = defaultCommandLine().with("-m", "even").invokeSejdaConsole();
+        assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
+    }
+
+    @Test
+    public void pageRange_combined() {
+        RotateParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
+                .invokeSejdaConsole();
+
+        assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
+                new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
+    }
+
+    @Test
+    public void mandatoryPageDefinitionParams() {
+        defaultCommandLine().without("-m").without("-s")
+                .assertConsoleOutputContains("Please specify at least one option that defines pages to be rotated");
     }
 
     @Test
     public void mandatoryParams() {
-        defaultCommandLine().without("-r").assertConsoleOutputContains("Option is mandatory: --pageRotation");
+        defaultCommandLine().without("-r").assertConsoleOutputContains("Option is mandatory: --rotation");
     }
 }

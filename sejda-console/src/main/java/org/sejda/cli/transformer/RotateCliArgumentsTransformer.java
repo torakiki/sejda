@@ -16,8 +16,10 @@
  */
 package org.sejda.cli.transformer;
 
+import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.RotateTaskCliArguments;
 import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface
@@ -35,7 +37,17 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
      * @return populated task parameters
      */
     public RotateParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
-        RotateParameters parameters = new RotateParameters(taskCliArguments.getPageRotation().getPageRotation());
+        RotateParameters parameters;
+        if (taskCliArguments.isPredefinedPages()
+                && taskCliArguments.getPredefinedPages().getEnumValue() != PredefinedSetOfPages.NONE) {
+            parameters = new RotateParameters(taskCliArguments.getRotation().getEnumValue(), taskCliArguments.getPredefinedPages().getEnumValue());
+        } else if (taskCliArguments.isPageSelection()) {
+            parameters = new RotateParameters(taskCliArguments.getRotation().getEnumValue(), PredefinedSetOfPages.NONE);
+            parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
+        } else {
+            throw new ArgumentValidationException(
+                    "Please specify at least one option that defines pages to be rotated");
+        }
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);

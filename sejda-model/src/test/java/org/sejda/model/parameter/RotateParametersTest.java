@@ -25,9 +25,8 @@ import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.MultipleTaskOutput;
-import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.model.rotation.RotationType;
 
 /**
  * @author Andrea Vacondio
@@ -37,21 +36,17 @@ public class RotateParametersTest {
 
     @Test
     public void testEquals() {
-        RotateParameters eq1 = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0,
-                RotationType.ALL_PAGES));
-        RotateParameters eq2 = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0,
-                RotationType.ALL_PAGES));
-        RotateParameters eq3 = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0,
-                RotationType.ALL_PAGES));
-        RotateParameters diff = new RotateParameters(PageRotation.createMultiplePagesRotation(Rotation.DEGREES_0,
-                RotationType.ALL_PAGES));
+        RotateParameters eq1 = new RotateParameters(Rotation.DEGREES_0, PredefinedSetOfPages.ALL_PAGES);
+        RotateParameters eq2 = new RotateParameters(Rotation.DEGREES_0, PredefinedSetOfPages.ALL_PAGES);
+        RotateParameters eq3 = new RotateParameters(Rotation.DEGREES_0, PredefinedSetOfPages.ALL_PAGES);
+        RotateParameters diff = new RotateParameters(Rotation.DEGREES_0, PredefinedSetOfPages.ALL_PAGES);
         diff.setOutputPrefix("prefix");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testInvalidParameters() {
-        RotateParameters victim = new RotateParameters(null);
+        RotateParameters victim = new RotateParameters(null, null);
         MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);

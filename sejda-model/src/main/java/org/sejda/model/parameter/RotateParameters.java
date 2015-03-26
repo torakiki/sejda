@@ -22,8 +22,17 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.rotation.PageRotation;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PageRangeSelection;
+import org.sejda.model.pdf.page.PagesSelection;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.model.rotation.Rotation;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the {@link PageRotation} will be applied.
@@ -31,18 +40,65 @@ import org.sejda.model.rotation.PageRotation;
  * @author Andrea Vacondio
  * 
  */
-public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters {
+public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters implements PagesSelection, PageRangeSelection {
 
     @Valid
     @NotNull
-    private PageRotation rotation = null;
+    private Rotation rotation = null;
 
-    public RotateParameters(PageRotation rotation) {
+    @NotNull
+    private PredefinedSetOfPages predefinedSetOfPages;
+    @Valid
+    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+
+    public RotateParameters(Rotation rotation, PredefinedSetOfPages predefinedSetOfPages) {
         this.rotation = rotation;
+        this.predefinedSetOfPages = predefinedSetOfPages;
     }
 
-    public PageRotation getRotation() {
+    public RotateParameters(Rotation rotation) {
+        this(rotation, PredefinedSetOfPages.NONE);
+    }
+
+    public Rotation getRotation() {
         return rotation;
+    }
+
+    public void addPageRange(PageRange range) {
+        pageSelection.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        pageSelection.addAll(ranges);
+    }
+
+    public PredefinedSetOfPages getPredefinedSetOfPages() {
+        return predefinedSetOfPages;
+    }
+
+    /**
+     * @return an unmodifiable view of the pageSelection
+     */
+    public Set<PageRange> getPageSelection() {
+        return Collections.unmodifiableSet(pageSelection);
+    }
+
+    /**
+     * @param upperLimit
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
+     *         case of {@link PredefinedSetOfPages}.
+     * @see PagesSelection#getPages(int)
+     */
+    public Set<Integer> getPages(int upperLimit) {
+        if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
+            return predefinedSetOfPages.getPages(upperLimit);
+        }
+        Set<Integer> retSet = new NullSafeSet<Integer>();
+        for (PageRange range : getPageSelection()) {
+            retSet.addAll(range.getPages(upperLimit));
+        }
+        return retSet;
     }
 
     @Override
