@@ -89,6 +89,17 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters.setOverwrite(true);
     }
 
+    private void setUpRotateMultipleInputNotRangesContained() {
+        parameters = new RotateParameters(Rotation.DEGREES_90);
+        parameters.addPageRange(new PageRange(2, 4));
+        parameters.addPageRange(new PageRange(15, 15));
+        parameters.addSource(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf"));
+        parameters.addSource(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium_test.pdf"));
+        parameters.setOverwrite(true);
+    }
+
     private void setUpParametersEncrypted() {
         setUpDefaultParameters();
 
@@ -142,7 +153,15 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         // assertVersion(reader, PdfVersion.VERSION_1_4);
     }
 
-    private void doExecute() throws TaskException, IOException {
+    @Test
+    public void testMultipleInputOneDoesntContainRange() throws TaskException, IOException {
+        setUpRotateMultipleInputNotRangesContained();
+        doExecute();
+
+        assertOutputContainsDocuments(2);
+    }
+
+    private void doExecute() throws TaskException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);

@@ -17,6 +17,10 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -30,17 +34,15 @@ import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
 /**
- * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the {@link PageRotation} will be applied.
+ * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the {@link Rotation} will be applied to the given
+ * {@link PredefinedSetOfPages} or to the given {@link PageRange}s.
  * 
  * @author Andrea Vacondio
  * 
  */
-public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters implements PagesSelection, PageRangeSelection {
+public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters implements PagesSelection,
+        PageRangeSelection {
 
     @Valid
     @NotNull

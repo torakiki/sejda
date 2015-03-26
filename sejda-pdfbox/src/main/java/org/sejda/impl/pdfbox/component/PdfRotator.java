@@ -18,13 +18,13 @@ package org.sejda.impl.pdfbox.component;
 
 import static org.sejda.model.rotation.Rotation.getRotation;
 
+import java.util.Set;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.sejda.model.rotation.Rotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
 
 /**
  * Handles rotations on a given PDDocument.
@@ -46,12 +46,13 @@ public final class PdfRotator implements OngoingRotation {
     }
 
     /**
-     * DSL entry point to apply a rotation
+     * DSL entry point to apply a rotation to a set of pages
      * <p>
-     * <code>applyRotation(rotation).to(document);</code>
+     * <code>applyRotation(rotation, pages).to(document);</code>
      * </p>
      * 
      * @param rotation
+     * @param pages
      * @return the ongoing apply rotation exposing methods to set the document you want to apply the rotation to.
      */
     public static OngoingRotation applyRotation(Rotation rotation, Set<Integer> pages) {

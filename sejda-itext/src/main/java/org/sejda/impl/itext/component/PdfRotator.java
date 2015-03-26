@@ -19,6 +19,8 @@ package org.sejda.impl.itext.component;
 
 import static org.sejda.model.rotation.Rotation.getRotation;
 
+import java.util.Set;
+
 import org.sejda.model.rotation.Rotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +29,6 @@ import com.lowagie.text.pdf.PdfDictionary;
 import com.lowagie.text.pdf.PdfName;
 import com.lowagie.text.pdf.PdfNumber;
 import com.lowagie.text.pdf.PdfReader;
-
-import java.util.Set;
 
 /**
  * Handles rotations on a given PdfReader
@@ -50,12 +50,13 @@ public final class PdfRotator implements OngoingRotation {
     }
 
     /**
-     * DSL entry point to apply a rotation
+     * DSL entry point to apply a rotation to a set of pages
      * <p>
-     * <code>applyRotation(rotation).to(reader);</code>
+     * <code>applyRotation(rotation, pages).to(document);</code>
      * </p>
      * 
      * @param rotation
+     * @param pages
      * @return the ongoing apply rotation exposing methods to set the reader you want to apply the rotation to.
      */
     public static OngoingRotation applyRotation(Rotation rotation, Set<Integer> pages) {
