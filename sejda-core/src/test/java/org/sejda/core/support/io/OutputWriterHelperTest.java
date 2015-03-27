@@ -65,7 +65,7 @@ public class OutputWriterHelperTest {
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.copyToFile(files, outFile, true);
+            OutputWriterHelper.moveToFile(files, outFile, true);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
@@ -82,7 +82,7 @@ public class OutputWriterHelperTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.copyToFile(files, outFile, true);
+            OutputWriterHelper.moveToFile(files, outFile, true);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
@@ -99,7 +99,7 @@ public class OutputWriterHelperTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.copyToFile(files, outFile, false);
+            OutputWriterHelper.moveToFile(files, outFile, false);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to overwrite the"));
@@ -115,7 +115,7 @@ public class OutputWriterHelperTest {
         when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
 
         try {
-            OutputWriterHelper.copyToDirectory(files, outFile, true);
+            OutputWriterHelper.moveToDirectory(files, outFile, true);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
@@ -133,7 +133,7 @@ public class OutputWriterHelperTest {
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
 
         try {
-            OutputWriterHelper.copyToDirectory(files, outFile, true);
+            OutputWriterHelper.moveToDirectory(files, outFile, true);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));

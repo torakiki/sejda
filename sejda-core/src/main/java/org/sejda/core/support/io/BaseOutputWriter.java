@@ -45,12 +45,12 @@ class BaseOutputWriter implements TaskOutputDispatcher {
     }
 
     public void dispatch(FileTaskOutput output) throws IOException {
-        OutputWriterHelper.copyToFile(multipleFiles, output.getDestination(), overwrite);
+        OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), overwrite);
 
     }
 
     public void dispatch(DirectoryTaskOutput output) throws IOException {
-        OutputWriterHelper.copyToDirectory(multipleFiles, output.getDestination(), overwrite);
+        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), overwrite);
 
     }
 

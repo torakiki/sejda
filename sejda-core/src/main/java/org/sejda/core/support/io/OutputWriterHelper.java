@@ -48,7 +48,7 @@ final class OutputWriterHelper {
     }
 
     /**
-     * copy the input file contained in the input map (single file) to the output file
+     * Moves the input file contained in the input map (single file) to the output file
      * 
      * @param files
      * @param outputFile
@@ -56,7 +56,7 @@ final class OutputWriterHelper {
      *            true to overwrite if already exists
      * @throws IOException
      */
-    static void copyToFile(Map<String, File> files, File outputFile, boolean overwrite) throws IOException {
+    static void moveToFile(Map<String, File> files, File outputFile, boolean overwrite) throws IOException {
         if (outputFile.exists() && !outputFile.isFile()) {
             throw new IOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
@@ -66,13 +66,13 @@ final class OutputWriterHelper {
                     outputFile));
         }
         for (Entry<String, File> entry : files.entrySet()) {
-            copyFile(entry.getValue(), outputFile, overwrite);
+            moveFile(entry.getValue(), outputFile, overwrite);
         }
 
     }
 
     /**
-     * Copy the input files to the output directory
+     * Moves the input files to the output directory
      * 
      * @param files
      * @param outputDirectory
@@ -80,7 +80,7 @@ final class OutputWriterHelper {
      *            true to overwrite if already exists
      * @throws IOException
      */
-    static void copyToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite) throws IOException {
+    static void moveToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite) throws IOException {
         if (!outputDirectory.isDirectory()) {
             throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
         }
@@ -90,14 +90,14 @@ final class OutputWriterHelper {
         for (Entry<String, File> entry : files.entrySet()) {
             if (isBlank(entry.getKey())) {
                 throw new IOException(String.format(
-                        "Unable to copy %s to the output directory, no output name specified.", entry.getValue()));
+                        "Unable to move %s to the output directory, no output name specified.", entry.getValue()));
             }
-            copyFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
+            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
         }
     }
 
     /**
-     * Copy the input file to the output file
+     * Moves the input file to the output file
      * 
      * @param input
      *            input file
@@ -107,14 +107,17 @@ final class OutputWriterHelper {
      *            true to overwrite if already exists
      * @throws IOException
      */
-    private static void copyFile(File input, File output, boolean overwrite) throws IOException {
+    private static void moveFile(File input, File output, boolean overwrite) throws IOException {
         if (!overwrite && output.exists()) {
             throw new IOException(String.format(
                     "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
         }
         try {
-            LOG.debug("Copying {} to {}.", input, output);
-            FileUtils.copyFile(input, output);
+            LOG.debug("Moving {} to {}.", input, output);
+            if(overwrite && output.exists()) {
+                FileUtils.deleteQuietly(output);
+            }
+            FileUtils.moveFile(input, output);
         } finally {
             delete(input);
         }
