@@ -112,15 +112,12 @@ final class OutputWriterHelper {
             throw new IOException(String.format(
                     "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
         }
-        try {
-            LOG.debug("Moving {} to {}.", input, output);
-            if(overwrite && output.exists()) {
-                FileUtils.deleteQuietly(output);
-            }
-            FileUtils.moveFile(input, output);
-        } finally {
-            delete(input);
+
+        LOG.debug("Moving {} to {}.", input, output);
+        if(overwrite && output.exists()) {
+            FileUtils.deleteQuietly(output);
         }
+        FileUtils.moveFile(input, output);
     }
 
     /**
