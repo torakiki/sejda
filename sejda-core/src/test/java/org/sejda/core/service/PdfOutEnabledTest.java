@@ -17,6 +17,7 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +25,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -126,6 +130,23 @@ public class PdfOutEnabledTest {
             counter++;
         }
         assertEquals(expectedNumberOfDocuments, counter);
+    }
+
+    /**
+     * Assert the the generated output zip stream contains the given file names.
+     *
+     * @param expectedFileNames
+     * @throws IOException
+     */
+    protected void assertOutputContainsFilenames(String... expectedFilenames) throws IOException {
+        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+        ZipInputStream zip = new ZipInputStream(input);
+        List<String> actualFilenames = new LinkedList<String>();
+        for (ZipEntry e; (e = zip.getNextEntry()) != null;) {
+            actualFilenames.add(e.getName());
+        }
+        Collections.sort(actualFilenames);
+        assertArrayEquals(expectedFilenames, actualFilenames.toArray(new String[actualFilenames.size()]));
     }
 
     /**
