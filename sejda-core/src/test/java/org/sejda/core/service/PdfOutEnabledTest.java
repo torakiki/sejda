@@ -20,11 +20,7 @@ package org.sejda.core.service;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,7 +28,6 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.model.output.FileTaskOutput;
@@ -104,16 +99,24 @@ public class PdfOutEnabledTest {
      * @throws IOException
      */
     protected PdfReader getReaderFromResultStream(String expectedFileName, byte[] ownerPwd) throws IOException {
-        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
-        ZipInputStream zip = new ZipInputStream(input);
-        ZipEntry entry = zip.getNextEntry();
-        if (StringUtils.isNotBlank(expectedFileName)) {
-            assertEquals(expectedFileName, entry.getName());
-        }
-        PdfReader reader = new PdfReader(zip, ownerPwd);
+        PdfReader reader = new PdfReader(getResultInputStream(expectedFileName), ownerPwd);
         reader.removeUnusedObjects();
         reader.consolidateNamedDestinations();
         return reader;
+    }
+
+    protected InputStream getResultInputStream(String expectedFileName) throws IOException {
+        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+        ZipInputStream zip = new ZipInputStream(input);
+        ZipEntry entry = zip.getNextEntry();
+        while(entry != null) {
+            if(entry.getName().equals(expectedFileName)){
+                return zip;
+            }
+            entry = zip.getNextEntry();
+        }
+
+        throw new RuntimeException("Didn't find any output file that matched " + expectedFileName);
     }
 
     /**
@@ -135,7 +138,7 @@ public class PdfOutEnabledTest {
     /**
      * Assert the the generated output zip stream contains the given file names.
      *
-     * @param expectedFileNames
+     * @param expectedFilenames
      * @throws IOException
      */
     protected void assertOutputContainsFilenames(String... expectedFilenames) throws IOException {

@@ -34,7 +34,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setheaderfooter")
-public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     @Option(shortName = "s", description = "page range selection. You can set the pages where the header/footer will be applied. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' (EX. -s 12-14) (required)")
@@ -58,17 +58,10 @@ public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfFile
     boolean isFont();
 
     @Option(shortName = "d", description = "font size in pt. Default is 10 (optional)", defaultValue = "10")
-    BigDecimal getFontSize();
+    double getFontSize();
 
     boolean isFontSize();
 
-    @Option(shortName = "n", description = "numbering definition for the header/footer. Accepted strings are \"pageNumber:style\" where pageNumber is the start point for the numbering and style is \"arabic\" or \"roman\" (Ex. -n 1:arabic) (optional)")
-    NumberingAdapter getNumbering();
-
-    boolean isNumbering();
-
-    @Option(shortName = "l", description = "label for the header/footer (optional)")
+    @Option(shortName = "l", description = "label for the header/footer. Supports dynamic patterns such as [PAGE_ROMAN], [PAGE_ARABIC], [PAGE_OF_TOTAL], [DATE], [BATES_NUMBER] and [FILE_NUMBER]. Example: \"Page [PAGE_ARABIC]\" (required)")
     String getLabel();
-
-    boolean isLabel();
 }

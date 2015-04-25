@@ -49,7 +49,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>1.99.99-SNAPSHOT</version>
+		<version>1.99.100-SNAPSHOT</version>
 		<relativePath>sejda-parent/pom.xml</relativePath>
 	</parent>
 

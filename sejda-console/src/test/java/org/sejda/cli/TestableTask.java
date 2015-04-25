@@ -108,7 +108,7 @@ public enum TestableTask {
     public static TestableTask[] getTasksWithMultipleSouceFiles() {
         return new TestableTask[] { TestableTask.DECRYPT, TestableTask.ENCRYPT, TestableTask.ROTATE,
                 TestableTask.SET_VIEWER_PREFERENCES, TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.ALTERNATE_MIX, TestableTask.MERGE };
+                TestableTask.ALTERNATE_MIX, TestableTask.MERGE, TestableTask.SET_HEADER_FOOTER };
     }
 
     boolean hasFolderOutput() {
@@ -168,12 +168,18 @@ class MultipleInputsAndFileOutputDefaultsProvider implements DefaultsProvider {
 
 }
 
+class MultipleInputsAndFolderOutputDefaultsProvider implements DefaultsProvider {
+
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFolderOutput();
+    }
+}
+
 class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
     }
-
 }
 
 class SingleInputAndFileOutputDefaultsProvider implements DefaultsProvider {
@@ -181,7 +187,6 @@ class SingleInputAndFileOutputDefaultsProvider implements DefaultsProvider {
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFileOutput();
     }
-
 }
 
 class SplitByBookmarksDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
@@ -247,10 +252,10 @@ class SetPageLabelsDefaultsProvider extends SingleInputAndFileOutputDefaultsProv
     }
 }
 
-class SetHeaderFooterDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+class SetHeaderFooterDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("-l", "label").with("-s", "all");
+        return super.provideDefaults(taskName).with("-l", "\"Page [PAGE_OF_TOTAL]\"").with("-s", "all");
     }
 }
 

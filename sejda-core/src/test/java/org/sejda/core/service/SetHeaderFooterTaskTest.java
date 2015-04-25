@@ -15,14 +15,13 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
+import static org.sejda.model.pdf.TextStampPattern.dateNow;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -33,17 +32,13 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.headerfooter.Numbering;
-import org.sejda.model.pdf.headerfooter.NumberingStyle;
+import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
 
 /**
  * @author Eduard Weissmann
@@ -63,84 +58,129 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the set page labels parameters
-     * 
-     */
-    private void setUpParams(VerticalAlign vAlign, PdfSource<?> source) {
-        parameters = new SetHeaderFooterParameters();
-        parameters.setNumbering(new Numbering(NumberingStyle.ARABIC, 100));
-        parameters.setPageRange(new PageRange(3));
+    private SetHeaderFooterParameters basicNoSources() {
+        SetHeaderFooterParameters parameters = new SetHeaderFooterParameters();
+        parameters.setBatesSequence(new BatesSequence());
+        parameters.setPageRange(new PageRange(1));
+        parameters.setPattern("[DATE] [PAGE_OF_TOTAL] - Exhibit [FILE_NUMBER] - Case ACME Inc - [BATES_NUMBER]");
 
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setFont(StandardType1Font.CURIER_BOLD_OBLIQUE);
 
-        parameters.setSource(source);
         parameters.setOverwrite(true);
         parameters.setHorizontalAlign(HorizontalAlign.LEFT);
-        parameters.setVerticalAlign(vAlign);
-        parameters.setFontSize(new BigDecimal("7"));
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        parameters.setFontSize(7d);
+
+        return parameters;
     }
 
-    private void setUpParameters(VerticalAlign vAlign) {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        setUpParams(vAlign, source);
+    private SetHeaderFooterParameters basicWithSources() {
+        SetHeaderFooterParameters parameters = basicNoSources();
+
+        InputStream stream1 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source1 = PdfStreamSource.newInstanceNoPassword(stream1, "test_file1.pdf");
+
+        InputStream stream2 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source2 = PdfStreamSource.newInstanceNoPassword(stream2, "test_file2.pdf");
+
+        parameters.addSource(source1);
+        parameters.addSource(source2);
+
+        return parameters;
     }
 
-    private void setUpParametersEncrypted(VerticalAlign vAlign) {
+    @Test
+    public void testPageRange() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPageRange(new PageRange(2));
+        parameters.setPattern("Test footer");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        doTestExecute();
+        assertFooterHasText("test_file1.pdf", 1, "");
+        assertFooterHasText("test_file1.pdf", 2, "Test footer");
+        assertFooterHasText("test_file1.pdf", 3, "Test footer");
+    }
+
+    @Test
+    public void testLogicalPage() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("Page [PAGE_ARABIC]");
+        parameters.setPageCountStartFrom(5);
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        doTestExecute();
+        assertFooterHasText("test_file1.pdf", 1, "Page 5");
+        assertFooterHasText("test_file1.pdf", 2, "Page 6");
+        assertFooterHasText("test_file1.pdf", 3, "Page 7");
+    }
+
+    @Test
+    public void testBatesAndFileSequence() throws Exception {
+        parameters = basicWithSources();
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        doTestExecute();
+
+        assertFooterHasText("test_file1.pdf", 2, dateNow() + " 2 of 4 - Exhibit 1 - Case ACME Inc - 000002");
+        assertFooterHasText("test_file1.pdf", 3, dateNow() + " 3 of 4 - Exhibit 1 - Case ACME Inc - 000003");
+
+        assertFooterHasText("test_file2.pdf", 1, dateNow() + " 1 of 4 - Exhibit 2 - Case ACME Inc - 000005");
+    }
+
+    @Test
+    public void testWriteHeader() throws Exception {
+        parameters = basicWithSources();
+        parameters.setVerticalAlign(VerticalAlign.TOP);
+        parameters.setPattern("Page [PAGE_ROMAN] [PAGE_ARABIC]");
+
+        doTestExecute();
+
+        assertHeaderHasText("test_file1.pdf", 3, "Page III 3");
+    }
+
+    @Test
+    public void testEncryptedFile() throws Exception {
+        parameters = basicNoSources();
+
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
-        setUpParams(vAlign, source);
+
+        parameters.addSource(source);
+
+        doTestExecute();
+        assertOutputContainsDocuments(1);
     }
 
     @Test
-    public void testExecuteFooter() throws TaskException, IOException {
-        setUpParameters(VerticalAlign.BOTTOM);
+    public void testNoBatesSeq() throws Exception {
+        parameters = basicWithSources();
+        parameters.setBatesSequence(null);
+
         doTestExecute();
-        assertSpecificFooterExpectations(getResultFile());
+        assertOutputContainsDocuments(2);
     }
 
     @Test
-    public void testExecuteHeader() throws TaskException, IOException {
-        setUpParameters(VerticalAlign.TOP);
-        doTestExecute();
-        assertSpecificHeaderExpectations(getResultFile());
-    }
+    public void testConfigurableBatesSeq() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("[BATES_NUMBER]");
+        parameters.setBatesSequence(new BatesSequence(1000, 5, 10));
 
-    @Test
-    public void testExecuteFooterEnc() throws TaskException, IOException {
-        setUpParametersEncrypted(VerticalAlign.BOTTOM);
         doTestExecute();
-        assertSpecificFooterExpectations(getResultFile());
-    }
 
-    @Test
-    public void testExecuteHeaderEnc() throws TaskException, IOException {
-        setUpParametersEncrypted(VerticalAlign.TOP);
-        doTestExecute();
-        assertSpecificHeaderExpectations(getResultFile());
+        assertFooterHasText("test_file1.pdf", 1, "0000001000");
+        assertFooterHasText("test_file1.pdf", 2, "0000001005");
     }
 
     private void doTestExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewFileOutput(parameters);
+        initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-
-        PdfReader reader = getReaderFromResultFile();
-
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        assertEquals(4, reader.getNumberOfPages());
-
-        reader.close();
-
     }
 
-    protected abstract void assertSpecificFooterExpectations(File result) throws TaskException;
+    protected abstract void assertFooterHasText(String filename, int page, String expectedText) throws Exception;
 
-    protected abstract void assertSpecificHeaderExpectations(File result) throws TaskException;
+    protected abstract void assertHeaderHasText(String filename, int page, String expectedText) throws Exception;
 
     protected SetHeaderFooterParameters getParameters() {
         return parameters;

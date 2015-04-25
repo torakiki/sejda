@@ -18,14 +18,11 @@ package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigDecimal;
-
 import org.junit.Test;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.headerfooter.NumberingStyle;
 
 /**
  * @author Andrea Vacondio
@@ -92,26 +89,19 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
 
     @Test
     public void testMandatory() {
-        defaultCommandLine().without("-l").assertConsoleOutputContains("No header or footer definition");
+        defaultCommandLine().without("-l").assertConsoleOutputContains("Option is mandatory: --label -l");
     }
 
     @Test
-    public void unrecognizedNumberingStyle() {
-        defaultCommandLine().with("-n", "Chuck:Norris").assertConsoleOutputContains(
-                "Could not parse input: 'Chuck:Norris'. Unrecognized page number: 'Chuck'");
-    }
-
-    @Test
-    public void numberingStyle() {
-        SetHeaderFooterParameters parameters = defaultCommandLine().with("-n", "99:arabic").invokeSejdaConsole();
-        assertEquals(NumberingStyle.ARABIC, parameters.getNumbering().getNumberingStyle());
-        assertEquals(99, parameters.getNumbering().getLogicalPageNumber());
+    public void labelPattern() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-l", "\"Page [PAGE_ROMAN]\"").invokeSejdaConsole();
+        assertEquals("Page [PAGE_ROMAN]", parameters.getPattern());
     }
 
     @Test
     public void fontSize() {
         SetHeaderFooterParameters parameters = defaultCommandLine().with("-d", "1.0").invokeSejdaConsole();
-        assertEquals(new BigDecimal("1.0"), parameters.getFontSize());
+        assertEquals(1d, parameters.getFontSize(), 0.0);
     }
 
     @Test
