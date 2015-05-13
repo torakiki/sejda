@@ -24,6 +24,8 @@ import org.icepdf.core.pobjects.PDimension;
 import org.icepdf.core.pobjects.Page;
 import org.icepdf.core.util.GraphicsRenderingHints;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ICEpdf component providing a conversion method for a {@link Document} page to a {@link BufferedImage}. current thread.
@@ -32,6 +34,8 @@ import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
  * 
  */
 public final class PdfToBufferedImageProvider {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PdfToBufferedImageProvider.class);
 
     private PdfToBufferedImageProvider() {
         // hide
@@ -46,15 +50,20 @@ public final class PdfToBufferedImageProvider {
      * @return the corresponding {@link BufferedImage}
      */
     public static BufferedImage toBufferedImage(Document document, int page, AbstractPdfToImageParameters parameters) {
-        Page currentPage = document.getPageTree().getPage(page);
-        currentPage.init();
-        PDimension pageDimensions = currentPage.getSize(0, parameters.getUserZoom());
-        BufferedImage currentImage = parameters.getOutputImageColorType().createBufferedImage(
-                (int) pageDimensions.getWidth(), (int) pageDimensions.getHeight());
-        Graphics2D g = currentImage.createGraphics();
-        currentPage.paint(g, GraphicsRenderingHints.PRINT, Page.BOUNDARY_CROPBOX, 0, parameters.getUserZoom());
-        g.dispose();
-        return currentImage;
+        try {
+            Page currentPage = document.getPageTree().getPage(page);
+            currentPage.init();
+            PDimension pageDimensions = currentPage.getSize(0, parameters.getUserZoom());
+            BufferedImage currentImage = parameters.getOutputImageColorType().createBufferedImage(
+                    (int) pageDimensions.getWidth(), (int) pageDimensions.getHeight());
+            Graphics2D g = currentImage.createGraphics();
+            currentPage.paint(g, GraphicsRenderingHints.PRINT, Page.BOUNDARY_CROPBOX, 0, parameters.getUserZoom());
+            g.dispose();
+            return currentImage;
+        } catch (NullPointerException ex) {
+            // works around an ICEPdf bug: if one page fails to convert, don't fail the complete task
+            LOG.warn("Failed to convert page to image", ex);
+            return null;
+        }
     }
-
 }

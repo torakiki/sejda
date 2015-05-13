@@ -21,6 +21,7 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 
 import org.icepdf.core.pobjects.Document;
@@ -72,7 +73,14 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         getWriter().openWriteDestination(tmpFile, parameters);
         for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < pdfDocument.getNumberOfPages(); zeroBasedPageNumber++) {
             LOG.trace("Writing page {}", zeroBasedPageNumber + 1);
-            getWriter().write(toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters), parameters);
+
+            BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters);
+            if(pageImage == null) {
+                LOG.debug("Failed to convert page {} to image", zeroBasedPageNumber + 1);
+                continue;
+            }
+
+            getWriter().write(pageImage, parameters);
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
         }
         getWriter().closeDestination();

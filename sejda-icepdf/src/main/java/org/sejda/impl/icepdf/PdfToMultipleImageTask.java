@@ -23,6 +23,7 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Set;
 
@@ -74,12 +75,18 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         for (int currentPage : requestedPages) {
             currentStep++;
 
+            BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBased(currentPage), parameters);
+            if(pageImage == null) {
+                LOG.debug("Failed to convert page {} to image", currentPage);
+                continue;
+            }
+
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
 
             getWriter().openWriteDestination(tmpFile, parameters);
             LOG.trace("Writing page {}", currentPage);
-            getWriter().write(toBufferedImage(pdfDocument, zeroBased(currentPage), parameters), parameters);
+            getWriter().write(pageImage, parameters);
             getWriter().closeDestination();
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
