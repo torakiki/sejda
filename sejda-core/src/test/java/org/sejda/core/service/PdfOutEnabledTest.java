@@ -163,24 +163,6 @@ public class PdfOutEnabledTest {
     }
 
     /**
-     * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
-     * @throws IOException
-     */
-    protected PdfReader getReaderFromResult() throws IOException {
-        return getReaderFromResultStream(null, null);
-    }
-
-    /**
-     * @param ownerPwd
-     *            owner password
-     * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
-     * @throws IOException
-     */
-    protected PdfReader getReaderFromResult(byte[] ownerPwd) throws IOException {
-        return getReaderFromResultStream(null, ownerPwd);
-    }
-
-    /**
      * Assert the correct creator
      * 
      * @param reader
