@@ -229,7 +229,7 @@ public class PDDocumentHandler implements Closeable {
      * @param page
      * @throws TaskIOException
      */
-    public void importPage(PDPage page) throws TaskIOException {
+    public PDPage importPage(PDPage page) throws TaskIOException {
         PDPage imported;
         try {
             imported = document.importPage(page);
@@ -240,10 +240,23 @@ public class PDDocumentHandler implements Closeable {
         imported.setMediaBox(page.findMediaBox());
         imported.setResources(page.findResources());
         imported.setRotation(page.findRotation());
+
+        return imported;
     }
 
     public PDPage getPage(int pageNumber) {
         return (PDPage) document.getDocumentCatalog().getAllPages().get(pageNumber - 1);
     }
+
+    public void initialiseBasedOn(PDDocumentHandler other) {
+        setDocumentInformation(other.getUnderlyingPDDocument().getDocumentInformation());
+        setViewerPreferences(other.getViewerPreferences());
+        getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(
+                other.getUnderlyingPDDocument().getDocumentCatalog().getPageLayout());
+        getUnderlyingPDDocument().getDocumentCatalog().setPageMode(
+                other.getUnderlyingPDDocument().getDocumentCatalog().getPageMode());
+        setCreatorOnPDDocument();
+    }
+
 
 }

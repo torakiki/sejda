@@ -21,10 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -105,12 +102,16 @@ public class PdfOutEnabledTest {
         return reader;
     }
 
+    protected PdfReader getReaderFromResultStream() throws IOException {
+        return getReaderFromResultStream(null);
+    }
+
     protected InputStream getResultInputStream(String expectedFileName) throws IOException {
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
         while(entry != null) {
-            if(entry.getName().equals(expectedFileName)){
+            if(expectedFileName == null || entry.getName().equals(expectedFileName)){
                 return zip;
             }
             entry = zip.getNextEntry();
@@ -190,5 +191,9 @@ public class PdfOutEnabledTest {
 
     public File getResultFile() {
         return outFile;
+    }
+
+    void assertNumberOfPages(int expected) throws IOException {
+        assertEquals("Number of pages don't match", expected, getReaderFromResultStream().getNumberOfPages());
     }
 }

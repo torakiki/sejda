@@ -46,18 +46,8 @@ public class PagesExtractor extends PDDocumentHandler {
     }
 
     public void extractPages(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
-        initializeDocument();
+        initialiseBasedOn(sourceDocumentHandler);
         doExtract(pages, taskMetadata);
-    }
-
-    private void initializeDocument() {
-        setDocumentInformation(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation());
-        setViewerPreferences(sourceDocumentHandler.getViewerPreferences());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(
-                sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getPageLayout());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageMode(
-                sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getPageMode());
-        setCreatorOnPDDocument();
     }
 
     private void doExtract(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
