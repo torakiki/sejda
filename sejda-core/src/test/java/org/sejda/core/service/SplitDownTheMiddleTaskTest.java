@@ -27,6 +27,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.Task;
 
 import java.io.IOException;
@@ -71,11 +72,26 @@ public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest imple
         return input;
     }
 
+    private List<PdfSource<?>> lastFirstRepaginationInput() {
+        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
+        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/split_in_two_last_first_repagination_sample.pdf"), "a.pdf"));
+        return input;
+    }
+
+    private List<PdfSource<?>> lastFirstRepaginationInputUnevenPagePairs() {
+        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
+        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream("pdf/split_in_two_last_first_repagination_uneven_sample.pdf"), "a.pdf"));
+        return input;
+    }
+
     @Test
     public void splitLandscapeMode() throws TaskException, IOException {
         setUpParameters(landscapeInput());
         execute();
         assertNumberOfPages(4);
+        assertPageText("L1L1", "R1R1", "L2L2", "R2R2");
     }
 
     @Test
@@ -83,6 +99,25 @@ public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest imple
         setUpParameters(portraitInput());
         execute();
         assertNumberOfPages(4);
+        assertPageText("L1L1", "R1R1", "L2L2", "R2R2");
+    }
+
+    @Test
+    public void lastFirstRepagination() throws TaskException, IOException {
+        setUpParameters(lastFirstRepaginationInput());
+        parameters.setRepagination(Repagination.LAST_FIRST);
+        execute();
+        assertNumberOfPages(10);
+        assertPageText("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+    }
+
+    @Test
+    public void lastFirstRepaginationUnevenPagePairs() throws TaskException, IOException {
+        setUpParameters(lastFirstRepaginationInputUnevenPagePairs());
+        parameters.setRepagination(Repagination.LAST_FIRST);
+        execute();
+        assertNumberOfPages(12);
+        assertPageText("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
     }
 
     void execute() throws TaskException, IOException {

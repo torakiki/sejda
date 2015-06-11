@@ -26,6 +26,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,6 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 PDPage page = sourceHandler.getPage(pageNumber);
                 PDRectangle trimBox = page.getTrimBox();
 
-
                 // landscape vs portrait
                 if(trimBox.getHeight() <= trimBox.getWidth()) {
                     // landscape orientation
@@ -129,8 +129,28 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
                     bottomPage.setCropBox(lowerSide);
                 }
+            }
 
+            // repaginate
+            if(parameters.getRepagination() == Repagination.LAST_FIRST) {
+                int pages = destinationHandler.getNumberOfPages();
 
+                // differs based on even/odd number of double-layout pages
+                int startStep = pages / 2 % 2;
+                // alternates between 1 or 3
+                int step = startStep == 0 ? 3 : 1;
+
+                int i = pages - startStep;
+                while(i > 0) {
+                    destinationHandler.movePageToDocumentEnd(i);
+                    i -= step;
+
+                    if(step == 1) {
+                        step = 3;
+                    } else {
+                        step = 1;
+                    }
+                }
             }
 
             destinationHandler.savePDDocument(tmpFile);

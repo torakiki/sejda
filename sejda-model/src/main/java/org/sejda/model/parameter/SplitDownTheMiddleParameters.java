@@ -18,12 +18,25 @@ package org.sejda.model.parameter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
+import org.sejda.model.repaginate.Repagination;
 
 public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutputParameters {
 
+    private Repagination repagination = Repagination.NONE;
+
+    public Repagination getRepagination() {
+        return repagination;
+    }
+
+    public void setRepagination(Repagination repagination) {
+        this.repagination = repagination;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).toHashCode();
+        return new HashCodeBuilder()
+                .append(getRepagination())
+                .appendSuper(super.hashCode()).toHashCode();
     }
 
     @Override
@@ -34,7 +47,9 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         if (!(other instanceof SplitDownTheMiddleParameters)) {
             return false;
         }
-        return new EqualsBuilder().appendSuper(super.equals(other))
+        return new EqualsBuilder()
+                .append(getRepagination(), ((SplitDownTheMiddleParameters) other).getRepagination())
+                .appendSuper(super.equals(other))
                 .isEquals();
     }
 }

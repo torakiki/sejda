@@ -20,11 +20,17 @@ package org.sejda.core.service;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.util.PDFTextStripperByArea;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.model.output.FileTaskOutput;
@@ -195,5 +201,28 @@ public class PdfOutEnabledTest {
 
     void assertNumberOfPages(int expected) throws IOException {
         assertEquals("Number of pages don't match", expected, getReaderFromResultStream().getNumberOfPages());
+    }
+
+    private PDFTextStripperByArea textStripper;
+
+    public void assertPageText(String... expectedText) throws IOException {
+        if(textStripper == null) {
+            textStripper = new PDFTextStripperByArea("UTF8");
+        }
+
+        for(int pageNumber = 0; pageNumber < expectedText.length; pageNumber++) {
+
+            PDDocument doc = PDDocument.load(getResultInputStream(null));
+            PDPage page = (PDPage)doc.getDocumentCatalog().getAllPages().get(pageNumber);
+            PDRectangle pageSize = page.getCropBox();
+            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int)pageSize.getWidth(), (int)pageSize.getHeight());
+
+            textStripper.setSortByPosition(true);
+            textStripper.addRegion("area1", cropBoxRectangle);
+            textStripper.extractRegions(page);
+
+            String actualText = textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", "");
+            assertEquals("Page " + (pageNumber + 1) + " text", expectedText[pageNumber], actualText);
+        }
     }
 }

@@ -244,6 +244,19 @@ public class PDDocumentHandler implements Closeable {
         return imported;
     }
 
+    /**
+     * Moves designated page to the end of the document.
+     *
+     * @param oldPageNumber 1-based page number
+     */
+    public void movePageToDocumentEnd(int oldPageNumber) {
+        if(oldPageNumber == document.getNumberOfPages()) return;
+
+        PDPage page = getPage(oldPageNumber);
+        document.addPage(page);
+        document.removePage(oldPageNumber - 1);
+    }
+
     public PDPage getPage(int pageNumber) {
         return (PDPage) document.getDocumentCatalog().getAllPages().get(pageNumber - 1);
     }
