@@ -7,11 +7,41 @@ An extendible and configurable PDF manipulation layer library written in Java. A
 
 Sejda offers many "ready to go" manipulations implemented using iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.
 
-Interface
+Quick start: [http://www.sejda.org/development/quick-start/]
+
+A full list of the available tasks: [http://www.sejda.org/development/available-tasks/]
+
+CLI Interface
 ----
 A platform independent CLI (command line interface) is available for download with every new release.
 
-A web interface is available at [sejda.com] where the most commonly used tasks are available as online services.
+Download latest from [https://github.com/torakiki/sejda/releases]
+
+Get started: [http://www.sejda.org/shell-interface/tutorial/]
+
+Web Interface
+----
+A web interface is available at [http://sejda.com] where the most commonly used tasks are available as online services:
+
+[Split PDF by pages](http://sejda.com/split-pdf)
+
+[Merge PDF](http://sejda.com/merge-pdf)
+
+[Split PDF by chapters](http://sejda.com/split-pdf-by-bookmarks)
+
+[Split PDF by size](http://sejda.com/split-pdf-by-size)
+
+[Split PDF by size](http://sejda.com/split-pdf-by-size)
+
+[Alternate/Mix PDF](http://sejda.com/merge-pdf)
+
+[Extract Pages from PDF](http://sejda.com/extract-pdf-pages)
+
+[Apply header/footer or page numbers to PDF pages](http://sejda.com/header-footer-pdf)
+
+[Rotate PDF pages](http://sejda.com/rotate-pdf-pages)
+
+[PDF to JPG Images](http://sejda.com/pdf-to-jpg)
 
 Quality
 ----
