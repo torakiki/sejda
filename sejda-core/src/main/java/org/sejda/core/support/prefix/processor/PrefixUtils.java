@@ -21,6 +21,6 @@ public class PrefixUtils {
      * Strips characters deemed usafe for a filename
      */
     public static String toSafeFilename(String input) {
-        return input.replaceAll("[\\\\/:*?\\\"<>|]", "");
+        return input.replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "");
     }
 }

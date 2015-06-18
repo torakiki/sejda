@@ -26,5 +26,6 @@ public class PrefixUtilsTest {
         assertEquals("..test.pdf", PrefixUtils.toSafeFilename("../test.pdf"));
         assertEquals("..test.pdf", PrefixUtils.toSafeFilename("..\\test.pdf"));
         assertEquals(".test.pdf", PrefixUtils.toSafeFilename("./test.pdf"));
+        assertEquals("rest.pdf", PrefixUtils.toSafeFilename("\r\n\t\f`rest.pdf"));
     }
 }
