@@ -15,6 +15,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -27,5 +28,11 @@ public class PrefixUtilsTest {
         assertEquals("..test.pdf", PrefixUtils.toSafeFilename("..\\test.pdf"));
         assertEquals(".test.pdf", PrefixUtils.toSafeFilename("./test.pdf"));
         assertEquals("rest.pdf", PrefixUtils.toSafeFilename("\r\n\t\f`rest.pdf"));
+    }
+
+    @Test
+    public void testStrictFilename() {
+        assertEquals("1_Invoice0001.pdf", PrefixUtils.toStrictFilename("1_Invoice#0001:*<>/\\.pdf"));
+        assertEquals(StringUtils.repeat('a', 255), PrefixUtils.toStrictFilename(StringUtils.repeat('a', 256)));
     }
 }

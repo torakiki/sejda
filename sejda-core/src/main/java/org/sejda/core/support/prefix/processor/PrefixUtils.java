@@ -23,4 +23,15 @@ public class PrefixUtils {
     public static String toSafeFilename(String input) {
         return input.replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "");
     }
+
+    /**
+     * Strips all but characters that are known to be safe: alphanumerics for now.
+     */
+    public static String toStrictFilename(String input) {
+        String safe = input.replaceAll("[^A-Za-z0-9_ .-]", "");
+        if(safe.length() > 255) {
+            safe = safe.substring(0, 255);
+        }
+        return safe;
+    }
 }

@@ -83,6 +83,6 @@ public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest imple
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         assertOutputContainsDocuments(3);
-        assertOutputContainsFilenames("1-Invoice #00001.pdf","4-Invoice #00002.pdf","5-Invoice #00003.pdf");
+        assertOutputContainsFilenames("1-Invoice00001.pdf","4-Invoice00002.pdf","5-Invoice00003.pdf");
     }
 }

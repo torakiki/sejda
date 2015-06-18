@@ -16,7 +16,7 @@ public class TextPrefixProcessorTest {
         String text = "This is an example\nof\t\f\r\n text;\\// that` is \" '' not filename friendly";
         NameGenerationRequest req = NameGenerationRequest.nameRequest().text(text);
         String actual = new TextPrefixProcessor().process("prefix-[TEXT]-suffix", req);
-        assertEquals("prefix-This is an exampleof text; that is  '' not filename friendly-suffix", actual);
+        assertEquals("prefix-This is an exampleof text that is   not filename friendly-suffix", actual);
 
         File file = File.createTempFile(actual, ".pdf");
         assertTrue(file.exists());
