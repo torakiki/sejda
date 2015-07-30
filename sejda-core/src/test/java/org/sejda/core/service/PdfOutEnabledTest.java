@@ -20,17 +20,19 @@ package org.sejda.core.service;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.util.PDFTextStripperByArea;
+import org.sejda.io.SeekableSources;
+import org.sejda.sambox.input.PDFParser;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.text.PDFTextStripperByArea;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
 import org.sejda.model.output.FileTaskOutput;
@@ -71,12 +73,6 @@ public class PdfOutEnabledTest {
         parameters.setOutput(pdfOut);
     }
 
-    /**
-     * Initialize the input parameters with a new {@link PdfFileOutput}
-     * 
-     * @param parameters
-     * @throws IOException
-     */
     void initializeNewFileOutput(SingleOutputTaskParameters parameters) throws IOException {
         outFile = File.createTempFile("SejdaTest", ".pdf");
         outFile.deleteOnExit();
@@ -203,22 +199,28 @@ public class PdfOutEnabledTest {
         assertEquals("Number of pages don't match", expected, getReaderFromResultStream().getNumberOfPages());
     }
 
-    private PDFTextStripperByArea textStripper;
-
     public void assertPageText(String... expectedText) throws IOException {
-        if(textStripper == null) {
-            textStripper = new PDFTextStripperByArea("UTF8");
-        }
-
         for(int pageNumber = 0; pageNumber < expectedText.length; pageNumber++) {
+            PDFTextStripperByArea textStripper = new PDFTextStripperByArea();
 
-            PDDocument doc = PDDocument.load(getResultInputStream(null));
-            PDPage page = (PDPage)doc.getDocumentCatalog().getAllPages().get(pageNumber);
-            PDRectangle pageSize = page.getCropBox();
-            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int)pageSize.getWidth(), (int)pageSize.getHeight());
+            PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getResultInputStream(null)));
+            PDPage page = doc.getDocumentCatalog().getPages().get(pageNumber);
+
+            PDRectangle rect = page.getCropBox();
+            // reposition rectangle to match text space
+            float x = rect.getLowerLeftX();
+            float y = rect.getUpperRightY();
+            float width = rect.getWidth();
+            float height = rect.getHeight();
+            int rotation = page.getRotation();
+            if (rotation == 0) {
+                PDRectangle pageSize = page.getMediaBox();
+                y = pageSize.getHeight() - y;
+            }
+            Rectangle2D.Float awtRect = new Rectangle2D.Float(x, y, width, height);
 
             textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", cropBoxRectangle);
+            textStripper.addRegion("area1", awtRect);
             textStripper.extractRegions(page);
 
             String actualText = textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", "");

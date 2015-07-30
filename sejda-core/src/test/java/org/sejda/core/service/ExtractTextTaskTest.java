@@ -83,29 +83,36 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
 
     @Test
     public void executeUnethicalExtract() throws TaskException, IOException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        victim.execute(parameters);
-        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
-        ZipInputStream zip = new ZipInputStream(input);
-        int counter = 0;
-        ZipEntry entry = zip.getNextEntry();
-        while (entry != null) {
-            counter++;
-            assertTrue(entry.getName().endsWith(SejdaFileExtensions.TXT_EXTENSION));
-            entry = zip.getNextEntry();
-        }
-        assertEquals(1, counter);
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        new WithUnethicalReadProperty(true) {
+            @Override
+            public void execute() throws TaskException, IOException {
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                victim.execute(parameters);
+                ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
+                ZipInputStream zip = new ZipInputStream(input);
+                int counter = 0;
+                ZipEntry entry = zip.getNextEntry();
+                while (entry != null) {
+                    counter++;
+                    assertTrue(entry.getName().endsWith(SejdaFileExtensions.TXT_EXTENSION));
+                    entry = zip.getNextEntry();
+                }
+                assertEquals(1, counter);
+            }
+        };
     }
 
     @Test
-    public void failedExtractMissingPermission() throws TaskException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
-        assertTrue(failListener.isFailed());
+    public void failedExtractMissingPermission() throws TaskException, IOException {
+        new WithUnethicalReadProperty(false) {
+            @Override
+            public void execute() throws TaskException, IOException {
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+                ThreadLocalNotificationContext.getContext().addListener(failListener);
+                victim.execute(parameters);
+                assertTrue(failListener.isFailed());
+            }
+        };
     }
 }

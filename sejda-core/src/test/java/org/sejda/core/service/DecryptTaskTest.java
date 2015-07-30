@@ -160,50 +160,60 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
 
     @Test
     public void executeOwnerCompressedUnethical() throws TaskException, IOException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
-        setUpInputOwnerCompressedNoPwd();
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
-        assertCommonsAndClose(reader);
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        new WithUnethicalReadProperty(true) {
+            @Override public void execute() throws TaskException, IOException {
+                setUpInputOwnerCompressedNoPwd();
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                initializeNewStreamOutput(parameters);
+                victim.execute(parameters);
+                PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
+                assertCommonsAndClose(reader);
+            }
+        };
     }
 
     @Test
-    public void failingExecuteOwnerCompresseNotUnethical() throws TaskException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
-        setUpInputOwnerCompressedNoPwd();
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
-        assertTrue(failListener.isFailed());
+    public void failingExecuteOwnerCompresseNotUnethical() throws TaskException, IOException {
+        new WithUnethicalReadProperty(false) {
+            @Override public void execute() throws TaskException, IOException {
+                setUpInputOwnerCompressedNoPwd();
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                initializeNewStreamOutput(parameters);
+                TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+                ThreadLocalNotificationContext.getContext().addListener(failListener);
+                victim.execute(parameters);
+                assertTrue(failListener.isFailed());
+            }
+        };
     }
 
     @Test
     public void executeOwnerUnompressedUnethical() throws TaskException, IOException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "true");
-        setUpInputOwnerUncompressedNoPwd();
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
-        assertCommonsAndClose(reader);
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
+        new WithUnethicalReadProperty(true) {
+            @Override public void execute() throws TaskException, IOException {
+                setUpInputOwnerUncompressedNoPwd();
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                initializeNewStreamOutput(parameters);
+                victim.execute(parameters);
+                PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
+                assertCommonsAndClose(reader);
+            }
+        };
     }
 
     @Test
-    public void failingExecuteOwnerUncompresseNotUnethical() throws TaskException {
-        System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
-        setUpInputOwnerUncompressedNoPwd();
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
-        assertTrue(failListener.isFailed());
+    public void failingExecuteOwnerUncompresseNotUnethical() throws TaskException, IOException {
+        new WithUnethicalReadProperty(false) {
+            @Override public void execute() throws TaskException, IOException {
+                setUpInputOwnerUncompressedNoPwd();
+                when(context.getTask(parameters)).thenReturn((Task) getTask());
+                initializeNewStreamOutput(parameters);
+                TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+                ThreadLocalNotificationContext.getContext().addListener(failListener);
+                victim.execute(parameters);
+                assertTrue("Expected task to fail, it did not.", failListener.isFailed());
+            }
+        };
     }
 
     private void assertCommonsAndClose(PdfReader reader) {
