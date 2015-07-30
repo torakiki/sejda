@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test encrypted files across all pdf implementations (itext, pdfbox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
+ * Test encrypted files across all pdf implementations (itext, sambox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
  * might be different behaviour at runtime
  * 
  * @author Eduard Weissmann

@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-pdfbox</artifactId>
+			<artifactId>sejda-sambox</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

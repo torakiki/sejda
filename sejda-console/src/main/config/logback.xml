@@ -18,7 +18,7 @@
 	</appender>
 
 	<logger name="org.sejda" level="DEBUG" />
-	<logger name="org.apache.pdfbox" level="WARN" />
+	<logger name="org.sejda.sambox" level="WARN" />
 	<logger name="org.icepdf" level="WARN" />
 	<logger name="org.hibernate.validator" level="INFO" />
 
