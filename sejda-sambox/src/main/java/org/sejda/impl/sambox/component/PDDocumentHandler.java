@@ -18,13 +18,14 @@ package org.sejda.impl.sambox.component;
 
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
+import static org.sejda.sambox.output.WriteOption.COMPRESS_STREAMS;
+import static org.sejda.sambox.output.WriteOption.OBJECT_STREAMS;
+import static org.sejda.sambox.output.WriteOption.XREF_STREAM;
 
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
@@ -186,11 +187,11 @@ public class PDDocumentHandler implements Closeable {
     private void savePDDocument(File file, boolean decrypted) throws TaskException {
         try {
             LOG.trace("Saving document to {}", file);
-            List<WriteOption> options = new ArrayList<WriteOption>();
-            if(compress){
-                options.add(WriteOption.COMPRESS_STREAMS);
+            WriteOption[] options = new WriteOption[0];
+            if (compress) {
+                options = new WriteOption[] { COMPRESS_STREAMS, XREF_STREAM, OBJECT_STREAMS };
             }
-            document.writeTo(file, options.toArray(new WriteOption[options.size()]));
+            document.writeTo(file, options);
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
@@ -228,10 +229,12 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Moves designated page to the end of the document.
      *
-     * @param oldPageNumber 1-based page number
+     * @param oldPageNumber
+     *            1-based page number
      */
     public void movePageToDocumentEnd(int oldPageNumber) {
-        if(oldPageNumber == document.getNumberOfPages()) return;
+        if (oldPageNumber == document.getNumberOfPages())
+            return;
 
         PDPage page = getPage(oldPageNumber);
         document.addPage(page);
@@ -256,7 +259,7 @@ public class PDDocumentHandler implements Closeable {
         try {
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, ImageType.RGB);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             LOG.error("Failed to render page " + pageNumber, ex);
             throw new TaskException("Failed to render page " + pageNumber, ex);
         }
