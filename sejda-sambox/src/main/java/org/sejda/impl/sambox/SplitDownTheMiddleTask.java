@@ -15,8 +15,15 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.io.File;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -28,24 +35,16 @@ import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.BaseTask;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * The typical example is A3 -> two A4s or the double page scan split.
  *
- * Splits all (two page layout) pages in a document in two sides, down the middle, creating a document that contains double the number of pages.
- * Works for multiple inputs.
- * If the page orientation is portrait, the split is done horizontally. Otherwise, it is done vertically, for landscape orientation.
+ * Splits all (two page layout) pages in a document in two sides, down the middle, creating a document that contains double the number of pages. Works for multiple inputs. If the
+ * page orientation is portrait, the split is done horizontally. Otherwise, it is done vertically, for landscape orientation.
  */
 public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameters> {
 
@@ -57,7 +56,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
-    public void before(SplitDownTheMiddleParameters parameters) throws TaskException {
+    public void before(SplitDownTheMiddleParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
@@ -89,13 +88,13 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 PDRectangle trimBox = page.getTrimBox();
 
                 // landscape vs portrait
-                if(trimBox.getHeight() <= trimBox.getWidth()) {
+                if (trimBox.getHeight() <= trimBox.getWidth()) {
                     // landscape orientation
 
                     PDPage leftPage = destinationHandler.importPage(page);
                     PDRectangle leftSide = new PDRectangle();
                     leftSide.setUpperRightY(trimBox.getUpperRightY());
-                    leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth()/2);
+                    leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
                     leftSide.setLowerLeftY(trimBox.getLowerLeftY());
                     leftSide.setLowerLeftX(trimBox.getLowerLeftX());
 
@@ -108,7 +107,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     rightSide.setUpperRightY(trimBox.getUpperRightY());
                     rightSide.setUpperRightX(trimBox.getUpperRightX());
                     rightSide.setLowerLeftY(trimBox.getLowerLeftY());
-                    rightSide.setLowerLeftX(trimBox.getLowerLeftX() + trimBox.getWidth()/2);
+                    rightSide.setLowerLeftX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
 
                     rightPage.setCropBox(rightSide);
                     rightPage.setTrimBox(rightSide);
@@ -129,7 +128,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
                     PDPage bottomPage = destinationHandler.importPage(page);
                     PDRectangle lowerSide = new PDRectangle();
-                    lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight()/2);
+                    lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
                     lowerSide.setUpperRightX(trimBox.getUpperRightX());
                     lowerSide.setLowerLeftY(trimBox.getLowerLeftY());
                     lowerSide.setLowerLeftX(trimBox.getLowerLeftX());
@@ -141,7 +140,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             }
 
             // repaginate
-            if(parameters.getRepagination() == Repagination.LAST_FIRST) {
+            if (parameters.getRepagination() == Repagination.LAST_FIRST) {
                 int pages = destinationHandler.getNumberOfPages();
 
                 // differs based on even/odd number of double-layout pages
@@ -150,11 +149,11 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 int step = startStep == 0 ? 3 : 1;
 
                 int i = pages - startStep;
-                while(i > 0) {
+                while (i > 0) {
                     destinationHandler.movePageToDocumentEnd(i);
                     i -= step;
 
-                    if(step == 1) {
+                    if (step == 1) {
                         step = 3;
                     } else {
                         step = 1;

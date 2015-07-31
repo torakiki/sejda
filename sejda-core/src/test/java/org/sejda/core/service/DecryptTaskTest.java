@@ -29,7 +29,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.core.Sejda;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
@@ -161,7 +160,8 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     @Test
     public void executeOwnerCompressedUnethical() throws TaskException, IOException {
         new WithUnethicalReadProperty(true) {
-            @Override public void execute() throws TaskException, IOException {
+            @Override
+            public void execute() throws TaskException, IOException {
                 setUpInputOwnerCompressedNoPwd();
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);
@@ -175,7 +175,8 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     @Test
     public void failingExecuteOwnerCompresseNotUnethical() throws TaskException, IOException {
         new WithUnethicalReadProperty(false) {
-            @Override public void execute() throws TaskException, IOException {
+            @Override
+            public void execute() throws TaskException {
                 setUpInputOwnerCompressedNoPwd();
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);
@@ -190,7 +191,8 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     @Test
     public void executeOwnerUnompressedUnethical() throws TaskException, IOException {
         new WithUnethicalReadProperty(true) {
-            @Override public void execute() throws TaskException, IOException {
+            @Override
+            public void execute() throws TaskException, IOException {
                 setUpInputOwnerUncompressedNoPwd();
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);
@@ -204,7 +206,8 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     @Test
     public void failingExecuteOwnerUncompresseNotUnethical() throws TaskException, IOException {
         new WithUnethicalReadProperty(false) {
-            @Override public void execute() throws TaskException, IOException {
+            @Override
+            public void execute() throws TaskException {
                 setUpInputOwnerUncompressedNoPwd();
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);

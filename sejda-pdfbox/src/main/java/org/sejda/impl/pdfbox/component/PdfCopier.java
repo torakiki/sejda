@@ -15,16 +15,15 @@
  */
 package org.sejda.impl.pdfbox.component;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+
+import java.io.Closeable;
+import java.io.File;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 public class PdfCopier implements Closeable {
     PDDocumentHandler document;
@@ -55,7 +54,7 @@ public class PdfCopier implements Closeable {
         document.saveDecryptedPDDocument(outputFile);
     }
 
-    public void close() throws IOException {
+    public void close() {
         nullSafeCloseQuietly(document);
     }
 }

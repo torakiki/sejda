@@ -21,14 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.sejda.sambox.pdmodel.PageMode;
-import org.sejda.sambox.pdmodel.PageLayout;
-import org.sejda.sambox.pdmodel.PDDocumentCatalog;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
@@ -37,6 +29,13 @@ import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
+import org.sejda.sambox.pdmodel.PageLayout;
+import org.sejda.sambox.pdmodel.PageMode;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

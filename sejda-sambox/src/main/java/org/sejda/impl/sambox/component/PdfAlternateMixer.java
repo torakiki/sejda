@@ -19,9 +19,7 @@ package org.sejda.impl.sambox.component;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.common.ComponentsUtility;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;

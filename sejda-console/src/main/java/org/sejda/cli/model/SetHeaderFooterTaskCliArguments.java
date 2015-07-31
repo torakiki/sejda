@@ -16,11 +16,8 @@
  */
 package org.sejda.cli.model;
 
-import java.math.BigDecimal;
-
 import org.sejda.conversion.BasePageRangeAdapter.PageRangeWithAllAdapter;
 import org.sejda.conversion.HorizontalAlignAdapter;
-import org.sejda.conversion.NumberingAdapter;
 import org.sejda.conversion.StandardType1FontAdapter;
 import org.sejda.conversion.VerticalAlignAdapter;
 

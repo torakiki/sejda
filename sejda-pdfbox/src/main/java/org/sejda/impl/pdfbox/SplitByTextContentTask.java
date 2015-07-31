@@ -1,7 +1,12 @@
 package org.sejda.impl.pdfbox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.sejda.impl.pdfbox.component.*;
+import org.sejda.impl.pdfbox.component.AbstractPdfSplitter;
+import org.sejda.impl.pdfbox.component.ByTextChangesPdfSplitter;
+import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -11,8 +16,6 @@ import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-
 public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitByTextContentTask.class);
@@ -21,7 +24,7 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
     private PDDocumentHandler sourceDocumentHandler;
     private AbstractPdfSplitter splitter;
 
-    public void before(SplitByTextContentParameters parameters) throws TaskException {
+    public void before(SplitByTextContentParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
     }
 

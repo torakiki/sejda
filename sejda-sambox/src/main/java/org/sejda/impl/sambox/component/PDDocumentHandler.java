@@ -26,18 +26,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sejda.sambox.cos.COSDictionary;
-import org.sejda.sambox.output.WriteOption;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentInformation;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.output.WriteOption;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentInformation;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
@@ -62,7 +62,7 @@ public class PDDocumentHandler implements Closeable {
      * @param document
      * @throws TaskIOException
      */
-    public PDDocumentHandler(PDDocument document) throws TaskIOException {
+    public PDDocumentHandler(PDDocument document) {
         if (document == null) {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }

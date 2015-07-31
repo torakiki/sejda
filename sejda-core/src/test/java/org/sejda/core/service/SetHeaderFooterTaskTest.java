@@ -17,10 +17,8 @@ package org.sejda.core.service;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import static org.sejda.model.pdf.TextStampPattern.dateNow;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
@@ -172,7 +170,7 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         assertFooterHasText("test_file1.pdf", 2, "0000001005");
     }
 
-    private void doTestExecute() throws TaskException, IOException {
+    private void doTestExecute() throws TaskException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);

@@ -32,7 +32,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.TestUtils;
-import org.sejda.core.Sejda;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.context.DefaultSejdaContext;
@@ -106,7 +105,7 @@ public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextPar
     public void failedExtractMissingPermission() throws TaskException, IOException {
         new WithUnethicalReadProperty(false) {
             @Override
-            public void execute() throws TaskException, IOException {
+            public void execute() throws TaskException {
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 TestListenerFailed failListener = TestListenerFactory.newFailedListener();
                 ThreadLocalNotificationContext.getContext().addListener(failListener);

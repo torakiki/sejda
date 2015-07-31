@@ -19,9 +19,8 @@ package org.sejda.impl.sambox.util;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Ignore;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
-import org.junit.Test;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 
 /**
  * @author Andrea Vacondio
