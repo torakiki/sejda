@@ -18,6 +18,7 @@
 package org.sejda.model.parameter.base;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,6 +41,10 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
     @NotEmpty
     @Valid
     private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
+
+    public void addSources(Collection<PdfSource<?>> inputs) {
+        sourceList.addAll(inputs);
+    }
 
     /**
      * adds the input source to the source list.

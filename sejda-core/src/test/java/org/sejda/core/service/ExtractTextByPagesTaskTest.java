@@ -74,6 +74,7 @@ public abstract class ExtractTextByPagesTaskTest implements TestableTask<Extract
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
+        parameters.setCompress(true);
         parameters.setTextEncoding("UTF-8");
 
     }

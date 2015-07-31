@@ -3,17 +3,17 @@
 	<notification async="false" />
 	<tasks>
 		<task parameters="org.sejda.model.parameter.DecryptParameters"
-			task="org.sejda.impl.pdfbox.DecryptTask" />
+			task="org.sejda.impl.sambox.DecryptTask" />
 		<task parameters="org.sejda.model.parameter.EncryptParameters"
 			task="org.sejda.impl.itext.EncryptTask" />
 		<task parameters="org.sejda.model.parameter.RotateParameters"
-			task="org.sejda.impl.pdfbox.RotateTask" />
+			task="org.sejda.impl.sambox.RotateTask" />
 		<task
 			parameters="org.sejda.model.parameter.ViewerPreferencesParameters"
-			task="org.sejda.impl.pdfbox.ViewerPreferencesTask" />
+			task="org.sejda.impl.sambox.ViewerPreferencesTask" />
 		<task
 			parameters="org.sejda.model.parameter.AlternateMixParameters"
-			task="org.sejda.impl.pdfbox.AlternateMixTask" />
+			task="org.sejda.impl.sambox.AlternateMixTask" />
 		<task parameters="org.sejda.model.parameter.UnpackParameters"
 			task="org.sejda.impl.itext.UnpackTask" />
 		<task parameters="org.sejda.model.parameter.MergeParameters"
@@ -33,16 +33,16 @@
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task
 			parameters="org.sejda.model.parameter.ExtractPagesParameters"
-			task="org.sejda.impl.pdfbox.ExtractPagesTask" />
+			task="org.sejda.impl.sambox.ExtractPagesTask" />
 		<task
 			parameters="org.sejda.model.parameter.ExtractTextParameters"
-			task="org.sejda.impl.pdfbox.ExtractTextTask" />
+			task="org.sejda.impl.sambox.ExtractTextTask" />
         <task
             parameters="org.sejda.model.parameter.ExtractTextByPagesParameters"
-            task="org.sejda.impl.pdfbox.ExtractTextByPagesTask" />
+            task="org.sejda.impl.sambox.ExtractTextByPagesTask" />
 		<task
 			parameters="org.sejda.model.parameter.SetMetadataParameters"
-			task="org.sejda.impl.pdfbox.SetMetadataTask" />
+			task="org.sejda.impl.sambox.SetMetadataTask" />
 		<task
 			parameters="org.sejda.model.parameter.SetPagesLabelParameters"
 			task="org.sejda.impl.itext.SetPagesLabelTask" />

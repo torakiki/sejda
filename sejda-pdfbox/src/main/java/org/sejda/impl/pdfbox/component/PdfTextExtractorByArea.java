@@ -32,7 +32,7 @@ import org.sejda.model.exception.TaskIOException;
  */
 public class PdfTextExtractorByArea {
 
-    private static final int STANDARD_FOOTER_HEIGHT = 50;
+    private static final int GUESSTIMATE_HEADER_FOOTER_HEIGHT = 50;
 
     /**
      * @param page
@@ -51,13 +51,13 @@ public class PdfTextExtractorByArea {
         PDRectangle pageSize = page.findCropBox();
         int pageHeight = (int) pageSize.getHeight();
         int pageWidth = (int) pageSize.getWidth();
-        return new Rectangle(0, pageHeight - STANDARD_FOOTER_HEIGHT, pageWidth, STANDARD_FOOTER_HEIGHT);
+        return new Rectangle(0, pageHeight - GUESSTIMATE_HEADER_FOOTER_HEIGHT, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }
 
     private Rectangle getHeaderAreaRectangle(PDPage page) {
         PDRectangle pageSize = page.findCropBox();
         int pageWidth = (int) pageSize.getWidth();
-        return new Rectangle(0, 0, pageWidth, STANDARD_FOOTER_HEIGHT);
+        return new Rectangle(0, 0, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }
 
     /**
@@ -72,7 +72,7 @@ public class PdfTextExtractorByArea {
      */
     public String extractTextFromArea(PDPage page, Rectangle area) throws TaskIOException {
         try {
-            PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+            PDFTextStripperByArea stripper = new PDFTextStripperByArea("UTF8");
 
             stripper.setSortByPosition(true);
             stripper.addRegion("area1", area);

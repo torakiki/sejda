@@ -23,6 +23,7 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Set;
 
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParameters> extends BasePdfToImageTask<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PdfToMultipleImageTask.class);
 
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
@@ -64,7 +65,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
         Set<Integer> requestedPages = parameters.getPages(pdfDocument.getNumberOfPages());
         if (requestedPages == null || requestedPages.isEmpty()) {
-            throw new TaskExecutionException("No page has been selected for convertion.");
+            throw new TaskExecutionException("No page has been selected for conversion.");
         }
 
         int currentStep = 0;
@@ -74,12 +75,18 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         for (int currentPage : requestedPages) {
             currentStep++;
 
+            BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBased(currentPage), parameters);
+            if(pageImage == null) {
+                LOG.debug("Failed to convert page {} to image", currentPage);
+                continue;
+            }
+
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);
 
             getWriter().openWriteDestination(tmpFile, parameters);
             LOG.trace("Writing page {}", currentPage);
-            getWriter().write(toBufferedImage(pdfDocument, zeroBased(currentPage), parameters), parameters);
+            getWriter().write(pageImage, parameters);
             getWriter().closeDestination();
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(

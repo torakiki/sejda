@@ -31,7 +31,7 @@ import org.sejda.model.validation.constraint.ValidPdfVersion;
 @ValidPdfVersion
 public abstract class AbstractPdfOutputParameters extends AbstractParameters {
 
-    private boolean compress = false;
+    private boolean compress = true;
     private PdfVersion version;
 
     public boolean isCompress() {

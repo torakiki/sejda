@@ -18,16 +18,13 @@ package org.sejda.impl.pdfbox;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-
 import org.sejda.common.ComponentsUtility;
 import org.sejda.core.service.SetHeaderFooterTaskTest;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfTextExtractorByArea;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.task.Task;
 
@@ -42,24 +39,24 @@ public class SetHeaderFooterPdfBoxTaskTest extends SetHeaderFooterTaskTest {
     }
 
     @Override
-    protected void assertSpecificFooterExpectations(File result) throws TaskException {
-        PdfSource<?> source = PdfFileSource.newInstanceNoPassword(result);
+    protected void assertFooterHasText(String filename, int page, String expectedText) throws Exception {
+        PdfSource<?> source = PdfStreamSource.newInstanceNoPassword(getResultInputStream(filename), filename);
         PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
+
         try {
-            assertThat(extractor.extractFooterText(handler.getPage(3)).trim(), is("100"));
-            assertThat(extractor.extractFooterText(handler.getPage(4)).trim(), is("101"));
+            assertThat(extractor.extractFooterText(handler.getPage(page)).trim(), is(expectedText));
         } finally {
             ComponentsUtility.nullSafeCloseQuietly(handler);
         }
     }
 
     @Override
-    protected void assertSpecificHeaderExpectations(File result) throws TaskException {
-        PdfSource<?> source = PdfFileSource.newInstanceNoPassword(result);
+    protected void assertHeaderHasText(String filename, int page, String expectedText) throws Exception {
+        PdfSource<?> source = PdfStreamSource.newInstanceNoPassword(getResultInputStream(filename), filename);
         PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
+
         try {
-            assertThat(extractor.extractHeaderText(handler.getPage(3)).trim(), is("100"));
-            assertThat(extractor.extractHeaderText(handler.getPage(4)).trim(), is("101"));
+            assertThat(extractor.extractHeaderText(handler.getPage(page)).trim(), is(expectedText));
         } finally {
             ComponentsUtility.nullSafeCloseQuietly(handler);
         }

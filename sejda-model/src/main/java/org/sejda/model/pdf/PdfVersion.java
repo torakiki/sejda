@@ -67,6 +67,13 @@ public enum PdfVersion implements FriendlyNamed {
     }
 
     /**
+     * @return a double representation of the version
+     */
+    public String getVersionAsDoubleString() {
+        return String.valueOf(versionDouble);
+    }
+
+    /**
      * @return a char representation of the int version
      */
     public char getVersionAsCharacter() {

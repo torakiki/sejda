@@ -38,7 +38,8 @@ enum PrefixType {
     FILENUMBER(true, "\\[FILENUMBER(#*)(-?[0-9]*)\\]", new FileNumberPrefixProcessor()),
     TIMESTAMP(true, "\\[TIMESTAMP\\]", new TimestampPrefixProcessor()),
     BOOKMARK(true, "\\[BOOKMARK_NAME\\]", new BookmarkPrefixProcessor()),
-    BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", new StrictBookmarkPrefixProcessor());
+    BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", new StrictBookmarkPrefixProcessor()),
+    TEXT(true, "\\[TEXT\\]", new TextPrefixProcessor());
 
     private boolean ensureUniqueNames;
     private Pattern pattern;

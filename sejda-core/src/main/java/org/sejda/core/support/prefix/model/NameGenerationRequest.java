@@ -33,6 +33,7 @@ public final class NameGenerationRequest {
     private String bookmark = null;
     private String originalName = null;
     private String extension = null;
+    private String text = null;
 
     private NameGenerationRequest(String extension) {
         if (StringUtils.isBlank(extension)) {
@@ -110,6 +111,19 @@ public final class NameGenerationRequest {
         return this;
     }
 
+    /**
+     * Fluently sets the text. Called when splitting by text content, passes in the text found in the rectangle
+     * box area on the page right before the split boundary.
+     *
+     * @param text strings found in page areas when splitting by text content
+     * @return the current instance
+     */
+
+    public NameGenerationRequest text(String text) {
+        this.text = text;
+        return this;
+    }
+
     public Integer getPage() {
         return page;
     }
@@ -128,6 +142,10 @@ public final class NameGenerationRequest {
 
     public String getExtension() {
         return extension;
+    }
+
+    public String getText() {
+        return text;
     }
 
 }

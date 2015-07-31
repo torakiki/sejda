@@ -15,10 +15,6 @@
  */
 package org.sejda.model.parameter;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.math.BigDecimal;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -27,22 +23,18 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
-import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
+import org.sejda.model.pdf.numbering.BatesSequence;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.headerfooter.Numbering;
 import org.sejda.model.pdf.page.PageRange;
-import org.sejda.model.validation.constraint.HasHeaderFooterDefinition;
-import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameters configuring how to label the header/footer of a set of pages in a given pdf document.
- * 
+ *
  * @author Eduard Weissmann
- * 
+ *
  */
-@SingleOutputAllowedExtensions
-@HasHeaderFooterDefinition
-public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParameters {
+public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @NotNull
     @Valid
@@ -51,11 +43,11 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
     @Min(1)
-    private BigDecimal fontSize = BigDecimal.TEN;
+    private double fontSize = 10d;
     @NotNull
-    @Valid
-    private Numbering numbering = Numbering.NULL;
-    private String labelPrefix;
+    private String pattern;
+    private Integer pageCountStartFrom;
+    private BatesSequence batesSequence;
 
     public PageRange getPageRange() {
         return pageRange;
@@ -63,20 +55,11 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
 
     /**
      * Set the page range where the header/footer will be applied
-     * 
+     *
      * @param pageRange
      */
     public void setPageRange(PageRange pageRange) {
         this.pageRange = pageRange;
-    }
-
-    /**
-     * 
-     * @param pageNumber
-     * @return the styled label for the given page number
-     */
-    public String styledLabelFor(int pageNumber) {
-        return String.format("%s%s", defaultString(labelPrefix, ""), numbering.styledLabelFor(pageNumber)).trim();
     }
 
     public StandardType1Font getFont() {
@@ -103,43 +86,47 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
         this.verticalAlign = verticalAlign;
     }
 
-    public BigDecimal getFontSize() {
+    public double getFontSize() {
         return fontSize;
     }
 
-    public Numbering getNumbering() {
-        return numbering;
+    public String getPattern() {
+        return pattern;
     }
 
-    public void setNumbering(Numbering numbering) {
-        if (numbering == null) {
-            this.numbering = Numbering.NULL;
-        } else {
-            this.numbering = numbering;
-        }
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
-    public String getLabelPrefix() {
-        return labelPrefix;
+    public Integer getPageCountStartFrom() {
+        return pageCountStartFrom;
     }
 
-    public void setLabelPrefix(String labelPrefix) {
-        this.labelPrefix = labelPrefix;
+    public void setPageCountStartFrom(int pageCountStartFrom) {
+        this.pageCountStartFrom = pageCountStartFrom;
+    }
+
+    public BatesSequence getBatesSequence() {
+        return batesSequence;
+    }
+
+    public void setBatesSequence(BatesSequence batesSequence) {
+        this.batesSequence = batesSequence;
     }
 
     /**
      * Set the font size in pts
-     * 
+     *
      * @param fontSize
      */
-    public void setFontSize(BigDecimal fontSize) {
+    public void setFontSize(double fontSize) {
         this.fontSize = fontSize;
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
-                .append(verticalAlign).append(fontSize).append(pageRange).append(numbering).append(labelPrefix)
+                .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence).append(pageCountStartFrom)
                 .toHashCode();
     }
 
@@ -155,8 +142,10 @@ public class SetHeaderFooterParameters extends SinglePdfSourceSingleOutputParame
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getFont(), parameter.getFont())
                 .append(getHorizontalAlign(), parameter.getHorizontalAlign())
                 .append(getVerticalAlign(), parameter.getVerticalAlign())
+                .append(getBatesSequence(), parameter.getBatesSequence())
+                .append(getPageCountStartFrom(), parameter.getPageCountStartFrom())
                 .append(getFontSize(), parameter.getFontSize()).append(getPageRange(), parameter.getPageRange())
-                .append(numbering, parameter.getNumbering()).append(labelPrefix, parameter.getLabelPrefix()).isEquals();
+                .append(getPattern(), parameter.getPattern()).isEquals();
     }
 
 }

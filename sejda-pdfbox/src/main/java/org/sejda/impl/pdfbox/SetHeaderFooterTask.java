@@ -20,11 +20,13 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
 
+import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.pdfbox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.pdfbox.component.PDDocumentHandler;
 import org.sejda.impl.pdfbox.component.PdfHeaderFooterWriter;
@@ -38,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task adding footer labels to pages
+ * PDFBox implementation of a task adding header or footer labels to pages
  * 
  * @author Eduard Weissmann
  * 
@@ -47,42 +49,50 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SetHeaderFooterTask.class);
 
+    private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private SingleOutputWriter outputWriter;
+    private MultipleOutputWriter outputWriter;
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     public void before(SetHeaderFooterParameters parameters) {
+        totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
     public void execute(SetHeaderFooterParameters parameters) throws TaskException {
-        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+        int currentStep = 0;
 
-        PdfSource<?> source = parameters.getSource();
-        LOG.debug("Opening {}", source);
-        documentHandler = source.open(documentLoader);
-        documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
-        documentHandler.setCreatorOnPDDocument();
+        for(PdfSource<?> source: parameters.getSourceList()) {
+            currentStep++;
 
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output on temporary buffer {}", tmpFile);
+            LOG.debug("Opening {}", source);
+            documentHandler = source.open(documentLoader);
+            documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
+            documentHandler.setCreatorOnPDDocument();
 
-        documentHandler.setVersionOnPDDocument(parameters.getVersion());
-        documentHandler.compressXrefStream(parameters.isCompress());
+            File tmpFile = createTemporaryPdfBuffer();
+            LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-        PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
-        footerWriter.writeFooter(parameters);
+            documentHandler.setVersionOnPDDocument(parameters.getVersion());
+            documentHandler.compressXrefStream(parameters.isCompress());
 
-        documentHandler.saveDecryptedPDDocument(tmpFile);
+            PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
+            footerWriter.write(parameters, currentStep);
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
+            documentHandler.saveDecryptedPDDocument(tmpFile);
 
-        nullSafeCloseQuietly(documentHandler);
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            outputWriter.addOutput(file(tmpFile).name(outName));
+
+            nullSafeCloseQuietly(documentHandler);
+
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+        }
 
         parameters.getOutput().accept(outputWriter);
-        LOG.debug("Header or footer added and document written to {}", parameters.getOutput());
     }
 
     public void after() {

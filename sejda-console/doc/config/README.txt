@@ -3,4 +3,4 @@ To use the alternative configuration:
 - On Mac/Linux: edit the file bin/sejda-console adding: JAVA_OPTS='-Dsejda.config.file=PATH_TO_ALTERNATIVE_CONFIG'
 - On Windows: edit the file bin/sejda-console.bat adding: set JAVA_OPTS='-Dsejda.config.file=PATH_TO_ALTERNATIVE_CONFIG'
 
--pdfbox-sejda.xml is a Sejda configuration file where PDFBox tasks implementations are used when available. 
+-sambox-sejda.xml is a Sejda configuration file where sambox tasks implementations are used when available.

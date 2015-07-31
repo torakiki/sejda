@@ -30,17 +30,12 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
         CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> {
 
     public SetHeaderFooterParameters toTaskParameters(SetHeaderFooterTaskCliArguments taskCliArguments) {
-        if (!taskCliArguments.isNumbering() && !taskCliArguments.isLabel()) {
-            throw new SejdaRuntimeException("No header or footer definition, numbering or label required.");
+        if (taskCliArguments.getLabel() == null) {
+            throw new SejdaRuntimeException("Please specify the text label to apply");
         }
         SetHeaderFooterParameters parameters = new SetHeaderFooterParameters();
         parameters.setPageRange(taskCliArguments.getPageRange().getPageRange());
-        if (taskCliArguments.isNumbering()) {
-            parameters.setNumbering(taskCliArguments.getNumbering().getNumbering());
-        }
-        if (taskCliArguments.isLabel()) {
-            parameters.setLabelPrefix(taskCliArguments.getLabel());
-        }
+        parameters.setPattern(taskCliArguments.getLabel());
         populateAlignment(taskCliArguments, parameters);
         populateFont(taskCliArguments, parameters);
         populateSourceParameters(parameters, taskCliArguments);

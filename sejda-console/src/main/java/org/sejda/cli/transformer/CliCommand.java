@@ -241,7 +241,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> getArgumentsTransformer() {
             return new SetHeaderFooterCliArgumentsTransformer();
         }
-    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf -o /tmp/output.pdf -s 5- -x right -t Courier -n 1:arabic -l \"some text\""),
+    }, "Adds a header or a footer to a pdf document or part of it.", "setheaderfooter -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp -s all -y top -x center -t Courier -l \"Page [PAGE_OF_TOTAL]\""),
     PDF_TO_JPEG("pdftojpeg", new CliInterfacedTask<PdfToJpegTaskCliArguments, PdfToJpegParameters>() {
 
         @Override
