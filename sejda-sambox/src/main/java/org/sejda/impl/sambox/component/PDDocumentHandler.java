@@ -19,6 +19,7 @@ package org.sejda.impl.sambox.component;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
+import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +38,8 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.sambox.rendering.ImageType;
+import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,5 +252,13 @@ public class PDDocumentHandler implements Closeable {
         setCreatorOnPDDocument();
     }
 
-
+    public BufferedImage renderImage(int pageNumber, int dpi) throws TaskException {
+        try {
+            PDFRenderer pdfRenderer = new PDFRenderer(document);
+            return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, ImageType.RGB);
+        } catch(IOException ex) {
+            LOG.error("Failed to render page " + pageNumber, ex);
+            throw new TaskException("Failed to render page " + pageNumber, ex);
+        }
+    }
 }

@@ -45,6 +45,11 @@
 			<artifactId>sambox</artifactId>
 			<version>${sambox.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.sejda</groupId>
+            <artifactId>sejda-image-writers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15</artifactId>

@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParameters> extends BasePdfToImageTask<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PdfToMultipleImageTask.class);
 
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<Document> sourceOpener = new DefaultPdfSourceOpener();
@@ -65,7 +65,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
         Set<Integer> requestedPages = parameters.getPages(pdfDocument.getNumberOfPages());
         if (requestedPages == null || requestedPages.isEmpty()) {
-            throw new TaskExecutionException("No page has been selected for convertion.");
+            throw new TaskExecutionException("No page has been selected for conversion.");
         }
 
         int currentStep = 0;
