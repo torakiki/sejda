@@ -61,8 +61,11 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                     LOG.debug("Starting split at page {} of the original document", page);
                     outputDocumentsCounter++;
                     pdfCopier = open(page, outputDocumentsCounter);
+                    pdfCopier.setCompression(parameters.isCompress());
                 }
+
                 pdfCopier.addPage(document, page);
+
                 notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     pdfCopier.saveToFile();

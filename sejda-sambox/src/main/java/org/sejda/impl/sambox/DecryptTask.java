@@ -72,7 +72,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
-            documentHandler.compressXrefStream(parameters.isCompress());
+            documentHandler.setCompress(parameters.isCompress());
             documentHandler.saveDecryptedPDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(

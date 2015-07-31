@@ -37,7 +37,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
 
         mixer.mix(getNotifiableTaskMetadata());
         mixer.setVersionOnPDDocument(parameters.getVersion());
-        mixer.compressXrefStream(parameters.isCompress());
+        mixer.setCompress(parameters.isCompress());
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);

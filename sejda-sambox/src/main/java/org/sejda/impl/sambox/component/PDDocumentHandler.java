@@ -16,20 +16,20 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.encryption.DecryptionMaterial;
-import org.sejda.sambox.pdmodel.encryption.StandardDecryptionMaterial;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
@@ -51,6 +51,7 @@ public class PDDocumentHandler implements Closeable {
 
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
+    private boolean compress = true;
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
@@ -136,10 +137,8 @@ public class PDDocumentHandler implements Closeable {
      * 
      * @param compress
      */
-    public void compressXrefStream(boolean compress) {
-        if (compress) {
-            LOG.warn("Xref Compression not yet supported by PDFBox");
-        }
+    public void setCompress(boolean compress) {
+        this.compress = compress;
     }
 
     /**
@@ -184,7 +183,11 @@ public class PDDocumentHandler implements Closeable {
     private void savePDDocument(File file, boolean decrypted) throws TaskException {
         try {
             LOG.trace("Saving document to {}", file);
-            document.writeTo(file);
+            List<WriteOption> options = new ArrayList<WriteOption>();
+            if(compress){
+                options.add(WriteOption.COMPRESS_STREAMS);
+            }
+            document.writeTo(file, options.toArray(new WriteOption[options.size()]));
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }

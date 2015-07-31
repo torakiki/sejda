@@ -66,6 +66,9 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
         documentHandler = source.open(documentLoader);
         documentHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
 
+        documentHandler.setCompress(parameters.isCompress());
+        documentHandler.setVersionOnPDDocument(parameters.getVersion());
+
         Set<Integer> pages = parameters.getPages(documentHandler.getNumberOfPages());
         if (pages == null || pages.isEmpty()) {
             throw new TaskExecutionException("No page has been selected for extraction.");
