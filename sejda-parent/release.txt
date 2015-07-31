@@ -2,7 +2,7 @@ Release howto
 
 * Release another snapshot version to OSS Sonatype
 
-mvn clean deploy -Psonatype-oss-snapshots
+mvn clean deploy -Prelease
 
 * Maven release
 
@@ -14,7 +14,7 @@ mvn release:perform -Darguments="-Dgpg.passphrase=secret123 -Psonatype-oss-relea
 
 * Post public release steps
 1a) log in to OSS Nexus and close the staging repository. Log in at https://oss.sonatype.org/ with username sejda, click "Staging Repositories". Select the last release performed (should be Open) and perform 'Close'. You expect no validation error and a successful close. After that, you can do 'Release', BEWARE this is a point of no return for Maven Central binaries.
-1b) hg push release changes (by default the release process does not push)
+1b) git push release changes (by default the release process does not push)
 2) upload released binaries to bitbucket download page:
 3a) - console binaries: <sejda dir>/target/checkout/sejda-console/target/sejda-console-*-bin.zip
 3b) - zip containing all jars for the rest of the modules: <sejda dir>/target/checkout/sejda-distribution/target/sejda-distribution-*-bin.zip

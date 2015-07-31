@@ -16,7 +16,7 @@
 
 	<profiles>
 		<profile>
-			<id>sonatype-oss-release</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<!-- creates the binary distributable zip containing all modules jars -->
