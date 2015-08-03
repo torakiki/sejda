@@ -289,6 +289,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>org.sejda</groupId>
+            <artifactId>sambox</artifactId>
+            <version>${sambox.version}</version>
+            <scope>compile</scope>
+        </dependency>
 		<!-- sejda-core needs an implementation of javax.validation -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
