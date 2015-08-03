@@ -35,9 +35,8 @@ import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.output.WriteOption;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentInformation;
-import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.*;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
@@ -211,13 +210,8 @@ public class PDDocumentHandler implements Closeable {
      * @param page
      * @throws TaskIOException
      */
-    public PDPage importPage(PDPage page) throws TaskIOException {
-        PDPage imported;
-        try {
-            imported = document.importPage(page);
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred copying the page.", e);
-        }
+    public PDPage importPage(PDPage page) {
+        PDPage imported = document.importPage(page);
         imported.setCropBox(page.getCropBox());
         imported.setMediaBox(page.getMediaBox());
         imported.setResources(page.getResources());
@@ -245,13 +239,11 @@ public class PDDocumentHandler implements Closeable {
         return document.getDocumentCatalog().getPages().get(pageNumber - 1);
     }
 
-    public void initialiseBasedOn(PDDocumentHandler other) {
-        setDocumentInformation(other.getUnderlyingPDDocument().getDocumentInformation());
-        setViewerPreferences(other.getViewerPreferences());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(
-                other.getUnderlyingPDDocument().getDocumentCatalog().getPageLayout());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageMode(
-                other.getUnderlyingPDDocument().getDocumentCatalog().getPageMode());
+    public void initialiseBasedOn(PDDocument other) {
+        setDocumentInformation(other.getDocumentInformation());
+        setViewerPreferences(other.getDocumentCatalog().getViewerPreferences());
+        getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(other.getDocumentCatalog().getPageLayout());
+        getUnderlyingPDDocument().getDocumentCatalog().setPageMode(other.getDocumentCatalog().getPageMode());
         setCreatorOnPDDocument();
     }
 
@@ -263,5 +255,17 @@ public class PDDocumentHandler implements Closeable {
             LOG.error("Failed to render page " + pageNumber, ex);
             throw new TaskException("Failed to render page " + pageNumber, ex);
         }
+    }
+
+    public void setDocumentOutline(PDDocumentOutline outline) {
+        document.getDocumentCatalog().setDocumentOutline(outline);
+    }
+
+    public void setPageMode(PageMode pageMode) {
+        document.getDocumentCatalog().setPageMode(pageMode);
+    }
+
+    public void setPageLayout(PageLayout pageLayout) {
+        document.getDocumentCatalog().setPageLayout(pageLayout);
     }
 }

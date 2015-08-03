@@ -231,12 +231,6 @@
 			<version>${itextpdf.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!--<dependency> -->
-		<!--<groupId>org.apache.pdfbox</groupId> -->
-		<!--<artifactId>pdfbox</artifactId> -->
-		<!--<version>${pdfbox.version}</version> -->
-		<!--<scope>test</scope> -->
-		<!--</dependency> -->
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sambox</artifactId>

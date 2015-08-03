@@ -2,8 +2,8 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
-import org.sejda.impl.sambox.component.AbstractPdfSplitter;
-import org.sejda.impl.sambox.component.ByTextChangesPdfSplitter;
+import org.sejda.impl.sambox.component.split.AbstractPdfSplitter;
+import org.sejda.impl.sambox.component.split.ByTextChangesPdfSplitter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;

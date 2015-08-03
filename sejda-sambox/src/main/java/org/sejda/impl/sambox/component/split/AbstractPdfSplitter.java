@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  */
-package org.sejda.impl.sambox.component;
+package org.sejda.impl.sambox.component.split;
 
+import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -53,44 +53,38 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
 
     public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {
         nextOutputStrategy().ensureIsValid();
-        PdfCopier pdfCopier = null;
-        try {
+        MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+
+        try (PagesExtractor extractor = new PagesExtractor(document)) {
             int outputDocumentsCounter = 0;
+            File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
                     outputDocumentsCounter++;
-                    pdfCopier = open(page, outputDocumentsCounter);
-                    pdfCopier.setCompression(parameters.isCompress());
+                    tmpFile = createTemporaryPdfBuffer();
+                    String outName = nameGenerator(parameters.getOutputPrefix())
+                            .generate(
+                                    enrichNameGenerationRequest(nameRequest().page(page)
+                                            .originalName(parameters.getSource().getName())
+                                            .fileNumber(outputDocumentsCounter)));
+                    outputWriter.addOutput(file(tmpFile).name(outName));
                 }
-
-                pdfCopier.addPage(document, page);
-
+                LOG.trace("Retaining page {} of the original document", page);
+                extractor.retain(page);
                 notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
-                    pdfCopier.saveToFile();
-                    nullSafeCloseQuietly(pdfCopier);
+                    LOG.debug("Created output temporary buffer {}", tmpFile);
+                    extractor.setVersion(parameters.getVersion());
+                    extractor.setCompress(parameters.isCompress());
+                    extractor.save(tmpFile);
+                    extractor.reset();
+
                     LOG.debug("Ending split at page {} of the original document", page);
                 }
             }
-        } finally {
-            nullSafeCloseQuietly(pdfCopier);
         }
         parameters.getOutput().accept(outputWriter);
-    }
-
-    private PdfCopier open(int page, int outputDocumentsCounter) throws TaskException {
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {}", tmpFile);
-
-        PdfCopier pdfCopier = new PdfCopier(document, tmpFile, parameters.getVersion());
-        pdfCopier.setCompression(parameters.isCompress());
-
-        String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                enrichNameGenerationRequest(nameRequest().page(page).originalName(parameters.getSource().getName())
-                        .fileNumber(outputDocumentsCounter)));
-        outputWriter.addOutput(file(tmpFile).name(outName));
-        return pdfCopier;
     }
 
     abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);

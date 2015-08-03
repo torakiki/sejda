@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.sejda.impl.sambox.component;
+package org.sejda.impl.sambox.component.split;
 
+import org.sejda.impl.sambox.component.SplitByTextChangesOutputStrategy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.model.exception.TaskIOException;

@@ -41,7 +41,7 @@ public class PdfCopier implements Closeable {
         document.setViewerPreferences(original.getDocumentCatalog().getViewerPreferences());
     }
 
-    void addPage(PDDocument original, int pageNumber) throws TaskException {
+    public void addPage(PDDocument original, int pageNumber) throws TaskException {
         PDPage page = original.getDocumentCatalog().getPages().get(pageNumber - 1);
         document.importPage(page);
     }

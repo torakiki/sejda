@@ -76,7 +76,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             destinationHandler = new PDDocumentHandler();
             destinationHandler.setVersionOnPDDocument(parameters.getVersion());
             LOG.debug("Done with version");
-            destinationHandler.initialiseBasedOn(sourceHandler);
+            destinationHandler.initialiseBasedOn(sourceHandler.getUnderlyingPDDocument());
             destinationHandler.setCompress(parameters.isCompress());
             LOG.debug("Done with init");
 

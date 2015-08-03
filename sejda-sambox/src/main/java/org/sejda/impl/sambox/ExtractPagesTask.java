@@ -68,15 +68,16 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         if (pages == null || pages.isEmpty()) {
             throw new TaskExecutionException("No page has been selected for extraction.");
         }
-        extractor = new PagesExtractor(sourceDocumentHandler);
-        LOG.debug("Extracting pages {}", pages);
-        extractor.extractPages(pages, getNotifiableTaskMetadata());
-        extractor.setVersionOnPDDocument(parameters.getVersion());
+        extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument());
+        extractor.setVersion(parameters.getVersion());
         extractor.setCompress(parameters.isCompress());
+
+        LOG.debug("Extracting pages {}", pages);
+        extractor.retain(pages, getNotifiableTaskMetadata());
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
-        extractor.saveDecryptedPDDocument(tmpFile);
+        extractor.save(tmpFile);
 
         closeResource();
 

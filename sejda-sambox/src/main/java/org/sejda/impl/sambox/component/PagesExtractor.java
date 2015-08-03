@@ -1,71 +1,108 @@
-/*
- * Created on 13/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License. 
+/* 
+ * This file is part of the Sejda source code
+ * Created on 06/mar/2015
+ * Copyright 2013-2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as 
+ * published by the Free Software Foundation, either version 3 of the 
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sejda.impl.sambox.component;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
-import java.io.IOException;
-import java.util.Set;
-
-import org.sejda.common.ComponentsUtility;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDPageTree;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
+import org.sejda.common.ComponentsUtility;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.pdf.PdfVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
+import java.io.File;
+import java.util.Set;
+
 /**
- * Component responsible for extracting a set of pages from an input {@link PDDocumentHandler} to a new {@link PDDocumentHandler}.
+ * Component that retains pages from a given existing {@link PDDocument} and saves a new document containing retained pages and an outline that patches the new document.
  * 
  * @author Andrea Vacondio
- * 
+ *
  */
-public class PagesExtractor extends PDDocumentHandler {
+public class PagesExtractor implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PagesExtractor.class);
 
-    private PDDocumentHandler sourceDocumentHandler;
+    private OutlineMerger outlineMerger;
+    private PDDocumentOutline outline;
+    private PDDocument originalDocument;
+    private PDDocumentHandler destinationDocument;
 
-    public PagesExtractor(PDDocumentHandler sourceDocumentHandler) {
-        this.sourceDocumentHandler = sourceDocumentHandler;
+    public PagesExtractor(PDDocument origin) {
+        this.originalDocument = origin;
+        init();
     }
 
-    public void extractPages(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
-        initialiseBasedOn(sourceDocumentHandler);
-        doExtract(pages, taskMetadata);
+    private void init() {
+        this.outlineMerger = new OutlineMerger(originalDocument);
+        this.outline = new PDDocumentOutline();
+        this.destinationDocument = new PDDocumentHandler();
+        this.destinationDocument.initialiseBasedOn(originalDocument);
     }
 
-    private void doExtract(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskIOException {
+    public void retain(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) {
         @SuppressWarnings("unchecked")
-        PDPageTree existingPages = sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getPages();
         int currentStep = 0;
         for (Integer page : pages) {
-            PDPage existingPage = existingPages.get(page - 1);
-            importPage(existingPage);
-            LOG.trace("Imported page number {}", page);
+            retain(page);
             notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(pages.size());
         }
     }
 
-    @Override
-    public void close() throws IOException {
-        super.close();
-        ComponentsUtility.nullSafeCloseQuietly(sourceDocumentHandler);
+    public void retain(int page) {
+        PDPage existingPage = originalDocument.getPage(page - 1);
+        destinationDocument.importPage(existingPage);
+        outlineMerger.addRelevantPage(existingPage);
+        LOG.trace("Imported page number {}", page);
     }
 
+    public void setVersion(PdfVersion version) {
+        destinationDocument.setVersionOnPDDocument(version);
+    }
+
+    public void setCompress(boolean compress) {
+        destinationDocument.setCompress(compress);
+    }
+
+    public void save(File file) throws TaskException {
+        outlineMerger.mergeRelevantOutlineTo(outline);
+        if (outline.hasChildren()) {
+            destinationDocument.setDocumentOutline(outline);
+        }
+        destinationDocument.saveDecryptedPDDocument(file);
+    }
+
+    public void close() {
+        ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
+        outlineMerger = null;
+    }
+
+    /**
+     * Resets the component making it ready to start a new extractions from the original document
+     */
+    public void reset() {
+        close();
+        init();
+    }
 }
