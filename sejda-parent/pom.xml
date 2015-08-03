@@ -115,6 +115,7 @@
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<hamcrest.version>1.3</hamcrest.version>
 		<sambox.version>1.0.0-SNAPSHOT</sambox.version>
+		<xmlgraphics.version>2.0.1</xmlgraphics.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -128,6 +129,14 @@
 			</releases>
 			<snapshots>
 				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>oss-sonatype</id>
+			<name>oss-sonatype</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -171,6 +180,11 @@
 				<artifactId>hamcrest-all</artifactId>
 				<version>${hamcrest.version}</version>
 				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xmlgraphics</groupId>
+				<artifactId>xmlgraphics-commons</artifactId>
+				<version>${xmlgraphics.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
