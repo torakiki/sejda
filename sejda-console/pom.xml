@@ -200,7 +200,7 @@
 					<programs>
 						<program>
 							<mainClass>org.sejda.cli.Main</mainClass>
-							<name>sejda-console</name>
+							<id>sejda-console</id>
 						</program>
 					</programs>
 				</configuration>
