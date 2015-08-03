@@ -1,7 +1,7 @@
 Sejda (http://www.sejda.org)
 =====
 [![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
-[![License](http://img.shields.io/badge/license-APLv2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![License](http://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
 An extendible and configurable PDF manipulation layer library written in Java. A ready to use java library to perform PDF document manipulation without having to deal with the low level API.
 
