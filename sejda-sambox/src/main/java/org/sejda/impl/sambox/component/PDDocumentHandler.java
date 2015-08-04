@@ -220,6 +220,11 @@ public class PDDocumentHandler implements Closeable {
         return imported;
     }
 
+    public PDPage addPage(PDPage page) {
+        document.addPage(page);
+        return page;
+    }
+
     /**
      * Moves designated page to the end of the document.
      *

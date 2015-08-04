@@ -67,9 +67,6 @@ public class OutlineMerger {
     }
 
     public void mergeRelevantOutlineTo(PDDocumentOutline dest) {
-        // TODO FIXME
-        if(1+1 == 2)return;
-
         requireNonNull(dest, "Unable to merge relevant outline items to a null outline.");
         outline.ifPresent(o -> {
             for (PDOutlineItem child : o.children()) {

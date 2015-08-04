@@ -79,11 +79,11 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         int totalSteps = firstSourcePages.getCount() + secondSourcePages.getCount();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
-                importPage(firstSourcePages.get(firstDocStatus.nextPage() - 1));
+                addPage(firstSourcePages.get(firstDocStatus.nextPage() - 1));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
-                importPage(secondSourcePages.get(secondDocStatus.nextPage() - 1));
+                addPage(secondSourcePages.get(secondDocStatus.nextPage() - 1));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }

@@ -72,7 +72,7 @@ public class PagesExtractor implements Closeable {
 
     public void retain(int page) {
         PDPage existingPage = originalDocument.getPage(page - 1);
-        destinationDocument.importPage(existingPage);
+        destinationDocument.addPage(existingPage);
         outlineMerger.addRelevantPage(existingPage);
         LOG.trace("Imported page number {}", page);
     }
