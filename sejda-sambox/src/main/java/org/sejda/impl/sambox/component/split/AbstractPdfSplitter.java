@@ -18,25 +18,25 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import org.sejda.impl.sambox.component.PagesExtractor;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.core.support.io.MultipleOutputWriter;
-import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
-import org.sejda.model.split.NextOutputStrategy;
-import org.sejda.model.task.NotifiableTaskMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.io.File;
+
+import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.impl.sambox.component.PagesExtractor;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.model.split.NextOutputStrategy;
+import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParameters> {
 
@@ -56,7 +56,6 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
 
     public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {
         nextOutputStrategy().ensureIsValid();
-        MultipleOutputWriter outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
 
         try (PagesExtractor extractor = new PagesExtractor(document)) {
             int outputDocumentsCounter = 0;

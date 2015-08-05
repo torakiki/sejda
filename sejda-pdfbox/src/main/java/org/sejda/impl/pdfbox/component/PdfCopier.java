@@ -23,6 +23,7 @@ import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
 
 public class PdfCopier implements Closeable {
@@ -41,7 +42,7 @@ public class PdfCopier implements Closeable {
         document.setViewerPreferences(original.getDocumentCatalog().getViewerPreferences());
     }
 
-    void addPage(PDDocument original, int pageNumber) throws TaskException {
+    public void addPage(PDDocument original, int pageNumber) throws TaskIOException {
         PDPage page = (PDPage) original.getDocumentCatalog().getAllPages().get(pageNumber - 1);
         document.importPage(page);
     }

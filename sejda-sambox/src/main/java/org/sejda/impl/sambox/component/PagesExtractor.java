@@ -20,19 +20,19 @@ package org.sejda.impl.sambox.component;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
+import java.io.Closeable;
+import java.io.File;
+import java.util.Set;
+
+import org.sejda.common.ComponentsUtility;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
-import org.sejda.common.ComponentsUtility;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.pdf.PdfVersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.Closeable;
-import java.io.File;
-import java.util.Set;
 
 /**
  * Component that retains pages from a given existing {@link PDDocument} and saves a new document containing retained pages and an outline that patches the new document.
@@ -62,7 +62,6 @@ public class PagesExtractor implements Closeable {
     }
 
     public void retain(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) {
-        @SuppressWarnings("unchecked")
         int currentStep = 0;
         for (Integer page : pages) {
             retain(page);

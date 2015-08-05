@@ -18,6 +18,9 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
@@ -30,9 +33,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Utility methods related to outline handling in PDFBox
