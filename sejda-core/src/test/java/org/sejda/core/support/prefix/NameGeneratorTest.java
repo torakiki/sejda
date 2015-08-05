@@ -17,10 +17,13 @@
  */
 package org.sejda.core.support.prefix;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 /**
@@ -69,5 +72,12 @@ public class NameGeneratorTest {
     public void testNullRequest() {
         String prefix = "BLA_";
         nameGenerator(prefix).generate(null);
+    }
+
+    @Test
+    public void testMaxFilenameSize() {
+        String generatedFilename = nameGenerator("BLA_[TEXT]").generate(nameRequest("pdf").text(StringUtils.repeat('a', 300)));
+        assertEquals(255, generatedFilename.length());
+        assertThat(generatedFilename, endsWith("aaa.pdf"));
     }
 }

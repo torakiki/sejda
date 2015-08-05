@@ -19,6 +19,7 @@ package org.sejda.core.support.prefix;
 
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
@@ -56,7 +57,15 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        return prefixTypesChain.process(prefix, preProcessRequest(request));
+        String result = prefixTypesChain.process(prefix, preProcessRequest(request));
+
+        if(result.length() > 255) {
+            String baseName = FilenameUtils.getBaseName(result);
+            String ext = FilenameUtils.getExtension(result);
+            return baseName.substring(0, 254 - ext.length()) + "." + ext;
+        }
+
+        return result;
     }
 
     /**
