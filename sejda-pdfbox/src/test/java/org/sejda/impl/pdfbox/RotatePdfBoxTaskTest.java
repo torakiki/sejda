@@ -16,7 +16,8 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ge org.sejda.impl.pdfbox;
+ */
+package org.sejda.impl.pdfbox;
 
 import org.sejda.core.service.RotateTaskTest;
 import org.sejda.model.parameter.RotateParameters;
