@@ -69,7 +69,7 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
     public void testExecuteLicense() {
-        assertConsoleOutputContains("--license", "Licensed under the Apache License, Version 2.0");
+        assertConsoleOutputContains("--license", "GNU Affero General Public License, Version 3");
     }
 
     @Test

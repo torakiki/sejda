@@ -1,18 +1,20 @@
 /*
- * Created on Jul 11, 2011
- * Copyright 2011 by Nero Couvalli (angelthepunisher@gmail.com).
+ * Copyright 2015 by Edi Weissmann (edi.weissmann@gmail.com)
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of the Sejda source code
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sejda.impl.sambox;
 
@@ -24,7 +26,6 @@ import static org.sejda.core.support.io.model.FileOutput.file;
 import java.io.File;
 import java.util.Map.Entry;
 
-import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -35,6 +36,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.task.BaseTask;
+import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
