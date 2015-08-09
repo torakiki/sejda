@@ -41,9 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task setting metadata on an input {@link PdfSource}.
+ * SAMBox implementation of a task setting metadata on an input {@link PdfSource}.
  * 
- * @author Nero Couvalli
+ * @author Eduard Weissmann
  * 
  */
 public class SetMetadataTask extends BaseTask<SetMetadataParameters> {

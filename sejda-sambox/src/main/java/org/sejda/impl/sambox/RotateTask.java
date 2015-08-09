@@ -42,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task performing pages rotation on a list of {@link PdfSource}.
+ * SAMBox implementation of a task performing pages rotation on a list of {@link PdfSource}.
  * 
- * @author Nero Couvalli
+ * @author Eduard Weissmann
  * 
  */
 public class RotateTask extends BaseTask<RotateParameters> {

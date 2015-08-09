@@ -1,7 +1,6 @@
 /* 
  * This file is part of the Sejda source code
- * Created on 31/Jul/2015
- * Copyright 2015 by Edi Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as 
@@ -30,7 +29,7 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
- * PDFBox component able to open a PdfSource and return the corresponding {@link PDDocumentHandler}.
+ * SAMBox component able to open a PdfSource and return the corresponding {@link PDDocumentHandler}.
  * 
  * @author Andrea Vacondio
  * 

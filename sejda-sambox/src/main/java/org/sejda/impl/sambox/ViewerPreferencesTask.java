@@ -1,6 +1,5 @@
 /*
- * Created on 27/ago/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -33,11 +32,6 @@ import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.setBooleanPrefer
 
 import java.io.File;
 
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -47,11 +41,16 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
+ * SAMBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
  * 
  * @author Andrea Vacondio
  * 

@@ -1,6 +1,5 @@
 /*
- * Created on Jul 2, 2011
- * Copyright 2010 by Nero Couvalli (angelthepunisher@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This file is part of the Sejda source code
  *
@@ -24,10 +23,8 @@ import org.sejda.sambox.pdmodel.PDDocument;
 /**
  * Identifies an ongoing rotation exposing methods to finalize it.
  * 
- * @author Nero Couvalli
- * 
+ * @author Andrea Vacondio
  */
-
 public interface OngoingRotation {
 
     /**

@@ -1,6 +1,5 @@
 /*
- * Created on 10/25/13
- * Copyright 2013 by Edi Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2015 by Edi Weissmann (edi.weissmann@gmail.com)
  *
  * This file is part of the Sejda source code
  *

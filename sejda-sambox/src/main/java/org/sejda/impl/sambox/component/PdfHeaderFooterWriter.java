@@ -1,6 +1,5 @@
 /*
- * Created on 13/nov/2012
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -27,16 +26,16 @@ import java.io.IOException;
 import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.PDPageContentStream;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDPageContentStream;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

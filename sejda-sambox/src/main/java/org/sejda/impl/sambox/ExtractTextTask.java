@@ -1,6 +1,5 @@
 /*
- * Created on 24/ago/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -44,10 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task extracting text from a list of {@link PdfSource}
+ * SAMBox implementation of a task extracting text from a list of {@link PdfSource}
  * 
  * @author Andrea Vacondio
- * 
  */
 public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 

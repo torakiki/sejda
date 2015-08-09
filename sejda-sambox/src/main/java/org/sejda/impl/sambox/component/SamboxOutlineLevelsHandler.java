@@ -18,6 +18,15 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.sejda.impl.sambox.component.OutlineUtils.getMaxBookmarkLevel;
+import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
@@ -25,18 +34,9 @@ import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
-import org.sejda.model.outline.OutlinePageDestinations;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.impl.sambox.component.OutlineUtils.getMaxBookmarkLevel;
-import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
 /**
- * PDFBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
+ * SAMBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
  * 
  * @author Andrea Vacondio
  *

@@ -1,6 +1,5 @@
 /*
- * Created on 13/nov/2012
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -23,8 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 
 /**
  * Utility to map from Sejda font definition to PDFBox.

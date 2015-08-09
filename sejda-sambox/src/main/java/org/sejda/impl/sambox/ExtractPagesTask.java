@@ -1,6 +1,5 @@
 /*
- * Created on 13/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -42,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of the task responsible for extracting pages from a given pdf document.
+ * SAMBox implementation of the task responsible for extracting pages from a given pdf document.
  * 
  * @author Andrea Vacondio
  * 

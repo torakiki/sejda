@@ -1,6 +1,5 @@
 /*
- * Created on 02/nov/2010
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -41,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task performing decrypt of a list of encrypted {@link PdfSource}
+ * SAMBox implementation of a task performing decrypt of a list of encrypted {@link PdfSource}
  * 
  * @author Andrea Vacondio
  * 

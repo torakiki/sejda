@@ -1,7 +1,6 @@
 /* 
  * This file is part of the Sejda source code
- * Created on 06/mar/2015
- * Copyright 2013-2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as 
@@ -18,6 +17,13 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.requireNonNull;
+import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
+import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
+
+import java.util.Optional;
+
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
@@ -25,15 +31,8 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-import org.sejda.common.collection.NullSafeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
-import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
-import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
 /**
  * Component that keeps track of the relevant pages of a document, distills a cloned version of the document outline based on the relevant pages selected and merges it to a given

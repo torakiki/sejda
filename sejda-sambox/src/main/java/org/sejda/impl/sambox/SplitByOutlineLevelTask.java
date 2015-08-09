@@ -1,6 +1,5 @@
 /* 
- * Created on 10/mar/2015
- * Copyright 2013-2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This file is part of the Sejda source code
  *
@@ -19,20 +18,20 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.split.PageDestinationsLevelPdfSplitter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 /**
  * Task splitting an input pdf document on a set of pages given by an outline level defined in the input parameter.

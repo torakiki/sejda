@@ -1,6 +1,5 @@
 /*
- * Created on 02/nov/2010
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Edi Weissmann (edi.weissmann@gmail.com)
  * 
  * This file is part of the Sejda source code
  *
@@ -43,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * PDFBox implementation of a task adding header or footer labels to pages
+ * SAMBox implementation of a task adding header or footer labels to pages
  * 
  * @author Eduard Weissmann
  * 

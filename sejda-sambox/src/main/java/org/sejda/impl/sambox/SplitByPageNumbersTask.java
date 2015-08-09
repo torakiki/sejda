@@ -1,6 +1,5 @@
 /* 
- * Created on 06/mar/2015
- * Copyright 2013-2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This file is part of the Sejda source code
  *
@@ -19,18 +18,18 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.sambox.pdmodel.PDDocument;
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.split.PagesPdfSplitter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 /**
  * Task splitting an input pdf document on a set of pages defined in the input parameter object.
