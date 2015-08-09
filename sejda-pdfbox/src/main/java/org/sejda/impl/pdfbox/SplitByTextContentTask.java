@@ -22,7 +22,7 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
-    private AbstractPdfSplitter splitter;
+    private AbstractPdfSplitter<SplitByTextContentParameters> splitter;
 
     public void before(SplitByTextContentParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
