@@ -5,7 +5,7 @@ Sejda (http://www.sejda.org)
 
 An extendible and configurable PDF manipulation layer library written in Java. A ready to use java library to perform PDF document manipulation without having to deal with the low level API.
 
-Sejda offers many "ready to go" manipulations implemented using iText, PDFBox or ICEpdf but it can be extended and/or configured to use other implementations.
+Sejda offers many "ready to go" manipulations implemented using iText, iText 5.x, PDFBox, ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, and it can be configured to use any of them but you can also provide your implementation and configure Sejda to use it.
 
 Quick start: http://www.sejda.org/development/quick-start/
 
@@ -50,7 +50,8 @@ We put a great effort trying to keep high quality standard for our code base, al
 License
 ----
 
-Apache License, Version 2.0
+Sejda 1.x is licensed under Apache License, Version 2.0
+Sejda 2.x is licensed under GNU Affero Public License 3.0 
 
   [sejda.com]: http://sejda.com  
   [SonarQube]: http://nemo.sonarqube.org/dashboard/index/org.sejda:sejda
