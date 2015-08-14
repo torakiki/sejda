@@ -51,6 +51,7 @@ License
 ----
 
 Sejda 1.x is licensed under Apache License, Version 2.0
+
 Sejda 2.x is licensed under GNU Affero Public License 3.0 
 
   [sejda.com]: http://sejda.com  
