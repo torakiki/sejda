@@ -116,7 +116,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         setUpDefaultParameters();
         doExecute();
 
-        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
         assertEquals(4, reader.getNumberOfPages());
         assertEquals(180, reader.getPageRotation(2));
         reader.close();
@@ -127,7 +127,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         setUpRotateSpecificPages();
         doExecute();
 
-        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
         assertEquals(90, reader.getPageRotation(3));
         reader.close();
     }
@@ -137,7 +137,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         setUpParametersEncrypted();
         doExecute();
 
-        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
 
         assertEquals(4, reader.getNumberOfPages());
         assertEquals(180, reader.getPageRotation(2));
@@ -150,7 +150,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
 
         doExecute();
 
-        PdfReader reader = getReaderFromResultStream("test_prefix_test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_test_file.pdf");
         assertCreator(reader);
         // TODO it seems iText 2 reads the version from the header only while it should read from the catalog first so this assert fails in PDFBox 2
         // assertVersion(reader, PdfVersion.VERSION_1_4);

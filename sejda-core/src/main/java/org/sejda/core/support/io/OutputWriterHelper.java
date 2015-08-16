@@ -22,10 +22,7 @@ package org.sejda.core.support.io;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
@@ -130,7 +127,7 @@ final class OutputWriterHelper {
      * @param out
      * @throws IOException
      */
-    static void copyToStream(Map<String, File> files, OutputStream out) throws IOException {
+    static void copyToStreamZipped(Map<String, File> files, OutputStream out) throws IOException {
         ZipOutputStream zipOut = new ZipOutputStream(out);
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;
@@ -149,6 +146,23 @@ final class OutputWriterHelper {
             }
         }
         IOUtils.closeQuietly(zipOut);
+    }
+
+    /**
+     * Copies the contents of the file to the specified outputstream, without zipping or applying any other changes.
+     * @param file
+     * @param out
+     * @throws IOException
+     */
+    static void copyToStream(File file, OutputStream out) throws IOException {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            IOUtils.copy(in, out);
+        } finally {
+            IOUtils.closeQuietly(in);
+            delete(file);
+        }
     }
 
     private static void delete(File file) {

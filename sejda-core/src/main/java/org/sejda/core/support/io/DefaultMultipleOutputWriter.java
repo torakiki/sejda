@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.StreamTaskOutput;
 
 /**
  * Multiple writer default implementation
@@ -39,6 +40,10 @@ class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOu
 
     public void addOutput(PopulatedFileOutput fileOutput) {
         add(fileOutput);
+    }
+
+    public void dispatch(StreamTaskOutput output) throws IOException {
+        OutputWriterHelper.copyToStreamZipped(multipleFiles, output.getDestination());
     }
 
     @Override

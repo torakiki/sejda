@@ -21,6 +21,9 @@
 package org.sejda.core.support.io;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.output.StreamTaskOutput;
+
+import java.io.IOException;
 
 /**
  * Single writer default implementation.
@@ -32,6 +35,10 @@ class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutput
 
     DefaultSingleOutputWriter(boolean overwrite) {
         super(overwrite);
+    }
+
+    public void dispatch(StreamTaskOutput output) throws IOException {
+        OutputWriterHelper.copyToStream(multipleFiles.values().iterator().next(), output.getDestination());
     }
 
     public void setOutput(PopulatedFileOutput fileOutput) {

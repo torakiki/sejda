@@ -38,7 +38,7 @@ public class BaseOutputWriterTest {
 
     @Test
     public void testWriteFile() throws IOException, TaskOutputVisitException {
-        BaseOutputWriter victim = spy(new BaseOutputWriter(true));
+        BaseOutputWriter victim = spy(new DefaultSingleOutputWriter(true));
         File tempFile = File.createTempFile("srcTest", "");
         victim.add(FileOutput.file(tempFile).name("newName"));
 

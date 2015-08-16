@@ -92,6 +92,10 @@ public class PdfOutEnabledTest {
         return new PdfReader(new FileInputStream(outFile));
     }
 
+
+    protected PdfReader getReaderFromResultStream() throws IOException {
+        return new PdfReader(new ByteArrayInputStream(out.toByteArray()));
+    }
     /**
      * @param expectedFileName
      *            the expected name of the first file in the ZipInputStream
@@ -100,15 +104,15 @@ public class PdfOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    protected PdfReader getReaderFromResultStream(String expectedFileName, byte[] ownerPwd) throws IOException {
+    protected PdfReader getReaderFromResultZipStream(String expectedFileName, byte[] ownerPwd) throws IOException {
         PdfReader reader = new PdfReader(getResultInputStream(expectedFileName), ownerPwd);
         reader.removeUnusedObjects();
         reader.consolidateNamedDestinations();
         return reader;
     }
 
-    protected PdfReader getReaderFromResultStream() throws IOException {
-        return getReaderFromResultStream(null);
+    protected PdfReader getReaderFromResultZipStream() throws IOException {
+        return getReaderFromResultZipStream(null);
     }
 
     protected InputStream getResultInputStream(String expectedFileName) throws IOException {
@@ -164,8 +168,8 @@ public class PdfOutEnabledTest {
      * @return a {@link PdfReader} opened on the first resulting file found in the ZipInputStream coming form the manipulation.
      * @throws IOException
      */
-    protected PdfReader getReaderFromResultStream(String expectedFileName) throws IOException {
-        return getReaderFromResultStream(expectedFileName, null);
+    protected PdfReader getReaderFromResultZipStream(String expectedFileName) throws IOException {
+        return getReaderFromResultZipStream(expectedFileName, null);
     }
 
     /**
@@ -199,7 +203,7 @@ public class PdfOutEnabledTest {
     }
 
     void assertNumberOfPages(int expected) throws IOException {
-        assertEquals("Number of pages don't match", expected, getReaderFromResultStream().getNumberOfPages());
+        assertEquals("Number of pages don't match", expected, getReaderFromResultZipStream().getNumberOfPages());
     }
 
     public void assertPageText(String... expectedText) throws IOException {

@@ -116,7 +116,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_empty_pwd.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_empty_pwd.pdf");
         assertCommonsAndClose(reader);
     }
 
@@ -126,7 +126,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_usr_own_same_pwd.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_usr_own_same_pwd.pdf");
         assertCommonsAndClose(reader);
     }
 
@@ -136,7 +136,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_test_test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_test_test_file.pdf");
         assertCommonsAndClose(reader);
     }
 
@@ -146,7 +146,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_owner_compressed.pdf");
         assertCommonsAndClose(reader);
     }
 
@@ -156,7 +156,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_owner_uncompressed.pdf");
         assertCommonsAndClose(reader);
     }
 
@@ -169,7 +169,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);
                 victim.execute(parameters);
-                PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_compressed.pdf");
+                PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_owner_compressed.pdf");
                 assertCommonsAndClose(reader);
             }
         };
@@ -200,7 +200,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
                 when(context.getTask(parameters)).thenReturn((Task) getTask());
                 initializeNewStreamOutput(parameters);
                 victim.execute(parameters);
-                PdfReader reader = getReaderFromResultStream("test_prefix_enc_owner_uncompressed.pdf");
+                PdfReader reader = getReaderFromResultZipStream("test_prefix_enc_owner_uncompressed.pdf");
                 assertCommonsAndClose(reader);
             }
         };

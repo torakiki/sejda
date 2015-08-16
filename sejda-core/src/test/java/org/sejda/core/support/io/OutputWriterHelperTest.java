@@ -20,9 +20,7 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,13 +49,23 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyStream() throws IOException {
+    public void testExecuteCopyStreamZipped() throws IOException {
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        OutputWriterHelper.copyToStream(files, out);
+        OutputWriterHelper.copyToStreamZipped(files, out);
         assertFalse("temporary file not deleted", tempFile.exists());
         assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testExecuteCopyStreamSingleFile() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("newName", tempFile);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        OutputWriterHelper.copyToStream(files.values().iterator().next(), out);
+        assertFalse("temporary file not deleted", tempFile.exists());
+        assertEquals(out.size(), tempFile.length());
     }
 
     @Test

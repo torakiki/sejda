@@ -167,6 +167,23 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         doExecuteMergeAll(true, 310);
     }
 
+    @Test
+    public void executeMergeAllStreamOutput() throws TaskException, IOException {
+        setUpParameters(getInput());
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamSingleOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = null;
+        try {
+            reader = getReaderFromResultStream();
+            assertCreator(reader);
+            assertVersion(reader, PdfVersion.VERSION_1_6);
+            assertEquals(4, reader.getNumberOfPages());
+        } finally {
+            nullSafeCloseReader(reader);
+        }
+    }
+
     void doExecuteMergeAll(boolean hasBookmarks, int pages) throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);

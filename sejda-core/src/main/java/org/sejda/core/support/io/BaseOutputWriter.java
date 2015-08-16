@@ -28,7 +28,6 @@ import java.util.Map;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
@@ -37,10 +36,10 @@ import org.sejda.model.output.TaskOutputDispatcher;
  * @author Andrea Vacondio
  * 
  */
-class BaseOutputWriter implements TaskOutputDispatcher {
+abstract class BaseOutputWriter implements TaskOutputDispatcher {
 
-    private Map<String, File> multipleFiles;
-    private boolean overwrite = false;
+    Map<String, File> multipleFiles;
+    boolean overwrite = false;
 
     public BaseOutputWriter(boolean overwrite) {
         this.multipleFiles = new HashMap<String, File>();
@@ -55,10 +54,6 @@ class BaseOutputWriter implements TaskOutputDispatcher {
     public void dispatch(DirectoryTaskOutput output) throws IOException {
         OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), overwrite);
 
-    }
-
-    public void dispatch(StreamTaskOutput output) throws IOException {
-        OutputWriterHelper.copyToStream(multipleFiles, output.getDestination());
     }
 
     /**

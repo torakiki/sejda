@@ -130,7 +130,7 @@ public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest imple
         victim.execute(parameters);
         PdfReader reader = null;
         try {
-            reader = getReaderFromResultStream();
+            reader = getReaderFromResultZipStream();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
         } finally {

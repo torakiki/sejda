@@ -115,7 +115,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_file.pdf");
+        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
         assertCreator(reader);
         assertVersion(reader, PdfVersion.VERSION_1_7);
         PdfDictionary catalog = PdfViewerPreferencesImp.getViewerPreferences(reader.getCatalog())

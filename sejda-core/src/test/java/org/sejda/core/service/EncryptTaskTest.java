@@ -87,7 +87,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
-        PdfReader reader = getReaderFromResultStream("test_prefix_test_file.pdf", "test".getBytes());
+        PdfReader reader = getReaderFromResultZipStream("test_prefix_test_file.pdf", "test".getBytes());
         assertCreator(reader);
         assertVersion(reader, PdfVersion.VERSION_1_6);
         assertTrue(reader.isEncrypted());
