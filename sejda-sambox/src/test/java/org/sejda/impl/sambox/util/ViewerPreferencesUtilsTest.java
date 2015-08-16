@@ -41,7 +41,7 @@ import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
  * @author Andrea Vacondio
  * 
  */
-public class ViewerPreferencesUtilsTestTest {
+public class ViewerPreferencesUtilsTest {
     @Test
     public void testGetDirection() {
         assertEquals(PDViewerPreferences.READING_DIRECTION.L2R,

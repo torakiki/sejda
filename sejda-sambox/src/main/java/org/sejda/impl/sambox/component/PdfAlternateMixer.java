@@ -63,7 +63,6 @@ public class PdfAlternateMixer extends PDDocumentHandler {
      *            metadata of the task executing the mix.
      * @throws TaskException
      */
-    @SuppressWarnings("unchecked")
     public void mix(NotifiableTaskMetadata taskMetadata) throws TaskException {
         firstDocumentHandler = openInput(firstInput);
         secondDocumentHandler = openInput(secondInput);

@@ -83,7 +83,7 @@ public final class PdfRotator implements OngoingRotation {
      */
     private void apply(int pageNmber) {
         if (pages.contains(pageNmber)) {
-            PDPage page = (PDPage) document.getDocumentCatalog().getPages().get(pageNmber - 1);
+            PDPage page = document.getPage(pageNmber - 1);
             page.setRotation(rotation.addRotation(getRotation(page.getRotation())).getDegrees());
         }
     }

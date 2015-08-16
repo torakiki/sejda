@@ -18,12 +18,12 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.split.PageDestinationsSplitPages;
+import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
  * Splitter implementation to split at pages that have an outline item pointing to them.
@@ -50,10 +50,12 @@ public class PageDestinationsLevelPdfSplitter extends AbstractPdfSplitter<SplitB
         this.outlineDestinations = outlineDestinations;
     }
 
+    @Override
     NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request.bookmark(outlineDestinations.getTitle(request.getPage()));
     }
 
+    @Override
     NextOutputStrategy nextOutputStrategy() {
         return splitPages;
     }

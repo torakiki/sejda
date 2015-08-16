@@ -80,8 +80,8 @@ public final class OutlineUtils {
      *            the outline item
      * @param destinations
      *            the named destinations tree to look for in case of {@link PDNamedDestination}
-     * @return the {@link PDPageDestination} for the given {@link PDOutlineItem} or null if the destination is not a page. In case the outline item has a named destination, it is
-     *         resolved against the given names tree.
+     * @return the {@link PDPageDestination} for the given {@link PDOutlineItem} or an empty {@link Optional} if the destination is not a page. In case the outline item has a named
+     *         destination, it is resolved against the given names tree.
      */
     public static Optional<PDPageDestination> toPageDestination(PDOutlineItem current,
             PDDestinationNameTreeNode destinations) {
@@ -94,7 +94,7 @@ public final class OutlineUtils {
                 }
             }
             if (dest instanceof PDNamedDestination && destinations != null) {
-                dest = (PDDestination) destinations.getValue(((PDNamedDestination) dest).getNamedDestination());
+                dest = destinations.getValue(((PDNamedDestination) dest).getNamedDestination());
             }
             if (dest instanceof PDPageDestination) {
                 return Optional.of((PDPageDestination) dest);

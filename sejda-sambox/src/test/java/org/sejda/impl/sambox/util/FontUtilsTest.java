@@ -21,7 +21,7 @@ package org.sejda.impl.sambox.util;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
+import org.junit.Test;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 
@@ -31,7 +31,7 @@ import org.sejda.sambox.pdmodel.font.PDType1Font;
  */
 public class FontUtilsTest {
 
-    @Ignore("requires fontbox 2.0.0-SNAPSHOT which is conflicting with fontbox-1.8.4 already pulled in as a dependency by the tests via pdfbox")
+    @Test
     public void testGetStandardType1Fontg() {
         assertEquals(PDType1Font.COURIER, FontUtils.getStandardType1Font(StandardType1Font.CURIER));
         assertEquals(PDType1Font.COURIER_BOLD, FontUtils.getStandardType1Font(StandardType1Font.CURIER_BOLD));
