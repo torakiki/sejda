@@ -18,7 +18,6 @@
  */
 package org.sejda.model.parameter;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -27,9 +26,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
+/**
+ * Parameter class for a split by text content change task. It lets specify an area. The task will split the document when text content in that changes.
+ * 
+ * @author Eduard Weissmann
+ * 
+ */
 public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputParameters {
 
-    @Valid
     @NotNull
     private final TopLeftRectangularBox textArea;
 

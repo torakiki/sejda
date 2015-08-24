@@ -73,6 +73,7 @@ public class PagesExtractor implements Closeable {
         destinationDocument.addPage(existingPage);
         outlineMerger.addRelevantPage(existingPage);
         LOG.trace("Imported page number {}", page);
+        // TODO annots and AA could be LinkAnnot or GoTo pointing to a named dest, name dest are not kept so the should be translated to a resolved destination
     }
 
     public void setVersion(PdfVersion version) {

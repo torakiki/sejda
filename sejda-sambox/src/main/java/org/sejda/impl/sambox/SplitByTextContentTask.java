@@ -34,6 +34,13 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Task splitting an input pdf document when text content inside a given document area of the page changes.
+ * 
+ * @author Eduard Weissmann
+ * @param <T>
+ *            the type of the parameters.
+ */
 public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitByTextContentTask.class);

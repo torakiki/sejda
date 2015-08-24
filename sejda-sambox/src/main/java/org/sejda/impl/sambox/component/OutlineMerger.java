@@ -97,7 +97,7 @@ public class OutlineMerger {
 
     }
 
-    private void copyDestination(Optional<PDPageDestination> destination, PDOutlineItem to) {
+    private static void copyDestination(Optional<PDPageDestination> destination, PDOutlineItem to) {
         destination.ifPresent(d -> {
             to.setDestination(d);
         });
@@ -120,10 +120,7 @@ public class OutlineMerger {
 
     private boolean isNeeded(Optional<PDPageDestination> destination) {
         if (destination.isPresent()) {
-            PDPage page = destination.get().getPage();
-            if (page != null) {
-                return relevantPages.contains(destination.get().getPage());
-            }
+            return relevantPages.contains(destination.get().getPage());
         }
         return false;
     }

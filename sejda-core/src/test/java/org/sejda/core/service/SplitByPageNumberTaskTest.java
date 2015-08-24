@@ -62,6 +62,11 @@ public abstract class SplitByPageNumberTaskTest extends PdfOutEnabledTest implem
                 getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf");
     }
 
+    private PdfStreamSource getPdfSourceWithOutline() {
+        return PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf"), "test_outline.pdf");
+    }
+
     private PdfStreamSource getEncPdfSource() {
         return PdfStreamSource.newInstanceWithPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf"),
@@ -72,6 +77,18 @@ public abstract class SplitByPageNumberTaskTest extends PdfOutEnabledTest implem
     public void burst() throws TaskException, IOException {
         parameters.setSource(getPdfSource());
         doTestBurst();
+    }
+
+    @Test
+    public void burstOutline() throws TaskException, IOException {
+        parameters.setSource(getPdfSourceWithOutline());
+        parameters.addPage(1);
+        parameters.addPage(2);
+        parameters.addPage(3);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(3);
     }
 
     @Test

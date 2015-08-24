@@ -25,10 +25,17 @@ import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.sambox.pdmodel.PDDocument;
 
+/**
+ * Splitter implementation that splits a document when text at a given area changes
+ * 
+ * @author Eduard Weissmann
+ * 
+ */
 public class ByTextChangesPdfSplitter extends AbstractPdfSplitter<SplitByTextContentParameters> {
     private SplitByTextChangesOutputStrategy outputStrategy;
 
-    public ByTextChangesPdfSplitter(PDDocument document, SplitByTextContentParameters parameters) throws TaskIOException {
+    public ByTextChangesPdfSplitter(PDDocument document, SplitByTextContentParameters parameters)
+            throws TaskIOException {
         super(document, parameters);
         this.outputStrategy = new SplitByTextChangesOutputStrategy(document, parameters.getTextArea());
     }

@@ -255,7 +255,11 @@ public class PDDocumentHandler implements Closeable {
         setViewerPreferences(other.getDocumentCatalog().getViewerPreferences());
         getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(other.getDocumentCatalog().getPageLayout());
         getUnderlyingPDDocument().getDocumentCatalog().setPageMode(other.getDocumentCatalog().getPageMode());
+        getUnderlyingPDDocument().getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
+        // TODO not sure about this, maybe an option to let the user decide if he wants to bring in metadata?
+        getUnderlyingPDDocument().getDocumentCatalog().setMetadata(other.getDocumentCatalog().getMetadata());
         setCreatorOnPDDocument();
+        // TODO maybe we bring in the open action?
     }
 
     public BufferedImage renderImage(int pageNumber, int dpi) throws TaskException {

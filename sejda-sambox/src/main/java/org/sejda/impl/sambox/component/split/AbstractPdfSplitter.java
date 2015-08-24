@@ -38,6 +38,13 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Abstract component providing a skeletal implementation of the split execution.
+ * 
+ * @author Andrea Vacondio
+ * @param <T>
+ *            the type of parameters the splitter needs to have all the information necessary to perform the split.
+ */
 public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);

@@ -48,6 +48,8 @@ import org.slf4j.LoggerFactory;
  *
  * Splits all (two page layout) pages in a document in two sides, down the middle, creating a document that contains double the number of pages. Works for multiple inputs. If the
  * page orientation is portrait, the split is done horizontally. Otherwise, it is done vertically, for landscape orientation.
+ * 
+ * @author Eduard Weissmann
  */
 public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameters> {
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <sejda validation="true">
 	<notification async="false" />
 	<tasks>
@@ -21,9 +21,9 @@
 		<task parameters="org.sejda.model.parameter.SplitBySizeParameters"
 			task="org.sejda.impl.itext.SplitBySizeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByPagesParameters"
-			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+			task="org.sejda.impl.sambox.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.SplitByEveryXPagesParameters"
-			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+			task="org.sejda.impl.sambox.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.SimpleSplitParameters"
 			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.ExtractPagesParameters"
