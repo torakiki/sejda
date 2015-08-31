@@ -19,7 +19,6 @@
 package org.sejda.impl.sambox.component.split;
 
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.sejda.impl.sambox.component.SplitByTextChangesOutputStrategy;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.split.NextOutputStrategy;

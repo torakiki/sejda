@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component;
+package org.sejda.impl.sambox.component.split;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskIOException;

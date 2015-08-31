@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component;
+package org.sejda.impl.sambox.component.split;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,6 +25,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.split.SplitByTextChangesOutputStrategy;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfStreamSource;
