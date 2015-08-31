@@ -75,7 +75,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
-            documentHandler.saveDecryptedPDDocument(tmpFile);
+            documentHandler.savePDDocument(tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));

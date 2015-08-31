@@ -20,14 +20,13 @@ package org.sejda.impl.sambox.component;
 
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
-import static org.sejda.sambox.output.WriteOption.COMPRESS_STREAMS;
-import static org.sejda.sambox.output.WriteOption.OBJECT_STREAMS;
-import static org.sejda.sambox.output.WriteOption.XREF_STREAM;
 
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
@@ -57,10 +56,12 @@ import org.slf4j.LoggerFactory;
 public class PDDocumentHandler implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
+    private static final WriteOption[] COMPRESSED_OPTS = new WriteOption[] { WriteOption.COMPRESS_STREAMS,
+            WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM };
 
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
-    private boolean compress = true;
+    private Set<WriteOption> writeOptions = new HashSet<>();
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
@@ -142,12 +143,39 @@ public class PDDocumentHandler implements Closeable {
     }
 
     /**
-     * Set compression of the XRef table on underlying {@link PDDocument}.
+     * Adds the given {@link WriteOption}s to be used when the document is saved
      * 
-     * @param compress
+     * @param opt
+     * @return
+     */
+    public void addWriteOption(WriteOption... opts) {
+        for (WriteOption opt : opts) {
+            this.writeOptions.add(opt);
+        }
+    }
+
+    /**
+     * Removes the given {@link WriteOption}s to be used when the document is saved
+     * 
+     * @param opt
+     * @return
+     * @see Set#remove(Object)
+     */
+    public void removeWriteOption(WriteOption... opts) {
+        for (WriteOption opt : opts) {
+            this.writeOptions.remove(opt);
+        }
+    }
+
+    /**
+     * sets or remove compression options to be used when the resulting document is written
      */
     public void setCompress(boolean compress) {
-        this.compress = compress;
+        if (compress) {
+            addWriteOption(COMPRESSED_OPTS);
+        } else {
+            removeWriteOption(COMPRESSED_OPTS);
+        }
     }
 
     /**
@@ -170,33 +198,15 @@ public class PDDocumentHandler implements Closeable {
     }
 
     /**
-     * Saves the underlying {@link PDDocument} removing security from it.
-     * 
-     * @param file
-     * @throws TaskException
-     */
-    public void saveDecryptedPDDocument(File file) throws TaskException {
-        savePDDocument(file, true);
-    }
-
-    /**
      * Saves the underlying {@link PDDocument} to the given file.
      * 
      * @param file
      * @throws TaskException
      */
     public void savePDDocument(File file) throws TaskException {
-        savePDDocument(file, false);
-    }
-
-    private void savePDDocument(File file, boolean decrypted) throws TaskException {
         try {
             LOG.trace("Saving document to {}", file);
-            WriteOption[] options = new WriteOption[0];
-            if (compress) {
-                options = new WriteOption[] { COMPRESS_STREAMS, XREF_STREAM, OBJECT_STREAMS };
-            }
-            document.writeTo(file, options);
+            document.writeTo(file, writeOptions.toArray(new WriteOption[writeOptions.size()]));
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
@@ -257,7 +267,7 @@ public class PDDocumentHandler implements Closeable {
         getUnderlyingPDDocument().getDocumentCatalog().setPageMode(other.getDocumentCatalog().getPageMode());
         getUnderlyingPDDocument().getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
         // TODO not sure about this, maybe an option to let the user decide if he wants to bring in metadata?
-        getUnderlyingPDDocument().getDocumentCatalog().setMetadata(other.getDocumentCatalog().getMetadata());
+        // getUnderlyingPDDocument().getDocumentCatalog().setMetadata(other.getDocumentCatalog().getMetadata());
         setCreatorOnPDDocument();
         // TODO maybe we bring in the open action?
     }

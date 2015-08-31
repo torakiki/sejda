@@ -89,12 +89,16 @@ public class PagesExtractor implements Closeable {
         if (outline.hasChildren()) {
             destinationDocument.setDocumentOutline(outline);
         }
-        destinationDocument.saveDecryptedPDDocument(file);
+        destinationDocument.savePDDocument(file);
     }
 
     public void close() {
         ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
         outlineMerger = null;
+    }
+
+    protected PDDocumentHandler destinationDocument() {
+        return destinationDocument;
     }
 
     /**

@@ -19,7 +19,7 @@
  */
 package org.sejda.model.split;
 
-import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.exception.TaskException;
 
 /**
  * Strategy used by the by the split implementations to know when it's time to close the ongoing output and open a new one.
@@ -31,22 +31,26 @@ public interface NextOutputStrategy {
     /**
      * Ensures that the strategy implementation is in a valid state.
      * 
-     * @throws TaskExecutionException
+     * @throws TaskException
      *             if not in a valid state.
      */
-    void ensureIsValid() throws TaskExecutionException;
+    void ensureIsValid() throws TaskException;
 
     /**
      * @param page
      *            the current processing page
      * @return true if the splitter should open a new output, false otherwise.
+     * @throws TaskException
+     *             if an error occurs while verifying if the page is an open page
      */
-    boolean isOpening(Integer page);
+    boolean isOpening(Integer page) throws TaskException;
 
     /**
      * @param page
      *            the current processing page
      * @return true if the splitter should close the current output, false otherwise.
+     * @throws TaskException
+     *             if an error occurs while verifying if the page is an close page
      */
-    boolean isClosing(Integer page);
+    boolean isClosing(Integer page) throws TaskException;
 }

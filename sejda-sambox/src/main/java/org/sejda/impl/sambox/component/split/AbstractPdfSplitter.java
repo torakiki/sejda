@@ -26,6 +26,7 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 
 import java.io.File;
 
+import org.apache.xmlgraphics.ps.dsc.tools.PageExtractor;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
@@ -64,14 +65,16 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
     public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {
         nextOutputStrategy().ensureIsValid();
 
-        try (PagesExtractor extractor = new PagesExtractor(document)) {
+        try (PagesExtractor extractor = supplyPagesExtractor(document)) {
             int outputDocumentsCounter = 0;
             File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
+                    onOpen(page);
                     outputDocumentsCounter++;
                     tmpFile = createTemporaryPdfBuffer();
+                    LOG.debug("Created output temporary buffer {}", tmpFile);
                     String outName = nameGenerator(parameters.getOutputPrefix())
                             .generate(
                                     enrichNameGenerationRequest(nameRequest().page(page)
@@ -80,16 +83,17 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                     outputWriter.addOutput(file(tmpFile).name(outName));
                 }
                 LOG.trace("Retaining page {} of the original document", page);
+                onRetain(page);
                 extractor.retain(page);
                 notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
-                    LOG.debug("Created output temporary buffer {}", tmpFile);
+                    onClose(page);
                     extractor.setVersion(parameters.getVersion());
                     extractor.setCompress(parameters.isCompress());
                     extractor.save(tmpFile);
                     extractor.reset();
-
-                    LOG.debug("Ending split at page {} of the original document", page);
+                    LOG.debug("Ending split at page {} of the original document, generated document size is {}", page,
+                            tmpFile.length());
                 }
             }
         }
@@ -102,4 +106,41 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
      * @return the strategy to use to know if it's time to open a new document or close the current one.
      */
     abstract NextOutputStrategy nextOutputStrategy();
+
+    /**
+     * Called when an output document is going to be opened. Extending classes can plug some logic here.
+     * 
+     * @param page
+     *            the page number which is going to be added
+     */
+    protected void onOpen(int page) throws TaskException {
+        // nothing
+    }
+
+    /**
+     * Called when the given page is going to be added . Extending classes can plug some logic here.
+     * 
+     * @param page
+     *            the page number which is going to be added
+     */
+    protected void onRetain(int page) throws TaskException {
+        // nothing
+    }
+
+    /**
+     * Called when an output document is going to be closed. Extending classes can plug some logic here.
+     * 
+     * @param page
+     *            the last added page number
+     */
+    protected void onClose(int page) throws TaskException {
+        // nothing
+    }
+
+    /**
+     * Creates the {@link PageExtractor} to be used by this {@link AbstractPdfSplitter}
+     */
+    protected PagesExtractor supplyPagesExtractor(PDDocument document) {
+        return new PagesExtractor(document);
+    }
 }
