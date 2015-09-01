@@ -19,20 +19,25 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -48,24 +53,27 @@ public abstract class SplitBySizeTaskTest extends PdfOutEnabledTest implements T
 
     private SejdaContext context = mock(DefaultSejdaContext.class);
     private SplitBySizeParameters parameters;
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
     public void setUp() {
         TestUtils.setProperty(victim, "context", context);
-        parameters = new SplitBySizeParameters(10000);
+        parameters = new SplitBySizeParameters(100000);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "medium_test.pdf");
         parameters.setSource(source);
         parameters.setOverwrite(true);
     }
 
     @Test
-    public void testExecuteBurst() throws TaskException, IOException {
+    public void testExecute() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
+        File output = folder.newFolder();
+        parameters.setOutput(new DirectoryTaskOutput(output));
         victim.execute(parameters);
-        assertOutputContainsDocuments(4);
+        assertEquals(4, output.listFiles().length);
     }
 }
