@@ -66,7 +66,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
     public void execute(SetHeaderFooterParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        for(PdfSource<?> source: parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
 
             LOG.debug("Opening {}", source);
@@ -80,16 +80,13 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
 
-            PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler);
-            footerWriter.write(parameters, currentStep);
-
-            documentHandler.savePDDocument(tmpFile);
-
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
-            outputWriter.addOutput(file(tmpFile).name(outName));
-
-            nullSafeCloseQuietly(documentHandler);
+            try (PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler)) {
+                footerWriter.write(parameters, currentStep);
+                documentHandler.savePDDocument(tmpFile);
+                String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                        nameRequest().originalName(source.getName()).fileNumber(currentStep));
+                outputWriter.addOutput(file(tmpFile).name(outName));
+            }
 
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }

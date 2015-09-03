@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility methods related to outline handling in PDFBox
+ * Utility methods related to outline handling in SAMBox
  * 
  * @author Andrea Vacondio
  *
@@ -49,23 +49,23 @@ public final class OutlineUtils {
 
     /**
      * @param document
-     * @return the max bookmarks level where a page destination (page destination, named destination, goto action) is defined.
+     * @return the max outline level where a page destination (page destination, named destination, goto action) is defined.
      */
-    public static int getMaxBookmarkLevel(PDDocument document) {
+    public static int getMaxOutlineLevel(PDDocument document) {
         PDDestinationNameTreeNode destinations = null;
         PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
         if (names != null) {
             destinations = names.getDests();
         }
-        return getMaxBookmarkLevel(document.getDocumentCatalog().getDocumentOutline(), destinations, 0);
+        return getMaxOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), destinations, 0);
     }
 
-    private static int getMaxBookmarkLevel(PDOutlineNode node, PDDestinationNameTreeNode destinations, int parentLevel) {
+    private static int getMaxOutlineLevel(PDOutlineNode node, PDDestinationNameTreeNode destinations, int parentLevel) {
         int maxLevel = parentLevel;
         if (node != null) {
             for (PDOutlineItem current : node.children()) {
                 if (isPageDestination(current, destinations)) {
-                    int maxBookmarkBranchLevel = getMaxBookmarkLevel(current, destinations, parentLevel + 1);
+                    int maxBookmarkBranchLevel = getMaxOutlineLevel(current, destinations, parentLevel + 1);
                     if (maxBookmarkBranchLevel > maxLevel) {
                         maxLevel = maxBookmarkBranchLevel;
                     }

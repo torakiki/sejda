@@ -20,7 +20,7 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.impl.sambox.component.OutlineUtils.getMaxBookmarkLevel;
+import static org.sejda.impl.sambox.component.OutlineUtils.getMaxOutlineLevel;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
 import java.util.regex.Matcher;
@@ -62,7 +62,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
     }
 
     public int getMaxOutlineDepth() {
-        return getMaxBookmarkLevel(document);
+        return getMaxOutlineLevel(document);
     }
 
     public OutlinePageDestinations getPageDestinationsForLevel(int level) {
