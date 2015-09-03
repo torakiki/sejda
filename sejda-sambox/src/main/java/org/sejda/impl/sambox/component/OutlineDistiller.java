@@ -21,9 +21,10 @@ import static java.util.Objects.requireNonNull;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
-import org.sejda.common.collection.NullSafeSet;
 import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
@@ -35,44 +36,43 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component that keeps track of the relevant pages of a document, distills a cloned version of the document outline based on the relevant pages selected and merges it to a given
- * existing {@link PDDocumentOutline}.
+ * Component that can distill a cloned version of the document outline based on the relevant pages selected and can append it to a given existing {@link PDDocumentOutline},
+ * filtering out outline item pointing to irrelevant pages.
  * 
  * @author Andrea Vacondio
  *
  */
-public class OutlineMerger {
-    private static final Logger LOG = LoggerFactory.getLogger(OutlineMerger.class);
+public class OutlineDistiller {
+    private static final Logger LOG = LoggerFactory.getLogger(OutlineDistiller.class);
 
-    private Optional<PDDocumentOutline> outline;
+    private PDDocumentOutline outline;
     private PDDestinationNameTreeNode destinations = null;
-    private NullSafeSet<PDPage> relevantPages = new NullSafeSet<>();
+    private Set<PDPage> currentRelevantPages;
 
-    public OutlineMerger(PDDocument document) {
+    public OutlineDistiller(PDDocument document) {
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
         PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
         if (names != null) {
             this.destinations = names.getDests();
         }
-        this.outline = Optional.ofNullable(document.getDocumentCatalog().getDocumentOutline());
+        this.outline = document.getDocumentCatalog().getDocumentOutline();
     }
 
     /**
-     * @param page
-     * @return adds a page that is relevant for the current task and any outline item pointing at this page as destination should be kept when merging the outline.
+     * Appends to the given outline, all the outline items whose page destination is relevant
+     * 
+     * @param to
+     * @param relevantPages
      */
-    public boolean addRelevantPage(PDPage page) {
-        return relevantPages.add(page);
-    }
-
-    public void mergeRelevantOutlineTo(PDDocumentOutline dest) {
-        requireNonNull(dest, "Unable to merge relevant outline items to a null outline.");
-        outline.ifPresent(o -> {
-            for (PDOutlineItem child : o.children()) {
-                cloneNode(child).ifPresent(c -> dest.addLast(c));
+    public void appendRelevantOutlineTo(PDDocumentOutline to, Set<PDPage> relevantPages) {
+        requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
+        this.currentRelevantPages = Optional.ofNullable(relevantPages).orElse(Collections.emptySet());
+        if (currentRelevantPages.size() > 0 && outline != null) {
+            for (PDOutlineItem child : outline.children()) {
+                cloneNode(child).ifPresent(c -> to.addLast(c));
             }
-            LOG.debug("Merged relevant outline items");
-        });
+            LOG.debug("Appended relevant outline items");
+        }
     }
 
     private Optional<PDOutlineItem> cloneNode(PDOutlineItem node) {
@@ -94,7 +94,6 @@ public class OutlineMerger {
             return Optional.empty();
         }
         return cloneLeafIfNeeded(node);
-
     }
 
     private static void copyDestination(Optional<PDPageDestination> destination, PDOutlineItem to) {
@@ -120,7 +119,7 @@ public class OutlineMerger {
 
     private boolean isNeeded(Optional<PDPageDestination> destination) {
         if (destination.isPresent()) {
-            return relevantPages.contains(destination.get().getPage());
+            return currentRelevantPages.contains(destination.get().getPage());
         }
         return false;
     }

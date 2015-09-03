@@ -46,7 +46,7 @@ public class OutlineUtilsTest {
     public void outlineMaxDepth() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
                 .getResourceAsStream("/pdf/test_outline.pdf")))) {
-            assertEquals(3, OutlineUtils.getMaxBookmarkLevel(doc));
+            assertEquals(3, OutlineUtils.getMaxOutlineLevel(doc));
         }
     }
 
@@ -54,7 +54,7 @@ public class OutlineUtilsTest {
     public void noOutlineMaxDepth() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
                 .getResourceAsStream("/pdf/test_no_outline.pdf")))) {
-            assertEquals(0, OutlineUtils.getMaxBookmarkLevel(doc));
+            assertEquals(0, OutlineUtils.getMaxOutlineLevel(doc));
         }
     }
 

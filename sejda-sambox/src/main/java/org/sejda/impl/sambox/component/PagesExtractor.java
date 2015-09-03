@@ -21,22 +21,15 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import org.sejda.common.ComponentsUtility;
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.action.PDAction;
-import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,19 +44,20 @@ public class PagesExtractor implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PagesExtractor.class);
 
-    private OutlineMerger outlineMerger;
-    private PDDocumentOutline outline;
+    private OutlineDistiller outlineMerger;
     private PDDocument originalDocument;
     private PDDocumentHandler destinationDocument;
+    private Set<PDPage> relevantPages = new NullSafeSet<>();
+    private AnnotationsDistiller annotationsDistiller;
 
     public PagesExtractor(PDDocument origin) {
         this.originalDocument = origin;
+        this.annotationsDistiller = new AnnotationsDistiller(origin);
         init();
     }
 
     private void init() {
-        this.outlineMerger = new OutlineMerger(originalDocument);
-        this.outline = new PDDocumentOutline();
+        this.outlineMerger = new OutlineDistiller(originalDocument);
         this.destinationDocument = new PDDocumentHandler();
         this.destinationDocument.initialiseBasedOn(originalDocument);
     }
@@ -79,35 +73,8 @@ public class PagesExtractor implements Closeable {
     public void retain(int page) {
         PDPage existingPage = originalDocument.getPage(page - 1);
         destinationDocument.addPage(existingPage);
-        outlineMerger.addRelevantPage(existingPage);
+        relevantPages.add(existingPage);
         LOG.trace("Imported page number {}", page);
-        processAnnotations(existingPage);
-    }
-
-    private void processAnnotations(PDPage imported) {
-        try {
-            List<PDAnnotation> annotations = imported.getAnnotations();
-            for (PDAnnotation annotation : annotations) {
-                if (annotation instanceof PDAnnotationLink) {
-                    PDAnnotationLink link = (PDAnnotationLink) annotation;
-                    PDDestination destination = link.getDestination();
-                    if (destination == null && link.getAction() != null) {
-                        PDAction action = link.getAction();
-                        if (action instanceof PDActionGoTo) {
-                            destination = ((PDActionGoTo) action).getDestination();
-                        }
-                    }
-                    if (destination instanceof PDPageDestination) {
-                        // TODO preserve links to pages within the splitted result
-                        ((PDPageDestination) destination).setPage(null);
-                    }
-                }
-                // TODO preserve links to pages within the splitted result
-                annotation.setPage(null);
-            }
-        } catch (IOException e) {
-            LOG.warn("Failed to process annotations for page");
-        }
     }
 
     public void setVersion(PdfVersion version) {
@@ -119,15 +86,22 @@ public class PagesExtractor implements Closeable {
     }
 
     public void save(File file) throws TaskException {
-        outlineMerger.mergeRelevantOutlineTo(outline);
+        createOutline();
+        annotationsDistiller.filterAnnotations(relevantPages);
+        destinationDocument.savePDDocument(file);
+    }
+
+    private void createOutline() {
+        PDDocumentOutline outline = new PDDocumentOutline();
+        outlineMerger.appendRelevantOutlineTo(outline, relevantPages);
         if (outline.hasChildren()) {
             destinationDocument.setDocumentOutline(outline);
         }
-        destinationDocument.savePDDocument(file);
     }
 
     public void close() {
         ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
+        relevantPages.clear();
         outlineMerger = null;
     }
 
