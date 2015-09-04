@@ -26,6 +26,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
+import org.sejda.core.support.prefix.processor.PrefixUtils;
 
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
@@ -68,7 +69,7 @@ public final class NameGenerator {
             return baseName.substring(0, 254 - ext.length()) + "." + ext;
         }
 
-        return result;
+        return PrefixUtils.toSafeFilename(result);
     }
 
     /**

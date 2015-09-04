@@ -83,4 +83,10 @@ public class NameGeneratorTest {
         assertEquals(255, generatedFilename.length());
         assertThat(generatedFilename, endsWith("aaa.pdf"));
     }
+
+    @Test
+    public void testInvalidCharacters() {
+        String generatedFilename = nameGenerator("Invalid_\\").generate(nameRequest("pdf"));
+        assertEquals(generatedFilename, "Invalid_.pdf");
+    }
 }
