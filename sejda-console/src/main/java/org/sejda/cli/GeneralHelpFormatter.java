@@ -60,7 +60,7 @@ public final class GeneralHelpFormatter {
      */
     private String formatCommandText(CliCommand each) {
         String formattedDescription = formatCommandDescriptionText(each);
-        return String.format(" %-" + maximumLengthForCommandDisplayName + "s %s\n\n", each.getDisplayName(),
+        return String.format(" %-" + maximumLengthForCommandDisplayName + "s %s%n%n", each.getDisplayName(),
                 formattedDescription);
     }
 
