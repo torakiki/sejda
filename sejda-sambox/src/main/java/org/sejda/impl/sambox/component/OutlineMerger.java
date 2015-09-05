@@ -23,7 +23,6 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -34,10 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Component that can create a new document outline based on the selected {@link OutlinePolicy}
+ * 
  * @author Andrea Vacondio
- *
  */
 public class OutlineMerger {
+
     private static final Logger LOG = LoggerFactory.getLogger(OutlineMerger.class);
 
     private OutlinePolicy policy;
@@ -47,31 +48,34 @@ public class OutlineMerger {
         this.policy = policy;
     }
 
-    public void updateOutline(PDDocument document, PdfMergeInput input, Set<PDPage> relevantPages) {
-        switch (policy) {
-        case ONE_ENTRY_EACH_DOC:
-            updateOneEntryPerDoc(input, relevantPages);
-            break;
-        case RETAIN:
-            new OutlineDistiller(document).appendRelevantOutlineTo(outline, relevantPages);
-            break;
-        default:
-            LOG.debug("Discarding outline for {}", input.getSource());
+    public void updateOutline(PDDocument document, String sourceName, Set<PDPage> relevantPages) {
+        if (!relevantPages.isEmpty()) {
+            switch (policy) {
+            case ONE_ENTRY_EACH_DOC:
+                updateOneEntryPerDoc(sourceName, relevantPages);
+                break;
+            case RETAIN:
+                new OutlineDistiller(document).appendRelevantOutlineTo(outline, relevantPages);
+                break;
+            default:
+                LOG.debug("Discarding outline for {}", sourceName);
+            }
+        } else {
+            LOG.info("Skipped outline merge, no relevant page");
         }
     }
 
-    private void updateOneEntryPerDoc(PdfMergeInput input, Set<PDPage> relevantPages) {
-        String name = input.getSource().getName();
-        if (!relevantPages.isEmpty() && StringUtils.isNotBlank(name)) {
-            LOG.debug("Adding outline entry for {}", name);
+    private void updateOneEntryPerDoc(String sourceName, Set<PDPage> relevantPages) {
+        if (StringUtils.isNotBlank(sourceName)) {
+            LOG.debug("Adding outline entry for {}", sourceName);
             PDOutlineItem item = new PDOutlineItem();
-            item.setTitle(removeExtension(name));
+            item.setTitle(removeExtension(sourceName));
             PDPageFitDestination destination = new PDPageFitDestination();
             destination.setPage(relevantPages.iterator().next());
             item.setDestination(destination);
             outline.addLast(item);
         } else {
-            LOG.warn("Outline entry not created, unable to find its name.");
+            LOG.warn("Outline entry not created, unable to find its name");
         }
     }
 

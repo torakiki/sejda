@@ -96,7 +96,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             }
             LOG.trace("Added pages for {}", input.getSource());
 
-            outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input, relevantPages);
+            outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
+                    relevantPages);
             AnnotationsDistiller.filterAnnotations(relevantPages, sourceDocumentHandler.getUnderlyingPDDocument());
 
             if (parameters.isBlankPageIfOdd()) {
