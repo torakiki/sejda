@@ -18,14 +18,14 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.sejda.util.RequireUtils.requireNotNullArg;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
@@ -43,37 +43,34 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  *
  */
-class AnnotationsDistiller {
+public final class AnnotationsDistiller {
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationsDistiller.class);
 
-    private PDDestinationNameTreeNode destinations;
-
-    public AnnotationsDistiller(PDDocument originalDocument) {
-        PDDocumentNameDictionary names = originalDocument.getDocumentCatalog().getNames();
-        if (names != null) {
-            this.destinations = names.getDests();
-        }
+    private AnnotationsDistiller() {
+        // utility
     }
 
     /**
      * Removes from the given set of pages all the annotations pointing to a page that is not in the set (an irrelevant page)
      * 
      * @param relevantPages
+     * @param pagesOwner
+     *            document owning the pages
      */
-    public void filterAnnotations(Set<PDPage> relevantPages) {
+    public static void filterAnnotations(Set<PDPage> relevantPages, PDDocument pagesOwner) {
+        requireNotNullArg(pagesOwner, "Cannot process annotations for a null document");
         LOG.debug("Pocessing annotations");
         for (PDPage page : relevantPages) {
             try {
                 List<PDAnnotation> keptAnnotation = new ArrayList<>();
                 for (PDAnnotation annotation : page.getAnnotations()) {
                     if (annotation instanceof PDAnnotationLink) {
-                        PDDestination destination = getDestinationFrom((PDAnnotationLink) annotation);
-                        if (destination instanceof PDPageDestination) {
-                            if (relevantPages.contains(((PDPageDestination) destination).getPage())) {
-                                keptAnnotation.add(annotation);
-                            } else {
-                                LOG.trace("Removing link annotation {}", annotation);
-                            }
+                        PDDestination destination = getDestinationFrom((PDAnnotationLink) annotation, pagesOwner);
+                        if (destination instanceof PDPageDestination
+                                && !relevantPages.contains(((PDPageDestination) destination).getPage())) {
+                            LOG.trace("Removing link annotation {}", annotation);
+                        } else {
+                            keptAnnotation.add(annotation);
                         }
                     } else {
                         PDPage p = annotation.getPage();
@@ -89,7 +86,7 @@ class AnnotationsDistiller {
         }
     }
 
-    private PDDestination getDestinationFrom(PDAnnotationLink link) throws IOException {
+    private static PDDestination getDestinationFrom(PDAnnotationLink link, PDDocument pageOwner) throws IOException {
         PDDestination destination = link.getDestination();
         if (destination == null) {
             PDAction action = link.getAction();
@@ -97,8 +94,8 @@ class AnnotationsDistiller {
                 destination = ((PDActionGoTo) action).getDestination();
             }
         }
-        if (destination instanceof PDNamedDestination && destinations != null) {
-            destination = destinations.getValue(((PDNamedDestination) destination).getNamedDestination());
+        if (destination instanceof PDNamedDestination) {
+            destination = pageOwner.getDocumentCatalog().findNamedDestinationPage((PDNamedDestination) destination);
         }
         return destination;
     }
