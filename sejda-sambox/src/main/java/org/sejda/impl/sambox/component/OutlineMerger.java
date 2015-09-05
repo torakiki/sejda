@@ -1,0 +1,85 @@
+/*
+ * Created on 04/set/2015
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * This file is part of Sejda.
+ *
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Sejda is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.sejda.impl.sambox.component;
+
+import static org.apache.commons.io.FilenameUtils.removeExtension;
+
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.outline.OutlinePolicy;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author Andrea Vacondio
+ *
+ */
+public class OutlineMerger {
+    private static final Logger LOG = LoggerFactory.getLogger(OutlineMerger.class);
+
+    private OutlinePolicy policy;
+    private PDDocumentOutline outline = new PDDocumentOutline();
+
+    public OutlineMerger(OutlinePolicy policy) {
+        this.policy = policy;
+    }
+
+    public void updateOutline(PDDocument document, PdfMergeInput input, Set<PDPage> relevantPages) {
+        switch (policy) {
+        case ONE_ENTRY_EACH_DOC:
+            updateOneEntryPerDoc(input, relevantPages);
+            break;
+        case RETAIN:
+            new OutlineDistiller(document).appendRelevantOutlineTo(outline, relevantPages);
+            break;
+        default:
+            LOG.debug("Discarding outline for {}", input.getSource());
+        }
+    }
+
+    private void updateOneEntryPerDoc(PdfMergeInput input, Set<PDPage> relevantPages) {
+        String name = input.getSource().getName();
+        if (!relevantPages.isEmpty() && StringUtils.isNotBlank(name)) {
+            LOG.debug("Adding outline entry for {}", name);
+            PDOutlineItem item = new PDOutlineItem();
+            item.setTitle(removeExtension(name));
+            PDPageFitDestination destination = new PDPageFitDestination();
+            destination.setPage(relevantPages.iterator().next());
+            item.setDestination(destination);
+            outline.addLast(item);
+        } else {
+            LOG.warn("Outline entry not created, unable to find its name.");
+        }
+    }
+
+    public boolean hasOutline() {
+        return outline.hasChildren();
+    }
+
+    public PDDocumentOutline getOutline() {
+        return outline;
+    }
+}

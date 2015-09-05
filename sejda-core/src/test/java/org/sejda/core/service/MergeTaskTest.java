@@ -72,7 +72,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     private void setUpParameters(List<PdfMergeInput> input) {
         parameters = new MergeParameters();
         parameters.setOverwrite(true);
-        parameters.setCompress(true);
+        parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         for (PdfMergeInput current : input) {
             parameters.addInput(current);

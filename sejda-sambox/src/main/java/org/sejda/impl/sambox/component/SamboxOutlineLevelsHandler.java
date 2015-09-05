@@ -27,9 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sejda.model.outline.OutlinePageDestinations;
-import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
@@ -44,7 +42,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.OutlineLevelsHandler {
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
-    private PDDestinationNameTreeNode namedDestinations = null;
     private PDDocument document;
     private PDPageTree pages;
 
@@ -52,10 +49,6 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
         this.document = document;
         this.pages = document.getPages();
-        PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
-        if (names != null) {
-            this.namedDestinations = names.getDests();
-        }
         if (isNotBlank(matchingTitleRegEx)) {
             this.titleMatchingPattern = Pattern.compile(matchingTitleRegEx);
         }
@@ -67,20 +60,20 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
 
     public OutlinePageDestinations getPageDestinationsForLevel(int level) {
         OutlinePageDestinations destinations = new OutlinePageDestinations();
-        addPageIfBookmarkLevel(document.getDocumentCatalog().getDocumentOutline(), 1, destinations, level);
+        addPageIfOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), 1, destinations, level);
         return destinations;
     }
 
-    private void addPageIfBookmarkLevel(PDOutlineNode outline, int currentLevel, OutlinePageDestinations destinations,
+    private void addPageIfOutlineLevel(PDOutlineNode outline, int currentLevel, OutlinePageDestinations destinations,
             int levelToAdd) {
         if (outline != null) {
             for (PDOutlineItem current : outline.children())
                 if (currentLevel <= levelToAdd) {
-                    toPageDestination(current, namedDestinations).ifPresent(d -> {
+                    toPageDestination(current, document.getDocumentCatalog()).ifPresent(d -> {
                         if (isLevelToBeAdded(currentLevel, levelToAdd)) {
                             addPageIfValid(destinations, d, current.getTitle());
                         } else {
-                            addPageIfBookmarkLevel(current, currentLevel + 1, destinations, levelToAdd);
+                            addPageIfOutlineLevel(current, currentLevel + 1, destinations, levelToAdd);
                         }
                     });
                 }

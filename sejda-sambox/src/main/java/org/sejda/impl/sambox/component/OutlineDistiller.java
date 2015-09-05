@@ -25,9 +25,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -45,17 +43,12 @@ import org.slf4j.LoggerFactory;
 public class OutlineDistiller {
     private static final Logger LOG = LoggerFactory.getLogger(OutlineDistiller.class);
 
-    private PDDocumentOutline outline;
-    private PDDestinationNameTreeNode destinations = null;
+    private PDDocument document;
     private Set<PDPage> currentRelevantPages;
 
     public OutlineDistiller(PDDocument document) {
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
-        PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
-        if (names != null) {
-            this.destinations = names.getDests();
-        }
-        this.outline = document.getDocumentCatalog().getDocumentOutline();
+        this.document = document;
     }
 
     /**
@@ -67,6 +60,7 @@ public class OutlineDistiller {
     public void appendRelevantOutlineTo(PDDocumentOutline to, Set<PDPage> relevantPages) {
         requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
         this.currentRelevantPages = Optional.ofNullable(relevantPages).orElse(Collections.emptySet());
+        PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();
         if (currentRelevantPages.size() > 0 && outline != null) {
             for (PDOutlineItem child : outline.children()) {
                 cloneNode(child).ifPresent(c -> to.addLast(c));
@@ -85,7 +79,7 @@ public class OutlineDistiller {
             }
             if (clone.hasChildren()) {
                 copyOutlineDictionary(node, clone);
-                Optional<PDPageDestination> destination = toPageDestination(node, destinations);
+                Optional<PDPageDestination> destination = toPageDestination(node, document.getDocumentCatalog());
                 if (isNeeded(destination)) {
                     copyDestination(destination, clone);
                 }
@@ -107,7 +101,7 @@ public class OutlineDistiller {
      * @return a clone of the origin leaf if its page destination falls in the range of the needed pages. Cloned item destination is offset by the given offset.
      */
     private Optional<PDOutlineItem> cloneLeafIfNeeded(PDOutlineItem origin) {
-        Optional<PDPageDestination> destination = toPageDestination(origin, destinations);
+        Optional<PDPageDestination> destination = toPageDestination(origin, document.getDocumentCatalog());
         if (isNeeded(destination)) {
             PDOutlineItem retVal = new PDOutlineItem();
             copyOutlineDictionary(origin, retVal);

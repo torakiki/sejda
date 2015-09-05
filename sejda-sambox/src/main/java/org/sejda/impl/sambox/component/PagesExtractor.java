@@ -48,11 +48,9 @@ public class PagesExtractor implements Closeable {
     private PDDocument originalDocument;
     private PDDocumentHandler destinationDocument;
     private Set<PDPage> relevantPages = new NullSafeSet<>();
-    private AnnotationsDistiller annotationsDistiller;
 
     public PagesExtractor(PDDocument origin) {
         this.originalDocument = origin;
-        this.annotationsDistiller = new AnnotationsDistiller(origin);
         init();
     }
 
@@ -87,7 +85,7 @@ public class PagesExtractor implements Closeable {
 
     public void save(File file) throws TaskException {
         createOutline();
-        annotationsDistiller.filterAnnotations(relevantPages);
+        AnnotationsDistiller.filterAnnotations(relevantPages, originalDocument);
         destinationDocument.savePDDocument(file);
     }
 

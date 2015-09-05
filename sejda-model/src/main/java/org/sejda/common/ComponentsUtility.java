@@ -48,7 +48,7 @@ public final class ComponentsUtility {
         try {
             nullSafeClose(closeable);
         } catch (Exception e) {
-            LOG.warn("An error occurred closing the document handler.", e);
+            LOG.warn("An error occurred closing the component.", e);
         }
     }
 

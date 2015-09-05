@@ -266,6 +266,7 @@ public class PDDocumentHandler implements Closeable {
         getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(other.getDocumentCatalog().getPageLayout());
         getUnderlyingPDDocument().getDocumentCatalog().setPageMode(other.getDocumentCatalog().getPageMode());
         getUnderlyingPDDocument().getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
+        // TODO named resources?
         // TODO not sure about this, maybe an option to let the user decide if he wants to bring in metadata?
         // getUnderlyingPDDocument().getDocumentCatalog().setMetadata(other.getDocumentCatalog().getMetadata());
         setCreatorOnPDDocument();
@@ -292,5 +293,12 @@ public class PDDocumentHandler implements Closeable {
 
     public void setPageLayout(PageLayout pageLayout) {
         document.getDocumentCatalog().setPageLayout(pageLayout);
+    }
+
+    public void addBlankPageIfOdd() {
+        if (document.getNumberOfPages() % 2 != 0) {
+            LOG.debug("Adding blank page");
+            document.addPage(new PDPage());
+        }
     }
 }

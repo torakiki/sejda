@@ -20,9 +20,8 @@ package org.sejda.impl.sambox.component;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
@@ -52,20 +51,15 @@ public final class OutlineUtils {
      * @return the max outline level where a page destination (page destination, named destination, goto action) is defined.
      */
     public static int getMaxOutlineLevel(PDDocument document) {
-        PDDestinationNameTreeNode destinations = null;
-        PDDocumentNameDictionary names = document.getDocumentCatalog().getNames();
-        if (names != null) {
-            destinations = names.getDests();
-        }
-        return getMaxOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), destinations, 0);
+        return getMaxOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), document.getDocumentCatalog(), 0);
     }
 
-    private static int getMaxOutlineLevel(PDOutlineNode node, PDDestinationNameTreeNode destinations, int parentLevel) {
+    private static int getMaxOutlineLevel(PDOutlineNode node, PDDocumentCatalog catalog, int parentLevel) {
         int maxLevel = parentLevel;
         if (node != null) {
             for (PDOutlineItem current : node.children()) {
-                if (isPageDestination(current, destinations)) {
-                    int maxBookmarkBranchLevel = getMaxOutlineLevel(current, destinations, parentLevel + 1);
+                if (isPageDestination(current, catalog)) {
+                    int maxBookmarkBranchLevel = getMaxOutlineLevel(current, catalog, parentLevel + 1);
                     if (maxBookmarkBranchLevel > maxLevel) {
                         maxLevel = maxBookmarkBranchLevel;
                     }
@@ -83,8 +77,7 @@ public final class OutlineUtils {
      * @return the {@link PDPageDestination} for the given {@link PDOutlineItem} or an empty {@link Optional} if the destination is not a page. In case the outline item has a named
      *         destination, it is resolved against the given names tree.
      */
-    public static Optional<PDPageDestination> toPageDestination(PDOutlineItem current,
-            PDDestinationNameTreeNode destinations) {
+    public static Optional<PDPageDestination> toPageDestination(PDOutlineItem current, PDDocumentCatalog catalog) {
         try {
             PDDestination dest = current.getDestination();
             if (dest == null) {
@@ -93,8 +86,8 @@ public final class OutlineUtils {
                     dest = ((PDActionGoTo) outlineAction).getDestination();
                 }
             }
-            if (dest instanceof PDNamedDestination && destinations != null) {
-                dest = destinations.getValue(((PDNamedDestination) dest).getNamedDestination());
+            if (dest instanceof PDNamedDestination && catalog != null) {
+                dest = catalog.findNamedDestinationPage((PDNamedDestination) dest);
             }
             if (dest instanceof PDPageDestination) {
                 return Optional.of((PDPageDestination) dest);
@@ -105,8 +98,8 @@ public final class OutlineUtils {
         return Optional.empty();
     }
 
-    private static boolean isPageDestination(PDOutlineItem current, PDDestinationNameTreeNode destinations) {
-        return toPageDestination(current, destinations).isPresent();
+    private static boolean isPageDestination(PDOutlineItem current, PDDocumentCatalog catalog) {
+        return toPageDestination(current, catalog).isPresent();
     }
 
     /**

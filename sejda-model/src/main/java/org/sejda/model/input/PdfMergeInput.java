@@ -54,7 +54,7 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
         // default constructor for persistence
     }
 
-    public PdfMergeInput(PdfSource<?> source, Set<PageRange> pageSelection){
+    public PdfMergeInput(PdfSource<?> source, Set<PageRange> pageSelection) {
         this.source = source;
         this.pageSelection.addAll(pageSelection);
     }
@@ -97,8 +97,14 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
      */
     public Set<Integer> getPages(int totalNumberOfPage) {
         Set<Integer> retSet = new NullSafeSet<Integer>();
-        for (PageRange range : getPageSelection()) {
-            retSet.addAll(range.getPages(totalNumberOfPage));
+        if (isAllPages()) {
+            for (int i = 1; i <= totalNumberOfPage; i++) {
+                retSet.add(i);
+            }
+        } else {
+            for (PageRange range : getPageSelection()) {
+                retSet.addAll(range.getPages(totalNumberOfPage));
+            }
         }
         return retSet;
     }

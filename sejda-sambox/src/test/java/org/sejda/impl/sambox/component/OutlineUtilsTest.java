@@ -21,6 +21,7 @@ package org.sejda.impl.sambox.component;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,8 +30,8 @@ import java.io.IOException;
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.input.PDFParser;
-import org.sejda.sambox.pdmodel.PDDestinationNameTreeNode;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
@@ -82,7 +83,20 @@ public class OutlineUtilsTest {
         destination.setPageNumber(5);
         PDOutlineItem victim = new PDOutlineItem();
         victim.setDestination(destination);
-        assertEquals(5, OutlineUtils.toPageDestination(victim, new PDDestinationNameTreeNode()).get().getPageNumber());
+        PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
+        assertEquals(5, OutlineUtils.toPageDestination(victim, catalog).get().getPageNumber());
+    }
+
+    @Test
+    public void toPageDestinationDestinationNullCatalog() {
+        PDPageFitDestination dest = new PDPageFitDestination();
+        dest.setPageNumber(5);
+        PDNamedDestination destination = new PDNamedDestination();
+        destination.setNamedDestination("ChuckNorris");
+        PDOutlineItem victim = new PDOutlineItem();
+        victim.setDestination(destination);
+        PDDocumentCatalog catalog = null;
+        assertFalse(OutlineUtils.toPageDestination(victim, catalog).isPresent());
     }
 
     @Test
@@ -101,9 +115,9 @@ public class OutlineUtilsTest {
         destination.setNamedDestination("ChuckNorris");
         PDOutlineItem victim = new PDOutlineItem();
         victim.setDestination(destination);
-        PDDestinationNameTreeNode names = mock(PDDestinationNameTreeNode.class);
-        when(names.getValue("ChuckNorris")).thenReturn(dest);
-        assertEquals(5, OutlineUtils.toPageDestination(victim, names).get().getPageNumber());
+        PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
+        when(catalog.findNamedDestinationPage(any())).thenReturn(dest);
+        assertEquals(dest, OutlineUtils.toPageDestination(victim, catalog).get());
     }
 
     @Test

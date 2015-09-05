@@ -61,6 +61,5 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         } catch (IOException e) {
             throw new TaskIOException(String.format("An error occurred opening the source: %s.", source), e);
         }
-
     }
 }
