@@ -38,6 +38,7 @@ public class CropCliArgumentsTransformer extends BaseCliArgumentsTransformer imp
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public CropParameters toTaskParameters(CropTaskCliArguments taskCliArguments) {
         CropParameters parameters = new CropParameters();
 

@@ -47,6 +47,7 @@ public final class AsyncNotificationStrategy implements NotificationStrategy {
         }
     };
 
+    @Override
     @SuppressWarnings("rawtypes")
     public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {
@@ -75,6 +76,7 @@ public final class AsyncNotificationStrategy implements NotificationStrategy {
             this.event = event;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public void run() {
             try {

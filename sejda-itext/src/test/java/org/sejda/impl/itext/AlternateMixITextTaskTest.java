@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class AlternateMixITextTaskTest extends AlternateMixTaskTest {
 
+    @Override
     public Task<AlternateMixParameters> getTask() {
         return new AlternateMixTask();
     }

@@ -41,10 +41,12 @@ public final class PdfFileSource extends AbstractPdfSource<File> {
         this.file = file;
     }
 
+    @Override
     public File getSource() {
         return file;
     }
 
+    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

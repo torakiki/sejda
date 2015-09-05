@@ -51,6 +51,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private final SejdaContext context = new DefaultSejdaContext();
 
+    @Override
     public void execute(TaskParameters parameters) {
         StopWatch stopWatch = new StopWatch();
         Task<? extends TaskParameters> task = null;

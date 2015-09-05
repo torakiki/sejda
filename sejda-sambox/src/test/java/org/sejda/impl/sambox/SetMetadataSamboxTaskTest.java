@@ -30,6 +30,7 @@ import org.sejda.model.task.Task;
  */
 public class SetMetadataSamboxTaskTest extends SetMetadataTaskTest {
 
+    @Override
     public Task<SetMetadataParameters> getTask() {
         return new SetMetadataTask();
     }

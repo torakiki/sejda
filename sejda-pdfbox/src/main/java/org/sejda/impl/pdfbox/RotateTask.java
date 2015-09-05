@@ -57,12 +57,14 @@ public class RotateTask extends BaseTask<RotateParameters> {
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(RotateParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(RotateParameters parameters) throws TaskException {
         int currentStep = 0;
 
@@ -95,6 +97,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
     }

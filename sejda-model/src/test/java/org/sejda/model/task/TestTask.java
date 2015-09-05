@@ -29,15 +29,18 @@ import org.junit.Ignore;
 @Ignore
 public class TestTask extends BaseTask<TestTaskParameter> {
 
+    @Override
     public void after() {
         // nothing
 
     }
 
+    @Override
     public void before(TestTaskParameter parameters) {
         // nothing
     }
 
+    @Override
     public void execute(TestTaskParameter parameters) {
         // nothing
     }

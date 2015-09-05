@@ -11,6 +11,7 @@ import org.sejda.model.task.Task;
  */
 public class SetPagesTransitionsITextTaskTest extends SetPagesTransitionsTaskTest {
 
+    @Override
     public Task<SetPagesTransitionParameters> getTask() {
         return new SetPagesTransitionTask();
     }

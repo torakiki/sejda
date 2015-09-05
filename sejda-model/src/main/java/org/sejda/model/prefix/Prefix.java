@@ -42,6 +42,7 @@ public enum Prefix implements FriendlyNamed {
         this.name = name;
     }
 
+    @Override
     public String getFriendlyName() {
         return name;
     }

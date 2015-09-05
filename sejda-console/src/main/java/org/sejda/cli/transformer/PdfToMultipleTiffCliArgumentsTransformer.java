@@ -37,6 +37,7 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public PdfToMultipleTiffParameters toTaskParameters(PdfToMultipleTiffTaskCliArguments taskCliArguments) {
         PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(taskCliArguments.getColorType()
                 .getEnumValue());

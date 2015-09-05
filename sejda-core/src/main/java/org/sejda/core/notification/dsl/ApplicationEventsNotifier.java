@@ -71,37 +71,45 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
         return new ApplicationEventsNotifier(taskMetadata);
     }
 
+    @Override
     public void taskFailed(Exception e) {
         notifyListeners(new TaskExecutionFailedEvent(e, taskMetadata));
     }
 
+    @Override
     public void taskCompleted(long executionTime) {
         notifyListeners(new TaskExecutionCompletedEvent(executionTime, taskMetadata));
     }
 
+    @Override
     public void taskStarted() {
         notifyListeners(new TaskExecutionStartedEvent(taskMetadata));
     }
 
+    @Override
     public void progressUndetermined() {
         notifyListeners(new PercentageOfWorkDoneChangedEvent(PercentageOfWorkDoneChangedEvent.UNDETERMINED,
                 taskMetadata));
     }
 
+    @Override
     public OngoingNotification stepsCompleted(int completed) {
         this.percentage = new BigDecimal(completed);
         return this;
     }
 
+    @Override
     public OngoingNotification stepsCompleted(BigDecimal completed) {
         this.percentage = completed;
         return this;
     }
 
+    @Override
     public void outOf(int total) {
         outOf(new BigDecimal(total));
     }
 
+    @Override
     public void outOf(BigDecimal total) {
         notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage.multiply(
                 PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN),

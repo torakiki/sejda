@@ -60,11 +60,13 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(SetMetadataParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(SetMetadataParameters parameters) throws TaskException {
         notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
 
@@ -97,6 +99,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(stamperHandler);

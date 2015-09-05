@@ -36,6 +36,7 @@ class TimestampPrefixProcessor implements PrefixProcessor {
     private static final String TIMESTAMP_REPLACE_RGX = "\\[TIMESTAMP\\]";
     private static final String DATE_PATTERN = "yyyyMMdd_HHmmssSS";
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = inputPrefix;
         String timestamp = new SimpleDateFormat(DATE_PATTERN).format(new Date());

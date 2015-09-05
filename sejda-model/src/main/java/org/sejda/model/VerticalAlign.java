@@ -47,6 +47,7 @@ public enum VerticalAlign implements FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

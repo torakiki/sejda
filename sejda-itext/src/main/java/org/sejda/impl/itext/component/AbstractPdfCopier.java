@@ -75,6 +75,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addPage(pdfCopy.getImportedPage(reader, pageNumber));
@@ -88,11 +89,13 @@ abstract class AbstractPdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void addBlankPage(PdfReader reader) {
         pdfCopy.addPage(reader.getPageSize(1), reader.getPageRotation(1));
         numberOfCopiedPages++;
     }
 
+    @Override
     public void addBlankPageIfOdd(PdfReader reader) {
         if (reader.getNumberOfPages() % 2 != 0) {
             addBlankPage(reader);
@@ -105,12 +108,14 @@ abstract class AbstractPdfCopier implements PdfCopier {
      * @param reader
      * @throws TaskException
      */
+    @Override
     public void addAllPages(PdfReader reader) throws TaskException {
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             addPage(reader, i);
         }
     }
 
+    @Override
     public void setCompression(boolean compress) {
         if (compress) {
             pdfCopy.setFullCompression();
@@ -118,6 +123,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void freeReader(PdfReader reader) throws TaskIOException {
         try {
             pdfCopy.freeReader(reader);
@@ -126,10 +132,12 @@ abstract class AbstractPdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void setPageLabels(PdfPageLabels labels) {
         pdfCopy.setPageLabels(labels);
     }
 
+    @Override
     public void close() {
         if (pdfDocument != null) {
             pdfDocument.close();
@@ -140,6 +148,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         closed = true;
     }
 
+    @Override
     public void setOutline(List<Map<String, Object>> outline) {
         if (outline != null && !outline.isEmpty()) {
             pdfCopy.setOutlines(outline);
@@ -150,6 +159,7 @@ abstract class AbstractPdfCopier implements PdfCopier {
         return closed;
     }
 
+    @Override
     public int getNumberOfCopiedPages() {
         return numberOfCopiedPages;
     }

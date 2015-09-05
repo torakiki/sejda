@@ -124,19 +124,23 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
         }
     }
 
+    @Override
     public Class<? extends NotificationStrategy> getNotificationStrategy() {
         return notificationStrategy;
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap() {
         return tasks;
     }
 
+    @Override
     public boolean isValidation() {
         return validation;
     }
 
+    @Override
     public boolean isIgnoreXmlConfiguration() {
         return ignoreXmlConfig;
     }

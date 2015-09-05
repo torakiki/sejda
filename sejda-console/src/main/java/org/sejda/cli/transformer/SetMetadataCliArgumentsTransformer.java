@@ -39,6 +39,7 @@ public class SetMetadataCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public SetMetadataParameters toTaskParameters(SetMetadataTaskCliArguments taskCliArguments) {
         final SetMetadataParameters parameters = new SetMetadataParameters();
         if (taskCliArguments.isAuthor()) {

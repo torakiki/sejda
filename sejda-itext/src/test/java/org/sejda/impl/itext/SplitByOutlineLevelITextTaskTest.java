@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class SplitByOutlineLevelITextTaskTest extends SplitByOutlineLevelTaskTest {
 
+    @Override
     public Task<SplitByOutlineLevelParameters> getTask() {
         return new SplitByOutlineLevelTask();
     }

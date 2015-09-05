@@ -45,6 +45,7 @@ abstract class AbstractImageWriterAdapter<T extends AbstractPdfToImageParameters
 
     private OutputStream outputDestination;
 
+    @Override
     public void openWriteDestination(File destination, T params) throws TaskIOException {
         try {
             openWriteDestination(new SeekableOutputStream(new RandomAccessFile(destination, "rw")), params);
@@ -60,6 +61,7 @@ abstract class AbstractImageWriterAdapter<T extends AbstractPdfToImageParameters
         this.outputDestination = destination;
     }
 
+    @Override
     public void closeDestination() throws TaskIOException {
         try {
             nullSafeClose(outputDestination);
@@ -76,6 +78,7 @@ abstract class AbstractImageWriterAdapter<T extends AbstractPdfToImageParameters
         return outputDestination;
     }
 
+    @Override
     public void close() throws IOException {
         nullSafeClose(getOutputDestination());
     }

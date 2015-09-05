@@ -42,6 +42,7 @@ class LoggingPrefixProcessorDecorator implements PrefixProcessor {
         this.decorated = decorated;
     }
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         LOG.trace("Processing prefix '{}' with processor '{}'", inputPrefix, decorated.getClass());
         String retVal = decorated.process(inputPrefix, request);

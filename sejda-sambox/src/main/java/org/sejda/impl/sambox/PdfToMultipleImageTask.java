@@ -52,6 +52,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
     private PDDocumentHandler documentHandler = null;
     private ImageWriter<PdfToJpegParameters> writer;
 
+    @Override
     public void before(PdfToJpegParameters parameters) throws TaskException {
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
         writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
@@ -65,6 +66,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
         LOG.trace("Found image writer {}", writer);
     }
 
+    @Override
     public void execute(PdfToJpegParameters parameters) throws TaskException {
         documentHandler = parameters.getSource().open(sourceOpener);
 
@@ -103,6 +105,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
         LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
         nullSafeCloseQuietly(writer);

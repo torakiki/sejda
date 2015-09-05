@@ -54,14 +54,17 @@ public final class FileOutput implements OngoingFileOuputCreation, PopulatedFile
         return new FileOutput(file);
     }
 
+    @Override
     public File getFile() {
         return file;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public PopulatedFileOutput name(String name) {
         this.name = name;
         return this;

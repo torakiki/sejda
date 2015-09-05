@@ -58,12 +58,14 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(SetHeaderFooterParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(SetHeaderFooterParameters parameters) throws TaskException {
         int currentStep = 0;
 
@@ -98,6 +100,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         parameters.getOutput().accept(outputWriter);
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
     }

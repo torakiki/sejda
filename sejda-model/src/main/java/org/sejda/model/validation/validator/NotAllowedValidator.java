@@ -37,10 +37,12 @@ public class NotAllowedValidator implements ConstraintValidator<NotAllowed, Pred
 
     private PredefinedSetOfPages[] disallow;
 
+    @Override
     public void initialize(NotAllowed constraintAnnotation) {
         disallow = constraintAnnotation.disallow();
     }
 
+    @Override
     public boolean isValid(PredefinedSetOfPages value, ConstraintValidatorContext context) {
         if (value != null && disallow != null) {
             return !Arrays.asList(disallow).contains(value);

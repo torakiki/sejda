@@ -37,10 +37,12 @@ class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutput
         super(overwrite);
     }
 
+    @Override
     public void dispatch(StreamTaskOutput output) throws IOException {
         OutputWriterHelper.copyToStream(multipleFiles.values().iterator().next(), output.getDestination());
     }
 
+    @Override
     public void setOutput(PopulatedFileOutput fileOutput) {
         add(fileOutput);
     }

@@ -35,10 +35,12 @@ import org.sejda.model.validation.constraint.Positive;
  */
 public class PositiveNumberValidator implements ConstraintValidator<Positive, Number> {
 
+    @Override
     public void initialize(Positive minValue) {
         // on purpose
     }
 
+    @Override
     public boolean isValid(Number value, ConstraintValidatorContext constraintValidatorContext) {
         if (value == null) {
             return true;

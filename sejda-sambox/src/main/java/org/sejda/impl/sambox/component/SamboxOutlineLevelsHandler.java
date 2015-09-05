@@ -54,10 +54,12 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         }
     }
 
+    @Override
     public int getMaxOutlineDepth() {
         return getMaxOutlineLevel(document);
     }
 
+    @Override
     public OutlinePageDestinations getPageDestinationsForLevel(int level) {
         OutlinePageDestinations destinations = new OutlinePageDestinations();
         addPageIfOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), 1, destinations, level);

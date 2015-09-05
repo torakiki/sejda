@@ -39,14 +39,17 @@ public class PageDestinationsSplitPages implements NextOutputStrategy {
         }
     }
 
+    @Override
     public void ensureIsValid() throws TaskExecutionException {
         delegate.ensureIsValid();
     }
 
+    @Override
     public boolean isOpening(Integer page) {
         return delegate.isOpening(page);
     }
 
+    @Override
     public boolean isClosing(Integer page) {
         return delegate.isClosing(page);
     }

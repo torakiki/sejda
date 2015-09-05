@@ -46,10 +46,12 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     private PdfSourceOpener<PdfReader> sourceOpener;
     private SizePdfSplitter splitter;
 
+    @Override
     public void before(SplitBySizeParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
     }
 
+    @Override
     public void execute(SplitBySizeParameters parameters) throws TaskException {
         LOG.debug("Opening {} ", parameters.getSource());
         reader = parameters.getSource().open(sourceOpener);
@@ -61,6 +63,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         splitter = null;

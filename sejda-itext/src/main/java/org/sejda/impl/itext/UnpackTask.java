@@ -49,12 +49,14 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
     private PdfSourceOpener<PdfReader> sourceOpener;
     private int totalSteps;
 
+    @Override
     public void before(UnpackParameters parameters) {
         unpacker = new PdfUnpacker(parameters.isOverwrite());
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         totalSteps = parameters.getSourceList().size();
     }
 
+    @Override
     public void execute(UnpackParameters parameters) throws TaskException {
         int currentStep = 0;
 
@@ -72,6 +74,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
         LOG.debug("Attachments unpacked and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
     }

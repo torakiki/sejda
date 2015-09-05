@@ -57,10 +57,12 @@ public class ITextOutlineLevelsHandler implements OutlineLevelsHandler {
         }
     }
 
+    @Override
     public int getMaxOutlineDepth() {
         return getMaxBookmarkLevel(bookmarks, 0);
     }
 
+    @Override
     public OutlinePageDestinations getPageDestinationsForLevel(int goToActionLevel) {
         OutlinePageDestinations destinations = new OutlinePageDestinations();
         addPageIfBookmarkLevel(bookmarks, 1, destinations, goToActionLevel);

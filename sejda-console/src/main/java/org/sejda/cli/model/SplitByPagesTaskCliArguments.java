@@ -40,6 +40,7 @@ public interface SplitByPagesTaskCliArguments extends CliArgumentsWithPdfAndDire
     List<Integer> getPageNumbers();
 
     // override default -f option that is decribed as expecting a list of files with a description stating that it is expecting a single file
+    @Override
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
     List<PdfFileSourceAdapter> getFiles();
 }

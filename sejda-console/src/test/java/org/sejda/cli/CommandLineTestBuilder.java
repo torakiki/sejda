@@ -236,6 +236,7 @@ class CommandLineExecuteTestHelper {
         final MutableBoolean taskCompleted = new MutableBoolean(false);
         GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionCompletedEvent>() {
 
+            @Override
             public void onEvent(TaskExecutionCompletedEvent event) {
                 taskCompleted.setValue(true);
             }

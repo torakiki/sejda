@@ -17,6 +17,7 @@ import org.sejda.model.input.PdfURLSource;
  */
 public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler> {
 
+    @Override
     public PDDocumentHandler open(PdfURLSource source) throws TaskIOException {
         PDDocument document = null;
         try {
@@ -27,6 +28,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         return new PDDocumentHandler(document, source.getPassword());
     }
 
+    @Override
     public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
         PDDocument document = null;
         try {
@@ -37,6 +39,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         return new PDDocumentHandler(document, source.getPassword());
     }
 
+    @Override
     public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
         PDDocument document = null;
         try {

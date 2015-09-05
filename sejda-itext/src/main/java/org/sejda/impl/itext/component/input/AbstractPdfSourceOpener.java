@@ -47,6 +47,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSourceOpener.class);
 
+    @Override
     public PdfReader open(PdfURLSource source) throws TaskIOException {
         PdfReader reader;
         try {
@@ -61,6 +62,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
         return reader;
     }
 
+    @Override
     public PdfReader open(PdfFileSource source) throws TaskIOException {
         PdfReader reader;
         try {
@@ -75,6 +77,7 @@ abstract class AbstractPdfSourceOpener implements PdfSourceOpener<PdfReader> {
         return reader;
     }
 
+    @Override
     public PdfReader open(PdfStreamSource source) throws TaskIOException {
         PdfReader reader;
         try {

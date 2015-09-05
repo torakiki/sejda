@@ -60,6 +60,7 @@ public final class TestListenerFactory {
 
         private boolean listened = false;
 
+        @Override
         public void onEvent(T event) {
             listened = true;
         }
@@ -81,6 +82,7 @@ public final class TestListenerFactory {
         private BigDecimal percentage;
         private boolean undeterminate;
 
+        @Override
         public void onEvent(PercentageOfWorkDoneChangedEvent event) {
             percentage = event.getPercentage();
             undeterminate = event.isUndetermined();
@@ -106,6 +108,7 @@ public final class TestListenerFactory {
 
         private boolean started = false;
 
+        @Override
         public void onEvent(TaskExecutionStartedEvent event) {
             started = true;
         }
@@ -126,6 +129,7 @@ public final class TestListenerFactory {
 
         private boolean failed = false;
 
+        @Override
         public void onEvent(TaskExecutionFailedEvent event) {
             failed = true;
         }

@@ -83,6 +83,7 @@ public class PdfTextExtractor implements Closeable {
         }
     }
 
+    @Override
     public void close() {
         IOUtils.closeQuietly(outputWriter);
     }

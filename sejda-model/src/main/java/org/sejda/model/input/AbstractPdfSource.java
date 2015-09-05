@@ -66,6 +66,7 @@ public abstract class AbstractPdfSource<T> implements PdfSource<T> {
         this.password = password;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -84,6 +85,7 @@ public abstract class AbstractPdfSource<T> implements PdfSource<T> {
     /**
      * @return the name of this source
      */
+    @Override
     public String getName() {
         return name;
     }

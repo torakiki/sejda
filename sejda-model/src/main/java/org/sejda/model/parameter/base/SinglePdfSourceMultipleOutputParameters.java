@@ -40,18 +40,22 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
     @NotNull
     private MultipleTaskOutput<?> output;
 
+    @Override
     public String getOutputPrefix() {
         return outputPrefix;
     }
 
+    @Override
     public void setOutputPrefix(String outputPrefix) {
         this.outputPrefix = outputPrefix;
     }
 
+    @Override
     public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(MultipleTaskOutput<?> output) {
         this.output = output;
     }

@@ -69,6 +69,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
     /**
      * @return an unmodifiable view of the pageSelection
      */
+    @Override
     public Set<PageRange> getPageSelection() {
         return Collections.unmodifiableSet(pageSelection);
     }
@@ -80,6 +81,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
      *         case of all pages.
      * @see org.sejda.model.pdf.page.PagesSelection#getPages(int)
      */
+    @Override
     public Set<Integer> getPages(int upperLimit) {
         if (pageSelection.isEmpty()) {
             return PredefinedSetOfPages.ALL_PAGES.getPages(upperLimit);
@@ -92,18 +94,22 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
         return retSet;
     }
 
+    @Override
     public String getOutputPrefix() {
         return outputPrefix;
     }
 
+    @Override
     public void setOutputPrefix(String outputPrefix) {
         this.outputPrefix = outputPrefix;
     }
 
+    @Override
     public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(MultipleTaskOutput<?> output) {
         this.output = output;
     }

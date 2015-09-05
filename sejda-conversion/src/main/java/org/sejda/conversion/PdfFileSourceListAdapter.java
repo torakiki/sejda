@@ -140,6 +140,7 @@ interface PdfInputFilesSource {
 abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfInputFilesSource.class);
 
+    @Override
     public List<PdfFileSource> getInputFiles(File file) {
         List<String> filenames = parseFileNames(file);
         LOG.trace("Input files: '" + StringUtils.join(filenames, "', '") + "'");
@@ -173,6 +174,7 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
     protected List<String> parseFileNames(File file) {
         List<File> files = Arrays.asList(file.listFiles(new FilenameFilter() {
 
+            @Override
             public boolean accept(File dir, String filename) {
                 Matcher matcher = pattern.matcher(filename);
                 String extension = FilenameUtils.getExtension(filename);

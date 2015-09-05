@@ -32,6 +32,7 @@ public abstract class BaseTask<T extends TaskParameters> implements Task<T> {
 
     private NotifiableTaskMetadata taskMetadata = new NotifiableTaskMetadata(this);
 
+    @Override
     public NotifiableTaskMetadata getNotifiableTaskMetadata() {
         return taskMetadata;
     }

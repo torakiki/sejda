@@ -75,6 +75,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void close() {
         if (pdfCopy != null) {
             pdfCopy.close();
@@ -82,6 +83,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         IOUtils.closeQuietly(outputStream);
     }
 
+    @Override
     public void addPage(PdfReader reader, int pageNumber) throws TaskException {
         try {
             pdfCopy.addDocument(reader, Collections.singletonList(Integer.valueOf(pageNumber)));
@@ -94,6 +96,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
 
     }
 
+    @Override
     public void addAllPages(PdfReader reader) throws TaskException {
         try {
             pdfCopy.addDocument(reader);
@@ -105,6 +108,7 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void setCompression(boolean compress) {
         if (compress) {
             pdfCopy.setFullCompression();
@@ -112,10 +116,12 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void setPageLabels(PdfPageLabels labels) {
         pdfCopy.getWriter().setPageLabels(labels);
     }
 
+    @Override
     public void freeReader(PdfReader reader) throws TaskIOException {
         try {
             pdfCopy.getWriter().freeReader(reader);
@@ -124,22 +130,26 @@ public class FormFieldsAwarePdfCopier implements PdfCopier {
         }
     }
 
+    @Override
     public void setOutline(List<Map<String, Object>> outline) {
         if (outline != null && !outline.isEmpty()) {
             pdfCopy.setOutlines(outline);
         }
     }
 
+    @Override
     public void addBlankPage(PdfReader reader) {
         LOG.warn("Add blank page not implemented for FormFieldsAwarePdfCopier");
     }
 
+    @Override
     public void addBlankPageIfOdd(PdfReader reader) {
         if (reader.getNumberOfPages() % 2 != 0) {
             addBlankPage(reader);
         }
     }
 
+    @Override
     public int getNumberOfCopiedPages() {
         return numberOfCopiedPages;
     }

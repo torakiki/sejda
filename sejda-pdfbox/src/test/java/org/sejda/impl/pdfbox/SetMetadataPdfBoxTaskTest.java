@@ -31,6 +31,7 @@ import org.sejda.model.task.Task;
  */
 public class SetMetadataPdfBoxTaskTest extends SetMetadataTaskTest {
 
+    @Override
     public Task<SetMetadataParameters> getTask() {
         return new SetMetadataTask();
     }

@@ -58,6 +58,7 @@ public class ExtractTextByPagesParameters extends SinglePdfSourceMultipleOutputP
     /**
      * @return an unmodifiable view of the pageSelection
      */
+    @Override
     public Set<PageRange> getPageSelection() {
         return Collections.unmodifiableSet(pageSelection);
     }
@@ -83,6 +84,7 @@ public class ExtractTextByPagesParameters extends SinglePdfSourceMultipleOutputP
      * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set.
      * @see PagesSelection#getPages(int)
      */
+    @Override
     public Set<Integer> getPages(int totalNumberOfPage) {
         if (pageSelection.isEmpty()) {
             return new PageRange(1).getPages(totalNumberOfPage);

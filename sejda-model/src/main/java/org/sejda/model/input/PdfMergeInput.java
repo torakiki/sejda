@@ -70,6 +70,7 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
     /**
      * @return an unmodifiable view of the pageSelection
      */
+    @Override
     public Set<PageRange> getPageSelection() {
         return Collections.unmodifiableSet(pageSelection);
     }
@@ -95,6 +96,7 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
      * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set.
      * @see PagesSelection#getPages(int)
      */
+    @Override
     public Set<Integer> getPages(int totalNumberOfPage) {
         Set<Integer> retSet = new NullSafeSet<Integer>();
         if (isAllPages()) {

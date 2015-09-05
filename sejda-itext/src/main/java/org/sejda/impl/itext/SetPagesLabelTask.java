@@ -57,11 +57,13 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(SetPagesLabelParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
         notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
 
@@ -89,6 +91,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(copier);

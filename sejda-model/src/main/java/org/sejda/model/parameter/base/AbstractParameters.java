@@ -31,6 +31,7 @@ public abstract class AbstractParameters implements TaskParameters {
 
     private boolean overwrite = false;
 
+    @Override
     public boolean isOverwrite() {
         return overwrite;
     }

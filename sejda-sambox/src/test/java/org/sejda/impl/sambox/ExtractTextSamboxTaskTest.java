@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class ExtractTextSamboxTaskTest extends ExtractTextTaskTest {
 
+    @Override
     public Task<ExtractTextParameters> getTask() {
         return new ExtractTextTask();
     }

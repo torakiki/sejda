@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class SingleTiffConversionIcePdfTaskTest extends SingleTiffConversionTaskTest {
 
+    @Override
     public Task<PdfToSingleTiffParameters> getTask() {
         return new PdfToSingleImageTask<PdfToSingleTiffParameters>();
     }

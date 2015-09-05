@@ -34,10 +34,12 @@ import org.sejda.model.validation.constraint.HasAPassword;
  * 
  */
 public class HasAPasswordValidator implements ConstraintValidator<HasAPassword, EncryptParameters> {
+    @Override
     public void initialize(HasAPassword constraintAnnotation) {
         // on purpose
     }
 
+    @Override
     public boolean isValid(EncryptParameters value, ConstraintValidatorContext context) {
         if (value != null) {
             return isNotBlank(value.getOwnerPassword()) || isNotBlank(value.getUserPassword());

@@ -58,6 +58,7 @@ public class PdfCopier implements Closeable {
         document.saveDecryptedPDDocument(outputFile);
     }
 
+    @Override
     public void close() {
         nullSafeCloseQuietly(document);
     }

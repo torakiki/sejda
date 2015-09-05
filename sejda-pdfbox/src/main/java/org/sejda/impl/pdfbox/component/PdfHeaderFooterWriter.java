@@ -118,6 +118,7 @@ public class PdfHeaderFooterWriter implements Closeable {
         }
     }
 
+    @Override
     public void close() {
         IOUtils.closeQuietly(documentHandler);
     }

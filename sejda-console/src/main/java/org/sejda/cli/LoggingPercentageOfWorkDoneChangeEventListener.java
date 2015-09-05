@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 final class LoggingPercentageOfWorkDoneChangeEventListener implements EventListener<PercentageOfWorkDoneChangedEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(LoggingPercentageOfWorkDoneChangeEventListener.class);
 
+    @Override
     public void onEvent(PercentageOfWorkDoneChangedEvent event) {
         if (event.isUndetermined()) {
             LOG.info("Task in progress");

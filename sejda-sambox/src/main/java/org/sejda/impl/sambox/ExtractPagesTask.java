@@ -55,11 +55,13 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
 
+    @Override
     public void before(ExtractPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(ExtractPagesParameters parameters) throws TaskException {
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
@@ -88,6 +90,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         LOG.debug("Pages extracted and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         closeResource();
     }

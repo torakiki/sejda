@@ -84,6 +84,7 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
     /**
      * @return an unmodifiable view of the pageSelection
      */
+    @Override
     public Set<PageRange> getPageSelection() {
         return Collections.unmodifiableSet(pageSelection);
     }
@@ -95,6 +96,7 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
      *         case of {@link PredefinedSetOfPages}.
      * @see PagesSelection#getPages(int)
      */
+    @Override
     public Set<Integer> getPages(int upperLimit) {
         if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
             return predefinedSetOfPages.getPages(upperLimit);

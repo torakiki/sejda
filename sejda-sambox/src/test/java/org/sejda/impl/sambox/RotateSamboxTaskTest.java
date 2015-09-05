@@ -28,6 +28,7 @@ import org.sejda.model.task.Task;
  */
 public class RotateSamboxTaskTest extends RotateTaskTest {
 
+    @Override
     public Task<RotateParameters> getTask() {
         return new RotateTask();
     }

@@ -61,10 +61,12 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
         this.secondInput = secondInput;
     }
 
+    @Override
     public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
@@ -85,6 +87,7 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
         this.outputName = outputName;
     }
 
+    @Override
     public String getOutputName() {
         return outputName;
     }

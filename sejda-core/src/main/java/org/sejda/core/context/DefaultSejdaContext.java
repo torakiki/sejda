@@ -40,10 +40,12 @@ public class DefaultSejdaContext implements SejdaContext {
 
     private static final String ERROR_INSTANTIATING_THE_TASK = "Error instantiating the task";
 
+    @Override
     public final Class<? extends NotificationStrategy> getNotificationStrategy() {
         return GlobalConfiguration.getInstance().getNotificationStrategy();
     }
 
+    @Override
     public boolean isValidation() {
         return GlobalConfiguration.getInstance().isValidation();
     }
@@ -52,6 +54,7 @@ public class DefaultSejdaContext implements SejdaContext {
         return GlobalConfiguration.getInstance().isIgnoreXmlConfiguration();
     }
 
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException {
         Class<? extends TaskParameters> parametersClass = parameters.getClass();

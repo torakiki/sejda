@@ -29,6 +29,7 @@ import org.sejda.model.notification.event.AbstractNotificationEvent;
  */
 public final class SyncNotificationStrategy implements NotificationStrategy {
 
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void notifyListener(final EventListener listener, final AbstractNotificationEvent event) {
         if (listener != null) {

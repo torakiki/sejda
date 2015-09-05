@@ -157,6 +157,7 @@ class RotateDefaultsProvider extends DefaultDefaultsProvider {
 
 class DefaultDefaultsProvider implements DefaultsProvider {
 
+    @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFolderOutput();
     }
@@ -165,6 +166,7 @@ class DefaultDefaultsProvider implements DefaultsProvider {
 
 class MultipleInputsAndFileOutputDefaultsProvider implements DefaultsProvider {
 
+    @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFileOutput();
     }
@@ -173,6 +175,7 @@ class MultipleInputsAndFileOutputDefaultsProvider implements DefaultsProvider {
 
 class MultipleInputsAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
+    @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultTwoInputs().defaultFolderOutput();
     }
@@ -180,6 +183,7 @@ class MultipleInputsAndFolderOutputDefaultsProvider implements DefaultsProvider 
 
 class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
+    @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
     }
@@ -187,6 +191,7 @@ class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
 class SingleInputAndFileOutputDefaultsProvider implements DefaultsProvider {
 
+    @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFileOutput();
     }

@@ -38,6 +38,7 @@ public class SetPageLabelsCliArgumentsTransformer extends BaseCliArgumentsTransf
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public SetPagesLabelParameters toTaskParameters(SetPageLabelsTaskCliArguments taskCliArguments) {
         final SetPagesLabelParameters parameters = new SetPagesLabelParameters();
 

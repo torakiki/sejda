@@ -32,6 +32,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
  */
 class PrependPrefixProcessor implements PrefixProcessor {
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = inputPrefix;
         if (request != null && StringUtils.isNotBlank(request.getOriginalName())) {

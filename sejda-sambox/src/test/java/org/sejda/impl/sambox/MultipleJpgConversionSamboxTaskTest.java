@@ -6,6 +6,7 @@ import org.sejda.model.task.Task;
 
 public class MultipleJpgConversionSamboxTaskTest extends MultipleJpegConversionTaskTest {
 
+    @Override
     public Task<PdfToJpegParameters> getTask() {
         return new PdfToMultipleImageTask();
     }

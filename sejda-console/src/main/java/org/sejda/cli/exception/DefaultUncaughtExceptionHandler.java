@@ -31,6 +31,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
  */
 public class DefaultUncaughtExceptionHandler implements UncaughtExceptionHandler {
 
+    @Override
     public void uncaughtException(Thread t, Throwable e) {
         if (!isExpectedException(e)) {
             System.err.print("Exception in thread \"" + t.getName() + "\" ");

@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class SplitByEveryXPagesITextTaskTest extends SplitByEveryXPagesTaskTest {
 
+    @Override
     public Task<SplitByEveryXPagesParameters> getTask() {
         return new SplitByPageNumbersTask<SplitByEveryXPagesParameters>();
     }

@@ -56,10 +56,12 @@ final class JpegImageWriterAdapter extends AbstractImageWriterAdapter<PdfToJpegP
         };
     }
 
+    @Override
     public void openWriteDestination(OutputStream destination, PdfToJpegParameters params) {
         setOutputStream(destination);
     }
 
+    @Override
     public void write(RenderedImage image, PdfToJpegParameters params) throws TaskIOException {
         if (getOutputDestination() == null) {
             throw new TaskIOException("Cannot call write before opening the write destination");
@@ -73,6 +75,7 @@ final class JpegImageWriterAdapter extends AbstractImageWriterAdapter<PdfToJpegP
 
     }
 
+    @Override
     public boolean supportMultiImage() {
         return false;
     }
@@ -103,6 +106,7 @@ final class JpegImageWriterAdapter extends AbstractImageWriterAdapter<PdfToJpegP
      */
     static final class JpegImageWriterAdapterBuilder implements ImageWriterBuilder<PdfToJpegParameters> {
 
+        @Override
         public JpegImageWriterAdapter build() {
             return new JpegImageWriterAdapter();
         }

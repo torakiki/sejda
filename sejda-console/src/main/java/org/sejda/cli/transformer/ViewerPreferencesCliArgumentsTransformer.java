@@ -38,6 +38,7 @@ public class ViewerPreferencesCliArgumentsTransformer extends BaseCliArgumentsTr
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public ViewerPreferencesParameters toTaskParameters(ViewerPreferencesTaskCliArguments taskCliArguments) {
         ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
         populateAbstractParameters(parameters, taskCliArguments);

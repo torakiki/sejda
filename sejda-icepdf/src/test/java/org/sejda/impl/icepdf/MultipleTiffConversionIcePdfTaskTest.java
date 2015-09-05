@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class MultipleTiffConversionIcePdfTaskTest extends MultipleTiffConversionTaskTest {
 
+    @Override
     public Task<PdfToMultipleTiffParameters> getTask() {
         return new PdfToMultipleImageTask<PdfToMultipleTiffParameters>();
     }

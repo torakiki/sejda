@@ -42,15 +42,18 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> void add(EventListener<T> listener) {
         Class<T> eventClass = getListenerEventClass(listener);
         listeners.put(eventClass, listener);
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> void add(Class<T> eventClass, EventListener<T> listener) {
         listeners.put(eventClass, listener);
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> boolean remove(EventListener<T> listener) {
         Class<T> eventClass = getListenerEventClass(listener);
         return listeners.remove(eventClass, listener);
@@ -65,14 +68,17 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
         return eventClass;
     }
 
+    @Override
     public void clear() {
         listeners.clear();
     }
 
+    @Override
     public List<EventListener<? extends AbstractNotificationEvent>> get(AbstractNotificationEvent event) {
         return listeners.get(event.getClass());
     }
 
+    @Override
     public int size() {
         return listeners.size();
     }

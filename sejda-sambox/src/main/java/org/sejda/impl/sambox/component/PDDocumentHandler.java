@@ -193,6 +193,7 @@ public class PDDocumentHandler implements Closeable {
         document.getDocumentCatalog().setViewerPreferences(preferences);
     }
 
+    @Override
     public void close() throws IOException {
         document.close();
     }

@@ -54,10 +54,12 @@ abstract class BaseImageIOWriterAdapter<T extends AbstractPdfToImageParameters> 
         adapted = writers.next();
     }
 
+    @Override
     public void openWriteDestination(OutputStream destination, T params) {
         setOutputStream(destination);
     }
 
+    @Override
     public void write(RenderedImage image, T params) throws TaskIOException {
         if (adapted == null) {
             throw new TaskIOException("No ImageWriter available");
@@ -86,6 +88,7 @@ abstract class BaseImageIOWriterAdapter<T extends AbstractPdfToImageParameters> 
         return adapted;
     }
 
+    @Override
     public boolean supportMultiImage() {
         return false;
     }

@@ -42,14 +42,17 @@ public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePd
     @NotNull
     private SingleTaskOutput<?> output;
 
+    @Override
     public String getOutputName() {
         return outputName;
     }
 
+    @Override
     public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }

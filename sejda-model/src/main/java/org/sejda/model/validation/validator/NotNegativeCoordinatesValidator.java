@@ -33,10 +33,12 @@ import org.sejda.model.validation.constraint.NotNegativeCoordinates;
  */
 public class NotNegativeCoordinatesValidator implements ConstraintValidator<NotNegativeCoordinates, RectangularBox> {
 
+    @Override
     public void initialize(NotNegativeCoordinates constraintAnnotation) {
         // nothing to do
     }
 
+    @Override
     public boolean isValid(RectangularBox value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getBottom() >= 0 && value.getTop() >= 0 && value.getLeft() >= 0 && value.getRight() >= 0;

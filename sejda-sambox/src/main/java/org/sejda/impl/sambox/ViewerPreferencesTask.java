@@ -64,12 +64,14 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(ViewerPreferencesParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
@@ -127,6 +129,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         documentHandler.setViewerPreferences(preferences);
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
     }

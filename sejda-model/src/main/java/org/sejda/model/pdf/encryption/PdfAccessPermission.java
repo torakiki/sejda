@@ -45,6 +45,7 @@ public enum PdfAccessPermission implements FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

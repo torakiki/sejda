@@ -34,6 +34,7 @@ import org.sejda.model.notification.event.TaskExecutionFailedEvent;
  */
 public class DefaultTaskExecutionFailedEventListener implements EventListener<TaskExecutionFailedEvent> {
 
+    @Override
     public void onEvent(TaskExecutionFailedEvent event) {
         String failingCauseMessage = extractFailingCauseMessage(event);
         throw new SejdaRuntimeException("Task failed. Reason was: " + failingCauseMessage, event.getFailingCause());

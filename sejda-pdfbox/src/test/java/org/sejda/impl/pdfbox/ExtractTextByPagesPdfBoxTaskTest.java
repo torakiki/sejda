@@ -25,6 +25,7 @@ import org.sejda.model.task.Task;
 
 public class ExtractTextByPagesPdfBoxTaskTest extends ExtractTextByPagesTaskTest {
 
+    @Override
     public Task<ExtractTextByPagesParameters> getTask() {
         return new ExtractTextByPagesTask();
     }

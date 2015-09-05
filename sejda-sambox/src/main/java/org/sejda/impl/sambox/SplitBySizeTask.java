@@ -46,10 +46,12 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     private PDDocumentHandler sourceDocumentHandler;
     private AbstractPdfSplitter<SplitBySizeParameters> splitter;
 
+    @Override
     public void before(SplitBySizeParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
     }
 
+    @Override
     public void execute(SplitBySizeParameters parameters) throws TaskException {
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
@@ -64,6 +66,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         closeResource();
     }

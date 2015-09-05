@@ -39,6 +39,7 @@ class BaseBookmarkPrefixProcessor implements PrefixProcessor {
         this.toBeReplacedRegex = toBeReplacedRegex;
     }
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = inputPrefix;
         if (request != null && StringUtils.isNotBlank(request.getBookmark())) {

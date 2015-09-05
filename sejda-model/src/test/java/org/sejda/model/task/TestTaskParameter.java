@@ -38,14 +38,17 @@ public class TestTaskParameter extends AbstractPdfOutputParameters implements Si
     @Valid
     private SingleTaskOutput<?> output;
 
+    @Override
     public TaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public String getOutputName() {
         return "test";
     }
 
+    @Override
     public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }

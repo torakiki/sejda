@@ -38,10 +38,12 @@ class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOu
         super(overwrite);
     }
 
+    @Override
     public void addOutput(PopulatedFileOutput fileOutput) {
         add(fileOutput);
     }
 
+    @Override
     public void dispatch(StreamTaskOutput output) throws IOException {
         OutputWriterHelper.copyToStreamZipped(multipleFiles, output.getDestination());
     }

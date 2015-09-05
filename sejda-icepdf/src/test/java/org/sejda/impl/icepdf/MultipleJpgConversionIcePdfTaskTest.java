@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class MultipleJpgConversionIcePdfTaskTest extends MultipleJpegConversionTaskTest {
 
+    @Override
     public Task<PdfToJpegParameters> getTask() {
         return new PdfToMultipleImageTask<PdfToJpegParameters>();
     }

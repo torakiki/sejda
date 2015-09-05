@@ -99,6 +99,7 @@ public final class PdfStamperHandler implements Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         try {
             stamper.close();

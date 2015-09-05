@@ -47,6 +47,7 @@ class DefaultTasksRegistry implements TasksRegistry {
         this.tasksMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
     }
 
+    @Override
     public Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {
         Class<? extends Task> retVal = tasksMap.get(parametersClass);
         if (retVal == null) {
@@ -71,12 +72,14 @@ class DefaultTasksRegistry implements TasksRegistry {
         return null;
     }
 
+    @Override
     public void addTask(Class<? extends TaskParameters> parameterClass, Class<? extends Task> taskClass) {
         synchronized (tasksMap) {
             tasksMap.put(parameterClass, taskClass);
         }
     }
 
+    @Override
     public Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasks() {
         return Collections.unmodifiableMap(tasksMap);
     }

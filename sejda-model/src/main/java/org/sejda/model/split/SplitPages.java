@@ -53,6 +53,7 @@ public class SplitPages implements NextOutputStrategy {
         openingPages.add(page + 1);
     }
 
+    @Override
     public void ensureIsValid() throws TaskExecutionException {
         if (closingPages.isEmpty()) {
             throw new TaskExecutionException("Unable to split, no page number given.");
@@ -63,6 +64,7 @@ public class SplitPages implements NextOutputStrategy {
      * @param page
      * @return true if the given page is an opening page (a page where the split process should start a new document).
      */
+    @Override
     public boolean isOpening(Integer page) {
         return openingPages.contains(page);
     }
@@ -71,6 +73,7 @@ public class SplitPages implements NextOutputStrategy {
      * @param page
      * @return true if the given page is an closing page (a page where the split process should close the document).
      */
+    @Override
     public boolean isClosing(Integer page) {
         return closingPages.contains(page);
     }

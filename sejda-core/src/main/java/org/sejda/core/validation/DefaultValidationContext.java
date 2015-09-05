@@ -50,6 +50,7 @@ public final class DefaultValidationContext implements ValidationContext {
         return DefaultValidationContextHolder.VALIDATION_CONTEXT;
     }
 
+    @Override
     public Validator getValidator() {
         return validator;
     }

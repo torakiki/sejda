@@ -57,6 +57,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PdfTextExtractor textExtractor;
 
+    @Override
     public void before(ExtractTextParameters parameters) throws TaskException {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
@@ -64,6 +65,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
@@ -91,6 +93,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
     }
 
+    @Override
     public void after() {
         closeResources();
     }

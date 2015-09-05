@@ -43,10 +43,12 @@ public enum PdfEncryption implements MinRequiredVersion, FriendlyNamed {
         this.minVersion = minVersion;
     }
 
+    @Override
     public PdfVersion getMinVersion() {
         return minVersion;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

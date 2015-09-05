@@ -32,6 +32,7 @@ import org.sejda.model.task.Task;
  */
 public class DecryptITextTaskTest extends DecryptTaskTest {
 
+    @Override
     public Task<DecryptParameters> getTask() {
         return new DecryptTask();
     }

@@ -32,6 +32,7 @@ import org.sejda.model.task.Task;
  */
 public class RotateITextTaskTest extends RotateTaskTest {
 
+    @Override
     public Task<RotateParameters> getTask() {
         return new RotateTask();
     }

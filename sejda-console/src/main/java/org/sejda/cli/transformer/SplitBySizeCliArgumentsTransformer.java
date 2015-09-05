@@ -37,6 +37,7 @@ public class SplitBySizeCliArgumentsTransformer extends BaseCliArgumentsTransfor
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public SplitBySizeParameters toTaskParameters(SplitBySizeTaskCliArguments taskCliArguments) {
         SplitBySizeParameters parameters = new SplitBySizeParameters(taskCliArguments.getSize());
 

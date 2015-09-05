@@ -97,6 +97,7 @@ public class PagesExtractor implements Closeable {
         }
     }
 
+    @Override
     public void close() {
         ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
         relevantPages.clear();

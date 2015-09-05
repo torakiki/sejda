@@ -28,6 +28,7 @@ import org.sejda.model.task.Task;
  */
 public class SimpleSplitSamboxTaskTest extends SimpleSplitTaskTest {
 
+    @Override
     public Task<SimpleSplitParameters> getTask() {
         return new SplitByPageNumbersTask<SimpleSplitParameters>();
     }

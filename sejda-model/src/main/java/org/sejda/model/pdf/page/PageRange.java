@@ -100,6 +100,7 @@ public class PageRange implements PagesSelection {
      * @return the selected set of pages ordered using their natural ordering.
      * @see PagesSelection#getPages(int)
      */
+    @Override
     public SortedSet<Integer> getPages(int totalNumberOfPage) {
         SortedSet<Integer> retSet = new TreeSet<Integer>();
         for (int i = start; i <= totalNumberOfPage && i <= end; i++) {

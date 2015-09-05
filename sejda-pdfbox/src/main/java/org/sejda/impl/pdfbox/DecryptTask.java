@@ -56,12 +56,14 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(DecryptParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
@@ -91,6 +93,7 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
         LOG.debug("Input documents decrypted and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
     }

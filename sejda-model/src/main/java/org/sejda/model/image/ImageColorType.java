@@ -42,6 +42,7 @@ public enum ImageColorType implements FriendlyNamed {
         this.bufferedImageType = bufferedImageType;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

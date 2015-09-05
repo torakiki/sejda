@@ -28,6 +28,7 @@ import org.sejda.model.task.Task;
  */
 public class MergeSamboxTaskTest extends MergeTaskTest {
 
+    @Override
     public Task<MergeParameters> getTask() {
         return new MergeTask();
     }

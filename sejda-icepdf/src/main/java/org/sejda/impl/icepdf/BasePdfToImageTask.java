@@ -43,6 +43,7 @@ abstract class BasePdfToImageTask<T extends AbstractPdfToImageParameters> extend
 
     private ImageWriter<T> writer;
 
+    @Override
     public void before(T parameters) throws TaskExecutionException {
         writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
         if (writer == null) {
@@ -55,6 +56,7 @@ abstract class BasePdfToImageTask<T extends AbstractPdfToImageParameters> extend
         LOG.trace("Found image writer {}", writer);
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(writer);
     }

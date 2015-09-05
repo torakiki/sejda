@@ -34,10 +34,12 @@ import org.sejda.model.validation.constraint.IsFile;
  */
 public class FileValidator implements ConstraintValidator<IsFile, File> {
 
+    @Override
     public void initialize(IsFile constraintAnnotation) {
         // on purpose
     }
 
+    @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null && value.exists()) {
             return value.isFile();

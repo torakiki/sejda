@@ -41,10 +41,12 @@ import org.sejda.model.validation.constraint.ValidSingleOutput;
  */
 public class SingleOutputValidator implements ConstraintValidator<ValidSingleOutput, SingleOutputTaskParameters> {
 
+    @Override
     public void initialize(ValidSingleOutput constraintAnnotation) {
         // nothing to do
     }
 
+    @Override
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
         if (value != null && value.getOutput() != null) {
             return isValidOutputType(value);
@@ -78,15 +80,18 @@ public class SingleOutputValidator implements ConstraintValidator<ValidSingleOut
             this.outputName = outputName;
         }
 
+        @Override
         public void dispatch(FileTaskOutput output) {
             this.valid = true;
         }
 
+        @Override
         public void dispatch(DirectoryTaskOutput output) {
             this.valid = StringUtils.isNotBlank(outputName);
 
         }
 
+        @Override
         public void dispatch(StreamTaskOutput output) {
             this.valid = StringUtils.isNotBlank(outputName);
         }

@@ -37,6 +37,7 @@ public class PdfToSingleTiffCliArgumentsTransformer extends BaseCliArgumentsTran
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public PdfToSingleTiffParameters toTaskParameters(PdfToSingleTiffTaskCliArguments taskCliArguments) {
         PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(taskCliArguments.getColorType()
                 .getEnumValue());

@@ -44,10 +44,12 @@ public enum PdfDuplex implements MinRequiredVersion, FriendlyNamed {
         this.minVersion = minVersion;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }
 
+    @Override
     public PdfVersion getMinVersion() {
         return minVersion;
     }

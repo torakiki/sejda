@@ -63,11 +63,13 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(SetPagesTransitionParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {} ", source);
@@ -102,6 +104,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         LOG.debug("Transitions set on {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(stamperHandler);

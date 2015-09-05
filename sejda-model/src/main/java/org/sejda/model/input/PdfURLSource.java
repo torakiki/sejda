@@ -43,10 +43,12 @@ public final class PdfURLSource extends AbstractPdfSource<URL> {
         this.url = url;
     }
 
+    @Override
     public URL getSource() {
         return url;
     }
 
+    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

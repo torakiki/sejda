@@ -57,10 +57,12 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @NotNull
     private SingleTaskOutput<?> output;
 
+    @Override
     public SingleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(SingleTaskOutput<?> output) {
         this.output = output;
     }
@@ -72,6 +74,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         return Collections.unmodifiableList(inputList);
     }
 
+    @Override
     public String getOutputName() {
         return outputName;
     }

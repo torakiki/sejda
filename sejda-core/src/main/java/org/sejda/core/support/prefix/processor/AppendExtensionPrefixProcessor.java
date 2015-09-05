@@ -30,6 +30,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
  */
 class AppendExtensionPrefixProcessor implements PrefixProcessor {
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         if (request != null && StringUtils.isNotBlank(request.getExtension())) {
             return String.format("%s.%s", inputPrefix, request.getExtension());

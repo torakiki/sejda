@@ -59,10 +59,12 @@ public class DefaultSejdaContextTest {
     public void testGetTaskNegative() throws TaskException {
         Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
 
+            @Override
             public TaskOutput getOutput() {
                 return null;
             }
 
+            @Override
             public boolean isOverwrite() {
                 return false;
             }

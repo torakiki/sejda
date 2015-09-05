@@ -43,6 +43,7 @@ public abstract class AbstractNotificationEvent implements NotificationEvent, Se
         this.notifiableTaskMetadata = notifiableTaskMetadata;
     }
 
+    @Override
     public Long getEventTimestamp() {
         return eventTimestamp;
     }

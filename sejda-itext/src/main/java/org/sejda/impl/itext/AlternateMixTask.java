@@ -58,11 +58,13 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(AlternateMixParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(AlternateMixParameters parameters) throws TaskException {
         LOG.debug("Opening first input {} ", parameters.getFirstInput().getSource());
         firstReader = parameters.getFirstInput().getSource().open(sourceOpener);
@@ -101,6 +103,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
                 .getFirstInput().getStep(), parameters.getSecondInput().getStep());
     }
 
+    @Override
     public void after() {
         closeResources();
     }

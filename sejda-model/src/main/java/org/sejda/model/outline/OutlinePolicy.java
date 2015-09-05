@@ -38,6 +38,7 @@ public enum OutlinePolicy implements FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

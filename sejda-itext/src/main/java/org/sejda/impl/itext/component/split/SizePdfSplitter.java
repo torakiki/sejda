@@ -87,6 +87,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             this.copier = copier;
         }
 
+        @Override
         public void ensureIsValid() throws TaskExecutionException {
             if (sizeLimit < 1) {
                 throw new TaskExecutionException(String.format("Unable to split at %d, a positive size is required.",
@@ -94,10 +95,12 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             }
         }
 
+        @Override
         public boolean isOpening(Integer page) {
             return copier == null || copier.isClosed();
         }
 
+        @Override
         public boolean isClosing(Integer page) {
             long estimatedSizeAfterNextPage = copier.getEstimatedSizeAfterNextPage();
             if (estimatedSizeAfterNextPage > sizeLimit) {

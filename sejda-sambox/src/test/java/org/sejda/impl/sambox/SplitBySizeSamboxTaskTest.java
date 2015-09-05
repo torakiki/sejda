@@ -28,6 +28,7 @@ import org.sejda.model.task.Task;
  */
 public class SplitBySizeSamboxTaskTest extends SplitBySizeTaskTest {
 
+    @Override
     public Task<SplitBySizeParameters> getTask() {
         return new SplitBySizeTask();
     }

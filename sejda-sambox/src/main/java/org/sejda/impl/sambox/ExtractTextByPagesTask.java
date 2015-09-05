@@ -57,11 +57,13 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(ExtractTextByPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(ExtractTextByPagesParameters parameters) throws TaskException {
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
@@ -103,6 +105,7 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
 
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
     }

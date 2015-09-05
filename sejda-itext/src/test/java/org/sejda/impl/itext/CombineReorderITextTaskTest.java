@@ -23,6 +23,7 @@ import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.Task;
 
 public class CombineReorderITextTaskTest extends CombineReorderTaskTest {
+    @Override
     public Task<CombineReorderParameters> getTask() {
         return new CombineReorderTask();
     }

@@ -61,6 +61,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private PdfReader reader;
     private int totalSteps;
 
+    @Override
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
@@ -68,6 +69,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }
 
+    @Override
     public void execute(MergeParameters parameters) throws TaskException {
         int currentStep = 0;
         File tmpFile = createTemporaryPdfBuffer();
@@ -104,6 +106,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         closeResources();
     }

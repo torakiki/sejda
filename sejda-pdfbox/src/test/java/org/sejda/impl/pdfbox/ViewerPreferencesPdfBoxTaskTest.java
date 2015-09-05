@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class ViewerPreferencesPdfBoxTaskTest extends ViewerPreferencesTaskTest {
 
+    @Override
     public Task<ViewerPreferencesParameters> getTask() {
         return new ViewerPreferencesTask();
     }

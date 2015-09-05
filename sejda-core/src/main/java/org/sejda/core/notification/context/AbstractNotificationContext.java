@@ -45,6 +45,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         this.strategy = getStrategy();
     }
 
+    @Override
     public void notifyListeners(AbstractNotificationEvent event) {
         synchronized (holder) {
             if (holder.size() > 0) {
@@ -55,6 +56,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> void addListener(EventListener<T> listener) {
         synchronized (holder) {
             LOG.trace("Adding event listener: {}", listener);
@@ -62,6 +64,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> void addListener(Class<T> eventClass, EventListener<T> listener) {
         synchronized (holder) {
             LOG.trace("Adding event listener {} on event {}", listener, eventClass);
@@ -69,6 +72,7 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
+    @Override
     public <T extends AbstractNotificationEvent> boolean removeListener(EventListener<T> listener) {
         synchronized (holder) {
             LOG.trace("Removing event listener: {}", listener);
@@ -76,12 +80,14 @@ abstract class AbstractNotificationContext implements NotificationContext {
         }
     }
 
+    @Override
     public void clearListeners() {
         synchronized (holder) {
             holder.clear();
         }
     }
 
+    @Override
     public int size() {
         return holder.size();
     }

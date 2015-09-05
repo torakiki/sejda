@@ -51,6 +51,7 @@ public class PdfToSingleTiffParameters extends AbstractPdfToSingleImageParameter
         return ImageType.TIFF;
     }
 
+    @Override
     public TiffCompressionType getCompressionType() {
         return compressionType;
     }

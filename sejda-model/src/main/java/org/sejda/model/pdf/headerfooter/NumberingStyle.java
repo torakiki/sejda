@@ -56,6 +56,7 @@ public enum NumberingStyle implements FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

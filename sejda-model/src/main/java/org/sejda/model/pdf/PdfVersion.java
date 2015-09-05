@@ -51,6 +51,7 @@ public enum PdfVersion implements FriendlyNamed {
         this.versionHeader = versionHeader;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

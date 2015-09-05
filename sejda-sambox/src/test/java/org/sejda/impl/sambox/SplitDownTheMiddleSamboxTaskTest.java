@@ -23,6 +23,7 @@ import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.task.Task;
 
 public class SplitDownTheMiddleSamboxTaskTest extends SplitDownTheMiddleTaskTest {
+    @Override
     public Task<SplitDownTheMiddleParameters> getTask() {
         return new SplitDownTheMiddleTask();
     }

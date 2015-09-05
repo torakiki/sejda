@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class UnpackITextTaskTest extends UnpackTaskTest {
 
+    @Override
     public Task<UnpackParameters> getTask() {
         return new UnpackTask();
     }

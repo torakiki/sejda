@@ -44,6 +44,7 @@ public enum PdfBooleanPreference implements MinRequiredVersion {
         this.minVersion = minVersion;
     }
 
+    @Override
     public PdfVersion getMinVersion() {
         return minVersion;
     }

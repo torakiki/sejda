@@ -46,11 +46,13 @@ abstract class BaseOutputWriter implements TaskOutputDispatcher {
         this.overwrite = overwrite;
     }
 
+    @Override
     public void dispatch(FileTaskOutput output) throws IOException {
         OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), overwrite);
 
     }
 
+    @Override
     public void dispatch(DirectoryTaskOutput output) throws IOException {
         OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), overwrite);
 

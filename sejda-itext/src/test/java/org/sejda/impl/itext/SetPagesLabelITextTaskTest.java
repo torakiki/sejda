@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class SetPagesLabelITextTaskTest extends SetPagesLabelTaskTest {
 
+    @Override
     public Task<SetPagesLabelParameters> getTask() {
         return new SetPagesLabelTask();
     }

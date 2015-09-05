@@ -49,10 +49,12 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
     private PDDocumentHandler sourceDocumentHandler;
     private AbstractPdfSplitter<SplitByTextContentParameters> splitter;
 
+    @Override
     public void before(SplitByTextContentParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
     }
 
+    @Override
     public void execute(SplitByTextContentParameters parameters) throws TaskException {
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
@@ -67,6 +69,7 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         closeResource();
     }

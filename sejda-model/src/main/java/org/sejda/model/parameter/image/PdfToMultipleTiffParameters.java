@@ -48,6 +48,7 @@ public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParam
         return ImageType.TIFF;
     }
 
+    @Override
     public TiffCompressionType getCompressionType() {
         return compressionType;
     }

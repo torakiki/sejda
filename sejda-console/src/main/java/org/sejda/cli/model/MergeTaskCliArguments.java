@@ -61,6 +61,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
             + "If -s is not set default behaviour is to merge document completely (optional)", defaultValue = "")
     MultiplePageRangeSetAdapter getPageSelection();
 
+    @Override
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
     List<PdfFileSourceAdapter> getFiles();
 

@@ -65,6 +65,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(EncryptParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
@@ -74,6 +75,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
         }
     }
 
+    @Override
     public void execute(EncryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
@@ -105,6 +107,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
         LOG.debug("Permissions {}", PdfEncryptor.getPermissionsVerbose(permissions));
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(stamperHandler);

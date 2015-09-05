@@ -47,12 +47,14 @@ public class ReflectionUtilsTest {
     }
 
     private class SecondTestListener implements EventListener<PercentageOfWorkDoneChangedEvent> {
+        @Override
         public void onEvent(PercentageOfWorkDoneChangedEvent event) {
             // nothing
         }
     }
 
     private class TestListener<T extends AbstractNotificationEvent> implements EventListener<T> {
+        @Override
         public void onEvent(T event) {
             // nothing
         }

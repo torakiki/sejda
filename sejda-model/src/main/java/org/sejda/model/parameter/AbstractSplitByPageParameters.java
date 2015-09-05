@@ -38,6 +38,7 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
      *            upper limit for the pages set.
      * @return the set of pages to split at. All pages are greater then 0 and lesser then upperLimit.
      */
+    @Override
     public abstract Set<Integer> getPages(int upperLimit);
 
 }

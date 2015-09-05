@@ -169,14 +169,17 @@ public abstract class AbstractTestSuite {
     protected void assertOutputFolder(TaskParameters result, final File outputFolder) throws TaskException {
         result.getOutput().accept(new TaskOutputDispatcher() {
 
+            @Override
             public void dispatch(StreamTaskOutput output) {
                 fail("wrong dispached method");
             }
 
+            @Override
             public void dispatch(DirectoryTaskOutput output) {
                 assertEquals(output.getDestination(), outputFolder);
             }
 
+            @Override
             public void dispatch(FileTaskOutput output) {
                 fail("wrong dispached method");
             }
@@ -186,14 +189,17 @@ public abstract class AbstractTestSuite {
     protected void assertOutputFile(TaskOutput<?> output, final File outputFile) throws TaskException {
         output.accept(new TaskOutputDispatcher() {
 
+            @Override
             public void dispatch(StreamTaskOutput output) {
                 fail("wrong dispached method");
             }
 
+            @Override
             public void dispatch(DirectoryTaskOutput output) {
                 fail("wrong dispached method");
             }
 
+            @Override
             public void dispatch(FileTaskOutput output) {
                 assertEquals(output.getDestination(), outputFile);
             }

@@ -40,6 +40,7 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
      * @param taskCliArguments
      * @return populated parameters
      */
+    @Override
     public AlternateMixParameters toTaskParameters(AlternateMixTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 2) {
             throw new ArgumentValidationException("Please specify two files as input parameters, found "

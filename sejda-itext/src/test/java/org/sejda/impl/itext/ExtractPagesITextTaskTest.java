@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class ExtractPagesITextTaskTest extends ExtractPagesTaskTest {
 
+    @Override
     public Task<ExtractPagesParameters> getTask() {
         return new ExtractPagesTask();
     }

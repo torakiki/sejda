@@ -62,6 +62,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private Queue<Closeable> toClose = new LinkedList<>();
     private OutlineMerger outlineMerger;
 
+    @Override
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
         sourceOpener = new DefaultPdfSourceOpener();
@@ -69,6 +70,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }
 
+    @Override
     public void execute(MergeParameters parameters) throws TaskException {
         int currentStep = 0;
         File tmpFile = createTemporaryPdfBuffer();
@@ -125,6 +127,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         nullSafeCloseQuietly(destinationDocument);
     }
 
+    @Override
     public void after() {
         closeResources();
         outputWriter = null;

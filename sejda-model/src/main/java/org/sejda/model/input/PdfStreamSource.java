@@ -42,10 +42,12 @@ public final class PdfStreamSource extends AbstractPdfSource<InputStream> {
         this.stream = stream;
     }
 
+    @Override
     public InputStream getSource() {
         return stream;
     }
 
+    @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
     }

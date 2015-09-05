@@ -39,10 +39,12 @@ abstract class SinglePdfSourceParameters extends AbstractPdfOutputParameters imp
     @NotNull
     private PdfSource<?> source;
 
+    @Override
     public PdfSource<?> getSource() {
         return source;
     }
 
+    @Override
     public void setSource(PdfSource<?> source) {
         this.source = source;
     }

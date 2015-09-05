@@ -36,6 +36,7 @@ public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransforme
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public PdfToJpegParameters toTaskParameters(PdfToJpegTaskCliArguments taskCliArguments) {
         PdfToJpegParameters parameters = new PdfToJpegParameters();
         populateSourceParameters(parameters, taskCliArguments);

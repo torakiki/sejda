@@ -48,10 +48,12 @@ public class SingleOutputExtensionsValidator implements
 
     private String[] extensions;
 
+    @Override
     public void initialize(SingleOutputAllowedExtensions constraintAnnotation) {
         extensions = constraintAnnotation.extensions();
     }
 
+    @Override
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
         if (value != null && value.getOutput() != null && ArrayUtils.isNotEmpty(extensions)) {
             String fileName = getOutputFileName(value);
@@ -103,14 +105,17 @@ public class SingleOutputExtensionsValidator implements
             this.outputName = outputName;
         }
 
+        @Override
         public void dispatch(FileTaskOutput output) {
             this.outputName = output.getDestination().getName();
         }
 
+        @Override
         public void dispatch(DirectoryTaskOutput output) {
             // do nothing
         }
 
+        @Override
         public void dispatch(StreamTaskOutput output) {
             // do nothing
         }

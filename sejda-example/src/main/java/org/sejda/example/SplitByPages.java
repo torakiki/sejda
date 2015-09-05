@@ -120,6 +120,7 @@ public final class SplitByPages {
      */
     private static class ProgressListener implements EventListener<PercentageOfWorkDoneChangedEvent> {
 
+        @Override
         public void onEvent(PercentageOfWorkDoneChangedEvent event) {
             LOG.info("Task progress: {}% done.", event.getPercentage().toPlainString());
         }
@@ -133,6 +134,7 @@ public final class SplitByPages {
      */
     private static class FailureListener implements EventListener<TaskExecutionFailedEvent> {
 
+        @Override
         public void onEvent(TaskExecutionFailedEvent event) {
             LOG.error("Task execution failed.");
             // rethrow it to the main
@@ -148,6 +150,7 @@ public final class SplitByPages {
      */
     private static class CompletionListener implements EventListener<TaskExecutionCompletedEvent> {
 
+        @Override
         public void onEvent(TaskExecutionCompletedEvent event) {
             LOG.info("Task completed in {} millis.", event.getExecutionTime());
         }

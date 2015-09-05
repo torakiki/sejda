@@ -36,6 +36,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
  */
 public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler> {
 
+    @Override
     public PDDocumentHandler open(PdfURLSource source) throws TaskIOException {
         try {
             PDDocument document = PDFParser.parse(SeekableSources.onTempFileSeekableSourceFrom(source.getSource().openStream()), source.getPassword());
@@ -45,6 +46,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         }
     }
 
+    @Override
     public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
         try {
             PDDocument document = PDFParser.parse(SeekableSources.seekableSourceFrom(source.getSource()), source.getPassword());
@@ -54,6 +56,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         }
     }
 
+    @Override
     public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
         try {
             PDDocument document = PDFParser.parse(SeekableSources.onTempFileSeekableSourceFrom(source.getSource()), source.getPassword());

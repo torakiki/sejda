@@ -39,6 +39,7 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public RotateParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
         RotateParameters parameters;
         if (taskCliArguments.isPredefinedPages()

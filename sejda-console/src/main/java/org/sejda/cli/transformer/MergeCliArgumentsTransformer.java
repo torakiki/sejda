@@ -46,6 +46,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public MergeParameters toTaskParameters(MergeTaskCliArguments taskCliArguments) {
         MergeParameters parameters = new MergeParameters();
         parameters.setCopyFormFields(taskCliArguments.isCopyFields());

@@ -66,6 +66,7 @@ public final class PdfRotator implements OngoingRotation {
         return new PdfRotator(rotation, pages);
     }
 
+    @Override
     public void to(PdfReader reader) {
         this.reader = reader;
         executeRotation();

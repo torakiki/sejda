@@ -44,6 +44,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
 
     private static final String AN_ERROR_OCCURRED_OPENING_SOURCE = "An error occurred opening the source: %s.";
 
+    @Override
     public Document open(PdfURLSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
@@ -59,6 +60,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         return document;
     }
 
+    @Override
     public Document open(PdfFileSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
@@ -74,6 +76,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         return document;
     }
 
+    @Override
     public Document open(PdfStreamSource source) throws TaskIOException {
         Document document = newDocument(source);
         try {
@@ -110,6 +113,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
             this.source = source;
         }
 
+        @Override
         public String requestPassword(Document document) {
             return source.getPassword();
         }

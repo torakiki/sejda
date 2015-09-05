@@ -56,6 +56,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
      * @return the selected set of pages ordered using their natural ordering.
      * @see PagesSelection#getPages(int)
      */
+    @Override
     public abstract SortedSet<Integer> getPages(int totalNumberOfPage);
 
     private String displayName;
@@ -64,6 +65,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

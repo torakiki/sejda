@@ -32,6 +32,7 @@ import org.sejda.model.parameter.SetHeaderFooterParameters;
 public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters> {
 
+    @Override
     public SetHeaderFooterParameters toTaskParameters(SetHeaderFooterTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getLabel() == null) {
             throw new SejdaRuntimeException("Please specify the text label to apply");

@@ -24,6 +24,7 @@ import org.sejda.model.task.Task;
 
 public class SplitByTextContentSamboxTaskTest extends SplitByTextContentTaskTest {
 
+    @Override
     public Task<SplitByTextContentParameters> getTask() {
         return new SplitByTextContentTask();
     }

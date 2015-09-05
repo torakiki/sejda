@@ -52,10 +52,12 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Positive
     private float userZoom = 1.0f;
 
+    @Override
     public PdfSource<?> getSource() {
         return source;
     }
 
+    @Override
     public void setSource(PdfSource<?> source) {
         this.source = source;
     }

@@ -53,10 +53,12 @@ public class DirectoryTaskOutput implements MultipleTaskOutput<File> {
         this.directory = directory;
     }
 
+    @Override
     public File getDestination() {
         return directory;
     }
 
+    @Override
     public void accept(TaskOutputDispatcher writer) throws TaskOutputVisitException {
         try {
             writer.dispatch(this);

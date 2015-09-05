@@ -43,6 +43,7 @@ public enum PdfNonFullScreenPageMode implements FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

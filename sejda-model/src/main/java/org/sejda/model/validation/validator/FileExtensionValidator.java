@@ -41,10 +41,12 @@ public class FileExtensionValidator implements ConstraintValidator<FileExtension
 
     private String expectedExtension;
 
+    @Override
     public void initialize(FileExtension constraintAnnotation) {
         expectedExtension = constraintAnnotation.value();
     }
 
+    @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null && value.isFile()) {
             String extension = FilenameUtils.getExtension(value.getName());

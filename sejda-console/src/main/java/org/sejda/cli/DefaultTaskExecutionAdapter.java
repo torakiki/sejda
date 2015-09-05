@@ -71,6 +71,7 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
      * 
      * @see org.sejda.cli.TaskExecutionAdapter#executeCommand(org.sejda.core.manipulation.model.parameter.TaskParameters)
      */
+    @Override
     public void execute(TaskParameters taskParameters) {
         getTaskExecutionService().execute(taskParameters);
     }

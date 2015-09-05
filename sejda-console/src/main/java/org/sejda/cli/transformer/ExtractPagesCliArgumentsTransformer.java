@@ -39,6 +39,7 @@ public class ExtractPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public ExtractPagesParameters toTaskParameters(ExtractPagesTaskCliArguments taskCliArguments) {
         final ExtractPagesParameters parameters;
         if (taskCliArguments.isPredefinedPages()

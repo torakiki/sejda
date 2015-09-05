@@ -61,12 +61,14 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
+    @Override
     public void before(SplitDownTheMiddleParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(SplitDownTheMiddleParameters parameters) throws TaskException {
 
         int currentStep = 0;
@@ -182,6 +184,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
     }
 
+    @Override
     public void after() {
         closeResources();
     }

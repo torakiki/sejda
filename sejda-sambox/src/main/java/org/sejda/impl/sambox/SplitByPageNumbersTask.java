@@ -46,10 +46,12 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PagesPdfSplitter<T> splitter;
 
+    @Override
     public void before(T parameters) {
         documentLoader = new DefaultPdfSourceOpener();
     }
 
+    @Override
     public void execute(T parameters) throws TaskException {
         LOG.debug("Opening {} ", parameters.getSource());
         document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
@@ -61,6 +63,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(document);
         splitter = null;

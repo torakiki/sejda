@@ -33,10 +33,12 @@ import org.sejda.model.validation.constraint.ValidPdfVersion;
  */
 public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion, AbstractPdfOutputParameters> {
 
+    @Override
     public void initialize(ValidPdfVersion constraintAnnotation) {
         // on purpose
     }
 
+    @Override
     public boolean isValid(AbstractPdfOutputParameters value, ConstraintValidatorContext context) {
         boolean isValid = value == null || value.getVersion() == null
                 || value.getVersion().compareTo(value.getMinRequiredPdfVersion()) >= 0;

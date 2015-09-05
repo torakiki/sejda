@@ -53,10 +53,12 @@ public class FileTaskOutput implements SingleTaskOutput<File> {
         this.file = file;
     }
 
+    @Override
     public File getDestination() {
         return file;
     }
 
+    @Override
     public void accept(TaskOutputDispatcher writer) throws TaskOutputVisitException {
         try {
             writer.dispatch(this);

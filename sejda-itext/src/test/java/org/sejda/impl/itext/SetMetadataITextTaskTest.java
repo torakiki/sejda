@@ -32,6 +32,7 @@ import org.sejda.model.task.Task;
  */
 public class SetMetadataITextTaskTest extends SetMetadataTaskTest {
 
+    @Override
     public Task<SetMetadataParameters> getTask() {
         return new SetMetadataTask();
     }

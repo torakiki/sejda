@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class CropITextTaskTest extends CropTaskTest {
 
+    @Override
     public Task<CropParameters> getTask() {
         return new CropTask();
     }

@@ -48,6 +48,7 @@ public class ImageWriterFactory implements ImageWriterAbstractFactory {
 
     }
 
+    @Override
     public <T extends AbstractPdfToImageParameters> ImageWriter<T> createImageWriter(T params) {
         ImageWriterBuilder<T> builder = BUILDERS_REGISTRY.getBuilder(params);
         if (builder != null) {

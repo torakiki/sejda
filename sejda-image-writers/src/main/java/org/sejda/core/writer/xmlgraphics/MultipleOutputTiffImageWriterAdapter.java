@@ -44,10 +44,12 @@ final class MultipleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdap
         adaptedWriter = new TIFFImageWriter();
     }
 
+    @Override
     public void openWriteDestination(OutputStream destination, PdfToMultipleTiffParameters params) {
         setOutputStream(destination);
     }
 
+    @Override
     public void write(RenderedImage image, PdfToMultipleTiffParameters params) throws TaskIOException {
         if (getOutputDestination() == null) {
             throw new TaskIOException("Cannot call write before opening the write destination");
@@ -61,6 +63,7 @@ final class MultipleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdap
 
     }
 
+    @Override
     public boolean supportMultiImage() {
         return false;
     }
@@ -80,6 +83,7 @@ final class MultipleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdap
     static final class MultipleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToMultipleTiffParameters> {
 
+        @Override
         public MultipleOutputTiffImageWriterAdapter build() {
             return new MultipleOutputTiffImageWriterAdapter();
         }

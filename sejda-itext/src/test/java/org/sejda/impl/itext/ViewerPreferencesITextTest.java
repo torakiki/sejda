@@ -32,6 +32,7 @@ import org.sejda.model.task.Task;
  */
 public class ViewerPreferencesITextTest extends ViewerPreferencesTaskTest {
 
+    @Override
     public Task<ViewerPreferencesParameters> getTask() {
         return new ViewerPreferencesTask();
     }

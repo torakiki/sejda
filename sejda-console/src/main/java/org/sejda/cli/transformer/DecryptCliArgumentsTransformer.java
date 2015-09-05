@@ -37,6 +37,7 @@ public class DecryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public DecryptParameters toTaskParameters(DecryptTaskCliArguments taskCliArguments) {
         DecryptParameters parameters = new DecryptParameters();
         populateAbstractParameters(parameters, taskCliArguments);

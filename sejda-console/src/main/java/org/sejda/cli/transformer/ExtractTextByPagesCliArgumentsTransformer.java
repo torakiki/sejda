@@ -37,6 +37,7 @@ public class ExtractTextByPagesCliArgumentsTransformer extends BaseCliArgumentsT
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public ExtractTextByPagesParameters toTaskParameters(ExtractTextByPagesTaskCliArguments taskCliArguments) {
         final ExtractTextByPagesParameters parameters = new ExtractTextByPagesParameters();
         parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());

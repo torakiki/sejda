@@ -61,18 +61,22 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
         this.textEncoding = textEncoding;
     }
 
+    @Override
     public MultipleTaskOutput<?> getOutput() {
         return output;
     }
 
+    @Override
     public void setOutput(MultipleTaskOutput<?> output) {
         this.output = output;
     }
 
+    @Override
     public String getOutputPrefix() {
         return outputPrefix;
     }
 
+    @Override
     public void setOutputPrefix(String outputPrefix) {
         this.outputPrefix = outputPrefix;
     }
@@ -82,6 +86,7 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
      * 
      * @param input
      */
+    @Override
     public void addSource(PdfSource<?> input) {
         sourceList.add(input);
     }
@@ -89,6 +94,7 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
     /**
      * @return an unmodifiable view of the source list
      */
+    @Override
     public List<PdfSource<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }

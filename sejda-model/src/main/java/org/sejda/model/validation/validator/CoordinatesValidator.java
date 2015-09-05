@@ -33,10 +33,12 @@ import org.sejda.model.validation.constraint.ValidCoordinates;
  */
 public class CoordinatesValidator implements ConstraintValidator<ValidCoordinates, RectangularBox> {
 
+    @Override
     public void initialize(ValidCoordinates constraintAnnotation) {
         // nothing to do
     }
 
+    @Override
     public boolean isValid(RectangularBox value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getTop() > value.getBottom() && value.getRight() > value.getLeft();

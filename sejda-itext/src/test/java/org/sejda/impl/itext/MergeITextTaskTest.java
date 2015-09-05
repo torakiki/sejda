@@ -29,6 +29,7 @@ import org.sejda.model.task.Task;
  */
 public class MergeITextTaskTest extends MergeTaskTest {
 
+    @Override
     public Task<MergeParameters> getTask() {
         return new MergeTask();
     }

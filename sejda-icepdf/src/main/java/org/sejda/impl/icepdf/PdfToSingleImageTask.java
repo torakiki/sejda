@@ -63,6 +63,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(T parameters) throws TaskException {
 
         File tmpFile = createTemporaryBuffer();

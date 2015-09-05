@@ -43,10 +43,12 @@ public enum PdfPrintScaling implements MinRequiredVersion, FriendlyNamed {
         this.displayName = displayName;
     }
 
+    @Override
     public PdfVersion getMinVersion() {
         return minVersion;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

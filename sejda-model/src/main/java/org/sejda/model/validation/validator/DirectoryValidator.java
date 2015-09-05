@@ -34,10 +34,12 @@ import org.sejda.model.validation.constraint.Directory;
  */
 public class DirectoryValidator implements ConstraintValidator<Directory, File> {
 
+    @Override
     public void initialize(Directory constraintAnnotation) {
         // on purpose
     }
 
+    @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.isDirectory();

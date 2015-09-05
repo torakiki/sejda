@@ -38,6 +38,7 @@ public class SetPageTransitionsCliArgumentsTransformer extends BaseCliArgumentsT
      * @param taskCliArguments
      * @return populated task parameters
      */
+    @Override
     public SetPagesTransitionParameters toTaskParameters(SetPageTransitionsTaskCliArguments taskCliArguments) {
         SetPagesTransitionParameters parameters;
         if (taskCliArguments.isDefaultTransition()) {

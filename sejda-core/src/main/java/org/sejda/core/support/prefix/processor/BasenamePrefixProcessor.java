@@ -33,6 +33,7 @@ class BasenamePrefixProcessor implements PrefixProcessor {
 
     private static final String BASENAME_REPLACE_REGX = "\\[BASENAME\\]";
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = inputPrefix;
         if (request != null && StringUtils.isNotBlank(request.getOriginalName())) {

@@ -45,6 +45,7 @@ final class SingleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapte
         // hide, constructed using builder
     }
 
+    @Override
     public void openWriteDestination(OutputStream destination, PdfToSingleTiffParameters params) throws TaskIOException {
         setOutputStream(destination);
         try {
@@ -54,6 +55,7 @@ final class SingleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapte
         }
     }
 
+    @Override
     public void write(RenderedImage image, PdfToSingleTiffParameters params) throws TaskIOException {
         if (adaptedWriter == null || getOutputDestination() == null) {
             throw new TaskIOException("Cannot call write before opening the write destination");
@@ -67,6 +69,7 @@ final class SingleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapte
 
     }
 
+    @Override
     public boolean supportMultiImage() {
         return true;
     }
@@ -102,6 +105,7 @@ final class SingleOutputTiffImageWriterAdapter extends BaseTiffImageWriterAdapte
     static final class SingleOutputTiffImageWriterAdapterBuilder implements
             ImageWriterBuilder<PdfToSingleTiffParameters> {
 
+        @Override
         public SingleOutputTiffImageWriterAdapter build() {
             return new SingleOutputTiffImageWriterAdapter();
         }

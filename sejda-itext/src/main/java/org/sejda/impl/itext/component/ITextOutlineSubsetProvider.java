@@ -63,14 +63,17 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<List<Ma
         return Collections.emptyList();
     }
 
+    @Override
     public void startPage(int startPage) {
         this.startPage = startPage;
     }
 
+    @Override
     public List<Map<String, Object>> getOutlineUntillPage(int endPage) throws TaskException {
         return getOutlineUntillPageWithOffset(endPage, 0);
     }
 
+    @Override
     public List<Map<String, Object>> getOutlineWithOffset(int offset) {
         List<Map<String, Object>> books = getDeepCopyBookmarks(bookmarks);
         if (offset != 0) {
@@ -79,6 +82,7 @@ public class ITextOutlineSubsetProvider implements OutlineSubsetProvider<List<Ma
         return books;
     }
 
+    @Override
     public List<Map<String, Object>> getOutlineUntillPageWithOffset(int endPage, int offset) throws TaskException {
         if (startPage < 0 || startPage > endPage) {
             throw new TaskException(

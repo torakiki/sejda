@@ -71,6 +71,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PdfReader> sourceOpener;
 
+    @Override
     public void before(ViewerPreferencesParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         preferences = ViewerPreferencesUtils.getViewerPreferences(parameters.getPageMode(), parameters.getPageLayout());
@@ -87,6 +88,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
 
@@ -124,6 +126,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
     }
 
+    @Override
     public void after() {
         nullSafeClosePdfReader(reader);
         nullSafeCloseQuietly(stamperHandler);

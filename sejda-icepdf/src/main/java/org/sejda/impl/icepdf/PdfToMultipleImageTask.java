@@ -63,6 +63,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(T parameters) throws TaskException {
         pdfDocument = parameters.getSource().open(sourceOpener);
 

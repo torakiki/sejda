@@ -59,12 +59,14 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     private List<PdfReader> readers = new ArrayList<PdfReader>();
     private int totalSteps;
 
+    @Override
     public void before(CombineReorderParameters parameters) {
         totalSteps = parameters.getPages().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(CombineReorderParameters parameters) throws TaskException {
         int currentStep = 0;
         File tmpFile = createTemporaryPdfBuffer();
@@ -110,6 +112,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         return false;
     }
 
+    @Override
     public void after() {
         closeResources();
     }

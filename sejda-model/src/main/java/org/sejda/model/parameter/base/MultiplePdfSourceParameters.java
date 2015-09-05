@@ -54,6 +54,7 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
      * 
      * @param input
      */
+    @Override
     public void addSource(PdfSource<?> input) {
         sourceList.add(input);
     }
@@ -61,6 +62,7 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
     /**
      * @return an unmodifiable view of the source list
      */
+    @Override
     public List<PdfSource<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }

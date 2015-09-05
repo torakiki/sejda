@@ -47,10 +47,12 @@ public enum PdfPageLayout implements MinRequiredVersion, FriendlyNamed {
         this.minVersion = minVersion;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }
 
+    @Override
     public PdfVersion getMinVersion() {
         return minVersion;
     }

@@ -46,6 +46,7 @@ public enum Rotation implements FriendlyNamed {
         this.degrees = degrees;
     }
 
+    @Override
     public String getFriendlyName() {
         return displayName;
     }

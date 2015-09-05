@@ -47,10 +47,12 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PageDestinationsLevelPdfSplitter splitter;
 
+    @Override
     public void before(SplitByOutlineLevelParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
     }
 
+    @Override
     public void execute(SplitByOutlineLevelParameters parameters) throws TaskException {
         LOG.debug("Opening {} ", parameters.getSource());
         document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
@@ -65,6 +67,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(document);
         splitter = null;

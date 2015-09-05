@@ -37,6 +37,7 @@ import org.sejda.model.task.Task;
 public class SetHeaderFooterPdfBoxTaskTest extends SetHeaderFooterTaskTest {
     private PdfTextExtractorByArea extractor = new PdfTextExtractorByArea();
 
+    @Override
     public Task<SetHeaderFooterParameters> getTask() {
         return new SetHeaderFooterTask();
     }

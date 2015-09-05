@@ -55,10 +55,12 @@ public class StreamTaskOutput implements MultipleTaskOutput<OutputStream>, Singl
         this.stream = stream;
     }
 
+    @Override
     public OutputStream getDestination() {
         return stream;
     }
 
+    @Override
     public void accept(TaskOutputDispatcher writer) throws TaskOutputVisitException {
         try {
             writer.dispatch(this);

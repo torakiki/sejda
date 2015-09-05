@@ -39,6 +39,7 @@ class CurrentPagePrefixProcessor extends NumberPrefixProcessor {
         super("CURRENTPAGE");
     }
 
+    @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
         String retVal = "";
         if (request != null && request.getPage() != null) {

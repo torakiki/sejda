@@ -45,11 +45,13 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private PdfAlternateMixer mixer = null;
     private SingleOutputWriter outputWriter;
 
+    @Override
     public void before(AlternateMixParameters parameters) {
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
     }
 
+    @Override
     public void execute(AlternateMixParameters parameters) throws TaskException {
 
         mixer.mix(getNotifiableTaskMetadata());
@@ -68,6 +70,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
                 .getFirstInput().getStep(), parameters.getSecondInput().getStep());
     }
 
+    @Override
     public void after() {
         nullSafeCloseQuietly(mixer);
     }

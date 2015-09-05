@@ -48,6 +48,7 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
 
+    @Override
     public InputStream getConfigurationStream() throws ConfigurationException {
         InputStream configurationStream = getConfiguration();
         if (configurationStream == null) {
