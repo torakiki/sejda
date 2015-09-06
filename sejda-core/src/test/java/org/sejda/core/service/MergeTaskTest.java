@@ -44,6 +44,7 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
 
@@ -205,13 +206,13 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     }
 
     @Test
-    public void testExecuteMergeAllCopyFields() throws TaskException, IOException {
+    public void testExecuteMergeAllFields() throws TaskException, IOException {
         setUpParameters(getInputWithOutline());
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
         // TODO use input with forms
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
-        TestUtils.setProperty(parameters, "copyFormFields", Boolean.TRUE);
         victim.execute(parameters);
         PdfReader reader = null;
         try {
@@ -226,18 +227,20 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     }
 
     @Test
-    public void executeMergeRangesCopyFields() throws TaskException, IOException {
-        doExecuteMergeRanges(true);
+    public void executeMergeRangesMergeForms() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
+        doExecuteMergeRanges();
     }
 
     @Test
     public void executeMergeRanges() throws TaskException, IOException {
-        doExecuteMergeRanges(false);
+        setUpParameters(getInputWithOutline());
+        parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
+        doExecuteMergeRanges();
     }
 
-    public void doExecuteMergeRanges(boolean copyFields) throws TaskException, IOException {
-        setUpParameters(getInputWithOutline());
-        TestUtils.setProperty(parameters, "copyFormFields", copyFields);
+    public void doExecuteMergeRanges() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {

@@ -38,6 +38,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +119,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
     private void createCopierIfNeeded(MergeParameters parameters, File tmpFile) throws TaskException {
         if (copier == null) {
-            if (parameters.isCopyFormFields()) {
+            if (parameters.getAcroFormPolicy() == AcroFormPolicy.MERGE) {
                 copier = new FormFieldsAwarePdfCopier(tmpFile, parameters.getVersion());
                 LOG.debug("Created FormFieldsAwarePdfCopier");
             } else {

@@ -21,6 +21,7 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
+import org.sejda.conversion.AcroFormPolicyAdapter;
 import org.sejda.conversion.MultiplePageRangeSetAdapter;
 import org.sejda.conversion.OutlinePolicyAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
@@ -38,8 +39,8 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " merge")
 public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(description = "input pdf documents contain forms (high memory usage) (optional)")
-    boolean isCopyFields();
+    @Option(shortName = "a", description = "acro forms merge policy. {discard, merge}. Default is 'discard' (optional)", defaultValue = "discard")
+    AcroFormPolicyAdapter getAcroForms();
 
     @Option(description = "add a blank page after each merged document if the number of pages is odd (optional)")
     boolean isAddBlanks();
@@ -73,7 +74,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     boolean isFilesListConfig();
 
-    @Option(shortName = "b", description = "bookmarks merge policy. {discard, retain, one_entry_each_doc }. Default is 'retain' (optional)", defaultValue = "retain")
+    @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc }. Default is 'retain' (optional)", defaultValue = "retain")
     OutlinePolicyAdapter getBookmarks();
 
 }

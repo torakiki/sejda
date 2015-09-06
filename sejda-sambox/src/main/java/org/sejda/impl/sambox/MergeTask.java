@@ -25,6 +25,7 @@ import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.Closeable;
 import java.io.File;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -85,8 +86,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
-            // TODO we rely on order
-            Set<PDPage> relevantPages = new NullSafeSet<>();
+            // LinkedHashSet because we rely on order in outline merge one entry per doc
+            Set<PDPage> relevantPages = new NullSafeSet<>(new LinkedHashSet<PDPage>());
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getUnderlyingPDDocument()
                     .getNumberOfPages())) {
                 PDPage page = sourceDocumentHandler.getUnderlyingPDDocument().getPage(currentPage - 1);

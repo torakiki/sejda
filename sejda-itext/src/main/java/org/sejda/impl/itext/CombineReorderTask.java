@@ -39,6 +39,7 @@ import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CombineReorderParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,7 +127,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
 
     private void createCopierIfNeeded(CombineReorderParameters parameters, File tmpFile, PdfReader reader) throws TaskException {
         if (copier == null) {
-            if (parameters.isCopyFormFields()) {
+            if (parameters.getAcroFormPolicy() == AcroFormPolicy.MERGE) {
                 copier = new FormFieldsAwarePdfCopier(tmpFile, parameters.getVersion());
                 LOG.debug("Created FormFieldsAwarePdfCopier");
             } else {

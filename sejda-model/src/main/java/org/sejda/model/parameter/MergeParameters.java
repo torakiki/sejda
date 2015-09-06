@@ -33,6 +33,7 @@ import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -48,10 +49,11 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @NotEmpty
     @Valid
     private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
-    private boolean copyFormFields = false;
     private boolean blankPageIfOdd = false;
     @NotNull
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
+    @NotNull
+    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.DISCARD;
     private String outputName;
     @Valid
     @NotNull
@@ -96,10 +98,6 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.inputList.add(input);
     }
 
-    public boolean isCopyFormFields() {
-        return copyFormFields;
-    }
-
     public boolean isBlankPageIfOdd() {
         return blankPageIfOdd;
     }
@@ -113,13 +111,17 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.blankPageIfOdd = blankPageIfOdd;
     }
 
+    public AcroFormPolicy getAcroFormPolicy() {
+        return this.acroFormPolicy;
+    }
+
     /**
-     * Setting this true tells the task to try to merge form fields if any of the input document has forms.
+     * The policy that the merge task should use when handling interactive forms (AcroForm)
      * 
-     * @param copyFormFields
+     * @param acroFormPolicy
      */
-    public void setCopyFormFields(boolean copyFormFields) {
-        this.copyFormFields = copyFormFields;
+    public void setAcroFormPolicy(AcroFormPolicy acroFormPolicy) {
+        this.acroFormPolicy = acroFormPolicy;
     }
 
     public OutlinePolicy getOutlinePolicy() {
@@ -137,7 +139,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(copyFormFields)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
                 .append(blankPageIfOdd).append(outlinePolicy).append(outputName).toHashCode();
     }
 
@@ -151,7 +153,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         }
         MergeParameters parameter = (MergeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList())
-                .append(copyFormFields, parameter.isCopyFormFields())
+                .append(acroFormPolicy, parameter.getAcroFormPolicy())
                 .append(blankPageIfOdd, parameter.isBlankPageIfOdd())
                 .append(outlinePolicy, parameter.getOutlinePolicy()).append(outputName, parameter.getOutputName())
                 .isEquals();

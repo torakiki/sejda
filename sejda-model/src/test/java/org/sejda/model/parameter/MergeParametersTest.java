@@ -30,6 +30,7 @@ import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.SingleTaskOutput;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
@@ -52,7 +53,7 @@ public class MergeParametersTest {
         MergeParameters eq3 = new MergeParameters();
         MergeParameters diff = new MergeParameters();
         diff.setBlankPageIfOdd(true);
-        diff.setCopyFormFields(true);
+        diff.setAcroFormPolicy(AcroFormPolicy.MERGE);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 

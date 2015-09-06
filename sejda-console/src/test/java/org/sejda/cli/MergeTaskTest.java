@@ -43,6 +43,7 @@ import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
@@ -91,15 +92,15 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void onCopyFields() {
-        MergeParameters parameters = defaultCommandLine().withFlag("--copyFields").invokeSejdaConsole();
-        assertTrue(parameters.isCopyFormFields());
-    }
-
-    @Test
     public void onAddBlanks() {
         MergeParameters parameters = defaultCommandLine().withFlag("--addBlanks").invokeSejdaConsole();
         assertTrue(parameters.isBlankPageIfOdd());
+    }
+
+    @Test
+    public void offAddBlankss() {
+        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.isBlankPageIfOdd());
     }
 
     @Test
@@ -121,15 +122,15 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void offCopyFields() {
+    public void onDefaultAcroForms() {
         MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertFalse(parameters.isCopyFormFields());
+        assertEquals(AcroFormPolicy.DISCARD, parameters.getAcroFormPolicy());
     }
 
     @Test
-    public void offAddBlankss() {
-        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertFalse(parameters.isBlankPageIfOdd());
+    public void onMergeAcroForms() {
+        MergeParameters parameters = defaultCommandLine().with("-a", "merge").invokeSejdaConsole();
+        assertEquals(AcroFormPolicy.MERGE, parameters.getAcroFormPolicy());
     }
 
     @Test

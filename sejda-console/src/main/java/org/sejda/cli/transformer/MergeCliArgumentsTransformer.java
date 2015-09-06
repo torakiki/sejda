@@ -49,7 +49,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
     @Override
     public MergeParameters toTaskParameters(MergeTaskCliArguments taskCliArguments) {
         MergeParameters parameters = new MergeParameters();
-        parameters.setCopyFormFields(taskCliArguments.isCopyFields());
+        parameters.setAcroFormPolicy(taskCliArguments.getAcroForms().getEnumValue());
         parameters.setBlankPageIfOdd(taskCliArguments.isAddBlanks());
         parameters.setOutlinePolicy(taskCliArguments.getBookmarks().getEnumValue());
         populateAbstractParameters(parameters, taskCliArguments);

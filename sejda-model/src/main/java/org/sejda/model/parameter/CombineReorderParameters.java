@@ -21,13 +21,14 @@ package org.sejda.model.parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
@@ -37,10 +38,10 @@ import org.sejda.model.validation.constraint.NotEmpty;
 public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParameters implements SingleOutputTaskParameters {
 
     @NotEmpty
-    @Valid
     private List<FileIndexAndPage> pages = new ArrayList<FileIndexAndPage>();
 
-    private boolean copyFormFields = false;
+    @NotNull
+    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.DISCARD;
 
     public void addPage(int fileIndex, int page) {
         pages.add(new FileIndexAndPage(fileIndex, page));
@@ -50,17 +51,23 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
         return pages;
     }
 
-    public boolean isCopyFormFields() {
-        return copyFormFields;
+    public AcroFormPolicy getAcroFormPolicy() {
+        return this.acroFormPolicy;
     }
 
-    public void setCopyFormFields(boolean copyFormFields) {
-        this.copyFormFields = copyFormFields;
+    /**
+     * The policy that the merge task should use when handling interactive forms (AcroForms)
+     * 
+     * @param acroFormPolicy
+     */
+    public void setAcroFormPolicy(AcroFormPolicy acroFormPolicy) {
+        this.acroFormPolicy = acroFormPolicy;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.pages).append(this.copyFormFields).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.pages).append(this.acroFormPolicy)
+                .toHashCode();
     }
 
     @Override
@@ -72,6 +79,7 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
             return false;
         }
         final CombineReorderParameters other = (CombineReorderParameters) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.pages, other.pages).append(this.copyFormFields, other.copyFormFields).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.pages, other.pages)
+                .append(this.acroFormPolicy, other.acroFormPolicy).isEquals();
     }
 }

@@ -39,6 +39,10 @@ public class NullSafeSet<E> implements Set<E> {
         delegate = new LinkedHashSet<E>();
     }
 
+    public NullSafeSet(Set<E> delegate) {
+        this.delegate = delegate;
+    }
+
     @Override
     public int size() {
         return delegate.size();

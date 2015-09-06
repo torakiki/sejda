@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
@@ -36,6 +37,15 @@ public class NullSafeSetTest {
     @Test
     public void testAdd() {
         Set<String> victim = new NullSafeSet<String>();
+        assertFalse(victim.add(null));
+        assertTrue(victim.isEmpty());
+        assertTrue(victim.add("test"));
+        assertEquals(1, victim.size());
+    }
+
+    @Test
+    public void testAddWithDelegate() {
+        Set<String> victim = new NullSafeSet<String>(new HashSet<>());
         assertFalse(victim.add(null));
         assertTrue(victim.isEmpty());
         assertTrue(victim.add("test"));
