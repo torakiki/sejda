@@ -20,9 +20,10 @@ target/assembled/bin/sejda-console splitbysize --help
 target/assembled/bin/sejda-console encrypt -h
 target/assembled/bin/sejda-console encrypt -a "test a pwd" --compressed -o /tmp/sejda-smoketest/ -p [FILENUMBER]_ -f ../sejda-core/src/test/resources/pdf/large_test.pdf -v 5 --overwrite
 target/assembled/bin/sejda-console rotate -h
-target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p rotated_ -r even:90 --overwrite
-target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p rotated_ -r all:180 --overwrite -v 5
-target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r all:90 --overwrite
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p rotated_ -r 90 -m even --overwrite
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p rotated_ -r 180 -m all --overwrite -v 5
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -m all --overwrite
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -s 4,12-14 --overwrite
 target/assembled/bin/sejda-console -h setmetadata
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a Torakiki -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
