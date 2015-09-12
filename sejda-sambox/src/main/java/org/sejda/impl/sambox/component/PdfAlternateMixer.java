@@ -31,7 +31,6 @@ import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.NotifiableTaskMetadata;
-import org.sejda.sambox.pdmodel.PDPageTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,27 +67,24 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         secondDocumentHandler = openInput(secondInput);
         setCreatorOnPDDocument();
 
-        PDPageTree firstSourcePages = firstDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog()
-                .getPages();
-        PDPageTree secondSourcePages = secondDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog()
-                .getPages();
+        int firstDocPages = firstDocumentHandler.getNumberOfPages();
+        int secondDocPages = secondDocumentHandler.getNumberOfPages();
 
-        PdfMixInputProcessStatus firstDocStatus = firstInput.newProcessingStatus(firstSourcePages.getCount());
-        PdfMixInputProcessStatus secondDocStatus = secondInput.newProcessingStatus(secondSourcePages.getCount());
+        PdfMixInputProcessStatus firstDocStatus = firstInput.newProcessingStatus(firstDocPages);
+        PdfMixInputProcessStatus secondDocStatus = secondInput.newProcessingStatus(secondDocPages);
 
         int currentStep = 0;
-        int totalSteps = firstSourcePages.getCount() + secondSourcePages.getCount();
+        int totalSteps = firstDocPages + secondDocPages;
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
-                addPage(firstSourcePages.get(firstDocStatus.nextPage() - 1));
+                importPage(firstDocumentHandler.getPage(firstDocStatus.nextPage()));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
-                addPage(secondSourcePages.get(secondDocStatus.nextPage() - 1));
+                importPage(secondDocumentHandler.getPage(secondDocStatus.nextPage()));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
-
     }
 
     private PDDocumentHandler openInput(PdfMixInput input) throws TaskIOException, TaskPermissionsException {
