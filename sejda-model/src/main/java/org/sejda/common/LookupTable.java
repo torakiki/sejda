@@ -18,7 +18,7 @@
  */
 package org.sejda.common;
 
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -41,8 +41,8 @@ public class LookupTable<I> {
      * @param valueItem
      */
     public void addLookupEntry(I keyItem, I valueItem) {
-        requireNotNullArg(keyItem, "Cannot map a null item");
-        requireNotNullArg(valueItem, "Cannot map a null item");
+        requireNonNull(keyItem, "Cannot map a null item");
+        requireNonNull(valueItem, "Cannot map a null item");
         oldToNew.put(keyItem, valueItem);
 
     }

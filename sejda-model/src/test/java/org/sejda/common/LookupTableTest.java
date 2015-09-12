@@ -47,12 +47,12 @@ public class LookupTableTest {
         assertTrue(victim.isEmpty());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullFirst() {
         victim.addLookupEntry(null, "not null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void nullSecond() {
         victim.addLookupEntry("not null", null);
     }
