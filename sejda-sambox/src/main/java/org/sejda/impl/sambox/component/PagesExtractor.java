@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.Set;
 
 import org.sejda.common.ComponentsUtility;
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.common.LookupTable;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
@@ -47,7 +47,7 @@ public class PagesExtractor implements Closeable {
     private OutlineDistiller outlineMerger;
     private PDDocument originalDocument;
     private PDDocumentHandler destinationDocument;
-    private Set<PDPage> relevantPages = new NullSafeSet<>();
+    private LookupTable<PDPage> pagesLookup = new LookupTable<>();
 
     public PagesExtractor(PDDocument origin) {
         this.originalDocument = origin;
@@ -70,8 +70,7 @@ public class PagesExtractor implements Closeable {
 
     public void retain(int page) {
         PDPage existingPage = originalDocument.getPage(page - 1);
-        destinationDocument.addPage(existingPage);
-        relevantPages.add(existingPage);
+        pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
         LOG.trace("Imported page number {}", page);
     }
 
@@ -85,13 +84,13 @@ public class PagesExtractor implements Closeable {
 
     public void save(File file) throws TaskException {
         createOutline();
-        AnnotationsDistiller.filterAnnotations(relevantPages, originalDocument);
+        AnnotationsDistiller.filterAnnotations(pagesLookup.values(), originalDocument);
         destinationDocument.savePDDocument(file);
     }
 
     private void createOutline() {
         PDDocumentOutline outline = new PDDocumentOutline();
-        outlineMerger.appendRelevantOutlineTo(outline, relevantPages);
+        outlineMerger.appendRelevantOutlineTo(outline, pagesLookup);
         if (outline.hasChildren()) {
             destinationDocument.setDocumentOutline(outline);
         }
@@ -100,7 +99,7 @@ public class PagesExtractor implements Closeable {
     @Override
     public void close() {
         ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
-        relevantPages.clear();
+        pagesLookup.clear();
         outlineMerger = null;
     }
 

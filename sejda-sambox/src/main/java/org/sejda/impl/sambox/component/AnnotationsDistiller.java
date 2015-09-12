@@ -22,8 +22,8 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -57,7 +57,7 @@ public final class AnnotationsDistiller {
      * @param pagesOwner
      *            document owning the pages
      */
-    public static void filterAnnotations(Set<PDPage> relevantPages, PDDocument pagesOwner) {
+    public static void filterAnnotations(Collection<PDPage> relevantPages, PDDocument pagesOwner) {
         requireNotNullArg(pagesOwner, "Cannot process annotations for a null document");
         LOG.debug("Pocessing annotations");
         for (PDPage page : relevantPages) {

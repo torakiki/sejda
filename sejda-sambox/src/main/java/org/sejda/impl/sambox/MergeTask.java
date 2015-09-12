@@ -25,14 +25,13 @@ import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
 
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.OutlineMerger;
@@ -62,6 +61,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private PDDocumentHandler destinationDocument;
     private Queue<Closeable> toClose = new LinkedList<>();
     private OutlineMerger outlineMerger;
+    private AcroFormsMerger acroFormsMerger;
 
     @Override
     public void before(MergeParameters parameters) {
@@ -81,25 +81,28 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.destinationDocument.setCreatorOnPDDocument();
         this.destinationDocument.setVersionOnPDDocument(parameters.getVersion());
         this.destinationDocument.setCompress(parameters.isCompress());
+        this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
+                this.destinationDocument.getUnderlyingPDDocument());
 
         for (PdfMergeInput input : parameters.getInputList()) {
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
-            // LinkedHashSet because we rely on order in outline merge one entry per doc
-            Set<PDPage> relevantPages = new NullSafeSet<>(new LinkedHashSet<PDPage>());
-            for (Integer currentPage : input.getPages(sourceDocumentHandler.getUnderlyingPDDocument()
-                    .getNumberOfPages())) {
-                PDPage page = sourceDocumentHandler.getUnderlyingPDDocument().getPage(currentPage - 1);
-                relevantPages.add(page);
-                destinationDocument.addPage(page);
-                LOG.trace("Added page {}", page);
+            LookupTable<PDPage> pagesLookup = new LookupTable<>();
+            for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
+                PDPage page = sourceDocumentHandler.getPage(currentPage);
+                pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
+                LOG.trace("Added imported page");
             }
             LOG.trace("Added pages for {}", input.getSource());
 
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
-                    relevantPages);
-            AnnotationsDistiller.filterAnnotations(relevantPages, sourceDocumentHandler.getUnderlyingPDDocument());
+                    pagesLookup);
+            AnnotationsDistiller.filterAnnotations(pagesLookup.values(),
+                    sourceDocumentHandler.getUnderlyingPDDocument());
+            acroFormsMerger.updateForm(
+                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
+                    input.getSource().getName(), pagesLookup.values());
 
             if (parameters.isBlankPageIfOdd()) {
                 destinationDocument.addBlankPageIfOdd();
@@ -110,6 +113,11 @@ public class MergeTask extends BaseTask<MergeParameters> {
         if (outlineMerger.hasOutline()) {
             LOG.trace("Adding generated outline");
             destinationDocument.setDocumentOutline(outlineMerger.getOutline());
+        }
+
+        if (acroFormsMerger.hasForm()) {
+            LOG.trace("Adding generated acro form");
+            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
         }
         destinationDocument.savePDDocument(tmpFile);
 

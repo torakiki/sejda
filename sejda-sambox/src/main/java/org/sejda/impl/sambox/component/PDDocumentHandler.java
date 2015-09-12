@@ -42,6 +42,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
+import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
@@ -222,21 +223,27 @@ public class PDDocumentHandler implements Closeable {
     }
 
     /**
-     * Import an existing page to the underlying {@link PDDocument}
+     * Creates a copy of the given page and adds it to the underlying {@link PDDocument}
      * 
      * @param page
+     * @return The newly created page
      * @throws TaskIOException
      */
     public PDPage importPage(PDPage page) {
-        PDPage imported = document.importPage(page);
+        PDPage imported = new PDPage(new COSDictionary(page.getCOSObject()));
         imported.setCropBox(page.getCropBox());
         imported.setMediaBox(page.getMediaBox());
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
-
-        return imported;
+        return addPage(imported);
     }
 
+    /**
+     * Adds the given page to the underlying {@link PDDocument}
+     * 
+     * @param page
+     * @return the page
+     */
     public PDPage addPage(PDPage page) {
         document.addPage(page);
         return page;
@@ -258,7 +265,7 @@ public class PDDocumentHandler implements Closeable {
     }
 
     public PDPage getPage(int pageNumber) {
-        return document.getDocumentCatalog().getPages().get(pageNumber - 1);
+        return document.getPage(pageNumber - 1);
     }
 
     public void initialiseBasedOn(PDDocument other) {
@@ -288,6 +295,10 @@ public class PDDocumentHandler implements Closeable {
         document.getDocumentCatalog().setDocumentOutline(outline);
     }
 
+    public void setDocumentAcroForm(PDAcroForm acroForm) {
+        document.getDocumentCatalog().setAcroForm(acroForm);
+    }
+
     public void setPageMode(PageMode pageMode) {
         document.getDocumentCatalog().setPageMode(pageMode);
     }
@@ -296,10 +307,17 @@ public class PDDocumentHandler implements Closeable {
         document.getDocumentCatalog().setPageLayout(pageLayout);
     }
 
+    /**
+     * Adds a blank page if the current total pages number is odd
+     */
     public void addBlankPageIfOdd() {
         if (document.getNumberOfPages() % 2 != 0) {
-            LOG.debug("Adding blank page");
-            document.addPage(new PDPage());
+            addBlankPage();
         }
+    }
+
+    public void addBlankPage() {
+        LOG.debug("Adding blank page");
+        addPage(new PDPage());
     }
 }

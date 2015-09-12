@@ -21,13 +21,11 @@ import static java.util.Objects.requireNonNull;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
-import java.util.Collections;
 import java.util.Optional;
-import java.util.Set;
 
+import org.sejda.common.LookupTable;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.slf4j.Logger;
@@ -44,7 +42,6 @@ class OutlineDistiller {
     private static final Logger LOG = LoggerFactory.getLogger(OutlineDistiller.class);
 
     private PDDocument document;
-    private Set<PDPage> currentRelevantPages;
 
     public OutlineDistiller(PDDocument document) {
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
@@ -55,66 +52,58 @@ class OutlineDistiller {
      * Appends to the given outline, all the outline items whose page destination is relevant
      * 
      * @param to
-     * @param relevantPages
+     * @param pagesLookup
      */
-    public void appendRelevantOutlineTo(PDDocumentOutline to, Set<PDPage> relevantPages) {
+    public void appendRelevantOutlineTo(PDDocumentOutline to, LookupTable<PDPage> pagesLookup) {
         requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
-        this.currentRelevantPages = Optional.ofNullable(relevantPages).orElse(Collections.emptySet());
-        PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();
-        if (currentRelevantPages.size() > 0 && outline != null) {
-            for (PDOutlineItem child : outline.children()) {
-                cloneNode(child).ifPresent(c -> to.addLast(c));
+        if (!pagesLookup.isEmpty()) {
+            PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();
+            if (outline != null) {
+                for (PDOutlineItem child : outline.children()) {
+                    cloneNode(child, pagesLookup).ifPresent(c -> to.addLast(c));
+                }
+                LOG.debug("Appended relevant outline items");
             }
-            LOG.debug("Appended relevant outline items");
         }
     }
 
-    private Optional<PDOutlineItem> cloneNode(PDOutlineItem node) {
+    private Optional<PDOutlineItem> cloneNode(PDOutlineItem node, LookupTable<PDPage> pagesLookup) {
         if (node.hasChildren()) {
             final PDOutlineItem clone = new PDOutlineItem();
             for (PDOutlineItem current : node.children()) {
-                cloneNode(current).ifPresent(clonedChild -> {
+                cloneNode(current, pagesLookup).ifPresent(clonedChild -> {
                     clone.addLast(clonedChild);
                 });
             }
             if (clone.hasChildren()) {
                 copyOutlineDictionary(node, clone);
-                Optional<PDPageDestination> destination = toPageDestination(node, document.getDocumentCatalog());
-                if (isNeeded(destination)) {
-                    copyDestination(destination, clone);
-                }
+                toPageDestination(node, document.getDocumentCatalog()).ifPresent(d -> {
+                    PDPage mapped = pagesLookup.lookup(d.getPage());
+                    if (mapped != null) {
+                        clone.setDestination(mapped);
+                    }
+                });
                 return Optional.of(clone);
             }
             return Optional.empty();
         }
-        return cloneLeafIfNeeded(node);
-    }
-
-    private static void copyDestination(Optional<PDPageDestination> destination, PDOutlineItem to) {
-        destination.ifPresent(d -> {
-            to.setDestination(d);
-        });
+        return cloneLeafIfNeeded(node, pagesLookup);
     }
 
     /**
      * @param origin
      * @return a clone of the origin leaf if its page destination falls in the range of the needed pages. Cloned item destination is offset by the given offset.
      */
-    private Optional<PDOutlineItem> cloneLeafIfNeeded(PDOutlineItem origin) {
-        Optional<PDPageDestination> destination = toPageDestination(origin, document.getDocumentCatalog());
-        if (isNeeded(destination)) {
-            PDOutlineItem retVal = new PDOutlineItem();
-            copyOutlineDictionary(origin, retVal);
-            copyDestination(destination, retVal);
-            return Optional.of(retVal);
-        }
-        return Optional.empty();
-    }
-
-    private boolean isNeeded(Optional<PDPageDestination> destination) {
-        if (destination.isPresent()) {
-            return currentRelevantPages.contains(destination.get().getPage());
-        }
-        return false;
+    private Optional<PDOutlineItem> cloneLeafIfNeeded(PDOutlineItem origin, LookupTable<PDPage> pagesLookup) {
+        return toPageDestination(origin, document.getDocumentCatalog()).flatMap(d -> {
+            PDPage mapped = pagesLookup.lookup(d.getPage());
+            if (mapped != null) {
+                PDOutlineItem retVal = new PDOutlineItem();
+                copyOutlineDictionary(origin, retVal);
+                retVal.setDestination(mapped);
+                return Optional.of(retVal);
+            }
+            return Optional.empty();
+        });
     }
 }

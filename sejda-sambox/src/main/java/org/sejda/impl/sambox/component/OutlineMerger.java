@@ -20,9 +20,8 @@ package org.sejda.impl.sambox.component;
 
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
-import java.util.Set;
-
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.common.LookupTable;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -48,30 +47,31 @@ public class OutlineMerger {
         this.policy = policy;
     }
 
-    public void updateOutline(PDDocument document, String sourceName, Set<PDPage> relevantPages) {
-        if (!relevantPages.isEmpty()) {
+    public void updateOutline(PDDocument document, String sourceName, LookupTable<PDPage> pagesLookup) {
+        if (!pagesLookup.isEmpty()) {
             switch (policy) {
             case ONE_ENTRY_EACH_DOC:
-                updateOneEntryPerDoc(sourceName, relevantPages);
+                updateOneEntryPerDoc(sourceName, pagesLookup);
                 break;
             case RETAIN:
-                new OutlineDistiller(document).appendRelevantOutlineTo(outline, relevantPages);
+                new OutlineDistiller(document).appendRelevantOutlineTo(outline, pagesLookup);
                 break;
             default:
                 LOG.debug("Discarding outline for {}", sourceName);
             }
         } else {
+            // shouldn't happen
             LOG.info("Skipped outline merge, no relevant page");
         }
     }
 
-    private void updateOneEntryPerDoc(String sourceName, Set<PDPage> relevantPages) {
+    private void updateOneEntryPerDoc(String sourceName, LookupTable<PDPage> pagesLookup) {
         if (StringUtils.isNotBlank(sourceName)) {
             LOG.debug("Adding outline entry for {}", sourceName);
             PDOutlineItem item = new PDOutlineItem();
             item.setTitle(removeExtension(sourceName));
             PDPageFitDestination destination = new PDPageFitDestination();
-            destination.setPage(relevantPages.iterator().next());
+            destination.setPage(pagesLookup.first());
             item.setDestination(destination);
             outline.addLast(item);
         } else {

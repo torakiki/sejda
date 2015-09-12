@@ -23,12 +23,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.common.LookupTable;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.sambox.input.PDFParser;
@@ -44,21 +42,21 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 public class OutlineMergerTest {
 
     private PDDocument document;
-    private Set<PDPage> relevant = new NullSafeSet<>();
+    private LookupTable<PDPage> mapping = new LookupTable<>();
 
     @Before
     public void setUp() throws IOException {
-        document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_outline.pdf")));
+        document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf")));
         for (PDPage current : document.getPages()) {
-            relevant.add(current);
+            mapping.addLookupEntry(current, new PDPage());
         }
     }
 
     @Test
     public void testEmpty() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.DISCARD);
-        victim.updateOutline(document, "large_outline.pdf", relevant);
+        victim.updateOutline(document, "large_outline.pdf", mapping);
         assertFalse(victim.hasOutline());
         assertFalse(victim.getOutline().hasChildren());
     }
@@ -66,7 +64,7 @@ public class OutlineMergerTest {
     @Test
     public void testRetainAll() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        victim.updateOutline(document, "large_outline.pdf", relevant);
+        victim.updateOutline(document, "large_outline.pdf", mapping);
         assertTrue(victim.hasOutline());
         assertEquals(count(document.getDocumentCatalog().getDocumentOutline()), count(victim.getOutline()));
     }
@@ -74,7 +72,7 @@ public class OutlineMergerTest {
     @Test
     public void testOnePerDoc() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        victim.updateOutline(document, "large_outline.pdf", relevant);
+        victim.updateOutline(document, "large_outline.pdf", mapping);
         assertTrue(victim.hasOutline());
         assertEquals(1, count(victim.getOutline()));
     }
@@ -82,11 +80,11 @@ public class OutlineMergerTest {
     @Test
     public void testRetainSome() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        relevant.clear();
-        relevant.add(document.getPage(2));
-        relevant.add(document.getPage(3));
-        relevant.add(document.getPage(4));
-        victim.updateOutline(document, "large_outline.pdf", relevant);
+        mapping.clear();
+        mapping.addLookupEntry(document.getPage(2), new PDPage());
+        mapping.addLookupEntry(document.getPage(3), new PDPage());
+        mapping.addLookupEntry(document.getPage(4), new PDPage());
+        victim.updateOutline(document, "large_outline.pdf", mapping);
         assertTrue(victim.hasOutline());
         assertEquals(28, count(victim.getOutline()));
     }
@@ -94,14 +92,14 @@ public class OutlineMergerTest {
     @Test
     public void testOnePerDocNoName() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        victim.updateOutline(document, "", relevant);
+        victim.updateOutline(document, "", mapping);
         assertFalse(victim.hasOutline());
     }
 
     @Test
     public void testRetainAllNoRelevantPage() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        victim.updateOutline(document, "large_outline.pdf", Collections.emptySet());
+        victim.updateOutline(document, "large_outline.pdf", new LookupTable<>());
         assertFalse(victim.hasOutline());
     }
 
