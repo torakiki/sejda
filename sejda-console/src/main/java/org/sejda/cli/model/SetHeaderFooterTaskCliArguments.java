@@ -62,6 +62,6 @@ public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfAndD
 
     boolean isFontSize();
 
-    @Option(shortName = "l", description = "label for the header/footer. Supports dynamic patterns such as [PAGE_ROMAN], [PAGE_ARABIC], [PAGE_OF_TOTAL], [DATE], [BATES_NUMBER] and [FILE_NUMBER]. Example: \"Page [PAGE_ARABIC]\" (required)")
+    @Option(shortName = "l", description = "label for the header/footer. Supports dynamic patterns such as [PAGE_ROMAN], [PAGE_ARABIC], [PAGE_OF_TOTAL], [TOTAL_PAGES_ARABIC], [TOTAL_PAGES_ROMAN], [DATE], [BATES_NUMBER] and [FILE_NUMBER]. Example: \"Page [PAGE_ARABIC] of [TOTAL_PAGES_ARABIC]\" (required)")
     String getLabel();
 }

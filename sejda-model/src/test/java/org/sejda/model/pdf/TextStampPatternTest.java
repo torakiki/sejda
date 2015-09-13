@@ -27,8 +27,14 @@ public class TextStampPatternTest {
 
     @Test
     public void testPageNumbers() {
-        String result = new TextStampPattern().withPage(3, 17).build("Page [PAGE_OF_TOTAL] - [PAGE_ROMAN] - [PAGE_ARABIC]");
-        assertEquals("Page 3 of 17 - III - 3", result);
+        assertEquals("Page III - 3", new TextStampPattern().withPage(3, 17).build("Page [PAGE_ROMAN] - [PAGE_ARABIC]"));
+    }
+
+    @Test
+    public void testPagesOfTotal() {
+        assertEquals("Page 3 of 17", new TextStampPattern().withPage(3, 17).build("Page [PAGE_OF_TOTAL]"));
+        assertEquals("Page 3 of 17", new TextStampPattern().withPage(3, 17).build("Page [PAGE_ARABIC] of [TOTAL_PAGES_ARABIC]"));
+        assertEquals("Page III of XVII", new TextStampPattern().withPage(3, 17).build("Page [PAGE_ROMAN] of [TOTAL_PAGES_ROMAN]"));
     }
 
     @Test
