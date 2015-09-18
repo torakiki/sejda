@@ -15,7 +15,7 @@
 		<task parameters="org.sejda.model.parameter.UnpackParameters"
 			task="org.sejda.impl.itext.UnpackTask" />
 		<task parameters="org.sejda.model.parameter.MergeParameters"
-			task="org.sejda.impl.itext.MergeTask" />
+			task="org.sejda.impl.sambox.MergeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByOutlineLevelParameters"
 			task="org.sejda.impl.sambox.SplitByOutlineLevelTask" />
 		<task parameters="org.sejda.model.parameter.SplitBySizeParameters"
