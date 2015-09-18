@@ -19,17 +19,18 @@
 package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.sejda.common.LookupTable;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
@@ -49,112 +50,119 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
  */
 public class AnnotationsDistillerTest {
 
+    private PDPage oldPage;
+    private PDPage newPage;
+    private LookupTable<PDPage> lookup;
+
+    @Before
+    public void setUp() {
+        oldPage = new PDPage();
+        newPage = new PDPage();
+        lookup = new LookupTable<>();
+        lookup.addLookupEntry(oldPage, newPage);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void fiterNullDocument() {
-        AnnotationsDistiller.filterAnnotations(Collections.emptySet(), null);
+        AnnotationsDistiller.filterAnnotations(new LookupTable<>(), null);
     }
 
     @Test
-    public void noLinks() throws IOException {
-        PDPage page = new PDPage();
+    public void noLinks() {
         List<PDAnnotation> annotations = Arrays.asList(new PDAnnotationText());
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(annotations.get(0).getCOSObject(), page.getAnnotations().get(0).getCOSObject());
+        doc.addPage(oldPage);
+        AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(1, newPage.getAnnotations().size());
     }
 
-    public void noLinks_PageRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void noLinks_PageRelevant() {
         PDPage destPage = new PDPage();
         PDAnnotationText annotation = new PDAnnotationText();
         annotation.setPage(destPage);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page, destPage)), doc);
-        assertEquals(annotations.get(0).getCOSObject(), page.getAnnotations().get(0).getCOSObject());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void noLinks_PageNotRelevant() throws IOException {
-        PDPage page = new PDPage();
-        PDPage destPage = new PDPage();
+    public void noLinks_PageNotRelevant() {
         PDAnnotationText annotation = new PDAnnotationText();
-        annotation.setPage(destPage);
+        annotation.setPage(new PDPage());
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(0, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(0, newPage.getAnnotations().size());
+        assertTrue(annotationsLookup.isEmpty());
     }
 
     @Test
-    public void noLinks_OnePageNotRelevantOneRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void noLinks_OnePageNotRelevantOneRelevant() {
         PDPage destPage = new PDPage();
         PDAnnotationText annotation = new PDAnnotationText();
         annotation.setPage(destPage);
         PDAnnotationText annotation2 = new PDAnnotationText();
-        annotation2.setPage(page);
+        annotation2.setPage(oldPage);
         List<PDAnnotation> annotations = Arrays.asList(annotation, annotation2);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(1, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void linksNoGoTo() throws IOException {
-        PDPage page = new PDPage();
+    public void linksNoGoTo() {
         PDAnnotationLink annotation = new PDAnnotationLink();
         annotation.setAction(new PDActionJavaScript());
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(1, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void links_PageNotRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void links_PageNotRelevant() {
+
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
         dest.setPage(destPage);
         annotation.setDestination(dest);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(0, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(0, newPage.getAnnotations().size());
+        assertTrue(annotationsLookup.isEmpty());
     }
 
     @Test
-    public void links_PageRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void links_PageRelevant() {
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
-        dest.setPage(page);
+        dest.setPage(oldPage);
         annotation.setDestination(dest);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(annotations.get(0).getCOSObject(), page.getAnnotations().get(0).getCOSObject());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void links_OnePageNotRelevantOneRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void links_OnePageNotRelevantOneRelevant() {
+
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
@@ -163,20 +171,20 @@ public class AnnotationsDistillerTest {
 
         PDAnnotationLink annotation2 = new PDAnnotationLink();
         PDPageDestination dest2 = new PDPageFitDestination();
-        dest2.setPage(page);
+        dest2.setPage(oldPage);
         annotation2.setDestination(dest2);
 
         List<PDAnnotation> annotations = Arrays.asList(annotation, annotation2);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(1, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void linksGoTo_PageNotRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void linksGoTo_PageNotRelevant() {
+
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
@@ -185,33 +193,32 @@ public class AnnotationsDistillerTest {
         action.setDestination(dest);
         annotation.setAction(action);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(0, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(0, newPage.getAnnotations().size());
+        assertTrue(annotationsLookup.isEmpty());
     }
 
     @Test
-    public void linksGoTo_PageRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void linksGoTo_PageRelevant() {
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
-        dest.setPage(page);
+        dest.setPage(oldPage);
         PDActionGoTo action = new PDActionGoTo();
         action.setDestination(dest);
         annotation.setAction(action);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(annotations.get(0).getCOSObject(), page.getAnnotations().get(0).getCOSObject());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
     @Test
-    public void linksGoTo_OnePageNotRelevantOneRelevant() throws IOException {
-        PDPage page = new PDPage();
+    public void linksGoTo_OnePageNotRelevantOneRelevant() {
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
@@ -222,22 +229,21 @@ public class AnnotationsDistillerTest {
 
         PDAnnotationLink annotation2 = new PDAnnotationLink();
         PDPageDestination dest2 = new PDPageFitDestination();
-        dest2.setPage(page);
+        dest2.setPage(oldPage);
         PDActionGoTo action2 = new PDActionGoTo();
         action2.setDestination(dest2);
         annotation2.setAction(action2);
 
         List<PDAnnotation> annotations = Arrays.asList(annotation, annotation2);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(1, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
     @Test
     public void links_NamedPageNotRelevant() throws IOException {
-        PDPage page = new PDPage();
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDNamedDestination namedDest = new PDNamedDestination(COSName.AESV3);
@@ -245,33 +251,33 @@ public class AnnotationsDistillerTest {
         dest.setPage(destPage);
         annotation.setDestination(namedDest);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = mock(PDDocument.class);
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
         when(doc.getDocumentCatalog()).thenReturn(catalog);
         when(catalog.findNamedDestinationPage(any(PDNamedDestination.class))).thenReturn(dest);
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(0, page.getAnnotations().size());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(0, newPage.getAnnotations().size());
+        assertTrue(annotationsLookup.isEmpty());
     }
 
     @Test
     public void links_NamedPageRelevant() throws IOException {
-        PDPage page = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDNamedDestination namedDest = new PDNamedDestination(COSName.AESV3);
 
         PDPageDestination dest = new PDPageFitDestination();
-        dest.setPage(page);
+        dest.setPage(oldPage);
         annotation.setDestination(namedDest);
         List<PDAnnotation> annotations = Arrays.asList(annotation);
-        page.setAnnotations(annotations);
+        oldPage.setAnnotations(annotations);
         PDDocument doc = mock(PDDocument.class);
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
         when(doc.getDocumentCatalog()).thenReturn(catalog);
         when(catalog.findNamedDestinationPage(namedDest)).thenReturn(dest);
-        doc.addPage(page);
-        AnnotationsDistiller.filterAnnotations(new HashSet<>(Arrays.asList(page)), doc);
-        assertEquals(annotations.get(0).getCOSObject(), page.getAnnotations().get(0).getCOSObject());
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(lookup, doc);
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 }

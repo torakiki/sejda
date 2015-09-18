@@ -49,6 +49,7 @@ public class OutlineMerger {
 
     public void updateOutline(PDDocument document, String sourceName, LookupTable<PDPage> pagesLookup) {
         if (!pagesLookup.isEmpty()) {
+            LOG.debug("Updating outline with policy {}", policy);
             switch (policy) {
             case ONE_ENTRY_EACH_DOC:
                 updateOneEntryPerDoc(sourceName, pagesLookup);

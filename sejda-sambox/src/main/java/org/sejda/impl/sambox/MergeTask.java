@@ -42,6 +42,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,21 +89,24 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
+
+            LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
                 pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
                 LOG.trace("Added imported page");
             }
-            LOG.trace("Added pages for {}", input.getSource());
 
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
-            AnnotationsDistiller.filterAnnotations(pagesLookup.values(),
+
+            LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(pagesLookup,
                     sourceDocumentHandler.getUnderlyingPDDocument());
-            acroFormsMerger.updateForm(
-                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
-                    input.getSource().getName(), pagesLookup.values());
+
+            acroFormsMerger.mergeForm(
+                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), pagesLookup,
+                    annotationsLookup);
 
             if (parameters.isBlankPageIfOdd()) {
                 destinationDocument.addBlankPageIfOdd();
@@ -111,12 +115,12 @@ public class MergeTask extends BaseTask<MergeParameters> {
         }
 
         if (outlineMerger.hasOutline()) {
-            LOG.trace("Adding generated outline");
+            LOG.debug("Adding generated outline");
             destinationDocument.setDocumentOutline(outlineMerger.getOutline());
         }
 
         if (acroFormsMerger.hasForm()) {
-            LOG.trace("Adding generated acro form");
+            LOG.debug("Adding generated AcroForm");
             destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
         }
         destinationDocument.savePDDocument(tmpFile);

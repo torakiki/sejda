@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Component that allows to set up a lookup relation between items of the same type.
@@ -64,8 +65,16 @@ public class LookupTable<I> {
      * @param item
      * @return the item associated to the given input one or null if no mapping is present
      */
-    public I lookup(I page) {
-        return oldToNew.get(page);
+    public I lookup(I item) {
+        return oldToNew.get(item);
+    }
+
+    /**
+     * @param item
+     * @return true if the table contains a lookup for the given item
+     */
+    public boolean hasLookupFor(I item) {
+        return oldToNew.containsKey(item);
     }
 
     /**
@@ -83,5 +92,12 @@ public class LookupTable<I> {
             return oldToNew.values().iterator().next();
         }
         return null;
+    }
+
+    /**
+     * @return the keys of the table
+     */
+    public Set<I> keys() {
+        return oldToNew.keySet();
     }
 }

@@ -83,28 +83,29 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     private List<PdfMergeInput> getInputWithOutline() {
         List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_outline.pdf"), "first_test_file.pdf")));
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf"), "first_test_file.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
         return input;
     }
 
     private List<PdfMergeInput> getInputWithEncrypted() {
         List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceWithPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/enc_with_modify_perm.pdf"), "enc_with_modify_perm.pdf", "test")));
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceWithPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf"),
+                "enc_with_modify_perm.pdf", "test")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/large_test.pdf"), "large_test.pdf")));
         return input;
     }
 
     private List<PdfMergeInput> getInput() {
         List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/test_no_outline.pdf"), "first_test_file.pdf")));
-        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/attachments.pdf"), "second_test.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf"), "first_test_file.pdf")));
+        input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf"), "second_test.pdf")));
         return input;
     }
 
@@ -208,9 +209,10 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     @Test
     public void testExecuteMergeAllFields() throws TaskException, IOException {
         setUpParameters(getInputWithOutline());
+        parameters.addInput(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf"), "second_test_file.pdf")));
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
-        // TODO use input with forms
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
         victim.execute(parameters);
@@ -219,8 +221,33 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(311, reader.getNumberOfPages());
+            assertEquals(312, reader.getNumberOfPages());
             assertNull(SimpleBookmark.getBookmark(reader));
+            assertFalse(reader.getAcroFields().getFields().isEmpty());
+        } finally {
+            nullSafeCloseReader(reader);
+        }
+    }
+
+    @Test
+    public void testExecuteMergeDiscardForms() throws TaskException, IOException {
+        setUpParameters(getInputWithOutline());
+        parameters.addInput(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf"), "second_test_file.pdf")));
+
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewFileOutput(parameters);
+        victim.execute(parameters);
+        PdfReader reader = null;
+        try {
+            reader = getReaderFromResultFile();
+            assertCreator(reader);
+            assertVersion(reader, PdfVersion.VERSION_1_6);
+            assertEquals(312, reader.getNumberOfPages());
+            assertNull(SimpleBookmark.getBookmark(reader));
+            assertTrue(reader.getAcroFields().getFields().isEmpty());
         } finally {
             nullSafeCloseReader(reader);
         }
@@ -229,32 +256,41 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
     @Test
     public void executeMergeRangesMergeForms() throws TaskException, IOException {
         setUpParameters(getInputWithOutline());
+        for (PdfMergeInput input : parameters.getInputList()) {
+            input.addPageRange(new PageRange(3, 10));
+            input.addPageRange(new PageRange(20, 23));
+            input.addPageRange(new PageRange(80, 90));
+        }
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
+        parameters.addInput(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf"), "forms.pdf")));
         doExecuteMergeRanges();
     }
 
     @Test
     public void executeMergeRanges() throws TaskException, IOException {
         setUpParameters(getInputWithOutline());
+        for (PdfMergeInput input : parameters.getInputList()) {
+            input.addPageRange(new PageRange(3, 10));
+            input.addPageRange(new PageRange(20, 23));
+            input.addPageRange(new PageRange(80, 90));
+        }
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
+        parameters.addInput(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf"), "forms.pdf")));
         doExecuteMergeRanges();
     }
 
     public void doExecuteMergeRanges() throws TaskException, IOException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewFileOutput(parameters);
-        for (PdfMergeInput input : parameters.getInputList()) {
-            input.addPageRange(new PageRange(3, 10));
-            input.addPageRange(new PageRange(20, 23));
-            input.addPageRange(new PageRange(80, 90));
-        }
         victim.execute(parameters);
         PdfReader reader = null;
         try {
             reader = getReaderFromResultFile();
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
-            assertEquals(26, reader.getNumberOfPages());
+            assertEquals(27, reader.getNumberOfPages());
             List<Map<String, Object>> bookmarks = SimpleBookmark.getBookmark(reader);
             assertNotNull(bookmarks);
             assertBookmarksMerged(bookmarks);

@@ -230,7 +230,7 @@ public class PDDocumentHandler implements Closeable {
      * @throws TaskIOException
      */
     public PDPage importPage(PDPage page) {
-        PDPage imported = new PDPage(new COSDictionary(page.getCOSObject()));
+        PDPage imported = new PDPage(page.getCOSObject().duplicate());
         imported.setCropBox(page.getCropBox());
         imported.setMediaBox(page.getMediaBox());
         imported.setResources(page.getResources());

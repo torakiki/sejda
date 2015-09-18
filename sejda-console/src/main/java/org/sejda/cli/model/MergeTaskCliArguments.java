@@ -39,7 +39,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " merge")
 public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
-    @Option(shortName = "a", description = "acro forms merge policy. {discard, merge}. Default is 'discard' (optional)", defaultValue = "discard")
+    @Option(shortName = "a", description = "acro forms merge policy. {discard, merge, merge_renaming}. Default is 'discard' (optional)", defaultValue = "discard")
     AcroFormPolicyAdapter getAcroForms();
 
     @Option(description = "add a blank page after each merged document if the number of pages is odd (optional)")

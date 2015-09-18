@@ -84,7 +84,7 @@ public class PagesExtractor implements Closeable {
 
     public void save(File file) throws TaskException {
         createOutline();
-        AnnotationsDistiller.filterAnnotations(pagesLookup.values(), originalDocument);
+        AnnotationsDistiller.filterAnnotations(pagesLookup, originalDocument);
         destinationDocument.savePDDocument(file);
     }
 

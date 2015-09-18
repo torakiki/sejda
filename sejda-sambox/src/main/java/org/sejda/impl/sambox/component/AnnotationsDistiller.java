@@ -18,13 +18,15 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.nonNull;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import org.sejda.common.LookupTable;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
@@ -56,32 +58,76 @@ public final class AnnotationsDistiller {
      * @param relevantPages
      * @param pagesOwner
      *            document owning the pages
+     * @return the lookup table to retrieve newly created annotations based on the old ones
      */
-    public static void filterAnnotations(Collection<PDPage> relevantPages, PDDocument pagesOwner) {
+    public static LookupTable<PDAnnotation> filterAnnotations(LookupTable<PDPage> relevantPages,
+            PDDocument pagesOwner) {
         requireNotNullArg(pagesOwner, "Cannot process annotations for a null document");
-        LOG.debug("Pocessing annotations");
-        for (PDPage page : relevantPages) {
+        LOG.debug("Filtering annotations");
+        LookupTable<PDAnnotation> annotationsLookup = new LookupTable<>();
+        for (PDPage page : relevantPages.keys()) {
             try {
-                List<PDAnnotation> keptAnnotation = new ArrayList<>();
+                List<PDAnnotation> keptAnnotations = new ArrayList<>();
                 for (PDAnnotation annotation : page.getAnnotations()) {
                     if (annotation instanceof PDAnnotationLink) {
                         PDDestination destination = getDestinationFrom((PDAnnotationLink) annotation, pagesOwner);
-                        if (destination instanceof PDPageDestination
-                                && !relevantPages.contains(((PDPageDestination) destination).getPage())) {
-                            LOG.trace("Removing link annotation {}", annotation);
+                        if (destination instanceof PDPageDestination) {
+                            PDPage destPage = relevantPages.lookup(((PDPageDestination) destination).getPage());
+                            if (nonNull(destPage)) {
+                                // not a page dest
+                                PDAnnotationLink copyAnnotation = new PDAnnotationLink(
+                                        annotation.getCOSObject().duplicate());
+                                copyAnnotation.getCOSObject().removeItem(COSName.A);
+                                PDPageDestination newDestination = (PDPageDestination) PDDestination
+                                        .create(destination.getCOSObject());
+                                newDestination.setPage(destPage);
+                                copyAnnotation.setDestination(newDestination);
+                                annotationsLookup.addLookupEntry(annotation, copyAnnotation);
+                                keptAnnotations.add(copyAnnotation);
+                            } else {
+                                LOG.trace("Removing link annotation");
+                            }
                         } else {
-                            keptAnnotation.add(annotation);
+                            // not a page dest
+                            PDAnnotation copyAnnotation = new PDAnnotationLink(annotation.getCOSObject().duplicate());
+                            annotationsLookup.addLookupEntry(annotation, copyAnnotation);
+                            keptAnnotations.add(copyAnnotation);
                         }
                     } else {
                         PDPage p = annotation.getPage();
-                        if (p == null != relevantPages.contains(p)) {
-                            keptAnnotation.add(annotation);
+                        if (p == null != relevantPages.hasLookupFor(p)) {
+                            PDAnnotation copyAnnotation = PDAnnotation
+                                    .createAnnotation(annotation.getCOSObject().duplicate());
+                            copyAnnotation.setPage(relevantPages.lookup(page));
+                            annotationsLookup.addLookupEntry(annotation, copyAnnotation);
+                            keptAnnotations.add(copyAnnotation);
                         }
                     }
                 }
-                page.setAnnotations(keptAnnotation);
+                trimSignatures(keptAnnotations);
+                relevantPages.lookup(page).setAnnotations(keptAnnotations);
             } catch (IOException e) {
                 LOG.warn("Failed to process annotations for page", e);
+            }
+        }
+        return annotationsLookup;
+    }
+
+    /**
+     * Removes signature values from widget annotations where the fields values are merged to the widget dictionary
+     * 
+     * @param relevantPages
+     * @param pagesOwner
+     *            document owning the pages
+     */
+    public static void trimSignatures(List<PDAnnotation> annotations) {
+        for (PDAnnotation annotation : annotations) {
+            if (COSName.WIDGET.getName().equals(annotation.getSubtype())
+                    && COSName.SIG.equals(annotation.getCOSObject().getCOSName(COSName.FT))) {
+                LOG.info("Removing signature value from the widget if any");
+                annotation.getCOSObject().removeItem(COSName.V);
+                annotation.getCOSObject().removeItem(COSName.SV);
+                annotation.getCOSObject().removeItem(COSName.LOCK);
             }
         }
     }

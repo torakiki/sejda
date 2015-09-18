@@ -85,4 +85,12 @@ public class LookupTableTest {
         victim.addLookupEntry("this2", "that2");
         assertEquals(3, victim.values().size());
     }
+
+    @Test
+    public void keys() {
+        victim.addLookupEntry("this", "that");
+        victim.addLookupEntry("this1", "that1");
+        victim.addLookupEntry("this", "that2");
+        assertEquals(2, victim.values().size());
+    }
 }
