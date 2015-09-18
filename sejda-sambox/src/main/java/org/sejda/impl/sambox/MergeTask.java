@@ -46,6 +46,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * SAMBox implementation of the Merge task that merges together a number of documents or part of them.
  * 
@@ -106,7 +107,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             clipSignatures(annotationsLookup.values());
 
             acroFormsMerger.mergeForm(
-                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), pagesLookup,
+                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
                     annotationsLookup);
 
             if (parameters.isBlankPageIfOdd()) {

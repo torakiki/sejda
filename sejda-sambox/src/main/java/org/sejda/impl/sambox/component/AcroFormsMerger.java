@@ -74,7 +74,6 @@ import org.sejda.common.LookupTable;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
@@ -167,14 +166,12 @@ public class AcroFormsMerger {
      * 
      * @param originalForm
      *            the form to merge
-     * @param pagesLookup
-     *            lookup for relevant pages
      * @param annotationsLookup
      *            lookup for relevant annotations
      */
-    public void mergeForm(PDAcroForm originalForm, LookupTable<PDPage> pagesLookup,
+    public void mergeForm(PDAcroForm originalForm,
             LookupTable<PDAnnotation> annotationsLookup) {
-        if (originalForm != null && !pagesLookup.isEmpty()) {
+        if (originalForm != null) {
             if (originalForm.hasXFA()) {
                 LOG.warn("Merge of XFA forms is not supported");
             } else {
