@@ -17,23 +17,25 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.impl.sambox.component.AnnotationsDistiller.filterAnnotations;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
 import java.util.Set;
 
-import org.sejda.common.ComponentsUtility;
 import org.sejda.common.LookupTable;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  * Component that retains pages from a given existing {@link PDDocument} and saves a new document containing retained pages and an outline that patches the new document.
  * 
@@ -84,7 +86,8 @@ public class PagesExtractor implements Closeable {
 
     public void save(File file) throws TaskException {
         createOutline();
-        AnnotationsDistiller.filterAnnotations(pagesLookup, originalDocument);
+        LookupTable<PDAnnotation> annotations = filterAnnotations(pagesLookup, originalDocument);
+        clipSignatures(annotations.values());
         destinationDocument.savePDDocument(file);
     }
 
@@ -98,7 +101,7 @@ public class PagesExtractor implements Closeable {
 
     @Override
     public void close() {
-        ComponentsUtility.nullSafeCloseQuietly(destinationDocument);
+        nullSafeCloseQuietly(destinationDocument);
         pagesLookup.clear();
         outlineMerger = null;
     }

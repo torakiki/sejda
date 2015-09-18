@@ -68,7 +68,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeNull() {
+    public void mergeNull() {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.DISCARD, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -78,7 +78,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeNoRelevant() {
+    public void mergeNoRelevant() {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.DISCARD, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -88,9 +88,9 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeWithXFA() {
+    public void mergeWithXFA() {
         PDDocument destination = new PDDocument();
-        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.DISCARD, destination);
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         PDAcroForm form = document.getDocumentCatalog().getAcroForm();
         assertNotNull(form);
         form.getCOSObject().setString(COSName.XFA, "Something");
@@ -100,7 +100,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testEmpty() {
+    public void empty() {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.DISCARD, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -110,7 +110,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMerge() {
+    public void merge() {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -120,7 +120,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeHalfFormWithAnnotations() throws IOException {
+    public void mergeHalfFormWithAnnotations() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -139,7 +139,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeSame() throws IOException {
+    public void mergeSame() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -170,7 +170,7 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void testMergeRenaming() throws IOException {
+    public void mergeRenaming() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
@@ -198,4 +198,33 @@ public class AcroFormsMergerTest {
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
+    @Test
+    public void mergeWithSignatureRemovesSignatureValue() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        victim.mergeForm(document.getDocumentCatalog().getAcroForm(), mapping, annotationsLookup);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_signature_signed.pdf")));
+        for (PDPage current : anotherDoc.getPages()) {
+            mapping.addLookupEntry(current, new PDPage());
+            annotationsLookup = AnnotationsDistiller.filterAnnotations(mapping, anotherDoc);
+        }
+        victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), mapping, annotationsLookup);
+
+        assertTrue(victim.hasForm());
+        PDAcroForm form = victim.getForm();
+        assertNotNull(form);
+        PDField signature = null;
+        for(PDField current: form.getFieldTree()){
+            if(current.getFieldType()==COSName.SIG.getName()){
+                signature = current;
+            }
+        }
+        assertNotNull(signature);
+        assertEquals("", signature.getValueAsString());
+    }
 }

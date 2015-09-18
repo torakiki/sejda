@@ -104,32 +104,12 @@ public final class AnnotationsDistiller {
                         }
                     }
                 }
-                trimSignatures(keptAnnotations);
                 relevantPages.lookup(page).setAnnotations(keptAnnotations);
             } catch (IOException e) {
                 LOG.warn("Failed to process annotations for page", e);
             }
         }
         return annotationsLookup;
-    }
-
-    /**
-     * Removes signature values from widget annotations where the fields values are merged to the widget dictionary
-     * 
-     * @param relevantPages
-     * @param pagesOwner
-     *            document owning the pages
-     */
-    public static void trimSignatures(List<PDAnnotation> annotations) {
-        for (PDAnnotation annotation : annotations) {
-            if (COSName.WIDGET.getName().equals(annotation.getSubtype())
-                    && COSName.SIG.equals(annotation.getCOSObject().getCOSName(COSName.FT))) {
-                LOG.info("Removing signature value from the widget if any");
-                annotation.getCOSObject().removeItem(COSName.V);
-                annotation.getCOSObject().removeItem(COSName.SV);
-                annotation.getCOSObject().removeItem(COSName.LOCK);
-            }
-        }
     }
 
     private static PDDestination getDestinationFrom(PDAnnotationLink link, PDDocument pageOwner) throws IOException {

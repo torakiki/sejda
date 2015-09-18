@@ -12,7 +12,7 @@
 	<logger name="org.icepdf" level="INFO" />
 	<logger name="org.hibernate" level="INFO" />
 
-	<root level="WARN">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

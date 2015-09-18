@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignature;
 import static org.sejda.sambox.cos.COSName.A;
 import static org.sejda.sambox.cos.COSName.AF;
 import static org.sejda.sambox.cos.COSName.AP;
@@ -111,7 +112,6 @@ public class AcroFormsMerger {
             previouslyCreated = PDFieldFactory.createFielAddingChildToParent(this.form,
                     existing.getCOSObject().duplicate(),
                     (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
-            trimSignatures(previouslyCreated);
             previouslyCreated.getCOSObject().removeItem(COSName.KIDS);
             fieldsLookup.addLookupEntry(existing, previouslyCreated);
         }
@@ -132,7 +132,6 @@ public class AcroFormsMerger {
             LOG.info("Existing terminal field renamed from {} to {}", existing.getPartialName(),
                     newField.getPartialName());
         }
-        trimSignatures(newField);
         newField.getCOSObject().removeItem(COSName.KIDS);
         fieldsLookup.addLookupEntry(existing, newField);
         return newField;
@@ -251,19 +250,15 @@ public class AcroFormsMerger {
 
     }
 
-    public static void trimSignatures(PDField previouslyCreated) {
-        if (COSName.SIG.getName().equals(previouslyCreated.getFieldType())) {
-            LOG.info("Removing signature value from the field if any");
-            previouslyCreated.getCOSObject().removeItem(COSName.V);
-            previouslyCreated.getCOSObject().removeItem(COSName.SV);
-            previouslyCreated.getCOSObject().removeItem(COSName.LOCK);
-        }
-    }
-
     public boolean hasForm() {
         return !form.getFields().isEmpty();
     }
 
+    /**
+     * Performs some cleanup task on the resulting {@link PDAcroForm} and then returns it.
+     * 
+     * @return
+     */
     public PDAcroForm getForm() {
         for (PDField current : form.getFieldTree()) {
             if (!current.isTerminal() && !((PDNonTerminalField) current).hasChildren()) {
@@ -274,6 +269,8 @@ public class AcroFormsMerger {
                     // it's a root field
                     form.removeField(current);
                 }
+            } else {
+                clipSignature(current);
             }
         }
         return form;
