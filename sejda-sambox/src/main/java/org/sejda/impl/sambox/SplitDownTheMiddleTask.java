@@ -24,9 +24,12 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
 
+import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -40,6 +43,7 @@ import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +94,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
+            LookupTable<PDPage> lookup = new LookupTable<>();
             for (int pageNumber = 1; pageNumber <= sourceHandler.getNumberOfPages(); pageNumber++) {
                 PDPage page = sourceHandler.getPage(pageNumber);
                 PDRectangle trimBox = page.getTrimBox();
@@ -99,6 +104,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     // landscape orientation
 
                     PDPage leftPage = destinationHandler.importPage(page);
+                    lookup.addLookupEntry(page, leftPage);
                     PDRectangle leftSide = new PDRectangle();
                     leftSide.setUpperRightY(trimBox.getUpperRightY());
                     leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
@@ -110,6 +116,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     leftPage.setMediaBox(leftSide);
 
                     PDPage rightPage = destinationHandler.importPage(page);
+                    lookup.addLookupEntry(page, rightPage);
                     PDRectangle rightSide = new PDRectangle();
                     rightSide.setUpperRightY(trimBox.getUpperRightY());
                     rightSide.setUpperRightX(trimBox.getUpperRightX());
@@ -123,6 +130,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     // portrait orientation
 
                     PDPage topPage = destinationHandler.importPage(page);
+                    lookup.addLookupEntry(page, topPage);
                     PDRectangle upperSide = new PDRectangle();
                     upperSide.setUpperRightY(trimBox.getUpperRightY());
                     upperSide.setUpperRightX(trimBox.getUpperRightX());
@@ -134,6 +142,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     topPage.setMediaBox(upperSide);
 
                     PDPage bottomPage = destinationHandler.importPage(page);
+                    lookup.addLookupEntry(page, bottomPage);
                     PDRectangle lowerSide = new PDRectangle();
                     lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
                     lowerSide.setUpperRightX(trimBox.getUpperRightX());
@@ -145,6 +154,8 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     bottomPage.setMediaBox(lowerSide);
                 }
             }
+            LookupTable<PDAnnotation> annotations = processAnnotations(lookup, sourceHandler.getUnderlyingPDDocument());
+            clipSignatures(annotations.values());
 
             // repaginate
             if (parameters.getRepagination() == Repagination.LAST_FIRST) {
@@ -170,8 +181,8 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
             destinationHandler.savePDDocument(tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closeResources();

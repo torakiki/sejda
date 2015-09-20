@@ -40,27 +40,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component that can distill pages annotations filtering out those pointing to irrelevant pages.
+ * Component that can distill pages annotations filtering out those pointing to irrelevant pages and updating the annotationsif necessasy.
  * 
  * @author Andrea Vacondio
  *
  */
-public final class AnnotationsDistiller {
-    private static final Logger LOG = LoggerFactory.getLogger(AnnotationsDistiller.class);
+public final class Annotations {
+    private static final Logger LOG = LoggerFactory.getLogger(Annotations.class);
 
-    private AnnotationsDistiller() {
+    private Annotations() {
         // utility
     }
 
     /**
-     * Removes from the given set of pages all the annotations pointing to a page that is not in the set (an irrelevant page)
+     * Removes from the given set of pages all the annotations pointing to a page that is not in the lookup (an irrelevant page) and replaces annotations pointing to an old page
+     * with a new one pointing to the looked up page.
      * 
      * @param relevantPages
      * @param pagesOwner
-     *            document owning the pages
+     *            document owning the pages (and the named destinations)
      * @return the lookup table to retrieve newly created annotations based on the old ones
      */
-    public static LookupTable<PDAnnotation> filterAnnotations(LookupTable<PDPage> relevantPages,
+    public static LookupTable<PDAnnotation> processAnnotations(LookupTable<PDPage> relevantPages,
             PDDocument pagesOwner) {
         requireNotNullArg(pagesOwner, "Cannot process annotations for a null document");
         LOG.debug("Filtering annotations");
@@ -85,7 +86,7 @@ public final class AnnotationsDistiller {
                                 annotationsLookup.addLookupEntry(annotation, copyAnnotation);
                                 keptAnnotations.add(copyAnnotation);
                             } else {
-                                LOG.trace("Removing link annotation");
+                                LOG.debug("Removing not relevant link annotation");
                             }
                         } else {
                             // not a page dest
@@ -101,6 +102,7 @@ public final class AnnotationsDistiller {
                             copyAnnotation.setPage(relevantPages.lookup(page));
                             annotationsLookup.addLookupEntry(annotation, copyAnnotation);
                             keptAnnotations.add(copyAnnotation);
+                            LOG.trace("Updated annotation page reference with the looked up page");
                         }
                     }
                 }

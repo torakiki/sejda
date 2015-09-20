@@ -19,10 +19,13 @@
 package org.sejda.impl.sambox.component;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.IOException;
 
 import org.sejda.common.ComponentsUtility;
+import org.sejda.common.LookupTable;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskPermissionsException;
@@ -31,6 +34,8 @@ import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,16 +80,25 @@ public class PdfAlternateMixer extends PDDocumentHandler {
 
         int currentStep = 0;
         int totalSteps = firstDocPages + secondDocPages;
+        LookupTable<PDPage> lookupFirst = new LookupTable<>();
+        LookupTable<PDPage> lookupSecond = new LookupTable<>();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
-                importPage(firstDocumentHandler.getPage(firstDocStatus.nextPage()));
+                PDPage current = firstDocumentHandler.getPage(firstDocStatus.nextPage());
+                lookupFirst.addLookupEntry(current, importPage(current));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
-                importPage(secondDocumentHandler.getPage(secondDocStatus.nextPage()));
+                PDPage current = secondDocumentHandler.getPage(secondDocStatus.nextPage());
+                lookupSecond.addLookupEntry(current, importPage(current));
                 notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
+        LookupTable<PDAnnotation> annotationsLookup = processAnnotations(lookupFirst,
+                firstDocumentHandler.getUnderlyingPDDocument());
+        clipSignatures(annotationsLookup.values());
+        annotationsLookup = processAnnotations(lookupSecond, secondDocumentHandler.getUnderlyingPDDocument());
+        clipSignatures(annotationsLookup.values());
     }
 
     private PDDocumentHandler openInput(PdfMixInput input) throws TaskIOException, TaskPermissionsException {

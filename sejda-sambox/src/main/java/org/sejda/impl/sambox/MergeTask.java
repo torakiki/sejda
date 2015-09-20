@@ -22,6 +22,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -33,7 +34,6 @@ import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.OutlineMerger;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -102,7 +102,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
 
-            LookupTable<PDAnnotation> annotationsLookup = AnnotationsDistiller.filterAnnotations(pagesLookup,
+            LookupTable<PDAnnotation> annotationsLookup = processAnnotations(pagesLookup,
                     sourceDocumentHandler.getUnderlyingPDDocument());
             clipSignatures(annotationsLookup.values());
 

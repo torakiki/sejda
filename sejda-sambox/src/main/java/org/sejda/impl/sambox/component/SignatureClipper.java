@@ -38,6 +38,10 @@ public final class SignatureClipper {
 
     private static final Logger LOG = LoggerFactory.getLogger(SignatureClipper.class);
 
+    private SignatureClipper() {
+        // utility
+    }
+
     /**
      * Removes signature values if found in the input {@link PDAnnotation}s, in case of a merged widget/field dictionary.
      * 

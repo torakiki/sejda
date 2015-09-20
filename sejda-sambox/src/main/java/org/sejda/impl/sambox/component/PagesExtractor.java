@@ -19,7 +19,7 @@ package org.sejda.impl.sambox.component;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.impl.sambox.component.AnnotationsDistiller.filterAnnotations;
+import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -86,7 +86,7 @@ public class PagesExtractor implements Closeable {
 
     public void save(File file) throws TaskException {
         createOutline();
-        LookupTable<PDAnnotation> annotations = filterAnnotations(pagesLookup, originalDocument);
+        LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup, originalDocument);
         clipSignatures(annotations.values());
         destinationDocument.savePDDocument(file);
     }
