@@ -76,12 +76,12 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
-            LOG.debug("Opening {} ...", source);
+            LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug("Created output on temporary buffer {} ...", tmpFile);
+            LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
@@ -111,21 +111,21 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         if (parameters.getDirection() != null) {
             READING_DIRECTION direction = getDirection(parameters.getDirection());
             preferences.setReadingDirection(direction);
-            LOG.trace("Direction set to '{}'.", direction);
+            LOG.trace("Direction set to '{}'", direction);
         }
         if (parameters.getDuplex() != null) {
             DUPLEX duplex = getDuplex(parameters.getDuplex());
             preferences.setDuplex(duplex);
-            LOG.trace("Duplex set to '{}'.", duplex);
+            LOG.trace("Duplex set to '{}'", duplex);
         }
         if (parameters.getPrintScaling() != null) {
             PRINT_SCALING printScaling = getPrintScaling(parameters.getPrintScaling());
             preferences.setPrintScaling(printScaling);
-            LOG.trace("PrintScaling set to '{}'.", printScaling);
+            LOG.trace("PrintScaling set to '{}'", printScaling);
         }
         NON_FULL_SCREEN_PAGE_MODE nfsMode = getNFSMode(parameters.getNfsMode());
         preferences.setNonFullScreenPageMode(nfsMode);
-        LOG.trace("Non full screen mode set to '{}'.", nfsMode);
+        LOG.trace("Non full screen mode set to '{}'", nfsMode);
         documentHandler.setViewerPreferences(preferences);
     }
 
