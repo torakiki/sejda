@@ -60,7 +60,7 @@ public class SignatureClipperTest {
 
     @Test
     public void nullFieldDoesntFail() {
-        SignatureClipper.clipSignature(null);
+        assertFalse(SignatureClipper.clipSignature(null));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SignatureClipperTest {
     public void clipField() {
         PDField field = PDFieldFactory.createFielAddingChildToParent(new PDAcroForm(new PDDocument()), dictionary,
                 null);
-        SignatureClipper.clipSignature(field);
+        assertTrue(SignatureClipper.clipSignature(field));
         assertFalse(field.getCOSObject().containsKey(COSName.V));
         assertFalse(field.getCOSObject().containsKey(COSName.SV));
         assertFalse(field.getCOSObject().containsKey(COSName.LOCK));

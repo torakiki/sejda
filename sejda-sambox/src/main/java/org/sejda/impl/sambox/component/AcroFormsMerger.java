@@ -19,6 +19,8 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignature;
 import static org.sejda.sambox.cos.COSName.A;
 import static org.sejda.sambox.cos.COSName.AF;
@@ -64,7 +66,6 @@ import static org.sejda.sambox.cos.COSName.V;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -72,6 +73,7 @@ import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -105,7 +107,7 @@ public class AcroFormsMerger {
 
     private final BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> createOrReuseTerminalField = (
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
-        PDField previouslyCreated = Optional.ofNullable(form.getField(existing.getFullyQualifiedName()))
+        PDField previouslyCreated = ofNullable(form.getField(existing.getFullyQualifiedName()))
                 .orElseGet(() -> fieldsLookup.lookup(existing));
         if (previouslyCreated == null) {
             previouslyCreated = PDFieldFactory.createFielAddingChildToParent(this.form,
@@ -169,8 +171,7 @@ public class AcroFormsMerger {
      * @param annotationsLookup
      *            lookup for relevant annotations
      */
-    public void mergeForm(PDAcroForm originalForm,
-            LookupTable<PDAnnotation> annotationsLookup) {
+    public void mergeForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup) {
         if (originalForm != null) {
             if (originalForm.hasXFA()) {
                 LOG.warn("Merge of XFA forms is not supported");
@@ -207,12 +208,13 @@ public class AcroFormsMerger {
                 current.getCOSObject().removeItems(FIELD_KEYS);
             }
         }
-        LOG.debug("Replaced merged dictionary widgets with unmerged ones");
+        LOG.debug("Removed fields keys from widget annotations");
     }
 
     private void updateForm(PDAcroForm originalForm, LookupTable<PDAnnotation> widgets,
             BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> getTerminalField,
             BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField) {
+        mergeFormDictionary(originalForm);
         LookupTable<PDField> fieldsLookup = new LookupTable<>();
         for (PDField field : originalForm.getFieldTree()) {
             if (!field.isTerminal()) {
@@ -234,6 +236,34 @@ public class AcroFormsMerger {
         }
         this.form.addFields(originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
                 .collect(Collectors.toList()));
+    }
+
+    private void mergeFormDictionary(PDAcroForm originalForm) {
+        if (!form.isNeedAppearances() && originalForm.isNeedAppearances()) {
+            form.setNeedAppearances(true);
+        }
+        String da = originalForm.getDefaultAppearance();
+        if (isBlank(form.getDefaultAppearance()) && !isBlank(da)) {
+            form.setDefaultAppearance(da);
+        }
+        int quadding = originalForm.getCOSObject().getInt(COSName.Q);
+        if (quadding != -1 && !form.getCOSObject().containsKey(COSName.Q)) {
+            form.setQuadding(quadding);
+        }
+        final COSDictionary formResources = ofNullable(form.getCOSObject().getDictionaryObject(COSName.DR))
+                .map(r -> (COSDictionary) r).orElseGet(COSDictionary::new);
+        ofNullable(originalForm.getCOSObject().getDictionaryObject(COSName.DR)).map(r -> (COSDictionary) r)
+                .ifPresent(dr -> {
+                    for (COSName currentKey : dr.keySet()) {
+                        COSDictionary currentItem = ofNullable(formResources.getDictionaryObject(currentKey))
+                                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new);
+                        currentItem.mergeWithoutOverwriting(ofNullable(dr.getDictionaryObject(currentKey))
+                                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new));
+                        formResources.setItem(currentKey, currentItem);
+                    }
+                });
+        form.getCOSObject().setItem(COSName.DR, formResources);
+        LOG.debug("Merged AcroForm dictionary");
     }
 
     /**
@@ -266,8 +296,8 @@ public class AcroFormsMerger {
                     // it's a root field
                     form.removeField(current);
                 }
-            } else {
-                clipSignature(current);
+            } else if (clipSignature(current)) {
+                form.setSignaturesExist(true);
             }
         }
         return form;

@@ -62,11 +62,15 @@ public final class SignatureClipper {
      * Removes signature values if found in the input {@link PDField}.
      * 
      * @param field
+     * @param true
+     *            if the field was a Signature and it has been clipped
      */
-    public static void clipSignature(PDField field) {
+    public static boolean clipSignature(PDField field) {
         if (nonNull(field) && COSName.SIG.getName().equals(field.getFieldType())) {
             clipSignature(field.getCOSObject());
+            return true;
         }
+        return false;
     }
 
     private static void clipSignature(COSDictionary item) {

@@ -220,12 +220,39 @@ public class AcroFormsMergerTest {
         PDAcroForm form = victim.getForm();
         assertNotNull(form);
         PDField signature = null;
-        for(PDField current: form.getFieldTree()){
-            if(current.getFieldType()==COSName.SIG.getName()){
+        for (PDField current : form.getFieldTree()) {
+            if (current.getFieldType() == COSName.SIG.getName()) {
                 signature = current;
             }
         }
         assertNotNull(signature);
         assertEquals("", signature.getValueAsString());
+        assertTrue(form.isSignaturesExist());
+    }
+
+    @Test
+    public void mergeFormsDictionaries() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+
+        PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")));
+        for (PDPage current : anotherDoc.getPages()) {
+            mapping.addLookupEntry(current, new PDPage());
+            annotationsLookup = Annotations.processAnnotations(mapping, anotherDoc);
+        }
+        victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        assertTrue(victim.hasForm());
+        PDAcroForm form = victim.getForm();
+        assertEquals(2, form.getQuadding());
+        assertEquals("/ArialMT 0 Tf 0 g ", form.getDefaultAppearance());
+        assertTrue(form.isNeedAppearances());
+        assertTrue(form.getDefaultResources().getCOSObject().size() > 0);
     }
 }
