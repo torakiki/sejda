@@ -115,16 +115,21 @@ public final class Annotations {
     }
 
     private static PDDestination getDestinationFrom(PDAnnotationLink link, PDDocument pageOwner) throws IOException {
-        PDDestination destination = link.getDestination();
-        if (destination == null) {
-            PDAction action = link.getAction();
-            if (action instanceof PDActionGoTo) {
-                destination = ((PDActionGoTo) action).getDestination();
+        try {
+            PDDestination destination = link.getDestination();
+            if (destination == null) {
+                PDAction action = link.getAction();
+                if (action instanceof PDActionGoTo) {
+                    destination = ((PDActionGoTo) action).getDestination();
+                }
             }
+            if (destination instanceof PDNamedDestination) {
+                destination = pageOwner.getDocumentCatalog().findNamedDestinationPage((PDNamedDestination) destination);
+            }
+            return destination;
+        } catch(Exception e){
+            LOG.warn("Failed to get destination for annotation", e);
+            return null;
         }
-        if (destination instanceof PDNamedDestination) {
-            destination = pageOwner.getDocumentCatalog().findNamedDestinationPage((PDNamedDestination) destination);
-        }
-        return destination;
     }
 }
