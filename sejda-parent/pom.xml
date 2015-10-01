@@ -119,7 +119,7 @@
 		<jdepend.version>2.9.1</jdepend.version>
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<hamcrest.version>1.3</hamcrest.version>
-		<sambox.version>1.0.0.M4</sambox.version>
+		<sambox.version>1.0.0.M5-SNAPSHOT</sambox.version>
 		<xmlgraphics.version>2.0.1</xmlgraphics.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
