@@ -73,6 +73,8 @@ import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -255,15 +257,38 @@ public class AcroFormsMerger {
         ofNullable(originalForm.getCOSObject().getDictionaryObject(COSName.DR)).map(r -> (COSDictionary) r)
                 .ifPresent(dr -> {
                     for (COSName currentKey : dr.keySet()) {
-                        COSDictionary currentItem = ofNullable(formResources.getDictionaryObject(currentKey))
-                                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new);
-                        currentItem.mergeWithoutOverwriting(ofNullable(dr.getDictionaryObject(currentKey))
-                                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new));
-                        formResources.setItem(currentKey, currentItem);
+                        ofNullable(dr.getDictionaryObject(currentKey)).ifPresent(value -> {
+                            if (value instanceof COSDictionary) {
+                                mergeResourceDictionaryValue(formResources, (COSDictionary) value, currentKey);
+                            } else if (value instanceof COSArray) {
+                                mergeResourceArrayValue(formResources, (COSArray) value, currentKey);
+                            } else {
+                                LOG.warn("Unsupported resource dictionary type {}", value);
+                            }
+                        });
                     }
                 });
         form.getCOSObject().setItem(COSName.DR, formResources);
         LOG.debug("Merged AcroForm dictionary");
+    }
+
+    private void mergeResourceArrayValue(COSDictionary formResources, COSArray value, COSName currentKey) {
+        COSArray currentItem = ofNullable(formResources.getDictionaryObject(currentKey)).map(i -> (COSArray) i)
+                .orElseGet(COSArray::new);
+        for (COSBase item : value) {
+            if (!currentItem.contains(item)) {
+                currentItem.add(item);
+            }
+        }
+        formResources.setItem(currentKey, currentItem);
+    }
+
+    private void mergeResourceDictionaryValue(final COSDictionary formResources, COSDictionary value,
+            COSName currentKey) {
+        COSDictionary currentItem = ofNullable(formResources.getDictionaryObject(currentKey))
+                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new);
+        currentItem.mergeWithoutOverwriting(value);
+        formResources.setItem(currentKey, currentItem);
     }
 
     /**
