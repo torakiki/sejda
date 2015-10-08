@@ -57,8 +57,7 @@
 		<module>sejda-parent</module>
 		<module>sejda-model</module>
 		<module>sejda-core</module>
-		<module>sejda-itext</module>
-		<!--<module>sejda-pdfbox</module> -->
+		<module>sejda-itext</module>		
 		<module>sejda-sambox</module>
 		<module>sejda-icepdf</module>
 		<module>sejda-console</module>
@@ -67,5 +66,5 @@
 		<module>sejda-example</module>
 		<module>sejda-conversion</module>
 	</modules>
-	
+
 </project>
