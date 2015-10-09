@@ -90,7 +90,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         if (isNotBlank(title)) {
             Matcher matcher = titleMatchingPattern.matcher(title);
             if (matcher.matches()) {
-                destinations.addPage(pages.indexOf(destination.getPage()), title);
+                destinations.addPage(pages.indexOf(destination.getPage()) + 1, title);
             }
         }
     }
