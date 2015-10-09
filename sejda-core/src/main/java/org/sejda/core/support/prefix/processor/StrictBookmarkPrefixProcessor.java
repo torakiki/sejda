@@ -20,7 +20,7 @@
 package org.sejda.core.support.prefix.processor;
 
 /**
- * Process the input prefix replacing all the [BOOKMARK_NAME_STRICT] occurrences with the input bookmark name if any. All the character that are not a letter or a number or '_' are
+ * Process the input prefix replacing all the [BOOKMARK_NAME_STRICT] occurrences with the input bookmark name if any. All the character that are not a letter or a number, space or '_' are
  * trimmed from the the bookmark value.
  * 
  * @author Andrea Vacondio
@@ -29,7 +29,7 @@ package org.sejda.core.support.prefix.processor;
 class StrictBookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
 
     private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME_STRICT\\]";
-    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "(?i)[^A-Z0-9_]";
+    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "(?i)[^A-Z0-9_ ]";
 
     public StrictBookmarkPrefixProcessor() {
         super(BOOKMARK_NAME_REPLACE_REGX, INVALID_WIN_FILENAME_CHARS_REGEXP);
