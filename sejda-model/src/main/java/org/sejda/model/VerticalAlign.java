@@ -53,7 +53,7 @@ public enum VerticalAlign implements FriendlyNamed {
     }
 
     /**
-     * @param pageHight
+     * @param pageHeight
      * @param margin
      * @return the vertical position of a text in a page of the given height
      */
