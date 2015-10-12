@@ -43,7 +43,7 @@ public class MandatoryInputAndOutputParametersTraitTest extends AbstractTaskTrai
 
     @Test
     public void testMandatoryOptions() {
-        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --files -f");
-        assertConsoleOutputContains(getTaskName(), "Option is mandatory: --output");
+        assertConsoleOutputContains(getTaskName() + " --output /tmp", "Option is mandatory: --files -f");
+        assertConsoleOutputContains(getTaskName() + " --files /tmp/test1.pdf", "Option is mandatory: --output");
     }
 }

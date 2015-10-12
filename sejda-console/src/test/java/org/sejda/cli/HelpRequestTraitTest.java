@@ -44,6 +44,17 @@ public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
         doTestExecuteCommandHelp("-h " + getTaskName());
     }
 
+    @Test
+    public void testHelpCommand() {
+        doTestExecuteCommandHelp("help " + getTaskName());
+        doTestExecuteCommandHelp(getTaskName() + " help");
+    }
+
+    @Test
+    public void testCommandWithoutParams() {
+        doTestExecuteCommandHelp(getTaskName());
+    }
+
     /**
      * 
      */

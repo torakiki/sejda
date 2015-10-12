@@ -114,7 +114,7 @@ public class SejdaConsole {
     }
 
     private boolean isCommandHelpRequested() {
-        return arguments.isHelpRequest();
+        return arguments.isHelpRequest() || arguments.isEmptyCommandArguments();
     }
 
     private CliCommand getCommandSpecified() {

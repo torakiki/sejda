@@ -24,7 +24,7 @@ class RawArguments {
     }
 
     public boolean isHelpRequest() {
-        return ArrayUtils.contains(this.arguments, "-h") || ArrayUtils.contains(this.arguments, "--help");
+        return ArrayUtils.contains(this.arguments, "-h") || ArrayUtils.contains(this.arguments, "--help") || ArrayUtils.contains(this.arguments, "help");
     }
 
     public boolean isVersionRequest() {
@@ -66,5 +66,13 @@ class RawArguments {
      */
     public boolean isNoCommandSpecified() {
         return getCliCommand() == null;
+    }
+
+    public boolean isCommandSpecified() {
+        return !isNoCommandSpecified();
+    }
+
+    public boolean isEmptyCommandArguments() {
+        return isCommandSpecified() && getCommandArguments().length == 0;
     }
 }
