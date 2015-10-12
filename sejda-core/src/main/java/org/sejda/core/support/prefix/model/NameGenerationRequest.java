@@ -91,7 +91,7 @@ public final class NameGenerationRequest {
      * @return the current instance
      */
     public NameGenerationRequest bookmark(String bookmark) {
-        this.bookmark = bookmark;
+        this.bookmark = StringUtils.trim(bookmark);
         return this;
     }
 

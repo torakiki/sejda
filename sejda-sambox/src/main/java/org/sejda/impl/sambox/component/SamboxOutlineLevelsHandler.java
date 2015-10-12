@@ -23,13 +23,18 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sejda.impl.sambox.component.OutlineUtils.getMaxOutlineLevel;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 
@@ -93,5 +98,64 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                 destinations.addPage(pages.indexOf(destination.getPage()) + 1, title);
             }
         }
+    }
+
+    @Override
+    public OutlineExtractPageDestinations getExtractPageDestinations(int level) {
+        OutlineExtractPageDestinations destinations = new OutlineExtractPageDestinations();
+
+        List<OutlineItem> flatOutline = getFlatOutline();
+
+        for(int i = 0; i < flatOutline.size(); i++) {
+            OutlineItem item = flatOutline.get(i);
+            if(item.level == level) {
+                int startPage = item.page;
+                String title = item.title;
+
+                if (isNotBlank(title)) {
+                    if (titleMatchingPattern.matcher(title).matches()) {
+                        int endPage = document.getNumberOfPages();
+                        for(int j = i + 1; j < flatOutline.size(); j++) {
+                            OutlineItem after = flatOutline.get(j);
+                            if(after.level <= item.level) {
+                                // This is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
+                                // resulting in the last half page missing from the extract. better to error on the safe side and include one extra page than have parts missing
+                                //endPage = after.xyzDestination ? after.page : after.page - 1;
+                                endPage = after.page;
+                                break;
+                            }
+                        }
+                        destinations.add(startPage, title, endPage);
+                    }
+                }
+            }
+        }
+
+        return destinations;
+    }
+
+    private List<OutlineItem> getFlatOutline() {
+        PDOutlineNode outline = document.getDocumentCatalog().getDocumentOutline();
+
+        if(outline == null) return new ArrayList<>();
+
+        List<OutlineItem> result = recurseFlatOutline(outline.children(), 1);
+        Collections.sort(result);
+
+        return result;
+    }
+
+    private List<OutlineItem> recurseFlatOutline(Iterable<PDOutlineItem> items, int level) {
+        List<OutlineItem> result = new ArrayList<>();
+        for(PDOutlineItem item: items) {
+            toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
+                int page = pages.indexOf(d.getPage()) + 1 /* 0-based index */;
+                boolean specificLocation = d instanceof PDPageXYZDestination;
+                result.add(new OutlineItem(item.getTitle(), page, level, specificLocation));
+            });
+            result.addAll(recurseFlatOutline(item.children(), level + 1));
+        }
+
+        return result;
     }
 }

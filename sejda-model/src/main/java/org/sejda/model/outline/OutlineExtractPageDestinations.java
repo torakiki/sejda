@@ -1,7 +1,4 @@
 /*
- * Created on 07/ago/2011
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,23 +16,29 @@
  */
 package org.sejda.model.outline;
 
+import java.util.*;
+
 /**
- * Component providing methods to retrieve outline information based on depth level.
- * 
- * @author Andrea Vacondio
+ * Used in extracting docs by outline.
+ * Keeps track of the extraction points and the associated page destination
  */
-public interface OutlineLevelsHandler {
+public class OutlineExtractPageDestinations {
 
-    /**
-     * @return the max depth level in the pdf document outline associated to this handler.
-     */
-    int getMaxOutlineDepth();
+    public final List<OutlineItemBoundaries> sections = new ArrayList<>();
 
-    /**
-     * @param level
-     * @return page sections found at the given outline level
-     */
-    OutlinePageDestinations getPageDestinationsForLevel(int level);
+    public void add(int startPage, String title, int endPage) {
+        sections.add(new OutlineItemBoundaries(startPage, title, endPage));
+    }
 
-    OutlineExtractPageDestinations getExtractPageDestinations(int level);
+    public static class OutlineItemBoundaries {
+        public int startPage;
+        public final String title;
+        public final int endPage;
+
+        public OutlineItemBoundaries(int startPage, String title, int endPage) {
+            this.startPage = startPage;
+            this.title = title;
+            this.endPage = endPage;
+        }
+    }
 }

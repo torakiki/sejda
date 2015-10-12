@@ -28,6 +28,8 @@
 			task="org.sejda.impl.sambox.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.ExtractPagesParameters"
 			task="org.sejda.impl.sambox.ExtractPagesTask" />
+		<task parameters="org.sejda.model.parameter.ExtractByOutlineParameters"
+			  task="org.sejda.impl.sambox.ExtractByOutlineTask" />
 		<task parameters="org.sejda.model.parameter.ExtractTextParameters"
 			task="org.sejda.impl.sambox.ExtractTextTask" />
 		<task parameters="org.sejda.model.parameter.ExtractTextByPagesParameters"

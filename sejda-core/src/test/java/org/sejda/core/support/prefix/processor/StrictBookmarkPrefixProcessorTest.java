@@ -39,7 +39,7 @@ public class StrictBookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
     @Test
     public void testComplexProcess() {
         String prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
-        String bookmark = "book name here";
+        String bookmark = "book name here ";
         String expected = "prefix_book name here_[BASENAME]";
         assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
     }

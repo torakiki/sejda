@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlineLevelsHandler;
 import org.sejda.model.outline.OutlinePageDestinations;
 
@@ -67,6 +68,12 @@ public class ITextOutlineLevelsHandler implements OutlineLevelsHandler {
         OutlinePageDestinations destinations = new OutlinePageDestinations();
         addPageIfBookmarkLevel(bookmarks, 1, destinations, goToActionLevel);
         return destinations;
+    }
+
+    @Override
+    public OutlineExtractPageDestinations getExtractPageDestinations(int level) {
+        // No Itext implementation for ExtractByOutlineTask exists
+        return null;
     }
 
     @SuppressWarnings("unchecked")

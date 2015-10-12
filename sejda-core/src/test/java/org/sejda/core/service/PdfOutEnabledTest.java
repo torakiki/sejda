@@ -20,7 +20,8 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 
 import java.awt.geom.Rectangle2D;
@@ -159,7 +160,9 @@ public class PdfOutEnabledTest {
             actualFilenames.add(e.getName());
         }
         Collections.sort(actualFilenames);
-        assertArrayEquals(expectedFilenames, actualFilenames.toArray(new String[actualFilenames.size()]));
+        for(String expectedFilename :expectedFilenames) {
+            assertThat(actualFilenames, hasItem(expectedFilename));
+        }
     }
 
     /**
@@ -204,6 +207,11 @@ public class PdfOutEnabledTest {
 
     void assertNumberOfPages(int expected) throws IOException {
         assertEquals("Number of pages don't match", expected, getReaderFromResultZipStream().getNumberOfPages());
+    }
+
+    void assertNumberOfPages(String filename, int expectedNumberOfPages) throws IOException {
+        int actualNumerOfPages = getReaderFromResultZipStream(filename).getNumberOfPages();
+        assertEquals("Number of pages don't match for " + filename, expectedNumberOfPages, actualNumerOfPages);
     }
 
     public void assertPageText(String... expectedText) throws IOException {
