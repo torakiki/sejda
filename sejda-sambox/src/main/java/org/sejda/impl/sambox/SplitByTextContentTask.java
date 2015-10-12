@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
  * Task splitting an input pdf document when text content inside a given document area of the page changes.
  * 
  * @author Eduard Weissmann
- * @param <T>
- *            the type of the parameters.
  */
 public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameters> {
 

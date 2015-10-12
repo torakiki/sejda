@@ -22,7 +22,7 @@ package org.sejda.cli.exception;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
- * Default console {@link UncaughtExceptionHandler} that doesnt print stacktraces to System.err for expected uncaught exceptions.<br/>
+ * Default console {@link UncaughtExceptionHandler} that doesnt print stacktraces to System.err for expected uncaught exceptions.
  * Since the console needs to exit with a corresponding error code when an exception occurs, all exceptions (even expected) are propagated to main(), but not all need to end up
  * being printed to System.err
  * 

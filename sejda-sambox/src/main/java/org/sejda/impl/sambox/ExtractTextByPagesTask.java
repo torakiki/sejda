@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extract text from pdf input, splitting input file by pages. Example: input.pdf -> page1-4.txt, page5-10.txt, page11.txt Implemented using PdfBox
+ * Extract text from pdf input, splitting input file by pages.
  * 
  * @author Eduard Weissmann
  */

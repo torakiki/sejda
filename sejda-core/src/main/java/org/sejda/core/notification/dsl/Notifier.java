@@ -57,7 +57,7 @@ public interface Notifier {
     void progressUndetermined();
 
     /**
-     * Notifies about a certain amount of steps completed: <br />
+     * Notifies about a certain amount of steps completed:
      * <code>
      * notifyEvent().stepsCompleted(2).outOf(10);
      * </code>
@@ -69,7 +69,7 @@ public interface Notifier {
     OngoingNotification stepsCompleted(int completed);
 
     /**
-     * Notifies about a certain amount of steps completed: <br />
+     * Notifies about a certain amount of steps completed:
      * <code>
      * notifyEvent().stepsCompleted(new BigDecimal("2").outOf(10);
      * </code>

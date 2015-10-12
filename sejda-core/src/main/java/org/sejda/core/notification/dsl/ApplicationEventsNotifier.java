@@ -55,11 +55,11 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     /**
      * Entry point to create a notification using DSL.
      * <p>
-     * Examples: <br />
+     * Examples:
      * <code>
      * NotifiableTaskMetadata taskMetadata = ...
      * notifyEvent(taskMetadata).stepsCompleted(2).outOf(10);
-     * </code> <br />
+     * </code>
      * <code>
      * notifyEvent(taskMetadata).taskCompleted();
      * </code>

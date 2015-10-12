@@ -43,7 +43,7 @@ public final class EnumUtils {
     /**
      * @param enumClass
      * @param displayName
-     * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
+     * @return Returns the enum value matching the input displayName, belonging to the specified enum class
      *         Does not throw an exception if enum value is not found, returns null
      */
     public static <T extends Enum<?> & FriendlyNamed> T valueOfSilently(Class<T> enumClass, String displayName) {
@@ -60,7 +60,7 @@ public final class EnumUtils {
      * @param enumClass
      * @param displayName
      * @param describedEnumClass
-     * @return Returns the enum value matching the input displayName, belonging to the specified enum class<br/>
+     * @return Returns the enum value matching the input displayName, belonging to the specified enum class
      * @throws SejdaRuntimeException
      *             if enum value is not found, mentioning the valid values in the message
      */

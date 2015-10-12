@@ -23,8 +23,10 @@ public class PdfFileSourceAdapter {
     private final PdfFileSource pdfFileSource;
 
     /**
-     * Constructor for a {@link PdfFileSourceAdapter}. Supports pdf files that are password protected<br/>
-     * If file has no password protection, input parameter is the path to the file. Eg: {@code /path/to/file.pdf}<br/>
+     * Constructor for a {@link PdfFileSourceAdapter}. Supports pdf files that are password protected
+     *
+     * If file has no password protection, input parameter is the path to the file. Eg: {@code /path/to/file.pdf}
+     *
      * For password protected files, input is concatenation of file path and password, using {@value #PASSWORD_SEPARATOR_CHARACTER} as delimiter. Eg:
      * {@code /path/to/file.pdf:secret123}
      * 
@@ -83,7 +85,7 @@ public class PdfFileSourceAdapter {
     }
 
     /**
-     * Factory method for transforming a collection of filenames to {@link PdfFileSource}s<br/>
+     * Factory method for transforming a collection of filenames to {@link PdfFileSource}s
      * Password protected file support included
      * 
      * @param filenames

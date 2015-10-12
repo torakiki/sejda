@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The typical example is A3 -> two A4s or the double page scan split.
+ * The typical example is A3 -&gt; two A4s or the double page scan split.
  *
  * Splits all (two page layout) pages in a document in two sides, down the middle, creating a document that contains double the number of pages. Works for multiple inputs. If the
  * page orientation is portrait, the split is done horizontally. Otherwise, it is done vertically, for landscape orientation.

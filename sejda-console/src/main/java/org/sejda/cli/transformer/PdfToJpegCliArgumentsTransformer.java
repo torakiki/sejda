@@ -23,7 +23,7 @@ import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
- * @link CommandCliArgumentsTransformer} for the PdfToJpegTask task command line interface
+ * {@link CommandCliArgumentsTransformer} for the PdfToJpegTask task command line interface
  * @author Andrea Vacondio
  * 
  */

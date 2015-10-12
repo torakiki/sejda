@@ -68,7 +68,6 @@ public class PDDocumentHandler implements Closeable {
      * Creates a new handler using the given document as underlying {@link PDDocument}.
      * 
      * @param document
-     * @throws TaskIOException
      */
     public PDDocumentHandler(PDDocument document) {
         if (document == null) {
@@ -80,8 +79,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a new handler with an empty underlying {@link PDDocument}.
-     * 
-     * @throws TaskIOException
      */
     public PDDocumentHandler() {
         this.document = new PDDocument();
@@ -146,8 +143,7 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Adds the given {@link WriteOption}s to be used when the document is saved
      * 
-     * @param opt
-     * @return
+     * @param opts
      */
     public void addWriteOption(WriteOption... opts) {
         for (WriteOption opt : opts) {
@@ -158,9 +154,7 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Removes the given {@link WriteOption}s to be used when the document is saved
      * 
-     * @param opt
-     * @return
-     * @see Set#remove(Object)
+     * @param opts
      */
     public void removeWriteOption(WriteOption... opts) {
         for (WriteOption opt : opts) {
@@ -227,7 +221,6 @@ public class PDDocumentHandler implements Closeable {
      * 
      * @param page
      * @return The newly created page
-     * @throws TaskIOException
      */
     public PDPage importPage(PDPage page) {
         PDPage imported = new PDPage(page.getCOSObject().duplicate());

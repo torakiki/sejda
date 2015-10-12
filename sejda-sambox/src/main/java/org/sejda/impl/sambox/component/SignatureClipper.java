@@ -62,7 +62,7 @@ public final class SignatureClipper {
      * Removes signature values if found in the input {@link PDField}.
      * 
      * @param field
-     * @param true
+     * @return true
      *            if the field was a Signature and it has been clipped
      */
     public static boolean clipSignature(PDField field) {

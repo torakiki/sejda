@@ -32,7 +32,6 @@ import org.sejda.core.support.prefix.processor.PrefixUtils;
  * Component used to generate the output name for a manipulation given the input prefix (if any);
  * 
  * @author Andrea Vacondio
- * @see org.sejda.core.support.prefix.processor.PrefixType
  */
 public final class NameGenerator {
 

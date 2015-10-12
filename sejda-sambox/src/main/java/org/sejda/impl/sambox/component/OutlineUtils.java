@@ -72,8 +72,8 @@ public final class OutlineUtils {
     /**
      * @param current
      *            the outline item
-     * @param destinations
-     *            the named destinations tree to look for in case of {@link PDNamedDestination}
+     * @param catalog
+     *            the catalog to look for in case of {@link PDNamedDestination}
      * @return the {@link PDPageDestination} for the given {@link PDOutlineItem} or an empty {@link Optional} if the destination is not a page. In case the outline item has a named
      *         destination, it is resolved against the given names tree.
      */
