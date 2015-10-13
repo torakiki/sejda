@@ -20,9 +20,7 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -54,7 +52,7 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
     @NotNull
     private PredefinedSetOfPages predefinedSetOfPages;
     @Valid
-    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+    private final Map<PageRange, Rotation> pageSelection = new HashMap<>();
 
     public RotateParameters(Rotation rotation, PredefinedSetOfPages predefinedSetOfPages) {
         this.rotation = rotation;
@@ -65,16 +63,32 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
         this(rotation, PredefinedSetOfPages.NONE);
     }
 
+    public RotateParameters() {
+        this(Rotation.DEGREES_0);
+    }
+
+    @Deprecated
     public Rotation getRotation() {
         return rotation;
     }
 
+    public Rotation getRotation(int page) {
+        return pageSelection.keySet().stream()
+                .filter(range -> range.contains(page)).findFirst()
+                .map(pageSelection::get).orElse(rotation);
+
+    }
+
     public void addPageRange(PageRange range) {
-        pageSelection.add(range);
+        pageSelection.put(range, this.rotation);
+    }
+
+    public void addPageRange(PageRange range, Rotation rotation) {
+        pageSelection.put(range, rotation);
     }
 
     public void addAllPageRanges(Collection<PageRange> ranges) {
-        pageSelection.addAll(ranges);
+        ranges.forEach(this::addPageRange);
     }
 
     public PredefinedSetOfPages getPredefinedSetOfPages() {
@@ -86,7 +100,7 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
      */
     @Override
     public Set<PageRange> getPageSelection() {
-        return Collections.unmodifiableSet(pageSelection);
+        return Collections.unmodifiableSet(pageSelection.keySet());
     }
 
     /**

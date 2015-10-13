@@ -42,7 +42,7 @@ public class PdfRotatorTest {
         PDPage page = mock(PDPage.class);
         when(page.getRotation()).thenReturn(180);
         when(document.getPage(2)).thenReturn(page);
-        PdfRotator.applyRotation(Rotation.DEGREES_270, Collections.singleton(3)).to(document);
+        new PdfRotator(document).rotate(3, Rotation.DEGREES_270);
         verify(page).setRotation(90);
     }
 
@@ -56,7 +56,8 @@ public class PdfRotatorTest {
         when(page2.getRotation()).thenReturn(90);
         when(document.getPage(1)).thenReturn(page2);
         when(document.getNumberOfPages()).thenReturn(2);
-        PdfRotator.applyRotation(Rotation.DEGREES_270, new HashSet<>(Arrays.asList(1, 2))).to(document);
+        PdfRotator victim = new PdfRotator(document);
+        new HashSet<>(Arrays.asList(1, 2)).forEach(page -> victim.rotate(page, Rotation.DEGREES_270));
         verify(page1).setRotation(90);
         verify(page2).setRotation(0);
     }

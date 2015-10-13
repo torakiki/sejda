@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.PdfRotator.applyRotation;
 
 import java.io.File;
 
@@ -32,6 +31,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfRotator;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -77,7 +77,9 @@ public class RotateTask extends BaseTask<RotateParameters> {
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            applyRotation(parameters.getRotation(), parameters.getPages(documentHandler.getNumberOfPages())).to(documentHandler.getUnderlyingPDDocument());
+            PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
+            parameters.getPages(documentHandler.getNumberOfPages())
+                    .forEach(page -> rotator.rotate(page, parameters.getRotation(page)));
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());

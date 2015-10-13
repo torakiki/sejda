@@ -109,6 +109,10 @@ public class PageRange implements PagesSelection {
         return retSet;
     }
 
+    public boolean contains(int page) {
+        return start <= page && end >= page;
+    }
+
     @Override
     public String toString() {
         if (isUnbounded()) {

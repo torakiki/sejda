@@ -34,58 +34,20 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfRotator implements OngoingRotation {
+public final class PdfRotator {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfRotator.class);
 
     private PDDocument document;
-    private Rotation rotation;
-    private Set<Integer> pages;
 
-    private PdfRotator(Rotation rotation, Set<Integer> pages) {
-        this.rotation = rotation;
-        this.pages = pages;
-    }
-
-    /**
-     * DSL entry point to apply a rotation to a set of pages
-     * <p>
-     * <code>applyRotation(rotation, pages).to(document);</code>
-     * </p>
-     * 
-     * @param rotation
-     * @param pages
-     * @return the ongoing apply rotation exposing methods to set the document you want to apply the rotation to.
-     */
-    public static OngoingRotation applyRotation(Rotation rotation, Set<Integer> pages) {
-        return new PdfRotator(rotation, pages);
-    }
-
-    @Override
-    public void to(PDDocument document) {
+    public PdfRotator(PDDocument document) {
         this.document = document;
-        executeRotation();
     }
 
-    /**
-     * Apply the rotation to the given {@link PDDocument}
-     */
-    private void executeRotation() {
-        LOG.debug("Applying rotation of {} degrees to {} pages", rotation.getDegrees(), pages.size());
-        for (int p : pages) {
-            apply(p);
-        }
-    }
 
-    /**
-     * apply the rotation to the given page if necessary
-     * 
-     * @param pageNmber
-     */
-    private void apply(int pageNmber) {
-        if (pages.contains(pageNmber)) {
-            PDPage page = document.getPage(pageNmber - 1);
-            page.setRotation(rotation.addRotation(getRotation(page.getRotation())).getDegrees());
-        }
+    public void rotate(int pageNumber, Rotation rotation) {
+        LOG.debug("Applying rotation of {} degrees to page {}", rotation.getDegrees(), pageNumber);
+        PDPage page = document.getPage(pageNumber - 1);
+        page.setRotation(rotation.addRotation(getRotation(page.getRotation())).getDegrees());
     }
 }

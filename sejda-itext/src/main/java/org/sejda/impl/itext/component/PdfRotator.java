@@ -39,60 +39,21 @@ import com.lowagie.text.pdf.PdfReader;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfRotator implements OngoingRotation {
+public final class PdfRotator {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfRotator.class);
 
     private PdfReader reader;
-    private Rotation rotation;
-    private Set<Integer> pages;
 
-    private PdfRotator(Rotation rotation, Set<Integer> pages) {
-        this.rotation = rotation;
-        this.pages = pages;
-    }
-
-    /**
-     * DSL entry point to apply a rotation to a set of pages
-     * <p>
-     * <code>applyRotation(rotation, pages).to(document);</code>
-     * </p>
-     * 
-     * @param rotation
-     * @param pages
-     * @return the ongoing apply rotation exposing methods to set the reader you want to apply the rotation to.
-     */
-    public static OngoingRotation applyRotation(Rotation rotation, Set<Integer> pages) {
-        return new PdfRotator(rotation, pages);
-    }
-
-    @Override
-    public void to(PdfReader reader) {
+    public PdfRotator(PdfReader reader) {
         this.reader = reader;
-        executeRotation();
     }
 
-    /**
-     * Apply the rotation to the dictionary of the given {@link PdfReader}
-     */
-    private void executeRotation() {
-        LOG.debug("Applying rotation of {} degrees to {} pages", rotation.getDegrees(), pages.size());
-        for (int p: pages) {
-            apply(p);
-        }
-    }
-
-    /**
-     * apply the rotation to the given page if necessary
-     * 
-     * @param pageNmber
-     */
-    private void apply(int pageNmber) {
-        if (pages.contains(pageNmber)) {
-            PdfDictionary dictionary = reader.getPageN(pageNmber);
-            dictionary.put(PdfName.ROTATE,
-                    new PdfNumber(rotation.addRotation(getRotation(reader.getPageRotation(pageNmber)))
-                            .getDegrees()));
-        }
+    public void rotate(int pageNumber, Rotation rotation) {
+        LOG.debug("Applying rotation of {} degrees to page {}", rotation.getDegrees(), pageNumber);
+        PdfDictionary dictionary = reader.getPageN(pageNumber);
+        dictionary.put(PdfName.ROTATE,
+                new PdfNumber(rotation.addRotation(getRotation(reader.getPageRotation(pageNumber)))
+                        .getDegrees()));
     }
 }

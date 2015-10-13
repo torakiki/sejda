@@ -164,6 +164,30 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         assertOutputContainsDocuments(2);
     }
 
+    @Test
+    public void testDifferentRotations() throws TaskException, IOException {
+        parameters = new RotateParameters();
+        parameters.addPageRange(new PageRange(1, 2), Rotation.DEGREES_90);
+        parameters.addPageRange(new PageRange(3, 4), Rotation.DEGREES_180);
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.addSource(source);
+        parameters.setOverwrite(true);
+
+        doExecute();
+
+        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
+
+        assertEquals(90, reader.getPageRotation(1));
+        assertEquals(90, reader.getPageRotation(2));
+        assertEquals(180, reader.getPageRotation(3));
+        assertEquals(180, reader.getPageRotation(4));
+
+        assertEquals(4, reader.getNumberOfPages());
+
+        reader.close();
+    }
+
     private void doExecute() throws TaskException {
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);

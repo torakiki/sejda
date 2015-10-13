@@ -26,13 +26,13 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.itext.component.PdfRotator.applyRotation;
 import static org.sejda.impl.itext.util.ITextUtils.nullSafeClosePdfReader;
 
 import java.io.File;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.impl.itext.component.PdfRotator;
 import org.sejda.impl.itext.component.PdfStamperHandler;
 import org.sejda.impl.itext.component.input.PdfSourceOpeners;
 import org.sejda.model.exception.TaskException;
@@ -77,7 +77,9 @@ public class RotateTask extends BaseTask<RotateParameters> {
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
-            applyRotation(parameters.getRotation(), parameters.getPages(reader.getNumberOfPages())).to(reader);
+            PdfRotator rotator = new PdfRotator(reader);
+            parameters.getPages(reader.getNumberOfPages())
+                    .forEach(page -> rotator.rotate(page, parameters.getRotation(page)));
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);

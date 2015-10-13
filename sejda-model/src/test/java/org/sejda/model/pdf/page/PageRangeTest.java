@@ -75,4 +75,18 @@ public class PageRangeTest {
         assertEquals("2", new PageRange(2, 2).toString());
         assertEquals("2-", new PageRange(2).toString());
     }
+
+    @Test
+    public void testContains() {
+        assertTrue(new PageRange(1,1).contains(1));
+        assertTrue(new PageRange(1,2).contains(1));
+        assertTrue(new PageRange(1,2).contains(2));
+
+        assertTrue(new PageRange(1).contains(1));
+        assertTrue(new PageRange(1).contains(2));
+
+        assertFalse(new PageRange(2).contains(1));
+        assertFalse(new PageRange(2, 3).contains(1));
+        assertFalse(new PageRange(2, 3).contains(4));
+    }
 }
