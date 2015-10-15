@@ -105,7 +105,7 @@ public class PdfHeaderFooterWriter implements Closeable {
                         page, true, true);
                 contentStream.beginText();
                 contentStream.setFont(font, fontSize.floatValue());
-                contentStream.setStrokingColor(parameters.getColor());
+                contentStream.setNonStrokingColor(parameters.getColor());
                 contentStream.newLineAtOffset(xPosition, yPosition);
                 contentStream.showText(label);
                 contentStream.endText();
