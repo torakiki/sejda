@@ -31,6 +31,8 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.page.PageRange;
 
+import java.awt.*;
+
 /**
  * Parameters configuring how to label the header/footer of a set of pages in a given pdf document.
  *
@@ -51,6 +53,8 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     private String pattern;
     private Integer pageCountStartFrom;
     private BatesSequence batesSequence;
+    @NotNull
+    private Color color = Color.black;
 
     public PageRange getPageRange() {
         return pageRange;
@@ -126,10 +130,19 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
         this.fontSize = fontSize;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
-                .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence).append(pageCountStartFrom)
+                .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence)
+                .append(pageCountStartFrom).append(color)
                 .toHashCode();
     }
 
@@ -148,7 +161,9 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
                 .append(getBatesSequence(), parameter.getBatesSequence())
                 .append(getPageCountStartFrom(), parameter.getPageCountStartFrom())
                 .append(getFontSize(), parameter.getFontSize()).append(getPageRange(), parameter.getPageRange())
-                .append(getPattern(), parameter.getPattern()).isEquals();
+                .append(getPattern(), parameter.getPattern())
+                .append(getColor(), parameter.getColor())
+                .isEquals();
     }
 
 }
