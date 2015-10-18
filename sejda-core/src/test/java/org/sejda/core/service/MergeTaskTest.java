@@ -331,6 +331,10 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
             assertCreator(reader);
             assertVersion(reader, PdfVersion.VERSION_1_6);
             assertEquals(8, reader.getNumberOfPages());
+            assertEquals(reader.getPageSize(3).getWidth(), reader.getPageSize(4).getWidth(), 0);
+            assertEquals(reader.getPageSize(3).getHeight(), reader.getPageSize(4).getHeight(), 0);
+            assertEquals(reader.getPageSize(7).getWidth(), reader.getPageSize(8).getWidth(), 0);
+            assertEquals(reader.getPageSize(7).getHeight(), reader.getPageSize(8).getHeight(), 0);
         } finally {
             nullSafeCloseReader(reader);
         }

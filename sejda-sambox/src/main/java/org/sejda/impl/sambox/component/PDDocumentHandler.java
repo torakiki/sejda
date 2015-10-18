@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
@@ -41,6 +42,7 @@ import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
@@ -302,15 +304,18 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Adds a blank page if the current total pages number is odd
+     * 
+     * @param mediaBox
+     *            media box size for the blank page
      */
-    public void addBlankPageIfOdd() {
+    public void addBlankPageIfOdd(PDRectangle mediaBox) {
         if (document.getNumberOfPages() % 2 != 0) {
-            addBlankPage();
+            addBlankPage(mediaBox);
         }
     }
 
-    public void addBlankPage() {
+    public void addBlankPage(PDRectangle mediaBox) {
         LOG.debug("Adding blank page");
-        addPage(new PDPage());
+        addPage(new PDPage(ofNullable(mediaBox).orElse(PDRectangle.LETTER)));
     }
 }

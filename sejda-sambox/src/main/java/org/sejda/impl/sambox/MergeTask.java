@@ -43,6 +43,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private Queue<Closeable> toClose = new LinkedList<>();
     private OutlineMerger outlineMerger;
     private AcroFormsMerger acroFormsMerger;
+    private PDRectangle currentPageSize = PDRectangle.LETTER;
 
     @Override
     public void before(MergeParameters parameters) {
@@ -95,6 +97,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
+                currentPageSize = page.getMediaBox();
                 pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
                 LOG.trace("Added imported page");
             }
@@ -111,7 +114,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     annotationsLookup);
 
             if (parameters.isBlankPageIfOdd()) {
-                destinationDocument.addBlankPageIfOdd();
+                destinationDocument.addBlankPageIfOdd(currentPageSize);
             }
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
