@@ -22,8 +22,6 @@ package org.sejda.impl.itext.component;
 
 import static org.sejda.model.rotation.Rotation.getRotation;
 
-import java.util.Set;
-
 import org.sejda.model.rotation.Rotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

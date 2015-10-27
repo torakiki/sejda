@@ -20,8 +20,6 @@ package org.sejda.impl.sambox.component;
 
 import static org.sejda.model.rotation.Rotation.getRotation;
 
-import java.util.Set;
-
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
