@@ -18,20 +18,22 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class PrefixUtils {
 
     /**
      * Strips characters deemed usafe for a filename
      */
     public static String toSafeFilename(String input) {
-        return input.replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "");
+        return StringUtils.defaultIfBlank(input, "").replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "");
     }
 
     /**
      * Strips all but characters that are known to be safe: alphanumerics for now.
      */
     public static String toStrictFilename(String input) {
-        String safe = input.replaceAll("[^A-Za-z0-9_ .-]", "");
+        String safe = StringUtils.defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
         if(safe.length() > 255) {
             safe = safe.substring(0, 255);
         }

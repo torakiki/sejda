@@ -39,4 +39,10 @@ public class PrefixUtilsTest {
         assertEquals("1_Invoice0001.pdf", PrefixUtils.toStrictFilename("1_Invoice#0001:*<>/\\.pdf"));
         assertEquals(StringUtils.repeat('a', 255), PrefixUtils.toStrictFilename(StringUtils.repeat('a', 256)));
     }
+
+    @Test
+    public void testNulls(){
+        assertEquals("", PrefixUtils.toSafeFilename(null));
+        assertEquals("", PrefixUtils.toStrictFilename(null));
+    }
 }
