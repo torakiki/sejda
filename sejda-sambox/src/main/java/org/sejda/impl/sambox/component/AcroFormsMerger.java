@@ -166,7 +166,7 @@ public class AcroFormsMerger {
     }
 
     /**
-     * Merge the original form to the current one, considering only fields whose widgets are in available as relevant pages in the given lookup table.
+     * Merge the original form to the current one, considering only fields whose widgets are available in the given lookup table.
      * 
      * @param originalForm
      *            the form to merge
@@ -200,7 +200,7 @@ public class AcroFormsMerger {
     }
 
     /**
-     * For each new widget annotation in the lookup table replaces removes all the Field keys.
+     * For each new widget annotation in the lookup table removes all the Field keys.
      * 
      * @param annotationsLookup
      */
