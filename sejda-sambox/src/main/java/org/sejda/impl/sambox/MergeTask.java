@@ -98,6 +98,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
                 currentPageSize = page.getMediaBox();
+                // we don't use the original page because once added to the new tree we loose inheritable attributes
+                // so we use a page duplicate to explicitly assign inheritable resources
                 pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
                 LOG.trace("Added imported page");
             }
