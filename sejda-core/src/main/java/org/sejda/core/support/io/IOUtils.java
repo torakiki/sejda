@@ -66,9 +66,19 @@ public final class IOUtils {
         }
     }
 
+    private static final int TEMP_DIR_ATTEMPTS = 1000;
     public static File createTemporaryFolder() {
-        File folder = new File(FileUtils.getTempDirectory(), "sejdaTmp" + new Date().getTime());
-        folder.mkdirs();
-        return folder;
+        File baseDir = new File(System.getProperty("java.io.tmpdir"));
+        String baseName = new StringBuilder("sejdaTmp").append(System.currentTimeMillis()).append("-").toString();
+
+        for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
+            File tempDir = new File(baseDir, baseName + counter);
+            if (tempDir.mkdir()) {
+                return tempDir;
+            }
+        }
+        throw new IllegalStateException("Failed to create directory within "
+                + TEMP_DIR_ATTEMPTS + " attempts (tried "
+                + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
     }
 }
