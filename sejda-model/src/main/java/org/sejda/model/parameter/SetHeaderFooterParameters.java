@@ -43,7 +43,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
 
     @NotNull
     @Valid
-    private PageRange pageRange;
+    private PageRange pageRange = new PageRange(1);
     private StandardType1Font font = StandardType1Font.HELVETICA;
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
