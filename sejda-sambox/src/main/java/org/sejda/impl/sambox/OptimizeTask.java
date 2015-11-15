@@ -18,6 +18,7 @@ package org.sejda.impl.sambox;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.writer.model.ImageOptimizer;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -34,12 +35,6 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -121,44 +116,23 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private void optimizeImages(PDPage page) throws IOException {
         PDResources pageResources = page.getResources();
         for (COSName xObjectName : pageResources.getXObjectNames()) {
-            PDXObject obj = pageResources.getXObject(xObjectName);
-            if (obj instanceof PDImageXObject) {
-                PDImageXObject imageXObject = ((PDImageXObject) obj);
-                LOG.debug("Found image {}x{}", imageXObject.getHeight(), imageXObject.getWidth());
+            try {
+                PDXObject obj = pageResources.getXObject(xObjectName);
+                if (obj instanceof PDImageXObject) {
+                    PDImageXObject imageXObject = ((PDImageXObject) obj);
+                    LOG.debug("Found image {}x{}", imageXObject.getHeight(), imageXObject.getWidth());
 
-                try {
-                    File tmpImageFile = File.createTempFile("pdfimage", ".jpeg");
-                    writeOptimizedImage(imageXObject.getImage(), tmpImageFile);
+                    File tmpImageFile = ImageOptimizer.optimize(imageXObject.getImage(),
+                            parameters.getImageQuality(),
+                            parameters.getImageDpi(),
+                            parameters.getImageMaxWidthOrHeight()
+                    );
+
                     PDImageXObject newImage = PDImageXObject.createFromFile(tmpImageFile);
                     pageResources.put(xObjectName, newImage);
-                } catch (IOException ex) {
-                    LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
                 }
-            }
-        }
-    }
-
-    private void writeOptimizedImage(BufferedImage image, File outputFile) throws IOException {
-        ImageWriter writer = null;
-        ImageOutputStream ios = null;
-        try {
-            ios = ImageIO.createImageOutputStream(outputFile);
-            writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-
-            ImageWriteParam iwp = writer.getDefaultWriteParam();
-            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            iwp.setCompressionQuality(parameters.getCompressedImageQuality());
-
-            writer.setOutput(ios);
-            writer.write(null, new IIOImage(image, null, null), iwp);
-        } finally {
-            org.apache.commons.io.IOUtils.closeQuietly(ios);
-            try {
-                if (writer != null) {
-                    writer.dispose();
-                }
-            } catch (Exception e) {
-                // silently ignore
+            } catch (IOException | RuntimeException ex) {
+                LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
             }
         }
     }

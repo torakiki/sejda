@@ -30,6 +30,7 @@ import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
+import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,9 +65,12 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
     private void setUpParameters() {
         parameters = new OptimizeParameters();
         parameters.setCompressImages(true);
+        parameters.setImageQuality(0.8f);
+        parameters.setImageDpi(72);
+        parameters.setImageMaxWidthOrHeight(1280);
         parameters.setVersion(PdfVersion.VERSION_1_6);
 
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_unoptimized.pdf");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/unoptimized.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_unoptimized.pdf");
         parameters.addSource(source);
     }
@@ -76,6 +80,6 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
         parameters.setOutput(new DirectoryTaskOutput(outputFolder));
         victim.execute(parameters);
         long sizeInKb = outputFolder.listFiles()[0].length() / 1000;
-        assertEquals(502, sizeInKb);
+        assertThat(sizeInKb, is(lessThan(104L)));
     }
 }
