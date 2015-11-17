@@ -37,6 +37,7 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
+import org.slf4j.LoggerFactory;
 
 /**
  * SAMBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
@@ -45,6 +46,8 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
  *
  */
 public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.OutlineLevelsHandler {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SamboxOutlineLevelsHandler.class);
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private PDDocument document;
@@ -149,9 +152,14 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         List<OutlineItem> result = new ArrayList<>();
         for(PDOutlineItem item: items) {
             toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
-                int page = pages.indexOf(d.getPage()) + 1 /* 0-based index */;
-                boolean specificLocation = d instanceof PDPageXYZDestination;
-                result.add(new OutlineItem(item.getTitle(), page, level, specificLocation));
+                try {
+                    int page = pages.indexOf(d.getPage()) + 1 /* 0-based index */;
+                    boolean specificLocation = d instanceof PDPageXYZDestination;
+                    result.add(new OutlineItem(item.getTitle(), page, level, specificLocation));
+                } catch(RuntimeException e) {
+                    // this can happen if the page destination points to some bogus page that doesn't exist in the doc
+                    LOG.warn("Failed to map page destination to actual page in the document", e);
+                }
             });
             result.addAll(recurseFlatOutline(item.children(), level + 1));
         }
