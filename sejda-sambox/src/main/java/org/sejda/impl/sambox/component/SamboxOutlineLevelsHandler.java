@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
@@ -152,14 +153,16 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         List<OutlineItem> result = new ArrayList<>();
         for(PDOutlineItem item: items) {
             toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
-                try {
-                    int page = pages.indexOf(d.getPage()) + 1 /* 0-based index */;
-                    boolean specificLocation = d instanceof PDPageXYZDestination;
-                    result.add(new OutlineItem(item.getTitle(), page, level, specificLocation));
-                } catch(RuntimeException e) {
-                    // this can happen if the page destination points to some bogus page that doesn't exist in the doc
-                    LOG.warn("Failed to map page destination to actual page in the document", e);
+                PDPage page = d.getPage();
+                int pageNumber;
+                if(page != null){
+                    pageNumber = pages.indexOf(page) + 1 /* 0-based index */;
+                } else {
+                    pageNumber = d.getPageNumber();
                 }
+                boolean specificLocation = d instanceof PDPageXYZDestination;
+                result.add(new OutlineItem(item.getTitle(), pageNumber, level, specificLocation));
+
             });
             result.addAll(recurseFlatOutline(item.children(), level + 1));
         }
