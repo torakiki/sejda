@@ -58,7 +58,7 @@ public class SplitByTextChangesOutputStrategy implements NextOutputStrategy {
         for (int pageNumber = 1; pageNumber <= document.getNumberOfPages(); pageNumber++) {
             PDPage page = document.getDocumentCatalog().getPages().get(pageNumber - 1);
 
-            String pageText = extractTextFromPageArea(page, area);
+            String pageText = org.sejda.core.support.util.StringUtils.trimIncludingNbsp(extractTextFromPageArea(page, area));
             boolean noChanges = (prevPageText == null || // no previous
                                     isBlank(pageText) || // if there's no text in the area, include in the prev document
                                     prevPageText.equals(pageText));

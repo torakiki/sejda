@@ -88,4 +88,18 @@ public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest imple
         assertOutputContainsDocuments(3);
         assertOutputContainsFilenames("1-Invoice00001.pdf","4-Invoice00002.pdf","5-Invoice00003.pdf");
     }
+
+    @Test
+    public void testDoesNotSplitWhenThePageOnlyHasNonBreakingSpace() throws TaskException, IOException {
+        setUpParameters(new TopLeftRectangularBox(68, 70, 73, 18));
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_newlines_sample.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.setSource(source);
+        parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(2);
+        assertOutputContainsFilenames("1-1234561234.pdf", "3-1234561235.pdf");
+    }
 }
