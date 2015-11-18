@@ -46,19 +46,38 @@ public class SplitByTextChangesOutputStrategy implements NextOutputStrategy {
     private Collection<Integer> pages;
     private Map<Integer, String> textByPage = new HashMap<Integer, String>();
 
-    public SplitByTextChangesOutputStrategy(PDDocument document, TopLeftRectangularBox area) throws TaskIOException {
-        this.pages = findPageToSplitAt(document, area);
+    public SplitByTextChangesOutputStrategy(PDDocument document, TopLeftRectangularBox area, String startsWith, String endsWith) throws TaskIOException {
+        this.pages = findPageToSplitAt(document, area, startsWith, endsWith);
         this.delegate = new SplitPages(pages);
     }
 
-    Collection<Integer> findPageToSplitAt(PDDocument document, TopLeftRectangularBox area) throws TaskIOException {
+    Collection<Integer> findPageToSplitAt(PDDocument document, TopLeftRectangularBox area, String startsWith, String endsWith) throws TaskIOException {
         Collection<Integer> pagesToSplitAt = new HashSet<Integer>();
         String prevPageText = null;
 
         for (int pageNumber = 1; pageNumber <= document.getNumberOfPages(); pageNumber++) {
             PDPage page = document.getDocumentCatalog().getPages().get(pageNumber - 1);
 
-            String pageText = org.sejda.core.support.util.StringUtils.trimIncludingNbsp(extractTextFromPageArea(page, area));
+            String pageText = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(extractTextFromPageArea(page, area)).trim();
+
+            // checks if the page text matches any (optional) prefixes/suffixes specified
+            if(isNotBlank(startsWith)){
+                if(!pageText.startsWith(startsWith)){
+                    LOG.debug("Detected page text does not match specified prefix: '{}' on '{}'", startsWith, pageText);
+                    pageText = "";
+                } else {
+                    pageText = pageText.substring(startsWith.length()).trim();
+                }
+            }
+            if(isNotBlank(endsWith)){
+                if(!pageText.endsWith(endsWith)){
+                    LOG.debug("Detected page text does not match specified suffix: '{}' on '{}'", pageText);
+                    pageText = "";
+                } else {
+                    pageText = pageText.substring(0, pageText.length() - endsWith.length()).trim();
+                }
+            }
+
             boolean noChanges = (prevPageText == null || // no previous
                                     isBlank(pageText) || // if there's no text in the area, include in the prev document
                                     prevPageText.equals(pageText));

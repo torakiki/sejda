@@ -20,29 +20,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StringUtils {
+
     /**
      * Why this method?
-     * Most String.trim() utilities out there will not trim non breaking space chars (ascii char '160') which is found in PDFs.
+     * Because when extracting text from PDFs you may get back non breaking space, which is technically different than whitespace
+     * but for the purpose of text comparison and extraction it actually should behave the same.
      *
-     * @param in
-     * @return
+     * @return the input string with all non breaking space chars replaced by whitespace char ' '
      */
-    private static List<Character> extraWhitespaceChars = Arrays.asList((char) 160);
+    public static String nbspAsWhitespace(String in) {
+        return in.replace((char)160, ' ');
+    }
 
-    public static String trimIncludingNbsp(String in) {
-        String result = in.trim();
-
-        for (Character c : extraWhitespaceChars) {
-            if (result.length() >= 1 && result.charAt(0) == c) {
-                result = result.substring(1);
-            }
-
-            if (result.length() >= 1 && result.charAt(result.length() - 1) == c) {
-                result = result.substring(0, result.length() - 1);
-            }
+    // Useful to debug weird strings that contain non breaking spaces
+    public static String asAsciiCodes(String in) {
+        StringBuilder result = new StringBuilder();
+        for(char c: in.toCharArray()){
+            result.append((int)c).append(" ");
         }
-
-        return result;
+        return result.toString();
     }
 
 }

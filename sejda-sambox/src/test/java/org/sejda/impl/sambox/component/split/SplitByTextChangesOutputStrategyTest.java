@@ -43,7 +43,7 @@ public class SplitByTextChangesOutputStrategyTest {
 
         TopLeftRectangularBox area = new TopLeftRectangularBox(114, 70, 41, 15);
 
-        Collection<Integer> pagesToSplitAt = new SplitByTextChangesOutputStrategy(document, area).getPages();
+        Collection<Integer> pagesToSplitAt = new SplitByTextChangesOutputStrategy(document, area, "", "").getPages();
         assertEquals(Sets.newSet(3, 4), pagesToSplitAt);
     }
 }

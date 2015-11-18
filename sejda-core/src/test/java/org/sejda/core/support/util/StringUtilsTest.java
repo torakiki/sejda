@@ -23,10 +23,11 @@ import static org.junit.Assert.*;
 public class StringUtilsTest {
 
     @Test
-    public void trimIncludingNbsp() throws Exception {
-        assertEquals("result", StringUtils.trimIncludingNbsp((char) 160 + "result"));
-        assertEquals("result", StringUtils.trimIncludingNbsp("result" + (char) 160));
-        assertEquals("", StringUtils.trimIncludingNbsp("" + (char) 160));
-        assertEquals("", StringUtils.trimIncludingNbsp((char) 160 + "" + (char) 160));
+    public void testNbsp() throws Exception {
+        assertEquals("result", StringUtils.nbspAsWhitespace((char) 160 + "result").trim());
+        assertEquals("result", StringUtils.nbspAsWhitespace("result" + (char) 160).trim());
+        assertEquals("", StringUtils.nbspAsWhitespace("" + (char) 160).trim());
+        assertEquals("", StringUtils.nbspAsWhitespace((char) 160 + "" + (char) 160).trim());
+        assertEquals("Foo bar", StringUtils.nbspAsWhitespace("Foo" + (char) 160 + "bar"));
     }
 }

@@ -86,7 +86,7 @@ public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest imple
         initializeNewStreamOutput(parameters);
         victim.execute(parameters);
         assertOutputContainsDocuments(3);
-        assertOutputContainsFilenames("1-Invoice00001.pdf","4-Invoice00002.pdf","5-Invoice00003.pdf");
+        assertOutputContainsFilenames("1-Invoice 00001.pdf","4-Invoice 00002.pdf","5-Invoice 00003.pdf");
     }
 
     @Test
@@ -101,5 +101,35 @@ public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest imple
         victim.execute(parameters);
         assertOutputContainsDocuments(2);
         assertOutputContainsFilenames("1-1234561234.pdf", "3-1234561235.pdf");
+    }
+
+    @Test
+    public void testUsingPrefix() throws TaskException, IOException {
+        setUpParameters(new TopLeftRectangularBox(70, 110, 92, 15));
+        parameters.setStartsWith("Fax:");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_with_prefix.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.setSource(source);
+        parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(2);
+        assertOutputContainsFilenames("1-1234561234.pdf", "3-4321231234.pdf");
+    }
+
+    @Test
+    public void testUsingSuffix() throws TaskException, IOException {
+        setUpParameters(new TopLeftRectangularBox(69, 95, 154, 16));
+        parameters.setEndsWith("Amsterdam, Netherlands");
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_with_prefix.pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
+        parameters.setSource(source);
+        parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
+        when(context.getTask(parameters)).thenReturn((Task) getTask());
+        initializeNewStreamOutput(parameters);
+        victim.execute(parameters);
+        assertOutputContainsDocuments(2);
+        assertOutputContainsFilenames("1-1023AB.pdf", "3-6543AB.pdf");
     }
 }

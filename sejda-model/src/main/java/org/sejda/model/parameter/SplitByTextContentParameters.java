@@ -27,7 +27,11 @@ import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
- * Parameter class for a split by text content change task. It lets specify an area. The task will split the document when text content in that changes.
+ * Parameter class for a split by text content change task. It lets specify an area.
+ * The task will split the document when text content in that changes.
+ *
+ * Can define optional conditions so split is performed only if text starts with or ends with specific prefix/suffix.
+ * This is useful when some pages contain text in the specified area but it's not the one that should be split by.
  * 
  * @author Eduard Weissmann
  * 
@@ -36,6 +40,8 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
 
     @NotNull
     private final TopLeftRectangularBox textArea;
+    private String startsWith = "";
+    private String endsWith = "";
 
     public SplitByTextContentParameters(TopLeftRectangularBox textArea) {
         this.textArea = textArea;
@@ -45,9 +51,30 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
         return textArea;
     }
 
+    public String getStartsWith() {
+        return startsWith;
+    }
+
+    public String getEndsWith() {
+        return endsWith;
+    }
+
+    public void setStartsWith(String startsWith) {
+        this.startsWith = startsWith;
+    }
+
+    public void setEndsWith(String endsWith) {
+        this.endsWith = endsWith;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append(textArea).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString())
+                .append(textArea)
+                .append(startsWith)
+                .append(endsWith)
+                .toString();
+
     }
 
     @Override
@@ -64,6 +91,10 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
             return false;
         }
         SplitByTextContentParameters parameter = (SplitByTextContentParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(textArea, parameter.textArea).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(textArea, parameter.textArea)
+                .append(startsWith, parameter.startsWith)
+                .append(endsWith, parameter.endsWith)
+                .isEquals();
     }
 }
