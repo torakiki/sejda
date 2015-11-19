@@ -50,10 +50,10 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
 
     @Before
     public void setUp() throws TaskException {
+        outputFolder = IOUtils.createTemporaryFolder();
         setUpParameters();
         TestUtils.setProperty(victim, "context", context);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
-        outputFolder = IOUtils.createTemporaryFolder();
     }
 
     @After
@@ -69,17 +69,30 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
         parameters.setImageDpi(72);
         parameters.setImageMaxWidthOrHeight(1280);
         parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setOutput(new DirectoryTaskOutput(outputFolder));
+    }
 
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/unoptimized.pdf");
+    private void withSource(String input) {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(input);
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_unoptimized.pdf");
         parameters.addSource(source);
     }
 
+    private long sizeOfResult() {
+        return outputFolder.listFiles()[0].length() / 1000;
+    }
+
     @Test
     public void testBasics() throws TaskException, IOException {
-        parameters.setOutput(new DirectoryTaskOutput(outputFolder));
+        withSource("pdf/unoptimized.pdf");
         victim.execute(parameters);
-        long sizeInKb = outputFolder.listFiles()[0].length() / 1000;
-        assertThat(sizeInKb, is(lessThan(104L)));
+        assertThat(sizeOfResult(), is(lessThan(104L)));
+    }
+
+    @Test
+    public void testRepeatedImages() throws TaskException, IOException {
+        withSource("pdf/test_optimize_repeated_images.pdf");
+        victim.execute(parameters);
+        assertThat(sizeOfResult(), is(lessThan(468L)));
     }
 }

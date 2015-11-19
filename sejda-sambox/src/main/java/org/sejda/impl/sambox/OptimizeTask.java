@@ -16,6 +16,8 @@
  */
 package org.sejda.impl.sambox;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.writer.model.ImageOptimizer;
@@ -35,8 +37,9 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -56,6 +59,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
     private OptimizeParameters parameters;
+    private Map<String, PDImageXObject> cache = new HashMap<>();
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
@@ -128,7 +132,16 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                             parameters.getImageMaxWidthOrHeight()
                     );
 
-                    PDImageXObject newImage = PDImageXObject.createFromFile(tmpImageFile);
+                    // images are hashed and cached so only one PDImageXObject is used if the image is repeated
+                    String hash = Files.hash(tmpImageFile, Hashing.md5()).toString();
+                    PDImageXObject newImage;
+                    if(cache.containsKey(hash)){
+                        newImage = cache.get(hash);
+                    } else {
+                        newImage = PDImageXObject.createFromFile(tmpImageFile);
+                        cache.put(hash, newImage);
+                    }
+
                     pageResources.put(xObjectName, newImage);
                 }
             } catch (IOException | RuntimeException ex) {
