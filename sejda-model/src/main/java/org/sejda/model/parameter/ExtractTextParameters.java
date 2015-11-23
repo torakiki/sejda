@@ -41,8 +41,8 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class ExtractTextParameters extends AbstractParameters implements MultiplePdfSourceTaskParameters,
-        MultipleOutputTaskParameters {
+public class ExtractTextParameters extends AbstractParameters
+        implements MultiplePdfSourceTaskParameters, MultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid
@@ -51,7 +51,8 @@ public class ExtractTextParameters extends AbstractParameters implements Multipl
     @NotEmpty
     @Valid
     private List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
-    private String textEncoding;
+    @NotEmpty
+    private String textEncoding = "UTF-8";
 
     public String getTextEncoding() {
         return textEncoding;

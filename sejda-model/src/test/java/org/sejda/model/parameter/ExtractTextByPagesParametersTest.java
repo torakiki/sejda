@@ -86,6 +86,16 @@ public class ExtractTextByPagesParametersTest {
     }
 
     @Test
+    public void testInvalidParametersInvalidEncoding() {
+        ExtractTextByPagesParameters victim = new ExtractTextByPagesParameters();
+        victim.setOutput(output);
+        victim.setSource(input);
+        victim.addPageRange(new PageRange(3, 10));
+        victim.setTextEncoding(null);
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
     public void getPagesEmptyRange() {
         ExtractTextByPagesParameters victim = new ExtractTextByPagesParameters();
         assertEquals(10, victim.getPages(10).size());

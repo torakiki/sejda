@@ -21,9 +21,7 @@ package org.sejda.core.support.io;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
-import org.apache.commons.io.FileUtils;
 import org.sejda.model.exception.TaskIOException;
 
 /**
@@ -67,6 +65,7 @@ public final class IOUtils {
     }
 
     private static final int TEMP_DIR_ATTEMPTS = 1000;
+
     public static File createTemporaryFolder() {
         File baseDir = new File(System.getProperty("java.io.tmpdir"));
         String baseName = new StringBuilder("sejdaTmp").append(System.currentTimeMillis()).append("-").toString();
@@ -77,8 +76,7 @@ public final class IOUtils {
                 return tempDir;
             }
         }
-        throw new IllegalStateException("Failed to create directory within "
-                + TEMP_DIR_ATTEMPTS + " attempts (tried "
+        throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried "
                 + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
     }
 }

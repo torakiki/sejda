@@ -32,6 +32,7 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.validation.constraint.NoIntersections;
+import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
  * Parameters for extract text by pages manipulation. Accepts a set of page numbers, where the split occurs. Works similar to SplitByPages, with the difference that the output will
@@ -40,12 +41,13 @@ import org.sejda.model.validation.constraint.NoIntersections;
  * @author Edi Weissmann
  */
 @NoIntersections
-public class ExtractTextByPagesParameters extends SinglePdfSourceMultipleOutputParameters implements
-        PageRangeSelection, PagesSelection {
+public class ExtractTextByPagesParameters extends SinglePdfSourceMultipleOutputParameters
+        implements PageRangeSelection, PagesSelection {
 
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
-    private String textEncoding;
+    @NotEmpty
+    private String textEncoding = "UTF-8";
 
     public String getTextEncoding() {
         return textEncoding;

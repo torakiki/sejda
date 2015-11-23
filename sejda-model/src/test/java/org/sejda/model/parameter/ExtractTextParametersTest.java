@@ -19,14 +19,32 @@
  */
 package org.sejda.model.parameter;
 
+import static org.mockito.Mockito.mock;
+
+import java.io.InputStream;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.MultipleTaskOutput;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 public class ExtractTextParametersTest {
+
+    private MultipleTaskOutput<?> output;
+    private PdfSource<InputStream> input;
+
+    @Before
+    public void setUp() {
+        output = mock(MultipleTaskOutput.class);
+        InputStream stream = mock(InputStream.class);
+        input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+    }
 
     @Test
     public void testEquals() {
@@ -42,6 +60,15 @@ public class ExtractTextParametersTest {
     @Test
     public void testInvalidParametersEmptySourceList() {
         ExtractTextParameters victim = new ExtractTextParameters();
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void testInvalidParametersInvalidEncoding() {
+        ExtractTextParameters victim = new ExtractTextParameters();
+        victim.setOutput(output);
+        victim.addSource(input);
+        victim.setTextEncoding("");
         TestUtils.assertInvalidParameters(victim);
     }
 }
