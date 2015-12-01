@@ -93,6 +93,15 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
     }
 
     @Test
+    public void testUnicodeCharacters() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("Does UTF-8 work? ✓  ❤ ☀ ☆ ☂ ☻ ♞ ☯ ☭");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        doTestExecute();
+        assertFooterHasText("test_file1.pdf", 1, "Does UTF-8 work? ✓  ❤ ☀ ☆ ☂ ☻ ♞ ☯ ☭");
+    }
+
+    @Test
     public void testPageRange() throws Exception {
         parameters = basicWithSources();
         parameters.setPageRange(new PageRange(2));

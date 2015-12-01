@@ -31,10 +31,12 @@ import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
+import org.sejda.model.pdf.UnicodeType0Font;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +93,11 @@ public class PdfHeaderFooterWriter implements Closeable {
                                                  .withFileSequence(String.valueOf(currentFileCounter))
                                                  .build(parameters.getPattern());
 
+            // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
+            // Type 1 fonts only support 8-bit code points.
+            font = fontOrFallback(label, font, loadFont(parameters.getFont().getUnicodeAlternative()));
+            font = fontOrFallback(label, font, loadFont(UnicodeType0Font.SERIF));
+
             LOG.debug("Applying {} {} to document page {}", what, label, pageNumber);
 
             PDPage page = documentHandler.getPage(pageNumber);
@@ -115,6 +122,27 @@ public class PdfHeaderFooterWriter implements Closeable {
             }
 
             labelPageNumber++;
+        }
+    }
+
+    private PDFont fontOrFallback(String text, PDFont font, PDFont fallback) {
+        if(fallback == null) return font;
+
+        try {
+            font.getStringWidth(text);
+            return font;
+        } catch (IllegalArgumentException | IOException ex) {
+            LOG.debug("Label cannot be written with font {}, will fallback to font {}", font.getName(), fallback.getName());
+            return fallback;
+        }
+    }
+
+    private PDFont loadFont(UnicodeType0Font font) {
+        try {
+            return PDType0Font.load(documentHandler.getUnderlyingPDDocument(), font.getResourceStream());
+        } catch (IOException e) {
+            LOG.warn("Failed to load " + font, e);
+            return null;
         }
     }
 

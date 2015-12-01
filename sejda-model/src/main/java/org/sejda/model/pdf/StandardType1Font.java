@@ -20,6 +20,7 @@
 package org.sejda.model.pdf;
 
 import org.sejda.common.FriendlyNamed;
+import static org.sejda.model.pdf.UnicodeType0Font.*;
 
 /**
  * Standard font type 1 fonts.<br>
@@ -30,29 +31,35 @@ import org.sejda.common.FriendlyNamed;
  */
 public enum StandardType1Font implements FriendlyNamed {
 
-    TIMES_ROMAN("Times-Roman"),
-    TIMES_BOLD("Times-Bold"),
-    TIMES_ITALIC("Times-Italic"),
-    TIMES_BOLD_ITALIC("Times-BoldItalic"),
-    HELVETICA("Helvetica"),
-    HELVETICA_BOLD("Helvetica-Bold"),
-    HELVETICA_OBLIQUE("Helvetica-Oblique"),
-    HELVETICA_BOLD_OBLIQUE("Helvetica-BoldOblique"),
-    CURIER("Courier"),
-    CURIER_BOLD("Courier-Bold"),
-    CURIER_OBLIQUE("Courier-Oblique"),
-    CURIER_BOLD_OBLIQUE("Courier-BoldOblique"),
-    SYMBOL("Symbol"),
-    ZAPFDINGBATS("ZapfDingbats");
+    TIMES_ROMAN("Times-Roman", SERIF),
+    TIMES_BOLD("Times-Bold", SERIF_BOLD),
+    TIMES_ITALIC("Times-Italic", SERIF_ITALIC),
+    TIMES_BOLD_ITALIC("Times-BoldItalic", SERIF_BOLD_ITALIC),
+    HELVETICA("Helvetica", SANS),
+    HELVETICA_BOLD("Helvetica-Bold", SANS_BOLD),
+    HELVETICA_OBLIQUE("Helvetica-Oblique", SANS_OBLIQUE),
+    HELVETICA_BOLD_OBLIQUE("Helvetica-BoldOblique", SANS_BOLD_OBLIQUE),
+    CURIER("Courier", MONO),
+    CURIER_BOLD("Courier-Bold", MONO_BOLD),
+    CURIER_OBLIQUE("Courier-Oblique", MONO_OBLIQUE),
+    CURIER_BOLD_OBLIQUE("Courier-BoldOblique", MONO_BOLD_OBLIQUE),
+    SYMBOL("Symbol", null),
+    ZAPFDINGBATS("ZapfDingbats", null);
 
     private String displayName;
+    private UnicodeType0Font alternative;
 
-    private StandardType1Font(String displayName) {
+    private StandardType1Font(String displayName, UnicodeType0Font alternative) {
         this.displayName = displayName;
+        this.alternative = alternative;
     }
 
     @Override
     public String getFriendlyName() {
         return displayName;
+    }
+
+    public UnicodeType0Font getUnicodeAlternative() {
+        return alternative;
     }
 }
