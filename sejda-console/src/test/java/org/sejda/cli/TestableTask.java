@@ -59,7 +59,11 @@ public enum TestableTask {
     PDF_TO_SINGLE_TIFF(new PdfToSingleTiffDefaultsProvider()),
     PDF_TO_MULTIPLE_TIFF(new PdfToMultipleTiffDefaultsProvider()),
     PDF_TO_JPEG(new SingleInputAndFolderOutputDefaultsProvider()),
-    SET_HEADER_FOOTER(new SetHeaderFooterDefaultsProvider());
+    SET_HEADER_FOOTER(new SetHeaderFooterDefaultsProvider()),
+    COMBINE_REORDER(new CombineReorderDefaultsProvider()),
+    SPLIT_DOWN_THE_MIDDLE(new MultipleInputsAndFolderOutputDefaultsProvider()),
+    SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
+    COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -112,7 +116,9 @@ public enum TestableTask {
     public static TestableTask[] getTasksWithMultipleSouceFiles() {
         return new TestableTask[] { TestableTask.DECRYPT, TestableTask.ENCRYPT, TestableTask.ROTATE,
                 TestableTask.SET_VIEWER_PREFERENCES, TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.ALTERNATE_MIX, TestableTask.MERGE, TestableTask.SET_HEADER_FOOTER };
+                TestableTask.ALTERNATE_MIX, TestableTask.MERGE, TestableTask.SET_HEADER_FOOTER, TestableTask.COMBINE_REORDER,
+                TestableTask.SPLIT_DOWN_THE_MIDDLE, TestableTask.COMPRESS
+        };
     }
 
     boolean hasFolderOutput() {
@@ -300,5 +306,19 @@ class PdfToMultipleTiffDefaultsProvider extends SingleInputAndFolderOutputDefaul
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("--colorType", "gray_scale");
+    }
+}
+
+class CombineReorderDefaultsProvider extends MultipleInputsAndFileOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-n", "0:1 1:1 0:2 1:3");
+    }
+}
+
+class SplitByTextDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("--top", "10").with("--left", "10").with("--width", "100").with("--height", "10");
     }
 }

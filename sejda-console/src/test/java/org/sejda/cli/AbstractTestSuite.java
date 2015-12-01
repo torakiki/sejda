@@ -87,6 +87,10 @@ public abstract class AbstractTestSuite {
         return createTestFile(path, new ByteArrayInputStream(contents.getBytes()));
     }
 
+    protected File overwriteTestPdfFile(String path, String resource) {
+        return createTestFile(path, getClass().getResourceAsStream(resource));
+    }
+
     protected File createTestTextFile(String path, InputStream contents) {
         return createTestFile(path, contents);
     }

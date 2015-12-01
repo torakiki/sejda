@@ -27,6 +27,8 @@ import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.StandardType1Font;
 
+import java.awt.*;
+
 /**
  * @author Andrea Vacondio
  * 
@@ -110,5 +112,31 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
     @Test
     public void wrongFontSize() {
         defaultCommandLine().with("-d", "Chuck").assertConsoleOutputContains("Invalid value");
+    }
+
+    @Test
+    public void batesStartFrom() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--batesStartFrom", "123456").invokeSejdaConsole();
+        assertEquals("123456", parameters.getBatesSequence().next());
+    }
+
+    @Test
+    public void batesIncrement() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--batesIncrement", "5").invokeSejdaConsole();
+        parameters.getBatesSequence().next();
+        assertEquals("000006", parameters.getBatesSequence().next());
+        assertEquals("000011", parameters.getBatesSequence().next());
+    }
+
+    @Test
+    public void fontColor() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--fontColor", "#FFFFFF").invokeSejdaConsole();
+        assertEquals(new Color(255, 255, 255), parameters.getColor());
+    }
+
+    @Test
+    public void pageCountStartFrom() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--pageCountStartFrom", "5").invokeSejdaConsole();
+        assertEquals(5, parameters.getPageCountStartFrom().intValue());
     }
 }

@@ -21,8 +21,17 @@ package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.RotateTaskCliArguments;
+import org.sejda.conversion.RotationAdapter;
 import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.model.rotation.Rotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface
@@ -33,6 +42,8 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
 public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<RotateTaskCliArguments, RotateParameters> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(RotateCliArgumentsTransformer.class);
+
     /**
      * Transforms {@link RotateTaskCliArguments} to {@link RotateParameters}
      * 
@@ -42,16 +53,48 @@ public class RotateCliArgumentsTransformer extends BaseCliArgumentsTransformer i
     @Override
     public RotateParameters toTaskParameters(RotateTaskCliArguments taskCliArguments) {
         RotateParameters parameters;
+        Rotation rotation = Rotation.DEGREES_0;
+
+        if(!taskCliArguments.isRotation() && !taskCliArguments.isPageRotations()) {
+            throw new ArgumentValidationException(
+                    "Please specify at least one option that defines rotation: either -r or -k");
+        }
+
+        if(taskCliArguments.isRotation()){
+            rotation = taskCliArguments.getRotation().getEnumValue();
+        }
+
         if (taskCliArguments.isPredefinedPages()
                 && taskCliArguments.getPredefinedPages().getEnumValue() != PredefinedSetOfPages.NONE) {
-            parameters = new RotateParameters(taskCliArguments.getRotation().getEnumValue(), taskCliArguments.getPredefinedPages().getEnumValue());
+            parameters = new RotateParameters(rotation, taskCliArguments.getPredefinedPages().getEnumValue());
         } else if (taskCliArguments.isPageSelection()) {
-            parameters = new RotateParameters(taskCliArguments.getRotation().getEnumValue(), PredefinedSetOfPages.NONE);
-            parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
+            parameters = new RotateParameters(rotation, PredefinedSetOfPages.NONE);
+            Set<PageRange> pageRanges = taskCliArguments.getPageSelection().getPageRangeSet();
+            if(taskCliArguments.isPageRotations()) {
+                List<RotationAdapter> pageRotations = taskCliArguments.getPageRotations();
+                Iterator<RotationAdapter> pageRotationsIterator = pageRotations.iterator();
+
+                for (PageRange range : pageRanges) {
+                    if (pageRotationsIterator.hasNext()) {
+                        Rotation pageRotation = pageRotationsIterator.next().getEnumValue();
+                        LOG.debug("Adding " + range.toString() + " and " + pageRotation);
+                        parameters.addPageRange(range, pageRotation);
+                    } else {
+                        LOG.debug("Adding " + range.toString());
+                        parameters.addPageRange(range);
+                    }
+                }
+
+            } else {
+                LOG.debug("Adding add pageRanges");
+                parameters.addAllPageRanges(pageRanges);
+            }
+
         } else {
             throw new ArgumentValidationException(
-                    "Please specify at least one option that defines pages to be rotated");
+                    "Please specify at least one option that defines pages to be rotated: either -s or -m");
         }
+
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);

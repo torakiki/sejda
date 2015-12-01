@@ -43,6 +43,10 @@ public class ExampleUsageIntegrationTest extends AcrossAllTasksTraitTest {
         String exampleUsage = testableTask.getExampleUsage();
         exampleUsage = StringUtils.replace(exampleUsage, "-e \".+(Chapter)+.+\"", "-e \".+(page)+.+\""); // quick hack for split by bookmarks (Chapter is better for help, page actually exists in the sample pdf)
 
+        if(testableTask == TestableTask.SPLIT_BY_TEXT) {
+            overwriteTestPdfFile("/tmp/file1.pdf", "/pdf/split_by_text_contents_sample.pdf");
+        }
+
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
         assertTaskCompletes(exampleUsage + " --overwrite");

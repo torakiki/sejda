@@ -22,6 +22,9 @@ package org.sejda.cli.transformer;
 import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
+import org.sejda.model.pdf.numbering.BatesSequence;
+
+import java.awt.*;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SetHeaderFooter task command line interface
@@ -45,6 +48,30 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
+
+        Long startFrom = 1L;
+        Integer increment = 1;
+        if(taskCliArguments.isBatesIncrement()) {
+            increment = taskCliArguments.getBatesIncrement();
+        }
+        if(taskCliArguments.isBatesStartFrom()){
+            startFrom = taskCliArguments.getBatesStartFrom();
+        }
+
+        parameters.setBatesSequence(new BatesSequence(startFrom, increment, 6));
+
+        if(taskCliArguments.isPageCountStartFrom()) {
+            parameters.setPageCountStartFrom(taskCliArguments.getPageCountStartFrom());
+        }
+
+        if(taskCliArguments.isFontColor()) {
+            String color = taskCliArguments.getFontColor();
+            if (!color.startsWith("#")) {
+                color = "#" + color;
+            }
+            parameters.setColor(hex2Rgb(color));
+        }
+
         return parameters;
     }
 
@@ -65,6 +92,13 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
         if (taskCliArguments.isFont()) {
             parameters.setFont(taskCliArguments.getFont().getEnumValue());
         }
+    }
+
+    private Color hex2Rgb(String s) {
+        return new Color(
+                Integer.valueOf(s.substring(1, 3), 16),
+                Integer.valueOf(s.substring(3, 5), 16),
+                Integer.valueOf(s.substring(5, 7), 16));
     }
 
 }

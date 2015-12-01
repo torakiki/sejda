@@ -37,7 +37,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
 
     @Option(shortName = "s", description = "page range selection. You can set the pages where the header/footer will be applied. Accepted values: 'all' or 'num1-num2' or"
-            + " 'num-' (EX. -s 12-14) (required)")
+            + " 'num-' (EX. -s 12-14) (optional)", defaultValue = "all")
     PageRangeWithAllAdapter getPageRange();
 
     @Option(shortName = "x", description = "horizontal align { center, right, left }. Default is 'center' (optional)", defaultValue = "center")
@@ -62,6 +62,26 @@ public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPdfAndD
 
     boolean isFontSize();
 
-    @Option(shortName = "l", description = "label for the header/footer. Supports dynamic patterns such as [PAGE_ROMAN], [PAGE_ARABIC], [PAGE_OF_TOTAL], [TOTAL_PAGES_ARABIC], [TOTAL_PAGES_ROMAN], [DATE], [BATES_NUMBER] and [FILE_NUMBER]. Example: \"Page [PAGE_ARABIC] of [TOTAL_PAGES_ARABIC]\" (required)")
+    @Option(shortName = "l", description = "label for the header or footer. Supports dynamic patterns such as [PAGE_ROMAN], [PAGE_ARABIC], [PAGE_OF_TOTAL], [TOTAL_PAGES_ARABIC], [TOTAL_PAGES_ROMAN], [DATE], [BATES_NUMBER] and [FILE_NUMBER]. Example: \"Page [PAGE_ARABIC] of [TOTAL_PAGES_ARABIC]\" (required)")
     String getLabel();
+
+    @Option(shortName = "b", description = "bates sequence start from. (optional)")
+    Long getBatesStartFrom();
+
+    boolean isBatesStartFrom();
+
+    @Option(shortName = "i", description = "bates sequence increment. (optional)")
+    Integer getBatesIncrement();
+
+    boolean isBatesIncrement();
+
+    @Option(shortName = "k", description = "page number counter start from. Defaults to 1, but can be overriden to start from another offset. Ex: -c 5 -s 5-10 (optional)")
+    Integer getPageCountStartFrom();
+
+    boolean isPageCountStartFrom();
+
+    @Option(shortName = "c", description = "font color. Defaults to black #000000. Ex: -c AA3399 (optional)", defaultValue = "#000000")
+    String getFontColor();
+
+    boolean isFontColor();
 }

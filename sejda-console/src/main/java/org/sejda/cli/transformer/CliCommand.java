@@ -214,7 +214,35 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<PdfToJpegTaskCliArguments, PdfToJpegParameters> getArgumentsTransformer() {
             return new PdfToJpegCliArgumentsTransformer();
         }
-    }, "Converts a pdf document to multiple JPEG images (one image per page).", "pdftojpeg -f /tmp/file1.pdf -o /tmp");
+    }, "Converts a pdf document to multiple JPEG images (one image per page).", "pdftojpeg -f /tmp/file1.pdf -o /tmp"),
+    COMBINE_REORDER("combinereorder", new CliInterfacedTask<CombineReorderTaskCliArguments, CombineReorderParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<CombineReorderTaskCliArguments, CombineReorderParameters> getArgumentsTransformer() {
+            return new CombineReorderCliArgumentsTransformer();
+        }
+    }, "Combines multiple pdf documents reordering the pages if required.", "combinereorder -f /tmp/file1.pdf /tmp/file2.pdf -n 0:1 1:2 0:3 -o /tmp/output.pdf"),
+    SPLIT_DOWN_THE_MIDDLE("splitdownthemiddle", new CliInterfacedTask<SplitDownTheMiddleTaskCliArguments, SplitDownTheMiddleParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitDownTheMiddleTaskCliArguments, SplitDownTheMiddleParameters> getArgumentsTransformer() {
+            return new SplitDownTheMiddleCliArgumentsTransformer();
+        }
+    }, "Splits document pages in two, reordering pages if necessary.", "splitdownthemiddle -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp"),
+    SPLIT_BY_TEXT("splitbytext", new CliInterfacedTask<SplitByTextTaskCliArguments, SplitByTextContentParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<SplitByTextTaskCliArguments, SplitByTextContentParameters> getArgumentsTransformer() {
+            return new SplitByTextCliArgumentsTransformer();
+        }
+    }, "Splits document by text content, extracting separate documents when specific text changes from page to page.", "splitbytext -f /tmp/file1.pdf --top 114 --left 70 --width 41 --height 15 -o /tmp"),
+    COMPRESS("compress", new CliInterfacedTask<CompressTaskCliArguments, OptimizeParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> getArgumentsTransformer() {
+            return new CompressCliArgumentsTransformer();
+        }
+    }, "Compress PDF by optimizing images inside, reducing their dpi, size and/or quality.", "compress -f /tmp/file1.pdf --imageDpi 72 --imageQuality 0.8 --imageMaxWidthOrHeight 1280 -o /tmp");;
 
     private String displayName;
     private String description;

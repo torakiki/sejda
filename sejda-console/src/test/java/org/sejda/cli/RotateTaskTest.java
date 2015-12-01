@@ -91,13 +91,24 @@ public class RotateTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void specificPagesAndRotations() {
+        RotateParameters parameters = defaultCommandLine().without("-m").with("-s", "3,5,8-10").with("-k", "90 180 270")
+                .invokeSejdaConsole();
+
+        assertEquals(parameters.getRotation(3), Rotation.DEGREES_90);
+        assertEquals(parameters.getRotation(5), Rotation.DEGREES_180);
+        assertEquals(parameters.getRotation(8), Rotation.DEGREES_270);
+        assertEquals(parameters.getRotation(9), Rotation.DEGREES_270);
+    }
+
+    @Test
     public void mandatoryPageDefinitionParams() {
         defaultCommandLine().without("-m").without("-s")
                 .assertConsoleOutputContains("Please specify at least one option that defines pages to be rotated");
     }
 
     @Test
-    public void mandatoryParams() {
-        defaultCommandLine().without("-r").assertConsoleOutputContains("Option is mandatory: --rotation");
+    public void mandatoryRotationParams() {
+        defaultCommandLine().without("-r").without("-k").assertConsoleOutputContains("Please specify at least one option that defines rotation");
     }
 }

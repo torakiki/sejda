@@ -26,6 +26,8 @@ import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
+import java.util.List;
+
 /**
  * Specifications for command line options of the Rotate task
  * 
@@ -35,8 +37,15 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " rotate")
 public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
 
-    @Option(shortName = "r", description = "rotation degrees: 90, 180 or 270. Pages will be rotated clockwise (required)")
+    @Option(shortName = "r", description = "rotation degrees: 90, 180 or 270. Pages will be rotated clockwise (optional)")
     RotationAdapter getRotation();
+
+    boolean isRotation();
+
+    @Option(shortName = "k", description = "per page rotation degrees: 90, 180 or 270. Ex: -s 4,5,6,7,8,9 -k 90 180 90 180 270 90 (optional)")
+    List<RotationAdapter> getPageRotations();
+
+    boolean isPageRotations();
 
     @Option(shortName = "m", description = "predefined pages: all, odd or even (optional)")
     PredefinedSetOfPagesAdapter getPredefinedPages();
