@@ -86,7 +86,7 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
     public void testBasics() throws TaskException, IOException {
         withSource("pdf/unoptimized.pdf");
         victim.execute(parameters);
-        assertThat(sizeOfResult(), is(lessThan(104L)));
+        assertThat(sizeOfResult(), is(lessThan(116L)));
     }
 
     @Test

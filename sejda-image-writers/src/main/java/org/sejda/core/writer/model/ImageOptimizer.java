@@ -31,7 +31,7 @@ public class ImageOptimizer {
 
         try {
             if (bufferedImage.getHeight() > maxWidthOrHeight) {
-                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.ULTRA_QUALITY, maxWidthOrHeight);
+                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.AUTOMATIC, maxWidthOrHeight);
             }
 
             JPEGImageWriter imageWriter = (JPEGImageWriter) ImageIO.getImageWritersBySuffix("jpeg").next();
