@@ -196,7 +196,7 @@
 						the classpath declaration in the bin scripts -->
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
 					<!-- Default JVM memory args -->
-					<extraJvmArguments>-Xmx256M</extraJvmArguments>
+					<extraJvmArguments>-Xmx512M</extraJvmArguments>
 					<programs>
 						<program>
 							<mainClass>org.sejda.cli.Main</mainClass>
