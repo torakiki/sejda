@@ -89,4 +89,10 @@ public class NameGeneratorTest {
         String generatedFilename = nameGenerator("Invalid_\\").generate(nameRequest("pdf"));
         assertEquals(generatedFilename, "Invalid_.pdf");
     }
+
+    @Test
+    public void testDollarSignInFilename() {
+        String generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]").generate(nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
+        assertEquals(generatedFilename, "99-My file 6-04-2015 $1234-56.pdf");
+    }
 }
