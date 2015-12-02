@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.ref.SoftReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
     private OptimizeParameters parameters;
-    private Map<String, PDImageXObject> cache = new HashMap<>();
+    private Map<String, SoftReference<PDImageXObject>> cache = new HashMap<>();
 
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
@@ -136,10 +137,10 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                     String hash = Files.hash(tmpImageFile, Hashing.md5()).toString();
                     PDImageXObject newImage;
                     if(cache.containsKey(hash)){
-                        newImage = cache.get(hash);
+                        newImage = cache.get(hash).get();
                     } else {
                         newImage = PDImageXObject.createFromFile(tmpImageFile);
-                        cache.put(hash, newImage);
+                        cache.put(hash, new SoftReference<>(newImage));
                     }
 
                     pageResources.put(xObjectName, newImage);
