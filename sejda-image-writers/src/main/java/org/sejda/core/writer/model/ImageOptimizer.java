@@ -30,7 +30,7 @@ public class ImageOptimizer {
         FileOutputStream fos = new FileOutputStream(outputFile);
 
         try {
-            if (bufferedImage.getHeight() > maxWidthOrHeight) {
+            if (bufferedImage.getHeight() > maxWidthOrHeight || bufferedImage.getWidth() > maxWidthOrHeight) {
                 bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.AUTOMATIC, maxWidthOrHeight);
             }
 
@@ -50,13 +50,17 @@ public class ImageOptimizer {
             jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
             jpegParams.setCompressionQuality(quality);
 
-            imageWriter.write(imageMetaData, new IIOImage(bufferedImage, null, null), jpegParams);
-            ios.close();
-            imageWriter.dispose();
+            try {
+                imageWriter.write(imageMetaData, new IIOImage(bufferedImage, null, null), jpegParams);
+            } finally {
+                IOUtils.closeQuietly(ios);
+                imageWriter.dispose();
+            }
 
             return outputFile;
         } finally {
             IOUtils.closeQuietly(fos);
+            bufferedImage.flush();
         }
     }
 }
