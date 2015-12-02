@@ -34,6 +34,8 @@ import org.sejda.core.validation.DefaultValidationContext;
 import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Cancellable;
+import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.model.task.Task;
 import org.slf4j.Logger;
@@ -53,12 +55,20 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     @Override
     public void execute(TaskParameters parameters) {
+        execute(parameters, new CancellationOption());
+    }
+
+    @Override
+    public void execute(TaskParameters parameters, CancellationOption cancellationOption) {
         StopWatch stopWatch = new StopWatch();
         Task<? extends TaskParameters> task = null;
         LOG.trace("Starting exectution for {}", parameters);
         try {
             validate(parameters);
             task = context.getTask(parameters);
+            if(task instanceof Cancellable) {
+                cancellationOption.setCancellableTask((Cancellable)task);
+            }
             LOG.info("Starting task ({}) execution.", task);
             preExecution(task, stopWatch);
             actualExecution(parameters, task);
