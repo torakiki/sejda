@@ -23,6 +23,7 @@ import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
@@ -95,8 +96,7 @@ public class PdfHeaderFooterWriter implements Closeable {
 
             // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
             // Type 1 fonts only support 8-bit code points.
-            font = fontOrFallback(label, font, loadFont(parameters.getFont().getUnicodeAlternative()));
-            font = fontOrFallback(label, font, loadFont(UnicodeType0Font.SERIF));
+            font = fontOrFallback(label, font, loadFont(UnicodeType0Font.NOTO_SANS_REGULAR));
 
             LOG.debug("Applying {} {} to document page {}", what, label, pageNumber);
 
@@ -138,11 +138,14 @@ public class PdfHeaderFooterWriter implements Closeable {
     }
 
     private PDFont loadFont(UnicodeType0Font font) {
+        InputStream in = font.getResourceStream();
         try {
-            return PDType0Font.load(documentHandler.getUnderlyingPDDocument(), font.getResourceStream());
+            return PDType0Font.load(documentHandler.getUnderlyingPDDocument(), in);
         } catch (IOException e) {
-            LOG.warn("Failed to load " + font, e);
+            LOG.warn("Failed to load font " + font, e);
             return null;
+        } finally {
+            IOUtils.closeQuietly(in);
         }
     }
 

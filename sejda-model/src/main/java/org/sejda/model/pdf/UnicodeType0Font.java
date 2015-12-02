@@ -20,23 +20,11 @@ package org.sejda.model.pdf;
 import java.io.InputStream;
 
 public enum UnicodeType0Font {
-    SERIF("/fonts/free-serif/FreeSerif.ttf"),
-    SERIF_BOLD("/fonts/free-serif/FreeSerifBold.ttf"),
-    SERIF_ITALIC("/fonts/free-serif/FreeSerifItalic.ttf"),
-    SERIF_BOLD_ITALIC("/fonts/free-serif/FreeSerifBoldItalic.ttf"),
-    SANS("/fonts/free-sans/FreeSans.ttf"),
-    SANS_BOLD("/fonts/free-sans/FreeSansBold.ttf"),
-    SANS_OBLIQUE("/fonts/free-sans/FreeSansOblique.ttf"),
-    SANS_BOLD_OBLIQUE("/fonts/free-sans/FreeSansBoldOblique.ttf"),
-    MONO("/fonts/free-mono/FreeMono.ttf"),
-    MONO_BOLD("/fonts/free-mono/FreeMonoBold.ttf"),
-    MONO_OBLIQUE("/fonts/free-mono/FreeMonoOblique.ttf"),
-    MONO_BOLD_OBLIQUE("/fonts/free-mono/FreeMonoBoldOblique.ttf")
-    ;
+    NOTO_SANS_REGULAR("/fonts/sans/NotoSans-Regular.ttf");
 
     private String resource;
 
-    private UnicodeType0Font(String resource) {
+    UnicodeType0Font(String resource) {
         this.resource = resource;
     }
 

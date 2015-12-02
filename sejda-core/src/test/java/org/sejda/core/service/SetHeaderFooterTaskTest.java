@@ -95,10 +95,10 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
     @Test
     public void testUnicodeCharacters() throws Exception {
         parameters = basicWithSources();
-        parameters.setPattern("Does UTF-8 work? ✓  ❤ ☀ ☆ ☂ ☻ ♞ ☯ ☭");
+        parameters.setPattern("Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         doTestExecute();
-        assertFooterHasText("test_file1.pdf", 1, "Does UTF-8 work? ✓  ❤ ☀ ☆ ☂ ☻ ♞ ☯ ☭");
+        assertFooterHasText("test_file1.pdf", 1, "Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
     }
 
     @Test
