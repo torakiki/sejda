@@ -35,6 +35,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.graphics.image.PDInlineImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,6 +136,15 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                             parameters.getImageDpi(),
                             parameters.getImageMaxWidthOrHeight()
                     );
+
+                    long optimizedSize = tmpImageFile.length();
+                    int originalSize  = imageXObject.getStream().getLength();
+
+                    if(originalSize > optimizedSize) {
+                        LOG.debug(String.format("Compressed image to %.2f percent of original size", optimizedSize * 100.0 / originalSize));
+                    } else {
+                        continue;
+                    }
 
                     // images are hashed and cached so only one PDImageXObject is used if the image is repeated
                     String hash = Files.hash(tmpImageFile, Hashing.md5()).toString();
