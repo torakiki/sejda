@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.sambox;
 
+import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import org.sejda.core.support.io.MultipleOutputWriter;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
@@ -120,7 +122,8 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
     private void optimizeImages(PDPage page) throws IOException {
         PDResources pageResources = page.getResources();
-        for (COSName xObjectName : pageResources.getXObjectNames()) {
+        List<COSName> xObjectNames = Lists.newArrayList(pageResources.getXObjectNames());
+        for (COSName xObjectName : xObjectNames) {
             try {
                 PDXObject obj = pageResources.getXObject(xObjectName);
                 if (obj instanceof PDImageXObject) {
