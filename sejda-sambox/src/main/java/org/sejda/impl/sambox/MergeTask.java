@@ -96,6 +96,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
+                stopTaskIfCancelled();
+
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
                 currentPageSize = page.getMediaBox();
                 // we don't use the original page because once added to the new tree we loose inheritable attributes

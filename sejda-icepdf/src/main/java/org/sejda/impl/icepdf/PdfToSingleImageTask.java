@@ -77,6 +77,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         getWriter().openWriteDestination(tmpFile, parameters);
         for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < pdfDocument.getNumberOfPages(); zeroBasedPageNumber++) {
             LOG.trace("Writing page {}", zeroBasedPageNumber + 1);
+            stopTaskIfCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters);
             if(pageImage == null) {

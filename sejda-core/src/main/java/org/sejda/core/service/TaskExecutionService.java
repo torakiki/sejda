@@ -21,6 +21,7 @@
 package org.sejda.core.service;
 
 import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.CancellationOption;
 
 /**
  * Service interface to perform the actual execution of a task.
@@ -34,4 +35,11 @@ public interface TaskExecutionService {
      * @param parameters task parameters
      */
     void execute(TaskParameters parameters);
+
+    /**
+     * Same as above, only also allows for cancelling a running task
+     * @param parameters
+     * @param cancellationOption
+     */
+    void execute(TaskParameters parameters, CancellationOption cancellationOption);
 }

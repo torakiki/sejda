@@ -67,6 +67,7 @@ public class PageDestinationsLevelPdfExtractor {
             }
 
             for(int s = 0; s < totalExtractions; s++) {
+                taskMetadata.stopTaskIfCancelled();
                 OutlineExtractPageDestinations.OutlineItemBoundaries section = outlineDestinations.sections.get(s);
                 // open
                 int page = section.startPage;
@@ -85,6 +86,8 @@ public class PageDestinationsLevelPdfExtractor {
                 outputWriter.addOutput(file(tmpFile).name(outName));
 
                 for(; page <= section.endPage; page++) {
+                    taskMetadata.stopTaskIfCancelled();
+
                     // retain
                     LOG.trace("Retaining page {} of the original document", page);
                     extractor.retain(page);

@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
+import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
@@ -62,9 +63,11 @@ public class PagesExtractor implements Closeable {
         this.destinationDocument.initialiseBasedOn(originalDocument);
     }
 
-    public void retain(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) {
+    public void retain(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskCancelledException {
         int currentStep = 0;
         for (Integer page : pages) {
+            taskMetadata.stopTaskIfCancelled();
+
             retain(page);
             notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(pages.size());
         }

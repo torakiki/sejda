@@ -93,6 +93,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

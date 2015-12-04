@@ -79,6 +79,8 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
     public void execute(EncryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
+
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);

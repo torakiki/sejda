@@ -78,8 +78,10 @@ public class RotateTask extends BaseTask<RotateParameters> {
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
-            parameters.getPages(documentHandler.getNumberOfPages())
-                    .forEach(page -> rotator.rotate(page, parameters.getRotation(page)));
+            for(Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
+                stopTaskIfCancelled();
+                rotator.rotate(page, parameters.getRotation(page));
+            }
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());

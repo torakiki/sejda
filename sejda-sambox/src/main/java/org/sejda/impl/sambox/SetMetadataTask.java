@@ -62,6 +62,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
     @Override
     public void execute(SetMetadataParameters parameters) throws TaskException {
+        stopTaskIfCancelled();
         notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();

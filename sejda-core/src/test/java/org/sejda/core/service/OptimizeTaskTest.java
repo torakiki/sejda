@@ -17,24 +17,31 @@
 package org.sejda.core.service;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
 import static org.hamcrest.Matchers.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -94,5 +101,42 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
         withSource("pdf/test_optimize_repeated_images.pdf");
         victim.execute(parameters);
         assertThat(sizeOfResult(), is(lessThan(468L)));
+    }
+
+    @Test
+    public void testCancellation() throws Throwable {
+        ExecutorService executor = Executors.newCachedThreadPool();
+        withSource("pdf/test_optimize_repeated_images.pdf");
+        CancellationOption cancellationOption = new CancellationOption();
+
+        CancellationListener cancellationListener = new CancellationListener();
+        GlobalNotificationContext.getContext().addListener(cancellationListener);
+
+        Future<?> future = executor.submit(() -> {
+            victim.execute(parameters, cancellationOption);
+        });
+
+        // wait for the task to start
+        while (!cancellationOption.isCancellable()) {
+            Thread.sleep(100);
+        }
+
+        // request for it to cancel and wait 2 seconds to complete
+        cancellationOption.requestCancel();
+        future.get(2, TimeUnit.SECONDS);
+
+        assertThat("Task was cancelled", cancellationListener.cancelled.booleanValue(), is(true));
+    }
+
+    private static class CancellationListener implements EventListener<TaskExecutionFailedEvent> {
+
+        MutableBoolean cancelled = new MutableBoolean(false);
+
+        @Override
+        public void onEvent(TaskExecutionFailedEvent event) {
+            if(event.getFailingCause() instanceof TaskCancelledException) {
+                cancelled.setTrue();
+            }
+        }
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.sejda.model.task;
 
+import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -28,12 +29,22 @@ import org.sejda.model.parameter.base.TaskParameters;
  * @param <T>
  *            parameters type to be executed
  */
-public abstract class BaseTask<T extends TaskParameters> implements Task<T> {
+public abstract class BaseTask<T extends TaskParameters> implements Task<T>, Cancellable {
 
     private NotifiableTaskMetadata taskMetadata = new NotifiableTaskMetadata(this);
+    private boolean cancelled = false;
 
     @Override
     public NotifiableTaskMetadata getNotifiableTaskMetadata() {
         return taskMetadata;
+    }
+
+    @Override
+    public void cancel() {
+        this.cancelled = true;
+    }
+
+    public void stopTaskIfCancelled() throws TaskCancelledException {
+        if(cancelled) throw new TaskCancelledException();
     }
 }

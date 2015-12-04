@@ -82,6 +82,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
         int currentStep = 0;
         for (Integer page : pages) {
+            stopTaskIfCancelled();
+
             LOG.trace("Adding page {}", page);
             copier.addPage(reader, page);
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(pages.size());

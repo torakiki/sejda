@@ -121,10 +121,11 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
         LOG.debug("Input documents optimized and written to {}", parameters.getOutput());
     }
 
-    private void optimizeImages(PDPage page) throws IOException {
+    private void optimizeImages(PDPage page) throws IOException, TaskException {
         PDResources pageResources = page.getResources();
         List<COSName> xObjectNames = Lists.newArrayList(pageResources.getXObjectNames());
         for (COSName xObjectName : xObjectNames) {
+            stopTaskIfCancelled();
             try {
                 PDXObject obj = pageResources.getXObject(xObjectName);
                 if (obj instanceof PDImageXObject) {

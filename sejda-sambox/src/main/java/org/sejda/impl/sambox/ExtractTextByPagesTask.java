@@ -82,6 +82,7 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
         int totalSteps = pages.size();
 
         for (Integer current : pages) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Extracting text from page {}", current);
 

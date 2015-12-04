@@ -77,6 +77,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             sourceHandler = source.open(documentLoader);

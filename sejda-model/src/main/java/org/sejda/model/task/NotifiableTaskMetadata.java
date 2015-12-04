@@ -27,6 +27,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.sejda.model.exception.TaskCancelledException;
 
 /**
  * An immutable set of metadata related to the task the event is notifying about.
@@ -43,17 +44,19 @@ public class NotifiableTaskMetadata implements Serializable {
     public static final NotifiableTaskMetadata NULL = new NullNotifiableTaskMetadata();
     private UUID taskIdentifier;
     private String qualifiedName;
+    private BaseTask<?> task;
 
     private NotifiableTaskMetadata() {
         // empty constructor
     }
 
-    public NotifiableTaskMetadata(Task<?> task) {
+    public NotifiableTaskMetadata(BaseTask<?> task) {
         if (task == null) {
             throw new IllegalArgumentException("No task given, unable to create notifiable metadata.");
         }
         this.taskIdentifier = UUID.randomUUID();
         this.qualifiedName = task.getClass().getName();
+        this.task = task;
     }
 
     /**
@@ -92,6 +95,10 @@ public class NotifiableTaskMetadata implements Serializable {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("taskIdentifier", taskIdentifier)
                 .append("qualifiedName", qualifiedName).toString();
+    }
+
+    public void stopTaskIfCancelled() throws TaskCancelledException {
+        task.stopTaskIfCancelled();
     }
 
     /**

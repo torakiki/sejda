@@ -69,6 +69,8 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
+
             currentStep++;
 
             LOG.debug("Opening {}", source);

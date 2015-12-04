@@ -83,6 +83,8 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         LookupTable<PDPage> lookupFirst = new LookupTable<>();
         LookupTable<PDPage> lookupSecond = new LookupTable<>();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
+            taskMetadata.stopTaskIfCancelled();
+
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
                 PDPage current = firstDocumentHandler.getPage(firstDocStatus.nextPage());
                 lookupFirst.addLookupEntry(current, importPage(current));

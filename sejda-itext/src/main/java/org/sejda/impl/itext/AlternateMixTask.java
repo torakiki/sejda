@@ -85,6 +85,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         int currentStep = 0;
         int totalSteps = firstReader.getNumberOfPages() + secondReader.getNumberOfPages();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
+            stopTaskIfCancelled();
+
             for (int i = 0; i < parameters.getFirstInput().getStep() && firstDocStatus.hasNextPage(); i++) {
                 copier.addPage(firstReader, firstDocStatus.nextPage());
                 notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
