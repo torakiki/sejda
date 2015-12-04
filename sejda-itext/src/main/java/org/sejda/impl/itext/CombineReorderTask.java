@@ -82,6 +82,8 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         }
 
         for (int i = 0; i < parameters.getPages().size(); i++) {
+            stopTaskIfCancelled();
+
             FileIndexAndPage filePage = parameters.getPages().get(i);
             PdfReader reader = readers.get(filePage.getFileIndex());
             copier.addPage(reader, filePage.getPage());

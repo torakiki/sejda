@@ -78,6 +78,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
         for (int currentPage : requestedPages) {
             currentStep++;
+            stopTaskIfCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBased(currentPage), parameters);
             if(pageImage == null) {

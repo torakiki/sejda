@@ -44,7 +44,7 @@ public abstract class BaseTask<T extends TaskParameters> implements Task<T>, Can
         this.cancelled = true;
     }
 
-    public void continueIfNotCancelled() throws TaskCancelledException {
+    public void stopTaskIfCancelled() throws TaskCancelledException {
         if(cancelled) throw new TaskCancelledException();
     }
 }

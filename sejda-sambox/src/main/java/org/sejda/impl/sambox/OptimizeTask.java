@@ -121,7 +121,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private void optimizeImages(PDPage page) throws IOException, TaskException {
         PDResources pageResources = page.getResources();
         for (COSName xObjectName : pageResources.getXObjectNames()) {
-            continueIfNotCancelled();
+            stopTaskIfCancelled();
 
             try {
                 PDXObject obj = pageResources.getXObject(xObjectName);

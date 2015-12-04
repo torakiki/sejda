@@ -61,6 +61,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 

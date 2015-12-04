@@ -86,6 +86,8 @@ public class CropTask extends BaseTask<CropParameters> {
         for (int page = 1; page <= totalPages; page++) {
             PdfDictionary dictionary = reader.getPageN(page);
             for (PdfRectangle cropBox : cropAreas) {
+                stopTaskIfCancelled();
+
                 LOG.trace("Applying crop box {} to page {}", cropBox, page);
                 dictionary.put(PdfName.MEDIABOX, cropBox);
                 dictionary.put(PdfName.CROPBOX, cropBox);

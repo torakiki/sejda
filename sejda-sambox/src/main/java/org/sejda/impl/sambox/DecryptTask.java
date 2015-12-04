@@ -66,6 +66,8 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
     public void execute(DecryptParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
+
             currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);

@@ -73,13 +73,16 @@ public class RotateTask extends BaseTask<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Opening {} ", source);
             reader = source.open(sourceOpener);
 
             PdfRotator rotator = new PdfRotator(reader);
-            parameters.getPages(reader.getNumberOfPages())
-                    .forEach(page -> rotator.rotate(page, parameters.getRotation(page)));
+            for(Integer page: parameters.getPages(reader.getNumberOfPages())) {
+                stopTaskIfCancelled();
+                rotator.rotate(page, parameters.getRotation(page));
+            }
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output temporary buffer {} ", tmpFile);

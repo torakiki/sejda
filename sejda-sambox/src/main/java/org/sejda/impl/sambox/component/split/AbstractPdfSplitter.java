@@ -69,6 +69,7 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
             int outputDocumentsCounter = 0;
             File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
+                taskMetadata.stopTaskIfCancelled();
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
                     onOpen(page);

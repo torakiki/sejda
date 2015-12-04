@@ -77,6 +77,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
         for (PdfMergeInput input : parameters.getInputList()) {
+            stopTaskIfCancelled();
+
             LOG.debug("Opening input {} ", input.getSource());
             reader = input.getSource().open(sourceOpener);
 
