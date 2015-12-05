@@ -38,7 +38,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
-import org.slf4j.LoggerFactory;
 
 /**
  * SAMBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
@@ -47,8 +46,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.OutlineLevelsHandler {
-
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(SamboxOutlineLevelsHandler.class);
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private PDDocument document;

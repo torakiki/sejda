@@ -16,9 +16,6 @@
  */
 package org.sejda.core.support.util;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class StringUtils {
 
     /**
