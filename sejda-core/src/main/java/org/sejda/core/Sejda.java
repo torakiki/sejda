@@ -44,7 +44,7 @@ public final class Sejda {
     }
 
     public static final String VERSION = new SejdaVersionLoader().getSejdaVersion();
-    public static final String CREATOR = "Sejda " + VERSION + " (www.sejda.org)";
+    public static String CREATOR = "Sejda " + VERSION + " (www.sejda.org)";
 
     /**
      * Loader for the sejda properties.
