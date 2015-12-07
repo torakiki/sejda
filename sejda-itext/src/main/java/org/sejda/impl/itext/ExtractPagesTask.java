@@ -61,7 +61,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     @Override
     public void before(ExtractPagesParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

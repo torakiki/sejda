@@ -57,7 +57,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     @Override
     public void before(SetMetadataParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

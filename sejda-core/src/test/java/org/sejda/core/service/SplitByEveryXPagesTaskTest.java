@@ -32,6 +32,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -70,7 +71,7 @@ public abstract class SplitByEveryXPagesTaskTest extends PdfOutEnabledTest imple
         parameters = new SplitByEveryXPagesParameters(10);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setSource(getPdfSource());
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);
@@ -83,7 +84,7 @@ public abstract class SplitByEveryXPagesTaskTest extends PdfOutEnabledTest imple
         parameters = new SplitByEveryXPagesParameters(2);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setSource(getEncPdfSource());
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         initializeNewStreamOutput(parameters);

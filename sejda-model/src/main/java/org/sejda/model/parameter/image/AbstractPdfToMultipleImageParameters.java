@@ -19,6 +19,10 @@
  */
 package org.sejda.model.parameter.image;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -33,18 +37,14 @@ import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
 /**
  * Base class for a parameter meant to convert an existing pdf source to multiple images of a specified type.
  * 
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfToImageParameters implements
-        MultipleOutputTaskParameters, PageRangeSelection, PagesSelection {
+public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfToImageParameters
+        implements MultipleOutputTaskParameters, PageRangeSelection, PagesSelection {
 
     AbstractPdfToMultipleImageParameters(ImageColorType outputImageColorType) {
         super(outputImageColorType);
@@ -116,7 +116,8 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(outputPrefix).append(pageSelection).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(outputPrefix)
+                .append(pageSelection).toHashCode();
     }
 
     @Override
@@ -128,7 +129,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
             return false;
         }
         AbstractPdfToMultipleImageParameters parameter = (AbstractPdfToMultipleImageParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
-                .append(outputPrefix, parameter.getOutputPrefix()).append(pageSelection, parameter.pageSelection).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output)
+                .append(outputPrefix, parameter.outputPrefix).append(pageSelection, parameter.pageSelection).isEquals();
     }
 }

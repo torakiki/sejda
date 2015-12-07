@@ -64,7 +64,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     public void before(CombineReorderParameters parameters) {
         totalSteps = parameters.getPages().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

@@ -34,8 +34,8 @@ import org.sejda.model.validation.constraint.ValidSingleOutput;
  * 
  */
 @ValidSingleOutput
-public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePdfSourceParameters implements
-        SingleOutputTaskParameters {
+public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePdfSourceParameters
+        implements SingleOutputTaskParameters {
 
     private String outputName;
     @Valid
@@ -67,7 +67,7 @@ public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePd
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputName).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputName).append(output).toHashCode();
     }
 
     @Override
@@ -79,7 +79,7 @@ public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePd
             return false;
         }
         MultiplePdfSourceSingleOutputParameters parameter = (MultiplePdfSourceSingleOutputParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputName, parameter.getOutputName())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputName, parameter.outputName)
+                .append(output, parameter.output).isEquals();
     }
 }

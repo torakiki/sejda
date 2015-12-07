@@ -66,7 +66,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
     @Override
     public void before(SetPagesTransitionParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

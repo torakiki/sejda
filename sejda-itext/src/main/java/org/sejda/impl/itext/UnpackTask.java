@@ -51,7 +51,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
 
     @Override
     public void before(UnpackParameters parameters) {
-        unpacker = new PdfUnpacker(parameters.isOverwrite());
+        unpacker = new PdfUnpacker(parameters.getExistingOutputPolicy());
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
         totalSteps = parameters.getSourceList().size();
     }

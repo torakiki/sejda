@@ -1,21 +1,20 @@
 /*
- * Created on Oct 10, 2011
- * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
- * 
- * This file is part of the Sejda source code
+ * Created on 07 dic 2015
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * This file is part of Sejda.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Sejda is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sejda.cli;
 
@@ -31,18 +30,16 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test encrypted files across all pdf implementations (itext, sambox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
- * might be different behaviour at runtime
- * 
- * @author Eduard Weissmann
- * 
+ * @author Andrea Vacondio
+ *
  */
-public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
+public class EncryptionIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput()));
+        return asParameterizedTestData(TestableTask.getTasksWithFolderOutput());
     }
+
     @Override
     @Before
     public void setUp() {
@@ -50,7 +47,7 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
         createTestEncryptedPdfFile("/tmp/file1encrypted.pdf");
     }
 
-    public EncryptionIntegrationTest(TestableTask testableTask) {
+    public EncryptionIntegrationFolderOutTest(TestableTask testableTask) {
         super(testableTask);
     }
 
@@ -58,10 +55,12 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
     public void executeExampleUsageWithEncryptedFileAsInput() {
         String exampleUsage = testableTask.getExampleUsage();
         // use an encrypted file as input instead of the regular input file
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // quick hack for decrypt
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
+        exampleUsage = StringUtils.replace(exampleUsage, "-l 2 -e \".+(Chapter)+.+\"", "-l 1"); // quick hack around splitbybookmarks ("Unable to split, no page number given.")
 
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
-        assertTaskCompletes(exampleUsage + " --overwrite");
+        assertTaskCompletes(exampleUsage + " -j skip");
     }
 }

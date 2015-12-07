@@ -16,6 +16,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.transition.PdfPageTransition;
@@ -52,7 +53,7 @@ public abstract class SetPagesTransitionsTaskTest extends PdfOutEnabledTest impl
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

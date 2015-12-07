@@ -21,6 +21,7 @@ package org.sejda.impl.icepdf;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -32,7 +33,6 @@ import java.util.Set;
 
 import org.icepdf.core.pobjects.Document;
 import org.sejda.core.support.io.MultipleOutputWriter;
-import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
@@ -60,7 +60,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     @Override
     public void before(T parameters) throws TaskExecutionException {
         super.before(parameters);
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             stopTaskIfCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBased(currentPage), parameters);
-            if(pageImage == null) {
+            if (pageImage == null) {
                 LOG.debug("Failed to convert page {} to image", currentPage);
                 continue;
             }
@@ -94,8 +94,8 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             getWriter().write(pageImage, parameters);
             getWriter().closeDestination();
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
                             .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 

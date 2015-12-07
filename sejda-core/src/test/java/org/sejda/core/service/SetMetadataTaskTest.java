@@ -37,6 +37,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.pdf.PdfVersion;
@@ -90,7 +91,7 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
         parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
         parameters.put(PdfMetadataKey.TITLE, "test_title");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

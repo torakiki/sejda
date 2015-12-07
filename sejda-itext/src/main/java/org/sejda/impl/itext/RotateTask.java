@@ -65,7 +65,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
     public void before(RotateParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

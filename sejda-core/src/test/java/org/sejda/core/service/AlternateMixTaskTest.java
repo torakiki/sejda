@@ -35,6 +35,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -74,7 +75,7 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
         PdfMixInput secondInput = new PdfMixInput(secondSource, true, 3);
         parameters = new AlternateMixParameters(firstInput, secondInput);
         parameters.setOutputName("outName.pdf");
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_5);
     }

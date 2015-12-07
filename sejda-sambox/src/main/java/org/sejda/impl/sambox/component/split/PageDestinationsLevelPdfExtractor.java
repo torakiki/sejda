@@ -16,6 +16,14 @@
  */
 package org.sejda.impl.sambox.component.split;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.io.File;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.PagesExtractor;
@@ -27,14 +35,6 @@ import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Extracts separate docs based on selected outline page sections
@@ -53,7 +53,7 @@ public class PageDestinationsLevelPdfExtractor {
         this.outlineDestinations = outlineDestinations;
         this.parameters = parameters;
         this.document = document;
-        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     public void extract(NotifiableTaskMetadata taskMetadata) throws TaskException {

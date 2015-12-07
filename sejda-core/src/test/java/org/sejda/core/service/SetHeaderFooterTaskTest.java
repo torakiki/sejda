@@ -34,6 +34,7 @@ import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
@@ -69,7 +70,7 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setFont(StandardType1Font.CURIER_BOLD_OBLIQUE);
 
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setHorizontalAlign(HorizontalAlign.LEFT);
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         parameters.setFontSize(7d);

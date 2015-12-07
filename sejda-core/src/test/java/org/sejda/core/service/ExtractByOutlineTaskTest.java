@@ -16,6 +16,13 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
@@ -26,16 +33,10 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class ExtractByOutlineTaskTest extends PdfOutEnabledTest implements
         TestableTask<ExtractByOutlineParameters> {
@@ -58,7 +59,7 @@ public abstract class ExtractByOutlineTaskTest extends PdfOutEnabledTest impleme
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "extract_by_outline_sample.pdf");
         parameters.setSource(source);
         parameters.setOutputPrefix("[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
 

@@ -63,7 +63,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     @Override
     public void before(SetMetadataParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.MultipleTaskOutput;
 
 /**
@@ -45,7 +46,7 @@ public class UnpackParametersTest {
         UnpackParameters eq2 = new UnpackParameters(output);
         UnpackParameters eq3 = new UnpackParameters(output);
         UnpackParameters diff = new UnpackParameters(output);
-        diff.setOverwrite(true);
+        diff.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 

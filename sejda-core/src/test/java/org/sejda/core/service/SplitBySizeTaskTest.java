@@ -38,6 +38,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -65,7 +66,7 @@ public abstract class SplitBySizeTaskTest extends PdfOutEnabledTest implements T
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "medium_test.pdf");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

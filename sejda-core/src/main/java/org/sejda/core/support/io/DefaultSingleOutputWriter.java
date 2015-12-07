@@ -20,10 +20,11 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.output.StreamTaskOutput;
-
 import java.io.IOException;
+
+import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.output.StreamTaskOutput;
 
 /**
  * Single writer default implementation.
@@ -33,8 +34,8 @@ import java.io.IOException;
  */
 class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutputWriter {
 
-    DefaultSingleOutputWriter(boolean overwrite) {
-        super(overwrite);
+    DefaultSingleOutputWriter(ExistingOutputPolicy existingOutputPolicy) {
+        super(existingOutputPolicy);
     }
 
     @Override

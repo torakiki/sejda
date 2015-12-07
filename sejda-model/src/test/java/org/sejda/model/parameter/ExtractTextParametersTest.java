@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.MultipleTaskOutput;
 
 /**
@@ -52,7 +53,7 @@ public class ExtractTextParametersTest {
         ExtractTextParameters eq2 = new ExtractTextParameters();
         ExtractTextParameters eq3 = new ExtractTextParameters();
         ExtractTextParameters diff = new ExtractTextParameters();
-        diff.setOverwrite(true);
+        diff.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
         diff.setTextEncoding("UTF-8");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }

@@ -60,7 +60,7 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
     @Override
     public void before(ExtractTextByPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

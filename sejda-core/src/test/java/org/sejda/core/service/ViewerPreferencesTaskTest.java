@@ -36,6 +36,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
@@ -84,7 +85,7 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         parameters.addEnabledPreference(PdfBooleanPreference.CENTER_WINDOW);
         parameters.addEnabledPreference(PdfBooleanPreference.HIDE_MENUBAR);
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private void setUpParameters() {

@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskNotFoundException;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.ChildTestTaskParameter;
@@ -65,8 +66,13 @@ public class DefaultSejdaContextTest {
             }
 
             @Override
-            public boolean isOverwrite() {
-                return false;
+            public ExistingOutputPolicy getExistingOutputPolicy() {
+                return ExistingOutputPolicy.SKIP;
+            }
+
+            @Override
+            public void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy) {
+                // nothing
             }
         });
         Assert.assertNotNull(task);

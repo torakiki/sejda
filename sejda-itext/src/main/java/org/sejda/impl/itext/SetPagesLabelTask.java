@@ -60,7 +60,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
     @Override
     public void before(SetPagesLabelParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

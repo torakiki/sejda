@@ -19,6 +19,7 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -52,5 +54,17 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
         TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();
         assertOutputFile(result.getOutput(), new File("./outputs/fileOutput.pdf"));
+    }
+
+    @Test
+    public void overwrite() {
+        TaskParameters result = defaultCommandLine().withFlag("--overwrite").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.OVERWRITE, result.getExistingOutputPolicy());
+    }
+
+    @Test
+    public void dontOverwrite() {
+        TaskParameters result = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.FAIL, result.getExistingOutputPolicy());
     }
 }

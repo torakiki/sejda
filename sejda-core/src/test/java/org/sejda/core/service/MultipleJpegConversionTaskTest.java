@@ -20,6 +20,7 @@
 package org.sejda.core.service;
 
 import org.junit.Ignore;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
@@ -35,7 +36,7 @@ public abstract class MultipleJpegConversionTaskTest extends MultipleImageConver
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(300);
         parameters.setUserZoom(1.5f);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
 

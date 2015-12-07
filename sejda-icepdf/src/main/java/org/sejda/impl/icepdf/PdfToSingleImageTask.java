@@ -21,6 +21,7 @@ package org.sejda.impl.icepdf;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.impl.icepdf.component.PdfToBufferedImageProvider.toBufferedImage;
 
@@ -28,7 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import org.icepdf.core.pobjects.Document;
-import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.icepdf.component.DefaultPdfSourceOpener;
 import org.sejda.model.exception.TaskException;
@@ -60,7 +60,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         if (!getWriter().supportMultiImage()) {
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
             stopTaskIfCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters);
-            if(pageImage == null) {
+            if (pageImage == null) {
                 LOG.debug("Failed to convert page {} to image", zeroBasedPageNumber + 1);
                 continue;
             }

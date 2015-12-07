@@ -39,6 +39,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
@@ -73,7 +74,7 @@ public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfTo
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

@@ -40,9 +40,6 @@ public interface TaskCliArguments {
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST)
     List<PdfFileSourceAdapter> getFiles();
 
-    @Option(description = "overwrite existing output file (optional)")
-    boolean getOverwrite();
-
     @Option(shortName = "h", description = "prints usage information. Can be used to detail options for a command '-h command' (optional)")
     boolean isHelp();
 }
