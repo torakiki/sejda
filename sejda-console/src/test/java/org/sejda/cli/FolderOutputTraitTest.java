@@ -19,12 +19,15 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -46,8 +49,8 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void negative_NotFound() {
-        defaultCommandLine().with("-o", "output-doesntexist").assertConsoleOutputContains(
-                "Path 'output-doesntexist' does not exist");
+        defaultCommandLine().with("-o", "output-doesntexist")
+                .assertConsoleOutputContains("Path 'output-doesntexist' does not exist");
     }
 
     @Test
@@ -55,4 +58,23 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
         TaskParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
         assertOutputFolder(result, new File("./outputs"));
     }
+
+    @Test
+    public void overwrite() {
+        TaskParameters result = defaultCommandLine().with("--existingOutput", "overwrite").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.OVERWRITE, result.getExistingOutputPolicy());
+    }
+
+    @Test
+    public void skip() {
+        TaskParameters result = defaultCommandLine().with("--existingOutput", "skip").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.SKIP, result.getExistingOutputPolicy());
+    }
+
+    @Test
+    public void defaultPolicy() {
+        TaskParameters result = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.FAIL, result.getExistingOutputPolicy());
+    }
+
 }

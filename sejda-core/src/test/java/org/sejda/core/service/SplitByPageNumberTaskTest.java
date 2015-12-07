@@ -32,6 +32,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -54,7 +55,7 @@ public abstract class SplitByPageNumberTaskTest extends PdfOutEnabledTest implem
         parameters = new SplitByPagesParameters();
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private PdfStreamSource getPdfSource() {

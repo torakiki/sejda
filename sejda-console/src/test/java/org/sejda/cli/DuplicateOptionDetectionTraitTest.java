@@ -45,6 +45,6 @@ public class DuplicateOptionDetectionTraitTest extends AcrossAllTasksTraitTest {
 
     @Test
     public void testDuplicateArgumentValuesAreNotDetectedAsFalsePositives() {
-        assertTaskCompletes("decrypt -f /tmp/file1.pdf /tmp/file1.pdf -o /tmp --overwrite");
+        assertTaskCompletes("decrypt -f /tmp/file1.pdf /tmp/file1.pdf -o /tmp --existingOutput overwrite");
     }
 }

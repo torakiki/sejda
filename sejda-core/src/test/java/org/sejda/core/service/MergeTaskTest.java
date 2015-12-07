@@ -42,6 +42,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.outline.OutlinePolicy;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
@@ -72,7 +73,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
 
     private void setUpParameters(List<PdfMergeInput> input) {
         parameters = new MergeParameters();
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         for (PdfMergeInput current : input) {

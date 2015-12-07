@@ -25,6 +25,7 @@ import java.io.File;
 
 import org.junit.Test;
 import org.sejda.model.exception.TaskOutputVisitException;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 
 /**
@@ -33,7 +34,7 @@ import org.sejda.model.output.FileTaskOutput;
  */
 public class DefaultMultipleOutputWriterTest {
 
-    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(true);
+    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE);
 
     @Test(expected = TaskOutputVisitException.class)
     public void testWriteNonFile() throws TaskOutputVisitException {

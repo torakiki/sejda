@@ -58,7 +58,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     @Override
     public void before(ExtractPagesParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

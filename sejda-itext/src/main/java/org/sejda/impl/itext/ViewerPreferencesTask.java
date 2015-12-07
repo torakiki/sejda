@@ -85,7 +85,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             LOG.trace("Page mode = {}", parameters.getPageMode());
             LOG.trace("Page layout = {}", parameters.getPageLayout());
         }
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

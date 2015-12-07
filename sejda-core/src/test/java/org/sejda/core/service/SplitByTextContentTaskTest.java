@@ -18,6 +18,12 @@
  */
 package org.sejda.core.service;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -27,15 +33,10 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Ignore
 public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest implements TestableTask<SplitByTextContentParameters> {
@@ -57,7 +58,7 @@ public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest imple
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_contents_sample.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

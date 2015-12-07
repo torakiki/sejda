@@ -38,6 +38,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
@@ -66,7 +67,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
 
     private void setUpParametersOddPages() {
         parameters = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(PdfStreamSource.newInstanceNoPassword(
@@ -79,7 +80,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(firstRange);
         parameters.addPageRange(secondRange);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(PdfStreamSource.newInstanceNoPassword(
@@ -98,7 +99,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
         ranges.add(fourthRange);
         parameters = new ExtractPagesParameters();
         parameters.addAllPageRanges(ranges);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(PdfStreamSource.newInstanceNoPassword(
@@ -109,7 +110,7 @@ public abstract class ExtractPagesTaskTest extends PdfOutEnabledTest implements 
         PageRange range = new PageRange(10);
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(range);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(PdfStreamSource.newInstanceNoPassword(

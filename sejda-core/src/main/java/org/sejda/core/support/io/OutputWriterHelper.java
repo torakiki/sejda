@@ -20,9 +20,16 @@
  */
 package org.sejda.core.support.io;
 
+import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
+import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
@@ -30,6 +37,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,21 +60,25 @@ final class OutputWriterHelper {
      * 
      * @param files
      * @param outputFile
-     * @param overwrite
-     *            true to overwrite if already exists
+     * @param existingOutputPolicy
+     *            policy to use if an output that already exists is found
      * @throws IOException
      */
-    static void moveToFile(Map<String, File> files, File outputFile, boolean overwrite) throws IOException {
+    static void moveToFile(Map<String, File> files, File outputFile, ExistingOutputPolicy existingOutputPolicy)
+            throws IOException {
         if (outputFile.exists() && !outputFile.isFile()) {
             throw new IOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
         if (files.size() != 1) {
-            throw new IOException(String.format(
-                    "Wrong files map size %d, must be 1 to copy to the selected destination %s", files.size(),
-                    outputFile));
+            throw new IOException(
+                    String.format("Wrong files map size %d, must be 1 to copy to the selected destination %s",
+                            files.size(), outputFile));
         }
         for (Entry<String, File> entry : files.entrySet()) {
-            moveFile(entry.getValue(), outputFile, overwrite);
+            moveFile(entry.getValue(), outputFile, of(existingOutputPolicy).filter(p -> p != SKIP).orElseGet(() -> {
+                LOG.debug("Cannot use {} output policy for single output, replaced with {}", SKIP, FAIL);
+                return FAIL;
+            }));
         }
 
     }
@@ -76,11 +88,12 @@ final class OutputWriterHelper {
      * 
      * @param files
      * @param outputDirectory
-     * @param overwrite
-     *            true to overwrite if already exists
+     * @param existingOutputPolicy
+     *            policy to use if an output that already exists is found
      * @throws IOException
      */
-    static void moveToDirectory(Map<String, File> files, File outputDirectory, boolean overwrite) throws IOException {
+    static void moveToDirectory(Map<String, File> files, File outputDirectory,
+            ExistingOutputPolicy existingOutputPolicy) throws IOException {
         if (!outputDirectory.isDirectory()) {
             throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
         }
@@ -92,7 +105,7 @@ final class OutputWriterHelper {
                 throw new IOException(String.format(
                         "Unable to move %s to the output directory, no output name specified.", entry.getValue()));
             }
-            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), overwrite);
+            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), existingOutputPolicy);
         }
     }
 
@@ -103,21 +116,31 @@ final class OutputWriterHelper {
      *            input file
      * @param output
      *            output file
-     * @param overwrite
-     *            true to overwrite if already exists
+     * @param existingOutputPolicy
+     *            policy to use if an output that already exists is found
      * @throws IOException
      */
-    private static void moveFile(File input, File output, boolean overwrite) throws IOException {
-        if (!overwrite && output.exists()) {
-            throw new IOException(String.format(
-                    "Unable to overwrite the output file %s with the input %s (overwrite is false)", output, input));
+    private static void moveFile(File input, File output, ExistingOutputPolicy existingOutputPolicy)
+            throws IOException {
+        if (output.exists()) {
+            switch (existingOutputPolicy) {
+            case OVERWRITE:
+                LOG.debug("Moving {} to {}.", input, output);
+                FileUtils.deleteQuietly(output);
+                FileUtils.moveFile(input, output);
+                break;
+            case SKIP:
+                LOG.info("Skipping already existing output file {}", output);
+                break;
+            default:
+                throw new IOException(
+                        String.format("Unable to write %s to the already existing file destination %s. (policy is %s)",
+                                input, output, existingOutputPolicy));
+            }
+        } else {
+            LOG.debug("Moving {} to {}.", input, output);
+            FileUtils.moveFile(input, output);
         }
-
-        LOG.debug("Moving {} to {}.", input, output);
-        if(overwrite && output.exists()) {
-            FileUtils.deleteQuietly(output);
-        }
-        FileUtils.moveFile(input, output);
     }
 
     /**
@@ -132,8 +155,8 @@ final class OutputWriterHelper {
         for (Entry<String, File> entry : files.entrySet()) {
             FileInputStream input = null;
             if (isBlank(entry.getKey())) {
-                throw new IOException(String.format(
-                        "Unable to copy %s to the output stream, no output name specified.", entry.getValue()));
+                throw new IOException(String.format("Unable to copy %s to the output stream, no output name specified.",
+                        entry.getValue()));
             }
             try {
                 input = new FileInputStream(entry.getValue());
@@ -150,6 +173,7 @@ final class OutputWriterHelper {
 
     /**
      * Copies the contents of the file to the specified outputstream, without zipping or applying any other changes.
+     * 
      * @param file
      * @param out
      * @throws IOException

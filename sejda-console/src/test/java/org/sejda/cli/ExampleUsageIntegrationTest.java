@@ -23,8 +23,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.Collection;
+
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Integration tests, running without mocks the example usage for each task
@@ -32,7 +34,12 @@ import org.junit.Test;
  * @author Eduard Weissmann
  * 
  */
-public class ExampleUsageIntegrationTest extends AcrossAllTasksTraitTest {
+public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
+
+    @Parameters
+    public static Collection<Object[]> data() {
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput()));
+    }
 
     public ExampleUsageIntegrationTest(TestableTask testableTask) {
         super(testableTask);
@@ -41,14 +48,7 @@ public class ExampleUsageIntegrationTest extends AcrossAllTasksTraitTest {
     @Test
     public void executeExampleUsage() {
         String exampleUsage = testableTask.getExampleUsage();
-        exampleUsage = StringUtils.replace(exampleUsage, "-e \".+(Chapter)+.+\"", "-e \".+(page)+.+\""); // quick hack for split by bookmarks (Chapter is better for help, page actually exists in the sample pdf)
-
-        if(testableTask == TestableTask.SPLIT_BY_TEXT) {
-            overwriteTestPdfFile("/tmp/file1.pdf", "/pdf/split_by_text_contents_sample.pdf");
-        }
-
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
-
         assertTaskCompletes(exampleUsage + " --overwrite");
     }
 }

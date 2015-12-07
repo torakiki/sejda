@@ -69,7 +69,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     public void before(SplitDownTheMiddleParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

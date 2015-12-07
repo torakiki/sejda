@@ -39,6 +39,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.DecryptParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -68,7 +69,7 @@ public abstract class DecryptTaskTest extends PdfOutEnabledTest implements Testa
     private void setUpParameters() {
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
         parameters.setVersion(PdfVersion.VERSION_1_6);
     }
 

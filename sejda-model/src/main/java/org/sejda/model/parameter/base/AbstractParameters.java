@@ -19,9 +19,12 @@
  */
 package org.sejda.model.parameter.base;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.sejda.model.output.ExistingOutputPolicy;
 
 /**
  * @author Andrea Vacondio
@@ -29,25 +32,21 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
  */
 public abstract class AbstractParameters implements TaskParameters {
 
-    private boolean overwrite = false;
+    @NotNull
+    private ExistingOutputPolicy existingOutputPolicy = ExistingOutputPolicy.FAIL;
 
     @Override
-    public boolean isOverwrite() {
-        return overwrite;
+    public ExistingOutputPolicy getExistingOutputPolicy() {
+        return existingOutputPolicy;
     }
 
-    /**
-     * Set if the output should be overwritten if already exists
-     * 
-     * @param overwrite
-     */
-    public void setOverwrite(boolean overwrite) {
-        this.overwrite = overwrite;
+    public void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy) {
+        this.existingOutputPolicy = existingOutputPolicy;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(overwrite).toHashCode();
+        return new HashCodeBuilder().append(existingOutputPolicy).toHashCode();
     }
 
     @Override
@@ -59,7 +58,7 @@ public abstract class AbstractParameters implements TaskParameters {
             return false;
         }
         AbstractParameters parameter = (AbstractParameters) other;
-        return new EqualsBuilder().append(overwrite, parameter.isOverwrite()).isEquals();
+        return new EqualsBuilder().append(existingOutputPolicy, parameter.existingOutputPolicy).isEquals();
     }
 
     @Override

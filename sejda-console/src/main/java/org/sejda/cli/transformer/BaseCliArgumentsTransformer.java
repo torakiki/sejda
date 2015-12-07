@@ -20,6 +20,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageFileOutput;
 import org.sejda.cli.model.CliArgumentsWithImageOutput;
@@ -29,7 +30,7 @@ import org.sejda.cli.model.CliArgumentsWithPdfOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.conversion.PdfFileSourceAdapter;
-import org.sejda.model.parameter.base.AbstractParameters;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
@@ -58,7 +59,8 @@ public class BaseCliArgumentsTransformer {
      */
     protected void populateOutputTaskParameters(MultipleOutputTaskParameters parameters,
             CliArgumentsWithPdfAndDirectoryOutput taskCliArguments) {
-        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        populateCommonMultipleOutputParameters(parameters, taskCliArguments);
+
     }
 
     /**
@@ -70,6 +72,9 @@ public class BaseCliArgumentsTransformer {
     protected void populateOutputTaskParameters(SingleOutputTaskParameters parameters,
             CliArgumentsWithPdfFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+        if (taskCliArguments.getOverwrite()) {
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        }
     }
 
     /**
@@ -91,7 +96,7 @@ public class BaseCliArgumentsTransformer {
      */
     protected void populateAbstractParameters(AbstractPdfToMultipleImageParameters parameters,
             CliArgumentsWithImageAndDirectoryOutput taskCliArguments) {
-        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        populateCommonMultipleOutputParameters(parameters, taskCliArguments);
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
 
@@ -104,6 +109,9 @@ public class BaseCliArgumentsTransformer {
     protected void populateAbstractParameters(AbstractPdfToSingleImageParameters parameters,
             CliArgumentsWithImageFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
+        if (taskCliArguments.getOverwrite()) {
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        }
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
 
@@ -117,20 +125,12 @@ public class BaseCliArgumentsTransformer {
         }
 
         // todo: hmmm, should populate also taskCliArguments.getColorType() but it's wired by constructor not setter... hmmm
-
-        populateCommonAbstractParameters(parameters, taskCliArguments);
-    }
-
-    private void populateCommonAbstractParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
-        parameters.setOverwrite(taskCliArguments.getOverwrite());
     }
 
     private void populateCommonPdfOutputParameters(AbstractPdfOutputParameters parameters,
             CliArgumentsWithPdfOutput taskCliArguments) {
         parameters.setCompress(taskCliArguments.getCompressed());
         parameters.setVersion(taskCliArguments.getPdfVersion().getEnumValue());
-
-        populateCommonAbstractParameters(parameters, taskCliArguments);
     }
 
     /**
@@ -152,11 +152,25 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateSourceParameters(SinglePdfSourceTaskParameters parameters, TaskCliArguments taskCliArguments) {
+    protected void populateSourceParameters(SinglePdfSourceTaskParameters parameters,
+            TaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 1) {
-            throw new ArgumentValidationException("Only one input file expected, received "
-                    + taskCliArguments.getFiles().size());
+            throw new ArgumentValidationException(
+                    "Only one input file expected, received " + taskCliArguments.getFiles().size());
         }
         parameters.setSource(taskCliArguments.getFiles().get(0).getPdfFileSource());
     }
+
+    /**
+     * Populates output directory and existing putput policy for tasks with multiple output
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateCommonMultipleOutputParameters(MultipleOutputTaskParameters parameters,
+            CliArgumentsWithDirectoryOutput taskCliArguments) {
+        parameters.setOutput(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+    }
+
 }

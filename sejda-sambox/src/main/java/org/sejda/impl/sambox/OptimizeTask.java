@@ -73,7 +73,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
         this.parameters = parameters;
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

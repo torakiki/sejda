@@ -32,8 +32,8 @@ import org.sejda.model.output.MultipleTaskOutput;
  * @author Andrea Vacondio
  * 
  */
-public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSourceParameters implements
-        MultipleOutputTaskParameters {
+public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSourceParameters
+        implements MultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid
@@ -62,7 +62,7 @@ public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSource
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(output).toHashCode();
     }
 
     @Override
@@ -74,8 +74,8 @@ public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSource
             return false;
         }
         MultiplePdfSourceMultipleOutputParameters parameter = (MultiplePdfSourceMultipleOutputParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.getOutputPrefix())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.outputPrefix)
+                .append(output, parameter.output).isEquals();
     }
 
 }

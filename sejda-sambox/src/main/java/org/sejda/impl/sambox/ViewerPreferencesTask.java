@@ -68,7 +68,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     public void before(ViewerPreferencesParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

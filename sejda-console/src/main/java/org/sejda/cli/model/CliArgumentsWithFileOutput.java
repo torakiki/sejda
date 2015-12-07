@@ -34,4 +34,7 @@ public interface CliArgumentsWithFileOutput extends TaskCliArguments {
 
     @Option(shortName = "o", description = "output file (required)")
     FileOutputAdapter getOutput();
+
+    @Option(description = "overwrite existing output file (optional)")
+    boolean getOverwrite();
 }

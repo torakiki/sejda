@@ -36,6 +36,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.MultipleTaskOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +62,8 @@ public class PdfUnpacker {
 
     private MultipleOutputWriter outputWriter;
 
-    public PdfUnpacker(boolean overwrite) {
-        outputWriter = OutputWriters.newMultipleOutputWriter(overwrite);
+    public PdfUnpacker(ExistingOutputPolicy existingOutputPolicy) {
+        outputWriter = OutputWriters.newMultipleOutputWriter(existingOutputPolicy);
     }
 
     public void unpack(PdfReader reader) throws TaskException {

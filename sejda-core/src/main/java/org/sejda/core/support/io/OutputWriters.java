@@ -19,6 +19,8 @@
  */
 package org.sejda.core.support.io;
 
+import org.sejda.model.output.ExistingOutputPolicy;
+
 /**
  * Provides factory methods for available output writers.
  * 
@@ -34,22 +36,22 @@ public final class OutputWriters {
     /**
      * Factory method for a {@link SingleOutputWriter}.
      * 
-     * @param overwrite
-     *            true if the writer should overwrite existing output
+     * @param policy
+     *            policy to use in case of an existing output is found
      * @return a new instace of the default {@link SingleOutputWriter}
      */
-    public static SingleOutputWriter newSingleOutputWriter(boolean overwrite) {
-        return new DefaultSingleOutputWriter(overwrite);
+    public static SingleOutputWriter newSingleOutputWriter(ExistingOutputPolicy policy) {
+        return new DefaultSingleOutputWriter(policy);
     }
 
     /**
      * Factory method for a {@link MultipleOutputWriter}.
      * 
-     * @param overwrite
-     *            true if the writer should overwrite existing output
-     * @return a new instace of the default {@link MultipleOutputWriter}
+     * @param policy
+     *            policy to use in case of an existing output is found
+     * @return a new instance of the default {@link MultipleOutputWriter}
      */
-    public static MultipleOutputWriter newMultipleOutputWriter(boolean overwrite) {
-        return new DefaultMultipleOutputWriter(overwrite);
+    public static MultipleOutputWriter newMultipleOutputWriter(ExistingOutputPolicy policy) {
+        return new DefaultMultipleOutputWriter(policy);
     }
 }

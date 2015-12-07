@@ -66,7 +66,7 @@ public class CropTask extends BaseTask<CropParameters> {
     @Override
     public void before(CropParameters parameters) {
         sourceOpener = PdfSourceOpeners.newFullReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

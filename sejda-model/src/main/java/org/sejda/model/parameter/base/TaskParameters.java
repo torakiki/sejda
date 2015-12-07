@@ -20,6 +20,7 @@
  */
 package org.sejda.model.parameter.base;
 
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.TaskOutput;
 
 /**
@@ -36,7 +37,15 @@ public interface TaskParameters {
     TaskOutput<?> getOutput();
 
     /**
-     * @return true if the tasks' outputs should overwrite any existing file, false otherwise
+     * @return the policy to use in case of an already existing output is found.
      */
-    boolean isOverwrite();
+    ExistingOutputPolicy getExistingOutputPolicy();
+
+    /**
+     * sets the policy to use in case of an already existing output is found.
+     * 
+     * @param existingOutputPolicy
+     *            the policy to set
+     */
+    void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy);
 }

@@ -22,6 +22,7 @@ package org.sejda.core.service;
 import org.junit.Ignore;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
@@ -38,7 +39,7 @@ public abstract class MultipleTiffConversionTaskTest extends
         parameters.setCompressionType(TiffCompressionType.PACKBITS);
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(96);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
 

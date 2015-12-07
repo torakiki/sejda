@@ -74,7 +74,7 @@ abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParame
         this.parameters = parameters;
         this.totalPages = reader.getNumberOfPages();
         this.outlineSubsetProvider = new ITextOutlineSubsetProvider(reader);
-        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     int getTotalNumberOfPages() {

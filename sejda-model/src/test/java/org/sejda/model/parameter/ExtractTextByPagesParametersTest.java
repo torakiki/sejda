@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 
@@ -53,7 +54,7 @@ public class ExtractTextByPagesParametersTest {
         ExtractTextByPagesParameters eq2 = new ExtractTextByPagesParameters();
         ExtractTextByPagesParameters eq3 = new ExtractTextByPagesParameters();
         ExtractTextByPagesParameters diff = new ExtractTextByPagesParameters();
-        diff.setOverwrite(true);
+        diff.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         diff.setTextEncoding("UTF-8");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }

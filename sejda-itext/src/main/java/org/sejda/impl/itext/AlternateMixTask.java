@@ -61,7 +61,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     @Override
     public void before(AlternateMixParameters parameters) {
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

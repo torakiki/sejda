@@ -20,6 +20,7 @@
 package org.sejda.cli.model;
 
 import org.sejda.conversion.DirectoryOutputAdapter;
+import org.sejda.conversion.ExistingOutputPolicyAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -34,4 +35,7 @@ public interface CliArgumentsWithDirectoryOutput extends TaskCliArguments {
 
     @Option(shortName = "o", description = "output directory (required)")
     DirectoryOutputAdapter getOutput();
+
+    @Option(shortName = "j", description = "policy to use when an output file with the same name already exists. {overwrite, skip, fail}. Default is 'fail' (optional)", defaultValue = "fail")
+    ExistingOutputPolicyAdapter getExistingOutput();
 }

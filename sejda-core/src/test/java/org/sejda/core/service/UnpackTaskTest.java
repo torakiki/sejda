@@ -37,6 +37,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.Task;
@@ -71,7 +72,7 @@ public abstract class UnpackTaskTest implements TestableTask<UnpackParameters> {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "attachments.pdf");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

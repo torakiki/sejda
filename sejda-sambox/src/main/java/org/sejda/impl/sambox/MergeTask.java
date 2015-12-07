@@ -71,7 +71,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     public void before(MergeParameters parameters) {
         totalSteps = parameters.getInputList().size();
         sourceOpener = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
         outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }
 

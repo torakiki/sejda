@@ -98,7 +98,7 @@ public class PdfHeaderFooterWriter implements Closeable {
             // Type 1 fonts only support 8-bit code points.
             font = fontOrFallback(label, font, loadFont(UnicodeType0Font.NOTO_SANS_REGULAR));
 
-            LOG.debug("Applying {} {} to document page {}", what, label, pageNumber);
+            LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
 
             PDPage page = documentHandler.getPage(pageNumber);
             PDRectangle pageSize = page.getCropBox();

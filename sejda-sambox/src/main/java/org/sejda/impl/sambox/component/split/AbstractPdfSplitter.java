@@ -59,7 +59,7 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
         this.document = document;
         this.parameters = parameters;
         this.totalPages = document.getNumberOfPages();
-        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {

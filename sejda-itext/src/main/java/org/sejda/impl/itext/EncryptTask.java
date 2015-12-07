@@ -69,7 +69,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
     public void before(EncryptParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         sourceOpener = PdfSourceOpeners.newPartialReadOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
         for (PdfAccessPermission permission : parameters.getPermissions()) {
             permissions |= getAccessPermission(permission);
         }

@@ -115,9 +115,9 @@ public class ExtractTextParameters extends AbstractParameters
             return false;
         }
         ExtractTextParameters parameter = (ExtractTextParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
-                .append(sourceList, parameter.getSourceList()).append(textEncoding, parameter.getTextEncoding())
-                .append(outputPrefix, parameter.getOutputPrefix()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output)
+                .append(sourceList, parameter.sourceList).append(textEncoding, parameter.textEncoding)
+                .append(outputPrefix, parameter.outputPrefix).isEquals();
     }
 
 }

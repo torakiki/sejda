@@ -31,6 +31,7 @@ import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +69,13 @@ public final class SplitByPages {
     }
 
     private static void printUsage() {
-        LOG.info("Usage: sejda-example -f /PATH_TO_INPUT/INPUT.pdf -o /OUTPUT_DIRECTORY -s n1,n2,n3.. -overwrite");
+        LOG.info(
+                "Usage: sejda-example -f /PATH_TO_INPUT/INPUT.pdf -o /OUTPUT_DIRECTORY -s n1,n2,n3.. -existingOutput OVERWRITE");
         LOG.info("Where /PATH_TO_INPUT/INPUT.pdf is the absolut path to the input pdf document.");
         LOG.info("Where /OUTPUT_DIRECTORY is the directory where output will be written.");
         LOG.info("Where n1,n2,n3.. is a comma separated list of page numbers where the document will be splitted at.");
-        LOG.info("Where -overwrite is optional and instruct the utility to overwrite an existing file with the same name as the generated ones.");
+        LOG.info(
+                "Where -existingOutput is an optional parameter telling the utility what to do when an existing file with the same name as the generated ones is found, possible values are OVERWRITE, SKIP, FAIL (default).");
     }
 
     private static SplitByPagesParameters createParameters(String[] args) {
@@ -89,8 +92,8 @@ public final class SplitByPages {
                 for (int j = 0; j < pages.length; j++) {
                     params.addPage(Integer.valueOf(pages[j].trim()));
                 }
-            } else if ("-overwrite".equals(args[i])) {
-                params.setOverwrite(true);
+            } else if ("-existingOutput".equals(args[i])) {
+                params.setExistingOutputPolicy(ExistingOutputPolicy.valueOf(args[++i]));
             }
         }
         return params;

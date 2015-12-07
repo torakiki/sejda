@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
 
@@ -39,22 +41,22 @@ import org.sejda.model.output.TaskOutputDispatcher;
 abstract class BaseOutputWriter implements TaskOutputDispatcher {
 
     Map<String, File> multipleFiles;
-    boolean overwrite = false;
+    private ExistingOutputPolicy existingOutputPolicy = ExistingOutputPolicy.FAIL;
 
-    public BaseOutputWriter(boolean overwrite) {
+    public BaseOutputWriter(ExistingOutputPolicy existingOutputPolicy) {
         this.multipleFiles = new HashMap<String, File>();
-        this.overwrite = overwrite;
+        this.existingOutputPolicy = ObjectUtils.defaultIfNull(existingOutputPolicy, ExistingOutputPolicy.FAIL);
     }
 
     @Override
     public void dispatch(FileTaskOutput output) throws IOException {
-        OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), overwrite);
+        OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), existingOutputPolicy);
 
     }
 
     @Override
     public void dispatch(DirectoryTaskOutput output) throws IOException {
-        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), overwrite);
+        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy);
 
     }
 

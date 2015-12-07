@@ -35,6 +35,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
@@ -69,7 +70,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private void setUpParametersWithVersionPrefixAndCompressionSpecified() {
@@ -80,7 +81,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
     }
 
     private void setUpRotateSpecificPages() {
@@ -89,7 +90,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private void setUpRotateMultipleInputNotRangesContained() {
@@ -100,7 +101,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
                 getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf"));
         parameters.addSource(PdfStreamSource.newInstanceNoPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium_test.pdf"));
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private void setUpParametersEncrypted() {
@@ -172,7 +173,7 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         doExecute();
 

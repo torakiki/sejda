@@ -20,7 +20,10 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,8 +33,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.sejda.model.output.ExistingOutputPolicy;
 
 /**
  * Test unit for the {@link OutputWriterHelper}
@@ -41,15 +46,12 @@ import org.junit.Test;
  */
 public class OutputWriterHelperTest {
 
-    private File tempFile;
-
-    @Before
-    public void setUp() throws IOException {
-        tempFile = File.createTempFile("srcTest", "");
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void testExecuteCopyStreamZipped() throws IOException {
+    public void copyStreamZipped() throws IOException {
+        File tempFile = folder.newFile();
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -59,7 +61,8 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyStreamSingleFile() throws IOException {
+    public void copyStreamSingleFile() throws IOException {
+        File tempFile = folder.newFile();
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -69,14 +72,14 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyFailsMapSize() {
+    public void copyFailsMapSize() {
         Map<String, File> files = new HashMap<String, File>();
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, true);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
@@ -84,16 +87,16 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyFailsFileType() {
+    public void copyFailsFileType() throws IOException {
         Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+        files.put("newName", folder.newFile());
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, true);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
@@ -101,32 +104,46 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyFailsOverwrite() {
+    public void copyFailsOverwrite() throws IOException {
         Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+        files.put("newName", folder.newFile());
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, false);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.FAIL);
             fail("Exception expected");
         } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to overwrite the"));
+            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
         }
     }
 
     @Test
-    public void testExecuteCopyFailsDirectoryType() {
+    public void copySingleFileSkipFallbacksToFail() throws IOException {
         Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+        files.put("newName", folder.newFile());
 
         File outFile = mock(File.class);
-        when(outFile.isDirectory()).thenReturn(Boolean.FALSE);
+        when(outFile.isFile()).thenReturn(Boolean.TRUE);
+        when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToDirectory(files, outFile, true);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.SKIP);
+            fail("Exception expected");
+        } catch (IOException e) {
+            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
+        }
+    }
+
+    @Test
+    public void copyFailsDirectoryType() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("newName", folder.newFile());
+
+        try {
+            OutputWriterHelper.moveToDirectory(files, folder.newFile(), ExistingOutputPolicy.OVERWRITE);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
@@ -134,7 +151,42 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void testExecuteCopyFailsDirectoryMkdirs() {
+    public void copyDirectorySkips() throws IOException {
+        File dest = folder.newFolder();
+        File tempFile = folder.newFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP);
+        assertEquals(2, dest.list().length);
+    }
+
+    @Test
+    public void copyDirectoryOverwrite() throws IOException {
+        File dest = folder.newFolder();
+        File tempFile = folder.newFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.OVERWRITE);
+        assertEquals(2, dest.list().length);
+    }
+
+    @Test(expected = IOException.class)
+    public void copyDirectoryFail() throws IOException {
+        File dest = folder.newFolder();
+        File tempFile = folder.newFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.FAIL);
+    }
+
+    private Map<String, File> populateWithOneExisting(File dest, File tempFile) throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("newName", tempFile);
+        File existing = File.createTempFile("Chuck", "Norris", dest);
+        files.put(existing.getName(), folder.newFile());
+        return files;
+    }
+
+    @Test
+    public void copyFailsDirectoryMkdirs() throws IOException {
+        File tempFile = folder.newFile();
         Map<String, File> files = new HashMap<String, File>();
         files.put("newName", tempFile);
 
@@ -144,7 +196,7 @@ public class OutputWriterHelperTest {
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
 
         try {
-            OutputWriterHelper.moveToDirectory(files, outFile, true);
+            OutputWriterHelper.moveToDirectory(files, outFile, ExistingOutputPolicy.OVERWRITE);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));

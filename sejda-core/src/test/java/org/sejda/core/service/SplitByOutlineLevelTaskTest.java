@@ -36,6 +36,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -64,7 +65,7 @@ public abstract class SplitByOutlineLevelTaskTest extends PdfOutEnabledTest impl
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/bigger_outline_test.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "bigger_outline_test.pdf");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
 

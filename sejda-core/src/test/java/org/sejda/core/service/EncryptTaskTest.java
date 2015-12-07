@@ -36,6 +36,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
@@ -77,7 +78,7 @@ public abstract class EncryptTaskTest extends PdfOutEnabledTest implements Testa
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
         parameters.addSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

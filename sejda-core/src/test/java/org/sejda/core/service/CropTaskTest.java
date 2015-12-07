@@ -36,6 +36,7 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -79,7 +80,7 @@ public abstract class CropTaskTest extends PdfOutEnabledTest implements Testable
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);
-        parameters.setOverwrite(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test

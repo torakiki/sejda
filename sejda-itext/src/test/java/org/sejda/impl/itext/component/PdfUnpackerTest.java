@@ -35,6 +35,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.output.ExistingOutputPolicy;
 
 import com.lowagie.text.pdf.PdfReader;
 
@@ -44,14 +45,14 @@ import com.lowagie.text.pdf.PdfReader;
  */
 public class PdfUnpackerTest {
 
-    private PdfUnpacker victim = new PdfUnpacker(true);
+    private PdfUnpacker victim = new PdfUnpacker(ExistingOutputPolicy.OVERWRITE);
     private InputStream is;
     private MultipleOutputWriter outputWriter;
 
     @Before
     public void setUp() {
         is = getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf");
-        outputWriter = spy(OutputWriters.newMultipleOutputWriter(true));
+        outputWriter = spy(OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE));
         TestUtils.setProperty(victim, "outputWriter", outputWriter);
     }
 

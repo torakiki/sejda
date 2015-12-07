@@ -61,7 +61,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
     public void before(SetHeaderFooterParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override

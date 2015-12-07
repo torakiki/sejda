@@ -54,7 +54,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
 
     @Override
     public void before(PdfToJpegParameters parameters) throws TaskException {
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.isOverwrite());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
         writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
         if (writer == null) {
             LOG.info("Unable to create an ImageWriter using the provided factory, falling back on default factory.");
