@@ -74,7 +74,7 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     boolean isFilesListConfig();
 
-    @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc }. Default is 'retain' (optional)", defaultValue = "retain")
+    @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc, retain_as_one_entry }. Default is 'retain' (optional)", defaultValue = "retain")
     OutlinePolicyAdapter getBookmarks();
 
 }

@@ -122,6 +122,12 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void onRetainAsOneEntry() {
+        MergeParameters parameters = defaultCommandLine().with("-b", "retain_as_one_entry").invokeSejdaConsole();
+        assertEquals(OutlinePolicy.RETAIN_AS_ONE_ENTRY, parameters.getOutlinePolicy());
+    }
+
+    @Test
     public void onDefaultAcroForms() {
         MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals(AcroFormPolicy.DISCARD, parameters.getAcroFormPolicy());
@@ -137,10 +143,8 @@ public class MergeTaskTest extends AbstractTaskTest {
     public void folderInput() {
         MergeParameters parameters = defaultCommandLine().without("-f").with("-d", "/tmp/merge").invokeSejdaConsole();
 
-        assertPdfMergeInputsFilesList(
-                parameters,
-                filesList("/tmp/merge/file1.pdf", "/tmp/merge/file2.pdf", "/tmp/merge/file3.pdf",
-                        "/tmp/merge/file4.pdf"));
+        assertPdfMergeInputsFilesList(parameters, filesList("/tmp/merge/file1.pdf", "/tmp/merge/file2.pdf",
+                "/tmp/merge/file3.pdf", "/tmp/merge/file4.pdf"));
     }
 
     @Test
@@ -168,8 +172,8 @@ public class MergeTaskTest extends AbstractTaskTest {
         for (String current : filenames) {
             String filename = current.toString();
             if (FilenameUtils.getPrefixLength(filename) > 0) {
-                result.add(CombinableMatcher.<Iterable<? super File>> either(hasItem(new File(filename))).or(
-                        hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
+                result.add(CombinableMatcher.<Iterable<? super File>> either(hasItem(new File(filename)))
+                        .or(hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
             }
             result.add(hasItem(new File(filename)));
         }
@@ -243,8 +247,8 @@ public class MergeTaskTest extends AbstractTaskTest {
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,
             Collection<Matcher<Iterable<? super File>>> expectedFilesMatchers) {
-        assertPdfMergeInputsFilesList(parameters, expectedFilesMatchers, nullsFilledList(parameters.getInputList()
-                .size()));
+        assertPdfMergeInputsFilesList(parameters, expectedFilesMatchers,
+                nullsFilledList(parameters.getInputList().size()));
     }
 
     private List<String> nullsFilledList(int size) {
@@ -279,8 +283,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         MergeParameters parameters = defaultCommandLine().without("-f").with("-l", "/tmp/filenames.xml")
                 .invokeSejdaConsole();
 
-        assertPdfMergeInputsFilesList(
-                parameters,
+        assertPdfMergeInputsFilesList(parameters,
                 filesList("/tmp/pdf/inputFile.pdf", "/tmp/pdf/inputFile2.pdf", "/tmp/inputFile1.pdf",
                         "/tmp/inputFile2.pdf", "/tmp/subdir/inputFile1.pdf", "/tmp/subdir3/inputFile2.pdf",
                         "/tmp/subdir2/inputFile1.pdf", "/tmp/subdir2/inputFile2.pdf", "/tmp/subdir2/inputFile3.pdf"),
@@ -335,8 +338,9 @@ public class MergeTaskTest extends AbstractTaskTest {
         MergeParameters parameters = defaultCommandLine().with("-s", "all:3,5,8-10,2,2,9-9,30-").invokeSejdaConsole();
 
         assertHasPdfMergeInput(parameters, "inputs/input.pdf", ALL_PAGES);
-        assertHasPdfMergeInput(parameters, "inputs/second_input.pdf", Arrays.asList(new PageRange(3, 3), new PageRange(
-                5, 5), new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
+        assertHasPdfMergeInput(parameters, "inputs/second_input.pdf",
+                Arrays.asList(new PageRange(3, 3), new PageRange(5, 5), new PageRange(8, 10), new PageRange(2, 2),
+                        new PageRange(9, 9), new PageRange(30)));
     }
 
     private void assertHasPdfMergeInput(MergeParameters parameters, String filename,
@@ -356,8 +360,10 @@ public class MergeTaskTest extends AbstractTaskTest {
             }
         }
 
-        assertTrue("File '" + file + "'"
-                + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
+        assertTrue(
+                "File '" + file + "'"
+                        + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"),
+                found);
 
     }
 }

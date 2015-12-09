@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,10 @@ public class OutlineMerger {
             case RETAIN:
                 new OutlineDistiller(document).appendRelevantOutlineTo(outline, pagesLookup);
                 break;
+            case RETAIN_AS_ONE_ENTRY:
+                ofNullable(updateOneEntryPerDoc(sourceName, pagesLookup))
+                        .ifPresent(item -> new OutlineDistiller(document).appendRelevantOutlineTo(item, pagesLookup));
+                break;
             default:
                 LOG.debug("Discarding outline for {}", sourceName);
             }
@@ -66,7 +71,7 @@ public class OutlineMerger {
         }
     }
 
-    private void updateOneEntryPerDoc(String sourceName, LookupTable<PDPage> pagesLookup) {
+    private PDOutlineItem updateOneEntryPerDoc(String sourceName, LookupTable<PDPage> pagesLookup) {
         if (StringUtils.isNotBlank(sourceName)) {
             LOG.debug("Adding outline entry for {}", sourceName);
             PDOutlineItem item = new PDOutlineItem();
@@ -75,9 +80,10 @@ public class OutlineMerger {
             destination.setPage(pagesLookup.first());
             item.setDestination(destination);
             outline.addLast(item);
-        } else {
-            LOG.warn("Outline entry not created, unable to find its name");
+            return item;
         }
+        LOG.warn("Unable to create an outline item for a source with blank name");
+        return null;
     }
 
     public boolean hasOutline() {

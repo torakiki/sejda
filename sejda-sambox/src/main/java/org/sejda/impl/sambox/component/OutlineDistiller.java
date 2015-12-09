@@ -28,6 +28,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,7 @@ class OutlineDistiller {
      * @param to
      * @param pagesLookup
      */
-    public void appendRelevantOutlineTo(PDDocumentOutline to, LookupTable<PDPage> pagesLookup) {
+    public void appendRelevantOutlineTo(PDOutlineNode to, LookupTable<PDPage> pagesLookup) {
         requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
         if (!pagesLookup.isEmpty()) {
             PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();

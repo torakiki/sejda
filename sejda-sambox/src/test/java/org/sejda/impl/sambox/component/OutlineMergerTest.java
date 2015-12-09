@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.common.LookupTable;
@@ -34,6 +35,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.sejda.util.IOUtils;
 
 /**
  * @author Andrea Vacondio
@@ -42,7 +44,9 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 public class OutlineMergerTest {
 
     private PDDocument document;
+    private PDDocument document2;
     private LookupTable<PDPage> mapping = new LookupTable<>();
+    private LookupTable<PDPage> mapping2 = new LookupTable<>();
 
     @Before
     public void setUp() throws IOException {
@@ -51,10 +55,22 @@ public class OutlineMergerTest {
         for (PDPage current : document.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
         }
+
+        document2 = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        for (PDPage current : document2.getPages()) {
+            mapping2.addLookupEntry(current, new PDPage());
+        }
+    }
+
+    @After
+    public void tearDown() {
+        IOUtils.closeQuietly(document);
+        IOUtils.closeQuietly(document2);
     }
 
     @Test
-    public void testEmpty() {
+    public void empty() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.DISCARD);
         victim.updateOutline(document, "large_outline.pdf", mapping);
         assertFalse(victim.hasOutline());
@@ -62,7 +78,7 @@ public class OutlineMergerTest {
     }
 
     @Test
-    public void testRetainAll() {
+    public void retainAll() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         victim.updateOutline(document, "large_outline.pdf", mapping);
         assertTrue(victim.hasOutline());
@@ -70,15 +86,31 @@ public class OutlineMergerTest {
     }
 
     @Test
-    public void testOnePerDoc() {
+    public void onePerDoc() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
         victim.updateOutline(document, "large_outline.pdf", mapping);
+        victim.updateOutline(document2, "test_outline.pdf", mapping2);
         assertTrue(victim.hasOutline());
-        assertEquals(1, count(victim.getOutline()));
+        assertEquals(2, count(victim.getOutline()));
+        for (PDOutlineItem current : victim.getOutline().children()) {
+            assertFalse(current.hasChildren());
+        }
     }
 
     @Test
-    public void testRetainSome() {
+    public void retainAsOneEntry() {
+        OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN_AS_ONE_ENTRY);
+        victim.updateOutline(document, "large_outline.pdf", mapping);
+        victim.updateOutline(document2, "test_outline.pdf", mapping2);
+        assertTrue(victim.hasOutline());
+        assertEquals(2, count(victim.getOutline()));
+        for (PDOutlineItem current : victim.getOutline().children()) {
+            assertTrue(current.hasChildren());
+        }
+    }
+
+    @Test
+    public void retainSome() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         mapping.clear();
         mapping.addLookupEntry(document.getPage(2), new PDPage());
@@ -90,14 +122,14 @@ public class OutlineMergerTest {
     }
 
     @Test
-    public void testOnePerDocNoName() {
+    public void onePerDocNoName() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
         victim.updateOutline(document, "", mapping);
         assertFalse(victim.hasOutline());
     }
 
     @Test
-    public void testRetainAllNoRelevantPage() {
+    public void retainAllNoRelevantPage() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         victim.updateOutline(document, "large_outline.pdf", new LookupTable<>());
         assertFalse(victim.hasOutline());

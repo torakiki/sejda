@@ -30,7 +30,8 @@ import org.sejda.common.FriendlyNamed;
 public enum OutlinePolicy implements FriendlyNamed {
     DISCARD("discard"),
     RETAIN("retain"),
-    ONE_ENTRY_EACH_DOC("one_entry_each_doc");
+    ONE_ENTRY_EACH_DOC("one_entry_each_doc"),
+    RETAIN_AS_ONE_ENTRY("retain_as_one_entry");
 
     private String displayName;
 
