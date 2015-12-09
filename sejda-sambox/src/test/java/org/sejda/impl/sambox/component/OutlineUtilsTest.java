@@ -20,6 +20,8 @@ package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -45,16 +47,16 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 public class OutlineUtilsTest {
     @Test
     public void outlineMaxDepth() throws IOException {
-        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getResourceAsStream("/pdf/test_outline.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
             assertEquals(3, OutlineUtils.getMaxOutlineLevel(doc));
         }
     }
 
     @Test
     public void noOutlineMaxDepth() throws IOException {
-        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getResourceAsStream("/pdf/test_no_outline.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_no_outline.pdf")))) {
             assertEquals(0, OutlineUtils.getMaxOutlineLevel(doc));
         }
     }
@@ -133,5 +135,16 @@ public class OutlineUtilsTest {
         assertTrue(to.isBold());
         assertTrue(to.isItalic());
         assertEquals("Chuck", to.getTitle());
+    }
+
+    @Test
+    // title is required by the spec
+    public void copyDictionaryFixesNullTitles() {
+        PDOutlineItem from = new PDOutlineItem();
+        from.setTitle(null);
+        PDOutlineItem to = new PDOutlineItem();
+        assertNull(from.getTitle());
+        OutlineUtils.copyOutlineDictionary(from, to);
+        assertNotNull(to.getTitle());
     }
 }

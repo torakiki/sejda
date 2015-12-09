@@ -17,6 +17,8 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -31,7 +33,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  * Utility methods related to outline handling in SAMBox
  * 
@@ -109,7 +110,7 @@ public final class OutlineUtils {
      * @param to
      */
     public static void copyOutlineDictionary(PDOutlineItem from, PDOutlineItem to) {
-        to.setTitle(from.getTitle());
+        to.setTitle(defaultString(from.getTitle()));
         to.setTextColor(from.getTextColor());
         to.setBold(from.isBold());
         to.setItalic(from.isItalic());
