@@ -24,27 +24,35 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.sejda.io.SeekableSources;
-import org.sejda.sambox.input.PDFParser;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.text.PDFTextStripperByArea;
 import org.junit.Ignore;
 import org.sejda.core.Sejda;
+import org.sejda.io.SeekableSources;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.sambox.input.PDFParser;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import com.lowagie.text.pdf.PdfReader;
 
@@ -93,10 +101,10 @@ public class PdfOutEnabledTest {
         return new PdfReader(new FileInputStream(outFile));
     }
 
-
     protected PdfReader getReaderFromResultStream() throws IOException {
         return new PdfReader(new ByteArrayInputStream(out.toByteArray()));
     }
+
     /**
      * @param expectedFileName
      *            the expected name of the first file in the ZipInputStream
@@ -120,8 +128,8 @@ public class PdfOutEnabledTest {
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
         ZipInputStream zip = new ZipInputStream(input);
         ZipEntry entry = zip.getNextEntry();
-        while(entry != null) {
-            if(expectedFileName == null || entry.getName().equals(expectedFileName)){
+        while (entry != null) {
+            if (expectedFileName == null || entry.getName().equals(expectedFileName)) {
                 return zip;
             }
             entry = zip.getNextEntry();
@@ -160,7 +168,7 @@ public class PdfOutEnabledTest {
             actualFilenames.add(e.getName());
         }
         Collections.sort(actualFilenames);
-        for(String expectedFilename :expectedFilenames) {
+        for (String expectedFilename : expectedFilenames) {
             assertThat(actualFilenames, hasItem(expectedFilename));
         }
     }
@@ -215,27 +223,22 @@ public class PdfOutEnabledTest {
     }
 
     public void assertPageText(String... expectedText) throws IOException {
-        for(int pageNumber = 0; pageNumber < expectedText.length; pageNumber++) {
+        for (int pageNumber = 0; pageNumber < expectedText.length; pageNumber++) {
             PDFTextStripperByArea textStripper = new PDFTextStripperByArea();
 
             PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getResultInputStream(null)));
             PDPage page = doc.getDocumentCatalog().getPages().get(pageNumber);
 
             PDRectangle rect = page.getCropBox();
-            // reposition rectangle to match text space
-            float x = rect.getLowerLeftX();
-            float y = rect.getUpperRightY();
-            float width = rect.getWidth();
-            float height = rect.getHeight();
+            Rectangle2D rectangle = new Rectangle2D.Float(0, 0, rect.getWidth(), rect.getHeight());
             int rotation = page.getRotation();
-            if (rotation == 0) {
-                PDRectangle pageSize = page.getMediaBox();
-                y = pageSize.getHeight() - y;
+            if (rotation > 0) {
+                AffineTransform transform = new AffineTransform();
+                transform.rotate(Math.toRadians(rotation));
+                rectangle = transform.createTransformedShape(rectangle).getBounds2D();
             }
-            Rectangle2D.Float awtRect = new Rectangle2D.Float(x, y, width, height);
-
             textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", awtRect);
+            textStripper.addRegion("area1", rectangle);
             textStripper.extractRegions(page);
 
             String actualText = textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", "");

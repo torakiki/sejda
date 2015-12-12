@@ -43,7 +43,8 @@ import org.sejda.model.task.Task;
 import com.lowagie.text.pdf.PdfReader;
 
 @Ignore
-public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest implements TestableTask<SplitDownTheMiddleParameters> {
+public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest
+        implements TestableTask<SplitDownTheMiddleParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
 
@@ -65,22 +66,23 @@ public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest imple
 
     private List<PdfSource<?>> landscapeInput() {
         List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/split_in_two_landscape_sample.pdf"), "a.pdf"));
+        input.add(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_landscape_sample.pdf"), "a.pdf"));
         return input;
     }
 
     private List<PdfSource<?>> portraitInput() {
         List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/split_in_two_portrait_sample.pdf"), "a.pdf"));
+        input.add(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_portrait_sample.pdf"), "a.pdf"));
         return input;
     }
 
     private List<PdfSource<?>> lastFirstRepaginationInput() {
         List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/split_in_two_last_first_repagination_sample.pdf"), "a.pdf"));
+        input.add(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_last_first_repagination_sample.pdf"),
+                "a.pdf"));
         return input;
     }
 
@@ -90,6 +92,8 @@ public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest imple
                 .getResourceAsStream("pdf/split_in_two_last_first_repagination_uneven_sample.pdf"), "a.pdf"));
         return input;
     }
+
+    // TODO add a test with a rotated input?
 
     @Test
     public void splitLandscapeMode() throws TaskException, IOException {
