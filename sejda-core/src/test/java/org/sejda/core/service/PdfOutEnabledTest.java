@@ -24,8 +24,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -229,16 +229,10 @@ public class PdfOutEnabledTest {
             PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getResultInputStream(null)));
             PDPage page = doc.getDocumentCatalog().getPages().get(pageNumber);
 
-            PDRectangle rect = page.getCropBox();
-            Rectangle2D rectangle = new Rectangle2D.Float(0, 0, rect.getWidth(), rect.getHeight());
-            int rotation = page.getRotation();
-            if (rotation > 0) {
-                AffineTransform transform = new AffineTransform();
-                transform.rotate(Math.toRadians(rotation));
-                rectangle = transform.createTransformedShape(rectangle).getBounds2D();
-            }
+            PDRectangle pageSize = page.getCropBox();
+            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int)pageSize.getWidth(), (int)pageSize.getHeight());
             textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", rectangle);
+            textStripper.addRegion("area1", cropBoxRectangle);
             textStripper.extractRegions(page);
 
             String actualText = textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", "");
