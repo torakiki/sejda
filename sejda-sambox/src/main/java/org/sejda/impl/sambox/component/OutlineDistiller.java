@@ -18,6 +18,7 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
@@ -26,6 +27,7 @@ import java.util.Optional;
 import org.sejda.common.LookupTable;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
@@ -58,13 +60,12 @@ class OutlineDistiller {
     public void appendRelevantOutlineTo(PDOutlineNode to, LookupTable<PDPage> pagesLookup) {
         requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
         if (!pagesLookup.isEmpty()) {
-            PDDocumentOutline outline = document.getDocumentCatalog().getDocumentOutline();
-            if (outline != null) {
+            ofNullable(document.getDocumentCatalog().getDocumentOutline()).ifPresent(outline -> {
                 for (PDOutlineItem child : outline.children()) {
                     cloneNode(child, pagesLookup).ifPresent(c -> to.addLast(c));
                 }
                 LOG.debug("Appended relevant outline items");
-            }
+            });
         }
     }
 
@@ -76,14 +77,11 @@ class OutlineDistiller {
                     clone.addLast(clonedChild);
                 });
             }
-            if (clone.hasChildren()) {
+            Optional<PDPage> destinationPage = toPageDestination(node, document.getDocumentCatalog())
+                    .map(PDPageDestination::getPage).map(p -> pagesLookup.lookup(p));
+            if (clone.hasChildren() || destinationPage.isPresent()) {
                 copyOutlineDictionary(node, clone);
-                toPageDestination(node, document.getDocumentCatalog()).ifPresent(d -> {
-                    PDPage mapped = pagesLookup.lookup(d.getPage());
-                    if (mapped != null) {
-                        clone.setDestination(mapped);
-                    }
-                });
+                destinationPage.ifPresent(p -> clone.setDestination(p));
                 return Optional.of(clone);
             }
             return Optional.empty();
