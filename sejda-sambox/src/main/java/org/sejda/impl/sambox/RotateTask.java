@@ -68,30 +68,33 @@ public class RotateTask extends BaseTask<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
-            documentHandler = source.open(documentLoader);
-            documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
-            documentHandler.setCreatorOnPDDocument();
+            try {
+                documentHandler = source.open(documentLoader);
+                documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
+                documentHandler.setCreatorOnPDDocument();
 
-            File tmpFile = createTemporaryPdfBuffer();
-            LOG.debug("Created output on temporary buffer {}", tmpFile);
+                File tmpFile = createTemporaryPdfBuffer();
+                LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
-            for(Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
-                stopTaskIfCancelled();
-                rotator.rotate(page, parameters.getRotation(page));
+                PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
+                for (Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
+                    stopTaskIfCancelled();
+                    rotator.rotate(page, parameters.getRotation(page));
+                }
+
+                documentHandler.setVersionOnPDDocument(parameters.getVersion());
+                documentHandler.setCompress(parameters.isCompress());
+                documentHandler.savePDDocument(tmpFile);
+
+                String outName = nameGenerator(parameters.getOutputPrefix())
+                        .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
+                outputWriter.addOutput(file(tmpFile).name(outName));
+            } finally {
+                nullSafeCloseQuietly(documentHandler);
             }
-
-            documentHandler.setVersionOnPDDocument(parameters.getVersion());
-            documentHandler.setCompress(parameters.isCompress());
-            documentHandler.savePDDocument(tmpFile);
-
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
-            outputWriter.addOutput(file(tmpFile).name(outName));
-
-            nullSafeCloseQuietly(documentHandler);
 
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
