@@ -59,24 +59,25 @@ public abstract class UnpackTaskTest implements TestableTask<UnpackParameters> {
     @Before
     public void setUp() {
         out = new ByteArrayOutputStream();
-        setUpParameters();
         TestUtils.setProperty(victim, "context", context);
     }
 
-    /**
-     * Set up of the unpack parameters
-     * 
-     */
-    private void setUpParameters() {
-        parameters = new UnpackParameters(new StreamTaskOutput(out));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "attachments.pdf");
-        parameters.addSource(source);
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+    @Test
+    public void unpackAnnotations() throws TaskException, IOException {
+        executeTest("pdf/attachments_as_annots.pdf");
     }
 
     @Test
-    public void testExecuteStream() throws TaskException, IOException {
+    public void unpackNamedTree() throws TaskException, IOException {
+        executeTest("pdf/attachments_as_named_tree.pdf");
+    }
+
+    public void executeTest(String filename) throws TaskException, IOException {
+        parameters = new UnpackParameters(new StreamTaskOutput(out));
+        InputStream stream = getClass().getClassLoader().getResourceAsStream(filename);
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "attachments.pdf");
+        parameters.addSource(source);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         when(context.getTask(parameters)).thenReturn((Task) getTask());
         victim.execute(parameters);
         ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());

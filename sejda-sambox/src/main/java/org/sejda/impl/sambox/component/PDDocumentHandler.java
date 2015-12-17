@@ -40,6 +40,7 @@ import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -263,12 +264,16 @@ public class PDDocumentHandler implements Closeable {
         return document.getPage(pageNumber - 1);
     }
 
+    public PDPageTree getPages() {
+        return document.getPages();
+    }
+
     public void initialiseBasedOn(PDDocument other) {
         setDocumentInformation(other.getDocumentInformation());
         setViewerPreferences(other.getDocumentCatalog().getViewerPreferences());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageLayout(other.getDocumentCatalog().getPageLayout());
-        getUnderlyingPDDocument().getDocumentCatalog().setPageMode(other.getDocumentCatalog().getPageMode());
-        getUnderlyingPDDocument().getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
+        setPageLayout(other.getDocumentCatalog().getPageLayout());
+        setPageMode(other.getDocumentCatalog().getPageMode());
+        document.getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
         // TODO named resources?
         // TODO not sure about this, maybe an option to let the user decide if he wants to bring in metadata?
         // getUnderlyingPDDocument().getDocumentCatalog().setMetadata(other.getDocumentCatalog().getMetadata());
