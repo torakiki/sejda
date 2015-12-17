@@ -106,7 +106,7 @@ public abstract class MergeTaskTest extends PdfOutEnabledTest implements Testabl
         input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf"), "first_test_file.pdf")));
         input.add(new PdfMergeInput(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf"), "second_test.pdf")));
+                getClass().getClassLoader().getResourceAsStream("pdf/attachments_as_annots.pdf"), "second_test.pdf")));
         return input;
     }
 

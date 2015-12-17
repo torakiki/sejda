@@ -51,7 +51,7 @@ public class PdfUnpackerTest {
 
     @Before
     public void setUp() {
-        is = getClass().getClassLoader().getResourceAsStream("pdf/attachments.pdf");
+        is = getClass().getClassLoader().getResourceAsStream("pdf/attachments_as_annots.pdf");
         outputWriter = spy(OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE));
         TestUtils.setProperty(victim, "outputWriter", outputWriter);
     }
