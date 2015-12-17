@@ -13,13 +13,13 @@
 		<task parameters="org.sejda.model.parameter.AlternateMixParameters"
 			task="org.sejda.impl.sambox.AlternateMixTask" />
 		<task parameters="org.sejda.model.parameter.UnpackParameters"
-			task="org.sejda.impl.itext.UnpackTask" />
+			task="org.sejda.impl.sambox.UnpackTask" />
 		<task parameters="org.sejda.model.parameter.MergeParameters"
-			task="org.sejda.impl.itext.MergeTask" />
+			task="org.sejda.impl.sambox.MergeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByOutlineLevelParameters"
 			task="org.sejda.impl.sambox.SplitByOutlineLevelTask" />
 		<task parameters="org.sejda.model.parameter.SplitBySizeParameters"
-			task="org.sejda.impl.itext.SplitBySizeTask" />
+			task="org.sejda.impl.sambox.SplitBySizeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByPagesParameters"
 			task="org.sejda.impl.sambox.SplitByPageNumbersTask" />
 		<task parameters="org.sejda.model.parameter.SplitByEveryXPagesParameters"

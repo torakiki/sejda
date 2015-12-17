@@ -13,7 +13,7 @@
 		<task parameters="org.sejda.model.parameter.AlternateMixParameters"
 			task="org.sejda.impl.sambox.AlternateMixTask" />
 		<task parameters="org.sejda.model.parameter.UnpackParameters"
-			task="org.sejda.impl.itext.UnpackTask" />
+			task="org.sejda.impl.sambox.UnpackTask" />
 		<task parameters="org.sejda.model.parameter.MergeParameters"
 			task="org.sejda.impl.sambox.MergeTask" />
 		<task parameters="org.sejda.model.parameter.SplitByOutlineLevelParameters"
