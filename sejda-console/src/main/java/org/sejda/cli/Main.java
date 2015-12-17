@@ -35,6 +35,9 @@ public final class Main {
     }
 
     public static void main(String[] args) {
+        // suppress the Dock icon on OS X
+        System.setProperty("apple.awt.UIElement", "true");
+
         // bridging between jul and slf4j
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
