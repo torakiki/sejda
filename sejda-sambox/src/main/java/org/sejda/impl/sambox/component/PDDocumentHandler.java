@@ -27,12 +27,15 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.sejda.core.Sejda;
+import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
@@ -117,7 +120,7 @@ public class PDDocumentHandler implements Closeable {
      * @param layout
      */
     public void setPageLayoutOnDocument(PdfPageLayout layout) {
-        document.getDocumentCatalog().setPageLayout(getPageLayout(layout));
+        setPageLayout(getPageLayout(layout));
         LOG.trace("Page layout set to '{}'", layout);
     }
 
@@ -127,8 +130,18 @@ public class PDDocumentHandler implements Closeable {
      * @param mode
      */
     public void setPageModeOnDocument(PdfPageMode mode) {
-        document.getDocumentCatalog().setPageMode(getPageMode(mode));
+        setPageMode(getPageMode(mode));
         LOG.trace("Page mode set to '{}'", mode);
+    }
+
+    /**
+     * Sets the page labels on the underlying {@link PDDocument}.
+     * 
+     * @param labels
+     */
+    public void setPageLabelsOnDocument(Map<Integer, PdfPageLabel> labels) {
+        document.getDocumentCatalog().setPageLabels(PageLabelUtils.getLabels(labels, getNumberOfPages()));
+        LOG.trace("Page labels set");
     }
 
     /**
@@ -299,11 +312,11 @@ public class PDDocumentHandler implements Closeable {
         document.getDocumentCatalog().setAcroForm(acroForm);
     }
 
-    public void setPageMode(PageMode pageMode) {
+    private void setPageMode(PageMode pageMode) {
         document.getDocumentCatalog().setPageMode(pageMode);
     }
 
-    public void setPageLayout(PageLayout pageLayout) {
+    private void setPageLayout(PageLayout pageLayout) {
         document.getDocumentCatalog().setPageLayout(pageLayout);
     }
 

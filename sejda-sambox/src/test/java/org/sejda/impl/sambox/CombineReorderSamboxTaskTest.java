@@ -26,7 +26,7 @@ import org.sejda.model.task.Task;
  * @author Andrea Vacondio
  *
  */
-public class CombineReorderSAMBoxTaskTest extends CombineReorderTaskTest {
+public class CombineReorderSamboxTaskTest extends CombineReorderTaskTest {
     @Override
     public Task<CombineReorderParameters> getTask() {
         return new CombineReorderTask();

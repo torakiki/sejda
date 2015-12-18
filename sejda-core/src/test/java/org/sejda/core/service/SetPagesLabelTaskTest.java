@@ -73,6 +73,7 @@ public abstract class SetPagesLabelTaskTest extends PdfOutEnabledTest implements
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.putLabel(1, PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1));
         parameters.putLabel(3, PdfPageLabel.newInstanceWithLabel("Test", PdfLabelNumberingStyle.ARABIC, 1));
+        parameters.putLabel(20, PdfPageLabel.newInstanceWithLabel("OutOfRange", PdfLabelNumberingStyle.ARABIC, 1));
         InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
         PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
         parameters.setSource(source);

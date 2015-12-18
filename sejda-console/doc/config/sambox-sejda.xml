@@ -35,7 +35,7 @@
 		<task parameters="org.sejda.model.parameter.SetMetadataParameters"
 			task="org.sejda.impl.sambox.SetMetadataTask" />
 		<task parameters="org.sejda.model.parameter.SetPagesLabelParameters"
-			task="org.sejda.impl.itext.SetPagesLabelTask" />
+			task="org.sejda.impl.sambox.SetPagesLabelTask" />
 		<task parameters="org.sejda.model.parameter.SetPagesTransitionParameters"
 			task="org.sejda.impl.itext.SetPagesTransitionTask" />
 		<task parameters="org.sejda.model.parameter.CropParameters" task="org.sejda.impl.sambox.CropTask" />
