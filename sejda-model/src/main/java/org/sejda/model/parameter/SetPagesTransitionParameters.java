@@ -98,6 +98,14 @@ public class SetPagesTransitionParameters extends SinglePdfSourceSingleOutputPar
         return defaultTransition;
     }
 
+    /**
+     * @param page
+     * @return the transition for the given page or the default one if no transition is set for that page
+     */
+    public PdfPageTransition getOrDefault(int page) {
+        return transitions.getOrDefault(page, defaultTransition);
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(transitions).append(defaultTransition)
