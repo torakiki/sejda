@@ -85,7 +85,7 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                 }
                 LOG.trace("Retaining page {} of the original document", page);
                 onRetain(page);
-                extractor.retain(page);
+                extractor.retain(page, taskMetadata);
                 notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     onClose(page);

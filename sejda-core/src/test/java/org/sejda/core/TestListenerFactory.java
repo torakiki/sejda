@@ -1,13 +1,12 @@
 package org.sejda.core;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.sejda.model.notification.EventListener;
-import org.sejda.model.notification.event.AbstractNotificationEvent;
-import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.model.notification.event.TaskExecutionFailedEvent;
-import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.notification.event.*;
 
 /**
  * Factory used by tests to create event listeners.
@@ -41,6 +40,10 @@ public final class TestListenerFactory {
      */
     public static TestListenerFailed newFailedListener() {
         return new TestListenerFailed();
+    }
+
+    public static TestListenerWarnings newWarningsListener() {
+        return new TestListenerWarnings();
     }
 
     /**
@@ -136,6 +139,24 @@ public final class TestListenerFactory {
 
         public boolean isFailed() {
             return failed;
+        }
+    }
+
+    /**
+     * Simple listener to use during tests. Listens for a warning event.
+     *
+     */
+    public static class TestListenerWarnings implements EventListener<TaskExecutionWarningEvent> {
+
+        private List<String> warnings = Collections.emptyList();
+
+        @Override
+        public void onEvent(TaskExecutionWarningEvent event) {
+            warnings.add(event.getWarning());
+        }
+
+        public List<String> getWarnings() {
+            return warnings;
         }
     }
 }
