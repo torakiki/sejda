@@ -46,7 +46,7 @@
 		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters"
 			task="org.sejda.impl.sambox.PdfToMultipleImageTask" />
 		<task parameters="org.sejda.model.parameter.CombineReorderParameters"
-			  task="org.sejda.impl.itext.CombineReorderTask" />
+			  task="org.sejda.impl.sambox.CombineReorderTask" />
 		<task parameters="org.sejda.model.parameter.SplitDownTheMiddleParameters"
 			  task="org.sejda.impl.sambox.SplitDownTheMiddleTask" />
 		<task parameters="org.sejda.model.parameter.SplitByTextContentParameters"
