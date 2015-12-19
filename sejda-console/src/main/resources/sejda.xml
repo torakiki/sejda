@@ -39,7 +39,7 @@
 		<task parameters="org.sejda.model.parameter.SetPagesLabelParameters"
 			task="org.sejda.impl.sambox.SetPagesLabelTask" />
 		<task parameters="org.sejda.model.parameter.SetPagesTransitionParameters"
-			task="org.sejda.impl.itext.SetPagesTransitionTask" />
+			task="org.sejda.impl.sambox.SetPagesTransitionTask" />
 		<task parameters="org.sejda.model.parameter.CropParameters" task="org.sejda.impl.sambox.CropTask" />
 		<task parameters="org.sejda.model.parameter.image.PdfToSingleTiffParameters"
 			task="org.sejda.impl.icepdf.PdfToSingleImageTask" />
