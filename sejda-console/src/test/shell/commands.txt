@@ -48,7 +48,7 @@ target/assembled/bin/sejda-console splitbyevery -h
 target/assembled/bin/sejda-console splitbyevery --help
 target/assembled/bin/sejda-console unpack -h
 target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -j overwrite
-target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/attachments.pdf -o /tmp/sejda-smoketest/ -j overwrite
+target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/attachments_as_annots.pdf -o /tmp/sejda-smoketest/ -j overwrite
 target/assembled/bin/sejda-console alternatemix -h
 target/assembled/bin/sejda-console alternatemix -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 --reverseSecond --firstStep 5 --overwrite --compressed -o /tmp/sejda-smoketest/mixed.pdf
 target/assembled/bin/sejda-console crop -h
