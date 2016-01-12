@@ -14,5 +14,6 @@ public class PdfEncryptionAdapterTest {
         new PdfEncryptionAdapter("rc4_40").getEnumValue();
         new PdfEncryptionAdapter("rc4_128").getEnumValue();
         new PdfEncryptionAdapter("aes_128").getEnumValue();
+        new PdfEncryptionAdapter("aes_256").getEnumValue();
     }
 }

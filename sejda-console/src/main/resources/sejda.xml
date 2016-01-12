@@ -5,7 +5,7 @@
 		<task parameters="org.sejda.model.parameter.DecryptParameters"
 			task="org.sejda.impl.sambox.DecryptTask" />
 		<task parameters="org.sejda.model.parameter.EncryptParameters"
-			task="org.sejda.impl.itext.EncryptTask" />
+			task="org.sejda.impl.sambox.EncryptTask" />
 		<task parameters="org.sejda.model.parameter.RotateParameters"
 			task="org.sejda.impl.sambox.RotateTask" />
 		<task parameters="org.sejda.model.parameter.ViewerPreferencesParameters"

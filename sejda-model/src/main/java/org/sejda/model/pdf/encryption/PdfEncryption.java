@@ -31,9 +31,11 @@ import org.sejda.model.pdf.PdfVersion;
  * 
  */
 public enum PdfEncryption implements MinRequiredVersion, FriendlyNamed {
+    @Deprecated
     STANDARD_ENC_40("rc4_40", PdfVersion.VERSION_1_2),
     STANDARD_ENC_128("rc4_128", PdfVersion.VERSION_1_2),
-    AES_ENC_128("aes_128", PdfVersion.VERSION_1_6);
+    AES_ENC_128("aes_128", PdfVersion.VERSION_1_6),
+    AES_ENC_256("aes_256", PdfVersion.VERSION_1_7);
 
     private PdfVersion minVersion;
     private String displayName;

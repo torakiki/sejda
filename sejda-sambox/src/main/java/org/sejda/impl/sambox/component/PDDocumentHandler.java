@@ -39,6 +39,7 @@ import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
@@ -216,9 +217,20 @@ public class PDDocumentHandler implements Closeable {
      * @throws TaskException
      */
     public void savePDDocument(File file) throws TaskException {
+        savePDDocument(file, null);
+    }
+
+    /**
+     * Saves the underlying {@link PDDocument} to the given file and using the given standard security.
+     * 
+     * @param file
+     * @param security
+     * @throws TaskException
+     */
+    public void savePDDocument(File file, StandardSecurity security) throws TaskException {
         try {
             LOG.trace("Saving document to {}", file);
-            document.writeTo(file, writeOptions.toArray(new WriteOption[writeOptions.size()]));
+            document.writeTo(file, security, writeOptions.toArray(new WriteOption[writeOptions.size()]));
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
