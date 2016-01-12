@@ -57,6 +57,7 @@ public class TextStampPattern {
         if(currentPage > 0) {
             result = StringUtils.replace(result, "[PAGE_ROMAN]", NumberingStyle.ROMAN.toStyledString(currentPage));
             result = StringUtils.replace(result, "[PAGE_ARABIC]", NumberingStyle.ARABIC.toStyledString(currentPage));
+            result = StringUtils.replace(result, "[PAGE_NUMBER]", NumberingStyle.ARABIC.toStyledString(currentPage));
             result = StringUtils.replace(result, "[TOTAL_PAGES_ROMAN]", NumberingStyle.ROMAN.toStyledString(totalPages));
             result = StringUtils.replace(result, "[TOTAL_PAGES_ARABIC]", NumberingStyle.ARABIC.toStyledString(totalPages));
             result = StringUtils.replace(result, "[TOTAL_PAGES]", NumberingStyle.ARABIC.toStyledString(totalPages));
