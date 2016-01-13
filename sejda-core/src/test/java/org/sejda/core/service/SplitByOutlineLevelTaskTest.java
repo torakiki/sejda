@@ -20,110 +20,81 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.sejda.TestUtils;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public abstract class SplitByOutlineLevelTaskTest extends PdfOutEnabledTest implements
-        TestableTask<SplitByOutlineLevelParameters> {
+public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOutlineLevelParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
-
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private SplitByOutlineLevelParameters setUpParameters(int level, String regEx) {
+    private SplitByOutlineLevelParameters setUpParameters(int level, String regEx) throws IOException {
         SplitByOutlineLevelParameters parameters = new SplitByOutlineLevelParameters(level);
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/bigger_outline_test.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "bigger_outline_test.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/bigger_outline_test.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
         return parameters;
     }
 
     @Test
-    public void testExecuteLevel3() throws TaskException, IOException {
+    public void testExecuteLevel3() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(3, null);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test
-    public void testExecuteLevel2() throws TaskException, IOException {
+    public void testExecuteLevel2() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(2, null);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(3);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
     }
 
     @Test
-    public void testExecuteLevel1() throws TaskException, IOException {
+    public void testExecuteLevel1() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(4);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
     }
 
     @Test
-    public void testExecuteLevel1MatchingregEx() throws TaskException, IOException {
+    public void testExecuteLevel1MatchingregEx() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, "(Second)+.+");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test
-    public void testExecuteLevel1NotMatchingregEx() throws TaskException {
+    public void testExecuteLevel1NotMatchingregEx() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
+        execute(parameters);
         assertTrue(failListener.isFailed());
     }
 
     @Test
-    public void testExecuteLevel4() throws TaskException {
+    public void testExecuteLevel4() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(4, null);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
+        execute(parameters);
         assertTrue(failListener.isFailed());
     }
 

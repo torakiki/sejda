@@ -4,6 +4,6 @@
 	<tasks>
 		<task
 			parameters="org.sejda.model.parameter.SplitByPagesParameters"
-			task="org.sejda.impl.itext.SplitByPageNumbersTask" />
+			task="org.sejda.impl.sambox.SplitByPageNumbersTask" />
 	</tasks>
 </sejda>

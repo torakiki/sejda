@@ -41,7 +41,6 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.filter.MissingImageReaderException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
@@ -89,19 +88,12 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-
             for (int i = 1; i <= documentHandler.getNumberOfPages(); i++) {
                 LOG.debug("Optimizing page {}", i);
                 PDPage page = documentHandler.getPage(i);
 
-                try {
-                    if (parameters.isCompressImages()) {
-                        optimizeImages(page);
-                    }
-                } catch (MissingImageReaderException e) {
-                    LOG.warn(e.getLocalizedMessage());
-                } catch (IOException e) {
-                    throw new TaskException(e);
+                if (parameters.isCompressImages()) {
+                    optimizeImages(page);
                 }
             }
 
@@ -109,8 +101,8 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
             documentHandler.setCompress(parameters.isCompress());
             documentHandler.savePDDocument(tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             nullSafeCloseQuietly(documentHandler);
@@ -122,7 +114,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
         LOG.debug("Input documents optimized and written to {}", parameters.getOutput());
     }
 
-    private void optimizeImages(PDPage page) throws IOException, TaskException {
+    private void optimizeImages(PDPage page) throws TaskException {
         PDResources pageResources = page.getResources();
         List<COSName> xObjectNames = Lists.newArrayList(pageResources.getXObjectNames());
         for (COSName xObjectName : xObjectNames) {
@@ -133,17 +125,15 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                     PDImageXObject imageXObject = ((PDImageXObject) obj);
                     LOG.debug("Found image {}x{}", imageXObject.getHeight(), imageXObject.getWidth());
 
-                    File tmpImageFile = ImageOptimizer.optimize(imageXObject.getImage(),
-                            parameters.getImageQuality(),
-                            parameters.getImageDpi(),
-                            parameters.getImageMaxWidthOrHeight()
-                    );
+                    File tmpImageFile = ImageOptimizer.optimize(imageXObject.getImage(), parameters.getImageQuality(),
+                            parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
 
                     long optimizedSize = tmpImageFile.length();
-                    int originalSize  = imageXObject.getStream().getLength();
+                    int originalSize = imageXObject.getStream().getLength();
 
-                    if(originalSize > optimizedSize) {
-                        LOG.debug(String.format("Compressed image to %.2f percent of original size", optimizedSize * 100.0 / originalSize));
+                    if (originalSize > optimizedSize) {
+                        LOG.debug(String.format("Compressed image to %.2f percent of original size",
+                                optimizedSize * 100.0 / originalSize));
                     } else {
                         continue;
                     }
@@ -151,7 +141,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                     // images are hashed and cached so only one PDImageXObject is used if the image is repeated
                     String hash = Files.hash(tmpImageFile, Hashing.md5()).toString();
                     PDImageXObject newImage;
-                    if(cache.containsKey(hash)){
+                    if (cache.containsKey(hash)) {
                         newImage = cache.get(hash).get();
                     } else {
                         newImage = PDImageXObject.createFromFile(tmpImageFile);

@@ -20,47 +20,31 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.fail;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.ImageTestUtils;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
-import org.sejda.model.task.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfToSingleTiffParameters> {
+public abstract class SingleTiffConversionTaskTest extends BaseTaskTest<PdfToSingleTiffParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
-
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(SingleTiffConversionTaskTest.class);
 
     private AbstractPdfToSingleImageParameters getSingleTiffParams() {
         PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);
@@ -71,23 +55,26 @@ public abstract class SingleTiffConversionTaskTest implements TestableTask<PdfTo
 
     private void setCommonParams(AbstractPdfToImageParameters parameters) {
         parameters.setResolutionInDpi(96);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_test_test_file.pdf", "test");
-        parameters.setSource(source);
+        parameters.setSource(customEncryptedInput("enc_test_test_file.pdf", "test"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test
-    public void testExecuteStreamToSingleTiff() throws TaskException, IOException {
+    public void testExecuteStreamToSingleTiff() throws IOException {
         AbstractPdfToSingleImageParameters parameters = getSingleTiffParams();
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        File out = File.createTempFile("SejdaTest", ".tiff");
-        out.deleteOnExit();
-        parameters.setOutput(new FileTaskOutput(out));
-        victim.execute(parameters);
-        RenderedImage ri = ImageTestUtils.loadImage(out);
-        assertTrue(ri.getHeight() > 0);
-        assertTrue(ri.getWidth() > 0);
+        testContext.fileOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachRawOutput(p -> {
+            try {
+                RenderedImage ri = ImageTestUtils.loadImage(p.toFile());
+                assertTrue(ri.getHeight() > 0);
+                assertTrue(ri.getWidth() > 0);
+            } catch (Exception e) {
+                LOG.error("Test failed", e);
+                fail();
+            }
+        });
     }
 
 }

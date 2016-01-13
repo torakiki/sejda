@@ -13,8 +13,7 @@
 			<includes>
 				<include>org.sejda:sejda-core</include>
 				<include>org.sejda:sejda-conversion</include>
-				<include>org.sejda:sejda-itext</include>
-				<include>org.sejda:sejda-pdfbox</include>
+				<include>org.sejda:sejda-sambox</include>				
 				<include>org.sejda:sejda-icepdf</include>
 				<include>org.sejda:sejda-image-writers</include>
 				<include>org.sejda:sejda-model</include>

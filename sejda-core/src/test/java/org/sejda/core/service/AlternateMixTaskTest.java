@@ -19,28 +19,15 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
 
 /**
  * Abstract test unit for the alternate mix task
@@ -49,30 +36,11 @@ import com.lowagie.text.pdf.PdfReader;
  * 
  */
 @Ignore
-public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements TestableTask<AlternateMixParameters> {
+public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private AlternateMixParameters parameters;
 
-    @Before
-    public void setUp() {
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    /**
-     * Set up of the rotation parameters
-     * 
-     */
-    private void setUpParameters() {
-        InputStream firstStream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource firstSource = PdfStreamSource.newInstanceNoPassword(firstStream, "first_test_file.pdf");
-        PdfMixInput firstInput = new PdfMixInput(firstSource);
-        InputStream secondStream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource secondSource = PdfStreamSource.newInstanceNoPassword(secondStream, "first_test_file.pdf");
-        PdfMixInput secondInput = new PdfMixInput(secondSource, true, 3);
+    private void setUpParameters(PdfMixInput firstInput, PdfMixInput secondInput) {
         parameters = new AlternateMixParameters(firstInput, secondInput);
         parameters.setOutputName("outName.pdf");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -81,18 +49,20 @@ public abstract class AlternateMixTaskTest extends PdfOutEnabledTest implements 
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewFileOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultFile();
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_5);
-        assertEquals(8, reader.getNumberOfPages());
-        reader.close();
+    public void withStandardInput() throws TaskException, IOException {
+        setUpParameters(new PdfMixInput(shortInput()), new PdfMixInput(shortInput(), true, 3));
+        testContext.fileOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);
     }
 
-    protected AlternateMixParameters getParameters() {
-        return parameters;
+    @Test
+    public void withEncryptedInput() throws TaskException, IOException {
+        setUpParameters(new PdfMixInput(encryptedInput()), new PdfMixInput(stronglyEncryptedInput(), true, 3));
+        testContext.fileOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);
     }
 }

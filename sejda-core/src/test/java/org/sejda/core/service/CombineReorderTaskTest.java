@@ -19,43 +19,25 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.parser.PdfTextExtractor;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.text.PDFTextStripper;
 
 @Ignore
-public abstract class CombineReorderTaskTest extends PdfOutEnabledTest implements TestableTask<CombineReorderParameters> {
+public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorderParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private CombineReorderParameters parameters;
-
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
 
     private void setUpParameters(List<PdfSource<?>> sources) {
         parameters = new CombineReorderParameters();
@@ -67,10 +49,8 @@ public abstract class CombineReorderTaskTest extends PdfOutEnabledTest implement
 
     private List<PdfSource<?>> basicInputs() {
         List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/multipage-test-a.pdf"), "a.pdf"));
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/multipage-test-b.pdf"), "b.pdf"));
+        input.add(customInput("pdf/multipage-test-a.pdf"));
+        input.add(customInput("pdf/multipage-test-b.pdf"));
         return input;
     }
 
@@ -87,44 +67,34 @@ public abstract class CombineReorderTaskTest extends PdfOutEnabledTest implement
         parameters.addPage(1, 4);
         parameters.addPage(1, 10);
         parameters.addPage(1, 11);
-        execute();
+        testContext.fileOutputTo(parameters);
+        execute(parameters);
+        PDDocument outDocument = testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6);
 
-        assertPageHasText(1, "1a");
-        assertPageHasText(2, "2a");
-        assertPageHasText(3, "3a");
-        assertPageHasText(4, "1b");
-        assertPageHasText(5, "2b");
-        assertPageHasText(6, "3b");
-        assertPageHasText(7, "4a");
-        assertPageHasText(8, "4b");
-        assertPageHasText(9, "10b");
-        assertPageHasText(10, "11b");
+        assertPageHasText(outDocument, 1, "1a");
+        assertPageHasText(outDocument, 2, "2a");
+        assertPageHasText(outDocument, 3, "3a");
+        assertPageHasText(outDocument, 4, "1b");
+        assertPageHasText(outDocument, 5, "2b");
+        assertPageHasText(outDocument, 6, "3b");
+        assertPageHasText(outDocument, 7, "4a");
+        assertPageHasText(outDocument, 8, "4b");
+        assertPageHasText(outDocument, 9, "10b");
+        assertPageHasText(outDocument, 10, "11b");
     }
 
-    void execute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewFileOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = null;
-        try {
-            reader = getReaderFromResultFile();
-            assertCreator(reader);
-            assertVersion(reader, PdfVersion.VERSION_1_6);
-            //assertEquals(pages, reader.getNumberOfPages());
-        } finally {
-            nullSafeCloseReader(reader);
-        }
-    }
-
-    void assertPageHasText(int page, String expected) throws IOException {
-        String actual = new PdfTextExtractor(getReaderFromResultFile()).getTextFromPage(page);
+    void assertPageHasText(PDDocument doc, int page, String expected) throws IOException {
+        PDFTextStripper textStripper = new PDFTextStripper();
+        textStripper.setStartPage(page);
+        textStripper.setEndPage(page);
+        String actual = textStripper.getText(doc);
 
         int[] num = new int[actual.length()];
 
         for (int i = 0; i < actual.length(); i++) {
             num[i] = actual.charAt(i);
         }
-        System.out.println(Arrays.toString(num));
         assertEquals("Page " + page + " text doesn't match", expected, actual.replaceAll("[^A-Za-z0-9]", ""));
     }
 }

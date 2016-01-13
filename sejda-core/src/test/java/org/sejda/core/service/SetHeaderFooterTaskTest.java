@@ -22,8 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sejda.model.pdf.TextStampPattern.dateNow;
 
-import java.io.InputStream;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,7 +31,6 @@ import org.sejda.core.context.SejdaContext;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -47,7 +44,7 @@ import org.sejda.model.task.Task;
  * 
  */
 @Ignore
-public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implements
+public abstract class SetHeaderFooterTaskTest extends BaseTaskTest implements
         TestableTask<SetHeaderFooterParameters> {
 
     private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
@@ -80,16 +77,8 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
 
     private SetHeaderFooterParameters basicWithSources() {
         SetHeaderFooterParameters parameters = basicNoSources();
-
-        InputStream stream1 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source1 = PdfStreamSource.newInstanceNoPassword(stream1, "test_file1.pdf");
-
-        InputStream stream2 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source2 = PdfStreamSource.newInstanceNoPassword(stream2, "test_file2.pdf");
-
-        parameters.addSource(source1);
-        parameters.addSource(source2);
-
+        parameters.addSource(shortInput());
+        parameters.addSource(shortInput());
         return parameters;
     }
 
@@ -152,11 +141,7 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
     @Test
     public void testEncryptedFile() throws Exception {
         parameters = basicNoSources();
-
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
-
-        parameters.addSource(source);
+        parameters.addSource(encryptedInput());
 
         doTestExecute();
         assertOutputContainsDocuments(1);

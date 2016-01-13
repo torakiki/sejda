@@ -19,76 +19,45 @@
  */
 package org.sejda.core.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class SplitByEveryXPagesTaskTest extends PdfOutEnabledTest implements
-        TestableTask<SplitByEveryXPagesParameters> {
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
-
+public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEveryXPagesParameters> {
     private SplitByEveryXPagesParameters parameters;
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private PdfStreamSource getPdfSource() {
-        return PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium_test.pdf");
-    }
-
-    private PdfStreamSource getEncPdfSource() {
-        return PdfStreamSource.newInstanceWithPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf"),
-                "enc_with_modify_perm.pdf", "test");
-    }
-
     @Test
-    public void split() throws TaskException, IOException {
+    public void split() throws IOException {
         parameters = new SplitByEveryXPagesParameters(10);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setSource(getPdfSource());
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(4);
+        parameters.setSource(mediumInput());
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
     }
 
     @Test
-    public void splitEnc() throws TaskException, IOException {
+    public void splitEnc() throws IOException {
         parameters = new SplitByEveryXPagesParameters(2);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setSource(getEncPdfSource());
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        parameters.setSource(stronglyEncryptedInput());
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 }
