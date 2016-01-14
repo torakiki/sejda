@@ -107,7 +107,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractWrongPageRages() throws IOException {
         setUpParametersWrongPageRanges();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
@@ -117,7 +117,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractOddPages() throws IOException {
         setUpParametersOddPages();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2);
@@ -126,7 +126,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractEvenPagesFromEncrypted() throws IOException {
         setUpParametersEvenPagesEncrypted();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2);
@@ -135,7 +135,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractRanges() throws IOException {
         setUpParametersPageRangesPages();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3);
@@ -144,7 +144,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractRangesMedium() throws TaskException, IOException {
         setUpParametersPageRangesMediumFile();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).assertPages(19);

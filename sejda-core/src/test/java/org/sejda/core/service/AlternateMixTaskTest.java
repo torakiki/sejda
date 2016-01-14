@@ -51,7 +51,7 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixPara
     @Test
     public void withStandardInput() throws TaskException, IOException {
         setUpParameters(new PdfMixInput(shortInput()), new PdfMixInput(shortInput(), true, 3));
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);
@@ -60,7 +60,7 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixPara
     @Test
     public void withEncryptedInput() throws TaskException, IOException {
         setUpParameters(new PdfMixInput(encryptedInput()), new PdfMixInput(stronglyEncryptedInput(), true, 3));
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);

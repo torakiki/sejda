@@ -5,7 +5,7 @@ Sejda (http://www.sejda.org)
 
 An extendible and configurable PDF manipulation layer library written in Java. A ready to use java library to perform PDF document manipulation without having to deal with the low level API.
 
-Sejda offers many "ready to go" manipulations implemented using iText, iText 5.x, PDFBox, ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, and it can be configured to use any of them but you can also provide your implementation and configure Sejda to use it.
+Sejda offers a set of "ready to go" manipulations implemented using ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
 
 Quick start: http://www.sejda.org/development/quick-start/
 

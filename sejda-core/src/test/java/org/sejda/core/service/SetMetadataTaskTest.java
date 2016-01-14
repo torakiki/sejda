@@ -69,7 +69,7 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
     }
 
     private void doExecute() throws IOException {
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         PDDocument document = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7);

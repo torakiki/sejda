@@ -18,128 +18,119 @@
  */
 package org.sejda.core.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.awt.Rectangle;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.repaginate.Repagination;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.text.PDFTextStripperByArea;
 
 @Ignore
-public abstract class SplitDownTheMiddleTaskTest extends PdfOutEnabledTest
-        implements TestableTask<SplitDownTheMiddleParameters> {
+public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownTheMiddleParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private SplitDownTheMiddleParameters parameters;
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private void setUpParameters(List<PdfSource<?>> sources) {
+    private void setUpParameters(String source) throws IOException {
         parameters = new SplitDownTheMiddleParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSources(sources);
+        parameters.addSource(customInput(source));
+        testContext.directoryOutputTo(parameters);
     }
-
-    private List<PdfSource<?>> landscapeInput() {
-        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_landscape_sample.pdf"), "a.pdf"));
-        return input;
-    }
-
-    private List<PdfSource<?>> portraitInput() {
-        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_portrait_sample.pdf"), "a.pdf"));
-        return input;
-    }
-
-    private List<PdfSource<?>> lastFirstRepaginationInput() {
-        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/split_in_two_last_first_repagination_sample.pdf"),
-                "a.pdf"));
-        return input;
-    }
-
-    private List<PdfSource<?>> lastFirstRepaginationInputUnevenPagePairs() {
-        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream("pdf/split_in_two_last_first_repagination_uneven_sample.pdf"), "a.pdf"));
-        return input;
-    }
-
     // TODO add a test with a rotated input?
 
     @Test
-    public void splitLandscapeMode() throws TaskException, IOException {
-        setUpParameters(landscapeInput());
-        execute();
-        assertNumberOfPages(4);
-        assertPageText("L1L1", "R1R1", "L2L2", "R2R2");
+    public void splitLandscapeMode() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "L1L1");
+            assertPageText(d.getPage(1), "R1R1");
+            assertPageText(d.getPage(2), "L2L2");
+            assertPageText(d.getPage(3), "R2R2");
+        });
+
     }
 
     @Test
-    public void splitPortraitMode() throws TaskException, IOException {
-        setUpParameters(portraitInput());
-        execute();
-        assertNumberOfPages(4);
-        assertPageText("L1L1", "R1R1", "L2L2", "R2R2");
+    public void splitPortraitMode() throws IOException {
+        setUpParameters("pdf/split_in_two_portrait_sample.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "L1L1");
+            assertPageText(d.getPage(1), "R1R1");
+            assertPageText(d.getPage(2), "L2L2");
+            assertPageText(d.getPage(3), "R2R2");
+        });
     }
 
     @Test
     public void lastFirstRepagination() throws TaskException, IOException {
-        setUpParameters(lastFirstRepaginationInput());
+        setUpParameters("pdf/split_in_two_last_first_repagination_sample.pdf");
         parameters.setRepagination(Repagination.LAST_FIRST);
-        execute();
-        assertNumberOfPages(10);
-        assertPageText("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(10).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "1");
+            assertPageText(d.getPage(1), "2");
+            assertPageText(d.getPage(2), "3");
+            assertPageText(d.getPage(3), "4");
+            assertPageText(d.getPage(4), "5");
+            assertPageText(d.getPage(5), "6");
+            assertPageText(d.getPage(6), "7");
+            assertPageText(d.getPage(7), "8");
+            assertPageText(d.getPage(8), "9");
+            assertPageText(d.getPage(9), "10");
+        });
     }
 
     @Test
     public void lastFirstRepaginationUnevenPagePairs() throws TaskException, IOException {
-        setUpParameters(lastFirstRepaginationInputUnevenPagePairs());
+        setUpParameters("pdf/split_in_two_last_first_repagination_uneven_sample.pdf");
         parameters.setRepagination(Repagination.LAST_FIRST);
-        execute();
-        assertNumberOfPages(12);
-        assertPageText("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(12).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "1");
+            assertPageText(d.getPage(1), "2");
+            assertPageText(d.getPage(2), "3");
+            assertPageText(d.getPage(3), "4");
+            assertPageText(d.getPage(4), "5");
+            assertPageText(d.getPage(5), "6");
+            assertPageText(d.getPage(6), "7");
+            assertPageText(d.getPage(7), "8");
+            assertPageText(d.getPage(8), "9");
+            assertPageText(d.getPage(9), "10");
+            assertPageText(d.getPage(10), "11");
+            assertPageText(d.getPage(11), "12");
+        });
     }
 
-    void execute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = null;
+    public void assertPageText(PDPage page, String text) {
+        PDFTextStripperByArea textStripper;
         try {
-            reader = getReaderFromResultZipStream();
-            assertCreator(reader);
-            assertVersion(reader, PdfVersion.VERSION_1_6);
-        } finally {
-            nullSafeCloseReader(reader);
+            textStripper = new PDFTextStripperByArea();
+            PDRectangle pageSize = page.getCropBox();
+            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
+            textStripper.setSortByPosition(true);
+            textStripper.addRegion("area1", cropBoxRectangle);
+            textStripper.extractRegions(page);
+            assertEquals(text, textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", ""));
+        } catch (IOException e) {
+            fail(e.getMessage());
         }
     }
 }

@@ -67,7 +67,7 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
         parameters.addPage(1, 4);
         parameters.addPage(1, 10);
         parameters.addPage(1, 11);
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         PDDocument outDocument = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6);

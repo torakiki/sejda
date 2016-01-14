@@ -55,17 +55,17 @@ public abstract class SingleTiffConversionTaskTest extends BaseTaskTest<PdfToSin
 
     private void setCommonParams(AbstractPdfToImageParameters parameters) {
         parameters.setResolutionInDpi(96);
-        parameters.setSource(customEncryptedInput("enc_test_test_file.pdf", "test"));
+        parameters.setSource(customEncryptedInput("pdf/enc_test_test_file.pdf", "test"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test
     public void testExecuteStreamToSingleTiff() throws IOException {
         AbstractPdfToSingleImageParameters parameters = getSingleTiffParams();
-        testContext.fileOutputTo(parameters);
+        testContext.fileOutputTo(parameters, ".tiff");
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.forEachRawOutput(p -> {
+        testContext.forRawOutput(p -> {
             try {
                 RenderedImage ri = ImageTestUtils.loadImage(p.toFile());
                 assertTrue(ri.getHeight() > 0);

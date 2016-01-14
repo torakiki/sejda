@@ -20,22 +20,19 @@ package org.sejda.impl.sambox;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
-import org.sejda.common.ComponentsUtility;
 import org.sejda.core.service.SetHeaderFooterTaskTest;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * @author Eduard Weissmann
  */
 public class SetHeaderFooterSamboxTaskTest extends SetHeaderFooterTaskTest {
-    private PdfTextExtractorByArea extractor = new PdfTextExtractorByArea();
 
     @Override
     public Task<SetHeaderFooterParameters> getTask() {
@@ -43,26 +40,20 @@ public class SetHeaderFooterSamboxTaskTest extends SetHeaderFooterTaskTest {
     }
 
     @Override
-    protected void assertFooterHasText(String filename, int page, String expectedText) throws Exception {
-        PdfSource<?> source = PdfStreamSource.newInstanceNoPassword(getResultInputStream(filename), filename);
-        PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
-
+    protected void assertFooterHasText(PDPage page, String expectedText) {
         try {
-            assertThat(extractor.extractFooterText(handler.getPage(page)).trim(), is(expectedText));
-        } finally {
-            ComponentsUtility.nullSafeCloseQuietly(handler);
+            assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is(expectedText));
+        } catch (TaskIOException e) {
+            fail(e.getMessage());
         }
     }
 
     @Override
-    protected void assertHeaderHasText(String filename, int page, String expectedText) throws Exception {
-        PdfSource<?> source = PdfStreamSource.newInstanceNoPassword(getResultInputStream(filename), filename);
-        PDDocumentHandler handler = source.open(new DefaultPdfSourceOpener());
-
+    protected void assertHeaderHasText(PDPage page, String expectedText) {
         try {
-            assertThat(extractor.extractHeaderText(handler.getPage(page)).trim(), is(expectedText));
-        } finally {
-            ComponentsUtility.nullSafeCloseQuietly(handler);
+            assertThat(new PdfTextExtractorByArea().extractHeaderText(page).trim(), is(expectedText));
+        } catch (TaskIOException e) {
+            fail(e.getMessage());
         }
     }
 

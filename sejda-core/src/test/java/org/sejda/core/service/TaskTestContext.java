@@ -19,6 +19,7 @@
 package org.sejda.core.service;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -98,8 +99,23 @@ public class TaskTestContext implements Closeable {
      * @param params
      * @return
      */
-    public TaskTestContext fileOutputTo(SingleOutputTaskParameters params) throws IOException {
+    public TaskTestContext pdfOutputTo(SingleOutputTaskParameters params) throws IOException {
         this.fileOutput = File.createTempFile("SejdaTest", ".pdf");
+        this.fileOutput.deleteOnExit();
+        params.setOutput(new FileTaskOutput(fileOutput));
+        return this;
+    }
+
+    /**
+     * Initialize the given params with a {@link FileTaskOutput} on a file with the given extension
+     * 
+     * @param params
+     * @param extension
+     * @return
+     * @throws IOException
+     */
+    public TaskTestContext fileOutputTo(SingleOutputTaskParameters params, String extension) throws IOException {
+        this.fileOutput = File.createTempFile("SejdaTest", extension);
         this.fileOutput.deleteOnExit();
         params.setOutput(new FileTaskOutput(fileOutput));
         return this;
@@ -295,6 +311,36 @@ public class TaskTestContext implements Closeable {
     }
 
     /**
+     * Applies the given consumer to generated single output PDF document
+     * 
+     * @param consumer
+     * @return
+     * @throws IOException
+     */
+    public TaskTestContext forPdfOutput(Consumer<PDDocument> consumer) {
+        requirePDDocument();
+        consumer.accept(outputDocument);
+        return this;
+    }
+
+    /**
+     * Applies the given consumer to generated output PDF document with the given name
+     * 
+     * @param consumer
+     * @return
+     * @throws IOException
+     */
+    public TaskTestContext forPdfOutput(String filename, Consumer<PDDocument> consumer) throws IOException {
+        requireMultipleOutputs();
+        assertTrue("Not a PDF output",
+                isNotEmpty(filename) && filename.toLowerCase().endsWith(SejdaFileExtensions.PDF_EXTENSION));
+        try (PDDocument doc = PDFParser.parse(SeekableSources.seekableSourceFrom(new File(fileOutput, filename)))) {
+            consumer.accept(doc);
+        }
+        return this;
+    }
+
+    /**
      * Applies the given consumer to every generated output
      * 
      * @param consumer
@@ -304,6 +350,19 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext forEachRawOutput(Consumer<Path> consumer) throws IOException {
         requireMultipleOutputs();
         Files.list(fileOutput.toPath()).forEach(consumer);
+        return this;
+    }
+
+    /**
+     * Applies the given consumer to a single generated output
+     * 
+     * @param consumer
+     * @return
+     * @throws IOException
+     */
+    public TaskTestContext forRawOutput(Consumer<Path> consumer) {
+        assertNotNull(fileOutput);
+        consumer.accept(fileOutput.toPath());
         return this;
     }
 

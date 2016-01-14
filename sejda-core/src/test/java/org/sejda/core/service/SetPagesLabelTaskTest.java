@@ -20,88 +20,65 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfPageLabels;
-import com.lowagie.text.pdf.PdfPageLabels.PdfPageLabelFormat;
-import com.lowagie.text.pdf.PdfReader;
+import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
+import org.sejda.sambox.pdmodel.common.PDPageLabels;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class SetPagesLabelTaskTest extends PdfOutEnabledTest implements TestableTask<SetPagesLabelParameters> {
+public abstract class SetPagesLabelTaskTest extends BaseTaskTest<SetPagesLabelParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private SetPagesLabelParameters parameters;
 
-    @Before
-    public void setUp() {
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    /**
-     * Set up of the set page labels parameters
-     * 
-     */
-    private void setUpParameters() {
+    private void setUpParameters() throws IOException {
         parameters = new SetPagesLabelParameters();
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.putLabel(1, PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1));
         parameters.putLabel(3, PdfPageLabel.newInstanceWithLabel("Test", PdfLabelNumberingStyle.ARABIC, 1));
         parameters.putLabel(20, PdfPageLabel.newInstanceWithLabel("OutOfRange", PdfLabelNumberingStyle.ARABIC, 1));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewFileOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultFile();
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        assertEquals(4, reader.getNumberOfPages());
-        PdfPageLabelFormat[] formats = PdfPageLabels.getPageLabelFormats(reader);
-        assertEquals(1, formats[0].logicalPage);
-        assertEquals(1, formats[1].logicalPage);
-        assertEquals(1, formats[0].physicalPage);
-        assertEquals(3, formats[1].physicalPage);
-        assertEquals(PdfPageLabels.LOWERCASE_ROMAN_NUMERALS, formats[0].numberStyle);
-        assertEquals(PdfPageLabels.DECIMAL_ARABIC_NUMERALS, formats[1].numberStyle);
-        assertEquals("Test", formats[1].prefix);
-        reader.close();
-    }
+    public void testExecute() throws IOException {
+        setUpParameters();
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(4).forPdfOutput(d -> {
+            try {
+                PDPageLabels labels = d.getDocumentCatalog().getPageLabels();
+                PDPageLabelRange range1 = labels.getPageLabelRange(0);
+                assertNotNull(range1);
+                assertEquals(PDPageLabelRange.STYLE_ROMAN_LOWER, range1.getStyle());
+                assertEquals(1, range1.getStart());
+                PDPageLabelRange range2 = labels.getPageLabelRange(2);
+                assertNotNull(range2);
+                assertEquals(PDPageLabelRange.STYLE_DECIMAL, range2.getStyle());
+                assertEquals(1, range2.getStart());
+                assertEquals("Test", range2.getPrefix());
+                assertNull(labels.getPageLabelRange(19));
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        });
 
-    protected SetPagesLabelParameters getParameters() {
-        return parameters;
     }
-
 }

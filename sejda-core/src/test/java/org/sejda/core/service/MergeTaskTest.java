@@ -149,7 +149,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     void doExecuteMergeAll(boolean hasBookmarks, int pages) throws IOException {
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(pages)
@@ -162,7 +162,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(312).assertVersion(PdfVersion.VERSION_1_6).assertHasOutline(false)
@@ -176,7 +176,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(312).assertVersion(PdfVersion.VERSION_1_6).assertHasOutline(false)
@@ -210,7 +210,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     public void doExecuteMergeRanges() throws IOException {
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(27).assertVersion(PdfVersion.VERSION_1_6)
@@ -220,7 +220,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeRangesWithBlankPage() throws IOException {
         setUpParameters(getInputWithOutline());
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {
             input.addPageRange(new PageRange(2, 4));
         }

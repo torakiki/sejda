@@ -102,14 +102,10 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             tasks = getTasksMap(document);
             validation = getValidation(document);
             ignoreXmlConfig = getIgnoreXmlConfig(document);
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
             throw new ConfigurationException(e);
-        } catch (SAXException e) {
-            throw new ConfigurationException(e);
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | XPathExpressionException e) {
             throw new ConfigurationException("Unable to create DocumentBuilder.", e);
-        } catch (XPathExpressionException e) {
-            throw new ConfigurationException("Unable evaluate xpath expression.", e);
         }
     }
 
@@ -117,8 +113,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
         if (Boolean.getBoolean(Sejda.PERFORM_SCHEMA_VALIDATION_PROPERTY_NAME)) {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(Thread.currentThread()
-                    .getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
+            factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
 
             factory.setNamespaceAware(true);
         }
@@ -187,8 +183,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             if (assignableInterface.isAssignableFrom(clazz)) {
                 return clazz.asSubclass(assignableInterface);
             }
-            throw new ConfigurationException(String.format("The configured %s is not a subtype of %s", clazz,
-                    assignableInterface));
+            throw new ConfigurationException(
+                    String.format("The configured %s is not a subtype of %s", clazz, assignableInterface));
         }
         throw new ConfigurationException(String.format("Missing %s configuration parameter.", attributeName));
     }

@@ -61,7 +61,8 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
     @Test
     public void testExecute() throws IOException {
         setUpParameters();
-        testContext.fileOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
         PDDocument outDocument = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(8);
         for (int i = 0; i < outDocument.getNumberOfPages(); i++) {
