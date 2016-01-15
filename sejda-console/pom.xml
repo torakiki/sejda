@@ -11,7 +11,7 @@
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
 		<version>2.0.0-alpha28-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<profiles>
@@ -189,10 +189,10 @@
 					<repositoryName>lib</repositoryName>
 					<!-- set alternative assemble directory -->
 					<assembleDirectory>${project.build.directory}/assembled</assembleDirectory>
-					<!-- Copy the contents from "/src/main/config" to the target configuration 
+					<!-- Copy the contents from "/src/main/config" to the target configuration
 						directory in the assembled application -->
 					<copyConfigurationDirectory>true</copyConfigurationDirectory>
-					<!-- Include the target configuration directory in the beginning of 
+					<!-- Include the target configuration directory in the beginning of
 						the classpath declaration in the bin scripts -->
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
 					<!-- Default JVM memory args -->

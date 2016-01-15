@@ -11,7 +11,7 @@
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
 		<version>2.0.0-alpha28-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<dependencies>
@@ -19,7 +19,7 @@
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-model</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 
 		<!-- test dependencies -->
 		<dependency>

@@ -7,13 +7,13 @@
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
 		<version>2.0.0-alpha28-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>sejda-model</artifactId>
 	<packaging>jar</packaging>
 	<name>sejda model</name>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -57,6 +57,6 @@
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>xmlgraphics-commons</artifactId>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>
