@@ -144,7 +144,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                     if (cache.containsKey(hash)) {
                         newImage = cache.get(hash).get();
                     } else {
-                        newImage = PDImageXObject.createFromFile(tmpImageFile);
+                        newImage = PDImageXObject.createFromFileByExtension(tmpImageFile);
                         cache.put(hash, new SoftReference<>(newImage));
                     }
 
