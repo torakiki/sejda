@@ -26,8 +26,9 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
@@ -41,16 +42,13 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.encryption.MessageDigests;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
 
 /**
  * SAMbox implementation of the Optimize task
@@ -116,8 +114,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
     private void optimizeImages(PDPage page) throws TaskException {
         PDResources pageResources = page.getResources();
-        List<COSName> xObjectNames = Lists.newArrayList(pageResources.getXObjectNames());
-        for (COSName xObjectName : xObjectNames) {
+        for (COSName xObjectName : pageResources.getXObjectNames()) {
             stopTaskIfCancelled();
             try {
                 PDXObject obj = pageResources.getXObject(xObjectName);
@@ -139,7 +136,8 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
                     }
 
                     // images are hashed and cached so only one PDImageXObject is used if the image is repeated
-                    String hash = Files.hash(tmpImageFile, Hashing.md5()).toString();
+                    String hash = Base64.getEncoder()
+                            .encodeToString(MessageDigests.md5().digest(Files.readAllBytes(tmpImageFile.toPath())));
                     PDImageXObject newImage;
                     if (cache.containsKey(hash)) {
                         newImage = cache.get(hash).get();
