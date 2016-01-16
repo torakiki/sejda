@@ -153,7 +153,7 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertVersion(PdfVersion version) {
         requirePDDocument();
-        assertEquals("Wrong output PDF version", version.getVersionAsDoubleString(), outputDocument.getVersion());
+        assertEquals("Wrong output PDF version", version.getVersionString(), outputDocument.getVersion());
         return this;
     }
 

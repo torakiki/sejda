@@ -152,7 +152,7 @@ public class PDDocumentHandler implements Closeable {
      */
     public void setVersionOnPDDocument(PdfVersion version) {
         if (version != null) {
-            document.setVersion(version.getVersionAsDoubleString());
+            document.setVersion(version.getVersionString());
             LOG.trace("Version set to '{}'", version);
         }
     }

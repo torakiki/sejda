@@ -166,7 +166,7 @@ public abstract class DecryptTaskTest extends BaseTaskTest<DecryptParameters> {
         testContext.forEachPdfOutput(d -> {
             assertEquals(Sejda.CREATOR, d.getDocumentInformation().getCreator());
             assertFalse(d.isEncrypted());
-            assertEquals("Wrong output PDF version", PdfVersion.VERSION_1_6.getVersionAsDoubleString(), d.getVersion());
+            assertEquals("Wrong output PDF version", PdfVersion.VERSION_1_6.getVersionString(), d.getVersion());
         });
     }
 }
