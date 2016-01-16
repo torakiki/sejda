@@ -190,7 +190,6 @@
 		<bouncycastle.version>1.54</bouncycastle.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<guava.version>19.0-rc2</guava.version>
 	</properties>
 
 	<dependencyManagement>
@@ -209,11 +208,6 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>${commons.lang.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>${guava.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>jdepend</groupId>
