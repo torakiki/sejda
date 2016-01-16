@@ -17,10 +17,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.CompressTaskCliArguments;
-import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.OptimizeParameters;
-
-import java.util.Optional;
 
 public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> {
@@ -39,14 +36,5 @@ public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer
         parameters.setImageQuality(taskCliArguments.getImageQuality());
 
         return parameters;
-    }
-
-    private Optional<FileIndexAndPage> parseIndexAndPage(String in) {
-        String[] parts = in.split(":");
-        try {
-            return Optional.of(new FileIndexAndPage(Integer.valueOf(parts[0]), Integer.valueOf(parts[1])));
-        } catch (RuntimeException e) {
-            return Optional.empty();
-        }
     }
 }
