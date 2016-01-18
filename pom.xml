@@ -69,6 +69,7 @@
 							<tagNameFormat>v@{project.version}</tagNameFormat>
 							<preparationGoals>clean install</preparationGoals>
 							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<localCheckout>true</localCheckout>
 						</configuration>
 					</plugin>
 					<plugin>
