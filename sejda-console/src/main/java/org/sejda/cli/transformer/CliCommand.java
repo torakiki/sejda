@@ -24,8 +24,62 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.model.*;
-import org.sejda.model.parameter.*;
+import org.sejda.cli.model.AlternateMixTaskCliArguments;
+import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
+import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
+import org.sejda.cli.model.CombineReorderTaskCliArguments;
+import org.sejda.cli.model.CompressTaskCliArguments;
+import org.sejda.cli.model.CropTaskCliArguments;
+import org.sejda.cli.model.DecryptTaskCliArguments;
+import org.sejda.cli.model.EncryptTaskCliArguments;
+import org.sejda.cli.model.ExtractByBookmarksTaskCliArguments;
+import org.sejda.cli.model.ExtractPagesTaskCliArguments;
+import org.sejda.cli.model.ExtractTextByPagesTaskCliArguments;
+import org.sejda.cli.model.ExtractTextTaskCliArguments;
+import org.sejda.cli.model.MergeTaskCliArguments;
+import org.sejda.cli.model.PdfToJpegTaskCliArguments;
+import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
+import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
+import org.sejda.cli.model.RotateTaskCliArguments;
+import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
+import org.sejda.cli.model.SetMetadataTaskCliArguments;
+import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
+import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
+import org.sejda.cli.model.SimpleSplitTaskCliArguments;
+import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
+import org.sejda.cli.model.SplitByEveryXPagesTaskCliArguments;
+import org.sejda.cli.model.SplitByPagesTaskCliArguments;
+import org.sejda.cli.model.SplitBySizeTaskCliArguments;
+import org.sejda.cli.model.SplitByTextTaskCliArguments;
+import org.sejda.cli.model.SplitDownTheMiddleTaskCliArguments;
+import org.sejda.cli.model.TaskCliArguments;
+import org.sejda.cli.model.UnpackTaskCliArguments;
+import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
+import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.CombineReorderParameters;
+import org.sejda.model.parameter.CropParameters;
+import org.sejda.model.parameter.DecryptParameters;
+import org.sejda.model.parameter.EncryptParameters;
+import org.sejda.model.parameter.ExtractByOutlineParameters;
+import org.sejda.model.parameter.ExtractPagesParameters;
+import org.sejda.model.parameter.ExtractTextByPagesParameters;
+import org.sejda.model.parameter.ExtractTextParameters;
+import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.parameter.OptimizeParameters;
+import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.parameter.SetHeaderFooterParameters;
+import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.parameter.SetPagesLabelParameters;
+import org.sejda.model.parameter.SetPagesTransitionParameters;
+import org.sejda.model.parameter.SimpleSplitParameters;
+import org.sejda.model.parameter.SplitByEveryXPagesParameters;
+import org.sejda.model.parameter.SplitByOutlineLevelParameters;
+import org.sejda.model.parameter.SplitByPagesParameters;
+import org.sejda.model.parameter.SplitBySizeParameters;
+import org.sejda.model.parameter.SplitByTextContentParameters;
+import org.sejda.model.parameter.SplitDownTheMiddleParameters;
+import org.sejda.model.parameter.UnpackParameters;
+import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
@@ -186,7 +240,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
             return new CropCliArgumentsTransformer();
         }
-    }, "Given a pdf document and a set of rectangular boxes, creates a single output pdf document where pages are cropped according to the input rectangular boxes. Input boxes are set as mediabox and cropbox on the resulting document pages (see Pdf reference 1.7, chapter 3.6.2, TABLE 3.27). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes.", "crop -f /tmp/file1.pdf -o /tmp/output.pdf --cropAreas [0:0][5:10] [5:0][10:10]"),
+    }, "Given a pdf document and a set of rectangular boxes, creates a single output pdf document where pages are cropped according to the input rectangular boxes. Input boxes are set as mediabox and cropbox on the resulting document pages (see PDF 32000-1:2008, chapter 7.7.3.3, Table 30). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes.", "crop -f /tmp/file1.pdf -o /tmp/output.pdf --cropAreas [0:0][5:10] [5:0][10:10]"),
     PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
 
         @Override
