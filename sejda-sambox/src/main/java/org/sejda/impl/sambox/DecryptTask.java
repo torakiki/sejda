@@ -52,7 +52,6 @@ public class DecryptTask extends BaseTask<DecryptParameters> {
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
-
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
