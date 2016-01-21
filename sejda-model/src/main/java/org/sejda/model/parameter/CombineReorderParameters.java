@@ -27,7 +27,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
-import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 
@@ -35,7 +34,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * Parameters specifying a list of pdf sources and an ordered list of pages from each file, that should be combined into one pdf output
  * Allows pages to appear in a different order in the output than in the original source.
  */
-public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParameters implements SingleOutputTaskParameters {
+public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParameters {
 
     @NotEmpty
     private List<FileIndexAndPage> pages = new ArrayList<FileIndexAndPage>();

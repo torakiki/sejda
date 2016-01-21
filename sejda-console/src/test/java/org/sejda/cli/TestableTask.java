@@ -63,7 +63,8 @@ public enum TestableTask {
     COMBINE_REORDER(new CombineReorderDefaultsProvider()),
     SPLIT_DOWN_THE_MIDDLE(new MultipleInputsAndFolderOutputDefaultsProvider()),
     SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
-    COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider());
+    COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
+    ADD_BACK_PAGES(new AddBackPagesDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -114,11 +115,9 @@ public enum TestableTask {
     }
 
     public static TestableTask[] getTasksWithMultipleSouceFiles() {
-        return new TestableTask[] { TestableTask.DECRYPT, TestableTask.ENCRYPT, TestableTask.ROTATE,
-                TestableTask.SET_VIEWER_PREFERENCES, TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.ALTERNATE_MIX, TestableTask.MERGE, TestableTask.SET_HEADER_FOOTER, TestableTask.COMBINE_REORDER,
-                TestableTask.SPLIT_DOWN_THE_MIDDLE, TestableTask.COMPRESS
-        };
+        return new TestableTask[] { DECRYPT, ENCRYPT, ROTATE, SET_VIEWER_PREFERENCES, UNPACK, EXTRACT_TEXT,
+                ALTERNATE_MIX, MERGE, SET_HEADER_FOOTER, COMBINE_REORDER, SPLIT_DOWN_THE_MIDDLE, COMPRESS,
+                ADD_BACK_PAGES };
     }
 
     boolean hasFolderOutput() {
@@ -319,6 +318,14 @@ class CombineReorderDefaultsProvider extends MultipleInputsAndFileOutputDefaults
 class SplitByTextDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
-        return super.provideDefaults(taskName).with("--top", "10").with("--left", "10").with("--width", "100").with("--height", "10");
+        return super.provideDefaults(taskName).with("--top", "10").with("--left", "10").with("--width", "100")
+                .with("--height", "10");
+    }
+}
+
+class AddBackPagesDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-b", "inputs/back.pdf");
     }
 }

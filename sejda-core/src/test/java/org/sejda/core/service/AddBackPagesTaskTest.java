@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.AddBackpagesParameters;
+import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 
@@ -34,12 +34,12 @@ import org.sejda.model.pdf.page.PageRange;
  *
  */
 @Ignore
-public abstract class AddBackPagesTaskTest extends BaseTaskTest<AddBackpagesParameters> {
+public abstract class AddBackPagesTaskTest extends BaseTaskTest<AddBackPagesParameters> {
 
-    private AddBackpagesParameters parameters;
+    private AddBackPagesParameters parameters;
 
     private void setUpParametersWithOutline() {
-        parameters = new AddBackpagesParameters();
+        parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -49,7 +49,7 @@ public abstract class AddBackPagesTaskTest extends BaseTaskTest<AddBackpagesPara
     }
 
     private void setUpParametersWithForms() {
-        parameters = new AddBackpagesParameters();
+        parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -59,7 +59,7 @@ public abstract class AddBackPagesTaskTest extends BaseTaskTest<AddBackpagesPara
     }
 
     private void setUpParametersBackPageToEveryPage() {
-        parameters = new AddBackpagesParameters();
+        parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -69,7 +69,7 @@ public abstract class AddBackPagesTaskTest extends BaseTaskTest<AddBackpagesPara
     }
 
     private void setUpParametersMultipleEncryptedInput() {
-        parameters = new AddBackpagesParameters();
+        parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);

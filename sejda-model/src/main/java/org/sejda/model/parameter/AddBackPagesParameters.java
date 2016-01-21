@@ -43,7 +43,7 @@ import org.sejda.model.validation.constraint.NoIntersections;
  *
  */
 @NoIntersections
-public class AddBackpagesParameters extends MultiplePdfSourceMultipleOutputParameters
+public class AddBackPagesParameters extends MultiplePdfSourceMultipleOutputParameters
         implements PageRangeSelection, PagesSelection {
 
     @Min(value = 1)
@@ -116,10 +116,10 @@ public class AddBackpagesParameters extends MultiplePdfSourceMultipleOutputParam
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AddBackpagesParameters)) {
+        if (!(other instanceof AddBackPagesParameters)) {
             return false;
         }
-        AddBackpagesParameters parameter = (AddBackpagesParameters) other;
+        AddBackPagesParameters parameter = (AddBackPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(backPagesSource, parameter.getBackPagesSource()).append(pageSelection, parameter.pageSelection)
                 .append(step, parameter.step).isEquals();

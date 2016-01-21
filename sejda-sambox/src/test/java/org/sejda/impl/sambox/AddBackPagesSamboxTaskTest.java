@@ -19,7 +19,7 @@
 package org.sejda.impl.sambox;
 
 import org.sejda.core.service.AddBackPagesTaskTest;
-import org.sejda.model.parameter.AddBackpagesParameters;
+import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.task.Task;
 
 /**
@@ -29,7 +29,7 @@ import org.sejda.model.task.Task;
 public class AddBackPagesSamboxTaskTest extends AddBackPagesTaskTest {
 
     @Override
-    public Task<AddBackpagesParameters> getTask() {
+    public Task<AddBackPagesParameters> getTask() {
         return new AddBackPagesTask();
     }
 

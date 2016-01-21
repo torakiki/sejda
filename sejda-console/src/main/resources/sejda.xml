@@ -57,5 +57,7 @@
 			  task="org.sejda.impl.sambox.SplitByTextContentTask" />
 		<task parameters="org.sejda.model.parameter.OptimizeParameters"
 			  task="org.sejda.impl.sambox.OptimizeTask" />
+		<task parameters="org.sejda.model.parameter.AddBackPagesParameters"
+			  task="org.sejda.impl.sambox.AddBackPagesTask" />
 	</tasks>
 </sejda>

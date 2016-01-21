@@ -92,7 +92,7 @@ public class SejdaConsole {
      * 
      */
     private void validateNoDuplicateCommandArguments() {
-        Map<String, Object> uniqueArguments = new HashMap<String, Object>();
+        Map<String, Object> uniqueArguments = new HashMap<>();
         for (final String eachArgument : arguments.getCommandArguments()) {
             if (uniqueArguments.containsKey(eachArgument) && StringUtils.startsWith(eachArgument, "-")) {
                 throw new ArgumentValidationException(

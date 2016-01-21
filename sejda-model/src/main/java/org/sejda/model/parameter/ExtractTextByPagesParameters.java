@@ -74,13 +74,6 @@ public class ExtractTextByPagesParameters extends SinglePdfSourceMultipleOutputP
     }
 
     /**
-     * @return true if page selection for this input contains all the pages of the input source.
-     */
-    public boolean isAllPages() {
-        return pageSelection.isEmpty();
-    }
-
-    /**
      * @param totalNumberOfPage
      *            the number of pages of the document (upper limit).
      * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set.

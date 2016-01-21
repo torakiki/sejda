@@ -40,7 +40,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.parameter.AddBackpagesParameters;
+import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  *
  */
-public class AddBackPagesTask extends BaseTask<AddBackpagesParameters> {
+public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AddBackPagesTask.class);
 
@@ -66,7 +66,7 @@ public class AddBackPagesTask extends BaseTask<AddBackpagesParameters> {
     private PDDocumentHandler destinationDocument;
 
     @Override
-    public void before(AddBackpagesParameters parameters) {
+    public void before(AddBackPagesParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -74,7 +74,7 @@ public class AddBackPagesTask extends BaseTask<AddBackpagesParameters> {
     }
 
     @Override
-    public void execute(AddBackpagesParameters parameters) throws TaskException {
+    public void execute(AddBackPagesParameters parameters) throws TaskException {
         LOG.debug("Opening back pages source {}", parameters.getBackPagesSource());
         backPagesSource = parameters.getBackPagesSource().open(documentLoader);
         List<PDPage> back = parameters.getPages(backPagesSource.getNumberOfPages()).stream()

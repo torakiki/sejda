@@ -28,32 +28,32 @@ import org.sejda.model.pdf.page.PageRange;
  * @author Andrea Vacondio
  *
  */
-public class AddBackpagesParametersTest {
+public class AddBackPagesParametersTest {
     @Test
     public void testEquals() {
-        AddBackpagesParameters eq1 = new AddBackpagesParameters();
-        AddBackpagesParameters eq2 = new AddBackpagesParameters();
-        AddBackpagesParameters eq3 = new AddBackpagesParameters();
-        AddBackpagesParameters diff = new AddBackpagesParameters();
+        AddBackPagesParameters eq1 = new AddBackPagesParameters();
+        AddBackPagesParameters eq2 = new AddBackPagesParameters();
+        AddBackPagesParameters eq3 = new AddBackPagesParameters();
+        AddBackPagesParameters diff = new AddBackPagesParameters();
         diff.addPageRange(new PageRange(12));
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testInvalidParametersEmptySourceList() {
-        AddBackpagesParameters victim = new AddBackpagesParameters();
+        AddBackPagesParameters victim = new AddBackPagesParameters();
         TestUtils.assertInvalidParameters(victim);
     }
 
     @Test
     public void getPagesEmptyRange() {
-        AddBackpagesParameters victim = new AddBackpagesParameters();
+        AddBackPagesParameters victim = new AddBackPagesParameters();
         assertEquals(10, victim.getPages(10).size());
     }
 
     @Test
     public void getPagesRange() {
-        AddBackpagesParameters victim = new AddBackpagesParameters();
+        AddBackPagesParameters victim = new AddBackPagesParameters();
         victim.addPageRange(new PageRange(2, 5));
         assertEquals(4, victim.getPages(10).size());
     }

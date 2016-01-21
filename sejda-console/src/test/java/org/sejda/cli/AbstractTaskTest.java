@@ -57,9 +57,11 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
         createTestPdfFile("./inputs/second_input.pdf");
         createTestPdfFile("./inputs/input-protected.pdf");
         createTestPdfFile("./inputs/input-unprotected.pdf");
+        createTestPdfFile("./inputs/back.pdf");
         createTestFolder("./outputs");
 
         createTestPdfFile("/tmp/file1.pdf");
         createTestPdfFile("/tmp/file2.pdf");
+        createTestPdfFile("/tmp/back.pdf");
     }
 }
