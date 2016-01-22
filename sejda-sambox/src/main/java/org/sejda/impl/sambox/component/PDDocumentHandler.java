@@ -42,6 +42,7 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageTree;
@@ -242,6 +243,10 @@ public class PDDocumentHandler implements Closeable {
 
     public PDDocument getUnderlyingPDDocument() {
         return document;
+    }
+
+    public PDDocumentCatalog catalog() {
+        return document.getDocumentCatalog();
     }
 
     /**

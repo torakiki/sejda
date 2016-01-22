@@ -45,9 +45,10 @@ import org.sejda.model.pdf.PdfVersion;
  */
 @Ignore
 public abstract class DecryptTaskTest extends BaseTaskTest<DecryptParameters> {
-    private DecryptParameters parameters = new DecryptParameters();
+    private DecryptParameters parameters;
 
     private void setUpParameters() {
+        parameters = new DecryptParameters();
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
