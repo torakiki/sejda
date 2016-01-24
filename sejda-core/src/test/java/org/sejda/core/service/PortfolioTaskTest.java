@@ -18,7 +18,10 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
@@ -27,6 +30,9 @@ import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.PortfolioParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
+import org.sejda.sambox.cos.COSName;
 
 /**
  * @author Andrea Vacondio
@@ -52,8 +58,12 @@ public abstract class PortfolioTaskTest extends BaseTaskTest<PortfolioParameters
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertCreator().assertPages(0).forPdfOutput(
-                d -> assertEquals(3, d.getDocumentCatalog().getNames().getEmbeddedFiles().getKids().size()));
+        testContext.assertCreator().assertPages(1).forPdfOutput(d -> {
+            COSBase names = d.getDocumentCatalog().getNames().getEmbeddedFiles().getCOSObject().getItem(COSName.NAMES);
+            assertThat(names, instanceOf(COSArray.class));
+            assertEquals(6, ((COSArray) names).size());
+            assertNotNull(d.getDocumentCatalog().getCOSObject().getItem(COSName.getPDFName("Collection")));
+        });
     }
 
 }

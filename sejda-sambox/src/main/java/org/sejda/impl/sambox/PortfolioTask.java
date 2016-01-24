@@ -52,6 +52,7 @@ import org.sejda.model.parameter.PortfolioParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.cos.COSBase;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
@@ -73,6 +74,7 @@ import org.slf4j.LoggerFactory;
 public class PortfolioTask extends BaseTask<PortfolioParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PortfolioTask.class);
+    private static final COSName COLLECTION_ITEM_ORDER_FIELD = COSName.getPDFName("Sejda-Order");
 
     private int totalSteps;
     private SingleOutputWriter outputWriter;
@@ -101,50 +103,26 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
 
         PDEmbeddedFilesNameTreeNode embeddedFiles = new PDEmbeddedFilesNameTreeNode();
         Map<String, PDComplexFileSpecification> names = new HashMap<>();
-
+        COSDictionary collection = new COSDictionary();
+        collection.setName(COSName.getPDFName("View"), parameters.getInitialView().value);
+        collection.setItem(COSName.TYPE, COSName.getPDFName("Collection"));
+        collection.setItem(COSName.getPDFName("Sort"), createSortDictionary());
+        LOG.trace("Added sort dictionary");
+        collection.setItem(COSName.getPDFName("Schema"), createSchemaDictionary());
+        LOG.trace("Added schema dictionary");
         for (PdfSource<?> source : parameters.getSourceList()) {
             stopTaskIfCancelled();
             PDComplexFileSpecification fileSpec = new PDComplexFileSpecification(null);
             fileSpec.setFileUnicode(source.getName());
             fileSpec.setFile(source.getName());
-
-            // TODO set CI
-            PDEmbeddedFile embeddedFile = new PDEmbeddedFile(
-                    source.open(new PdfSourceOpener<EmbeddedPdfSourceStream>() {
-
-                        @Override
-                        public EmbeddedPdfSourceStream open(PdfURLSource source) throws TaskIOException {
-                            try {
-                                return new EmbeddedPdfSourceStream(source.getSource().openStream());
-                            } catch (IOException e) {
-                                throw new TaskIOException(e);
-                            }
-                        }
-
-                        @Override
-                        public EmbeddedPdfSourceStream open(PdfFileSource source) throws TaskIOException {
-                            EmbeddedPdfSourceStream retVal;
-                            try {
-                                retVal = new EmbeddedPdfSourceStream(new FileInputStream(source.getSource()));
-
-                                retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE.getName(),
-                                        source.getSource().length());
-                                return retVal;
-                            } catch (FileNotFoundException e) {
-                                throw new TaskIOException(e);
-                            }
-                        }
-
-                        @Override
-                        public EmbeddedPdfSourceStream open(PdfStreamSource source) throws TaskIOException {
-                            return new EmbeddedPdfSourceStream(source.getSource());
-                        }
-                    }));
-            embeddedFile.setCreationDate(new GregorianCalendar());
+            COSDictionary collectionItem = new COSDictionary();
+            collectionItem.setInt(COLLECTION_ITEM_ORDER_FIELD, currentStep);
+            fileSpec.setCollectionItem(collectionItem);
+            PDEmbeddedFile embeddedFile = embeddedFileFromSource(source);
             fileSpec.setEmbeddedFileUnicode(embeddedFile);
             fileSpec.setEmbeddedFile(embeddedFile);
-
             names.put(currentStep + source.getName(), fileSpec);
+            collection.putIfAbsent(COSName.D, currentStep + source.getName());
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             LOG.debug("Added embedded file from {}", source);
         }
@@ -154,6 +132,7 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
         PDDocumentNameDictionary nameDictionary = new PDDocumentNameDictionary(destinationDocument.catalog());
         nameDictionary.setEmbeddedFiles(embeddedFiles);
         destinationDocument.catalog().setNames(nameDictionary);
+        destinationDocument.catalog().getCOSObject().setItem(COSName.getPDFName("Collection"), collection);
         destinationDocument.savePDDocument(tmpFile);
         nullSafeCloseQuietly(destinationDocument);
 
@@ -161,6 +140,79 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Created portfolio with {} files and written to {}", parameters.getSourceList().size(),
                 parameters.getOutput());
+    }
+
+    private COSDictionary createSortDictionary() {
+        COSDictionary sortDictionary = new COSDictionary();
+        sortDictionary.setItem(COSName.S, COLLECTION_ITEM_ORDER_FIELD);
+        return sortDictionary;
+    }
+
+    private COSDictionary createSchemaDictionary() {
+        COSDictionary schemaDictionary = new COSDictionary();
+        COSDictionary fileDateFieldDictionary = new COSDictionary();
+        fileDateFieldDictionary.setItem(COSName.SUBTYPE, COSName.F);
+        fileDateFieldDictionary.setString(COSName.N, "File");
+        fileDateFieldDictionary.setInt(COSName.O, 0);
+        schemaDictionary.setItem(COSName.F, fileDateFieldDictionary);
+        COSDictionary creationDateFieldDictionary = new COSDictionary();
+        creationDateFieldDictionary.setItem(COSName.SUBTYPE, COSName.CREATION_DATE);
+        creationDateFieldDictionary.setString(COSName.N, "Created");
+        creationDateFieldDictionary.setInt(COSName.O, 1);
+        schemaDictionary.setItem(COSName.CREATION_DATE, creationDateFieldDictionary);
+        COSDictionary modDateFieldDictionary = new COSDictionary();
+        modDateFieldDictionary.setItem(COSName.SUBTYPE, COSName.MOD_DATE);
+        modDateFieldDictionary.setString(COSName.N, "Modified");
+        modDateFieldDictionary.setInt(COSName.O, 2);
+        schemaDictionary.setItem(COSName.MOD_DATE, modDateFieldDictionary);
+        COSDictionary sizeDateFieldDictionary = new COSDictionary();
+        sizeDateFieldDictionary.setItem(COSName.SUBTYPE, COSName.SIZE);
+        sizeDateFieldDictionary.setString(COSName.N, "Size");
+        sizeDateFieldDictionary.setInt(COSName.O, 3);
+        schemaDictionary.setItem(COSName.SIZE, sizeDateFieldDictionary);
+        COSDictionary sortFieldDictionary = new COSDictionary();
+        sortFieldDictionary.setItem(COSName.SUBTYPE, COSName.N);
+        sortFieldDictionary.setString(COSName.N, "Order");
+        sortFieldDictionary.setInt(COSName.O, 4);
+        schemaDictionary.setItem(COLLECTION_ITEM_ORDER_FIELD, sortFieldDictionary);
+        return schemaDictionary;
+    }
+
+    private PDEmbeddedFile embeddedFileFromSource(PdfSource<?> source) throws TaskIOException {
+        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(source.open(new PdfSourceOpener<EmbeddedPdfSourceStream>() {
+
+            @Override
+            public EmbeddedPdfSourceStream open(PdfURLSource source) throws TaskIOException {
+                try {
+                    return new EmbeddedPdfSourceStream(source.getSource().openStream());
+                } catch (IOException e) {
+                    throw new TaskIOException(e);
+                }
+            }
+
+            @Override
+            public EmbeddedPdfSourceStream open(PdfFileSource source) throws TaskIOException {
+                try {
+                    EmbeddedPdfSourceStream retVal = new EmbeddedPdfSourceStream(
+                            new FileInputStream(source.getSource()));
+                    retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE, source.getSource().length());
+                    GregorianCalendar calendar = new GregorianCalendar();
+                    calendar.setTimeInMillis(source.getSource().lastModified());
+                    retVal.setEmbeddedDate(COSName.PARAMS.getName(), COSName.MOD_DATE, calendar);
+                    return retVal;
+                } catch (FileNotFoundException e) {
+                    throw new TaskIOException(e);
+                }
+            }
+
+            @Override
+            public EmbeddedPdfSourceStream open(PdfStreamSource source) {
+                return new EmbeddedPdfSourceStream(source.getSource());
+            }
+        }));
+        embeddedFile.setCreationDate(new GregorianCalendar());
+        embeddedFile.setSubtype("application/pdf");
+        return embeddedFile;
     }
 
     @Override

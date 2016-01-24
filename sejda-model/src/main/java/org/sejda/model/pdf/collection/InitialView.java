@@ -27,14 +27,16 @@ import org.sejda.common.FriendlyNamed;
  *
  */
 public enum InitialView implements FriendlyNamed {
-    DETAILS("details"),
-    TILES("tiles"),
-    HIDDEN("hidden");
+    DETAILS("details", "D"),
+    TILES("tiles", "T"),
+    HIDDEN("hidden", "H");
 
     private String displayName;
+    public final String value;
 
-    private InitialView(String displayName) {
+    private InitialView(String displayName, String value) {
         this.displayName = displayName;
+        this.value = value;
     }
 
     @Override
