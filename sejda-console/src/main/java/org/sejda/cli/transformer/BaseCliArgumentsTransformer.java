@@ -72,9 +72,7 @@ public class BaseCliArgumentsTransformer {
     protected void populateOutputTaskParameters(SingleOutputTaskParameters parameters,
             CliArgumentsWithPdfFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
-        if (taskCliArguments.getOverwrite()) {
-            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        }
+        parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
     }
 
     /**
@@ -109,9 +107,7 @@ public class BaseCliArgumentsTransformer {
     protected void populateAbstractParameters(AbstractPdfToSingleImageParameters parameters,
             CliArgumentsWithImageFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
-        if (taskCliArguments.getOverwrite()) {
-            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        }
+        parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
 
