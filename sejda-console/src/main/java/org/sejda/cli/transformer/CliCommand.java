@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.model.AddBackPagesTaskCliArguments;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
+import org.sejda.cli.model.AttachmentsCollectionTaskCliArguments;
 import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.CombineReorderTaskCliArguments;
@@ -58,6 +59,7 @@ import org.sejda.cli.model.UnpackTaskCliArguments;
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.parameter.DecryptParameters;
@@ -305,7 +307,14 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AddBackPagesTaskCliArguments, AddBackPagesParameters> getArgumentsTransformer() {
             return new AddBackPagesCliArgumentsTransformer();
         }
-    }, "Takes one or more pages form a PDF document and adds them to one or more PDF documents after each 'n' pages.", "addbackpages -f /tmp/file1.pdf /tmp/file2.pdf -b /tmp/back.pdf -s 1 -n 2 -o /tmp");
+    }, "Takes one or more pages form a PDF document and adds them to one or more PDF documents after each 'n' pages.", "addbackpages -f /tmp/file1.pdf /tmp/file2.pdf -b /tmp/back.pdf -s 1 -n 2 -o /tmp"),
+    PORTFOLIO("portfolio", new CliInterfacedTask<AttachmentsCollectionTaskCliArguments, AttachmentsCollectionParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<AttachmentsCollectionTaskCliArguments, AttachmentsCollectionParameters> getArgumentsTransformer() {
+            return new AttachmentsCollectionCliArgumentsTransformer();
+        }
+    }, "Creates a portfolio/collection of PDF attachments.", "portfolio -f /tmp/file1.pdf /tmp/file2.pdf -i details -o /tmp/portfolio.pdf");
 
     private String displayName;
     private String description;

@@ -64,7 +64,8 @@ public enum TestableTask {
     SPLIT_DOWN_THE_MIDDLE(new MultipleInputsAndFolderOutputDefaultsProvider()),
     SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
     COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
-    ADD_BACK_PAGES(new AddBackPagesDefaultsProvider());
+    ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
+    PORTFOLIO(new MultipleInputsAndFileOutputDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -117,7 +118,7 @@ public enum TestableTask {
     public static TestableTask[] getTasksWithMultipleSouceFiles() {
         return new TestableTask[] { DECRYPT, ENCRYPT, ROTATE, SET_VIEWER_PREFERENCES, UNPACK, EXTRACT_TEXT,
                 ALTERNATE_MIX, MERGE, SET_HEADER_FOOTER, COMBINE_REORDER, SPLIT_DOWN_THE_MIDDLE, COMPRESS,
-                ADD_BACK_PAGES };
+                ADD_BACK_PAGES, PORTFOLIO };
     }
 
     boolean hasFolderOutput() {

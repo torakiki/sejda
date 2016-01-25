@@ -16,19 +16,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox;
+package org.sejda.model.parameter;
 
-import org.sejda.core.service.PortfolioTaskTest;
-import org.sejda.model.parameter.PortfolioParameters;
-import org.sejda.model.task.Task;
+import org.junit.Test;
+import org.sejda.TestUtils;
+import org.sejda.model.pdf.collection.InitialView;
 
 /**
  * @author Andrea Vacondio
  *
  */
-public class PortfolioSamboxTaskTest extends PortfolioTaskTest {
-    @Override
-    public Task<PortfolioParameters> getTask() {
-        return new PortfolioTask();
+public class AttachmentsCollectionParametersTest {
+    @Test
+    public void testEquals() {
+        AttachmentsCollectionParameters eq1 = new AttachmentsCollectionParameters();
+        AttachmentsCollectionParameters eq2 = new AttachmentsCollectionParameters();
+        AttachmentsCollectionParameters eq3 = new AttachmentsCollectionParameters();
+        AttachmentsCollectionParameters diff = new AttachmentsCollectionParameters();
+        diff.setInitialView(InitialView.HIDDEN);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

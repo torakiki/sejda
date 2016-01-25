@@ -18,62 +18,46 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Objects.requireNonNull;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.io.SeekableSources.inMemorySeekableSourceFrom;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.DeflaterInputStream;
 
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.io.SeekableSource;
-import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.impl.sambox.component.ReadOnlyCOSStream;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.PdfURLSource;
-import org.sejda.model.parameter.PortfolioParameters;
+import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
-import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.sejda.sambox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.sejda.sambox.util.SpecVersionUtils;
-import org.sejda.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SAMBox implementation for a task that creates a PDF portfolio containing the set of input PDF documents
+ * SAMBox implementation for a task that creates a collection of attachments from a list of PDF documents. See Chap 12.3.5 of PDF spec 32000-1:2008
  * 
  * @author Andrea Vacondio
  *
  */
-public class PortfolioTask extends BaseTask<PortfolioParameters> {
+public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PortfolioTask.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AttachmentsCollectionTask.class);
     private static final COSName COLLECTION_ITEM_ORDER_FIELD = COSName.getPDFName("Sejda-Order");
 
     private int totalSteps;
@@ -81,13 +65,13 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
     private PDDocumentHandler destinationDocument;
 
     @Override
-    public void before(PortfolioParameters parameters) {
+    public void before(AttachmentsCollectionParameters parameters) {
         totalSteps = parameters.getSourceList().size();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
-    public void execute(PortfolioParameters parameters) throws TaskException {
+    public void execute(AttachmentsCollectionParameters parameters) throws TaskException {
         int currentStep = 0;
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {} ", tmpFile);
@@ -179,37 +163,7 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
     }
 
     private PDEmbeddedFile embeddedFileFromSource(PdfSource<?> source) throws TaskIOException {
-        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(source.open(new PdfSourceOpener<EmbeddedPdfSourceStream>() {
-
-            @Override
-            public EmbeddedPdfSourceStream open(PdfURLSource source) throws TaskIOException {
-                try {
-                    return new EmbeddedPdfSourceStream(source.getSource().openStream());
-                } catch (IOException e) {
-                    throw new TaskIOException(e);
-                }
-            }
-
-            @Override
-            public EmbeddedPdfSourceStream open(PdfFileSource source) throws TaskIOException {
-                try {
-                    EmbeddedPdfSourceStream retVal = new EmbeddedPdfSourceStream(
-                            new FileInputStream(source.getSource()));
-                    retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE, source.getSource().length());
-                    GregorianCalendar calendar = new GregorianCalendar();
-                    calendar.setTimeInMillis(source.getSource().lastModified());
-                    retVal.setEmbeddedDate(COSName.PARAMS.getName(), COSName.MOD_DATE, calendar);
-                    return retVal;
-                } catch (FileNotFoundException e) {
-                    throw new TaskIOException(e);
-                }
-            }
-
-            @Override
-            public EmbeddedPdfSourceStream open(PdfStreamSource source) {
-                return new EmbeddedPdfSourceStream(source.getSource());
-            }
-        }));
+        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(ReadOnlyCOSStream.fromSource(source));
         embeddedFile.setCreationDate(new GregorianCalendar());
         embeddedFile.setSubtype("application/pdf");
         return embeddedFile;
@@ -220,100 +174,4 @@ public class PortfolioTask extends BaseTask<PortfolioParameters> {
         nullSafeCloseQuietly(destinationDocument);
     }
 
-    /**
-     * A read only {@link COSStream} that reads from the underlying {@link InputStream}, is always compressed and has a length written as indirect object
-     * 
-     * @author Andrea Vacondio
-     *
-     */
-    private static class EmbeddedPdfSourceStream extends COSStream {
-
-        private InputStream stream;
-
-        EmbeddedPdfSourceStream(InputStream stream) {
-            requireNonNull(stream, "input stream cannot be null");
-            this.stream = stream;
-            setItem(COSName.FILTER, COSName.FLATE_DECODE);
-        }
-
-        @Override
-        protected InputStream doGetFilteredStream() {
-            return new DeflaterInputStream(stream);
-        }
-
-        @Override
-        public long getFilteredLength() throws IOException {
-            throw new IOException("Embedded files filtered length cannot be requested");
-        }
-
-        @Override
-        public long getUnfilteredLength() throws IOException {
-            throw new IOException("Embedded files unfiltered length cannot be requested");
-        }
-
-        @Override
-        public InputStream getUnfilteredStream() {
-            return stream;
-        }
-
-        @Override
-        public SeekableSource getUnfilteredSource() throws IOException {
-            return inMemorySeekableSourceFrom(stream);
-        }
-
-        @Override
-        public OutputStream createFilteredStream() {
-            throw new SejdaRuntimeException("createFilteredStream cannot be called on this stream");
-        }
-
-        @Override
-        public OutputStream createFilteredStream(COSBase filters) {
-            throw new SejdaRuntimeException("createFilteredStream cannot be called on this stream");
-        }
-
-        @Override
-        public void setFilters(COSBase filters) {
-            throw new SejdaRuntimeException("setFilters cannot be called on this stream");
-        }
-
-        @Override
-        public void addCompression() {
-            // do nothing, it's already supposed to be compressed
-        }
-
-        @Override
-        public boolean encryptable() {
-            return true;
-        }
-
-        @Override
-        public void encryptable(boolean encryptable) {
-            // do nothing, it can be encrypted
-        }
-
-        @Override
-        public OutputStream createUnfilteredStream() {
-            throw new SejdaRuntimeException("createUnfilteredStream cannot be called on this stream");
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @Override
-        public boolean indirectLength() {
-            return true;
-        }
-
-        @Override
-        public void indirectLength(boolean indirectLength) {
-            // do nothing, it's always written as indirect
-        }
-
-        @Override
-        public void close() {
-            IOUtils.closeQuietly(stream);
-        }
-    }
 }

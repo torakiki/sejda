@@ -28,7 +28,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.PortfolioParameters;
+import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
@@ -39,11 +39,11 @@ import org.sejda.sambox.cos.COSName;
  *
  */
 @Ignore
-public abstract class PortfolioTaskTest extends BaseTaskTest<PortfolioParameters> {
-    private PortfolioParameters parameters;
+public abstract class AttachmentsCollectionTaskTest extends BaseTaskTest<AttachmentsCollectionParameters> {
+    private AttachmentsCollectionParameters parameters;
 
     private void setUpParameters() {
-        parameters = new PortfolioParameters();
+        parameters = new AttachmentsCollectionParameters();
         parameters.setCompress(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setVersion(PdfVersion.VERSION_1_6);

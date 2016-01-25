@@ -99,4 +99,6 @@ target/assembled/bin/sejda-console extracttextbypages -h
 target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -s 1-3 -j overwrite
 target/assembled/bin/sejda-console addbackpages -h
 target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite --compressed -o /tmp/sejda-smoketest/ 
+target/assembled/bin/sejda-console portfolio -h
+target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -i details -o /tmp/sejda-smoketest/portfolio.pdf
 

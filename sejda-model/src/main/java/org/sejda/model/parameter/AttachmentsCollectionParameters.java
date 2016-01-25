@@ -26,12 +26,12 @@ import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.collection.InitialView;
 
 /**
- * Parameters for a task that creates a PDF portfolio from a list of PDF documents
+ * Parameters for a task that creates a collection of attachments from a list of PDF documents. See Chap 12.3.5 of PDF spec 32000-1:2008
  * 
  * @author Andrea Vacondio
  *
  */
-public class PortfolioParameters extends MultiplePdfSourceSingleOutputParameters {
+public class AttachmentsCollectionParameters extends MultiplePdfSourceSingleOutputParameters {
 
     @NotNull
     private InitialView initialView = InitialView.TILES;
@@ -54,10 +54,10 @@ public class PortfolioParameters extends MultiplePdfSourceSingleOutputParameters
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PortfolioParameters)) {
+        if (!(other instanceof AttachmentsCollectionParameters)) {
             return false;
         }
-        PortfolioParameters parameter = (PortfolioParameters) other;
+        AttachmentsCollectionParameters parameter = (AttachmentsCollectionParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(initialView, parameter.getInitialView())
                 .isEquals();
     }
