@@ -80,7 +80,7 @@ public class PagesExtractor implements Closeable {
             pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
             LOG.trace("Imported page number {}", page);
         } catch (PageNotFoundException ex) {
-            String warning = String.format("Page %d was skipped, not found in the document", page);
+            String warning = String.format("Page %d was skipped, could not be processed", page);
             notifyEvent(taskMetadata).taskWarning(warning);
             LOG.warn(warning, ex);
         }

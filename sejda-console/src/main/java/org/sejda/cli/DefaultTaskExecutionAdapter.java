@@ -23,6 +23,8 @@ import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.service.TaskExecutionService;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.parameter.base.TaskParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of {@link TaskExecutionAdapter}
@@ -32,7 +34,10 @@ import org.sejda.model.parameter.base.TaskParameters;
  */
 public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionAdapter.class);
+
     private final TaskExecutionService taskExecutionService;
+    private final DefaultTaskWarningsEventListener warningsListener = new DefaultTaskWarningsEventListener();
 
     public DefaultTaskExecutionAdapter(TaskExecutionService taskExecutionService) {
         this.taskExecutionService = taskExecutionService;
@@ -42,6 +47,7 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     private void registerListeners() {
         doRegisterProcessListener();
         doRegisterTaskFailureListener();
+        doRegisterTaskWarningsListener();
     }
 
     private void doRegisterProcessListener() {
@@ -52,6 +58,16 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     private void doRegisterTaskFailureListener() {
         DefaultTaskExecutionFailedEventListener listener = new DefaultTaskExecutionFailedEventListener();
         addEnsuringOnlyOne(listener);
+    }
+
+    private void doRegisterTaskWarningsListener() {
+        addEnsuringOnlyOne(warningsListener);
+    }
+
+    private void printWarningsIfAny(){
+        if(warningsListener.getWarnings().size() > 0) {
+            LOG.warn("Task completed with {} warning(s): {}", warningsListener.getWarnings().size(), String.join(", ", warningsListener.getWarnings()));
+        }
     }
 
     /**
@@ -74,5 +90,6 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     @Override
     public void execute(TaskParameters taskParameters) {
         getTaskExecutionService().execute(taskParameters);
+        printWarningsIfAny();
     }
 }
