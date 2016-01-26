@@ -12,7 +12,9 @@
 	<logger name="org.icepdf" level="INFO" />
 	<logger name="org.hibernate" level="INFO" />
 
-	<root level="DEBUG">
+	<!-- careful here. when the build is too verbose Travis-CI starts terminating it too early and deeming build failure.
+	change it locally when investigating something, but please don't commit it changed -->
+	<root level="WARN">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
