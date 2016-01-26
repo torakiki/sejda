@@ -33,6 +33,7 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
@@ -68,15 +69,21 @@ public class PagesExtractor implements Closeable {
         for (Integer page : pages) {
             taskMetadata.stopTaskIfCancelled();
 
-            retain(page);
+            retain(page, taskMetadata);
             notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(pages.size());
         }
     }
 
-    public void retain(int page) {
-        PDPage existingPage = originalDocument.getPage(page - 1);
-        pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
-        LOG.trace("Imported page number {}", page);
+    public void retain(int page, NotifiableTaskMetadata taskMetadata) {
+        try {
+            PDPage existingPage = originalDocument.getPage(page - 1);
+            pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
+            LOG.trace("Imported page number {}", page);
+        } catch (PageNotFoundException ex) {
+            String warning = String.format("Page %d was skipped, could not be processed", page);
+            notifyEvent(taskMetadata).taskWarning(warning);
+            LOG.warn(warning, ex);
+        }
     }
 
     public void setVersion(PdfVersion version) {

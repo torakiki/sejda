@@ -52,6 +52,11 @@ public interface Notifier {
     void taskStarted();
 
     /**
+     * Notifies about a task warning
+     */
+    void taskWarning(String warning);
+
+    /**
      * Notifies about a task progress which is undetermined
      */
     void progressUndetermined();

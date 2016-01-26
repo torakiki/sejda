@@ -24,11 +24,7 @@ import java.math.BigDecimal;
 
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.notification.event.AbstractNotificationEvent;
-import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
-import org.sejda.model.notification.event.TaskExecutionFailedEvent;
-import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.notification.event.*;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +80,11 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     @Override
     public void taskStarted() {
         notifyListeners(new TaskExecutionStartedEvent(taskMetadata));
+    }
+
+    @Override
+    public void taskWarning(String warning) {
+        notifyListeners(new TaskExecutionWarningEvent(warning, taskMetadata));
     }
 
     @Override

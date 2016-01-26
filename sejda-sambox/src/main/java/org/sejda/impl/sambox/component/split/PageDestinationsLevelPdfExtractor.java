@@ -90,7 +90,7 @@ public class PageDestinationsLevelPdfExtractor {
 
                     // retain
                     LOG.trace("Retaining page {} of the original document", page);
-                    extractor.retain(page);
+                    extractor.retain(page, taskMetadata);
                 }
 
                 // close
