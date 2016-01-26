@@ -20,15 +20,15 @@ target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resour
 target/assembled/bin/sejda-console extractpages --help
 target/assembled/bin/sejda-console splitbysize --help
 target/assembled/bin/sejda-console encrypt -h
-target/assembled/bin/sejda-console encrypt -a "test a pwd" --compressed -o /tmp/sejda-smoketest/ -p [FILENUMBER]_ -f ../sejda-core/src/test/resources/pdf/large_test.pdf -v 5 -j overwrite
+target/assembled/bin/sejda-console encrypt -a "test a pwd" --compressed -o /tmp/sejda-smoketest/ -p [FILENUMBER]_ -f ../sejda-core/src/test/resources/pdf/large_test.pdf -v 1.5 -j overwrite
 target/assembled/bin/sejda-console rotate -h
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p rotated_ -r 90 -m even --existingOutput overwrite
-target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p rotated_ -r 180 -m all -j overwrite -v 5
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p rotated_ -r 180 -m all -j overwrite -v 1.5
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -m all -j skip
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -s 4,12-14 -j overwrite
 target/assembled/bin/sejda-console -h setmetadata
-target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a Torakiki -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
-target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
+target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a Torakiki -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.4
+target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.4
 target/assembled/bin/sejda-console splitbysize --help
 target/assembled/bin/sejda-console splitbysize -f ../sejda-core/src/test/resources/pdf/large_test.pdf -p [FILENUMBER] -o /tmp/sejda-smoketest/ -s 1000000 -j overwrite --compressed
 target/assembled/bin/sejda-console splitbysize -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [FILENUMBER] -o /tmp/sejda-smoketest/ -s 1000000 -j skip --compressed
@@ -48,7 +48,7 @@ target/assembled/bin/sejda-console splitbyevery -h
 target/assembled/bin/sejda-console splitbyevery --help
 target/assembled/bin/sejda-console unpack -h
 target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -j overwrite
-target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/attachments.pdf -o /tmp/sejda-smoketest/ -j overwrite
+target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pdf/attachments_as_annots.pdf -o /tmp/sejda-smoketest/ -j overwrite
 target/assembled/bin/sejda-console alternatemix -h
 target/assembled/bin/sejda-console alternatemix -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 --reverseSecond --firstStep 5 --overwrite --compressed -o /tmp/sejda-smoketest/mixed.pdf
 target/assembled/bin/sejda-console crop -h
@@ -74,27 +74,31 @@ target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf
 target/assembled/bin/sejda-console settransitions -h
 target/assembled/bin/sejda-console setpagetransitions -h
 # TODO: folder contains encrypted files, maybe fix this by creating separate folders for encrypted and un-encrypted files
-# target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf/ -o /tmp/sejda-smoketest/merged.pdf --overwrite -v 7 
+# target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf/ -o /tmp/sejda-smoketest/merged.pdf --overwrite -v 1.7 
 target/assembled/bin/sejda-console unpack -h
 target/assembled/bin/sejda-console pdftomultipletiff -h
 # TODO: find a pdfbox configured sejda file and smoke-run it
 #target/assembled/bin/sejda-console -Dsejda.config.file=./etc/sejda.xml
 target/assembled/bin/sejda-console decrypt -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p dec -j fail
 target/assembled/bin/sejda-console setmetadata -h
-target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
-target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 4
-target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" --overwrite -v 4
-target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "" --overwrite -v 4
+target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.4
+target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.4
+target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" --overwrite -v 1.4
+target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "" --overwrite -v 1.4
 target/assembled/bin/sejda-console setviewerpreferences -h
 target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle 
-target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 6 -j overwrite
-target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 7 -j overwrite
+target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 1.6 -j overwrite
+target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 1.7 -j overwrite
 target/assembled/bin/sejda-console setheaderfooter -h
-target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -d 12 -s 5- -x right -t Courier -k 1 -l "[PAGE_ARABIC] my footer" -j overwrite -v 4
-target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s all -x right -y top -t Times-Bold -l "[PAGE_ROMAN]" -j overwrite -v 4
+target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -d 12 -s 5- -x right -t Courier -k 1 -l "[PAGE_ARABIC] my footer" -j overwrite -v 1.4
+target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s all -x right -y top -t Times-Bold -l "[PAGE_ROMAN]" -j overwrite -v 1.4
 target/assembled/bin/sejda-console pdftojpeg -h
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -z 1.3 -j overwrite
 target/assembled/bin/sejda-console extracttextbypages -h
 target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -s 1-3 -j overwrite
+target/assembled/bin/sejda-console addbackpages -h
+target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite --compressed -o /tmp/sejda-smoketest/ 
+target/assembled/bin/sejda-console portfolio -h
+target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -i details -o /tmp/sejda-smoketest/portfolio.pdf
 

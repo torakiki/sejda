@@ -18,119 +18,90 @@
  */
 package org.sejda.core.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.TopLeftRectangularBox;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
 
 @Ignore
-public abstract class SplitByTextContentTaskTest extends PdfOutEnabledTest implements TestableTask<SplitByTextContentParameters> {
+public abstract class SplitByTextContentTaskTest extends BaseTaskTest<SplitByTextContentParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private SplitByTextContentParameters parameters;
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private void setUpParameters(TopLeftRectangularBox area) {
+    private void setUpParameters(TopLeftRectangularBox area) throws IOException {
         parameters = new SplitByTextContentParameters(area);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_contents_sample.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/split_by_text_contents_sample.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
+    public void testExecute() throws IOException {
         setUpParameters(new TopLeftRectangularBox(114, 70, 41, 15));
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(3);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
     }
 
     @Test
-    public void testNoTextFoundInAreas() throws TaskException, IOException {
+    public void testNoTextFoundInAreas() throws IOException {
         setUpParameters(new TopLeftRectangularBox(1, 1, 1, 1));
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(0);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        execute(parameters);
+        assertTrue(failListener.isFailed());
     }
 
     @Test
-    public void testFileOutputNaming() throws TaskException, IOException {
+    public void testFileOutputNaming() throws IOException {
         setUpParameters(new TopLeftRectangularBox(70, 70, 81, 15));
         parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(3);
-        assertOutputContainsFilenames("1-Invoice 00001.pdf","4-Invoice 00002.pdf","5-Invoice 00003.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3).assertOutputContainsFilenames("1-Invoice 00001.pdf", "4-Invoice 00002.pdf",
+                "5-Invoice 00003.pdf");
     }
 
     @Test
-    public void testDoesNotSplitWhenThePageOnlyHasNonBreakingSpace() throws TaskException, IOException {
+    public void testDoesNotSplitWhenThePageOnlyHasNonBreakingSpace() throws IOException {
         setUpParameters(new TopLeftRectangularBox(68, 70, 73, 18));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_newlines_sample.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/split_by_text_newlines_sample.pdf"));
         parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
-        assertOutputContainsFilenames("1-1234561234.pdf", "3-1234561235.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).assertOutputContainsFilenames("1-1234561234.pdf", "3-1234561235.pdf");
     }
 
     @Test
-    public void testUsingPrefix() throws TaskException, IOException {
+    public void testUsingPrefix() throws IOException {
         setUpParameters(new TopLeftRectangularBox(70, 110, 92, 15));
         parameters.setStartsWith("Fax:");
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_with_prefix.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/split_by_text_with_prefix.pdf"));
         parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
-        assertOutputContainsFilenames("1-1234561234.pdf", "3-4321231234.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).assertOutputContainsFilenames("1-1234561234.pdf", "3-4321231234.pdf");
     }
 
     @Test
-    public void testUsingSuffix() throws TaskException, IOException {
+    public void testUsingSuffix() throws IOException {
         setUpParameters(new TopLeftRectangularBox(69, 95, 154, 16));
         parameters.setEndsWith("Amsterdam, Netherlands");
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/split_by_text_with_prefix.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/split_by_text_with_prefix.pdf"));
         parameters.setOutputPrefix("[CURRENTPAGE]-[TEXT]");
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
-        assertOutputContainsFilenames("1-1023AB.pdf", "3-6543AB.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).assertOutputContainsFilenames("1-1023AB.pdf", "3-6543AB.pdf");
     }
 }

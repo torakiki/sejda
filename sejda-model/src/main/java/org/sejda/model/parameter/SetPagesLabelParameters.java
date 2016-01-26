@@ -52,6 +52,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceSingleOutputParamete
      * Associates the given label to the given page number. If a label was already associated to the given page, it is replaced with the new one.
      * 
      * @param page
+     *            the one based page number
      * @param label
      * @return the previously associated label or null.
      */

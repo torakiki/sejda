@@ -76,11 +76,9 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                     outputDocumentsCounter++;
                     tmpFile = createTemporaryPdfBuffer();
                     LOG.debug("Created output temporary buffer {}", tmpFile);
-                    String outName = nameGenerator(parameters.getOutputPrefix())
-                            .generate(
-                                    enrichNameGenerationRequest(nameRequest().page(page)
-                                            .originalName(parameters.getSource().getName())
-                                            .fileNumber(outputDocumentsCounter)));
+                    String outName = nameGenerator(parameters.getOutputPrefix()).generate(enrichNameGenerationRequest(
+                            nameRequest().page(page).originalName(parameters.getSource().getName())
+                                    .fileNumber(outputDocumentsCounter)));
                     outputWriter.addOutput(file(tmpFile).name(outName));
                 }
                 LOG.trace("Retaining page {} of the original document", page);

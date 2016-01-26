@@ -21,29 +21,18 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentInformation;
 
 /**
  * Test unit for the set metadata task
@@ -52,40 +41,13 @@ import com.lowagie.text.pdf.PdfReader;
  * 
  */
 @Ignore
-@SuppressWarnings("unchecked")
-public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements TestableTask<SetMetadataParameters> {
-
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
+public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParameters> {
     private SetMetadataParameters parameters = new SetMetadataParameters();
-
-    @Before
-    public void setUp() {
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    /**
-     * Set up of the set metadata parameters
-     * 
-     */
-    private void setUpParameters() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        setUpParams(source);
-    }
-
-    private void setUpParametersEncrypted() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "enc_with_modify_perm.pdf", "test");
-        setUpParams(source);
-    }
 
     private void setUpParams(PdfSource<?> source) {
         parameters.setCompress(true);
         parameters.setOutputName("outName.pdf");
-        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.put(PdfMetadataKey.AUTHOR, "test_author");
         parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");
         parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
@@ -95,34 +57,27 @@ public abstract class SetMetadataTaskTest extends PdfOutEnabledTest implements T
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        setUpParameters();
+    public void testExecute() throws IOException {
+        setUpParams(shortInput());
         doExecute();
     }
 
     @Test
-    public void testExecuteEncrypted() throws TaskException, IOException {
-        setUpParametersEncrypted();
+    public void testExecuteEncrypted() throws IOException {
+        setUpParams(stronglyEncryptedInput());
         doExecute();
     }
 
-    private void doExecute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewFileOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultFile();
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_6);
-        HashMap<String, String> meta = reader.getInfo();
-        assertEquals("test_author", meta.get(PdfMetadataKey.AUTHOR.getKey()));
-        assertEquals("test_keywords", meta.get(PdfMetadataKey.KEYWORDS.getKey()));
-        assertEquals("test_subject", meta.get(PdfMetadataKey.SUBJECT.getKey()));
-        assertEquals("test_title", meta.get(PdfMetadataKey.TITLE.getKey()));
-        reader.close();
-    }
-
-    protected SetMetadataParameters getParameters() {
-        return parameters;
+    private void doExecute() throws IOException {
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument document = testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7);
+        PDDocumentInformation info = document.getDocumentInformation();
+        assertEquals("test_author", info.getAuthor());
+        assertEquals("test_keywords", info.getKeywords());
+        assertEquals("test_subject", info.getSubject());
+        assertEquals("test_title", info.getTitle());
     }
 
 }

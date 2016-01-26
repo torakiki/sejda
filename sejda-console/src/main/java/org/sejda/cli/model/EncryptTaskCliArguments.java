@@ -48,6 +48,6 @@ public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectory
     @Option(shortName = "a", description = "owner password for the document (optional)", defaultValue = "")
     String getAdministratorPassword();
 
-    @Option(shortName = "e", description = "encryption algorithm {rc4_40, rc4_128, aes_128}. If omitted it uses rc4_128 (optional)", defaultValue = "rc4_128")
+    @Option(shortName = "e", description = "encryption algorithm {rc4_128, aes_128, aes_256}. If omitted it uses rc4_128 (optional)", defaultValue = "rc4_128")
     PdfEncryptionAdapter getEncryptionType();
 }

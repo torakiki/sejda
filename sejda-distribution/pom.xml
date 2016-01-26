@@ -10,8 +10,8 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>2.0.0-alpha26-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<version>2.0.0.M2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<profiles>
@@ -57,11 +57,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-itext</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
 			<artifactId>sejda-sambox</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -84,6 +79,6 @@
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-conversion</artifactId>
 			<version>${project.version}</version>
-		</dependency>		
+		</dependency>
 	</dependencies>
 </project>

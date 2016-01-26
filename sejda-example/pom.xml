@@ -6,8 +6,8 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>2.0.0-alpha26-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<version>2.0.0.M2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>sejda-example</artifactId>
@@ -30,7 +30,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-itext</artifactId>
+			<artifactId>sejda-sambox</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
@@ -38,12 +38,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.lowagie</groupId>
-			<artifactId>itext</artifactId>
-			<version>2.1.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -40,6 +40,7 @@ public abstract class AbstractParameters implements TaskParameters {
         return existingOutputPolicy;
     }
 
+    @Override
     public void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy) {
         this.existingOutputPolicy = existingOutputPolicy;
     }

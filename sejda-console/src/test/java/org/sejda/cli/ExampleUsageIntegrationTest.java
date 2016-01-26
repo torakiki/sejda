@@ -49,6 +49,6 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
     public void executeExampleUsage() {
         String exampleUsage = testableTask.getExampleUsage();
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
-        assertTaskCompletes(exampleUsage + " --overwrite");
+        assertTaskCompletes(exampleUsage + " --existingOutput overwrite");
     }
 }

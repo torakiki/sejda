@@ -27,17 +27,22 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.sejda.core.Sejda;
+import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageTree;
@@ -117,7 +122,7 @@ public class PDDocumentHandler implements Closeable {
      * @param layout
      */
     public void setPageLayoutOnDocument(PdfPageLayout layout) {
-        document.getDocumentCatalog().setPageLayout(getPageLayout(layout));
+        setPageLayout(getPageLayout(layout));
         LOG.trace("Page layout set to '{}'", layout);
     }
 
@@ -127,8 +132,18 @@ public class PDDocumentHandler implements Closeable {
      * @param mode
      */
     public void setPageModeOnDocument(PdfPageMode mode) {
-        document.getDocumentCatalog().setPageMode(getPageMode(mode));
+        setPageMode(getPageMode(mode));
         LOG.trace("Page mode set to '{}'", mode);
+    }
+
+    /**
+     * Sets the page labels on the underlying {@link PDDocument}.
+     * 
+     * @param labels
+     */
+    public void setPageLabelsOnDocument(Map<Integer, PdfPageLabel> labels) {
+        document.getDocumentCatalog().setPageLabels(PageLabelUtils.getLabels(labels, getNumberOfPages()));
+        LOG.trace("Page labels set");
     }
 
     /**
@@ -138,7 +153,7 @@ public class PDDocumentHandler implements Closeable {
      */
     public void setVersionOnPDDocument(PdfVersion version) {
         if (version != null) {
-            document.setVersion(version.getVersionAsDoubleString());
+            document.setVersion(version.getVersionString());
             LOG.trace("Version set to '{}'", version);
         }
     }
@@ -203,9 +218,20 @@ public class PDDocumentHandler implements Closeable {
      * @throws TaskException
      */
     public void savePDDocument(File file) throws TaskException {
+        savePDDocument(file, null);
+    }
+
+    /**
+     * Saves the underlying {@link PDDocument} to the given file and using the given standard security.
+     * 
+     * @param file
+     * @param security
+     * @throws TaskException
+     */
+    public void savePDDocument(File file, StandardSecurity security) throws TaskException {
         try {
             LOG.trace("Saving document to {}", file);
-            document.writeTo(file, writeOptions.toArray(new WriteOption[writeOptions.size()]));
+            document.writeTo(file, security, writeOptions.toArray(new WriteOption[writeOptions.size()]));
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
@@ -217,6 +243,10 @@ public class PDDocumentHandler implements Closeable {
 
     public PDDocument getUnderlyingPDDocument() {
         return document;
+    }
+
+    public PDDocumentCatalog catalog() {
+        return document.getDocumentCatalog();
     }
 
     /**
@@ -299,11 +329,11 @@ public class PDDocumentHandler implements Closeable {
         document.getDocumentCatalog().setAcroForm(acroForm);
     }
 
-    public void setPageMode(PageMode pageMode) {
+    private void setPageMode(PageMode pageMode) {
         document.getDocumentCatalog().setPageMode(pageMode);
     }
 
-    public void setPageLayout(PageLayout pageLayout) {
+    private void setPageLayout(PageLayout pageLayout) {
         document.getDocumentCatalog().setPageLayout(pageLayout);
     }
 

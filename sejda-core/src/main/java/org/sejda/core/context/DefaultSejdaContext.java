@@ -60,23 +60,18 @@ public class DefaultSejdaContext implements SejdaContext {
         Class<? extends TaskParameters> parametersClass = parameters.getClass();
         Class<? extends Task> taskClass = GlobalConfiguration.getInstance().getTasksRegistry().getTask(parametersClass);
         if (taskClass == null) {
-            throw new TaskNotFoundException(String.format("Unable to find a Task class able to execute %s",
-                    parametersClass));
+            throw new TaskNotFoundException(
+                    String.format("Unable to find a Task class able to execute %s", parametersClass));
         }
         try {
             Constructor<? extends Task> constructor = taskClass.getConstructor();
             return constructor.newInstance();
-        } catch (InstantiationException e) {
-            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
-        } catch (IllegalAccessException e) {
-            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
-        } catch (SecurityException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | SecurityException e) {
             throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
         } catch (NoSuchMethodException e) {
-            throw new TaskException(
-                    String.format("The task %s doesn't define a public no-args contructor.", taskClass), e);
-        } catch (InvocationTargetException e) {
-            throw new TaskException(ERROR_INSTANTIATING_THE_TASK, e);
+            throw new TaskException(String.format("The task %s doesn't define a public no-args contructor.", taskClass),
+                    e);
         }
     }
 }

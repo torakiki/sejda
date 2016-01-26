@@ -30,24 +30,22 @@ import org.sejda.common.FriendlyNamed;
  */
 public enum PdfVersion implements FriendlyNamed {
 
-    VERSION_1_0(0, 1.0d, "%PDF-1.0"),
-    VERSION_1_1(1, 1.1d, "%PDF-1.1"),
-    VERSION_1_2(2, 1.2d, "%PDF-1.2"),
-    VERSION_1_3(3, 1.3d, "%PDF-1.3"),
-    VERSION_1_4(4, 1.4d, "%PDF-1.4"),
-    VERSION_1_5(5, 1.5d, "%PDF-1.5"),
-    VERSION_1_6(6, 1.6d, "%PDF-1.6"),
-    VERSION_1_7(7, 1.7d, "%PDF-1.7");
+    VERSION_1_0(1.0d, "%PDF-1.0"),
+    VERSION_1_1(1.1d, "%PDF-1.1"),
+    VERSION_1_2(1.2d, "%PDF-1.2"),
+    VERSION_1_3(1.3d, "%PDF-1.3"),
+    VERSION_1_4(1.4d, "%PDF-1.4"),
+    VERSION_1_5(1.5d, "%PDF-1.5"),
+    VERSION_1_6(1.6d, "%PDF-1.6"),
+    VERSION_1_7(1.7d, "%PDF-1.7");
 
-    private int version;
-    private double versionDouble;
+    private double version;
     private String versionHeader;
     private String displayName;
 
-    private PdfVersion(int version, double versionDouble, String versionHeader) {
+    private PdfVersion(double version, String versionHeader) {
         this.displayName = String.valueOf(version);
         this.version = version;
-        this.versionDouble = versionDouble;
         this.versionHeader = versionHeader;
     }
 
@@ -57,36 +55,21 @@ public enum PdfVersion implements FriendlyNamed {
     }
 
     /**
-     * @return an int representation of the version
+     * @return a double representation of the version
      */
-    public int getVersion() {
+    public double getVersion() {
         return version;
     }
 
     /**
-     * @return a double representation of the version
+     * @return a String representation of the version
      */
-    public double getVersionAsDouble() {
-        return versionDouble;
+    public String getVersionString() {
+        return String.valueOf(version);
     }
 
     /**
-     * @return a double representation of the version
-     */
-    public String getVersionAsDoubleString() {
-        return String.valueOf(versionDouble);
-    }
-
-    /**
-     * @return a char representation of the int version
-     */
-    public char getVersionAsCharacter() {
-        return String.valueOf(version).charAt(0);
-    }
-
-    /**
-     * @return the PDF header for this version<br>
-     *         Pdf reference 1.7, 3.4.1 File Header
+     * @return the PDF header for this version as specified in Chap 7.5.2 of PDF 32000-1:2008
      */
     public String getVersionHeader() {
         return versionHeader;

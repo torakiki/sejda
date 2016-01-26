@@ -19,34 +19,19 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.ExtractTextParameters;
-import org.sejda.model.task.Task;
 
 /**
  * Parent class for tests testing the ExtractText task.
@@ -55,65 +40,40 @@ import org.sejda.model.task.Task;
  * 
  */
 @Ignore
-public abstract class ExtractTextTaskTest implements TestableTask<ExtractTextParameters> {
+public abstract class ExtractTextTaskTest extends BaseTaskTest<ExtractTextParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private ExtractTextParameters parameters;
-    private ByteArrayOutputStream out;
 
-    @Before
-    public void setUp() {
-        out = new ByteArrayOutputStream();
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    /**
-     * Set up of the unpack parameters
-     * 
-     */
-    private void setUpParameters() {
+    private void setUpParameters() throws IOException {
         parameters = new ExtractTextParameters();
-        parameters.setOutput(new StreamTaskOutput(out));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_test_test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "enc_test_test_file.pdf");
-        parameters.addSource(source);
+        testContext.directoryOutputTo(parameters);
+        parameters.addSource(customInput("pdf/enc_test_test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setTextEncoding("UTF-8");
     }
 
     @Test
     public void executeUnethicalExtract() throws TaskException, IOException {
+        setUpParameters();
         new WithUnethicalReadProperty(true) {
             @Override
-            public void execute() throws TaskException, IOException {
-                when(context.getTask(parameters)).thenReturn((Task) getTask());
-                victim.execute(parameters);
-                ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
-                ZipInputStream zip = new ZipInputStream(input);
-                int counter = 0;
-                ZipEntry entry = zip.getNextEntry();
-                while (entry != null) {
-                    counter++;
-                    assertTrue(entry.getName().endsWith(SejdaFileExtensions.TXT_EXTENSION));
-                    entry = zip.getNextEntry();
-                }
-                assertEquals(1, counter);
+            public void execute() throws IOException {
+                ExtractTextTaskTest.this.execute(parameters);
+                testContext.assertTaskCompleted();
+                testContext.assertOutputSize(1).forEachRawOutput(p -> p.endsWith(SejdaFileExtensions.TXT_EXTENSION));
             }
         };
     }
 
     @Test
     public void failedExtractMissingPermission() throws TaskException, IOException {
+        setUpParameters();
         new WithUnethicalReadProperty(false) {
             @Override
-            public void execute() throws TaskException {
-                when(context.getTask(parameters)).thenReturn((Task) getTask());
+            public void execute() {
                 TestListenerFailed failListener = TestListenerFactory.newFailedListener();
                 ThreadLocalNotificationContext.getContext().addListener(failListener);
-                victim.execute(parameters);
+                ExtractTextTaskTest.this.execute(parameters);
                 assertTrue(failListener.isFailed());
             }
         };

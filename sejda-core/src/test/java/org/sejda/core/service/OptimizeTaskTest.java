@@ -16,104 +16,88 @@
  */
 package org.sejda.core.service;
 
-import org.apache.commons.io.FileUtils;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.GlobalNotificationContext;
-import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
-import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.CancellationOption;
-import org.sejda.model.task.Task;
-import static org.hamcrest.Matchers.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.*;
+public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> {
+    private static Logger LOG = LoggerFactory.getLogger(OptimizeTaskTest.class);
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements TestableTask<OptimizeParameters> {
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private OptimizeParameters parameters;
 
-    private File outputFolder;
-
-    @Before
-    public void setUp() throws TaskException {
-        outputFolder = IOUtils.createTemporaryFolder();
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-    }
-
-    @After
-    public void tearDown() throws IOException {
-        //System.out.println(outputFolder);
-        FileUtils.deleteDirectory(outputFolder);
-    }
-
-    private void setUpParameters() {
+    private void setUpParameters() throws IOException {
         parameters = new OptimizeParameters();
         parameters.setCompressImages(true);
         parameters.setImageQuality(0.8f);
         parameters.setImageDpi(72);
         parameters.setImageMaxWidthOrHeight(1280);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setOutput(new DirectoryTaskOutput(outputFolder));
+        testContext.directoryOutputTo(parameters);
     }
 
-    private void withSource(String input) {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(input);
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_unoptimized.pdf");
-        parameters.addSource(source);
-    }
-
-    private long sizeOfResult() {
-        return outputFolder.listFiles()[0].length() / 1000;
+    private long sizeOfResult(Path p) {
+        try {
+            return Files.size(p) / 1000;
+        } catch (IOException e) {
+            LOG.error("Test failed", e);
+            fail(e.getMessage());
+        }
+        return 0;
     }
 
     @Test
-    public void testBasics() throws TaskException, IOException {
-        withSource("pdf/unoptimized.pdf");
-        victim.execute(parameters);
-        assertThat(sizeOfResult(), is(lessThan(116L)));
+    public void testBasics() throws IOException {
+        setUpParameters();
+        parameters.addSource(customInput("pdf/unoptimized.pdf"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(116L))));
+
     }
 
     @Test
     public void testRepeatedImages() throws TaskException, IOException {
-        withSource("pdf/test_optimize_repeated_images.pdf");
-        victim.execute(parameters);
-        assertThat(sizeOfResult(), is(lessThan(468L)));
+        setUpParameters();
+        parameters.addSource(customInput("pdf/test_optimize_repeated_images.pdf"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(468L))));
     }
 
     @Test
     public void testCancellation() throws Throwable {
+        setUpParameters();
         ExecutorService executor = Executors.newCachedThreadPool();
-        withSource("pdf/test_optimize_repeated_images.pdf");
+        parameters.addSource(customInput("pdf/test_optimize_repeated_images.pdf"));
         CancellationOption cancellationOption = new CancellationOption();
 
         CancellationListener cancellationListener = new CancellationListener();
         GlobalNotificationContext.getContext().addListener(cancellationListener);
 
         Future<?> future = executor.submit(() -> {
-            victim.execute(parameters, cancellationOption);
+            execute(parameters, cancellationOption);
         });
 
         // wait for the task to start
@@ -134,7 +118,7 @@ public abstract class OptimizeTaskTest extends PdfOutEnabledTest implements Test
 
         @Override
         public void onEvent(TaskExecutionFailedEvent event) {
-            if(event.getFailingCause() instanceof TaskCancelledException) {
+            if (event.getFailingCause() instanceof TaskCancelledException) {
                 cancelled.setTrue();
             }
         }

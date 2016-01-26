@@ -20,27 +20,17 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipInputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
+import org.junit.rules.TemporaryFolder;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.UnpackParameters;
-import org.sejda.model.task.Task;
 
 /**
  * Parent test for an Unpack test.
@@ -49,43 +39,28 @@ import org.sejda.model.task.Task;
  * 
  */
 @Ignore
-public abstract class UnpackTaskTest implements TestableTask<UnpackParameters> {
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
+public abstract class UnpackTaskTest extends BaseTaskTest<UnpackParameters> {
 
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private UnpackParameters parameters;
-    private ByteArrayOutputStream out;
-
-    @Before
-    public void setUp() {
-        out = new ByteArrayOutputStream();
-        TestUtils.setProperty(victim, "context", context);
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
-    public void unpackAnnotations() throws TaskException, IOException {
+    public void unpackAnnotations() throws IOException {
         executeTest("pdf/attachments_as_annots.pdf");
     }
 
     @Test
-    public void unpackNamedTree() throws TaskException, IOException {
+    public void unpackNamedTree() throws IOException {
         executeTest("pdf/attachments_as_named_tree.pdf");
     }
 
-    public void executeTest(String filename) throws TaskException, IOException {
-        parameters = new UnpackParameters(new StreamTaskOutput(out));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(filename);
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "attachments.pdf");
-        parameters.addSource(source);
+    public void executeTest(String filename) throws IOException {
+        File out = folder.newFolder();
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.addSource(customInput(filename));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        victim.execute(parameters);
-        ByteArrayInputStream input = new ByteArrayInputStream(out.toByteArray());
-        ZipInputStream zip = new ZipInputStream(input);
-        int counter = 0;
-        while (zip.getNextEntry() != null) {
-            counter++;
-        }
-        assertEquals(1, counter);
+        execute(parameters);
+        assertEquals(1, out.list().length);
     }
 }

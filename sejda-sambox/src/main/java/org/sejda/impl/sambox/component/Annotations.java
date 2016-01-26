@@ -86,7 +86,7 @@ public final class Annotations {
                                 annotationsLookup.addLookupEntry(annotation, copyAnnotation);
                                 keptAnnotations.add(copyAnnotation);
                             } else {
-                                LOG.debug("Removing not relevant link annotation");
+                                LOG.trace("Removing not relevant link annotation");
                             }
                         } else {
                             // not a page dest

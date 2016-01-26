@@ -4,7 +4,7 @@ Documentation online
 * Available at http://www.sejda.org/shell-interface/
 
 Requirements
-* Java Runtime 1.5 (or newer)
+* Java Runtime 1.8 (or newer)
 
 Quick install & run
 * Extract the downloaded zip file
@@ -12,7 +12,7 @@ Quick install & run
 * (Linux/Mac) Execute the console: > ./bin/sejda-console
 * (Windows) Execute bin/sejda-console.bat
 
-License: Apache License 2.0
+License: GNU Affero GPLv3
 Feedbacks to: info@sejda.org
 Issue tracker: https://github.com/torakiki/sejda/issues
 

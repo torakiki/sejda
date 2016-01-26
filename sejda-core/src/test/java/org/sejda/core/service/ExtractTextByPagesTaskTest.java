@@ -19,37 +19,21 @@
  */
 package org.sejda.core.service;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasItemInArray;
-import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.core.support.io.IOUtils;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractTextByPagesParameters;
 import org.sejda.model.pdf.page.PageRange;
-import org.sejda.model.task.Task;
 
 /**
  * Base tests for testing the ExtractTextByPages task.
@@ -57,79 +41,69 @@ import org.sejda.model.task.Task;
  * @author Edi Weissmann
  */
 @Ignore
-public abstract class ExtractTextByPagesTaskTest implements TestableTask<ExtractTextByPagesParameters> {
+public abstract class ExtractTextByPagesTaskTest extends BaseTaskTest<ExtractTextByPagesParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private ExtractTextByPagesParameters parameters;
-    private File out = IOUtils.createTemporaryFolder();
 
-    @Before
-    public void setUp() {
-        setUpParameters();
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private void setUpParameters() {
+    private void setUpParameters() throws IOException {
         parameters = new ExtractTextByPagesParameters();
-        parameters.setOutput(new DirectoryTaskOutput(out));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.setSource(source);
+        parameters.setSource(customInput("pdf/test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setTextEncoding("UTF-8");
-
+        parameters.setOutputPrefix("[FILENUMBER]_test_file");
+        testContext.directoryOutputTo(parameters);
     }
 
     @Test
-    public void testExecuteWrongRange() throws TaskException {
+    public void testExecuteWrongRange() throws IOException {
+        setUpParameters();
         parameters.addPageRange(new PageRange(10));
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
-        victim.execute(parameters);
+        execute(parameters);
         assertTrue(failListener.isFailed());
     }
 
     @Test
-    public void testExecuteRange() throws TaskException, IOException {
+    public void testExecuteRange() throws IOException {
+        setUpParameters();
         parameters.addPageRange(new PageRange(1, 3));
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        victim.execute(parameters);
-
-        assertEquals(3, out.list().length);
-        assertThat(out.list(), hasItemInArray("1_test_file.txt"));
-        assertThat(out.list(), hasItemInArray("2_test_file.txt"));
-        assertThat(out.list(), hasItemInArray("3_test_file.txt"));
-
-        String contents1 = FileUtils.readFileToString(new File(out, "1_test_file.txt")).trim();
-        assertThat(contents1, startsWith("GNU LIBRARY GENERAL PUBLIC LICENSE"));
-        assertThat(contents1, endsWith("This"));
-
-        String contents3 = FileUtils.readFileToString(new File(out, "3_test_file.txt")).trim();
-        assertThat(contents3, startsWith("and installation of the library."));
-        assertThat(contents3, endsWith("your rights to work written entirely by you; rather, the intent is to"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3)
+                .assertOutputContainsFilenames("1_test_file.txt", "2_test_file.txt", "3_test_file.txt")
+                .forEachRawOutput(p -> {
+                    try {
+                        if (p.getFileName().equals("1_test_file.txt")) {
+                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get());
+                        }
+                        if (p.getFileName().equals("3_test_file.txt")) {
+                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get());
+                        }
+                    } catch (IOException e) {
+                        fail(e.getMessage());
+                    }
+                });
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        victim.execute(parameters);
-
-        assertEquals(4, out.list().length);
-        assertThat(out.list(), hasItemInArray("1_test_file.txt"));
-        assertThat(out.list(), hasItemInArray("2_test_file.txt"));
-        assertThat(out.list(), hasItemInArray("3_test_file.txt"));
-        assertThat(out.list(), hasItemInArray("4_test_file.txt"));
-
-        String contents1 = FileUtils.readFileToString(new File(out, "1_test_file.txt")).trim();
-        assertThat(contents1, startsWith("GNU LIBRARY GENERAL PUBLIC LICENSE"));
-        assertThat(contents1, endsWith("This"));
-
-        String contents3 = FileUtils.readFileToString(new File(out, "3_test_file.txt")).trim();
-        assertThat(contents3, startsWith("and installation of the library."));
-        assertThat(contents3, endsWith("your rights to work written entirely by you; rather, the intent is to"));
+    public void testExecute() throws IOException {
+        setUpParameters();
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("1_test_file.txt", "2_test_file.txt",
+                "3_test_file.txt", "4_test_file.txt").forEachRawOutput(p -> {
+                    try {
+                        if (p.getFileName().equals("1_test_file.txt")) {
+                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get());
+                        }
+                        if (p.getFileName().equals("3_test_file.txt")) {
+                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get());
+                        }
+                    } catch (IOException e) {
+                        fail(e.getMessage());
+                    }
+                });
     }
 }

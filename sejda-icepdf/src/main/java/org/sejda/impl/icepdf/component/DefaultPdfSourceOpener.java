@@ -49,13 +49,11 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         Document document = newDocument(source);
         try {
             document.setUrl(source.getSource());
-        } catch (PDFException e) {
+        } catch (PDFException | IOException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         }
         return document;
     }
@@ -65,13 +63,11 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         Document document = newDocument(source);
         try {
             document.setFile(source.getSource().getAbsolutePath());
-        } catch (PDFException e) {
+        } catch (PDFException | IOException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         }
         return document;
     }
@@ -81,13 +77,11 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<Document> {
         Document document = newDocument(source);
         try {
             document.setInputStream(source.getSource(), source.getName());
-        } catch (PDFException e) {
+        } catch (PDFException | IOException e) {
             throw new TaskIOException(String.format(AN_ERROR_OCCURRED_OPENING_SOURCE, source), e);
         } catch (PDFSecurityException e) {
             throw new TaskWrongPasswordException(String.format("An error occurred decrypting the source: %s.", source),
                     e);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format("An I/O error occurred opening the source: %s.", source), e);
         }
         return document;
     }

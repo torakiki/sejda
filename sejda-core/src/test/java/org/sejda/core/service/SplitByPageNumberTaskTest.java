@@ -19,146 +19,106 @@
  */
 package org.sejda.core.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class SplitByPageNumberTaskTest extends PdfOutEnabledTest implements
-        TestableTask<SplitByPagesParameters> {
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
+public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPagesParameters> {
     private SplitByPagesParameters parameters;
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
+    private void setUpParameters() throws IOException {
         parameters = new SplitByPagesParameters();
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-    }
-
-    private PdfStreamSource getPdfSource() {
-        return PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf");
-    }
-
-    private PdfStreamSource getPdfSourceWithOutline() {
-        return PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf"), "test_outline.pdf");
-    }
-
-    private PdfStreamSource getEncPdfSource() {
-        return PdfStreamSource.newInstanceWithPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf"),
-                "enc_with_modify_perm.pdf", "test");
+        testContext.directoryOutputTo(parameters);
     }
 
     @Test
-    public void burst() throws TaskException, IOException {
-        parameters.setSource(getPdfSource());
+    public void burst() throws IOException {
+        setUpParameters();
+        parameters.setSource(shortInput());
         doTestBurst();
     }
 
     @Test
-    public void burstOutline() throws TaskException, IOException {
-        parameters.setSource(getPdfSourceWithOutline());
-        parameters.addPage(1);
-        parameters.addPage(2);
-        parameters.addPage(3);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(3);
-    }
-
-    @Test
-    public void burstEnc() throws TaskException, IOException {
-        parameters.setSource(getEncPdfSource());
+    public void burstEnc() throws IOException {
+        setUpParameters();
+        parameters.setSource(stronglyEncryptedInput());
         doTestBurst();
     }
 
-    public void doTestBurst() throws TaskException, IOException {
+    @Test
+    public void burstOutline() throws IOException {
+        setUpParameters();
+        parameters.setSource(largeOutlineInput());
         parameters.addPage(1);
         parameters.addPage(2);
         parameters.addPage(3);
-        parameters.addPage(4);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(4);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
+    }
+
+    public void doTestBurst() throws IOException {
+        parameters.addPage(1);
+        parameters.addPage(2);
+        parameters.addPage(3);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
     }
 
     @Test
-    public void even() throws TaskException, IOException {
-        parameters.setSource(getPdfSource());
+    public void even() throws IOException {
+        setUpParameters();
+        parameters.setSource(shortInput());
         doTestEven();
     }
 
     @Test
-    public void evenEnc() throws TaskException, IOException {
-        parameters.setSource(getEncPdfSource());
+    public void evenEnc() throws IOException {
+        setUpParameters();
+        parameters.setSource(encryptedInput());
         doTestEven();
     }
 
-    public void doTestEven() throws TaskException, IOException {
+    public void doTestEven() throws IOException {
         parameters.addPage(2);
         parameters.addPage(4);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test
-    public void odd() throws TaskException, IOException {
-        parameters.setSource(getPdfSource());
+    public void odd() throws IOException {
+        setUpParameters();
+        parameters.setSource(shortInput());
         doTestOdd();
     }
 
     @Test
-    public void oddEnc() throws TaskException, IOException {
-        parameters.setSource(getEncPdfSource());
+    public void oddEnc() throws IOException {
+        setUpParameters();
+        parameters.setSource(encryptedInput());
         doTestOdd();
     }
 
-    public void doTestOdd() throws TaskException, IOException {
+    public void doTestOdd() throws IOException {
         parameters.addPage(1);
         parameters.addPage(3);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(3);
-    }
-
-    @Test
-    public void splitHalf() throws TaskException, IOException {
-        parameters.setSource(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "2_pages.pdf"));
-        parameters.addPage(1);
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        assertOutputContainsDocuments(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
     }
 }

@@ -10,8 +10,8 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>2.0.0-alpha26-SNAPSHOT</version>
-		<relativePath>../sejda-parent/pom.xml</relativePath>
+		<version>2.0.0.M2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<profiles>
@@ -189,10 +189,10 @@
 					<repositoryName>lib</repositoryName>
 					<!-- set alternative assemble directory -->
 					<assembleDirectory>${project.build.directory}/assembled</assembleDirectory>
-					<!-- Copy the contents from "/src/main/config" to the target configuration 
+					<!-- Copy the contents from "/src/main/config" to the target configuration
 						directory in the assembled application -->
 					<copyConfigurationDirectory>true</copyConfigurationDirectory>
-					<!-- Include the target configuration directory in the beginning of 
+					<!-- Include the target configuration directory in the beginning of
 						the classpath declaration in the bin scripts -->
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
 					<!-- Default JVM memory args -->
@@ -222,11 +222,6 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-model</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
-			<artifactId>sejda-itext</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -266,28 +261,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
-		</dependency>
-		<!-- http://jira.codehaus.org/browse/MNG-4156 -->
-		<dependency>
-			<groupId>com.lowagie</groupId>
-			<artifactId>itext</artifactId>
-			<version>2.1.7</version>
-			<scope>compile</scope>
-			<exclusions>
-				<!-- use SAMBox ones instead -->
-				<exclusion>
-					<artifactId>bctsp-jdk14</artifactId>
-					<groupId>org.bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcprov-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcmail-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>

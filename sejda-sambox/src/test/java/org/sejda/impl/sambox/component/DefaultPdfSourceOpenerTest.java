@@ -38,15 +38,23 @@ public class DefaultPdfSourceOpenerTest {
     }
 
     @Test
-    public void openDocumentWithPassword() throws TaskIOException {
+    public void openDocumentWithPasswordAES128() throws TaskIOException {
         assertNotNull(new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceWithPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/enc_test.pdf"), "my source", "test")));
+                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf"), "my source",
+                "test")));
+    }
+
+    @Test
+    public void openDocumentWithPasswordAES256() throws TaskIOException {
+        assertNotNull(new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceWithPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES256_user_pwd.pdf"), "my source",
+                "test")));
     }
 
     @Test(expected = TaskWrongPasswordException.class)
     public void openDocumentWrongPassword() throws TaskIOException {
         new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/enc_test.pdf"), "my source"));
+                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf"), "my source"));
     }
 
     @Test(expected = TaskIOException.class)

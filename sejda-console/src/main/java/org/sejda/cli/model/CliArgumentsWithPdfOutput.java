@@ -19,7 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.PdfVersionAdapter;
+import org.sejda.conversion.PdfVersionAdapterWithFallback;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
 
@@ -34,6 +34,6 @@ public interface CliArgumentsWithPdfOutput extends TaskCliArguments {
     @Option(description = "compress output file (optional)")
     boolean getCompressed();
 
-    @Option(shortName = "v", description = "pdf version of the output document/s {2, 3, 4, 5, 6 or 7}. Default is 6. (optional)", defaultValue = "6")
-    PdfVersionAdapter getPdfVersion();
+    @Option(shortName = "v", description = "pdf version of the output document/s {1.2, 1.3, 1.4, 1.5, 1.6 or 1.7}. Default is 1.6. (optional)", defaultValue = "1.6")
+    PdfVersionAdapterWithFallback getPdfVersion();
 }

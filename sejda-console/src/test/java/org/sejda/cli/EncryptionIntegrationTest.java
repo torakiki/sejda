@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test encrypted files across all pdf implementations (itext, sambox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there
- * might be different behaviour at runtime
+ * Test encrypted files across all pdf implementations (sambox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there might
+ * be different behaviour at runtime
  * 
  * @author Eduard Weissmann
  * 
@@ -62,6 +62,6 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
-        assertTaskCompletes(exampleUsage + " --overwrite");
+        assertTaskCompletes(exampleUsage + " --existingOutput overwrite");
     }
 }

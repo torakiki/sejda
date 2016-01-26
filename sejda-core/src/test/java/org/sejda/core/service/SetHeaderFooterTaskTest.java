@@ -18,49 +18,32 @@
  */
 package org.sejda.core.service;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.sejda.model.pdf.TextStampPattern.dateNow;
 
-import java.io.InputStream;
+import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
-import org.sejda.model.task.Task;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * @author Eduard Weissmann
  * 
  */
 @Ignore
-public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implements
-        TestableTask<SetHeaderFooterParameters> {
+public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFooterParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private SetHeaderFooterParameters parameters;
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private SetHeaderFooterParameters basicNoSources() {
+    private SetHeaderFooterParameters basicNoSources() throws IOException {
         SetHeaderFooterParameters parameters = new SetHeaderFooterParameters();
         parameters.setBatesSequence(new BatesSequence());
         parameters.setPageRange(new PageRange(1));
@@ -74,22 +57,15 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setHorizontalAlign(HorizontalAlign.LEFT);
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         parameters.setFontSize(7d);
-
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        testContext.directoryOutputTo(parameters);
         return parameters;
     }
 
-    private SetHeaderFooterParameters basicWithSources() {
+    private SetHeaderFooterParameters basicWithSources() throws IOException {
         SetHeaderFooterParameters parameters = basicNoSources();
-
-        InputStream stream1 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source1 = PdfStreamSource.newInstanceNoPassword(stream1, "test_file1.pdf");
-
-        InputStream stream2 = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source2 = PdfStreamSource.newInstanceNoPassword(stream2, "test_file2.pdf");
-
-        parameters.addSource(source1);
-        parameters.addSource(source2);
-
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.addSource(customInput("pdf/test_file.pdf"));
         return parameters;
     }
 
@@ -98,8 +74,12 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters = basicWithSources();
         parameters.setPattern("Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
-        doTestExecute();
-        assertFooterHasText("test_file1.pdf", 1, "Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0),
+                    "Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
+        });
     }
 
     @Test
@@ -108,10 +88,13 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setPageRange(new PageRange(2));
         parameters.setPattern("Test footer");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
-        doTestExecute();
-        assertFooterHasText("test_file1.pdf", 1, "");
-        assertFooterHasText("test_file1.pdf", 2, "Test footer");
-        assertFooterHasText("test_file1.pdf", 3, "Test footer");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "");
+            assertFooterHasText(d.getPage(1), "Test footer");
+            assertFooterHasText(d.getPage(2), "Test footer");
+        });
     }
 
     @Test
@@ -120,22 +103,27 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setPattern("Page [PAGE_ARABIC]");
         parameters.setPageCountStartFrom(5);
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
-        doTestExecute();
-        assertFooterHasText("test_file1.pdf", 1, "Page 5");
-        assertFooterHasText("test_file1.pdf", 2, "Page 6");
-        assertFooterHasText("test_file1.pdf", 3, "Page 7");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "Page 5");
+            assertFooterHasText(d.getPage(1), "Page 6");
+            assertFooterHasText(d.getPage(2), "Page 7");
+        });
     }
 
     @Test
     public void testBatesAndFileSequence() throws Exception {
         parameters = basicWithSources();
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
-        doTestExecute();
-
-        assertFooterHasText("test_file1.pdf", 2, dateNow() + " 2 of 4 - Exhibit 1 - Case ACME Inc - 000002");
-        assertFooterHasText("test_file1.pdf", 3, dateNow() + " 3 of 4 - Exhibit 1 - Case ACME Inc - 000003");
-
-        assertFooterHasText("test_file2.pdf", 1, dateNow() + " 1 of 4 - Exhibit 2 - Case ACME Inc - 000005");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(1), dateNow() + " 2 of 4 - Exhibit 1 - Case ACME Inc - 000002");
+            assertFooterHasText(d.getPage(2), dateNow() + " 3 of 4 - Exhibit 1 - Case ACME Inc - 000003");
+        }).forPdfOutput("test_file2.pdf", d -> {
+            assertFooterHasText(d.getPage(0), dateNow() + " 1 of 4 - Exhibit 2 - Case ACME Inc - 000005");
+        });
     }
 
     @Test
@@ -144,22 +132,21 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setVerticalAlign(VerticalAlign.TOP);
         parameters.setPattern("Page [PAGE_ROMAN] [PAGE_ARABIC]");
 
-        doTestExecute();
-
-        assertHeaderHasText("test_file1.pdf", 3, "Page III 3");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertHeaderHasText(d.getPage(2), "Page III 3");
+        });
     }
 
     @Test
     public void testEncryptedFile() throws Exception {
         parameters = basicNoSources();
+        parameters.addSource(encryptedInput());
 
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
-
-        parameters.addSource(source);
-
-        doTestExecute();
-        assertOutputContainsDocuments(1);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1);
     }
 
     @Test
@@ -167,8 +154,9 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters = basicWithSources();
         parameters.setBatesSequence(null);
 
-        doTestExecute();
-        assertOutputContainsDocuments(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test
@@ -177,24 +165,17 @@ public abstract class SetHeaderFooterTaskTest extends PdfOutEnabledTest implemen
         parameters.setPattern("[BATES_NUMBER]");
         parameters.setBatesSequence(new BatesSequence(1000, 5, 10));
 
-        doTestExecute();
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "0000001000");
+            assertFooterHasText(d.getPage(1), "0000001005");
 
-        assertFooterHasText("test_file1.pdf", 1, "0000001000");
-        assertFooterHasText("test_file1.pdf", 2, "0000001005");
+        });
     }
 
-    private void doTestExecute() throws TaskException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-    }
+    protected abstract void assertFooterHasText(PDPage page, String expectedText);
 
-    protected abstract void assertFooterHasText(String filename, int page, String expectedText) throws Exception;
-
-    protected abstract void assertHeaderHasText(String filename, int page, String expectedText) throws Exception;
-
-    protected SetHeaderFooterParameters getParameters() {
-        return parameters;
-    }
+    protected abstract void assertHeaderHasText(PDPage page, String expectedText);
 
 }

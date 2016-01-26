@@ -19,6 +19,7 @@
  */
 package org.sejda.cli.model;
 
+import org.sejda.conversion.ExistingOutputPolicyAdapter;
 import org.sejda.conversion.FileOutputAdapter;
 
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -35,6 +36,6 @@ public interface CliArgumentsWithFileOutput extends TaskCliArguments {
     @Option(shortName = "o", description = "output file (required)")
     FileOutputAdapter getOutput();
 
-    @Option(description = "overwrite existing output file (optional)")
-    boolean getOverwrite();
+    @Option(shortName = "j", description = "policy to use when an output file with the same name already exists. {overwrite, skip, fail}. Default is 'fail' (optional)", defaultValue = "fail")
+    ExistingOutputPolicyAdapter getExistingOutput();
 }

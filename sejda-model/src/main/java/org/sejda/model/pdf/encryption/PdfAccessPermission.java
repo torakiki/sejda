@@ -30,19 +30,22 @@ import org.sejda.common.FriendlyNamed;
  * 
  */
 public enum PdfAccessPermission implements FriendlyNamed {
-    MODIFY("modify"),
-    COPY_AND_EXTRACT("copy"),
-    ANNOTATION("modifyannotations"),
-    PRINT("print"),
-    FILL_FORMS("fill"),
-    ASSEMBLE("assembly"),
-    DEGRADATED_PRINT("degradedprinting"),
-    EXTRACTION_FOR_DISABLES("screenreaders");
+    PRINT("print", 0b00000000000000000000000000000100),
+    MODIFY("modify", 0b00000000000000000000000000001000),
+    COPY_AND_EXTRACT("copy", 0b00000000000000000000000000010000),
+    ANNOTATION("modifyannotations", 0b00000000000000000000000000100000),
+    FILL_FORMS("fill", 0b00000000000000000000000100000000),
+    @Deprecated // as of PDF2.0 this is always 1
+    EXTRACTION_FOR_DISABLES("screenreaders", 0b00000000000000000000001000000000),
+    ASSEMBLE("assembly", 0b00000000000000000000010000000000),
+    DEGRADATED_PRINT("degradedprinting", 0b00000000000000000000100000000000);
 
     private String displayName;
+    public final int bits;
 
-    private PdfAccessPermission(String displayName) {
+    private PdfAccessPermission(String displayName, int bits) {
         this.displayName = displayName;
+        this.bits = bits;
     }
 
     @Override

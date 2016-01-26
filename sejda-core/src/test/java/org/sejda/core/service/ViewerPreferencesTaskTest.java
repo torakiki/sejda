@@ -21,21 +21,14 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -46,13 +39,14 @@ import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfBoolean;
-import com.lowagie.text.pdf.PdfDictionary;
-import com.lowagie.text.pdf.PdfName;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
+import org.sejda.sambox.pdmodel.PageLayout;
+import org.sejda.sambox.pdmodel.PageMode;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 
 /**
  * test unit for the viewer preferences task
@@ -61,19 +55,10 @@ import com.lowagie.text.pdf.internal.PdfViewerPreferencesImp;
  * 
  */
 @Ignore
-public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implements
-        TestableTask<ViewerPreferencesParameters> {
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
+public abstract class ViewerPreferencesTaskTest extends BaseTaskTest<ViewerPreferencesParameters> {
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
-
-    private void setUpParams(PdfSource<?> source) {
+    private void setUpParams(PdfSource<?> source) throws IOException {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
@@ -86,53 +71,36 @@ public abstract class ViewerPreferencesTaskTest extends PdfOutEnabledTest implem
         parameters.addEnabledPreference(PdfBooleanPreference.HIDE_MENUBAR);
         parameters.addSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-    }
-
-    private void setUpParameters() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        setUpParams(source);
-    }
-
-    private void setUpParametersEncrypted() {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
-        setUpParams(source);
+        testContext.directoryOutputTo(parameters);
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
-        setUpParameters();
+    public void testExecute() throws IOException {
+        setUpParams(shortInput());
         doExecute();
     }
 
     @Test
-    public void testExecuteEncrypted() throws TaskException, IOException {
-        setUpParametersEncrypted();
+    public void testExecuteEncrypted() throws IOException {
+        setUpParams(stronglyEncryptedInput());
         doExecute();
     }
 
-    public void doExecute() throws TaskException, IOException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
-        assertCreator(reader);
-        assertVersion(reader, PdfVersion.VERSION_1_7);
-        PdfDictionary catalog = PdfViewerPreferencesImp.getViewerPreferences(reader.getCatalog())
-                .getViewerPreferences();
-        assertEquals(PdfName.SIMPLEX, catalog.getAsName(PdfName.DUPLEX));
-        assertEquals(PdfName.L2R, catalog.getAsName(PdfName.DIRECTION));
-        assertEquals(PdfName.APPDEFAULT, catalog.getAsName(PdfName.PRINTSCALING));
-        assertEquals(PdfName.USETHUMBS, catalog.getAsName(PdfName.NONFULLSCREENPAGEMODE));
-        assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.CENTERWINDOW));
-        assertEquals(PdfBoolean.PDFTRUE, catalog.getAsBoolean(PdfName.HIDEMENUBAR));
-        assertEquals(PdfBoolean.PDFFALSE, catalog.getAsBoolean(PdfName.HIDETOOLBAR));
-        reader.close();
+    private void doExecute() throws IOException {
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).forEachPdfOutput(d -> {
+            PDDocumentCatalog catalog = d.getDocumentCatalog();
+            PDViewerPreferences prefs = catalog.getViewerPreferences();
+            assertTrue(prefs.hideMenubar());
+            assertTrue(prefs.centerWindow());
+            assertFalse(prefs.hideToolbar());
+            assertEquals(DUPLEX.Simplex.toString(), prefs.getDuplex());
+            assertEquals(NON_FULL_SCREEN_PAGE_MODE.UseThumbs.toString(), prefs.getNonFullScreenPageMode());
+            assertEquals(PRINT_SCALING.AppDefault.toString(), prefs.getPrintScaling());
+            assertEquals(READING_DIRECTION.L2R.toString(), prefs.getReadingDirection());
+            assertEquals(PageLayout.ONE_COLUMN, catalog.getPageLayout());
+            assertEquals(PageMode.USE_THUMBS, catalog.getPageMode());
+        });
     }
-
-    protected ViewerPreferencesParameters getParameters() {
-        return parameters;
-    }
-
 }

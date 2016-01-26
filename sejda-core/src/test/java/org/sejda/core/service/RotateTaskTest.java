@@ -21,29 +21,17 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.io.InputStream;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.model.task.Task;
-
-import com.lowagie.text.pdf.PdfReader;
 
 /**
  * Abstract test unit for the rotate task
@@ -52,24 +40,13 @@ import com.lowagie.text.pdf.PdfReader;
  * 
  */
 @Ignore
-@SuppressWarnings("unchecked")
-public abstract class RotateTaskTest extends PdfOutEnabledTest implements TestableTask<RotateParameters> {
+public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
-
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private RotateParameters parameters;
-
-    @Before
-    public void setUp() {
-        TestUtils.setProperty(victim, "context", context);
-    }
 
     private void setUpDefaultParameters() {
         parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.addSource(source);
+        parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
@@ -77,19 +54,15 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
         parameters.setCompress(true);
         parameters.setOutputPrefix("test_prefix_");
-        parameters.setVersion(PdfVersion.VERSION_1_4);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.addSource(source);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
     }
 
     private void setUpRotateSpecificPages() {
         parameters = new RotateParameters(Rotation.DEGREES_90);
         parameters.addPageRange(new PageRange(2, 4));
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.addSource(source);
+        parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
@@ -97,102 +70,80 @@ public abstract class RotateTaskTest extends PdfOutEnabledTest implements Testab
         parameters = new RotateParameters(Rotation.DEGREES_90);
         parameters.addPageRange(new PageRange(2, 4));
         parameters.addPageRange(new PageRange(15, 15));
-        parameters.addSource(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf"));
-        parameters.addSource(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium_test.pdf"));
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     private void setUpParametersEncrypted() {
-        setUpDefaultParameters();
-
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/enc_with_modify_perm.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceWithPassword(stream, "test_file.pdf", "test");
-        parameters.addSource(source);
+        parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addSource(stronglyEncryptedInput());
     }
 
     @Test
-    public void testExecute() throws TaskException, IOException {
+    public void testExecute() throws IOException {
         setUpDefaultParameters();
-        doExecute();
-
-        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
-        assertEquals(4, reader.getNumberOfPages());
-        assertEquals(180, reader.getPageRotation(2));
-        reader.close();
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(4)
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
     }
 
     @Test
-    public void testRotateSpecificPages() throws TaskException, IOException {
+    public void testRotateSpecificPages() throws IOException {
         setUpRotateSpecificPages();
-        doExecute();
-
-        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
-        assertEquals(90, reader.getPageRotation(3));
-        reader.close();
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(4).forEachPdfOutput(d -> assertEquals(90, d.getPage(2).getRotation()));
     }
 
     @Test
-    public void testExecuteEncrypted() throws TaskException, IOException {
+    public void testExecuteEncrypted() throws IOException {
         setUpParametersEncrypted();
-        doExecute();
-
-        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
-
-        assertEquals(4, reader.getNumberOfPages());
-        assertEquals(180, reader.getPageRotation(2));
-        reader.close();
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(4)
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
     }
 
     @Test
-    public void testVersionPrefixAndCreatorAreApplied() throws TaskException, IOException {
+    public void testVersionPrefixAndCreatorAreApplied() throws IOException {
         setUpParametersWithVersionPrefixAndCompressionSpecified();
-
-        doExecute();
-
-        PdfReader reader = getReaderFromResultZipStream("test_prefix_test_file.pdf");
-        assertCreator(reader);
-        // TODO it seems iText 2 reads the version from the header only while it should read from the catalog first so this assert fails in PDFBox 2
-        // assertVersion(reader, PdfVersion.VERSION_1_4);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(4).assertVersion(PdfVersion.VERSION_1_6);
     }
 
     @Test
-    public void testMultipleInputOneDoesntContainRange() throws TaskException, IOException {
+    public void testMultipleInputOneDoesntContainRange() throws IOException {
         setUpRotateMultipleInputNotRangesContained();
-        doExecute();
-
-        assertOutputContainsDocuments(2);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test
-    public void testDifferentRotations() throws TaskException, IOException {
+    public void testDifferentRotations() throws IOException {
         parameters = new RotateParameters();
         parameters.addPageRange(new PageRange(1, 2), Rotation.DEGREES_90);
         parameters.addPageRange(new PageRange(3, 4), Rotation.DEGREES_180);
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf");
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(stream, "test_file.pdf");
-        parameters.addSource(source);
+        parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(4).forEachPdfOutput(d -> {
+            assertEquals(90, d.getPage(0).getRotation());
+            assertEquals(90, d.getPage(1).getRotation());
+            assertEquals(180, d.getPage(2).getRotation());
+            assertEquals(180, d.getPage(3).getRotation());
+        });
 
-        doExecute();
-
-        PdfReader reader = getReaderFromResultZipStream("test_file.pdf");
-
-        assertEquals(90, reader.getPageRotation(1));
-        assertEquals(90, reader.getPageRotation(2));
-        assertEquals(180, reader.getPageRotation(3));
-        assertEquals(180, reader.getPageRotation(4));
-
-        assertEquals(4, reader.getNumberOfPages());
-
-        reader.close();
     }
-
-    private void doExecute() throws TaskException {
-        when(context.getTask(parameters)).thenReturn((Task) getTask());
-        initializeNewStreamOutput(parameters);
-        victim.execute(parameters);
-    }
-
 }
