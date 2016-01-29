@@ -24,29 +24,19 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.nio.file.Files;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.writer.model.ImageOptimizer;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.optimizaton.DocumentOptimizer;
+import org.sejda.impl.sambox.component.optimizaton.PagesOptimizer;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.task.BaseTask;
-import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.encryption.MessageDigests;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDResources;
-import org.sejda.sambox.pdmodel.graphics.PDXObject;
-import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,17 +50,17 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
-    private OptimizeParameters parameters;
-    private Map<String, SoftReference<PDImageXObject>> cache = new HashMap<>();
-
+    private DocumentOptimizer documentOptimizer;
+    private PagesOptimizer pagesOptimizer;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
     public void before(OptimizeParameters parameters) {
-        this.parameters = parameters;
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+        documentOptimizer = new DocumentOptimizer(parameters.getOptimizations());
+        pagesOptimizer = new PagesOptimizer(parameters);
     }
 
     @Override
@@ -78,6 +68,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
@@ -85,14 +76,11 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
+            documentOptimizer.accept(documentHandler.getUnderlyingPDDocument());
 
-            for (int i = 1; i <= documentHandler.getNumberOfPages(); i++) {
-                LOG.debug("Optimizing page {}", i);
-                PDPage page = documentHandler.getPage(i);
-
-                if (parameters.isCompressImages()) {
-                    optimizeImages(page);
-                }
+            for (PDPage p : documentHandler.getPages()) {
+                stopTaskIfCancelled();
+                pagesOptimizer.accept(p);
             }
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
@@ -110,48 +98,6 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents optimized and written to {}", parameters.getOutput());
-    }
-
-    private void optimizeImages(PDPage page) throws TaskException {
-        PDResources pageResources = page.getResources();
-        for (COSName xObjectName : pageResources.getXObjectNames()) {
-            stopTaskIfCancelled();
-            try {
-                PDXObject obj = pageResources.getXObject(xObjectName);
-                if (obj instanceof PDImageXObject) {
-                    PDImageXObject imageXObject = ((PDImageXObject) obj);
-                    LOG.debug("Found image {}x{}", imageXObject.getHeight(), imageXObject.getWidth());
-
-                    File tmpImageFile = ImageOptimizer.optimize(imageXObject.getImage(), parameters.getImageQuality(),
-                            parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
-
-                    long optimizedSize = tmpImageFile.length();
-                    int originalSize = imageXObject.getStream().getLength();
-
-                    if (originalSize > optimizedSize) {
-                        LOG.debug(String.format("Compressed image to %.2f percent of original size",
-                                optimizedSize * 100.0 / originalSize));
-                    } else {
-                        continue;
-                    }
-
-                    // images are hashed and cached so only one PDImageXObject is used if the image is repeated
-                    String hash = Base64.getEncoder()
-                            .encodeToString(MessageDigests.md5().digest(Files.readAllBytes(tmpImageFile.toPath())));
-                    PDImageXObject newImage;
-                    if (cache.containsKey(hash)) {
-                        newImage = cache.get(hash).get();
-                    } else {
-                        newImage = PDImageXObject.createFromFileByExtension(tmpImageFile);
-                        cache.put(hash, new SoftReference<>(newImage));
-                    }
-
-                    pageResources.put(xObjectName, newImage);
-                }
-            } catch (IOException | RuntimeException ex) {
-                LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
-            }
-        }
     }
 
     @Override

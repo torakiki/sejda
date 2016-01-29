@@ -16,28 +16,24 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.Set;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.common.collection.NullSafeSet;
+import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 
 /**
- * Parameters for the optimize task, which compresses images found in the PDF changing their DPI to 144 by default.
- * Depending on JPG codecs found on the system, this might not work as expected: PDF files containing images already compressed using better algorithms.
+ * Parameters for the optimize task, which compresses images found in the PDF changing their DPI to 144 by default. Depending on JPG codecs found on the system, this might not work
+ * as expected: PDF files containing images already compressed using better algorithms.
  */
 public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    private boolean compressImages = true;
     private float imageQuality = 1.0f;
     private int imageDpi = 72;
     private int imageMaxWidthOrHeight = 1280;
-
-    public boolean isCompressImages() {
-        return compressImages;
-    }
-
-    public void setCompressImages(boolean compressImages) {
-        this.compressImages = compressImages;
-    }
+    private Set<Optimization> optimizations = new NullSafeSet<>();
 
     public float getImageQuality() {
         return imageQuality;
@@ -63,11 +59,21 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         this.imageMaxWidthOrHeight = imageMaxWidthOrHeight;
     }
 
+    public Set<Optimization> getOptimizations() {
+        return optimizations;
+    }
+
+    public void setOptimizations(Set<Optimization> optimizations) {
+        this.optimizations = optimizations;
+    }
+
+    public void addOptimization(Optimization optimization) {
+        this.optimizations.add(optimization);
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(compressImages)
-                .append(imageQuality)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizations).append(imageQuality)
                 .toHashCode();
     }
 
@@ -81,10 +87,8 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         }
         OptimizeParameters parameter = (OptimizeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(isCompressImages(), parameter.isCompressImages())
-                .append(getImageQuality(), parameter.getImageQuality())
-                .append(getImageDpi(), parameter.getImageDpi())
-                .append(getImageMaxWidthOrHeight(), parameter.getImageMaxWidthOrHeight())
-                .isEquals();
+                .append(getOptimizations(), parameter.getOptimizations())
+                .append(getImageQuality(), parameter.getImageQuality()).append(getImageDpi(), parameter.getImageDpi())
+                .append(getImageMaxWidthOrHeight(), parameter.getImageMaxWidthOrHeight()).isEquals();
     }
 }

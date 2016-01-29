@@ -36,6 +36,7 @@ import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.CancellationOption;
@@ -49,7 +50,8 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
 
     private void setUpParameters() throws IOException {
         parameters = new OptimizeParameters();
-        parameters.setCompressImages(true);
+        parameters.addOptimization(Optimization.IMAGES);
+        parameters.addOptimization(Optimization.DISCARD_METADATA);
         parameters.setImageQuality(0.8f);
         parameters.setImageDpi(72);
         parameters.setImageMaxWidthOrHeight(1280);

@@ -40,19 +40,19 @@ import org.sejda.sambox.cos.COSName;
  * @author Andrea Vacondio
  *
  */
-public class ReadOnlyCOSStreamTest {
+public class ReadOnlyCompressedCOSStreamTest {
     private InputStream stream;
-    private ReadOnlyCOSStream victim;
+    private ReadOnlyCompressedCOSStream victim;
 
     @Before
     public void createReadOnlyCOSStream() {
         stream = new ByteArrayInputStream(new byte[] { 1, 2 });
-        victim = new ReadOnlyCOSStream(stream);
+        victim = new ReadOnlyCompressedCOSStream(stream);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nonNullConstructor() throws Exception {
-        new ReadOnlyCOSStream(null);
+        new ReadOnlyCompressedCOSStream(null);
     }
 
     @Test(expected = IOException.class)
@@ -80,7 +80,7 @@ public class ReadOnlyCOSStreamTest {
     @Test
     public void testClose() throws Exception {
         stream = mock(InputStream.class);
-        victim = new ReadOnlyCOSStream(stream);
+        victim = new ReadOnlyCompressedCOSStream(stream);
         victim.close();
         verify(stream).close();
     }

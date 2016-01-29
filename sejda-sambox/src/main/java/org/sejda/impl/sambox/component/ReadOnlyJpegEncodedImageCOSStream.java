@@ -1,5 +1,5 @@
 /*
- * Created on 25 gen 2016
+ * Created on 28 gen 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -21,45 +21,42 @@ package org.sejda.impl.sambox.component;
 import static org.sejda.io.SeekableSources.inMemorySeekableSourceFrom;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.GregorianCalendar;
-import java.util.zip.DeflaterInputStream;
+import java.util.Optional;
 
 import org.sejda.io.SeekableSource;
 import org.sejda.model.exception.SejdaRuntimeException;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.PdfURLSource;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 import org.sejda.util.IOUtils;
 
 /**
- * A read only {@link COSStream} that reads from the underlying {@link InputStream}, is always compressed and has a length written as indirect object
- * 
  * @author Andrea Vacondio
  *
  */
-public final class ReadOnlyCOSStream extends COSStream {
+public class ReadOnlyJpegEncodedImageCOSStream extends COSStream {
     private InputStream stream;
 
-    public ReadOnlyCOSStream(InputStream stream) {
+    public ReadOnlyJpegEncodedImageCOSStream(InputStream stream, int width, int height, int bitsPerComponent,
+            PDColorSpace colorSpace) {
         requireNotNullArg(stream, "input stream cannot be null");
+        requireNotNullArg(colorSpace, "color space cannot be null");
         this.stream = stream;
-        setItem(COSName.FILTER, COSName.FLATE_DECODE);
+        setItem(COSName.FILTER, COSName.DCT_DECODE);
+        setInt(COSName.BITS_PER_COMPONENT, bitsPerComponent);
+        setInt(COSName.HEIGHT, height);
+        setInt(COSName.WIDTH, width);
+        Optional.ofNullable(colorSpace).map(PDColorSpace::getCOSObject)
+                .ifPresent(cs -> setItem(COSName.COLORSPACE, cs));
     }
 
     @Override
     protected InputStream doGetFilteredStream() {
-        return new DeflaterInputStream(stream);
+        return stream;
     }
 
     @Override
@@ -73,8 +70,8 @@ public final class ReadOnlyCOSStream extends COSStream {
     }
 
     @Override
-    public InputStream getUnfilteredStream() {
-        return stream;
+    public InputStream getUnfilteredStream() throws IOException {
+        throw new IOException("getUnfilteredStream  cannot be requested");
     }
 
     @Override
@@ -135,45 +132,5 @@ public final class ReadOnlyCOSStream extends COSStream {
     @Override
     public void close() {
         IOUtils.closeQuietly(stream);
-    }
-
-    /**
-     * Factory method to create a {@link ReadOnlyCOSStream} from a {@link PdfSource}
-     * 
-     * @param source
-     * @return
-     * @throws TaskIOException
-     */
-    public static final ReadOnlyCOSStream fromSource(PdfSource<?> source) throws TaskIOException {
-        return source.open(new PdfSourceOpener<ReadOnlyCOSStream>() {
-
-            @Override
-            public ReadOnlyCOSStream open(PdfURLSource source) throws TaskIOException {
-                try {
-                    return new ReadOnlyCOSStream(source.getSource().openStream());
-                } catch (IOException e) {
-                    throw new TaskIOException(e);
-                }
-            }
-
-            @Override
-            public ReadOnlyCOSStream open(PdfFileSource source) throws TaskIOException {
-                try {
-                    ReadOnlyCOSStream retVal = new ReadOnlyCOSStream(new FileInputStream(source.getSource()));
-                    retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE, source.getSource().length());
-                    GregorianCalendar calendar = new GregorianCalendar();
-                    calendar.setTimeInMillis(source.getSource().lastModified());
-                    retVal.setEmbeddedDate(COSName.PARAMS.getName(), COSName.MOD_DATE, calendar);
-                    return retVal;
-                } catch (FileNotFoundException e) {
-                    throw new TaskIOException(e);
-                }
-            }
-
-            @Override
-            public ReadOnlyCOSStream open(PdfStreamSource source) {
-                return new ReadOnlyCOSStream(source.getSource());
-            }
-        });
     }
 }

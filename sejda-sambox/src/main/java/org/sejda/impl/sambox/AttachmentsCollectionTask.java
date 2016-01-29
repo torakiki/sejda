@@ -31,7 +31,7 @@ import java.util.Map;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.ReadOnlyCOSStream;
+import org.sejda.impl.sambox.component.ReadOnlyCompressedCOSStream;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfSource;
@@ -163,7 +163,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     }
 
     private PDEmbeddedFile embeddedFileFromSource(PdfSource<?> source) throws TaskIOException {
-        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(ReadOnlyCOSStream.fromSource(source));
+        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(ReadOnlyCompressedCOSStream.fromSource(source));
         embeddedFile.setCreationDate(new GregorianCalendar());
         embeddedFile.setSubtype("application/pdf");
         return embeddedFile;
