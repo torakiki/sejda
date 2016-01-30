@@ -76,12 +76,13 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
-            documentOptimizer.accept(documentHandler.getUnderlyingPDDocument());
 
             for (PDPage p : documentHandler.getPages()) {
                 stopTaskIfCancelled();
                 pagesOptimizer.accept(p);
             }
+
+            documentOptimizer.accept(documentHandler.getUnderlyingPDDocument());
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());

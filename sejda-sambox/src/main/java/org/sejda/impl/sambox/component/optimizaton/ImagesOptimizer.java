@@ -62,6 +62,7 @@ import org.sejda.sambox.pdmodel.graphics.color.PDDeviceGray;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,9 +76,11 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
     private Map<String, ReadOnlyJpegEncodedImageCOSStream> optimizedByHash = new HashMap<>();
     private OptimizeParameters parameters;
+    private ImagesHitter hitter;
 
     ImagesOptimizer(OptimizeParameters parameters) {
         this.parameters = parameters;
+        this.hitter = new ImagesHitter();
         addOperator(new XObjectOperator());
     }
 
@@ -117,15 +120,21 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private void optimize(COSName objectName, PDImageXObject image) {
             try {
+                LOG.debug("Optimizing image {}", objectName);
                 File tmpImageFile = ImageOptimizer.optimize(image.getImage(), parameters.getImageQuality(),
                         parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
 
-                double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSStream().getFilteredLength();
+                // we wrap the existing so we can identify it later as "in use" and already processed
+                ReadOnlyJpegEncodedImageCOSStream optimizedImage = new ReadOnlyJpegEncodedImageCOSStream(
+                        image.getCOSStream());
 
+                double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSStream().getFilteredLength();
+                // can be compressed
                 if (sizeRate < 100) {
                     String hash = Base64.getEncoder()
                             .encodeToString(MessageDigests.md5().digest(Files.readAllBytes(tmpImageFile.toPath())));
-                    ReadOnlyJpegEncodedImageCOSStream optimizedImage = optimizedByHash.get(hash);
+                    optimizedImage = optimizedByHash.get(hash);
+                    // is it the same as something we already compressed?
                     if (isNull(optimizedImage)) {
                         LOG.debug(String.format("Compressed image to %.2f%% of original size", sizeRate));
                         optimizedImage = createFromJpegFile(tmpImageFile);
@@ -133,15 +142,16 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                     } else {
                         LOG.debug("Reusing previously optimized image");
                     }
-                    COSDictionary resources = context.getResources().getCOSObject();
-                    COSDictionary xobjects = ofNullable(resources.getDictionaryObject(COSName.XOBJECT))
-                            .filter(b -> b instanceof COSDictionary).map(b -> (COSDictionary) b).orElseGet(() -> {
-                                COSDictionary ret = new COSDictionary();
-                                resources.setItem(COSName.XOBJECT, ret);
-                                return ret;
-                            });
-                    xobjects.setItem(objectName, optimizedImage);
                 }
+                COSDictionary resources = context.getResources().getCOSObject();
+                COSDictionary xobjects = ofNullable(resources.getDictionaryObject(COSName.XOBJECT))
+                        .filter(b -> b instanceof COSDictionary).map(b -> (COSDictionary) b).orElseGet(() -> {
+                            COSDictionary ret = new COSDictionary();
+                            resources.setItem(COSName.XOBJECT, ret);
+                            return ret;
+                        });
+                xobjects.setItem(objectName, optimizedImage);
+
             } catch (IOException | RuntimeException ex) {
                 LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
             }
@@ -175,12 +185,18 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
     public void accept(PDPage page) {
         try {
             this.processPage(page);
+            for (PDAnnotation annotation : page.getAnnotations()) {
+                // this forces annotation appearance stream to be parsed. It's a form xobject so...
+                this.showAnnotation(annotation);
+            }
+            // this isn't very clever but still... we need to hit the xobject images in form xobject and transparency groups so they are not later removed if the form xobject
+            // shares the resource dictionary with the page.
+            this.hitter.accept(page);
         } catch (IOException e) {
             LOG.warn("Failed to optimize page, skipping and continuing with next.", e);
         }
     }
 
-    // returns a PDColorSpace for a given BufferedImage
     private static PDColorSpace getColorSpaceFromAWT(BufferedImage awtImage) {
         if (awtImage.getColorModel().getNumComponents() == 1) {
             // 256 color (gray) JPEG

@@ -46,12 +46,21 @@ public class ReadOnlyJpegEncodedImageCOSStream extends COSStream {
         requireNotNullArg(stream, "input stream cannot be null");
         requireNotNullArg(colorSpace, "color space cannot be null");
         this.stream = stream;
+        setItem(COSName.TYPE, COSName.XOBJECT);
+        setItem(COSName.SUBTYPE, COSName.IMAGE);
         setItem(COSName.FILTER, COSName.DCT_DECODE);
         setInt(COSName.BITS_PER_COMPONENT, bitsPerComponent);
         setInt(COSName.HEIGHT, height);
         setInt(COSName.WIDTH, width);
         Optional.ofNullable(colorSpace).map(PDColorSpace::getCOSObject)
                 .ifPresent(cs -> setItem(COSName.COLORSPACE, cs));
+    }
+
+    public ReadOnlyJpegEncodedImageCOSStream(COSStream existingImage) throws IOException {
+        super(existingImage);
+        // let's make sure we get the unencrypted and filtered
+        existingImage.setEncryptor(null);
+        this.stream = existingImage.getFilteredStream();
     }
 
     @Override

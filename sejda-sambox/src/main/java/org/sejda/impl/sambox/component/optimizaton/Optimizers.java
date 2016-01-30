@@ -57,6 +57,8 @@ final class Optimizers {
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.getPDFName("PieceInfo"));
         case DISCARD_STRUCTURE_TREE:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.STRUCT_TREE_ROOT);
+        case IMAGES:
+            return new ResourceDictionaryCleaner();
         default:
             return null;
         }
@@ -66,6 +68,8 @@ final class Optimizers {
         switch (optimization) {
         case DISCARD_PIECE_INFO:
             return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("PieceInfo"));
+        case DISCARD_THUMBNAILS:
+            return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("Thumb"));
         case IMAGES:
             return new ImagesOptimizer(parameters);
         default:

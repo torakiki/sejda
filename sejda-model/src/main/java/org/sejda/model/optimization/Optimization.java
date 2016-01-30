@@ -59,7 +59,11 @@ public enum Optimization implements FriendlyNamed {
     /**
      * @see PDF 32000-1:2008 14.7.2
      */
-    DISCARD_STRUCTURE_TREE("discard_struct_tree");
+    DISCARD_STRUCTURE_TREE("discard_struct_tree"),
+    /**
+     * @see PDF 32000-1:2008 12.3.4
+     */
+    DISCARD_THUMBNAILS("discard_thumbnails");
 
     private String displayName;
 
