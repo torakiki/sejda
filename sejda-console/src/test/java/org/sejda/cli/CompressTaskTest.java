@@ -16,10 +16,11 @@
  */
 package org.sejda.cli;
 
-import org.junit.Test;
-import org.sejda.model.parameter.OptimizeParameters;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.sejda.model.optimization.Optimization;
+import org.sejda.model.parameter.OptimizeParameters;
 
 public class CompressTaskTest extends AbstractTaskTest {
 
@@ -29,22 +30,33 @@ public class CompressTaskTest extends AbstractTaskTest {
 
     @Test
     public void testImageDpi() {
-        OptimizeParameters parameters = defaultCommandLine().with("--imageDpi", "100")
-                .invokeSejdaConsole();
-        assertEquals(parameters.getImageDpi(), 100);
+        OptimizeParameters parameters = defaultCommandLine().with("--imageDpi", "100").invokeSejdaConsole();
+        assertEquals(100, parameters.getImageDpi());
     }
 
     @Test
     public void testImageMax() {
         OptimizeParameters parameters = defaultCommandLine().with("--imageMaxWidthOrHeight", "110")
                 .invokeSejdaConsole();
-        assertEquals(parameters.getImageMaxWidthOrHeight(), 110);
+        assertEquals(110, parameters.getImageMaxWidthOrHeight());
     }
 
     @Test
     public void testImageQuality() {
-        OptimizeParameters parameters = defaultCommandLine().with("--imageQuality", "0.22")
-                .invokeSejdaConsole();
-        assertEquals(parameters.getImageQuality(), 0.22f, 0.01);
+        OptimizeParameters parameters = defaultCommandLine().with("--imageQuality", "0.22").invokeSejdaConsole();
+        assertEquals(0.22f, parameters.getImageQuality(), 0.01);
+    }
+
+    @Test
+    public void testDefaultOptimizations() {
+        OptimizeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(Optimization.values().length - 1, parameters.getOptimizations().size());
+    }
+
+    @Test
+    public void testOptimizations() {
+        OptimizeParameters parameters = defaultCommandLine()
+                .with("--optimizations", "discard_metadata compress_images discard_unused_images").invokeSejdaConsole();
+        assertEquals(3, parameters.getOptimizations().size());
     }
 }

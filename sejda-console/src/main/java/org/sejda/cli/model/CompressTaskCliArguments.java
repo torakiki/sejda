@@ -16,14 +16,17 @@
  */
 package org.sejda.cli.model;
 
+import java.util.List;
+
+import org.sejda.conversion.OptimizationAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
+
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
-import java.util.List;
-
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " compress")
-public interface CompressTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
+@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " optimize")
+public interface CompressTaskCliArguments
+        extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
 
     @Option(shortName = "d", description = "image DPI. Defaults to 72. (Ex --imageDpi 140) (optional)", defaultValue = "72")
     Integer getImageDpi();
@@ -37,4 +40,9 @@ public interface CompressTaskCliArguments extends CliArgumentsWithPdfAndDirector
     @Override
     @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
     List<PdfFileSourceAdapter> getFiles();
+
+    @Option(shortName = "z", description = "list of optimizations to perform. { discard_metadata, discard_outline, discard_threads, discard_spider_info, discard_piece_info, discard_mc_props, discard_alternate_images, compress_images, discard_unused_images, discard_struct_tree, discard_thumbnails }. If omitted it performs all the optimizations except discard_outline (optional)")
+    List<OptimizationAdapter> getOptimizations();
+
+    boolean isOptimizations();
 }

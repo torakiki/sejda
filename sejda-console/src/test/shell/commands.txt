@@ -101,4 +101,7 @@ target/assembled/bin/sejda-console addbackpages -h
 target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite --compressed -o /tmp/sejda-smoketest/ 
 target/assembled/bin/sejda-console portfolio -h
 target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -i details -o /tmp/sejda-smoketest/portfolio.pdf
+target/assembled/bin/sejda-console compress -h
+target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -q 0.4 -o /tmp/sejda-smoketest
+target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -z discard_unused_images discard_outline discard_metadata -o /tmp/sejda-smoketest
 

@@ -19,12 +19,10 @@
 package org.sejda.impl.sambox.component.optimizaton;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static org.sejda.util.RequireUtils.requireIOCondition;
+import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.getColorSpaceFromAWT;
+import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.readJpegFile;
 
-import java.awt.color.ColorSpace;
-import java.awt.color.ICC_ColorSpace;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,17 +30,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-
 import org.sejda.core.writer.model.ImageOptimizer;
-import org.sejda.impl.sambox.component.ReadOnlyJpegEncodedImageCOSStream;
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.sambox.contentstream.PDFStreamEngine;
@@ -56,10 +49,6 @@ import org.sejda.sambox.encryption.MessageDigests;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
-import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
-import org.sejda.sambox.pdmodel.graphics.color.PDDeviceCMYK;
-import org.sejda.sambox.pdmodel.graphics.color.PDDeviceGray;
-import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -67,6 +56,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Component that parses the page content stream and its annotations appearance stream and performs some optimization, depending on the input {@link OptimizeParameters}. It tries
+ * to identify equal image xobjects and reause them.
+ * 
  * @author Andrea Vacondio
  *
  */
@@ -74,13 +66,11 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesOptimizer.class);
 
-    private Map<String, ReadOnlyJpegEncodedImageCOSStream> optimizedByHash = new HashMap<>();
+    private Map<String, ReadOnlyFilteredCOSStream> optimizedByHash = new HashMap<>();
     private OptimizeParameters parameters;
-    private ImagesHitter hitter;
 
     ImagesOptimizer(OptimizeParameters parameters) {
         this.parameters = parameters;
-        this.hitter = new ImagesHitter();
         addOperator(new XObjectOperator());
     }
 
@@ -100,16 +90,14 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 .map(d -> d.getDictionaryObject(objectName)).orElseThrow(
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
-                if (!(existing instanceof ReadOnlyJpegEncodedImageCOSStream)) {
+                if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
                     PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
                     if (xobject instanceof PDImageXObject) {
                         PDImageXObject image = (PDImageXObject) xobject;
-                        LOG.debug("Found image {}x{}", image.getHeight(), image.getWidth());
+                        LOG.trace("Found image {}x{}", image.getHeight(), image.getWidth());
                         removeMetadataIfNeeded(image);
                         removeAlternatesIfNeeded(image);
-                        if (parameters.getOptimizations().contains(Optimization.IMAGES)) {
-                            optimize(objectName, image);
-                        }
+                        optimize(objectName, image);
                     } else if (xobject instanceof PDFormXObject) {
                         removeMetadataIfNeeded(xobject);
                         removePieceInfoIfNeeded(xobject);
@@ -120,13 +108,12 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private void optimize(COSName objectName, PDImageXObject image) {
             try {
-                LOG.debug("Optimizing image {}", objectName);
+                LOG.debug("Optimizing image {}", objectName.getName());
                 File tmpImageFile = ImageOptimizer.optimize(image.getImage(), parameters.getImageQuality(),
                         parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
 
                 // we wrap the existing so we can identify it later as "in use" and already processed
-                ReadOnlyJpegEncodedImageCOSStream optimizedImage = new ReadOnlyJpegEncodedImageCOSStream(
-                        image.getCOSStream());
+                ReadOnlyFilteredCOSStream optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSStream());
 
                 double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSStream().getFilteredLength();
                 // can be compressed
@@ -189,64 +176,19 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                 // this forces annotation appearance stream to be parsed. It's a form xobject so...
                 this.showAnnotation(annotation);
             }
-            // this isn't very clever but still... we need to hit the xobject images in form xobject and transparency groups so they are not later removed if the form xobject
-            // shares the resource dictionary with the page.
-            this.hitter.accept(page);
         } catch (IOException e) {
             LOG.warn("Failed to optimize page, skipping and continuing with next.", e);
         }
     }
 
-    private static PDColorSpace getColorSpaceFromAWT(BufferedImage awtImage) {
-        if (awtImage.getColorModel().getNumComponents() == 1) {
-            // 256 color (gray) JPEG
-            return PDDeviceGray.INSTANCE;
-        }
-
-        ColorSpace awtColorSpace = awtImage.getColorModel().getColorSpace();
-        if (awtColorSpace instanceof ICC_ColorSpace && !awtColorSpace.isCS_sRGB()) {
-            throw new UnsupportedOperationException("ICC color spaces not implemented");
-        }
-
-        switch (awtColorSpace.getType()) {
-        case ColorSpace.TYPE_RGB:
-            return PDDeviceRGB.INSTANCE;
-        case ColorSpace.TYPE_GRAY:
-            return PDDeviceGray.INSTANCE;
-        case ColorSpace.TYPE_CMYK:
-            return PDDeviceCMYK.INSTANCE;
-        default:
-            throw new UnsupportedOperationException("color space not implemented: " + awtColorSpace.getType());
-        }
-    }
-
-    public static ReadOnlyJpegEncodedImageCOSStream createFromJpegFile(File file) throws IOException {
+    public static ReadOnlyFilteredCOSStream createFromJpegFile(File file) throws IOException {
         // read image
         BufferedImage awtImage = readJpegFile(file);
         if (awtImage.getColorModel().hasAlpha()) {
             throw new UnsupportedOperationException("alpha channel not implemented");
         }
-        return new ReadOnlyJpegEncodedImageCOSStream(new FileInputStream(file), awtImage.getWidth(),
+        return ReadOnlyFilteredCOSStream.readOnlyJpegImage(new FileInputStream(file), awtImage.getWidth(),
                 awtImage.getHeight(), awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
     }
 
-    private static BufferedImage readJpegFile(File file) throws IOException {
-        Iterator<ImageReader> readers = ImageIO.getImageReadersBySuffix("jpeg");
-        ImageReader reader = null;
-        while (readers.hasNext()) {
-            reader = readers.next();
-            if (reader.canReadRaster()) {
-                break;
-            }
-        }
-        requireIOCondition(nonNull(reader), "Cannot find an ImageIO reader for JPEG image");
-
-        try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
-            reader.setInput(iis);
-            ImageIO.setUseCache(false);
-            return reader.read(0);
-        } finally {
-            reader.dispose();
-        }
-    }
 }

@@ -18,17 +18,22 @@
  */
 package org.sejda.impl.sambox.component.optimizaton;
 
+import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.component.optimizaton.Optimizers.pageOptimizer;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
+import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Consumer that optimize the given page based on the given {@link OptimizeParameters}
+ * 
  * @author Andrea Vacondio
  *
  */
@@ -39,9 +44,15 @@ public class PagesOptimizer implements Consumer<PDPage> {
     private Consumer<PDPage> optimizer = (p) -> LOG.trace("Optimizing page");
 
     public PagesOptimizer(OptimizeParameters parameters) {
-        parameters.getOptimizations().forEach(o -> {
+        Set<Optimization> optimizations = ofNullable(parameters).map(OptimizeParameters::getOptimizations)
+                .orElse(emptySet());
+        optimizations.forEach(o -> {
             ofNullable(pageOptimizer(o, parameters)).ifPresent(toAdd -> optimizer = optimizer.andThen(toAdd));
         });
+        // we want to be sure this is not performed before images optimization
+        if (optimizations.contains(Optimization.DISCARD_UNUSED_IMAGES)) {
+            optimizer = optimizer.andThen(new ImagesHitter());
+        }
     }
 
     @Override

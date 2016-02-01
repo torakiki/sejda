@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.sejda.impl.sambox.component.ReadOnlyJpegEncodedImageCOSStream;
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.sambox.contentstream.PDFStreamEngine;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
@@ -43,6 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Component that parses the page content steam and the page annotations appearance stream, wraps any image xobject (type xobject, subtype image) found in an instance of
+ * {@link ReadOnlyFilteredCOSStream} and puts it back to the resource dictionary. It's then easy to identify later xobjects in use by the page/s and what can be discarded.
+ * 
  * @author Andrea Vacondio
  *
  */
@@ -50,7 +53,7 @@ public class ImagesHitter extends PDFStreamEngine implements Consumer<PDPage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesHitter.class);
 
-    ImagesHitter() {
+    public ImagesHitter() {
         addOperator(new XObjectOperator());
     }
 
@@ -70,14 +73,14 @@ public class ImagesHitter extends PDFStreamEngine implements Consumer<PDPage> {
                                 .map(d -> d.getDictionaryObject(objectName)).orElseThrow(
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
-                if (!(existing instanceof ReadOnlyJpegEncodedImageCOSStream)) {
+                if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
                     PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
                     if (xobject instanceof PDImageXObject) {
                         PDImageXObject image = (PDImageXObject) xobject;
-                        LOG.debug("Found image {}x{}", image.getHeight(), image.getWidth());
+                        LOG.trace("Hit image with name {}", objectName.getName());
                         // we wrap the existing so we can identify it later as "in use" and already processed
-                        ReadOnlyJpegEncodedImageCOSStream optimizedImage = new ReadOnlyJpegEncodedImageCOSStream(
-                                image.getCOSStream());
+                        ReadOnlyFilteredCOSStream optimizedImage = ReadOnlyFilteredCOSStream
+                                .readOnly(image.getCOSStream());
                         COSDictionary resources = context.getResources().getCOSObject();
                         COSDictionary xobjects = ofNullable(resources.getDictionaryObject(COSName.XOBJECT))
                                 .filter(b -> b instanceof COSDictionary).map(b -> (COSDictionary) b).orElseGet(() -> {

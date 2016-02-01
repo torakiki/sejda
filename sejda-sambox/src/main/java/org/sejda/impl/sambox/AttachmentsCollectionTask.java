@@ -22,6 +22,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyEmbeddedFile;
 
 import java.io.File;
 import java.util.GregorianCalendar;
@@ -31,7 +32,6 @@ import java.util.Map;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.ReadOnlyCompressedCOSStream;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfSource;
@@ -163,7 +163,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     }
 
     private PDEmbeddedFile embeddedFileFromSource(PdfSource<?> source) throws TaskIOException {
-        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(ReadOnlyCompressedCOSStream.fromSource(source));
+        PDEmbeddedFile embeddedFile = new PDEmbeddedFile(readOnlyEmbeddedFile(source));
         embeddedFile.setCreationDate(new GregorianCalendar());
         embeddedFile.setSubtype("application/pdf");
         return embeddedFile;

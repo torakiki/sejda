@@ -16,11 +16,15 @@
  */
 package org.sejda.cli.transformer;
 
+import static java.util.Arrays.stream;
+
 import org.sejda.cli.model.CompressTaskCliArguments;
+import org.sejda.conversion.OptimizationAdapter;
+import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 
-public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> {
+public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer
+        implements CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> {
 
     @Override
     public OptimizeParameters toTaskParameters(CompressTaskCliArguments taskCliArguments) {
@@ -30,7 +34,13 @@ public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 
-        parameters.setCompressImages(true);
+        if (taskCliArguments.isOptimizations()) {
+            taskCliArguments.getOptimizations().stream().map(OptimizationAdapter::getEnumValue)
+                    .forEach(parameters::addOptimization);
+        } else {
+            stream(Optimization.values()).filter(o -> o != Optimization.DISCARD_OUTLINE)
+                    .forEach(parameters::addOptimization);
+        }
         parameters.setImageDpi(taskCliArguments.getImageDpi());
         parameters.setImageMaxWidthOrHeight(taskCliArguments.getImageMaxWidthOrHeight());
         parameters.setImageQuality(taskCliArguments.getImageQuality());

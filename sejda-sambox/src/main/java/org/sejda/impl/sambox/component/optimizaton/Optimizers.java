@@ -43,7 +43,7 @@ final class Optimizers {
      * @param optimization
      * @return the optimizer or null if there is no document level optimization for the given {@link Optimization}
      */
-    public static Consumer<PDDocument> documentOptimizer(Optimization optimization) {
+    static Consumer<PDDocument> documentOptimizer(Optimization optimization) {
         switch (optimization) {
         case DISCARD_METADATA:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.METADATA);
@@ -57,20 +57,22 @@ final class Optimizers {
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.getPDFName("PieceInfo"));
         case DISCARD_STRUCTURE_TREE:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.STRUCT_TREE_ROOT);
-        case IMAGES:
+        case DISCARD_UNUSED_IMAGES:
             return new ResourceDictionaryCleaner();
         default:
             return null;
         }
     }
 
-    public static Consumer<PDPage> pageOptimizer(Optimization optimization, OptimizeParameters parameters) {
+    static Consumer<PDPage> pageOptimizer(Optimization optimization, OptimizeParameters parameters) {
         switch (optimization) {
         case DISCARD_PIECE_INFO:
             return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("PieceInfo"));
         case DISCARD_THUMBNAILS:
             return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("Thumb"));
-        case IMAGES:
+        case DISCARD_MC_PROPERTIES:
+            return (p) -> p.getResources().getCOSObject().removeItem(COSName.PROPERTIES);
+        case COMPRESS_IMAGES:
             return new ImagesOptimizer(parameters);
         default:
             return null;

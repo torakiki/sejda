@@ -50,7 +50,7 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
 
     private void setUpParameters() throws IOException {
         parameters = new OptimizeParameters();
-        parameters.addOptimization(Optimization.IMAGES);
+        parameters.addOptimization(Optimization.COMPRESS_IMAGES);
         parameters.addOptimization(Optimization.DISCARD_METADATA);
         parameters.setImageQuality(0.8f);
         parameters.setImageDpi(72);
