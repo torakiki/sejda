@@ -24,7 +24,7 @@ import org.sejda.conversion.PdfFileSourceAdapter;
 import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
 import uk.co.flamingpenguin.jewel.cli.Option;
 
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " optimize")
+@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " compress")
 public interface CompressTaskCliArguments
         extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
 
