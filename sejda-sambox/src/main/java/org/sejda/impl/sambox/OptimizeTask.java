@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * SAMbox implementation of the Optimize task
+ * SAMBox implementation of the Optimize task
  */
 public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
@@ -59,8 +59,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
-        documentOptimizer = new DocumentOptimizer(parameters.getOptimizations());
-        pagesOptimizer = new PagesOptimizer(parameters);
+
     }
 
     @Override
@@ -76,6 +75,9 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
             File tmpFile = createTemporaryPdfBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
+
+            documentOptimizer = new DocumentOptimizer(parameters.getOptimizations());
+            pagesOptimizer = new PagesOptimizer(parameters);
 
             LOG.debug("Starting optimization");
             for (PDPage p : documentHandler.getPages()) {
