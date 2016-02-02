@@ -62,6 +62,6 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
-        assertTaskCompletes(exampleUsage + " --existingOutput overwrite");
+        assertTaskCompletes(exampleUsage + " --overwrite");
     }
 }

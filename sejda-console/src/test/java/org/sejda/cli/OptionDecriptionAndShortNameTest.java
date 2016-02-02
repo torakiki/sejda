@@ -30,7 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * 

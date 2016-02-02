@@ -19,13 +19,13 @@
  */
 package org.sejda.cli;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * For tasks that support page ranges, test various scenarios related to this trait

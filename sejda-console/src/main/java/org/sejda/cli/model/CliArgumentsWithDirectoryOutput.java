@@ -22,7 +22,7 @@ package org.sejda.cli.model;
 import org.sejda.conversion.DirectoryOutputAdapter;
 import org.sejda.conversion.ExistingOutputPolicyAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * 

@@ -25,8 +25,8 @@ import org.sejda.conversion.PageRangeSetAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the ExtractPages task

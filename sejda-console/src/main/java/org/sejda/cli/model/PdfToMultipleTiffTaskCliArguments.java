@@ -25,8 +25,8 @@ import org.sejda.conversion.ImageColorTypeAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.TiffCompressionTypeAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * CLI interface for the PdfToMultipleTiff task

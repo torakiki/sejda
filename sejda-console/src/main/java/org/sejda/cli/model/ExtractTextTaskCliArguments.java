@@ -19,8 +19,8 @@
  */
 package org.sejda.cli.model;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the ExtractText task

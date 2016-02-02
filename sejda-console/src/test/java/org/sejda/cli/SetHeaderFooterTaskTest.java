@@ -21,13 +21,13 @@ package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.Color;
+
 import org.junit.Test;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.StandardType1Font;
-
-import java.awt.*;
 
 /**
  * @author Andrea Vacondio

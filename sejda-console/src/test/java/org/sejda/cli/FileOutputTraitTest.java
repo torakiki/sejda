@@ -58,6 +58,12 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void overwrite() {
+        TaskParameters result = defaultCommandLine().withFlag("--overwrite").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.OVERWRITE, result.getExistingOutputPolicy());
+    }
+
+    @Test
+    public void overwriteHiddenParam() {
         TaskParameters result2 = defaultCommandLine().with("--existingOutput", "overwrite").invokeSejdaConsole();
         assertEquals(ExistingOutputPolicy.OVERWRITE, result2.getExistingOutputPolicy());
     }

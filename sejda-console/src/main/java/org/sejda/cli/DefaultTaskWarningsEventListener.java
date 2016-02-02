@@ -16,13 +16,13 @@
  */
 package org.sejda.cli;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionWarningEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DefaultTaskWarningsEventListener implements EventListener<TaskExecutionWarningEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskWarningsEventListener.class);

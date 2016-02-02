@@ -16,10 +16,10 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the ExtractByBookmarksTask command line interface

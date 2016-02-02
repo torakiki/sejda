@@ -20,8 +20,8 @@ package org.sejda.cli.model;
 
 import org.sejda.conversion.InitialViewAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specification for CLI arguments of a task that creates a collection of attachments

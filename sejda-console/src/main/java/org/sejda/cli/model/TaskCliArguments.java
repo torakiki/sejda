@@ -23,7 +23,7 @@ import java.util.List;
 
 import org.sejda.conversion.PdfFileSourceAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Base interface for specifications of the command line interface for {@link org.sejda.model.task.Task}s

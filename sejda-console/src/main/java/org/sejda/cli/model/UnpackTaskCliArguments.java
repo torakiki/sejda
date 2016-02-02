@@ -20,7 +20,7 @@
 package org.sejda.cli.model;
 
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
 
 /**
  * Specifications for command line options of the Unpack task

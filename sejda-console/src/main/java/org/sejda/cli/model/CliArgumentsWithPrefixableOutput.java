@@ -19,7 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Cli arguments that support a specified prefix to be applied to the name of the outputs

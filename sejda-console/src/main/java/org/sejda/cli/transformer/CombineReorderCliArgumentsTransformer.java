@@ -16,11 +16,11 @@
  */
 package org.sejda.cli.transformer;
 
+import java.util.Optional;
+
 import org.sejda.cli.model.CombineReorderTaskCliArguments;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.CombineReorderParameters;
-
-import java.util.Optional;
 
 public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<CombineReorderTaskCliArguments, CombineReorderParameters> {

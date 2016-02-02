@@ -21,7 +21,7 @@ package org.sejda.cli.model;
 
 import org.sejda.conversion.PdfVersionAdapterWithFallback;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Trait for cli tasks that output pdf files

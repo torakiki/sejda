@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<url>http://www.sejda.org</url>
 	<artifactId>sejda-console</artifactId>
@@ -189,10 +190,10 @@
 					<repositoryName>lib</repositoryName>
 					<!-- set alternative assemble directory -->
 					<assembleDirectory>${project.build.directory}/assembled</assembleDirectory>
-					<!-- Copy the contents from "/src/main/config" to the target configuration
+					<!-- Copy the contents from "/src/main/config" to the target configuration 
 						directory in the assembled application -->
 					<copyConfigurationDirectory>true</copyConfigurationDirectory>
-					<!-- Include the target configuration directory in the beginning of
+					<!-- Include the target configuration directory in the beginning of 
 						the classpath declaration in the bin scripts -->
 					<includeConfigurationDirectoryInClasspath>true</includeConfigurationDirectoryInClasspath>
 					<!-- Default JVM memory args -->
@@ -245,9 +246,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>uk.co.flamingpenguin.jewelcli</groupId>
+			<groupId>com.lexicalscope.jewelcli</groupId>
 			<artifactId>jewelcli</artifactId>
-			<version>0.6</version>
+			<version>0.8.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

@@ -19,12 +19,12 @@
  */
 package org.sejda.cli.transformer;
 
+import java.awt.Color;
+
 import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.numbering.BatesSequence;
-
-import java.awt.*;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SetHeaderFooter task command line interface

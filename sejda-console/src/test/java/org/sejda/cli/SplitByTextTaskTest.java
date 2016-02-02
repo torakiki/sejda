@@ -16,11 +16,11 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.parameter.SplitByTextContentParameters;
-
-import static org.junit.Assert.assertEquals;
 
 public class SplitByTextTaskTest extends AbstractTaskTest {
 

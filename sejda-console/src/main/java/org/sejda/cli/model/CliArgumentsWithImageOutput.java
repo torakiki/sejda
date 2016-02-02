@@ -19,7 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Trait for cli tasks that output image files

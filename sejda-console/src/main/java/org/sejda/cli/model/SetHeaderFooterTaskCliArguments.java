@@ -24,8 +24,8 @@ import org.sejda.conversion.HorizontalAlignAdapter;
 import org.sejda.conversion.StandardType1FontAdapter;
 import org.sejda.conversion.VerticalAlignAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the SetHeaderFooterTask task

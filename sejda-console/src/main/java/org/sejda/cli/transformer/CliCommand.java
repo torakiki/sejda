@@ -89,8 +89,8 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
-import uk.co.flamingpenguin.jewel.cli.Cli;
-import uk.co.flamingpenguin.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.Cli;
+import com.lexicalscope.jewel.cli.CliFactory;
 
 /**
  * Enumeration of commands supported through the console
@@ -442,7 +442,7 @@ abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParam
         try {
             T cliArguments = createCli().parseArguments(rawArguments);
             return getArgumentsTransformer().toTaskParameters(cliArguments);
-        } catch (uk.co.flamingpenguin.jewel.cli.ArgumentValidationException e) {
+        } catch (com.lexicalscope.jewel.cli.ArgumentValidationException e) {
             throw new org.sejda.cli.exception.ArgumentValidationException(e.getMessage(), e);
         }
     }

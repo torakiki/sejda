@@ -19,6 +19,10 @@
  */
 package org.sejda.cli.transformer;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.RotateTaskCliArguments;
 import org.sejda.conversion.RotationAdapter;
@@ -28,10 +32,6 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the Rotate task command line interface

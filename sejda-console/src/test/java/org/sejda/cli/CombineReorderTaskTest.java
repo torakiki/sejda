@@ -16,13 +16,13 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.CombineReorderParameters;
-
-import java.util.*;
-
-import static org.junit.Assert.*;
 
 public class CombineReorderTaskTest extends AbstractTaskTest {
 

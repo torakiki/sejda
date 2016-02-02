@@ -27,8 +27,8 @@ import org.sejda.conversion.OutlinePolicyAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PdfFileSourceListAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the Concat/Merge task

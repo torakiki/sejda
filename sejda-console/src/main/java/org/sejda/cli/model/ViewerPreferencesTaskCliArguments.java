@@ -26,8 +26,8 @@ import org.sejda.conversion.PdfPageLayoutAdapter;
 import org.sejda.conversion.PdfPageModeAdapter;
 import org.sejda.conversion.PdfPrintScalingAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * Specifications for command line options of the ViewerPreferences task

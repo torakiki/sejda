@@ -21,8 +21,8 @@ import java.util.List;
 import org.sejda.conversion.OptimizationAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 
-import uk.co.flamingpenguin.jewel.cli.CommandLineInterface;
-import uk.co.flamingpenguin.jewel.cli.Option;
+import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " compress")
 public interface CompressTaskCliArguments

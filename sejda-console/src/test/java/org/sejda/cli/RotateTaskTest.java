@@ -21,12 +21,12 @@ package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
-
-import java.util.Arrays;
 
 /**
  * Tests for the RotateTask command line interface

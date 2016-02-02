@@ -30,6 +30,7 @@ import org.sejda.cli.model.CliArgumentsWithPdfOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.conversion.PdfFileSourceAdapter;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
@@ -71,7 +72,11 @@ public class BaseCliArgumentsTransformer {
     protected void populateOutputTaskParameters(SingleOutputTaskParameters parameters,
             CliArgumentsWithPdfFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
-        parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+        if (taskCliArguments.getOverwrite()) {
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        } else {
+            parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+        }
     }
 
     /**
@@ -106,7 +111,11 @@ public class BaseCliArgumentsTransformer {
     protected void populateAbstractParameters(AbstractPdfToSingleImageParameters parameters,
             CliArgumentsWithImageFileOutput taskCliArguments) {
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
-        parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+        if (taskCliArguments.getOverwrite()) {
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        } else {
+            parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+        }
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
 
