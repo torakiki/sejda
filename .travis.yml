@@ -1,5 +1,5 @@
 language: java
 sudo: false
-script: mvn clean install -Dmaven.javadoc.skip=false
+script: mvn clean install javadoc:javadoc
 jdk:
   - oraclejdk8
