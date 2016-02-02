@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component that parses the page content stream and its annotations appearance stream and performs some optimization, depending on the input {@link OptimizeParameters}. It tries
- * to identify equal image xobjects and reause them.
+ * to identify equal image xobjects and reuse them.
  * 
  * @author Andrea Vacondio
  *
@@ -97,10 +97,13 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                         LOG.trace("Found image {}x{}", image.getHeight(), image.getWidth());
                         removeMetadataIfNeeded(image);
                         removeAlternatesIfNeeded(image);
-                        optimize(objectName, image);
+                        if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
+                            optimize(objectName, image);
+                        }
                     } else if (xobject instanceof PDFormXObject) {
                         removeMetadataIfNeeded(xobject);
                         removePieceInfoIfNeeded(xobject);
+                        showForm((PDFormXObject) xobject);
                     }
                 }
             }
@@ -129,6 +132,9 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                     } else {
                         LOG.debug("Reusing previously optimized image");
                     }
+                } else {
+                    LOG.trace(String.format("Skipping already compressed image, result is %.2f%% of original size",
+                            sizeRate));
                 }
                 COSDictionary resources = context.getResources().getCOSObject();
                 COSDictionary xobjects = ofNullable(resources.getDictionaryObject(COSName.XOBJECT))
@@ -191,4 +197,8 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                 awtImage.getHeight(), awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
     }
 
+    public static boolean canOptimizeFor(Optimization o) {
+        return o == Optimization.COMPRESS_IMAGES || o == Optimization.DISCARD_ALTERNATE_IMAGES
+                || o == Optimization.DISCARD_PIECE_INFO || o == Optimization.DISCARD_METADATA;
+    }
 }

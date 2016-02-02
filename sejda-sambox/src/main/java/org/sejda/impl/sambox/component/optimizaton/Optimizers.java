@@ -72,8 +72,6 @@ final class Optimizers {
             return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("Thumb"));
         case DISCARD_MC_PROPERTIES:
             return (p) -> p.getResources().getCOSObject().removeItem(COSName.PROPERTIES);
-        case COMPRESS_IMAGES:
-            return new ImagesOptimizer(parameters);
         default:
             return null;
         }

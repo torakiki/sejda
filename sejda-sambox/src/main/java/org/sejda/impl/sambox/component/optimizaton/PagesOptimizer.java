@@ -49,6 +49,9 @@ public class PagesOptimizer implements Consumer<PDPage> {
         optimizations.forEach(o -> {
             ofNullable(pageOptimizer(o, parameters)).ifPresent(toAdd -> optimizer = optimizer.andThen(toAdd));
         });
+        if (optimizations.stream().anyMatch(ImagesOptimizer::canOptimizeFor)) {
+            optimizer = optimizer.andThen(new ImagesOptimizer(parameters));
+        }
         // we want to be sure this is not performed before images optimization
         if (optimizations.contains(Optimization.DISCARD_UNUSED_IMAGES)) {
             optimizer = optimizer.andThen(new ImagesHitter());
