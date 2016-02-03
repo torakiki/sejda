@@ -20,13 +20,17 @@ package org.sejda.impl.sambox.component.optimizaton;
 
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,22 +63,42 @@ public class SplitOptimizationRuler implements Function<PDDocument, Boolean> {
     }
 
     private boolean willNeedOptimization(PDDocument document) {
-        long inheritedImage = coundInheritedImages(document);
-        return inheritedImage > 0;
+        return hasSharedXObjectDictionaries(document) || hasInheritedImages(document);
     }
 
-    private long coundInheritedImages(PDDocument document) {
+    private boolean hasInheritedImages(PDDocument document) {
         // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count the xobjects of subtype Image, so basically we try to determine if pages are
-        // going to inherit images, potentially unused
+        // going to inherit images, potentially unused in which case we want to optimize
         long inheritedImage = document.getPages().streamNodes().filter(SplitOptimizationRuler::isPageTreeNode)
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES)).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d).map(d -> d.getDictionaryObject(COSName.XOBJECT))
                 .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
-                .flatMap(d -> d.getValues().stream()).filter(d -> d instanceof COSDictionary)
+                .flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d).map(d -> d.getNameAsString(COSName.SUBTYPE)).filter(Objects::nonNull)
                 .filter(COSName.IMAGE.getName()::equals).count();
         LOG.debug("Found {} inherited images potentially unused", inheritedImage);
-        return inheritedImage;
+        return inheritedImage > 0;
+    }
+
+    private boolean hasSharedXObjectDictionaries(PDDocument document) {
+        // we get from all the pages resource dictionaries, all the xobject name dictionaries containing images
+        List<COSDictionary> xobjectsDictionaries = document.getPages().stream().map(PDPage::getCOSObject)
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES))
+                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
+                .map(d -> d.getDictionaryObject(COSName.XOBJECT)).filter(d -> d instanceof COSDictionary)
+                .map(d -> (COSDictionary) d).filter(x -> {
+                    return x.getValues().stream().map(COSBase::getCOSObject).filter(v -> v instanceof COSDictionary)
+                            .map(v -> (COSDictionary) v).map(v -> v.getNameAsString(COSName.SUBTYPE))
+                            .filter(Objects::nonNull).filter(COSName.IMAGE.getName()::equals).count() > 0;
+                }).collect(Collectors.toList());
+        long distinctXobjectsDictionaries = xobjectsDictionaries.stream().distinct().count();
+        if (xobjectsDictionaries.size() > distinctXobjectsDictionaries) {
+            // if the distinct count is different it means one or more xobject name dictionary is shared among some pages so it likely contains images used by multiple pages so we
+            // optimize
+            LOG.debug("Found shared XObject dictionary containing image resouces");
+            return true;
+        }
+        return false;
     }
 
     // TODO replace this once we release SAMBox 1.0.0.M21
