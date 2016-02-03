@@ -23,6 +23,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
+import org.sejda.impl.sambox.component.optimizaton.SplitOptimizationRuler;
 import org.sejda.impl.sambox.component.split.PageDestinationsLevelPdfSplitter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;
@@ -60,7 +61,8 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
         LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
         OutlinePageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
                 parameters.getMatchingTitleRegEx()).getPageDestinationsForLevel(parameters.getLevelToSplitAt());
-        splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination);
+        splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination,
+                new SplitOptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
         LOG.debug("Starting split by outline level for {} ", parameters);
         splitter.split(getNotifiableTaskMetadata());
 

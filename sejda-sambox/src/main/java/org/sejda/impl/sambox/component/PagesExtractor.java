@@ -17,6 +17,7 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
@@ -27,17 +28,23 @@ import java.io.File;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
+import org.sejda.impl.sambox.component.optimizaton.ImagesHitter;
+import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Component that retains pages from a given existing {@link PDDocument} and saves a new document containing retained pages and an outline that patches the new document.
  * 
@@ -92,6 +99,25 @@ public class PagesExtractor implements Closeable {
 
     public void setCompress(boolean compress) {
         destinationDocument.setCompress(compress);
+    }
+
+    public void optimize() {
+        LOG.trace("Optimizing document");
+        ImagesHitter hitter = new ImagesHitter();
+        pagesLookup.values().forEach(p -> {
+            // each page must have it's own resource dic and it's own xobject name dic
+            // so we don't optimize shared resource dic or xobjects name dictionaries
+            COSDictionary resources = ofNullable(p.getResources().getCOSObject()).map(COSDictionary::duplicate)
+                    .orElseGet(COSDictionary::new);
+            // resources are cached in the PDPage so make sure they are replaced
+            p.setResources(new PDResources(resources));
+            ofNullable(resources.getDictionaryObject(COSName.XOBJECT)).filter(b -> b instanceof COSDictionary)
+                    .map(b -> (COSDictionary) b).map(COSDictionary::duplicate)
+                    .ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
+
+            hitter.accept(p);
+        });
+        new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
     public void save(File file) throws TaskException {

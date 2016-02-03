@@ -50,8 +50,8 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
 
     private OutputSizeStrategy nextOutputStrategy;
 
-    public SizePdfSplitter(PDDocument document, SplitBySizeParameters parameters) {
-        super(document, parameters);
+    public SizePdfSplitter(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
+        super(document, parameters, optimize);
         if (parameters.isCompress()) {
             this.nextOutputStrategy = new OutputSizeStrategy(document, parameters, () -> {
                 return new ExistingPagesSizePredictor(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
@@ -149,8 +149,8 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         @Override
         public void ensureIsValid() throws TaskExecutionException {
             if (sizeLimit < 1) {
-                throw new TaskExecutionException(String.format("Unable to split at %d, a positive size is required.",
-                        sizeLimit));
+                throw new TaskExecutionException(
+                        String.format("Unable to split at %d, a positive size is required.", sizeLimit));
             }
         }
 

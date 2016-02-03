@@ -24,24 +24,28 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.TopLeftRectangularBox;
+import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
- * Parameter class for a split by text content change task. It lets specify an area.
- * The task will split the document when text content in that changes.
+ * Parameter class for a split by text content change task. It lets specify an area. The task will split the document when text content in that changes.
  *
- * Can define optional conditions so split is performed only if text starts with or ends with specific prefix/suffix.
- * This is useful when some pages contain text in the specified area but it's not the one that should be split by.
+ * Can define optional conditions so split is performed only if text starts with or ends with specific prefix/suffix. This is useful when some pages contain text in the specified
+ * area but it's not the one that should be split by.
  * 
  * @author Eduard Weissmann
  * 
  */
-public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputParameters {
+public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputParameters
+        implements OptimizableOutputTaskParameters {
 
     @NotNull
     private final TopLeftRectangularBox textArea;
     private String startsWith = "";
     private String endsWith = "";
+    @NotNull
+    private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
 
     public SplitByTextContentParameters(TopLeftRectangularBox textArea) {
         this.textArea = textArea;
@@ -68,18 +72,26 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
     }
 
     @Override
+    public OptimizationPolicy getOptimizationPolicy() {
+        return optimizationPolicy;
+    }
+
+    @Override
+    public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
+        this.optimizationPolicy = optimizationPolicy;
+    }
+
+    @Override
     public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString())
-                .append(textArea)
-                .append(startsWith)
-                .append(endsWith)
-                .toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(textArea).append(startsWith)
+                .append(endsWith).toString();
 
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(textArea).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(textArea)
+                .toHashCode();
     }
 
     @Override
@@ -92,9 +104,7 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
         }
         SplitByTextContentParameters parameter = (SplitByTextContentParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(textArea, parameter.textArea)
-                .append(startsWith, parameter.startsWith)
-                .append(endsWith, parameter.endsWith)
-                .isEquals();
+                .append(optimizationPolicy, parameter.optimizationPolicy).append(textArea, parameter.textArea)
+                .append(startsWith, parameter.startsWith).append(endsWith, parameter.endsWith).isEquals();
     }
 }

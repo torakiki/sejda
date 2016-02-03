@@ -22,6 +22,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 
 /**
@@ -45,6 +46,12 @@ public class SplitByBookmarksTaskTest extends AbstractTaskTest {
     @Test
     public void mandatoryParams() {
         defaultCommandLine().without("-l").assertConsoleOutputContains("Option is mandatory: --bookmarkLevel");
+    }
+
+    @Test
+    public void optimizedYes() {
+        SplitByOutlineLevelParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
     }
 
     @Test

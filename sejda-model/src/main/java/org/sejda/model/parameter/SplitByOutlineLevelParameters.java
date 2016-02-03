@@ -20,10 +20,13 @@
 package org.sejda.model.parameter;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
@@ -32,11 +35,24 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutputParameters {
+public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutputParameters
+        implements OptimizableOutputTaskParameters {
 
     @Min(1)
     private int levelToSplitAt;
     private String matchingTitleRegEx;
+    @NotNull
+    private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
+
+    @Override
+    public OptimizationPolicy getOptimizationPolicy() {
+        return optimizationPolicy;
+    }
+
+    @Override
+    public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
+        this.optimizationPolicy = optimizationPolicy;
+    }
 
     public SplitByOutlineLevelParameters(int levelToSplitAt) {
         this.levelToSplitAt = levelToSplitAt;
@@ -62,8 +78,8 @@ public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutput
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(levelToSplitAt).append(matchingTitleRegEx)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(levelToSplitAt)
+                .append(matchingTitleRegEx).toHashCode();
     }
 
     @Override
@@ -76,7 +92,9 @@ public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutput
         }
         SplitByOutlineLevelParameters parameter = (SplitByOutlineLevelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(optimizationPolicy, parameter.getOptimizationPolicy())
                 .append(levelToSplitAt, parameter.getLevelToSplitAt())
                 .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();
     }
+
 }

@@ -22,6 +22,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.optimizaton.SplitOptimizationRuler;
 import org.sejda.impl.sambox.component.split.AbstractPdfSplitter;
 import org.sejda.impl.sambox.component.split.ByTextChangesPdfSplitter;
 import org.sejda.model.exception.TaskException;
@@ -60,7 +61,8 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
         sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
         PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
 
-        splitter = new ByTextChangesPdfSplitter(sourceDocument, parameters);
+        splitter = new ByTextChangesPdfSplitter(sourceDocument, parameters,
+                new SplitOptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
         LOG.debug("Starting to split by text content");
         splitter.split(getNotifiableTaskMetadata());
 

@@ -19,11 +19,11 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.split.SplitPages;
+import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
  * Component providing split by pages functionalities.
@@ -36,8 +36,8 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
 
     private NextOutputStrategy splitPages;
 
-    public PagesPdfSplitter(PDDocument document, T parameters) {
-        super(document, parameters);
+    public PagesPdfSplitter(PDDocument document, T parameters, boolean optimize) {
+        super(document, parameters, optimize);
         this.splitPages = new SplitPages(parameters.getPages(document.getNumberOfPages()));
     }
 

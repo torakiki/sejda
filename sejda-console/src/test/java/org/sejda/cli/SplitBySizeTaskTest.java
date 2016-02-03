@@ -22,6 +22,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 
 /**
@@ -40,6 +41,12 @@ public class SplitBySizeTaskTest extends AbstractTaskTest {
     public void size_Specified() {
         SplitBySizeParameters parameters = defaultCommandLine().with("-s", "1234567890123456789").invokeSejdaConsole();
         assertEquals(1234567890123456789L, parameters.getSizeToSplitAt());
+    }
+
+    @Test
+    public void optimizedYes() {
+        SplitBySizeParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
     }
 
     @Test

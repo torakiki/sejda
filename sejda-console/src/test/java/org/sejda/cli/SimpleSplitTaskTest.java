@@ -19,9 +19,12 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SimpleSplitParameters;
 
 /**
@@ -52,6 +55,12 @@ public class SimpleSplitTaskTest extends AbstractTaskTest {
     public void predefinedPages_EVEN_PAGES() {
         SimpleSplitParameters parameters = defaultCommandLine().with("-s", "even").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
+    }
+
+    @Test
+    public void optimizedNo() {
+        SimpleSplitParameters parameters = defaultCommandLine().with("-z", "no").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.NO, parameters.getOptimizationPolicy());
     }
 
     @Test

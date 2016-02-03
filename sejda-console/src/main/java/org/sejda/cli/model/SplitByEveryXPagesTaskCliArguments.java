@@ -34,7 +34,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbyevery")
 public interface SplitByEveryXPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
 
     @Option(shortName = "n", description = "number of pages to split at, the document will be splitted in documents of 'n' pages (required)")
     Integer getPages();

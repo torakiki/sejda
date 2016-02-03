@@ -44,8 +44,8 @@ public class PageDestinationsLevelPdfSplitter extends AbstractPdfSplitter<SplitB
      *            holder for the outline destinations the splitter has to split at.
      */
     public PageDestinationsLevelPdfSplitter(PDDocument document, SplitByOutlineLevelParameters parameters,
-                                            OutlinePageDestinations outlineDestinations) {
-        super(document, parameters);
+            OutlinePageDestinations outlineDestinations, boolean optimize) {
+        super(document, parameters, optimize);
         this.splitPages = new PageDestinationsSplitPages(outlineDestinations);
         this.outlineDestinations = outlineDestinations;
     }

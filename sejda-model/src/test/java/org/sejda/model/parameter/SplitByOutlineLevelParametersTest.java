@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.MultipleTaskOutput;
 
 /**
@@ -43,6 +44,7 @@ public class SplitByOutlineLevelParametersTest {
         SplitByOutlineLevelParameters diff = new SplitByOutlineLevelParameters(1);
         diff.setOutputPrefix("prefix");
         diff.setMatchingTitleRegEx("string");
+        diff.setOptimizationPolicy(OptimizationPolicy.AUTO);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 

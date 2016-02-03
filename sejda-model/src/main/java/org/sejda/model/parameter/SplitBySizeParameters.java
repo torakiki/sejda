@@ -20,9 +20,12 @@
 package org.sejda.model.parameter;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
@@ -31,8 +34,11 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * @author Andrea Vacondio
  * 
  */
-public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParameters {
+public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParameters
+        implements OptimizableOutputTaskParameters {
 
+    @NotNull
+    private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     @Min(1)
     private long sizeToSplitAt;
 
@@ -45,8 +51,19 @@ public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParamete
     }
 
     @Override
+    public OptimizationPolicy getOptimizationPolicy() {
+        return optimizationPolicy;
+    }
+
+    @Override
+    public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
+        this.optimizationPolicy = optimizationPolicy;
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(sizeToSplitAt).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(sizeToSplitAt)
+                .toHashCode();
     }
 
     @Override
@@ -58,7 +75,8 @@ public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParamete
             return false;
         }
         SplitBySizeParameters parameter = (SplitBySizeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(sizeToSplitAt, parameter.getSizeToSplitAt())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(optimizationPolicy, parameter.getOptimizationPolicy())
+                .append(sizeToSplitAt, parameter.getSizeToSplitAt()).isEquals();
     }
 }

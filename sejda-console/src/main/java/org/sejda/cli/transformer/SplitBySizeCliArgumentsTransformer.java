@@ -45,6 +45,7 @@ public class SplitBySizeCliArgumentsTransformer extends BaseCliArgumentsTransfor
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
+        populateOptimizableOutputParameters(parameters, taskCliArguments);
 
         return parameters;
     }

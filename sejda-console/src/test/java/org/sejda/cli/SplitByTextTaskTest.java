@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.sejda.model.TopLeftRectangularBox;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SplitByTextContentParameters;
 
 public class SplitByTextTaskTest extends AbstractTaskTest {
@@ -30,11 +31,15 @@ public class SplitByTextTaskTest extends AbstractTaskTest {
 
     @Test
     public void basicParams() {
-        SplitByTextContentParameters parameters = defaultCommandLine()
-                .with("--top", "10").with("--left", "11").with("--width", "12").with("--height", "13")
-                .with("--startsWith", "Fax:")
-                .invokeSejdaConsole();
-        assertEquals(new TopLeftRectangularBox(10, 11,12, 13), parameters.getTextArea());
+        SplitByTextContentParameters parameters = defaultCommandLine().with("--top", "10").with("--left", "11")
+                .with("--width", "12").with("--height", "13").with("--startsWith", "Fax:").invokeSejdaConsole();
+        assertEquals(new TopLeftRectangularBox(10, 11, 12, 13), parameters.getTextArea());
         assertEquals("Fax:", parameters.getStartsWith());
+    }
+
+    @Test
+    public void optimizedYes() {
+        SplitByTextContentParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
     }
 }

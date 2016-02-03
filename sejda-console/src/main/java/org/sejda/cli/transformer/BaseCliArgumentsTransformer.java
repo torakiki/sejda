@@ -24,6 +24,7 @@ import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageFileOutput;
 import org.sejda.cli.model.CliArgumentsWithImageOutput;
+import org.sejda.cli.model.CliArgumentsWithOptimizableOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfFileOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfOutput;
@@ -34,6 +35,7 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
@@ -100,6 +102,17 @@ public class BaseCliArgumentsTransformer {
             CliArgumentsWithImageAndDirectoryOutput taskCliArguments) {
         populateCommonMultipleOutputParameters(parameters, taskCliArguments);
         populateCommonImageOutputParameters(parameters, taskCliArguments);
+    }
+
+    /**
+     * Populates common parameters for a task whose output can be optimized
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateOptimizableOutputParameters(OptimizableOutputTaskParameters parameters,
+            CliArgumentsWithOptimizableOutput taskCliArguments) {
+        parameters.setOptimizationPolicy(taskCliArguments.getOptimize().getEnumValue());
     }
 
     /**

@@ -21,7 +21,7 @@ package org.sejda.model.optimization;
 import org.sejda.common.FriendlyNamed;
 
 /**
- * Things that the optimization process can optimize from the original document
+ * Things that the optimization process can optimize/discad from the original document
  * 
  * @author Andrea Vacondio
  *

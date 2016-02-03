@@ -25,7 +25,7 @@ import com.lexicalscope.jewel.cli.Option;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbytext")
 public interface SplitByTextTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
 
     @Option(shortName = "t", description = "top left rectangular area's x axis coordinate (required)")
     Integer getTop();

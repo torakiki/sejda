@@ -33,9 +33,9 @@ import org.sejda.sambox.pdmodel.PDDocument;
 public class ByTextChangesPdfSplitter extends AbstractPdfSplitter<SplitByTextContentParameters> {
     private SplitByTextChangesOutputStrategy outputStrategy;
 
-    public ByTextChangesPdfSplitter(PDDocument document, SplitByTextContentParameters parameters)
+    public ByTextChangesPdfSplitter(PDDocument document, SplitByTextContentParameters parameters, boolean optimize)
             throws TaskIOException {
-        super(document, parameters);
+        super(document, parameters, optimize);
         this.outputStrategy = new SplitByTextChangesOutputStrategy(document, parameters.getTextArea(),
                 parameters.getStartsWith(), parameters.getEndsWith());
     }

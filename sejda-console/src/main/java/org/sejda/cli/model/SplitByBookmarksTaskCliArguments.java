@@ -34,7 +34,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbybookmarks")
 public interface SplitByBookmarksTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
 
     @Option(shortName = "l", description = "bookmarks depth to split at (required)")
     Integer getBookmarkLevel();

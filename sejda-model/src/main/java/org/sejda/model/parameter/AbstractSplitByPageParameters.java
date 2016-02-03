@@ -21,6 +21,12 @@ package org.sejda.model.parameter;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PagesSelection;
 
@@ -30,8 +36,20 @@ import org.sejda.model.pdf.page.PagesSelection;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters implements
-        PagesSelection {
+public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters
+        implements PagesSelection, OptimizableOutputTaskParameters {
+    @NotNull
+    private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
+
+    @Override
+    public OptimizationPolicy getOptimizationPolicy() {
+        return optimizationPolicy;
+    }
+
+    @Override
+    public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
+        this.optimizationPolicy = optimizationPolicy;
+    }
 
     /**
      * @param upperLimit
@@ -41,4 +59,21 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
     @Override
     public abstract Set<Integer> getPages(int upperLimit);
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof AbstractSplitByPageParameters)) {
+            return false;
+        }
+        AbstractSplitByPageParameters parameter = (AbstractSplitByPageParameters) other;
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(optimizationPolicy, parameter.optimizationPolicy).isEquals();
+    }
 }

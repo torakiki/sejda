@@ -46,6 +46,7 @@ public class SplitByPagesCliArgumentsTransformer extends BaseCliArgumentsTransfo
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
+        populateOptimizableOutputParameters(parameters, taskCliArguments);
 
         return parameters;
     }
