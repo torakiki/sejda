@@ -36,20 +36,21 @@ public class ImagesHitterTest {
 
     @Test
     public void testAccept() throws Exception {
-        PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/draw_w_transparency.pdf")));
-        document.getPages().forEach(victim::accept);
-        PDPage page = document.getPage(0);
-        COSDictionary pageRes = page.getResources().getCOSObject();
-        assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.XOBJECT))
-                .getDictionaryObject(COSName.getPDFName("x5")).getCOSObject() instanceof ReadOnlyFilteredCOSStream);
-        PDFormXObject form = (PDFormXObject) page.getResources().getXObject(COSName.getPDFName("x7"));
-        PDFormXObject nestedForm = (PDFormXObject) form.getResources().getXObject(COSName.getPDFName("x10"));
-        COSDictionary nestedFormRes = nestedForm.getResources().getCOSObject();
-        assertTrue("Hitter should discover images nested in form xobjects",
-                ((COSDictionary) nestedFormRes.getDictionaryObject(COSName.XOBJECT))
-                        .getDictionaryObject(COSName.getPDFName("x17"))
-                        .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/draw_w_transparency.pdf")))) {
+            document.getPages().forEach(victim::accept);
+            PDPage page = document.getPage(0);
+            COSDictionary pageRes = page.getResources().getCOSObject();
+            assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.XOBJECT))
+                    .getDictionaryObject(COSName.getPDFName("x5")).getCOSObject() instanceof ReadOnlyFilteredCOSStream);
+            PDFormXObject form = (PDFormXObject) page.getResources().getXObject(COSName.getPDFName("x7"));
+            PDFormXObject nestedForm = (PDFormXObject) form.getResources().getXObject(COSName.getPDFName("x10"));
+            COSDictionary nestedFormRes = nestedForm.getResources().getCOSObject();
+            assertTrue("Hitter should discover images nested in form xobjects",
+                    ((COSDictionary) nestedFormRes.getDictionaryObject(COSName.XOBJECT))
+                            .getDictionaryObject(COSName.getPDFName("x17"))
+                            .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
+        }
     }
 
 }

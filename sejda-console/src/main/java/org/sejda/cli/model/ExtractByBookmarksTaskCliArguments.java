@@ -29,7 +29,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extractbybookmarks")
 public interface ExtractByBookmarksTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
 
     @Option(shortName = "l", description = "bookmarks depth to extract by (required)")
     Integer getBookmarkLevel();

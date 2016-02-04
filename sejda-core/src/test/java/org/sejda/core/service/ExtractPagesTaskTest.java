@@ -31,6 +31,7 @@ import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -62,6 +63,15 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(encryptedInput());
+    }
+
+    private void setUpParametersToOptimize() {
+        parameters = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(true);
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
     }
 
     private void setUpParametersPageRangesPages() {
@@ -148,5 +158,14 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).assertPages(19);
+    }
+
+    @Test
+    public void extractOptimized() throws IOException {
+        setUpParametersToOptimize();
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(1);
     }
 }

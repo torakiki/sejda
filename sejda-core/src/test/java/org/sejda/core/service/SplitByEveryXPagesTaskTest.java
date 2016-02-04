@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -59,5 +60,34 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(2);
+    }
+
+    @Test
+    public void splitOptimizeShareResources() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(1);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
+    }
+
+    @Test
+    public void splitOptimizeSharedXObjects() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(1);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setSource(customInput("pdf/shared_xobjects_dics.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
+
     }
 }

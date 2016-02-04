@@ -27,6 +27,7 @@ import java.io.File;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.PagesExtractor;
+import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
@@ -49,7 +50,7 @@ public class PageDestinationsLevelPdfExtractor {
     private final MultipleOutputWriter outputWriter;
 
     public PageDestinationsLevelPdfExtractor(PDDocument document, ExtractByOutlineParameters parameters,
-                                             OutlineExtractPageDestinations outlineDestinations) {
+            OutlineExtractPageDestinations outlineDestinations) {
         this.outlineDestinations = outlineDestinations;
         this.parameters = parameters;
         this.document = document;
@@ -60,13 +61,15 @@ public class PageDestinationsLevelPdfExtractor {
         int outputDocumentsCounter = 0;
 
         try (PagesExtractor extractor = new PagesExtractor(document)) {
-            int totalExtractions = outlineDestinations.sections.size();
 
-            if(totalExtractions == 0) {
+            int totalExtractions = outlineDestinations.sections.size();
+            if (totalExtractions == 0) {
                 throw new TaskExecutionException("No page has been selected for extraction.");
             }
 
-            for(int s = 0; s < totalExtractions; s++) {
+            boolean optimize = new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document);
+
+            for (int s = 0; s < totalExtractions; s++) {
                 taskMetadata.stopTaskIfCancelled();
                 OutlineExtractPageDestinations.OutlineItemBoundaries section = outlineDestinations.sections.get(s);
                 // open
@@ -77,15 +80,12 @@ public class PageDestinationsLevelPdfExtractor {
                 File tmpFile = createTemporaryPdfBuffer();
                 LOG.debug("Created output temporary buffer {}", tmpFile);
 
-                String outName = nameGenerator(parameters.getOutputPrefix()).generate(nameRequest()
-                        .page(page)
-                        .originalName(parameters.getSource().getName())
-                        .fileNumber(outputDocumentsCounter)
-                        .bookmark(section.title)
-                );
+                String outName = nameGenerator(parameters.getOutputPrefix())
+                        .generate(nameRequest().page(page).originalName(parameters.getSource().getName())
+                                .fileNumber(outputDocumentsCounter).bookmark(section.title));
                 outputWriter.addOutput(file(tmpFile).name(outName));
 
-                for(; page <= section.endPage; page++) {
+                for (; page <= section.endPage; page++) {
                     taskMetadata.stopTaskIfCancelled();
 
                     // retain
@@ -96,6 +96,9 @@ public class PageDestinationsLevelPdfExtractor {
                 // close
                 extractor.setVersion(parameters.getVersion());
                 extractor.setCompress(parameters.isCompress());
+                if (optimize) {
+                    extractor.optimize();
+                }
                 extractor.save(tmpFile);
                 extractor.reset();
                 LOG.debug("Ending extracting {}", section.title);

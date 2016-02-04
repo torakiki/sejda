@@ -39,6 +39,7 @@ public class ExtractByBookmarksCliArgumentsTransformer extends BaseCliArgumentsT
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
+        populateOptimizableOutputParameters(parameters, taskCliArguments);
 
         return parameters;
     }

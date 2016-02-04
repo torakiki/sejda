@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -48,6 +49,17 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         setUpParameters();
         parameters.setSource(shortInput());
         doTestBurst();
+    }
+
+    @Test
+    public void burstOptimize() throws IOException {
+        setUpParameters();
+        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.addPage(1);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2);
     }
 
     @Test

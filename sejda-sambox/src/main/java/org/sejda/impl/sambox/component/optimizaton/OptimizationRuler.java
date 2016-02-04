@@ -35,18 +35,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component in charge to decide if a document will likely generate split results needing optimization
+ * Component in charge to decide if a document will likely generate split/extract results needing optimization
  * 
  * @author Andrea Vacondio
  *
  */
-public class SplitOptimizationRuler implements Function<PDDocument, Boolean> {
+public class OptimizationRuler implements Function<PDDocument, Boolean> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplitOptimizationRuler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OptimizationRuler.class);
 
     private OptimizationPolicy policy;
 
-    public SplitOptimizationRuler(OptimizationPolicy policy) {
+    public OptimizationRuler(OptimizationPolicy policy) {
         requireNotNullArg(policy, "Optimization policy cannot be null");
         this.policy = policy;
     }
@@ -69,7 +69,7 @@ public class SplitOptimizationRuler implements Function<PDDocument, Boolean> {
     private boolean hasInheritedImages(PDDocument document) {
         // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count the xobjects of subtype Image, so basically we try to determine if pages are
         // going to inherit images, potentially unused in which case we want to optimize
-        long inheritedImage = document.getPages().streamNodes().filter(SplitOptimizationRuler::isPageTreeNode)
+        long inheritedImage = document.getPages().streamNodes().filter(OptimizationRuler::isPageTreeNode)
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES)).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d).map(d -> d.getDictionaryObject(COSName.XOBJECT))
                 .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)

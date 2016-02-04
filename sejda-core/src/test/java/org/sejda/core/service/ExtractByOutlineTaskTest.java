@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -78,6 +79,16 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     @Test
     public void testWithMatchingText() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(3, "(Using)+.+");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertOutputSize(3).assertPages("1_Using Profiles.pdf", 2)
+                .assertPages("2_Using Profiles by OS.pdf", 2).assertPages("3_Using internal Repositories.pdf", 2);
+    }
+
+    @Test
+    public void testWithMatchingTextAndOptimization() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(3, "(Using)+.+");
+        parameters.setOptimizationPolicy(OptimizationPolicy.YES);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputSize(3).assertPages("1_Using Profiles.pdf", 2)

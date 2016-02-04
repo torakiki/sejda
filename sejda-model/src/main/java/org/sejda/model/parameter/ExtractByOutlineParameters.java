@@ -19,20 +19,26 @@
  */
 package org.sejda.model.parameter;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
-
-import javax.validation.constraints.Min;
 
 /**
  * Extract chapters to separate documents based on the bookmarks in the outline
  *
  * Specify which outline level to use for selecting bookmarks and optionally a regex to filter them.
  */
-public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputParameters {
+public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputParameters
+        implements OptimizableOutputTaskParameters {
 
+    @NotNull
+    private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     @Min(1)
     private int level;
     private String matchingTitleRegEx;
@@ -60,9 +66,19 @@ public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputPar
     }
 
     @Override
+    public OptimizationPolicy getOptimizationPolicy() {
+        return optimizationPolicy;
+    }
+
+    @Override
+    public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
+        this.optimizationPolicy = optimizationPolicy;
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(level).append(matchingTitleRegEx)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(level)
+                .append(matchingTitleRegEx).toHashCode();
     }
 
     @Override
@@ -75,7 +91,7 @@ public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputPar
         }
         ExtractByOutlineParameters parameter = (ExtractByOutlineParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(level, parameter.getLevel())
+                .append(optimizationPolicy, parameter.optimizationPolicy).append(level, parameter.getLevel())
                 .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();
     }
 }

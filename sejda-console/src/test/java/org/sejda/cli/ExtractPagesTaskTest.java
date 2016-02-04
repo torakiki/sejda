@@ -19,9 +19,12 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.page.PageRange;
 
@@ -68,5 +71,17 @@ public class ExtractPagesTaskTest extends AbstractTaskTest {
     public void mandatoryParams() {
         defaultCommandLine().without("-p").without("-s")
                 .assertConsoleOutputContains("Please specify at least one option that defines pages to be extracted");
+    }
+
+    @Test
+    public void optimizedNo() {
+        ExtractPagesParameters parameters = defaultCommandLine().with("-z", "no").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.NO, parameters.getOptimizationPolicy());
+    }
+
+    @Test
+    public void optimizedYes() {
+        ExtractPagesParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
     }
 }

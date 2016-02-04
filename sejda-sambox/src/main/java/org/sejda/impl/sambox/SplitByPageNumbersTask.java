@@ -22,7 +22,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.optimizaton.SplitOptimizationRuler;
+import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
 import org.sejda.impl.sambox.component.split.PagesPdfSplitter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;
@@ -58,7 +58,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
         document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
 
         splitter = new PagesPdfSplitter<>(document, parameters,
-                new SplitOptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
+                new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
         LOG.debug("Starting split by page numbers for {} ", parameters);
         splitter.split(getNotifiableTaskMetadata());
 

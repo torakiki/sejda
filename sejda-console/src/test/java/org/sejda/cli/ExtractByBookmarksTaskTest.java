@@ -19,6 +19,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 
 /**
@@ -47,5 +48,17 @@ public class ExtractByBookmarksTaskTest extends AbstractTaskTest {
         ExtractByOutlineParameters parameters = defaultCommandLine().with("--matchingRegEx", "[Chapter*]")
                 .invokeSejdaConsole();
         assertEquals("[Chapter*]", parameters.getMatchingTitleRegEx());
+    }
+
+    @Test
+    public void optimizedNo() {
+        ExtractByOutlineParameters parameters = defaultCommandLine().with("-z", "no").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.NO, parameters.getOptimizationPolicy());
+    }
+
+    @Test
+    public void optimizedYes() {
+        ExtractByOutlineParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
+        assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
     }
 }

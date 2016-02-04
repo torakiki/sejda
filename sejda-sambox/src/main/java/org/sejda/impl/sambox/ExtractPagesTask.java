@@ -30,6 +30,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PagesExtractor;
+import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;
@@ -81,6 +82,10 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
+        if (new OptimizationRuler(parameters.getOptimizationPolicy())
+                .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
+            extractor.optimize();
+        }
         extractor.save(tmpFile);
 
         closeResource();
