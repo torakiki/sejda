@@ -28,41 +28,41 @@ import org.sejda.common.FriendlyNamed;
  */
 public enum Optimization implements FriendlyNamed {
     /**
-     * @see PDF 32000-1:2008 14.3.2
+     * PDF 32000-1:2008 14.3.2
      */
     DISCARD_METADATA("discard_metadata"),
     /**
-     * @see PDF 32000-1:2008 12.3.3
+     * PDF 32000-1:2008 12.3.3
      */
     DISCARD_OUTLINE("discard_outline"),
     /**
-     * @see PDF 32000-1:2008 12.4.3
+     * PDF 32000-1:2008 12.4.3
      */
     DISCARD_THREADS("discard_threads"),
     /**
-     * @see PDF 32000-1:2008 14.10.2
+     * PDF 32000-1:2008 14.10.2
      */
     DISCARD_SPIDER_INFO("discard_spider_info"),
     /**
-     * @see PDF 32000-1:2008 14.5
+     * PDF 32000-1:2008 14.5
      */
     DISCARD_PIECE_INFO("discard_piece_info"),
     /**
-     * @see PDF 32000-1:2008 14.6.2
+     * PDF 32000-1:2008 14.6.2
      */
     DISCARD_MC_PROPERTIES("discard_mc_props"),
     /**
-     * @see PDF 32000-1:2008 8.9.5.4
+     * PDF 32000-1:2008 8.9.5.4
      */
     DISCARD_ALTERNATE_IMAGES("discard_alternate_images"),
     COMPRESS_IMAGES("compress_images"),
     DISCARD_UNUSED_IMAGES("discard_unused_images"),
     /**
-     * @see PDF 32000-1:2008 14.7.2
+     * PDF 32000-1:2008 14.7.2
      */
     DISCARD_STRUCTURE_TREE("discard_struct_tree"),
     /**
-     * @see PDF 32000-1:2008 12.3.4
+     * PDF 32000-1:2008 12.3.4
      */
     DISCARD_THUMBNAILS("discard_thumbnails");
 
