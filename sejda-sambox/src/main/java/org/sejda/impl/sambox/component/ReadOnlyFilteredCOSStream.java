@@ -44,6 +44,7 @@ import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 import org.sejda.util.IOUtils;
 
@@ -57,12 +58,15 @@ import org.sejda.util.IOUtils;
 public class ReadOnlyFilteredCOSStream extends COSStream {
     private InputStream stream;
     private long length;
+    private COSDictionary wrapped;
 
     ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
-        super(ofNullable(existingDictionary).orElseGet(COSDictionary::new));
+        super(ofNullable(existingDictionary)
+                .orElseThrow(() -> new IllegalArgumentException("wrapped dictionary cannot be null")));
         requireNotNullArg(stream, "input stream cannot be null");
         this.stream = stream;
         this.length = length;
+        this.wrapped = existingDictionary;
     }
 
     @Override
@@ -139,6 +143,16 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     @Override
     public void indirectLength(boolean indirectLength) {
         // do nothing, it's always written as indirect
+    }
+
+    @Override
+    public IndirectCOSObjectIdentifier id() {
+        return wrapped.id();
+    }
+
+    @Override
+    public void idIfAbsent(IndirectCOSObjectIdentifier id) {
+        wrapped.idIfAbsent(id);
     }
 
     @Override

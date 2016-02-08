@@ -21,6 +21,7 @@ package org.sejda.impl.sambox.component;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -43,7 +44,9 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSObjectKey;
 import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 
 /**
@@ -67,6 +70,11 @@ public class ReadOnlyFilteredCOSStreamTest {
     @Test(expected = IllegalArgumentException.class)
     public void nullConstructor() {
         new ReadOnlyFilteredCOSStream(new COSDictionary(), null, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void nullConstructorDictionary() {
+        new ReadOnlyFilteredCOSStream(null, stream, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -118,6 +126,26 @@ public class ReadOnlyFilteredCOSStreamTest {
         victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 10);
         victim.close();
         verify(stream).close();
+    }
+
+    @Test
+    public void testId() {
+        IndirectCOSObjectIdentifier id = new IndirectCOSObjectIdentifier(new COSObjectKey(10, 0), "source");
+        dictionary.idIfAbsent(id);
+        victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 10);
+        assertTrue(victim.hasId());
+        assertEquals(id, victim.id());
+    }
+
+    @Test
+    public void testPutId() {
+        victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 10);
+        assertFalse(victim.hasId());
+        assertNull(victim.id());
+        IndirectCOSObjectIdentifier id = new IndirectCOSObjectIdentifier(new COSObjectKey(10, 0), "source");
+        dictionary.idIfAbsent(id);
+        assertTrue(dictionary.hasId());
+        assertEquals(id, dictionary.id());
     }
 
     @Test
