@@ -29,12 +29,15 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.DeflaterInputStream;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.sambox.cos.COSDictionary;
@@ -48,20 +51,22 @@ import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
  *
  */
 public class ReadOnlyFilteredCOSStreamTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
     private InputStream stream;
     private COSDictionary dictionary;
     private ReadOnlyFilteredCOSStream victim;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
         dictionary = new COSDictionary();
         stream = new ByteArrayInputStream(new byte[] { 1, 2 });
-        victim = new ReadOnlyFilteredCOSStream(dictionary, stream);
+        victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 2);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void nullConstructor() {
-        new ReadOnlyFilteredCOSStream(new COSDictionary(), null);
+        new ReadOnlyFilteredCOSStream(new COSDictionary(), null, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -70,17 +75,23 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void readOnlyJpegImageNullStream() {
+    public void readOnlyJpegImageNullFile() throws FileNotFoundException {
         ReadOnlyFilteredCOSStream.readOnlyJpegImage(null, 10, 10, 1, mock(PDColorSpace.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void readOnlyJpegImageNullColorSpace() {
-        ReadOnlyFilteredCOSStream.readOnlyJpegImage(stream, 10, 10, 1, null);
+    public void readOnlyJpegImageNullColorSpace() throws IOException {
+        ReadOnlyFilteredCOSStream.readOnlyJpegImage(folder.newFile(), 10, 10, 1, null);
+    }
+
+    @Test
+    public void testGetFilteredLength() throws Exception {
+        assertEquals(2, victim.getFilteredLength());
     }
 
     @Test(expected = IOException.class)
-    public void testGetFilteredLength() throws Exception {
+    public void testInvalidGetFilteredLength() throws Exception {
+        victim = new ReadOnlyFilteredCOSStream(dictionary, stream, -1);
         victim.getFilteredLength();
     }
 
@@ -103,8 +114,8 @@ public class ReadOnlyFilteredCOSStreamTest {
 
     @Test
     public void testClose() throws Exception {
-        stream = mock(InputStream.class);
-        victim = new ReadOnlyFilteredCOSStream(dictionary, stream);
+        InputStream stream = mock(InputStream.class);
+        victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 10);
         victim.close();
         verify(stream).close();
     }
@@ -163,10 +174,10 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test
-    public void readOnlyJpegImage() {
+    public void readOnlyJpegImage() throws FileNotFoundException, IOException {
         PDColorSpace colorSpace = mock(PDColorSpace.class);
         when(colorSpace.getCOSObject()).thenReturn(COSInteger.TWO);
-        victim = ReadOnlyFilteredCOSStream.readOnlyJpegImage(stream, 10, 20, 8, colorSpace);
+        victim = ReadOnlyFilteredCOSStream.readOnlyJpegImage(folder.newFile(), 10, 20, 8, colorSpace);
         assertEquals(COSName.XOBJECT, victim.getItem(COSName.TYPE));
         assertEquals(COSName.IMAGE, victim.getItem(COSName.SUBTYPE));
         assertEquals(COSName.DCT_DECODE, victim.getItem(COSName.FILTER));

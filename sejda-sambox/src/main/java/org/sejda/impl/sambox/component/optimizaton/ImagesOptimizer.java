@@ -25,7 +25,6 @@ import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.readJpegFile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
@@ -193,8 +192,8 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
         if (awtImage.getColorModel().hasAlpha()) {
             throw new UnsupportedOperationException("alpha channel not implemented");
         }
-        return ReadOnlyFilteredCOSStream.readOnlyJpegImage(new FileInputStream(file), awtImage.getWidth(),
-                awtImage.getHeight(), awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
+        return ReadOnlyFilteredCOSStream.readOnlyJpegImage(file, awtImage.getWidth(), awtImage.getHeight(),
+                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
     }
 
     public static boolean canOptimizeFor(Optimization o) {

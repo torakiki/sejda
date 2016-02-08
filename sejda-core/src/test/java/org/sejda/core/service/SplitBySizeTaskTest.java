@@ -19,10 +19,15 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -36,20 +41,57 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
 
     private SplitBySizeParameters parameters;
 
-    private void setUpParameters() throws IOException {
+    @Test
+    public void testExecute() throws IOException {
         parameters = new SplitBySizeParameters(100000);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setSource(mediumInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
-    }
-
-    @Test
-    public void testExecute() throws IOException {
-        setUpParameters();
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(4);
+    }
+
+    @Test
+    public void testExecuteOptimized() throws IOException {
+        parameters = new SplitBySizeParameters(60000);
+        parameters.setCompress(true);
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachRawOutput(p -> {
+            try {
+                assertTrue(Files.size(p) < 100000);
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        });
+    }
+
+    @Test
+    public void testExecuteNoOptimized() throws IOException {
+        parameters = new SplitBySizeParameters(60000);
+        parameters.setCompress(true);
+        parameters.setOptimizationPolicy(OptimizationPolicy.NO);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachRawOutput(p -> {
+            try {
+                assertTrue(Files.size(p) > 100000);
+            } catch (Exception e) {
+                fail(e.getMessage());
+            }
+        });
+
     }
 }

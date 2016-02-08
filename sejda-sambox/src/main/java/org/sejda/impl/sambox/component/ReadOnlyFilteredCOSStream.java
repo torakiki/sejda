@@ -20,8 +20,10 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
+import static org.sejda.util.RequireUtils.requireIOCondition;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -54,11 +56,13 @@ import org.sejda.util.IOUtils;
  */
 public class ReadOnlyFilteredCOSStream extends COSStream {
     private InputStream stream;
+    private long length;
 
-    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream) {
+    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
         super(ofNullable(existingDictionary).orElseGet(COSDictionary::new));
         requireNotNullArg(stream, "input stream cannot be null");
         this.stream = stream;
+        this.length = length;
     }
 
     @Override
@@ -68,12 +72,13 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     public long getFilteredLength() throws IOException {
-        throw new IOException("Embedded files filtered length cannot be requested");
+        requireIOCondition(length >= 0, "Filtered length cannot be requested");
+        return length;
     }
 
     @Override
     public long getUnfilteredLength() throws IOException {
-        throw new IOException("Embedded files unfiltered length cannot be requested");
+        throw new IOException("Unfiltered length cannot be requested");
     }
 
     @Override
@@ -152,7 +157,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         requireNotNullArg(existing, "input stream cannot be null");
         // let's make sure we get the unencrypted and filtered
         existing.setEncryptor(null);
-        return new ReadOnlyFilteredCOSStream(existing, existing.getFilteredStream());
+        return new ReadOnlyFilteredCOSStream(existing, existing.getFilteredStream(), existing.getFilteredLength());
     }
 
     /**
@@ -165,10 +170,11 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * @param bitsPerComponent
      * @param colorSpace
      * @return
+     * @throws FileNotFoundException
      */
-    public static ReadOnlyFilteredCOSStream readOnlyJpegImage(InputStream stream, int width, int height,
-            int bitsPerComponent, PDColorSpace colorSpace) {
-        requireNotNullArg(stream, "input stream cannot be null");
+    public static ReadOnlyFilteredCOSStream readOnlyJpegImage(File imageFile, int width, int height,
+            int bitsPerComponent, PDColorSpace colorSpace) throws FileNotFoundException {
+        requireNotNullArg(imageFile, "input file cannot be null");
         requireNotNullArg(colorSpace, "color space cannot be null");
         COSDictionary dictionary = new COSDictionary();
         dictionary.setItem(COSName.TYPE, COSName.XOBJECT);
@@ -177,9 +183,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         dictionary.setInt(COSName.BITS_PER_COMPONENT, bitsPerComponent);
         dictionary.setInt(COSName.HEIGHT, height);
         dictionary.setInt(COSName.WIDTH, width);
-        of(colorSpace).map(PDColorSpace::getCOSObject)
-                .ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
-        return new ReadOnlyFilteredCOSStream(dictionary, stream);
+        of(colorSpace).map(PDColorSpace::getCOSObject).ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
+        return new ReadOnlyFilteredCOSStream(dictionary, new FileInputStream(imageFile), imageFile.length());
     }
 
     /**
@@ -198,7 +203,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
             public ReadOnlyFilteredCOSStream open(PdfURLSource source) throws TaskIOException {
                 try {
                     return new ReadOnlyFilteredCOSStream(dictionary,
-                            new DeflaterInputStream(source.getSource().openStream()));
+                            new DeflaterInputStream(source.getSource().openStream()), -1);
                 } catch (IOException e) {
                     throw new TaskIOException(e);
                 }
@@ -208,7 +213,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
             public ReadOnlyFilteredCOSStream open(PdfFileSource source) throws TaskIOException {
                 try {
                     ReadOnlyFilteredCOSStream retVal = new ReadOnlyFilteredCOSStream(dictionary,
-                            new DeflaterInputStream(new FileInputStream(source.getSource())));
+                            new DeflaterInputStream(new FileInputStream(source.getSource())), -1);
                     retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE, source.getSource().length());
                     GregorianCalendar calendar = new GregorianCalendar();
                     calendar.setTimeInMillis(source.getSource().lastModified());
@@ -221,7 +226,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
             @Override
             public ReadOnlyFilteredCOSStream open(PdfStreamSource source) {
-                return new ReadOnlyFilteredCOSStream(dictionary, new DeflaterInputStream(source.getSource()));
+                return new ReadOnlyFilteredCOSStream(dictionary, new DeflaterInputStream(source.getSource()), -1);
             }
         });
     }

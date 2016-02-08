@@ -269,7 +269,7 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertOutputSize(int size) {
         requireMultipleOutputs();
-        assertTrue("An unexpected number of output files has been created", fileOutput.listFiles().length == size);
+        assertEquals("An unexpected number of output files has been created", size, fileOutput.listFiles().length);
         return this;
     }
 

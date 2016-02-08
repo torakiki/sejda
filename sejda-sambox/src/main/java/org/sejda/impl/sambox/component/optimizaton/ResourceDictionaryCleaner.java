@@ -28,6 +28,7 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,15 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     @Override
     public void accept(PDDocument p) {
         LOG.debug("Cleaning resource dictionaries from unused external objects");
-        Stream<COSDictionary> xobjects = p.getPages().streamNodes().map(d -> d.getDictionaryObject(COSName.RESOURCES))
+        clean(p.getPages().streamNodes());
+    }
+
+    public void clean(PDPage page) {
+        clean(Stream.of(page.getCOSObject()));
+    }
+
+    private void clean(Stream<COSDictionary> nodes) {
+        Stream<COSDictionary> xobjects = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES))
                 .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
                 .map(d -> d.getDictionaryObject(COSName.XOBJECT)).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d);
