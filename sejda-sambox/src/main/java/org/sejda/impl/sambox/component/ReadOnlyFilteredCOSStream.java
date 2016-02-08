@@ -163,8 +163,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     /**
      * a {@link ReadOnlyFilteredCOSStream} that represents an xobject JPEG image
      * 
-     * @param stream
-     *            image stream
+     * @param imageFile
+     *            the image file
      * @param width
      * @param height
      * @param bitsPerComponent
