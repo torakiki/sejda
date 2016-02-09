@@ -113,6 +113,22 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
+    public void testDocumentWithRotatedPages() throws Exception {
+        parameters = basicNoSources();
+        parameters.addSource(customInput("pdf/rotated_page.pdf"));
+        parameters.setPattern("Page [PAGE_ARABIC]");
+        parameters.setVerticalAlign(VerticalAlign.TOP);
+        parameters.setHorizontalAlign(HorizontalAlign.LEFT);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertHeaderHasText(d.getPage(0), "Page 1");
+            assertHeaderHasText(d.getPage(1), "Page 2");
+            assertHeaderHasText(d.getPage(2), "Page 3");
+        });
+    }
+
+    @Test
     public void testBatesAndFileSequence() throws Exception {
         parameters = basicWithSources();
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);

@@ -21,6 +21,7 @@ package org.sejda.impl.sambox.component;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
+import java.awt.geom.AffineTransform;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +40,7 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType0Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +115,17 @@ public class PdfHeaderFooterWriter implements Closeable {
                 contentStream.beginText();
                 contentStream.setFont(font, fontSize.floatValue());
                 contentStream.setNonStrokingColor(parameters.getColor());
+
+                if(page.getRotation() > 0) {
+                    float xOffset = (pageSize.getUpperRightX() + pageSize.getLowerLeftX()) / 2f;
+                    float yOffset = (pageSize.getUpperRightY() + pageSize.getLowerLeftY()) / 2f;
+
+                    AffineTransform transform = AffineTransform.getTranslateInstance(xOffset, yOffset);
+                    transform.concatenate(AffineTransform.getRotateInstance(page.getRotation() * Math.PI / 180));
+                    transform.concatenate(AffineTransform.getTranslateInstance(-xOffset, -yOffset));
+                    contentStream.setTextMatrix(new Matrix(transform));
+                }
+
                 contentStream.newLineAtOffset(xPosition, yPosition);
                 contentStream.showText(label);
                 contentStream.endText();
