@@ -12,7 +12,9 @@ Quick install & run
 * (Linux/Mac) Execute the console: > ./bin/sejda-console
 * (Windows) Execute bin/sejda-console.bat
 
-License: GNU Affero GPLv3
+License: GNU Affero GPLv3 
+* Available at http://www.gnu.org/licenses/agpl-3.0.html
+
 Feedbacks to: info@sejda.org
 Issue tracker: https://github.com/torakiki/sejda/issues
 

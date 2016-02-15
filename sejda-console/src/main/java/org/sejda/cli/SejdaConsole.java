@@ -19,6 +19,9 @@
  */
 package org.sejda.cli;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,10 +98,8 @@ public class SejdaConsole {
         Map<String, Object> uniqueArguments = new HashMap<>();
         for (final String eachArgument : arguments.getCommandArguments()) {
             if (uniqueArguments.containsKey(eachArgument) && StringUtils.startsWith(eachArgument, "-")) {
-                throw new ArgumentValidationException(
-                        "Option '"
-                                + eachArgument
-                                + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf");
+                throw new ArgumentValidationException("Option '" + eachArgument
+                        + "' is specified twice. Please note that the correct way to specify a list of values for an option is to repeat the values after the option, without re-stating the option name. Example: --files /tmp/file1.pdf /tmp/files2.pdf");
             }
             uniqueArguments.put(eachArgument, eachArgument);
         }
@@ -128,15 +129,15 @@ public class SejdaConsole {
     private void printVersionAndLicense() {
         StringBuilder info = new StringBuilder(String.format("\nSejda Console (Version %s)\n", Sejda.VERSION));
         info.append("(see http://www.sejda.org for more information)\n\n");
-        info.append("Copyright 2011-2015 by Andrea Vacondio, Eduard Weissmann.\n" + "\n"
-                + "Licensed under the GNU Affero General Public License, Version 3 (the \"License\");\n"
-                + "you may not use this file except in compliance with the License.\n"
-                + "You may obtain a copy of the License at \n" + "\n" + "http://www.gnu.org/licenses/agpl-3.0.html\n"
-                + "\n" + "Unless required by applicable law or agreed to in writing, software\n"
-                + "distributed under the License is distributed on an \"AS IS\" BASIS,\n"
-                + "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-                + "See the License for the specific language governing permissions and \n"
-                + "limitations under the License. ");
+        try (BufferedReader buffer = new BufferedReader(
+                new InputStreamReader(SejdaConsole.class.getResourceAsStream("/LICENSE.txt")))) {
+            buffer.lines().forEach(l -> {
+                info.append(l);
+                info.append(System.lineSeparator());
+            });
+        } catch (IOException e) {
+            LOG.error("An error occured while reading license information", e);
+        }
         LOG.info(info.toString());
     }
 
