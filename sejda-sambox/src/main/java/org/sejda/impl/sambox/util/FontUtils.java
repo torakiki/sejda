@@ -18,12 +18,19 @@
  */
 package org.sejda.impl.sambox.util;
 
+import static java.util.Objects.nonNull;
+
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility to map from Sejda font definition to PDFBox.
@@ -33,11 +40,14 @@ import org.sejda.sambox.pdmodel.font.PDType1Font;
  */
 public final class FontUtils {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FontUtils.class);
+
     private FontUtils() {
         // hide
     }
 
     private static final Map<StandardType1Font, PDType1Font> STANDARD_TYPE1_FONTS;
+
     static {
         Map<StandardType1Font, PDType1Font> fontsCache = new HashMap<StandardType1Font, PDType1Font>();
         fontsCache.put(StandardType1Font.CURIER, PDType1Font.COURIER);
@@ -65,5 +75,26 @@ public final class FontUtils {
      */
     public static PDType1Font getStandardType1Font(StandardType1Font st1Font) {
         return STANDARD_TYPE1_FONTS.get(st1Font);
+    }
+
+    /**
+     * check the label can be written with the selected font, use the fallback otherwise
+     * 
+     * @param text
+     * @param font
+     * @param fallbackSupplier
+     * @return
+     */
+    public static PDFont fontOrFallback(String text, PDFont font, Supplier<PDFont> fallbackSupplier) {
+        if (nonNull(fallbackSupplier)) {
+            try {
+                font.getStringWidth(text);
+            } catch (IllegalArgumentException | IOException ex) {
+                LOG.info("Text cannot be written with font {}, using fallback", font.getName());
+                return fallbackSupplier.get();
+            }
+        }
+        return font;
+
     }
 }

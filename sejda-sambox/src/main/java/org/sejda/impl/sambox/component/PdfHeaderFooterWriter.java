@@ -19,7 +19,9 @@
 package org.sejda.impl.sambox.component;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
+import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
 import java.io.Closeable;
@@ -82,23 +84,22 @@ public class PdfHeaderFooterWriter implements Closeable {
 
         for (int pageNumber : pages) {
             // if user didn't override it, use document actual page numbering
-            if(labelPageNumber == null) {
+            if (labelPageNumber == null) {
                 labelPageNumber = pageNumber;
             }
 
             String batesSeq = null;
-            if(parameters.getBatesSequence() != null) {
+            if (parameters.getBatesSequence() != null) {
                 batesSeq = parameters.getBatesSequence().next();
             }
 
-            String label = new TextStampPattern().withPage(labelPageNumber, totalPages)
-                                                 .withBatesSequence(batesSeq)
-                                                 .withFileSequence(String.valueOf(currentFileCounter))
-                                                 .build(parameters.getPattern());
+            String label = new TextStampPattern().withPage(labelPageNumber, totalPages).withBatesSequence(batesSeq)
+                    .withFileSequence(String.valueOf(currentFileCounter)).build(parameters.getPattern());
 
             // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
             // Type 1 fonts only support 8-bit code points.
-            font = fontOrFallback(label, font, loadFont(UnicodeType0Font.NOTO_SANS_REGULAR));
+            font = fontOrFallback(label, font, () -> loadFont(UnicodeType0Font.NOTO_SANS_REGULAR));
+            requireNotNullArg(font, "Unable to find suitable font for the given label");
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
 
@@ -116,7 +117,7 @@ public class PdfHeaderFooterWriter implements Closeable {
                 contentStream.setFont(font, fontSize.floatValue());
                 contentStream.setNonStrokingColor(parameters.getColor());
 
-                if(page.getRotation() > 0) {
+                if (page.getRotation() > 0) {
                     float xOffset = (pageSize.getUpperRightX() + pageSize.getLowerLeftX()) / 2f;
                     float yOffset = (pageSize.getUpperRightY() + pageSize.getLowerLeftY()) / 2f;
 
@@ -138,22 +139,12 @@ public class PdfHeaderFooterWriter implements Closeable {
         }
     }
 
-    private PDFont fontOrFallback(String text, PDFont font, PDFont fallback) {
-        if(fallback == null) return font;
-
-        try {
-            font.getStringWidth(text);
-            return font;
-        } catch (IllegalArgumentException | IOException ex) {
-            LOG.debug("Label cannot be written with font {}, will fallback to font {}", font.getName(), fallback.getName());
-            return fallback;
-        }
-    }
-
     private PDFont loadFont(UnicodeType0Font font) {
         InputStream in = font.getResourceStream();
         try {
-            return PDType0Font.load(documentHandler.getUnderlyingPDDocument(), in);
+            PDType0Font fallback = PDType0Font.load(documentHandler.getUnderlyingPDDocument(), in);
+            LOG.debug("Loaded fallback font {}", fallback.getName());
+            return fallback;
         } catch (IOException e) {
             LOG.warn("Failed to load font " + font, e);
             return null;
