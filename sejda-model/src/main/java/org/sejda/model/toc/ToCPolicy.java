@@ -1,5 +1,5 @@
 /*
- * Created on 03 feb 2016
+ * Created on 16 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,24 +16,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.optimization;
+package org.sejda.model.toc;
 
 import org.sejda.common.FriendlyNamed;
 
 /**
- * Possible optimization policies to use on tasks generated documents
+ * Possible ToC creation policies to use in tasks that may require a ToC
  * 
  * @author Andrea Vacondio
  *
  */
-public enum OptimizationPolicy implements FriendlyNamed {
-    YES("yes"),
-    NO("no"),
-    AUTO("auto");
+public enum ToCPolicy implements FriendlyNamed {
+    NONE("none"),
+    TEXT_NAMES("text_names"),
+    TEXT_TITLES("text_titles");
 
     private String displayName;
 
-    private OptimizationPolicy(String displayName) {
+    private ToCPolicy(String displayName) {
         this.displayName = displayName;
     }
 

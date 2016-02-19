@@ -114,7 +114,7 @@ public final class Annotations {
         return annotationsLookup;
     }
 
-    private static PDDestination getDestinationFrom(PDAnnotationLink link, PDDocument pageOwner) throws IOException {
+    private static PDDestination getDestinationFrom(PDAnnotationLink link, PDDocument pageOwner) {
         try {
             PDDestination destination = link.getDestination();
             if (destination == null) {

@@ -31,6 +31,7 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDPageTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
     private boolean hasInheritedImages(PDDocument document) {
         // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count the xobjects of subtype Image, so basically we try to determine if pages are
         // going to inherit images, potentially unused in which case we want to optimize
-        long inheritedImage = document.getPages().streamNodes().filter(OptimizationRuler::isPageTreeNode)
+        long inheritedImage = document.getPages().streamNodes().filter(PDPageTree::isPageTreeNode)
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES)).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d).map(d -> d.getDictionaryObject(COSName.XOBJECT))
                 .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
@@ -99,10 +100,5 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
             return true;
         }
         return false;
-    }
-
-    // TODO replace this once we release SAMBox 1.0.0.M21
-    private static boolean isPageTreeNode(COSDictionary node) {
-        return node.getCOSName(COSName.TYPE) == COSName.PAGES || node.containsKey(COSName.KIDS);
     }
 }

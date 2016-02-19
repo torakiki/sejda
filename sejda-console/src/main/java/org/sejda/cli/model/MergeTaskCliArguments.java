@@ -26,6 +26,7 @@ import org.sejda.conversion.MultiplePageRangeSetAdapter;
 import org.sejda.conversion.OutlinePolicyAdapter;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PdfFileSourceListAdapter;
+import org.sejda.conversion.ToCPolicyAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
@@ -74,7 +75,9 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
 
     boolean isFilesListConfig();
 
-    @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc, retain_as_one_entry }. Default is 'retain' (optional)", defaultValue = "retain")
+    @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc, retain_as_one_entry}. Default is 'retain' (optional)", defaultValue = "retain")
     OutlinePolicyAdapter getBookmarks();
 
+    @Option(shortName = "t", description = "table of contents creation policy dictating if a ToC should be created. {none, text_names, text_titles}. Default is 'none' (optional)", defaultValue = "none")
+    ToCPolicyAdapter getToc();
 }

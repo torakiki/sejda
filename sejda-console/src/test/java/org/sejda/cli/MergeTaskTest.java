@@ -45,6 +45,7 @@ import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.toc.ToCPolicy;
 
 /**
  * Tests for the MergeTask command line interface
@@ -137,6 +138,24 @@ public class MergeTaskTest extends AbstractTaskTest {
     public void onMergeAcroForms() {
         MergeParameters parameters = defaultCommandLine().with("-a", "merge").invokeSejdaConsole();
         assertEquals(AcroFormPolicy.MERGE, parameters.getAcroFormPolicy());
+    }
+
+    @Test
+    public void onDefaultToc() {
+        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(ToCPolicy.NONE, parameters.getTableOfContentsPolicy());
+    }
+
+    @Test
+    public void onTextNamesToC() {
+        MergeParameters parameters = defaultCommandLine().with("-t", "text_names").invokeSejdaConsole();
+        assertEquals(ToCPolicy.TEXT_NAMES, parameters.getTableOfContentsPolicy());
+    }
+
+    @Test
+    public void onTextTitlesToC() {
+        MergeParameters parameters = defaultCommandLine().with("-t", "text_titles").invokeSejdaConsole();
+        assertEquals(ToCPolicy.TEXT_TITLES, parameters.getTableOfContentsPolicy());
     }
 
     @Test

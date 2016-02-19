@@ -1,5 +1,5 @@
 /*
- * Created on 03 feb 2016
+ * Created on 16 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,29 +16,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.optimization;
+package org.sejda.conversion;
 
-import org.sejda.common.FriendlyNamed;
+import org.junit.Test;
+import org.sejda.model.exception.SejdaRuntimeException;
 
 /**
- * Possible optimization policies to use on tasks generated documents
- * 
  * @author Andrea Vacondio
  *
  */
-public enum OptimizationPolicy implements FriendlyNamed {
-    YES("yes"),
-    NO("no"),
-    AUTO("auto");
-
-    private String displayName;
-
-    private OptimizationPolicy(String displayName) {
-        this.displayName = displayName;
+public class OptimizationPolicyAdapterTest {
+    @Test
+    public void testAdapt() {
+        new OptimizationPolicyAdapter("yes").getEnumValue();
+        new OptimizationPolicyAdapter("no").getEnumValue();
+        new OptimizationPolicyAdapter("auto").getEnumValue();
     }
 
-    @Override
-    public String getFriendlyName() {
-        return displayName;
+    @Test(expected = SejdaRuntimeException.class)
+    public void testInvalid() {
+        new OptimizationPolicyAdapter("Chuck").getEnumValue();
     }
 }

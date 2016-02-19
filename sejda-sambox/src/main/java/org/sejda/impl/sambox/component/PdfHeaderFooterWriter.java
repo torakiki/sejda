@@ -26,10 +26,10 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 import java.awt.geom.AffineTransform;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
@@ -40,7 +40,6 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDType0Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
@@ -98,7 +97,8 @@ public class PdfHeaderFooterWriter implements Closeable {
 
             // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
             // Type 1 fonts only support 8-bit code points.
-            font = fontOrFallback(label, font, () -> loadFont(UnicodeType0Font.NOTO_SANS_REGULAR));
+            font = fontOrFallback(label, font, () -> FontUtils.loadFont(documentHandler.getUnderlyingPDDocument(),
+                    UnicodeType0Font.NOTO_SANS_REGULAR));
             requireNotNullArg(font, "Unable to find suitable font for the given label");
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
@@ -136,20 +136,6 @@ public class PdfHeaderFooterWriter implements Closeable {
             }
 
             labelPageNumber++;
-        }
-    }
-
-    private PDFont loadFont(UnicodeType0Font font) {
-        InputStream in = font.getResourceStream();
-        try {
-            PDType0Font fallback = PDType0Font.load(documentHandler.getUnderlyingPDDocument(), in);
-            LOG.debug("Loaded fallback font {}", fallback.getName());
-            return fallback;
-        } catch (IOException e) {
-            LOG.warn("Failed to load font " + font, e);
-            return null;
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 

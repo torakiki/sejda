@@ -34,6 +34,7 @@ import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.model.toc.ToCPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -58,6 +59,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @Valid
     @NotNull
     private SingleTaskOutput<?> output;
+    @NotNull
+    private ToCPolicy tocPolicy = ToCPolicy.NONE;
 
     @Override
     public SingleTaskOutput<?> getOutput() {
@@ -137,10 +140,18 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.outlinePolicy = outlinePolicy;
     }
 
+    public ToCPolicy getTableOfContentsPolicy() {
+        return tocPolicy;
+    }
+
+    public void setTableOfContentsPolicy(ToCPolicy tocPolicy) {
+        this.tocPolicy = tocPolicy;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
-                .append(blankPageIfOdd).append(outlinePolicy).append(outputName).toHashCode();
+                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(outputName).toHashCode();
     }
 
     @Override
@@ -155,7 +166,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList())
                 .append(acroFormPolicy, parameter.getAcroFormPolicy())
                 .append(blankPageIfOdd, parameter.isBlankPageIfOdd())
-                .append(outlinePolicy, parameter.getOutlinePolicy()).append(outputName, parameter.getOutputName())
+                .append(outlinePolicy, parameter.getOutlinePolicy())
+                .append(tocPolicy, parameter.getTableOfContentsPolicy()).append(outputName, parameter.getOutputName())
                 .isEquals();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Created on 03 feb 2016
+ * Created on 16 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,29 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.optimization;
+package org.sejda.conversion;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.toc.ToCPolicy;
 
 /**
- * Possible optimization policies to use on tasks generated documents
- * 
  * @author Andrea Vacondio
  *
  */
-public enum OptimizationPolicy implements FriendlyNamed {
-    YES("yes"),
-    NO("no"),
-    AUTO("auto");
+public class ToCPolicyAdapter extends EnumAdapter<ToCPolicy> {
 
-    private String displayName;
-
-    private OptimizationPolicy(String displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public String getFriendlyName() {
-        return displayName;
+    public ToCPolicyAdapter(String userFriendlyName) {
+        super(userFriendlyName, ToCPolicy.class, "ToC policy");
     }
 }

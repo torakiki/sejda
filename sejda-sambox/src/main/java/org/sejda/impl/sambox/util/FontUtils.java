@@ -21,13 +21,18 @@ package org.sejda.impl.sambox.util;
 import static java.util.Objects.nonNull;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.commons.io.IOUtils;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.UnicodeType0Font;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +100,19 @@ public final class FontUtils {
             }
         }
         return font;
+    }
 
+    public static PDFont loadFont(PDDocument document, UnicodeType0Font font) {
+        InputStream in = font.getResourceStream();
+        try {
+            PDType0Font loaded = PDType0Font.load(document, in);
+            LOG.debug("Loaded font {}", loaded.getName());
+            return loaded;
+        } catch (IOException e) {
+            LOG.warn("Failed to load font " + font, e);
+            return null;
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
 }

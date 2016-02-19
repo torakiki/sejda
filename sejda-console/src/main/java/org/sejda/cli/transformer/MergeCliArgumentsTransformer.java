@@ -37,8 +37,8 @@ import org.sejda.model.parameter.MergeParameters;
  * @author Eduard Weissmann
  * 
  */
-public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> {
+public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer
+        implements CommandCliArgumentsTransformer<MergeTaskCliArguments, MergeParameters> {
 
     /**
      * Transforms {@link MergeTaskCliArguments} to {@link MergeParameters}
@@ -52,6 +52,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
         parameters.setAcroFormPolicy(taskCliArguments.getAcroForms().getEnumValue());
         parameters.setBlankPageIfOdd(taskCliArguments.isAddBlanks());
         parameters.setOutlinePolicy(taskCliArguments.getBookmarks().getEnumValue());
+        parameters.setTableOfContentsPolicy(taskCliArguments.getToc().getEnumValue());
         populateAbstractParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
 
@@ -97,8 +98,8 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer im
             throw new SejdaRuntimeException("No input files specified");
         }
 
-        MultiplePdfMergeInputAdapter mergeInputsAdapter = new MultiplePdfMergeInputAdapter(inputFiles, taskCliArguments
-                .getPageSelection().ranges());
+        MultiplePdfMergeInputAdapter mergeInputsAdapter = new MultiplePdfMergeInputAdapter(inputFiles,
+                taskCliArguments.getPageSelection().ranges());
         return mergeInputsAdapter;
     }
 

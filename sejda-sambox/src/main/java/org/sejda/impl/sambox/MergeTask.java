@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
@@ -30,6 +31,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
@@ -37,14 +40,20 @@ import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.OutlineMerger;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.TableOfContentsCreator;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +74,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private Queue<Closeable> toClose = new LinkedList<>();
     private OutlineMerger outlineMerger;
     private AcroFormsMerger acroFormsMerger;
+    private TableOfContentsCreator tocCreator;
     private PDRectangle currentPageSize = PDRectangle.LETTER;
+    private long pagesCounter = 0;
 
     @Override
     public void before(MergeParameters parameters) {
@@ -87,6 +98,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.destinationDocument.setCompress(parameters.isCompress());
         this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
                 this.destinationDocument.getUnderlyingPDDocument());
+        this.tocCreator = new TableOfContentsCreator(parameters.getTableOfContentsPolicy(),
+                this.destinationDocument.getUnderlyingPDDocument());
 
         for (PdfMergeInput input : parameters.getInputList()) {
             LOG.debug("Opening {}", input.getSource());
@@ -95,16 +108,31 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
+            long relativeCounter = 0;
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
                 stopTaskIfCancelled();
+                pagesCounter++;
+                relativeCounter++;
 
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
                 currentPageSize = page.getMediaBox();
                 // we don't use the original page because once added to the new tree we loose inheritable attributes
                 // so we use a page duplicate to explicitly assign inheritable resources
-                pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
+                PDPage importedPage = destinationDocument.importPage(page);
+                pagesLookup.addLookupEntry(page, importedPage);
+
+                // processing the first page of the source
+                if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
+                    String itemText = FilenameUtils.getBaseName(input.getSource().getName());
+                    if (ToCPolicy.TEXT_TITLES == parameters.getTableOfContentsPolicy()) {
+                        itemText = ofNullable(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
+                                .map(i -> i.getTitle()).filter(StringUtils::isNotBlank).orElse(itemText);
+                    }
+                    tocCreator.appendItem(itemText, pagesCounter, linkAnnotationFor(importedPage));
+                }
                 LOG.trace("Added imported page");
             }
+            relativeCounter = 0;
 
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
@@ -132,14 +160,28 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Adding generated AcroForm");
             destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
         }
-        destinationDocument.savePDDocument(tmpFile);
 
+        if (tocCreator.hasToc()) {
+            LOG.debug("Adding generated ToC");
+            tocCreator.addToC();
+        }
+
+        destinationDocument.savePDDocument(tmpFile);
         closeResources();
 
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
 
+    }
+
+    private PDAnnotationLink linkAnnotationFor(PDPage importedPage) {
+        PDPageFitWidthDestination pageDest = new PDPageFitWidthDestination();
+        pageDest.setPage(importedPage);
+        PDAnnotationLink link = new PDAnnotationLink();
+        link.setDestination(pageDest);
+        link.setBorder(new COSArray(COSInteger.ZERO, COSInteger.ZERO, COSInteger.ZERO));
+        return link;
     }
 
     private void closeResources() {

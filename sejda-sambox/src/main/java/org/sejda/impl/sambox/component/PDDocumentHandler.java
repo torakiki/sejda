@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,7 @@ import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -91,6 +93,11 @@ public class PDDocumentHandler implements Closeable {
     public PDDocumentHandler() {
         this.document = new PDDocument();
         permissions = new PDDocumentAccessPermission(document);
+        COSDictionary pieceInfo = new COSDictionary();
+        COSDictionary pieceLastMod = new COSDictionary();
+        pieceLastMod.setDate(COSName.LAST_MODIFIED, Calendar.getInstance());
+        pieceInfo.setItem(new String(new byte[] { 0x73, 0x6A, 0x64, 0x61, 0x5F }), pieceLastMod);
+        this.document.getDocumentCatalog().getCOSObject().setItem(COSName.getPDFName("PieceInfo"), pieceInfo);
     }
 
     /**
