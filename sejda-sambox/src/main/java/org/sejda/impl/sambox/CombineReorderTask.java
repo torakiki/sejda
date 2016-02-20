@@ -42,6 +42,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,8 +97,16 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             stopTaskIfCancelled();
 
             FileIndexAndPage filePage = parameters.getPages().get(i);
-            PDPage page = documents.get(filePage.getFileIndex()).getPage(filePage.getPage());
-            pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
+            int pageNum = filePage.getPage();
+
+            try {
+                PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
+                pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
+            } catch (PageNotFoundException ex){
+                String warning = String.format("Page %d was skipped, could not be processed", pageNum);
+                notifyEvent(getNotifiableTaskMetadata()).taskWarning(warning);
+                LOG.warn(warning, ex);
+            }
 
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
