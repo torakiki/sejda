@@ -22,6 +22,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.sejda.util.RequireUtils.requireNotBlank;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -107,6 +108,11 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     public PdfStreamSource customInput(String path) {
         return PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader().getResourceAsStream(path),
                 randomAscii(16) + ".pdf");
+    }
+
+    public PdfStreamSource customInput(String path, String name) {
+        requireNotBlank(name, "Name cannot be blank");
+        return PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader().getResourceAsStream(path), name);
     }
 
     public PdfStreamSource customEncryptedInput(String path, String password) {

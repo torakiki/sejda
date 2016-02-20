@@ -35,7 +35,6 @@ import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
-import org.sejda.model.pdf.UnicodeType0Font;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -97,8 +96,8 @@ public class PdfHeaderFooterWriter implements Closeable {
 
             // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
             // Type 1 fonts only support 8-bit code points.
-            font = fontOrFallback(label, font, () -> FontUtils.loadFont(documentHandler.getUnderlyingPDDocument(),
-                    UnicodeType0Font.NOTO_SANS_REGULAR));
+            font = fontOrFallback(label, font,
+                    () -> FontUtils.findFontFor(documentHandler.getUnderlyingPDDocument(), label));
             requireNotNullArg(font, "Unable to find suitable font for the given label");
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);

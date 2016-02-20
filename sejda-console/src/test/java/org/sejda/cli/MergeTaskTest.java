@@ -148,14 +148,14 @@ public class MergeTaskTest extends AbstractTaskTest {
 
     @Test
     public void onTextNamesToC() {
-        MergeParameters parameters = defaultCommandLine().with("-t", "text_names").invokeSejdaConsole();
-        assertEquals(ToCPolicy.TEXT_NAMES, parameters.getTableOfContentsPolicy());
+        MergeParameters parameters = defaultCommandLine().with("-t", "file_names").invokeSejdaConsole();
+        assertEquals(ToCPolicy.FILE_NAMES, parameters.getTableOfContentsPolicy());
     }
 
     @Test
     public void onTextTitlesToC() {
-        MergeParameters parameters = defaultCommandLine().with("-t", "text_titles").invokeSejdaConsole();
-        assertEquals(ToCPolicy.TEXT_TITLES, parameters.getTableOfContentsPolicy());
+        MergeParameters parameters = defaultCommandLine().with("-t", "doc_titles").invokeSejdaConsole();
+        assertEquals(ToCPolicy.DOC_TITLES, parameters.getTableOfContentsPolicy());
     }
 
     @Test

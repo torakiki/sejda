@@ -83,6 +83,19 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
+    public void testThaiCharacters() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("นี่คือการทดสอบ");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "นี่คือการทดสอบ");
+
+        });
+    }
+
+    @Test
     public void testPageRange() throws Exception {
         parameters = basicWithSources();
         parameters.setPageRange(new PageRange(2));

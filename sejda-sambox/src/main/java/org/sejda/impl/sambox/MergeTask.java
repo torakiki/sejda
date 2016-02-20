@@ -124,7 +124,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 // processing the first page of the source
                 if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
                     String itemText = FilenameUtils.getBaseName(input.getSource().getName());
-                    if (ToCPolicy.TEXT_TITLES == parameters.getTableOfContentsPolicy()) {
+                    if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                         itemText = ofNullable(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
                                 .map(i -> i.getTitle()).filter(StringUtils::isNotBlank).orElse(itemText);
                     }

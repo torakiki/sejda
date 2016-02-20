@@ -1,5 +1,5 @@
 /*
- * Created on 16 feb 2016
+ * Created on 19 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,29 +16,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.toc;
-
-import org.sejda.common.FriendlyNamed;
+package org.sejda.impl.sambox.component;
 
 /**
- * Possible ToC creation policies to use in tasks that may require a ToC
- * 
  * @author Andrea Vacondio
  *
  */
-public enum ToCPolicy implements FriendlyNamed {
-    NONE("none"),
-    FILE_NAMES("file_names"),
-    DOC_TITLES("doc_titles");
+public class TableOfContentsCreatorTest {
 
-    private String displayName;
-
-    private ToCPolicy(String displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public String getFriendlyName() {
-        return displayName;
-    }
 }

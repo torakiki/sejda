@@ -29,7 +29,8 @@ public class ToCPolicyAdapterTest {
     @Test
     public void testAdapt() {
         new ToCPolicyAdapter("none").getEnumValue();
-        new ToCPolicyAdapter("text").getEnumValue();
+        new ToCPolicyAdapter("doc_titles").getEnumValue();
+        new ToCPolicyAdapter("file_names").getEnumValue();
     }
 
     @Test(expected = SejdaRuntimeException.class)

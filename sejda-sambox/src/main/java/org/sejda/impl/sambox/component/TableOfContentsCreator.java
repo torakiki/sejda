@@ -22,6 +22,7 @@ import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 import static org.sejda.util.RequireUtils.requireArg;
+import static org.sejda.util.RequireUtils.requireIOCondition;
 import static org.sejda.util.RequireUtils.requireNotBlank;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
@@ -31,7 +32,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 import org.sejda.impl.sambox.util.FontUtils;
-import org.sejda.model.pdf.UnicodeType0Font;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -113,7 +113,7 @@ public class TableOfContentsCreator {
     private LinkedList<PDPage> generateToC() throws IOException {
         LinkedList<PDPage> pages = new LinkedList<>();
         if (shouldGenerateToC()) {
-            PDFont font = getFont();
+            PDFont font = PDType1Font.HELVETICA;
             int maxRows = (int) (PAGE_SIZE.getHeight() - (MARGIN * 2)) / LINE_HEIGHT;
             while (!items.isEmpty()) {
                 int row = 0;
@@ -125,6 +125,8 @@ public class TableOfContentsCreator {
                         ToCItem i = items.poll();
                         if (nonNull(i)) {
                             row++;
+                            font = fontOrFallback(i.text, font, () -> FontUtils.findFontFor(document, i.text));
+                            requireIOCondition(nonNull(font), "Unable to find suitable font for " + i.text);
                             float y = PAGE_SIZE.getHeight() - MARGIN - (row * LINE_HEIGHT);
                             stream.beginText();
                             stream.setFont(font, FONT_SIZE);
@@ -133,8 +135,9 @@ public class TableOfContentsCreator {
                             stream.showText(itemText);
 
                             String pageString = SEPARATOR + Long.toString(i.page);
-                            stream.setTextMatrix(new Matrix(
-                                    AffineTransform.getTranslateInstance(getPageNumberX(separatorWidth, font, i), y)));
+                            stream.setTextMatrix(new Matrix(AffineTransform.getTranslateInstance(
+                                    getPageNumberX(separatorWidth, PDType1Font.HELVETICA, i), y)));
+                            stream.setFont(PDType1Font.HELVETICA, FONT_SIZE);
                             stream.showText(pageString);
                             stream.endText();
                             i.annotation
@@ -201,17 +204,6 @@ public class TableOfContentsCreator {
 
     public boolean shouldGenerateToC() {
         return policy != ToCPolicy.NONE;
-    }
-
-    private PDFont getFont() {
-        PDFont font = PDType1Font.HELVETICA;
-        for (ToCItem i : items) {
-            font = fontOrFallback(i.text, font, () -> FontUtils.loadFont(document, UnicodeType0Font.NOTO_SANS_REGULAR));
-            if (font != PDType1Font.HELVETICA) {
-                break;
-            }
-        }
-        return font;
     }
 
     private static class ToCItem {

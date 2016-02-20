@@ -78,6 +78,6 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
     @Option(shortName = "b", description = "bookmarks (outline) merge policy. {discard, retain, one_entry_each_doc, retain_as_one_entry}. Default is 'retain' (optional)", defaultValue = "retain")
     OutlinePolicyAdapter getBookmarks();
 
-    @Option(shortName = "t", description = "table of contents creation policy dictating if a ToC should be created. {none, text_names, text_titles}. Default is 'none' (optional)", defaultValue = "none")
+    @Option(shortName = "t", description = "table of contents creation policy dictating if a ToC should be created. {none, file_names, doc_titles}. Default is 'none' (optional)", defaultValue = "none")
     ToCPolicyAdapter getToc();
 }

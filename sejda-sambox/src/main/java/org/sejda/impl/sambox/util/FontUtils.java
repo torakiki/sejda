@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.sejda.fonts.UnicodeType0Font;
 import org.sejda.model.pdf.StandardType1Font;
-import org.sejda.model.pdf.UnicodeType0Font;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType0Font;
@@ -91,22 +91,18 @@ public final class FontUtils {
      * @return
      */
     public static PDFont fontOrFallback(String text, PDFont font, Supplier<PDFont> fallbackSupplier) {
-        if (nonNull(fallbackSupplier)) {
-            try {
-                font.getStringWidth(text);
-            } catch (IllegalArgumentException | IOException ex) {
-                LOG.info("Text cannot be written with font {}, using fallback", font.getName());
-                return fallbackSupplier.get();
-            }
+        if (nonNull(fallbackSupplier) && !canDisplay(text, font)) {
+            LOG.info("Text cannot be written with font {}, using fallback", font.getName());
+            return fallbackSupplier.get();
         }
         return font;
     }
 
     public static PDFont loadFont(PDDocument document, UnicodeType0Font font) {
-        InputStream in = font.getResourceStream();
+        InputStream in = font.getFontStream();
         try {
             PDType0Font loaded = PDType0Font.load(document, in);
-            LOG.debug("Loaded font {}", loaded.getName());
+            LOG.trace("Loaded font {}", loaded.getName());
             return loaded;
         } catch (IOException e) {
             LOG.warn("Failed to load font " + font, e);
@@ -114,5 +110,32 @@ public final class FontUtils {
         } finally {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    public static final PDFont findFontFor(PDDocument document, String text) {
+        try {
+            // lets make sure the jar is in the classpath
+            Class.forName("org.sejda.fonts.UnicodeType0Font");
+            for (UnicodeType0Font font : UnicodeType0Font.values()) {
+                PDFont loaded = loadFont(document, font);
+                if (nonNull(loaded) && canDisplay(text, loaded)) {
+                    LOG.debug("Found suitable font {}", loaded.getName());
+                    return loaded;
+                }
+            }
+        } catch (ClassNotFoundException clf) {
+            LOG.warn("Fallback fonts not available");
+        }
+        return null;
+    }
+
+    public static boolean canDisplay(String text, PDFont font) {
+        try {
+            font.encode(text);
+            return true;
+        } catch (IllegalArgumentException | IOException e) {
+            // nothing
+        }
+        return false;
     }
 }

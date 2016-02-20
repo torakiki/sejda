@@ -14,13 +14,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.pdf;
-
+package org.sejda.fonts;
 
 import java.io.InputStream;
 
-public enum UnicodeType0Font {
-    NOTO_SANS_REGULAR("/fonts/sans/NotoSans-Regular.ttf");
+import org.sejda.model.pdf.FontResource;
+
+public enum UnicodeType0Font implements FontResource {
+    NOTO_SANS_REGULAR("/fonts/sans/NotoSans-Regular.ttf"),
+    NOTO_SANS_KUFI_REGULAR("/fonts/sans/NotoKufiArabic-Regular.ttf"),
+    NOTO_SANS_NASKH_REGULAR("/fonts/sans/NotoNaskhArabic-Regular.ttf"),
+    NOTO_SANS_DEVANAGARI_REGULAR("/fonts/sans/NotoSansDevanagari-Regular.ttf"),
+    NOTO_SANS_HEBREW_REGULAR("/fonts/sans/NotoSansHebrew-Regular.ttf"),
+    NOTO_SANS_THAI_REGULAR("/fonts/sans/NotoSansThai-Regular.ttf");
 
     private String resource;
 
@@ -28,7 +34,8 @@ public enum UnicodeType0Font {
         this.resource = resource;
     }
 
-    public InputStream getResourceStream() {
+    @Override
+    public InputStream getFontStream() {
         return this.getClass().getResourceAsStream(resource);
     }
 }

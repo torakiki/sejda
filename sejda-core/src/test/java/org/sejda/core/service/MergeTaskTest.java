@@ -34,6 +34,7 @@ import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
@@ -95,6 +96,39 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeAllRetainingOutline() throws IOException {
         setUpParameters(getInput());
         doExecuteMergeAll(false, 14);
+    }
+
+    @Test
+    public void executeMergeAllRetainingOutlineTocNames() throws IOException {
+        setUpParameters(getInput());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        doExecuteMergeAll(false, 19);
+    }
+
+    @Test
+    public void executeMergeAllRetainingOutlineTocTitles() throws IOException {
+        setUpParameters(getInput());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        doExecuteMergeAll(false, 19);
+    }
+
+    @Test
+    public void executeMergeAllRetainingOutlineTocNamesUTF() throws IOException {
+        setUpParameters(getInput());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "αυτό είναι ένα τεστ.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        doExecuteMergeAll(false, 19);
+    }
+
+    @Test
+    public void executeMergeAllRetainingOutlineTocNamesUTFThaiAndHindi() throws IOException {
+        setUpParameters(getInput());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "นี่คือการทดสอบ.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "यह एक परीक्षण है.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        doExecuteMergeAll(false, 23);
     }
 
     @Test
