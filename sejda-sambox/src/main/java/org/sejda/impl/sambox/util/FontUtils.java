@@ -98,7 +98,7 @@ public final class FontUtils {
         return font;
     }
 
-    public static PDFont loadFont(PDDocument document, UnicodeType0Font font) {
+    private static PDFont loadFont(PDDocument document, UnicodeType0Font font) {
         InputStream in = font.getFontStream();
         try {
             PDType0Font loaded = PDType0Font.load(document, in);
@@ -112,13 +112,19 @@ public final class FontUtils {
         }
     }
 
+    /**
+     * 
+     * @param document
+     * @param text
+     * @return a font capable of displaying the given string or null
+     */
     public static final PDFont findFontFor(PDDocument document, String text) {
         try {
             // lets make sure the jar is in the classpath
             Class.forName("org.sejda.fonts.UnicodeType0Font");
             for (UnicodeType0Font font : UnicodeType0Font.values()) {
                 PDFont loaded = loadFont(document, font);
-                if (nonNull(loaded) && canDisplay(text, loaded)) {
+                if (canDisplay(text, loaded)) {
                     LOG.debug("Found suitable font {}", loaded.getName());
                     return loaded;
                 }
@@ -129,10 +135,17 @@ public final class FontUtils {
         return null;
     }
 
+    /**
+     * @param text
+     * @param font
+     * @return true if the given font can display the given text
+     */
     public static boolean canDisplay(String text, PDFont font) {
         try {
-            font.encode(text);
-            return true;
+            if (nonNull(font)) {
+                font.encode(text);
+                return true;
+            }
         } catch (IllegalArgumentException | IOException e) {
             // nothing
         }
