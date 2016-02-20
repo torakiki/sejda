@@ -54,7 +54,7 @@ final class Optimizers {
         case DISCARD_SPIDER_INFO:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.getPDFName("SpiderInfo"));
         case DISCARD_PIECE_INFO:
-            return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.Piec);
+            return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.PIECE_INFO);
         case DISCARD_STRUCTURE_TREE:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.STRUCT_TREE_ROOT);
         case DISCARD_UNUSED_IMAGES:

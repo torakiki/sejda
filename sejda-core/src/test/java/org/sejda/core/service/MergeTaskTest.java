@@ -46,10 +46,8 @@ import org.sejda.sambox.pdmodel.PDDocument;
 @Ignore
 public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
-    private MergeParameters parameters;
-
-    private void setUpParameters(List<PdfMergeInput> input) {
-        parameters = new MergeParameters();
+    private MergeParameters setUpParameters(List<PdfMergeInput> input) {
+        MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
@@ -57,6 +55,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
             parameters.addInput(current);
         }
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+        return parameters;
     }
 
     private List<PdfMergeInput> getInputWithOutline() {
@@ -82,107 +81,104 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void executeMergeAllWithOutlineRetainingOutline() throws IOException {
-        setUpParameters(getInputWithOutline());
-        doExecuteMergeAll(true, 311);
+        doExecuteMergeAll(true, 311, setUpParameters(getInputWithOutline()));
     }
 
     @Test
     public void executeMergeAllWithEncryptedRetainingOutline() throws IOException {
-        setUpParameters(getInputWithEncrypted());
-        doExecuteMergeAll(true, 310);
+        doExecuteMergeAll(true, 310, setUpParameters(getInputWithEncrypted()));
     }
 
     @Test
     public void executeMergeAllRetainingOutline() throws IOException {
-        setUpParameters(getInput());
-        doExecuteMergeAll(false, 14);
+        doExecuteMergeAll(false, 14, setUpParameters(getInput()));
     }
 
     @Test
     public void executeMergeAllRetainingOutlineTocNames() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        doExecuteMergeAll(false, 19);
+        doExecuteMergeAll(false, 19, parameters);
     }
 
     @Test
     public void executeMergeAllRetainingOutlineTocTitles() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        doExecuteMergeAll(false, 19);
+        doExecuteMergeAll(false, 19, parameters);
     }
 
     @Test
     public void executeMergeAllRetainingOutlineTocNamesUTF() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "αυτό είναι ένα τεστ.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        doExecuteMergeAll(false, 19);
+        doExecuteMergeAll(false, 19, parameters);
     }
 
     @Test
     public void executeMergeAllRetainingOutlineTocNamesUTFThaiAndHindi() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "นี่คือการทดสอบ.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "यह एक परीक्षण है.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        doExecuteMergeAll(false, 23);
+        doExecuteMergeAll(false, 23, parameters);
     }
 
     @Test
     public void executeMergeAllWithOutlineDiscardingOutline() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
-        doExecuteMergeAll(false, 311);
+        doExecuteMergeAll(false, 311, parameters);
     }
 
     @Test
     public void executeMergeAllDiscardingOutline() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
-        doExecuteMergeAll(false, 14);
+        doExecuteMergeAll(false, 14, parameters);
     }
 
     @Test
     public void executeMergeAllWithEncryptedDiscardingOutline() throws IOException {
-        setUpParameters(getInputWithEncrypted());
+        MergeParameters parameters = setUpParameters(getInputWithEncrypted());
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
-        doExecuteMergeAll(false, 310);
+        doExecuteMergeAll(false, 310, parameters);
     }
 
     @Test
     public void executeMergeAllWithOutlineOnePerDoc() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        doExecuteMergeAll(true, 311);
+        doExecuteMergeAll(true, 311, parameters);
     }
 
     @Test
     public void executeMergeAllOnePerDoc() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        doExecuteMergeAll(true, 14);
+        doExecuteMergeAll(true, 14, parameters);
     }
 
     @Test
     public void executeMergeAllWithEncryptedOnePerDoc() throws IOException {
-        setUpParameters(getInputWithEncrypted());
+        MergeParameters parameters = setUpParameters(getInputWithEncrypted());
         parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        doExecuteMergeAll(true, 310);
+        doExecuteMergeAll(true, 310, parameters);
     }
 
     @Test
     public void executeMergeAllStreamOutput() throws IOException {
-        setUpParameters(getInput());
+        MergeParameters parameters = setUpParameters(getInput());
         testContext.streamOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(14);
     }
 
-    void doExecuteMergeAll(boolean hasBookmarks, int pages) throws IOException {
+    void doExecuteMergeAll(boolean hasBookmarks, int pages, MergeParameters parameters) throws IOException {
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -192,7 +188,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void testExecuteMergeAllFields() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
@@ -205,7 +201,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void testExecuteMergeDiscardForms() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
@@ -219,7 +215,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void executeMergeRangesMergeForms() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         for (PdfMergeInput input : parameters.getInputList()) {
             input.addPageRange(new PageRange(3, 10));
             input.addPageRange(new PageRange(20, 23));
@@ -227,12 +223,12 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         }
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
-        doExecuteMergeRanges();
+        doExecuteMergeRanges(parameters);
     }
 
     @Test
     public void executeMergeRanges() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         for (PdfMergeInput input : parameters.getInputList()) {
             input.addPageRange(new PageRange(3, 10));
             input.addPageRange(new PageRange(20, 23));
@@ -240,10 +236,10 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         }
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
-        doExecuteMergeRanges();
+        doExecuteMergeRanges(parameters);
     }
 
-    public void doExecuteMergeRanges() throws IOException {
+    public void doExecuteMergeRanges(MergeParameters parameters) throws IOException {
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -253,7 +249,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void testExecuteMergeRangesWithBlankPage() throws IOException {
-        setUpParameters(getInputWithOutline());
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
         testContext.pdfOutputTo(parameters);
         for (PdfMergeInput input : parameters.getInputList()) {
             input.addPageRange(new PageRange(2, 4));

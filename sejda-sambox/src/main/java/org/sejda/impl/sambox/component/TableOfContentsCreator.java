@@ -89,8 +89,6 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and prepend it to the given document
-     * 
-     * @param document
      */
     public void addToC() {
         requireNotNullArg(document, "Cannot add a ToC to a null document");
