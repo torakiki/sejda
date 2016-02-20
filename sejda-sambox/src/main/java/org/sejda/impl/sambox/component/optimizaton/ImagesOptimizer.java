@@ -157,7 +157,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private void removePieceInfoIfNeeded(PDXObject image) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_PIECE_INFO)) {
-                image.getCOSStream().removeItem(COSName.getPDFName("PieceInfo"));
+                image.getCOSStream().removeItem(COSName.PIECE_INFO);
             }
         }
 

@@ -97,7 +97,7 @@ public class PDDocumentHandler implements Closeable {
         COSDictionary pieceLastMod = new COSDictionary();
         pieceLastMod.setDate(COSName.LAST_MODIFIED, Calendar.getInstance());
         pieceInfo.setItem(new String(new byte[] { 0x73, 0x6A, 0x64, 0x61, 0x5F }), pieceLastMod);
-        this.document.getDocumentCatalog().getCOSObject().setItem(COSName.getPDFName("PieceInfo"), pieceInfo);
+        this.document.getDocumentCatalog().getCOSObject().setItem(COSName.PIECE_INFO, pieceInfo);
     }
 
     /**
