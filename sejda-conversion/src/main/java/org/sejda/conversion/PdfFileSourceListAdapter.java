@@ -19,17 +19,16 @@
  */
 package org.sejda.conversion;
 
+import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -52,7 +51,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 /**
  * Adapter for a list of {@link PdfFileSource}s. Provides a filePath based constructor. Will parse xml, csv config file formats, and list a directory contents
  * 
@@ -64,7 +62,7 @@ public class PdfFileSourceListAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(PdfFileSourceListAdapter.class);
 
     private final PdfInputFilesSourceFactory parserFactory = new PdfInputFilesSourceFactory();
-    private final List<PdfFileSource> fileSourceList = new ArrayList<PdfFileSource>();
+    private final List<PdfFileSource> fileSourceList = new ArrayList<>();
     private final File file;
     private Pattern pattern = Pattern.compile(".+");
 
@@ -104,7 +102,7 @@ public class PdfFileSourceListAdapter {
         private static final String CSV_EXTENSION = "csv";
 
         PdfInputFilesSource createSource(File file) {
-            String extension = FilenameUtils.getExtension(file.getName());
+            String extension = getExtension(file.getName());
 
             if (file.isDirectory()) {
                 return new FolderFileSourceListParser(PdfFileSourceListAdapter.this.pattern);
@@ -172,18 +170,12 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
 
     @Override
     protected List<String> parseFileNames(File file) {
-        List<File> files = Arrays.asList(file.listFiles(new FilenameFilter() {
-
-            @Override
-            public boolean accept(File dir, String filename) {
-                Matcher matcher = pattern.matcher(filename);
-                String extension = FilenameUtils.getExtension(filename);
-                return StringUtils.equalsIgnoreCase(extension, PDF_EXTENSION) && matcher.matches();
-            }
-
+        List<File> files = Arrays.asList(file.listFiles((dir, filename) -> {
+            return StringUtils.equalsIgnoreCase(getExtension(filename), PDF_EXTENSION)
+                    && pattern.matcher(filename).matches();
         }));
 
-        List<String> filenames = new ArrayList<String>();
+        List<String> filenames = new ArrayList<>();
         for (File current : files) {
             filenames.add(current.getAbsolutePath());
         }
@@ -216,7 +208,7 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
     }
 
     protected List<String> doParseFileNames(File file) throws IOException {
-        List<String> resultingFileNames = new ArrayList<String>();
+        List<String> resultingFileNames = new ArrayList<>();
 
         List<String> lines = IOUtils.readLines(new FileInputStream(file));
         for (String eachLine : lines) {
@@ -257,7 +249,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document doc = builder.parse(file);
 
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         result.addAll(parseSingleFiles(doc));
         result.addAll(parseFileSets(doc, file));
@@ -273,7 +265,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
      * @throws XPathExpressionException
      */
     private List<String> parseFileSets(Document doc, File configFile) throws XPathExpressionException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         NodeList nodeList = getNodeListMatchingXpath("//filelist/fileset/file", doc);
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -316,7 +308,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
      * @throws XPathExpressionException
      */
     private List<String> parseSingleFiles(Document doc) throws XPathExpressionException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         NodeList nodeList = getNodeListMatchingXpath("//filelist/file", doc);
         for (int i = 0; i < nodeList.getLength(); i++) {

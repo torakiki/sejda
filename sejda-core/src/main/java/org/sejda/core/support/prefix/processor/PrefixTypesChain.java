@@ -40,9 +40,9 @@ public class PrefixTypesChain {
     private static final Logger LOG = LoggerFactory.getLogger(PrefixTypesChain.class);
 
     // prefix types ensuring unique output names
-    private Set<PrefixType> firstLevelPrefixChain = new HashSet<PrefixType>();
+    private Set<PrefixType> firstLevelPrefixChain = new HashSet<>();
     // prefix types processed only if the first level processors performed some changed (ensuring unique name)
-    private Set<PrefixType> secondLevelPrefixChain = new HashSet<PrefixType>();
+    private Set<PrefixType> secondLevelPrefixChain = new HashSet<>();
     // processor used in case the processors chain did not perform any change
     private PrefixProcessor fallBackProcessor = new LoggingPrefixProcessorDecorator(new PrependPrefixProcessor());
     private PrefixProcessor extensionProcessor = new LoggingPrefixProcessorDecorator(

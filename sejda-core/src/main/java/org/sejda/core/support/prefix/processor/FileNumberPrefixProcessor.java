@@ -44,6 +44,6 @@ class FileNumberPrefixProcessor extends NumberPrefixProcessor {
         if (request != null && request.getFileNumber() != null) {
             retVal = findAndReplace(inputPrefix, request.getFileNumber());
         }
-        return (StringUtils.isBlank(retVal)) ? inputPrefix : retVal;
+        return StringUtils.isBlank(retVal) ? inputPrefix : retVal;
     }
 }

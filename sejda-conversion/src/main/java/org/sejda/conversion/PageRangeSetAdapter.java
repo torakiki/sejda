@@ -35,7 +35,7 @@ public class PageRangeSetAdapter {
 
     private static final String SEPARATOR = ",";
 
-    private final Set<PageRange> pageRangeSet = new NullSafeSet<PageRange>();
+    private final Set<PageRange> pageRangeSet = new NullSafeSet<>();
 
     public PageRangeSetAdapter(String rawString) {
         if (AdapterUtils.isAllPages(rawString)) {

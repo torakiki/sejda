@@ -42,6 +42,4 @@ public interface AlternateMixTaskCliArguments extends CliArgumentsWithPdfFileOut
 
     @Option(shortName = "z", description = "step for the alternate mix of the second file (default is 1) (optional)", defaultValue = "1")
     int getSecondStep();
-
-    // pdfsam-incompatibility {f1 and f2 are specified, vs now -f -f}
 }

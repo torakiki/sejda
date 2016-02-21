@@ -42,7 +42,7 @@ public final class ListValueMap<K, V> {
     private Map<K, List<V>> map;
 
     public ListValueMap() {
-        map = new HashMap<K, List<V>>();
+        map = new HashMap<>();
     }
 
     /**
@@ -62,7 +62,7 @@ public final class ListValueMap<K, V> {
     public List<V> put(K key, V value) {
         List<V> list = map.get(key);
         if (list == null) {
-            list = new ArrayList<V>();
+            list = new ArrayList<>();
         }
         list.add(value);
         return map.put(key, list);

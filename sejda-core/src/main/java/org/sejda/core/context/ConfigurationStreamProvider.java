@@ -29,6 +29,7 @@ import org.sejda.model.exception.ConfigurationException;
  * @author Andrea Vacondio
  * 
  */
+@FunctionalInterface
 interface ConfigurationStreamProvider {
 
     /**

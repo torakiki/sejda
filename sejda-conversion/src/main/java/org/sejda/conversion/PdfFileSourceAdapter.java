@@ -92,7 +92,7 @@ public class PdfFileSourceAdapter {
      * @return a list of {@link PdfFileSource}s built from the filenames specified
      */
     static List<PdfFileSource> fromStrings(List<String> filenames) {
-        List<PdfFileSource> result = new ArrayList<PdfFileSource>();
+        List<PdfFileSource> result = new ArrayList<>();
         for (String filename : filenames) {
             result.add(new PdfFileSourceAdapter(StringUtils.trim(filename)).getPdfFileSource());
         }

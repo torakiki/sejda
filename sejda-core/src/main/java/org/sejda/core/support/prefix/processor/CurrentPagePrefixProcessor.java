@@ -45,7 +45,7 @@ class CurrentPagePrefixProcessor extends NumberPrefixProcessor {
         if (request != null && request.getPage() != null) {
             retVal = findAndReplace(inputPrefix, request.getPage());
         }
-        return (StringUtils.isBlank(retVal)) ? inputPrefix : retVal;
+        return StringUtils.isBlank(retVal) ? inputPrefix : retVal;
     }
 
 }

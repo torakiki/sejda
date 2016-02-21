@@ -25,6 +25,7 @@ package org.sejda.common;
  * @author Eduard Weissmann
  * 
  */
+@FunctionalInterface
 public interface FriendlyNamed {
 
     /**

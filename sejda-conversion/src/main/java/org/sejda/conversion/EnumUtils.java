@@ -77,7 +77,7 @@ public final class EnumUtils {
     }
 
     private static <T extends Enum<?> & FriendlyNamed> Collection<String> findValidValues(Class<T> enumClass) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         for (FriendlyNamed each : enumClass.getEnumConstants()) {
             result.add(each.getFriendlyName());

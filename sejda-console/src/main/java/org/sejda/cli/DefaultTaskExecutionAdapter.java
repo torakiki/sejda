@@ -65,7 +65,7 @@ public class DefaultTaskExecutionAdapter implements TaskExecutionAdapter {
     }
 
     private void printWarningsIfAny(){
-        if(warningsListener.getWarnings().size() > 0) {
+        if (!warningsListener.getWarnings().isEmpty()) {
             LOG.warn("Task completed with {} warning(s): {}", warningsListener.getWarnings().size(), String.join(", ", warningsListener.getWarnings()));
         }
     }

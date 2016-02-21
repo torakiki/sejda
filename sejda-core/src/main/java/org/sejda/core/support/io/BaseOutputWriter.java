@@ -44,7 +44,7 @@ abstract class BaseOutputWriter implements TaskOutputDispatcher {
     private ExistingOutputPolicy existingOutputPolicy = ExistingOutputPolicy.FAIL;
 
     public BaseOutputWriter(ExistingOutputPolicy existingOutputPolicy) {
-        this.multipleFiles = new HashMap<String, File>();
+        this.multipleFiles = new HashMap<>();
         this.existingOutputPolicy = ObjectUtils.defaultIfNull(existingOutputPolicy, ExistingOutputPolicy.FAIL);
     }
 

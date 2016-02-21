@@ -144,7 +144,7 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     @SuppressWarnings("rawtypes")
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
             throws ConfigurationException, XPathExpressionException {
-        Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
+        Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new HashMap<>();
         NodeList nodes = (NodeList) xpathFactory.newXPath().evaluate(ROOT_NODE + TASKS_XPATH, document,
                 XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {

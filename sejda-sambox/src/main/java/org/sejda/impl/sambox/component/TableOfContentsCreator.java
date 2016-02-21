@@ -68,7 +68,7 @@ public class TableOfContentsCreator {
     public TableOfContentsCreator(ToCPolicy policy, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
         this.document = document;
-        this.policy = policy;
+        this.policy = ofNullable(policy).orElse(ToCPolicy.NONE);
     }
 
     /**
@@ -91,7 +91,6 @@ public class TableOfContentsCreator {
      * Generates a ToC and prepend it to the given document
      */
     public void addToC() {
-        requireNotNullArg(document, "Cannot add a ToC to a null document");
         try {
             PDPageTree pagesTree = document.getPages();
             ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {

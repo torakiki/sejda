@@ -39,7 +39,7 @@ class SimpleEventListenerHoldingStrategy implements EventListenerHoldingStrategy
     private final ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>> listeners;
 
     SimpleEventListenerHoldingStrategy() {
-        listeners = new ListValueMap<Class<? extends AbstractNotificationEvent>, EventListener<? extends AbstractNotificationEvent>>();
+        listeners = new ListValueMap<>();
     }
 
     @Override

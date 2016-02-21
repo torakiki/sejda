@@ -104,7 +104,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer
     }
 
     private List<PdfFileSource> extractFiles(List<PdfFileSourceAdapter> adapters) {
-        List<PdfFileSource> result = new ArrayList<PdfFileSource>();
+        List<PdfFileSource> result = new ArrayList<>();
         for (PdfFileSourceAdapter eachAdapter : adapters) {
             result.add(eachAdapter.getPdfFileSource());
         }

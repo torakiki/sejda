@@ -26,6 +26,7 @@ package org.sejda.core.support.io.model;
  * @author Andrea Vacondio
  * 
  */
+@FunctionalInterface
 public interface OngoingFileOuputCreation {
 
     /**

@@ -70,7 +70,7 @@ public class RectangularBoxAdapter {
     }
 
     private String[] splitStrings(String[] inputs, String delimiter) {
-        List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<>();
         for (String eachInput : inputs) {
             String[] newTokens = eachInput.split(delimiter);
             result.addAll(Arrays.asList(newTokens));

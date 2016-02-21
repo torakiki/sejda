@@ -36,7 +36,7 @@ public class NullSafeSet<E> implements Set<E> {
     private Set<E> delegate;
 
     public NullSafeSet() {
-        delegate = new LinkedHashSet<E>();
+        delegate = new LinkedHashSet<>();
     }
 
     public NullSafeSet(Set<E> delegate) {

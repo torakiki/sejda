@@ -27,6 +27,7 @@ import org.sejda.model.notification.event.AbstractNotificationEvent;
  * 
  * @author Andrea Vacondio
  */
+@FunctionalInterface
 public interface NotificationStrategy {
 
     /**

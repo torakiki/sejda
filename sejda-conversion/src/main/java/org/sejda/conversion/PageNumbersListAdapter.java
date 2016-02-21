@@ -34,7 +34,7 @@ public class PageNumbersListAdapter {
      *            string representation of the List<Integer> page numbers
      */
     private List<Integer> doParsePageNumbers(String rawString) {
-        List<Integer> result = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<>();
         for (String s : AdapterUtils.splitAndTrim(rawString, SEPARATOR)) {
             result.add(parsePageNumber(s));
         }

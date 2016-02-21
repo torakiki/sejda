@@ -32,7 +32,7 @@ import org.sejda.model.pdf.page.PageRange;
  * 
  */
 public class MultiplePageRangeSetAdapter {
-    private final List<Set<PageRange>> listOfPageRangeSets = new ArrayList<Set<PageRange>>();
+    private final List<Set<PageRange>> listOfPageRangeSets = new ArrayList<>();
 
     public MultiplePageRangeSetAdapter(String rawString) {
         String[] tokens = AdapterUtils.splitAndTrim(rawString);

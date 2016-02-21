@@ -45,6 +45,7 @@ public final class ImageWriterContext {
     /**
      * @deprecated use IMAGE_WRITER_FACTORY_CLASS
      */
+    @Deprecated
     private static final String OLD_IMAGE_WRITER_FACTORY_CLASS = "org.sejda.image.writer.factory.class";
 
     private final ImageWriterAbstractFactory factory;

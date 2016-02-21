@@ -28,6 +28,7 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
  * 
  * @author Andrea Vacondio
  */
+@FunctionalInterface
 interface PrefixProcessor {
 
     /**

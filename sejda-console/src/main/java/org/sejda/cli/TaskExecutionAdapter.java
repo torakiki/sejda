@@ -27,6 +27,7 @@ import org.sejda.model.parameter.base.TaskParameters;
  * @author Eduard Weissmann
  * 
  */
+@FunctionalInterface
 public interface TaskExecutionAdapter {
 
     /**

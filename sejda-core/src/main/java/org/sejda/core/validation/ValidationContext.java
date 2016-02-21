@@ -28,6 +28,7 @@ import javax.validation.Validator;
  * @author Andrea Vacondio
  * 
  */
+@FunctionalInterface
 public interface ValidationContext {
 
     /**

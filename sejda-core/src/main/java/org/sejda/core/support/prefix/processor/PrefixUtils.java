@@ -20,7 +20,10 @@ package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class PrefixUtils {
+public final class PrefixUtils {
+    private PrefixUtils() {
+        // hide
+    }
 
     /**
      * Strips characters deemed usafe for a filename
@@ -34,7 +37,7 @@ public class PrefixUtils {
      */
     public static String toStrictFilename(String input) {
         String safe = StringUtils.defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
-        if(safe.length() > 255) {
+        if (safe.length() > 255) {
             safe = safe.substring(0, 255);
         }
         return safe;
