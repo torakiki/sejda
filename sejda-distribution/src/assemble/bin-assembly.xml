@@ -17,6 +17,7 @@
 				<include>org.sejda:sejda-icepdf</include>
 				<include>org.sejda:sejda-image-writers</include>
 				<include>org.sejda:sejda-model</include>
+				<include>org.sejda:sejda-fonts</include>
 				<include>org.sejda:sejda-example</include>
 			</includes>
 			<outputDirectory>/</outputDirectory>
