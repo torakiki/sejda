@@ -19,9 +19,11 @@
  */
 package org.sejda.cli;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
@@ -68,8 +70,8 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
     }
 
     @Test
-    public void testExecuteLicense() {
-        assertConsoleOutputContains("--license", "GNU Affero General Public License, Version 3");
+    public void testExecuteLicense() throws IOException {
+        assertConsoleOutputContains("--license", IOUtils.toString(getClass().getResourceAsStream("/sejda-console/LICENSE.txt")));
     }
 
     @Test
