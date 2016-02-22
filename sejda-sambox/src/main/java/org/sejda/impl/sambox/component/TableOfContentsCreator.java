@@ -137,8 +137,8 @@ public class TableOfContentsCreator {
                             stream.setFont(PDType1Font.HELVETICA, FONT_SIZE);
                             stream.showText(pageString);
                             stream.endText();
-                            i.annotation
-                                    .setRectangle(new PDRectangle(MARGIN, y, PAGE_SIZE.getWidth() - MARGIN, FONT_SIZE));
+                            i.annotation.setRectangle(
+                                    new PDRectangle(MARGIN, y, PAGE_SIZE.getWidth() - (2 * MARGIN), FONT_SIZE));
                             page.getAnnotations().add(i.annotation);
                             // we didn't sanitieze the text so it's shorter then the available space and needs a separator line
                             if (itemText.equals(i.text)) {
