@@ -318,7 +318,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AttachmentsCollectionTaskCliArguments, AttachmentsCollectionParameters> getArgumentsTransformer() {
             return new AttachmentsCollectionCliArgumentsTransformer();
         }
-    }, "Creates a portfolio/collection of PDF attachments.", "portfolio -f /tmp/file1.txt /tmp/file2.pdf -i details -o /tmp/portfolio.pdf");
+    }, "Creates a portfolio/collection of attachments.", "portfolio -f /tmp/file1.txt /tmp/file2.pdf -i details -o /tmp/portfolio.pdf");
 
     private String displayName;
     private String description;

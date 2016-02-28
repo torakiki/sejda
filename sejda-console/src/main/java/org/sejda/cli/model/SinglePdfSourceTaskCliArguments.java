@@ -31,6 +31,6 @@ import com.lexicalscope.jewel.cli.Option;
  *
  */
 public interface SinglePdfSourceTaskCliArguments extends TaskCliArguments {
-    @Option(shortName = "f", description = "pdf file to operate on: a single pdf file (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
+    @Option(shortName = "f", description = "pdf file to operate on. A single pdf file (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
     List<PdfFileSourceAdapter> getFiles();
 }

@@ -31,6 +31,6 @@ import com.lexicalscope.jewel.cli.Option;
  *
  */
 public interface MultiplePdfSourceTaskCliArguments extends TaskCliArguments {
-    @Option(shortName = "f", description = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
+    @Option(shortName = "f", description = "pdf files to operate on. A list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
     List<PdfFileSourceAdapter> getFiles();
 }

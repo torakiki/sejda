@@ -30,6 +30,6 @@ import com.lexicalscope.jewel.cli.Option;
  * @author Andrea Vacondio
  */
 public interface MultipleSourceTaskCliArguments extends TaskCliArguments {
-    @Option(shortName = "f", description = "files to operate on: a list of existing files (EX. -f /tmp/file1.txt) (required)")
+    @Option(shortName = "f", description = "files to operate on. A list of existing files (EX. -f /tmp/file1.txt) (required)")
     List<FileSourceAdapter> getFiles();
 }
