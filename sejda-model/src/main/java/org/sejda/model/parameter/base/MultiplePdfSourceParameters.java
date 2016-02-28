@@ -43,7 +43,7 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
 
     @NotEmpty
     @Valid
-    private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
+    private final List<PdfSource<?>> sourceList = new ArrayList<>();
 
     public void addSources(Collection<PdfSource<?>> inputs) {
         sourceList.addAll(inputs);

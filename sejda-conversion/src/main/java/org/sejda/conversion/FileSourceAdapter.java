@@ -1,5 +1,5 @@
 /*
- * Created on 25 gen 2016
+ * Created on 28 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,23 +16,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli.model;
+package org.sejda.conversion;
 
-import org.sejda.conversion.InitialViewAdapter;
+import java.io.File;
 
-import com.lexicalscope.jewel.cli.CommandLineInterface;
-import com.lexicalscope.jewel.cli.Option;
+import org.sejda.model.input.FileSource;
 
 /**
- * Specification for CLI arguments of a task that creates a collection of attachments
+ * Adapter for a {@link FileSource}
  * 
  * @author Andrea Vacondio
  *
  */
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " portfolio")
-public interface AttachmentsCollectionTaskCliArguments
-        extends CliArgumentsWithPdfFileOutput, MultipleSourceTaskCliArguments {
+public class FileSourceAdapter {
 
-    @Option(shortName = "i", description = "value for the initial view of the collection. {details, tiles, hidden}. If omitted it uses tiles (optional)", defaultValue = "tiles")
-    InitialViewAdapter getInitialView();
+    private FileSource source;
+
+    public FileSourceAdapter(String path) {
+        this.source = FileSource.newInstance(new File(path));
+    }
+
+    public FileSource getSource() {
+        return source;
+    }
 }

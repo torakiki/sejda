@@ -54,7 +54,7 @@ public class CombineReorderParametersTest {
     @Test
     public void testInvalidParametersEmptyList() throws IOException {
         CombineReorderParameters victim = new CombineReorderParameters();
-        victim.setOutput(new FileTaskOutput(folder.newFile()));
+        victim.setOutput(new FileTaskOutput(folder.newFile("out.pdf")));
         victim.addSources(Arrays.asList(PdfFileSource.newInstanceNoPassword(folder.newFile("chuck.pdf"))));
         TestUtils.assertInvalidParameters(victim);
     }

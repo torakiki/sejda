@@ -19,10 +19,6 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
 
@@ -34,13 +30,8 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbysize")
 public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(shortName = "s", description = "size in bytes to split at (required)")
     Long getSize();
-
-    // override default -f option that is decribed as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
 }

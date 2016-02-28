@@ -19,12 +19,9 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
 import org.sejda.conversion.AcroFormPolicyAdapter;
 import org.sejda.conversion.MultiplePageRangeSetAdapter;
 import org.sejda.conversion.OutlinePolicyAdapter;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PdfFileSourceListAdapter;
 import org.sejda.conversion.ToCPolicyAdapter;
 
@@ -38,7 +35,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " merge")
-public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface MergeTaskCliArguments
+        extends CliArgumentsWithPdfFileOutput, MultipleOptionalPdfSourceTaskCliArguments {
 
     @Option(shortName = "a", description = "acro forms merge policy. {discard, merge, merge_renaming}. Default is 'discard' (optional)", defaultValue = "discard")
     AcroFormPolicyAdapter getAcroForms();
@@ -62,12 +60,6 @@ public interface MergeTaskCliArguments extends CliArgumentsWithPdfFileOutput {
             + "(EX. -f /tmp/file1.pdf /tmp/file2.pdf /tmp/file3.pdf -s all:12-14:32,12-14,4,34-:) to merge file1.pdf, pages 12,13,14 of file2.pdf and pages 32,12,13,14,4,34,35.. of file3.pdf. "
             + "If -s is not set default behaviour is to merge document completely (optional)", defaultValue = "")
     MultiplePageRangeSetAdapter getPageSelection();
-
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
-    List<PdfFileSourceAdapter> getFiles();
-
-    boolean isFiles();
 
     @Option(shortName = "l", description = "xml or csv file containing pdf files list to concat. If csv file in comma separated value format; "
             + "if xml file <filelist><file value=\"filepath\" /></filelist> (optional)")

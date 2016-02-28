@@ -38,7 +38,8 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput()));
+        return asParameterizedTestData(
+                TestableTask.allTasksExceptFor(TestableTask.getTasksWith(TestableTask::hasFolderOutput)));
     }
 
     public ExampleUsageIntegrationTest(TestableTask testableTask) {

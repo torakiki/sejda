@@ -19,12 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.CommandLineInterface;
-import com.lexicalscope.jewel.cli.Option;
 
 /**
  * CLI interface for the PdfToJpeg task
@@ -34,10 +29,5 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftojpeg")
 public interface PdfToJpegTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
-
-    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
+        CliArgumentsWithPrefixableOutput, SinglePdfSourceTaskCliArguments {
 }

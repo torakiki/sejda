@@ -16,9 +16,6 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.RepaginationAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -26,14 +23,10 @@ import com.lexicalscope.jewel.cli.Option;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitdownthemiddle")
 public interface SplitDownTheMiddleTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "r", description = "repagination (Ex: --repagination last-first denotes pages are sourced from a booklet scan like (10,1) (2,9) (8,3) (4,7) (6,5) and should be reordered to natural order 1, 2, 3,etc) (optional)")
     RepaginationAdapter getRepagination();
 
     boolean isRepagination();
-
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
-    List<PdfFileSourceAdapter> getFiles();
 }

@@ -40,7 +40,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.model.exception.SejdaRuntimeException;
-import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
@@ -157,7 +157,7 @@ public class ReadOnlyFilteredCOSStreamTest {
 
     @Test
     public void embeddedFileIsCompressed() throws Exception {
-        victim = ReadOnlyFilteredCOSStream.readOnlyEmbeddedFile(PdfStreamSource.newInstanceNoPassword(stream, "chuck"));
+        victim = ReadOnlyFilteredCOSStream.readOnlyEmbeddedFile(StreamSource.newInstance(stream, "chuck"));
         assertThat(victim.getFilteredStream(), instanceOf(DeflaterInputStream.class));
     }
 

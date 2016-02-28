@@ -40,13 +40,13 @@ public class PageRangesTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(new TestableTask[] { TestableTask.PDF_TO_JPEG , TestableTask.PDF_TO_MULTIPLE_TIFF , TestableTask.EXTRACT_PAGES });
+        return asParameterizedTestData(
+                Arrays.asList(TestableTask.PDF_TO_JPEG, TestableTask.PDF_TO_MULTIPLE_TIFF, TestableTask.EXTRACT_PAGES));
     }
 
     @Test
     public void pageRanges() {
-        PageRangeSelection parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
-                .invokeSejdaConsole();
+        PageRangeSelection parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-").invokeSejdaConsole();
 
         assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
                 new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));

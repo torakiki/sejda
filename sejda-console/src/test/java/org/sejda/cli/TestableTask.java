@@ -21,7 +21,10 @@ package org.sejda.cli;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
@@ -65,7 +68,7 @@ public enum TestableTask {
     SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
     COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
     ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
-    PORTFOLIO(new MultipleInputsAndFileOutputDefaultsProvider());
+    PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -95,30 +98,44 @@ public enum TestableTask {
      * 
      */
     public CliCommand getCorrespondingCliCommand() {
-        for (CliCommand eachCliCommand : CliCommand.values()) {
-            if (StringUtils.equalsIgnoreCase(eachCliCommand.name(), this.name())) {
-                return eachCliCommand;
-            }
-        }
-
-        return null;
+        return Arrays.stream(CliCommand.values()).filter(c -> StringUtils.equalsIgnoreCase(c.name(), this.name()))
+                .findFirst().orElse(null);
     }
 
-    public static TestableTask[] allTasks() {
+    public static List<TestableTask> allTasks() {
         return allTasksExceptFor();
     }
 
-    public static TestableTask[] allTasksExceptFor(TestableTask... exceptFor) {
+    public static List<TestableTask> allTasksExceptFor(TestableTask... exceptFor) {
         List<TestableTask> result = new ArrayList<TestableTask>(Arrays.asList(TestableTask.values()));
         result.removeAll(Arrays.asList(exceptFor));
-
-        return result.toArray(new TestableTask[result.size()]);
+        return result;
     }
 
-    public static TestableTask[] getTasksWithMultipleSouceFiles() {
-        return new TestableTask[] { DECRYPT, ENCRYPT, ROTATE, SET_VIEWER_PREFERENCES, UNPACK, EXTRACT_TEXT,
-                ALTERNATE_MIX, MERGE, SET_HEADER_FOOTER, COMBINE_REORDER, SPLIT_DOWN_THE_MIDDLE, COMPRESS,
-                ADD_BACK_PAGES, PORTFOLIO };
+    public static List<TestableTask> allTasksExceptFor(Collection<TestableTask> tasks) {
+        List<TestableTask> result = new ArrayList<TestableTask>(Arrays.asList(TestableTask.values()));
+        result.removeAll(tasks);
+        return result;
+    }
+
+    public static List<TestableTask> getTasksWithMultipleSouceFiles() {
+        return getTasksWith(TestableTask::isMultiplePdfSource);
+    }
+
+    public static List<TestableTask> getTasksWithSingleSouceFiles() {
+        return getTasksWith(TestableTask::isSinglePdfSource);
+    }
+
+    public static List<TestableTask> getTasksWithFolderOutputAndPdfInput() {
+        return getTasksWith(t -> !t.isMultipleSource() && t.hasFolderOutput());
+    }
+
+    public static List<TestableTask> getTasksWithPrefixableOutput() {
+        return getTasksWith(TestableTask::hasPrefixableOutput);
+    }
+
+    public static List<TestableTask> getTasksWith(Predicate<? super TestableTask> p) {
+        return Arrays.stream(TestableTask.values()).filter(p).collect(Collectors.toList());
     }
 
     boolean hasFolderOutput() {
@@ -129,27 +146,19 @@ public enum TestableTask {
         return getCorrespondingCliCommand().hasPrefixableOutput();
     }
 
-    public static TestableTask[] getTasksWithFolderOutput() {
-        List<TestableTask> result = new ArrayList<TestableTask>();
-        for (TestableTask each : TestableTask.values()) {
-            if (each.hasFolderOutput()) {
-                result.add(each);
-            }
-        }
-        return result.toArray(new TestableTask[result.size()]);
+    boolean isMultipleSource() {
+        return getCorrespondingCliCommand().hasMultipleSource();
+    }
+    boolean isMultiplePdfSource() {
+        return getCorrespondingCliCommand().hasMultiplePdfSource();
     }
 
-    public static TestableTask[] getTasksWithPrefixableOutput() {
-        List<TestableTask> result = new ArrayList<TestableTask>();
-        for (TestableTask each : TestableTask.values()) {
-            if (each.hasPrefixableOutput()) {
-                result.add(each);
-            }
-        }
-        return result.toArray(new TestableTask[result.size()]);
+    boolean isSinglePdfSource() {
+        return getCorrespondingCliCommand().hasSinglePdfSource();
     }
 }
 
+@FunctionalInterface
 interface DefaultsProvider {
 
     CommandLineTestBuilder provideDefaults(String taskName);

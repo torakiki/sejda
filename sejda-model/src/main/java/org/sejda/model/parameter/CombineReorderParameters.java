@@ -29,11 +29,13 @@ import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
+import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameters specifying a list of pdf sources and an ordered list of pages from each file, that should be combined into one pdf output
  * Allows pages to appear in a different order in the output than in the original source.
  */
+@SingleOutputAllowedExtensions
 public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParameters {
 
     @NotEmpty

@@ -35,7 +35,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " rotate")
-public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput {
+public interface RotateTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput,
+        MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "r", description = "rotation degrees: 90, 180 or 270. Pages will be rotated clockwise (optional)")
     RotationAdapter getRotation();

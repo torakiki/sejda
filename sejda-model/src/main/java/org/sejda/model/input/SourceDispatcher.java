@@ -1,5 +1,5 @@
 /*
- * Created on 25 gen 2016
+ * Created on 27 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,23 +16,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli.model;
+package org.sejda.model.input;
 
-import org.sejda.conversion.InitialViewAdapter;
-
-import com.lexicalscope.jewel.cli.CommandLineInterface;
-import com.lexicalscope.jewel.cli.Option;
+import org.sejda.model.exception.TaskIOException;
 
 /**
- * Specification for CLI arguments of a task that creates a collection of attachments
+ * Double dispatch
  * 
  * @author Andrea Vacondio
  *
  */
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " portfolio")
-public interface AttachmentsCollectionTaskCliArguments
-        extends CliArgumentsWithPdfFileOutput, MultipleSourceTaskCliArguments {
+public interface SourceDispatcher<T> {
 
-    @Option(shortName = "i", description = "value for the initial view of the collection. {details, tiles, hidden}. If omitted it uses tiles (optional)", defaultValue = "tiles")
-    InitialViewAdapter getInitialView();
+    T dispatch(FileSource source) throws TaskIOException;
+
+    T dispatch(StreamSource source) throws TaskIOException;
 }

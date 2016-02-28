@@ -1,5 +1,5 @@
 /*
- * Created on 25 gen 2016
+ * Created on 28 feb 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -18,21 +18,19 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.InitialViewAdapter;
+import java.util.List;
 
-import com.lexicalscope.jewel.cli.CommandLineInterface;
+import org.sejda.conversion.PdfFileSourceAdapter;
+
 import com.lexicalscope.jewel.cli.Option;
 
 /**
- * Specification for CLI arguments of a task that creates a collection of attachments
+ * Command line arguments for a task accepting a single PDF file as input
  * 
  * @author Andrea Vacondio
  *
  */
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " portfolio")
-public interface AttachmentsCollectionTaskCliArguments
-        extends CliArgumentsWithPdfFileOutput, MultipleSourceTaskCliArguments {
-
-    @Option(shortName = "i", description = "value for the initial view of the collection. {details, tiles, hidden}. If omitted it uses tiles (optional)", defaultValue = "tiles")
-    InitialViewAdapter getInitialView();
+public interface SinglePdfSourceTaskCliArguments extends TaskCliArguments {
+    @Option(shortName = "f", description = "pdf file to operate on: a single pdf file (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
+    List<PdfFileSourceAdapter> getFiles();
 }

@@ -19,6 +19,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.AttachmentsCollectionTaskCliArguments;
+import org.sejda.conversion.FileSourceAdapter;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 
 /**
@@ -34,7 +35,9 @@ public class AttachmentsCollectionCliArgumentsTransformer extends BaseCliArgumen
     public AttachmentsCollectionParameters toTaskParameters(AttachmentsCollectionTaskCliArguments taskCliArguments) {
         AttachmentsCollectionParameters parameters = new AttachmentsCollectionParameters();
         populateAbstractParameters(parameters, taskCliArguments);
-        populateSourceParameters(parameters, taskCliArguments);
+        for (FileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
+            parameters.addSource(eachAdapter.getSource());
+        }
         populateOutputTaskParameters(parameters, taskCliArguments);
         parameters.setInitialView(taskCliArguments.getInitialView().getEnumValue());
         return parameters;

@@ -35,7 +35,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " encrypt")
 public interface EncryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "l", description = "permissions: a list of permissions. { print, modify, copy, modifyannotations, fill, screenreaders, assembly, degradedprinting }  (optional)")
     List<PdfAccessPermissionAdapter> getAllow();

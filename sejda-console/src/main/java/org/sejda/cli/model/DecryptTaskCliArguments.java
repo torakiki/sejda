@@ -29,6 +29,6 @@ import com.lexicalscope.jewel.cli.CommandLineInterface;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " decrypt")
 public interface DecryptTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
 }

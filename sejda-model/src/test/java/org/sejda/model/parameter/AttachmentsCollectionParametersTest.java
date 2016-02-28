@@ -18,8 +18,15 @@
  */
 package org.sejda.model.parameter;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
+import org.sejda.model.input.StreamSource;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.pdf.collection.InitialView;
 
 /**
@@ -27,6 +34,9 @@ import org.sejda.model.pdf.collection.InitialView;
  *
  */
 public class AttachmentsCollectionParametersTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
     public void testEquals() {
         AttachmentsCollectionParameters eq1 = new AttachmentsCollectionParameters();
@@ -35,5 +45,20 @@ public class AttachmentsCollectionParametersTest {
         AttachmentsCollectionParameters diff = new AttachmentsCollectionParameters();
         diff.setInitialView(InitialView.HIDDEN);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
+    }
+
+    @Test
+    public void testInvalidParametersEmptySourceList() throws IOException {
+        AttachmentsCollectionParameters victim = new AttachmentsCollectionParameters();
+        victim.setOutput(new FileTaskOutput(folder.newFile("out.pdf")));
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void testInvalidParametersOutput() throws IOException {
+        AttachmentsCollectionParameters victim = new AttachmentsCollectionParameters();
+        victim.addSource(StreamSource.newInstance(new ByteArrayInputStream(new byte[] { -1 }), "source"));
+        victim.setOutput(new FileTaskOutput(folder.newFile("out.chuck")));
+        TestUtils.assertInvalidParameters(victim);
     }
 }

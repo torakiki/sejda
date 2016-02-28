@@ -29,7 +29,7 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " alternatemix")
-public interface AlternateMixTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface AlternateMixTaskCliArguments extends CliArgumentsWithPdfFileOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(description = "reverse first input file (optional)")
     boolean isReverseFirst();

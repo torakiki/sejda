@@ -19,10 +19,6 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
 
@@ -33,7 +29,7 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setmetadata")
-public interface SetMetadataTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface SetMetadataTaskCliArguments extends CliArgumentsWithPdfFileOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(shortName = "t", description = "document title (optional)")
     String getTitle();
@@ -54,9 +50,4 @@ public interface SetMetadataTaskCliArguments extends CliArgumentsWithPdfFileOutp
     String getKeywords();
 
     boolean isKeywords();
-
-    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
 }

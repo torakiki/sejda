@@ -30,6 +30,7 @@ import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
+import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter containing rectangular selection to be cropped on an input pdf source.
@@ -37,6 +38,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
+@SingleOutputAllowedExtensions
 public class CropParameters extends SinglePdfSourceSingleOutputParameters {
 
     @Valid

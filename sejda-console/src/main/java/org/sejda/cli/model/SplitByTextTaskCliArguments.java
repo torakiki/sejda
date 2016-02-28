@@ -16,16 +16,12 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbytext")
 public interface SplitByTextTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput {
+        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(shortName = "t", description = "top left rectangular area's x axis coordinate (required)")
     Integer getTop();
@@ -43,8 +39,4 @@ public interface SplitByTextTaskCliArguments extends CliArgumentsWithPdfAndDirec
     String getStartsWith();
 
     boolean isStartsWith();
-
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
 }

@@ -22,7 +22,6 @@ package org.sejda.cli.model;
 import java.util.List;
 
 import org.sejda.conversion.PageNumberWithPdfPageTransitionAdapter;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PdfPageTransitionAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -35,7 +34,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setpagetransitions")
-public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface SetPageTransitionsTaskCliArguments
+        extends CliArgumentsWithPdfFileOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(description = "open the document in fullscreen mode (optional)")
     boolean isFullscreen();
@@ -50,9 +50,4 @@ public interface SetPageTransitionsTaskCliArguments extends CliArgumentsWithPdfF
     List<PageNumberWithPdfPageTransitionAdapter> getTransitions();
 
     boolean isTransitions();
-
-    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
 }

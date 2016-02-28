@@ -19,10 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
 import org.sejda.conversion.ImageColorTypeAdapter;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.TiffCompressionTypeAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -36,17 +33,11 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftomultipletiff")
 public interface PdfToMultipleTiffTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(shortName = "x", description = "image compression type: { none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate. Default is 'none' } (optional)", defaultValue = "none")
     TiffCompressionTypeAdapter getCompressionType();
 
-    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
-
     @Option(shortName = "c", description = "image color type: { black_and_white, gray_scale, color_rgb } (required)")
     ImageColorTypeAdapter getColorType();
-
 }

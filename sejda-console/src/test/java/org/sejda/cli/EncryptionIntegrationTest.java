@@ -41,8 +41,9 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithFolderOutput()));
+        return asParameterizedTestData(TestableTask.getTasksWith(t -> !t.isMultipleSource() && !t.hasFolderOutput()));
     }
+
     @Override
     @Before
     public void setUp() {
@@ -56,6 +57,7 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
     @Test
     public void executeExampleUsageWithEncryptedFileAsInput() {
+        System.out.println("running " + testableTask);
         String exampleUsage = testableTask.getExampleUsage();
         // use an encrypted file as input instead of the regular input file
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one

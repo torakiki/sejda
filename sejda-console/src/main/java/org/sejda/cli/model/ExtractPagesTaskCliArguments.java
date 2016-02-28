@@ -19,10 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
 import org.sejda.conversion.PageRangeSetAdapter;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.conversion.PredefinedSetOfPagesAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -35,7 +32,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extractpages")
-public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOutput, CliArgumentsWithOptimizableOutput {
+public interface ExtractPagesTaskCliArguments
+        extends CliArgumentsWithPdfFileOutput, CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments {
 
     @Option(shortName = "p", description = "predefined pages mode {odd or even} (optional)")
     PredefinedSetOfPagesAdapter getPredefinedPages();
@@ -48,8 +46,4 @@ public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOut
 
     boolean isPageSelection();
 
-    // override default -f option that is described as expecting a list of files with a description stating that it is expecting a single file
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE)
-    List<PdfFileSourceAdapter> getFiles();
 }

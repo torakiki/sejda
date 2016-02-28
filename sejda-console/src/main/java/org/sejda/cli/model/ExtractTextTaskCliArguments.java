@@ -30,7 +30,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extracttext")
 public interface ExtractTextTaskCliArguments extends CliArgumentsWithTextAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "e", description = "text encoding, default is UTF-8 (optional)", defaultValue = "UTF-8")
     String getTextEncoding();

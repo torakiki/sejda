@@ -18,12 +18,24 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
+import org.sejda.model.input.Source;
+import org.sejda.model.output.SingleTaskOutput;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.MultipleSourceTaskParameter;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.collection.InitialView;
+import org.sejda.model.validation.constraint.NotEmpty;
+import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameters for a task that creates a collection of attachments from a list of PDF documents. See Chap 12.3.5 of PDF spec 32000-1:2008
@@ -31,10 +43,39 @@ import org.sejda.model.pdf.collection.InitialView;
  * @author Andrea Vacondio
  *
  */
-public class AttachmentsCollectionParameters extends MultiplePdfSourceSingleOutputParameters {
+@SingleOutputAllowedExtensions
+public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
+        implements SingleOutputTaskParameters, MultipleSourceTaskParameter {
 
     @NotNull
     private InitialView initialView = InitialView.TILES;
+    @NotEmpty
+    @Valid
+    private final List<Source<?>> sourceList = new ArrayList<>();
+    private String outputName;
+    @Valid
+    @NotNull
+    private SingleTaskOutput<?> output;
+
+    public void addSources(Collection<? extends Source<?>> inputs) {
+        sourceList.addAll(inputs);
+    }
+
+    /**
+     * adds the input source to the source list.
+     * 
+     * @param input
+     */
+    public void addSource(Source<?> input) {
+        sourceList.add(input);
+    }
+
+    /**
+     * @return an unmodifiable view of the source list
+     */
+    public List<Source<?>> getSourceList() {
+        return Collections.unmodifiableList(sourceList);
+    }
 
     public InitialView getInitialView() {
         return initialView;
@@ -45,8 +86,32 @@ public class AttachmentsCollectionParameters extends MultiplePdfSourceSingleOutp
     }
 
     @Override
+    public String getOutputName() {
+        return outputName;
+    }
+
+    @Override
+    public SingleTaskOutput<?> getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(SingleTaskOutput<?> output) {
+        this.output = output;
+    }
+
+    /**
+     * @param outputName
+     *            the outputName to be used when the output is not a file destination
+     */
+    public void setOutputName(String outputName) {
+        this.outputName = outputName;
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(initialView).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(initialView).append(outputName).append(output)
+                .append(sourceList).toHashCode();
     }
 
     @Override
@@ -59,6 +124,7 @@ public class AttachmentsCollectionParameters extends MultiplePdfSourceSingleOutp
         }
         AttachmentsCollectionParameters parameter = (AttachmentsCollectionParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(initialView, parameter.getInitialView())
-                .isEquals();
+                .append(outputName, parameter.outputName).append(output, parameter.output)
+                .append(sourceList, parameter.getSourceList()).isEquals();
     }
 }

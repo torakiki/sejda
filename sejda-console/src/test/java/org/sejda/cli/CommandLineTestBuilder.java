@@ -71,6 +71,16 @@ public class CommandLineTestBuilder {
     }
 
     /**
+     * Populates multiple input parameters using PDF and non PDf inputs
+     * 
+     * @return this builder (for telescopic usage)
+     */
+    public CommandLineTestBuilder defaultMultipleNonPdfInputs() {
+        with("-f", "inputs/input.pdf inputs/second_input.pdf inputs/file1.txt");
+        return this;
+    }
+
+    /**
      * Populates default single input parameter
      * 
      * @return this builder (for telescopic usage)

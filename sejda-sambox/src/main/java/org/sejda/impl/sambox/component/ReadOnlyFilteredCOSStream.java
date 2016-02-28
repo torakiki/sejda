@@ -35,11 +35,10 @@ import java.util.zip.DeflaterInputStream;
 import org.sejda.io.SeekableSource;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.PdfURLSource;
+import org.sejda.model.input.FileSource;
+import org.sejda.model.input.Source;
+import org.sejda.model.input.SourceDispatcher;
+import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
@@ -208,23 +207,13 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * @return
      * @throws TaskIOException
      */
-    public static final ReadOnlyFilteredCOSStream readOnlyEmbeddedFile(PdfSource<?> source) throws TaskIOException {
+    public static final ReadOnlyFilteredCOSStream readOnlyEmbeddedFile(Source<?> source) throws TaskIOException {
         COSDictionary dictionary = new COSDictionary();
         dictionary.setItem(COSName.FILTER, COSName.FLATE_DECODE);
-        return source.open(new PdfSourceOpener<ReadOnlyFilteredCOSStream>() {
+        return source.dispatch(new SourceDispatcher<ReadOnlyFilteredCOSStream>() {
 
             @Override
-            public ReadOnlyFilteredCOSStream open(PdfURLSource source) throws TaskIOException {
-                try {
-                    return new ReadOnlyFilteredCOSStream(dictionary,
-                            new DeflaterInputStream(source.getSource().openStream()), -1);
-                } catch (IOException e) {
-                    throw new TaskIOException(e);
-                }
-            }
-
-            @Override
-            public ReadOnlyFilteredCOSStream open(PdfFileSource source) throws TaskIOException {
+            public ReadOnlyFilteredCOSStream dispatch(FileSource source) throws TaskIOException {
                 try {
                     ReadOnlyFilteredCOSStream retVal = new ReadOnlyFilteredCOSStream(dictionary,
                             new DeflaterInputStream(new FileInputStream(source.getSource())), -1);
@@ -239,7 +228,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
             }
 
             @Override
-            public ReadOnlyFilteredCOSStream open(PdfStreamSource source) {
+            public ReadOnlyFilteredCOSStream dispatch(StreamSource source) {
                 return new ReadOnlyFilteredCOSStream(dictionary, new DeflaterInputStream(source.getSource()), -1);
             }
         });

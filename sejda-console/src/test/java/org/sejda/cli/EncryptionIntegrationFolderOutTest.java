@@ -37,7 +37,7 @@ public class EncryptionIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithFolderOutput());
+        return asParameterizedTestData(TestableTask.getTasksWithFolderOutputAndPdfInput());
     }
 
     @Override

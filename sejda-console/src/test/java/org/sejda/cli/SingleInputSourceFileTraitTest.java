@@ -36,7 +36,7 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.getTasksWithMultipleSouceFiles()));
+        return asParameterizedTestData(TestableTask.getTasksWithSingleSouceFiles());
     }
 
     public SingleInputSourceFileTraitTest(TestableTask testableTask) {
@@ -45,8 +45,8 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testSourceFileNotFound() {
-        defaultCommandLine().with("-f", "input-doesntexist.pdf").assertConsoleOutputContains(
-                "File 'input-doesntexist.pdf' does not exist");
+        defaultCommandLine().with("-f", "input-doesntexist.pdf")
+                .assertConsoleOutputContains("File 'input-doesntexist.pdf' does not exist");
     }
 
     @Test

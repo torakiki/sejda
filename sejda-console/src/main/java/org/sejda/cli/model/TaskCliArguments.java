@@ -19,10 +19,6 @@
  */
 package org.sejda.cli.model;
 
-import java.util.List;
-
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.Option;
 
 /**
@@ -33,12 +29,6 @@ import com.lexicalscope.jewel.cli.Option;
  */
 public interface TaskCliArguments {
     String EXECUTABLE_NAME = "sejda-console";
-    String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)";
-    String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL = "pdf files to operate on: a list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (optional)";
-    String FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_SINGLE_FILE = "pdf file to operate on: a single pdf file (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)";
-
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST)
-    List<PdfFileSourceAdapter> getFiles();
 
     @Option(shortName = "h", description = "prints usage information. Can be used to detail options for a command '-h command' (optional)")
     boolean isHelp();

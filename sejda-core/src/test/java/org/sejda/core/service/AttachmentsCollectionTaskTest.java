@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.input.StreamSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -47,9 +48,12 @@ public abstract class AttachmentsCollectionTaskTest extends BaseTaskTest<Attachm
         parameters.setCompress(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(shortInput());
-        parameters.addSource(mediumInput());
-        parameters.addSource(encryptedInput());
+        parameters.addSource(StreamSource.newInstance(
+                getClass().getClassLoader().getResourceAsStream("pdf/short-test-file.pdf"), "short-test-file.pdf"));
+        parameters.addSource(StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream("text_file.txt"),
+                "text_file.txt"));
+        parameters.addSource(StreamSource.newInstance(
+                getClass().getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium-test-file.pdf"));
     }
 
     @Test

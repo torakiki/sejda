@@ -20,8 +20,14 @@ package org.sejda.model.parameter;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
@@ -29,6 +35,9 @@ import org.sejda.model.pdf.page.PageRange;
  *
  */
 public class AddBackPagesParametersTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @Test
     public void testEquals() {
         AddBackPagesParameters eq1 = new AddBackPagesParameters();
@@ -40,8 +49,11 @@ public class AddBackPagesParametersTest {
     }
 
     @Test
-    public void testInvalidParametersEmptySourceList() {
+    public void testInvalidParametersEmptySourceList() throws IOException {
         AddBackPagesParameters victim = new AddBackPagesParameters();
+        victim.addPageRange(new PageRange(2));
+        victim.setBackPagesSource(PdfFileSource.newInstanceNoPassword(folder.newFile("source.pdf")));
+        victim.setOutput(new DirectoryTaskOutput(folder.newFolder()));
         TestUtils.assertInvalidParameters(victim);
     }
 

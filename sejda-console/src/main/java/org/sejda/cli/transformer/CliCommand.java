@@ -39,6 +39,9 @@ import org.sejda.cli.model.ExtractPagesTaskCliArguments;
 import org.sejda.cli.model.ExtractTextByPagesTaskCliArguments;
 import org.sejda.cli.model.ExtractTextTaskCliArguments;
 import org.sejda.cli.model.MergeTaskCliArguments;
+import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
+import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
+import org.sejda.cli.model.MultipleSourceTaskCliArguments;
 import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
@@ -48,6 +51,7 @@ import org.sejda.cli.model.SetMetadataTaskCliArguments;
 import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
 import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
 import org.sejda.cli.model.SimpleSplitTaskCliArguments;
+import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
 import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
 import org.sejda.cli.model.SplitByEveryXPagesTaskCliArguments;
 import org.sejda.cli.model.SplitByPagesTaskCliArguments;
@@ -314,7 +318,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AttachmentsCollectionTaskCliArguments, AttachmentsCollectionParameters> getArgumentsTransformer() {
             return new AttachmentsCollectionCliArgumentsTransformer();
         }
-    }, "Creates a portfolio/collection of PDF attachments.", "portfolio -f /tmp/file1.pdf /tmp/file2.pdf -i details -o /tmp/portfolio.pdf");
+    }, "Creates a portfolio/collection of PDF attachments.", "portfolio -f /tmp/file1.txt /tmp/file2.pdf -i details -o /tmp/portfolio.pdf");
 
     private String displayName;
     private String description;
@@ -403,6 +407,19 @@ public enum CliCommand {
 
     public boolean hasPrefixableOutput() {
         return isInheritingTraitsFrom(CliArgumentsWithPrefixableOutput.class);
+    }
+
+    public boolean hasMultiplePdfSource() {
+        return isInheritingTraitsFrom(MultipleOptionalPdfSourceTaskCliArguments.class)
+                || isInheritingTraitsFrom(MultiplePdfSourceTaskCliArguments.class);
+    }
+
+    public boolean hasMultipleSource() {
+        return isInheritingTraitsFrom(MultipleSourceTaskCliArguments.class);
+    }
+
+    public boolean hasSinglePdfSource() {
+        return isInheritingTraitsFrom(SinglePdfSourceTaskCliArguments.class);
     }
 
     boolean isInheritingTraitsFrom(Class<?> parentClazz) {

@@ -36,7 +36,7 @@ public class ExampleUsageIntegrationFolderOutTest extends AbstractTaskTraitTest 
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithFolderOutput());
+        return asParameterizedTestData(TestableTask.getTasksWithFolderOutputAndPdfInput());
     }
 
     public ExampleUsageIntegrationFolderOutTest(TestableTask testableTask) {

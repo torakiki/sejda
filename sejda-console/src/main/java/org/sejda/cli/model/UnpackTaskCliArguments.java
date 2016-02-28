@@ -29,6 +29,7 @@ import com.lexicalscope.jewel.cli.CommandLineInterface;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " unpack")
-public interface UnpackTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput {
+public interface UnpackTaskCliArguments
+        extends CliArgumentsWithPdfAndDirectoryOutput, MultiplePdfSourceTaskCliArguments {
 
 }

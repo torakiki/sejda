@@ -34,7 +34,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.Source;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
@@ -94,7 +94,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         LOG.trace("Added sort dictionary");
         collection.setItem(COSName.getPDFName("Schema"), createSchemaDictionary());
         LOG.trace("Added schema dictionary");
-        for (PdfSource<?> source : parameters.getSourceList()) {
+        for (Source<?> source : parameters.getSourceList()) {
             stopTaskIfCancelled();
             PDComplexFileSpecification fileSpec = new PDComplexFileSpecification(null);
             fileSpec.setFileUnicode(source.getName());
@@ -162,7 +162,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         return schemaDictionary;
     }
 
-    private PDEmbeddedFile embeddedFileFromSource(PdfSource<?> source) throws TaskIOException {
+    private PDEmbeddedFile embeddedFileFromSource(Source<?> source) throws TaskIOException {
         PDEmbeddedFile embeddedFile = new PDEmbeddedFile(readOnlyEmbeddedFile(source));
         embeddedFile.setCreationDate(new GregorianCalendar());
         embeddedFile.setSubtype("application/pdf");

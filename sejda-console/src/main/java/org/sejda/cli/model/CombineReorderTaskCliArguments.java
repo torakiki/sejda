@@ -18,18 +18,13 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
-import org.sejda.conversion.PdfFileSourceAdapter;
-
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " combinereorder")
-public interface CombineReorderTaskCliArguments extends CliArgumentsWithPdfFileOutput {
+public interface CombineReorderTaskCliArguments
+        extends CliArgumentsWithPdfFileOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "n", description = "pages in expected order, indexed by their source file. (Ex --pages 0:100 1:50 denotes page 100 from the first file and page 50 from the second file specified in --files) (required)")
     List<String> getPages();
-
-    @Override
-    @Option(shortName = "f", description = FILES_OPTION_DESCRIPTION_WHEN_EXPECTING_A_LIST_OPTIONAL)
-    List<PdfFileSourceAdapter> getFiles();
 }

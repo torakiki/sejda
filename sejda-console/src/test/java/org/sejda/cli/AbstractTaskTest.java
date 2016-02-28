@@ -60,6 +60,7 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
         createTestPdfFile("./inputs/back.pdf");
         createTestFolder("./outputs");
 
+        createTestTextFile("./inputs/file1.txt", "this is a test file");
         createTestPdfFile("/tmp/file1.pdf");
         createTestPdfFile("/tmp/file2.pdf");
         createTestPdfFile("/tmp/back.pdf");

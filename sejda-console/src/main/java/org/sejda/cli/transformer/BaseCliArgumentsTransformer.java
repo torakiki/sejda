@@ -29,7 +29,9 @@ import org.sejda.cli.model.CliArgumentsWithPdfAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfFileOutput;
 import org.sejda.cli.model.CliArgumentsWithPdfOutput;
 import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
-import org.sejda.cli.model.TaskCliArguments;
+import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
+import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
+import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
@@ -157,7 +159,20 @@ public class BaseCliArgumentsTransformer {
      * @param taskCliArguments
      */
     protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters,
-            TaskCliArguments taskCliArguments) {
+            MultiplePdfSourceTaskCliArguments taskCliArguments) {
+        for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
+            parameters.addSource(eachAdapter.getPdfFileSource());
+        }
+    }
+
+    /**
+     * Populates pdf source parameters for tasks that support <i>more than</i> one input file
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters,
+            MultipleOptionalPdfSourceTaskCliArguments taskCliArguments) {
         for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
             parameters.addSource(eachAdapter.getPdfFileSource());
         }
@@ -170,7 +185,7 @@ public class BaseCliArgumentsTransformer {
      * @param taskCliArguments
      */
     protected void populateSourceParameters(SinglePdfSourceTaskParameters parameters,
-            TaskCliArguments taskCliArguments) {
+            SinglePdfSourceTaskCliArguments taskCliArguments) {
         if (taskCliArguments.getFiles().size() != 1) {
             throw new ArgumentValidationException(
                     "Only one input file expected, received " + taskCliArguments.getFiles().size());
