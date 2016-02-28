@@ -130,7 +130,7 @@ public class SejdaConsole {
         StringBuilder info = new StringBuilder(String.format("\nSejda Console (Version %s)\n", Sejda.VERSION));
         info.append("(see http://www.sejda.org for more information)\n\n");
         try (BufferedReader buffer = new BufferedReader(
-                new InputStreamReader(SejdaConsole.class.getResourceAsStream("/LICENSE.txt")))) {
+                new InputStreamReader(SejdaConsole.class.getResourceAsStream("/sejda-console/LICENSE.txt")))) {
             buffer.lines().forEach(l -> {
                 info.append(l);
                 info.append(System.lineSeparator());
