@@ -31,7 +31,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PdfHeaderFooterWriter;
+import org.sejda.impl.sambox.component.SetHeaderFooterWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -84,7 +84,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
 
-            try (PdfHeaderFooterWriter footerWriter = new PdfHeaderFooterWriter(documentHandler)) {
+            try (SetHeaderFooterWriter footerWriter = new SetHeaderFooterWriter(documentHandler)) {
                 footerWriter.write(parameters, currentStep);
                 documentHandler.savePDDocument(tmpFile);
                 String outName = nameGenerator(parameters.getOutputPrefix()).generate(

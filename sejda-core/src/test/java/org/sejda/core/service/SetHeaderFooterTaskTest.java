@@ -126,18 +126,38 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
-    public void testDocumentWithRotatedPages() throws Exception {
+    public void testDocumentWithRotatedPagesHeader() throws Exception {
         parameters = basicNoSources();
-        parameters.addSource(customInput("pdf/rotated_page.pdf"));
-        parameters.setPattern("Page [PAGE_ARABIC]");
+        parameters.addSource(customInput("pdf/rotated_pages.pdf"));
+        parameters.setPattern("[PAGE_ARABIC]");
         parameters.setVerticalAlign(VerticalAlign.TOP);
+        parameters.setHorizontalAlign(HorizontalAlign.CENTER);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertHeaderHasText(d.getPage(0), "1");
+            assertHeaderHasText(d.getPage(1), "2");
+            assertHeaderHasText(d.getPage(2), "3");
+            assertHeaderHasText(d.getPage(3), "4");
+            assertHeaderHasText(d.getPage(4), "5");
+        });
+    }
+
+    @Test
+    public void testDocumentWithRotatedPagesFooter() throws Exception {
+        parameters = basicNoSources();
+        parameters.addSource(customInput("pdf/rotated_pages.pdf"));
+        parameters.setPattern("[PAGE_ARABIC]");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         parameters.setHorizontalAlign(HorizontalAlign.LEFT);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertHeaderHasText(d.getPage(0), "Page 1");
-            assertHeaderHasText(d.getPage(1), "Page 2");
-            assertHeaderHasText(d.getPage(2), "Page 3");
+            assertFooterHasText(d.getPage(0), "1");
+            assertFooterHasText(d.getPage(1), "2");
+            assertFooterHasText(d.getPage(2), "3");
+            assertFooterHasText(d.getPage(3), "4");
+            assertFooterHasText(d.getPage(4), "5");
         });
     }
 

@@ -29,22 +29,27 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.TableOfContentsCreator;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.sejda.sambox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationFileAttachment;
 import org.sejda.sambox.util.SpecVersionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +68,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     private int totalSteps;
     private SingleOutputWriter outputWriter;
     private PDDocumentHandler destinationDocument;
+    private TableOfContentsCreator tocCreator;
 
     @Override
     public void before(AttachmentsCollectionParameters parameters) {
@@ -83,7 +89,8 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
 
         destinationDocument.setCompress(parameters.isCompress());
         destinationDocument.setPageModeOnDocument(PdfPageMode.USE_ATTACHMENTS);
-        destinationDocument.addBlankPage(PDRectangle.A4);
+        this.tocCreator = new TableOfContentsCreator(ToCPolicy.FILE_NAMES,
+                this.destinationDocument.getUnderlyingPDDocument());
 
         PDEmbeddedFilesNameTreeNode embeddedFiles = new PDEmbeddedFilesNameTreeNode();
         Map<String, PDComplexFileSpecification> names = new HashMap<>();
@@ -94,6 +101,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         LOG.trace("Added sort dictionary");
         collection.setItem(COSName.getPDFName("Schema"), createSchemaDictionary());
         LOG.trace("Added schema dictionary");
+        int attachCounter = 0;
         for (Source<?> source : parameters.getSourceList()) {
             stopTaskIfCancelled();
             PDComplexFileSpecification fileSpec = new PDComplexFileSpecification(null);
@@ -107,6 +115,10 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
             fileSpec.setEmbeddedFile(embeddedFile);
             names.put(currentStep + source.getName(), fileSpec);
             collection.putIfAbsent(COSName.D, currentStep + source.getName());
+
+            tocCreator.appendItem(FilenameUtils.getName(source.getName()), ++attachCounter,
+                    attachmentAnnotation(fileSpec));
+
             notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             LOG.debug("Added embedded file from {}", source);
         }
@@ -117,6 +129,8 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         nameDictionary.setEmbeddedFiles(embeddedFiles);
         destinationDocument.catalog().setNames(nameDictionary);
         destinationDocument.catalog().getCOSObject().setItem(COSName.getPDFName("Collection"), collection);
+        LOG.debug("Adding generated ToC");
+        tocCreator.addToC();
         destinationDocument.savePDDocument(tmpFile);
         nullSafeCloseQuietly(destinationDocument);
 
@@ -165,8 +179,16 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     private PDEmbeddedFile embeddedFileFromSource(Source<?> source) throws TaskIOException {
         PDEmbeddedFile embeddedFile = new PDEmbeddedFile(readOnlyEmbeddedFile(source));
         embeddedFile.setCreationDate(new GregorianCalendar());
-        embeddedFile.setSubtype("application/pdf");
+        // TODO
+        // embeddedFile.setSubtype("application/pdf");
         return embeddedFile;
+    }
+
+    private PDAnnotationFileAttachment attachmentAnnotation(PDComplexFileSpecification fileSpec) {
+        PDAnnotationFileAttachment attachmentAnnot = new PDAnnotationFileAttachment();
+        attachmentAnnot.setFile(fileSpec);
+        attachmentAnnot.setBorder(new COSArray(COSInteger.ZERO, COSInteger.ZERO, COSInteger.ZERO));
+        return attachmentAnnot;
     }
 
     @Override

@@ -22,10 +22,10 @@ package org.sejda.impl.sambox.component;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
-import org.sejda.model.exception.TaskIOException;
 
 /**
  * Stateless component responsible for extracting text from a given area of a document page
@@ -51,14 +51,14 @@ public class PdfTextExtractorByArea {
     }
 
     private Rectangle getFooterAreaRectangle(PDPage page) {
-        PDRectangle pageSize = page.getCropBox();
+        PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
         int pageHeight = (int) pageSize.getHeight();
         int pageWidth = (int) pageSize.getWidth();
         return new Rectangle(0, pageHeight - GUESSTIMATE_HEADER_FOOTER_HEIGHT, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }
 
     private Rectangle getHeaderAreaRectangle(PDPage page) {
-        PDRectangle pageSize = page.getCropBox();
+        PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
         int pageWidth = (int) pageSize.getWidth();
         return new Rectangle(0, 0, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }

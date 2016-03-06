@@ -24,6 +24,7 @@ import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.SortedSet;
@@ -50,9 +51,9 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-public class PdfHeaderFooterWriter implements Closeable {
+public class SetHeaderFooterWriter implements Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfHeaderFooterWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SetHeaderFooterWriter.class);
 
     // TODO define as a params member
     private static final Float DEFAULT_MARGIN = 30F;
@@ -64,7 +65,7 @@ public class PdfHeaderFooterWriter implements Closeable {
      * @param documentHandler
      *            the document handler holding the document where we want to write the footer
      */
-    public PdfHeaderFooterWriter(PDDocumentHandler documentHandler) {
+    public SetHeaderFooterWriter(PDDocumentHandler documentHandler) {
         this.documentHandler = documentHandler;
         this.totalPages = documentHandler.getNumberOfPages();
     }
@@ -77,7 +78,7 @@ public class PdfHeaderFooterWriter implements Closeable {
         VerticalAlign vAlign = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
         String what = vAlign == VerticalAlign.BOTTOM ? "footer" : "header";
 
-        SortedSet<Integer> pages = parameters.getPageRange().getPages(documentHandler.getNumberOfPages());
+        SortedSet<Integer> pages = parameters.getPageRange().getPages(totalPages);
         Integer labelPageNumber = parameters.getPageCountStartFrom();
 
         for (int pageNumber : pages) {
@@ -101,41 +102,61 @@ public class PdfHeaderFooterWriter implements Closeable {
             requireNotNullArg(font, "Unable to find suitable font for the given label");
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
-
             PDPage page = documentHandler.getPage(pageNumber);
-            PDRectangle pageSize = page.getCropBox();
+            PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
 
             try {
                 float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
-                float xPosition = hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN);
-                float yPosition = vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN);
+                Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
+                        vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN));
 
-                PDPageContentStream contentStream = new PDPageContentStream(documentHandler.getUnderlyingPDDocument(),
-                        page, true, true);
-                contentStream.beginText();
-                contentStream.setFont(font, fontSize.floatValue());
-                contentStream.setNonStrokingColor(parameters.getColor());
+                try (PDPageContentStream contentStream = new PDPageContentStream(
+                        documentHandler.getUnderlyingPDDocument(), page, true, true)) {
+                    contentStream.beginText();
+                    contentStream.setFont(font, fontSize.floatValue());
+                    contentStream.setNonStrokingColor(parameters.getColor());
 
-                if (page.getRotation() > 0) {
-                    float xOffset = (pageSize.getUpperRightX() + pageSize.getLowerLeftX()) / 2f;
-                    float yOffset = (pageSize.getUpperRightY() + pageSize.getLowerLeftY()) / 2f;
+                    if (page.getRotation() > 0) {
+                        position = findPositionInRotatedPage(page.getRotation(), pageSize, position);
 
-                    AffineTransform transform = AffineTransform.getTranslateInstance(xOffset, yOffset);
-                    transform.concatenate(AffineTransform.getRotateInstance(page.getRotation() * Math.PI / 180));
-                    transform.concatenate(AffineTransform.getTranslateInstance(-xOffset, -yOffset));
-                    contentStream.setTextMatrix(new Matrix(transform));
+                        AffineTransform tx = AffineTransform.getTranslateInstance(position.getX(), position.getY());
+                        tx.rotate(Math.toRadians(page.getRotation()));
+                        contentStream.setTextMatrix(new Matrix(tx));
+
+                    } else {
+                        contentStream.setTextMatrix(
+                                new Matrix(AffineTransform.getTranslateInstance(position.getX(), position.getY())));
+                    }
+
+                    LOG.trace("Text position {}", position);
+                    contentStream.showText(label);
+                    contentStream.endText();
                 }
-
-                contentStream.newLineAtOffset(xPosition, yPosition);
-                contentStream.showText(label);
-                contentStream.endText();
-                contentStream.close();
             } catch (IOException e) {
                 throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
             }
 
             labelPageNumber++;
         }
+    }
+
+    private Point2D findPositionInRotatedPage(int rotation, PDRectangle pageSize, Point2D position) {
+        LOG.debug("Found rotation {}", rotation);
+        // flip
+        AffineTransform transform = AffineTransform.getScaleInstance(1, -1);
+        if (rotation == 90) {
+            transform.translate(pageSize.getHeight(), 0);
+        }
+        if (rotation == 180) {
+            transform.translate(pageSize.getWidth(), -pageSize.getHeight());
+        }
+        if (rotation == 270) {
+            transform.translate(0, -pageSize.getWidth());
+        }
+        transform.rotate(Math.toRadians(-rotation));
+        // flip
+        transform.scale(1, -1);
+        return transform.transform(position, null);
     }
 
     @Override
