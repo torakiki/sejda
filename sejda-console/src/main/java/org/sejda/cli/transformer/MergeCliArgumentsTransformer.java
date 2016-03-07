@@ -53,6 +53,7 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer
         parameters.setBlankPageIfOdd(taskCliArguments.isAddBlanks());
         parameters.setOutlinePolicy(taskCliArguments.getBookmarks().getEnumValue());
         parameters.setTableOfContentsPolicy(taskCliArguments.getToc().getEnumValue());
+        parameters.setFilenameFooter(taskCliArguments.getFooter());
         populateAbstractParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
 

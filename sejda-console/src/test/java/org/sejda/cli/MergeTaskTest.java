@@ -117,9 +117,18 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void onDefaultOutlinePolicy() {
+    public void addFooter() {
+        MergeParameters parameters = defaultCommandLine().withFlag("--footer").invokeSejdaConsole();
+        assertTrue(parameters.isFilenameFooter());
+    }
+
+    @Test
+    public void onDefault() {
         MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals(OutlinePolicy.RETAIN, parameters.getOutlinePolicy());
+        assertEquals(AcroFormPolicy.DISCARD, parameters.getAcroFormPolicy());
+        assertEquals(ToCPolicy.NONE, parameters.getTableOfContentsPolicy());
+        assertFalse(parameters.isFilenameFooter());
     }
 
     @Test
@@ -129,21 +138,9 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void onDefaultAcroForms() {
-        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals(AcroFormPolicy.DISCARD, parameters.getAcroFormPolicy());
-    }
-
-    @Test
     public void onMergeAcroForms() {
         MergeParameters parameters = defaultCommandLine().with("-a", "merge").invokeSejdaConsole();
         assertEquals(AcroFormPolicy.MERGE, parameters.getAcroFormPolicy());
-    }
-
-    @Test
-    public void onDefaultToc() {
-        MergeParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals(ToCPolicy.NONE, parameters.getTableOfContentsPolicy());
     }
 
     @Test

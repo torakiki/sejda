@@ -55,7 +55,7 @@ public class SetHeaderFooterWriter implements Closeable {
      */
     public SetHeaderFooterWriter(PDDocumentHandler documentHandler) {
         this.documentHandler = documentHandler;
-        this.headerFooterWriter = new HeaderFooterWriter(documentHandler);
+        this.headerFooterWriter = new HeaderFooterWriter(documentHandler.getUnderlyingPDDocument());
         this.totalPages = documentHandler.getNumberOfPages();
     }
 
@@ -91,7 +91,6 @@ public class SetHeaderFooterWriter implements Closeable {
             labelPageNumber++;
         }
     }
-
 
     @Override
     public void close() {

@@ -124,6 +124,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "นี่คือการทดสอบ.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "यह एक परीक्षण है.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setFilenameFooter(true);
         doExecuteMergeAll(false, 23, parameters);
     }
 

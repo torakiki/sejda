@@ -38,6 +38,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.FilenameFooterWriter;
 import org.sejda.impl.sambox.component.OutlineMerger;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.TableOfContentsCreator;
@@ -75,6 +76,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private OutlineMerger outlineMerger;
     private AcroFormsMerger acroFormsMerger;
     private TableOfContentsCreator tocCreator;
+    private FilenameFooterWriter footerWriter;
     private PDRectangle currentPageSize = PDRectangle.LETTER;
     private long pagesCounter = 0;
 
@@ -100,6 +102,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 this.destinationDocument.getUnderlyingPDDocument());
         this.tocCreator = new TableOfContentsCreator(parameters.getTableOfContentsPolicy(),
                 this.destinationDocument.getUnderlyingPDDocument());
+        this.footerWriter = new FilenameFooterWriter(parameters.isFilenameFooter(),
+                this.destinationDocument.getUnderlyingPDDocument());
 
         for (PdfMergeInput input : parameters.getInputList()) {
             LOG.debug("Opening {}", input.getSource());
@@ -121,15 +125,18 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 PDPage importedPage = destinationDocument.importPage(page);
                 pagesLookup.addLookupEntry(page, importedPage);
 
+                String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
                 // processing the first page of the source
                 if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
-                    String itemText = FilenameUtils.getBaseName(input.getSource().getName());
                     if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
-                        itemText = ofNullable(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                .map(i -> i.getTitle()).filter(StringUtils::isNotBlank).orElse(itemText);
+                        sourceBaseName = ofNullable(
+                                sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
+                                        .map(i -> i.getTitle()).filter(StringUtils::isNotBlank).orElse(sourceBaseName);
                     }
-                    tocCreator.appendItem(itemText, pagesCounter, linkAnnotationFor(importedPage));
+                    tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
                 }
+
+                this.footerWriter.addFooter(importedPage, sourceBaseName);
                 LOG.trace("Added imported page");
             }
             relativeCounter = 0;

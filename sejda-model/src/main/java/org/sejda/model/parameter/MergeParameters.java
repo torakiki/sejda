@@ -61,6 +61,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private SingleTaskOutput<?> output;
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
+    private boolean filenameFooter = false;
 
     @Override
     public SingleTaskOutput<?> getOutput() {
@@ -148,10 +149,19 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.tocPolicy = tocPolicy;
     }
 
+    public boolean isFilenameFooter() {
+        return filenameFooter;
+    }
+
+    public void setFilenameFooter(boolean filenameFooter) {
+        this.filenameFooter = filenameFooter;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
-                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(outputName).toHashCode();
+                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(outputName)
+                .append(filenameFooter).toHashCode();
     }
 
     @Override
@@ -162,12 +172,12 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         if (!(other instanceof MergeParameters)) {
             return false;
         }
-        MergeParameters parameter = (MergeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.getInputList())
-                .append(acroFormPolicy, parameter.getAcroFormPolicy())
-                .append(blankPageIfOdd, parameter.isBlankPageIfOdd())
-                .append(outlinePolicy, parameter.getOutlinePolicy())
-                .append(tocPolicy, parameter.getTableOfContentsPolicy()).append(outputName, parameter.getOutputName())
-                .isEquals();
+        MergeParameters params = (MergeParameters) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.getInputList())
+                .append(acroFormPolicy, params.getAcroFormPolicy())
+                .append(blankPageIfOdd, params.isBlankPageIfOdd())
+                .append(outlinePolicy, params.getOutlinePolicy())
+                .append(tocPolicy, params.getTableOfContentsPolicy()).append(outputName, params.getOutputName())
+                .append(filenameFooter, params.isFilenameFooter()).isEquals();
     }
 }

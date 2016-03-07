@@ -72,4 +72,7 @@ public interface MergeTaskCliArguments
 
     @Option(shortName = "t", description = "table of contents creation policy dictating if a ToC should be created. {none, file_names, doc_titles}. Default is 'none' (optional)", defaultValue = "none")
     ToCPolicyAdapter getToc();
+
+    @Option(description = "add a footer to every page with the name of the original PDF document the page belonged to (optional)")
+    boolean getFooter();
 }
