@@ -46,11 +46,13 @@ public class FilenameFooterWriter {
         this.addFooter = addFooter;
     }
 
-    public void addFooter(PDPage page, String fileName) {
+    public void addFooter(PDPage page, String fileName, long pageNumber) {
         if (addFooter) {
             try {
                 writer.write(page, HorizontalAlign.LEFT, VerticalAlign.BOTTOM, fileName, PDType1Font.HELVETICA, 10d,
                         Color.BLACK);
+                writer.write(page, HorizontalAlign.RIGHT, VerticalAlign.BOTTOM, Long.toString(pageNumber),
+                        PDType1Font.HELVETICA, 10d, Color.BLACK);
             } catch (TaskIOException e) {
                 LOG.warn("Unable to writer the page footer", e);
             }

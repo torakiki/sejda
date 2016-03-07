@@ -38,8 +38,8 @@ public class FilenameFooterWriterTest {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
-        new FilenameFooterWriter(true, doc).addFooter(page, "My Footer");
-        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is("My Footer"));
+        new FilenameFooterWriter(true, doc).addFooter(page, "My Footer", 20);
+        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is("My Footer 20"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class FilenameFooterWriterTest {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
-        new FilenameFooterWriter(false, doc).addFooter(page, "My Footer");
+        new FilenameFooterWriter(false, doc).addFooter(page, "My Footer", 20);
         assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), isEmptyOrNullString());
     }
 }

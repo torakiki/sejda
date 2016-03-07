@@ -136,7 +136,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
                 }
 
-                this.footerWriter.addFooter(importedPage, sourceBaseName);
+                this.footerWriter.addFooter(importedPage, sourceBaseName, pagesCounter);
                 LOG.trace("Added imported page");
             }
             relativeCounter = 0;
