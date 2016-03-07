@@ -18,6 +18,8 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
+import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
@@ -26,10 +28,10 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
-import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -47,16 +49,17 @@ public class HeaderFooterWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(HeaderFooterWriter.class);
 
-    private PDDocumentHandler documentHandler;
+    private PDDocument document;
     // TODO define as a params member
     private static final Float DEFAULT_MARGIN = 30F;
+    private PDFont latestSuitablefont;
 
     /**
-     * @param documentHandler
-     *            the document handler holding the document where we want to write the footer
+     * @param document
+     *            the document where we want to write the footer
      */
-    public HeaderFooterWriter(PDDocumentHandler documentHandler) {
-        this.documentHandler = documentHandler;
+    public HeaderFooterWriter(PDDocument document) {
+        this.document = document;
     }
 
     public void write(PDPage page, HorizontalAlign hAlign, VerticalAlign vAlign, String label, PDFont font,
@@ -64,20 +67,23 @@ public class HeaderFooterWriter {
 
         // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
         // Type 1 fonts only support 8-bit code points.
-        font = fontOrFallback(label, font,
-                () -> FontUtils.findFontFor(documentHandler.getUnderlyingPDDocument(), label));
-        requireNotNullArg(font, "Unable to find suitable font for the given label");
+        latestSuitablefont = fontOrFallback(label, font, () -> {
+            if (canDisplay(label, latestSuitablefont)) {
+                return latestSuitablefont;
+            }
+            return findFontFor(document, label);
+        });
+        requireNotNullArg(latestSuitablefont, "Unable to find suitable font for the given label");
 
         PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
 
         try {
-            float stringWidth = font.getStringWidth(label) * fontSize.floatValue() / 1000f;
+            float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
             Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
                     vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN));
-            try (PDPageContentStream contentStream = new PDPageContentStream(documentHandler.getUnderlyingPDDocument(),
-                    page, true, true)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true)) {
                 contentStream.beginText();
-                contentStream.setFont(font, fontSize.floatValue());
+                contentStream.setFont(latestSuitablefont, fontSize.floatValue());
                 contentStream.setNonStrokingColor(color);
 
                 if (page.getRotation() > 0) {
