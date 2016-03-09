@@ -81,7 +81,7 @@ public class HeaderFooterWriter {
             float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
             Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
                     vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true, true)) {
                 contentStream.beginText();
                 contentStream.setFont(latestSuitablefont, fontSize.floatValue());
                 contentStream.setNonStrokingColor(color);
