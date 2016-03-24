@@ -48,7 +48,6 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         parameters.addSource(customInput(source));
         testContext.directoryOutputTo(parameters);
     }
-    // TODO add a test with a rotated input?
 
     @Test
     public void splitLandscapeMode() throws IOException {
@@ -63,6 +62,91 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         });
 
     }
+
+    @Test
+    public void splitLandscapeModeRotated90() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample_rotated_90.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "L1L1");
+            assertPageText(d.getPage(1), "R1R1");
+            assertPageText(d.getPage(2), "L2L2");
+            assertPageText(d.getPage(3), "R2R2");
+        });
+
+    }
+
+    @Test
+    public void splitLandscapeModeRotated180() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample_rotated_180.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+            assertPageText(d.getPage(2), "R2R2");
+            assertPageText(d.getPage(3), "L2L2");
+        });
+
+    }
+
+    @Test
+    public void splitLandscapeModeRotated270() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample_rotated_270.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+            assertPageText(d.getPage(2), "R2R2");
+            assertPageText(d.getPage(3), "L2L2");
+        });
+
+    }
+
+    @Test
+    public void splitPortraitModeRotated90() throws IOException {
+        setUpParameters("pdf/split_in_two_portrait_sample_rotated_90.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+            assertPageText(d.getPage(2), "R2R2");
+            assertPageText(d.getPage(3), "L2L2");
+        });
+
+    }
+
+    @Test
+    public void splitPortraitModeRotated180() throws IOException {
+        setUpParameters("pdf/split_in_two_portrait_sample_rotated_180.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+            assertPageText(d.getPage(2), "R2R2");
+            assertPageText(d.getPage(3), "L2L2");
+        });
+
+    }
+
+    @Test
+    public void splitPortraitModeRotated270() throws IOException {
+        setUpParameters("pdf/split_in_two_portrait_sample_rotated_270.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "L1L1");
+            assertPageText(d.getPage(1), "R1R1");
+            assertPageText(d.getPage(2), "L2L2");
+            assertPageText(d.getPage(3), "R2R2");
+        });
+
+    }
+
 
     @Test
     public void splitPortraitMode() throws IOException {
@@ -125,6 +209,9 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
             textStripper = new PDFTextStripperByArea();
             PDRectangle pageSize = page.getCropBox();
             Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
+            if(page.getRotation() == 90 || page.getRotation() == 270) {
+                cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
+            }
             textStripper.setSortByPosition(true);
             textStripper.addRegion("area1", cropBoxRectangle);
             textStripper.extractRegions(page);

@@ -104,55 +104,29 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 if (trimBox.getHeight() <= trimBox.getWidth()) {
                     // landscape orientation
 
-                    PDPage leftPage = destinationHandler.importPage(page);
-                    lookup.addLookupEntry(page, leftPage);
-                    PDRectangle leftSide = new PDRectangle();
-                    leftSide.setUpperRightY(trimBox.getUpperRightY());
-                    leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
-                    leftSide.setLowerLeftY(trimBox.getLowerLeftY());
-                    leftSide.setLowerLeftX(trimBox.getLowerLeftX());
+                    boolean leftFirst = page.getRotation() != 270 && page.getRotation() != 180;
 
-                    leftPage.setCropBox(leftSide);
-                    leftPage.setTrimBox(leftSide);
-                    leftPage.setMediaBox(leftSide);
+                    if(leftFirst) {
+                        importLeftPage(page, lookup);
+                        importRightPage(page, lookup);
+                    } else {
+                        importRightPage(page, lookup);
+                        importLeftPage(page, lookup);
+                    }
 
-                    PDPage rightPage = destinationHandler.importPage(page);
-                    lookup.addLookupEntry(page, rightPage);
-                    PDRectangle rightSide = new PDRectangle();
-                    rightSide.setUpperRightY(trimBox.getUpperRightY());
-                    rightSide.setUpperRightX(trimBox.getUpperRightX());
-                    rightSide.setLowerLeftY(trimBox.getLowerLeftY());
-                    rightSide.setLowerLeftX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
-
-                    rightPage.setCropBox(rightSide);
-                    rightPage.setTrimBox(rightSide);
-                    rightPage.setMediaBox(rightSide);
                 } else {
                     // portrait orientation
 
-                    PDPage topPage = destinationHandler.importPage(page);
-                    lookup.addLookupEntry(page, topPage);
-                    PDRectangle upperSide = new PDRectangle();
-                    upperSide.setUpperRightY(trimBox.getUpperRightY());
-                    upperSide.setUpperRightX(trimBox.getUpperRightX());
-                    upperSide.setLowerLeftY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
-                    upperSide.setLowerLeftX(trimBox.getLowerLeftX());
+                    boolean topFirst = page.getRotation() != 90 && page.getRotation() != 180;
 
-                    topPage.setCropBox(upperSide);
-                    topPage.setTrimBox(upperSide);
-                    topPage.setMediaBox(upperSide);
+                    if(topFirst) {
+                        importTopPage(page, lookup);
+                        importBottomPage(page, lookup);
+                    } else {
+                        importBottomPage(page, lookup);
+                        importTopPage(page, lookup);
+                    }
 
-                    PDPage bottomPage = destinationHandler.importPage(page);
-                    lookup.addLookupEntry(page, bottomPage);
-                    PDRectangle lowerSide = new PDRectangle();
-                    lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
-                    lowerSide.setUpperRightX(trimBox.getUpperRightX());
-                    lowerSide.setLowerLeftY(trimBox.getLowerLeftY());
-                    lowerSide.setLowerLeftX(trimBox.getLowerLeftX());
-
-                    bottomPage.setCropBox(lowerSide);
-                    bottomPage.setTrimBox(lowerSide);
-                    bottomPage.setMediaBox(lowerSide);
                 }
             }
             LookupTable<PDAnnotation> annotations = processAnnotations(lookup, sourceHandler.getUnderlyingPDDocument());
@@ -194,6 +168,66 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Text extracted from input documents and written to {}", parameters.getOutput());
 
+    }
+
+    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup){
+        PDRectangle trimBox = page.getTrimBox();
+        PDPage leftPage = destinationHandler.importPage(page);
+        lookup.addLookupEntry(page, leftPage);
+        PDRectangle leftSide = new PDRectangle();
+        leftSide.setUpperRightY(trimBox.getUpperRightY());
+        leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
+        leftSide.setLowerLeftY(trimBox.getLowerLeftY());
+        leftSide.setLowerLeftX(trimBox.getLowerLeftX());
+
+        leftPage.setCropBox(leftSide);
+        leftPage.setTrimBox(leftSide);
+        leftPage.setMediaBox(leftSide);
+    }
+
+    private void importRightPage(PDPage page, LookupTable<PDPage> lookup){
+        PDRectangle trimBox = page.getTrimBox();
+        PDPage rightPage = destinationHandler.importPage(page);
+        lookup.addLookupEntry(page, rightPage);
+        PDRectangle rightSide = new PDRectangle();
+        rightSide.setUpperRightY(trimBox.getUpperRightY());
+        rightSide.setUpperRightX(trimBox.getUpperRightX());
+        rightSide.setLowerLeftY(trimBox.getLowerLeftY());
+        rightSide.setLowerLeftX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
+
+        rightPage.setCropBox(rightSide);
+        rightPage.setTrimBox(rightSide);
+        rightPage.setMediaBox(rightSide);
+    }
+
+    private void importTopPage(PDPage page, LookupTable<PDPage> lookup){
+        PDRectangle trimBox = page.getTrimBox();
+        PDPage topPage = destinationHandler.importPage(page);
+        lookup.addLookupEntry(page, topPage);
+        PDRectangle upperSide = new PDRectangle();
+        upperSide.setUpperRightY(trimBox.getUpperRightY());
+        upperSide.setUpperRightX(trimBox.getUpperRightX());
+        upperSide.setLowerLeftY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
+        upperSide.setLowerLeftX(trimBox.getLowerLeftX());
+
+        topPage.setCropBox(upperSide);
+        topPage.setTrimBox(upperSide);
+        topPage.setMediaBox(upperSide);
+    }
+
+    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup){
+        PDRectangle trimBox = page.getTrimBox();
+        PDPage bottomPage = destinationHandler.importPage(page);
+        lookup.addLookupEntry(page, bottomPage);
+        PDRectangle lowerSide = new PDRectangle();
+        lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
+        lowerSide.setUpperRightX(trimBox.getUpperRightX());
+        lowerSide.setLowerLeftY(trimBox.getLowerLeftY());
+        lowerSide.setLowerLeftX(trimBox.getLowerLeftX());
+
+        bottomPage.setCropBox(lowerSide);
+        bottomPage.setTrimBox(lowerSide);
+        bottomPage.setMediaBox(lowerSide);
     }
 
     @Override
