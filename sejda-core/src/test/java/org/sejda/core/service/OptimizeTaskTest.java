@@ -75,7 +75,7 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
         parameters.addSource(customInput("pdf/unoptimized.pdf"));
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(116L))));
+        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(127L))));
 
     }
 
