@@ -34,6 +34,7 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
+import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.util.Matrix;
@@ -81,7 +82,8 @@ public class HeaderFooterWriter {
             float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
             Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
                     vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, true, true, true)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true,
+                    true)) {
                 contentStream.beginText();
                 contentStream.setFont(latestSuitablefont, fontSize.floatValue());
                 contentStream.setNonStrokingColor(color);

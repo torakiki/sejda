@@ -115,9 +115,9 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                         parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
 
                 // we wrap the existing so we can identify it later as "in use" and already processed
-                ReadOnlyFilteredCOSStream optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSStream());
+                ReadOnlyFilteredCOSStream optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSObject());
 
-                double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSStream().getFilteredLength();
+                double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSObject().getFilteredLength();
                 // can be compressed
                 if (sizeRate < 100) {
                     String hash = Base64.getEncoder()
@@ -151,19 +151,19 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private void removeMetadataIfNeeded(PDXObject image) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_METADATA)) {
-                image.getCOSStream().removeItem(COSName.METADATA);
+                image.getCOSObject().removeItem(COSName.METADATA);
             }
         }
 
         private void removePieceInfoIfNeeded(PDXObject image) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_PIECE_INFO)) {
-                image.getCOSStream().removeItem(COSName.PIECE_INFO);
+                image.getCOSObject().removeItem(COSName.PIECE_INFO);
             }
         }
 
         private void removeAlternatesIfNeeded(PDXObject image) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_ALTERNATE_IMAGES)) {
-                image.getCOSStream().removeItem(COSName.getPDFName("Alternates"));
+                image.getCOSObject().removeItem(COSName.getPDFName("Alternates"));
             }
         }
 

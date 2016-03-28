@@ -60,18 +60,18 @@ public class ImagesOptimizerTest {
         params.addOptimization(Optimization.DISCARD_METADATA);
         PDPage page = document.getPage(0);
         PDImageXObject image = (PDImageXObject) page.getResources().getXObject(COSName.getPDFName("x5"));
-        image.getCOSStream().setItem(COSName.METADATA, COSInteger.ZERO);
+        image.getCOSObject().setItem(COSName.METADATA, COSInteger.ZERO);
         PDFormXObject form = (PDFormXObject) page.getResources().getXObject(COSName.getPDFName("x7"));
-        form.getCOSStream().setItem(COSName.METADATA, COSInteger.ONE);
+        form.getCOSObject().setItem(COSName.METADATA, COSInteger.ONE);
         PDFormXObject nestedForm = (PDFormXObject) form.getResources().getXObject(COSName.getPDFName("x10"));
-        nestedForm.getCOSStream().setItem(COSName.METADATA, COSInteger.TWO);
-        assertNotNull(image.getCOSStream().getItem(COSName.METADATA));
-        assertNotNull(form.getCOSStream().getItem(COSName.METADATA));
-        assertNotNull(nestedForm.getCOSStream().getItem(COSName.METADATA));
+        nestedForm.getCOSObject().setItem(COSName.METADATA, COSInteger.TWO);
+        assertNotNull(image.getCOSObject().getItem(COSName.METADATA));
+        assertNotNull(form.getCOSObject().getItem(COSName.METADATA));
+        assertNotNull(nestedForm.getCOSObject().getItem(COSName.METADATA));
         new ImagesOptimizer(params).accept(page);
-        assertNull(image.getCOSStream().getItem(COSName.METADATA));
-        assertNull(form.getCOSStream().getItem(COSName.METADATA));
-        assertNull(nestedForm.getCOSStream().getItem(COSName.METADATA));
+        assertNull(image.getCOSObject().getItem(COSName.METADATA));
+        assertNull(form.getCOSObject().getItem(COSName.METADATA));
+        assertNull(nestedForm.getCOSObject().getItem(COSName.METADATA));
     }
 
     @Test
@@ -79,10 +79,10 @@ public class ImagesOptimizerTest {
         params.addOptimization(Optimization.DISCARD_ALTERNATE_IMAGES);
         PDPage page = document.getPage(0);
         PDImageXObject image = (PDImageXObject) page.getResources().getXObject(COSName.getPDFName("x5"));
-        image.getCOSStream().setItem(COSName.getPDFName("Alternates"), COSInteger.ZERO);
-        assertNotNull(image.getCOSStream().getItem(COSName.getPDFName("Alternates")));
+        image.getCOSObject().setItem(COSName.getPDFName("Alternates"), COSInteger.ZERO);
+        assertNotNull(image.getCOSObject().getItem(COSName.getPDFName("Alternates")));
         new ImagesOptimizer(params).accept(page);
-        assertNull(image.getCOSStream().getItem(COSName.getPDFName("Alternates")));
+        assertNull(image.getCOSObject().getItem(COSName.getPDFName("Alternates")));
     }
 
     @Test
@@ -90,14 +90,14 @@ public class ImagesOptimizerTest {
         params.addOptimization(Optimization.DISCARD_PIECE_INFO);
         PDPage page = document.getPage(0);
         PDFormXObject form = (PDFormXObject) page.getResources().getXObject(COSName.getPDFName("x7"));
-        form.getCOSStream().setItem(COSName.getPDFName("PieceInfo"), COSInteger.ONE);
+        form.getCOSObject().setItem(COSName.getPDFName("PieceInfo"), COSInteger.ONE);
         PDFormXObject nestedForm = (PDFormXObject) form.getResources().getXObject(COSName.getPDFName("x10"));
-        nestedForm.getCOSStream().setItem(COSName.getPDFName("PieceInfo"), COSInteger.TWO);
-        assertNotNull(form.getCOSStream().getItem(COSName.getPDFName("PieceInfo")));
-        assertNotNull(nestedForm.getCOSStream().getItem(COSName.getPDFName("PieceInfo")));
+        nestedForm.getCOSObject().setItem(COSName.getPDFName("PieceInfo"), COSInteger.TWO);
+        assertNotNull(form.getCOSObject().getItem(COSName.getPDFName("PieceInfo")));
+        assertNotNull(nestedForm.getCOSObject().getItem(COSName.getPDFName("PieceInfo")));
         new ImagesOptimizer(params).accept(page);
-        assertNull(form.getCOSStream().getItem(COSName.getPDFName("PieceInfo")));
-        assertNull(nestedForm.getCOSStream().getItem(COSName.getPDFName("PieceInfo")));
+        assertNull(form.getCOSObject().getItem(COSName.getPDFName("PieceInfo")));
+        assertNull(nestedForm.getCOSObject().getItem(COSName.getPDFName("PieceInfo")));
     }
 
     @Test
