@@ -143,6 +143,10 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                             return ret;
                         });
                 xobjects.setItem(objectName, optimizedImage);
+                // free up resources used by the underlying COSStream
+                // which stores both the filtered and unfiltered bytes[] and DecodeResult
+                // potentially creating a large memory footprint
+                image.getCOSObject().close();
 
             } catch (IOException | RuntimeException ex) {
                 LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
