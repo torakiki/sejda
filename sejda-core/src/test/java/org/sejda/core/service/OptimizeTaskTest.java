@@ -33,7 +33,6 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.junit.Test;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.model.exception.TaskCancelledException;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.optimization.Optimization;
@@ -80,12 +79,21 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
     }
 
     @Test
-    public void testRepeatedImages() throws TaskException, IOException {
+    public void testRepeatedImages() throws IOException {
         setUpParameters();
         parameters.addSource(customInput("pdf/test_optimize_repeated_images.pdf"));
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(468L))));
+    }
+
+    @Test
+    public void testAlreadyCompressed() throws IOException {
+        setUpParameters();
+        parameters.setImageQuality(1f);
+        parameters.addSource(customInput("pdf/draw_w_transparency.pdf"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
     }
 
     @Test

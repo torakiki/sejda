@@ -84,8 +84,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
                 COSName objectName = (COSName) operand;
                 COSBase existing = ofNullable(
-                        context.getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT))
-                                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
+                        context.getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                                 .map(d -> d.getDictionaryObject(objectName)).orElseThrow(
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
