@@ -40,7 +40,7 @@ public class ImageOptimizer {
         try {
             if (bufferedImage.getHeight() > maxWidthOrHeight || bufferedImage.getWidth() > maxWidthOrHeight) {
                 LOG.debug("Resizing image");
-                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.SPEED, maxWidthOrHeight);
+                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, maxWidthOrHeight);
             }
 
             // PNG read fix when converting to JPEG
