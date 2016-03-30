@@ -31,6 +31,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.text.PDFTextStripper;
 
@@ -82,6 +83,35 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
         assertPageHasText(outDocument, 8, "4b");
         assertPageHasText(outDocument, 9, "10b");
         assertPageHasText(outDocument, 10, "11b");
+    }
+
+    @Test
+    public void combineAndReorderWithRotation() throws TaskException, IOException {
+        setUpParameters(basicInputs());
+        parameters.addPage(0, 1);
+        parameters.addPage(1, 1, Rotation.DEGREES_90);
+        parameters.addPage(0, 2, Rotation.DEGREES_180);
+        parameters.addPage(1, 2, Rotation.DEGREES_270);
+        parameters.addPage(0, 3);
+        parameters.addPage(1, 3, Rotation.DEGREES_90);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument outDocument = testContext.assertTaskCompleted();
+
+        assertPageHasText(outDocument, 1, "1a");
+        assertPageHasText(outDocument, 2, "1b");
+        assertPageHasText(outDocument, 3, "2a");
+        assertPageHasText(outDocument, 4, "2b");
+        assertPageHasText(outDocument, 5, "3a");
+        assertPageHasText(outDocument, 6, "3b");
+
+        testContext.assertCreator().assertPages(6).forEachPdfOutput(d -> {
+            assertEquals(90, d.getPage(1).getRotation());
+            assertEquals(180, d.getPage(2).getRotation());
+            assertEquals(270, d.getPage(3).getRotation());
+            assertEquals(90, d.getPage(5).getRotation());
+        });
     }
 
     void assertPageHasText(PDDocument doc, int page, String expected) throws IOException {

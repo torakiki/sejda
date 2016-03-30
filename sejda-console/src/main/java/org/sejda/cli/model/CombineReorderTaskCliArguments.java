@@ -25,6 +25,6 @@ import com.lexicalscope.jewel.cli.Option;
 public interface CombineReorderTaskCliArguments
         extends CliArgumentsWithPdfFileOutput, MultiplePdfSourceTaskCliArguments {
 
-    @Option(shortName = "n", description = "pages in expected order, indexed by their source file. (Ex --pages 0:100 1:50 denotes page 100 from the first file and page 50 from the second file specified in --files) (required)")
+    @Option(shortName = "n", description = "pages in expected order, indexed by their source file, with optional rotation, as in 'fileIndex:pageNumber:rotationDegrees'. (Ex --pages 0:100 1:50:270 denotes page 100 from the first file and page 50 from the second file specified in --files, rotated 270 degrees clockwise.) (required)")
     List<String> getPages();
 }

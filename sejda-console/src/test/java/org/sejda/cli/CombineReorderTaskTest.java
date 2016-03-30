@@ -23,6 +23,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.CombineReorderParameters;
+import org.sejda.model.rotation.Rotation;
 
 public class CombineReorderTaskTest extends AbstractTaskTest {
 
@@ -35,6 +36,15 @@ public class CombineReorderTaskTest extends AbstractTaskTest {
         CombineReorderParameters parameters = defaultCommandLine().with("-n", "0:1 1:1 0:2 1:3")
                 .invokeSejdaConsole();
         assertEquals(Arrays.asList(new FileIndexAndPage(0, 1), new FileIndexAndPage(1, 1), new FileIndexAndPage(0, 2), new FileIndexAndPage(1, 3)),
+                parameters.getPages());
+    }
+
+    @Test
+    public void testPagesWithRotation_Specified() {
+        CombineReorderParameters parameters = defaultCommandLine().with("-n", "0:1 1:1:270 0:2:180 1:3:90")
+                .invokeSejdaConsole();
+
+        assertEquals(Arrays.asList(new FileIndexAndPage(0, 1), new FileIndexAndPage(1, 1, Rotation.DEGREES_270), new FileIndexAndPage(0, 2, Rotation.DEGREES_180), new FileIndexAndPage(1, 3, Rotation.DEGREES_90)),
                 parameters.getPages());
     }
 }

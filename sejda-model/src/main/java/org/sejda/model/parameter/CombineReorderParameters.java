@@ -28,6 +28,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -46,6 +47,10 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
 
     public void addPage(int fileIndex, int page) {
         pages.add(new FileIndexAndPage(fileIndex, page));
+    }
+
+    public void addPage(int fileIndex, int page, Rotation rotation) {
+        pages.add(new FileIndexAndPage(fileIndex, page, rotation));
     }
 
     public List<FileIndexAndPage> getPages() {

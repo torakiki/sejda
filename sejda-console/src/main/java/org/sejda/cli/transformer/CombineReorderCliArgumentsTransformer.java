@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.sejda.cli.model.CombineReorderTaskCliArguments;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.CombineReorderParameters;
+import org.sejda.model.rotation.Rotation;
 
 public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
         CommandCliArgumentsTransformer<CombineReorderTaskCliArguments, CombineReorderParameters> {
@@ -36,7 +37,7 @@ public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTrans
                 .map(in -> parseIndexAndPage(in))
                 .filter(item -> item.isPresent())
                 .map(item -> item.get())
-                .forEach(item -> parameters.addPage(item.getFileIndex(), item.getPage()));
+                .forEach(item -> parameters.addPage(item.getFileIndex(), item.getPage(), item.getRotation()));
 
         return parameters;
     }
@@ -44,7 +45,8 @@ public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTrans
     private Optional<FileIndexAndPage> parseIndexAndPage(String in) {
         String[] parts = in.split(":");
         try {
-            return Optional.of(new FileIndexAndPage(Integer.valueOf(parts[0]), Integer.valueOf(parts[1])));
+            Rotation rotation = parts.length > 2 ? Rotation.getRotation(Integer.valueOf(parts[2])) : Rotation.DEGREES_0;
+            return Optional.of(new FileIndexAndPage(Integer.valueOf(parts[0]), Integer.valueOf(parts[1]), rotation));
         } catch (RuntimeException e) {
             return Optional.empty();
         }

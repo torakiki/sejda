@@ -35,6 +35,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfRotator;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.input.PdfSource;
@@ -92,6 +93,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
 
         int currentStep = 0;
         int totalSteps = parameters.getPages().size() + documents.size();
+        PdfRotator rotator = new PdfRotator(destinationDocument.getUnderlyingPDDocument());
 
         for (int i = 0; i < parameters.getPages().size(); i++) {
             stopTaskIfCancelled();
@@ -102,6 +104,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             try {
                 PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
                 pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
+                rotator.rotate(i + 1, filePage.getRotation());
             } catch (PageNotFoundException ex){
                 String warning = String.format("Page %d was skipped, could not be processed", pageNum);
                 notifyEvent(getNotifiableTaskMetadata()).taskWarning(warning);
