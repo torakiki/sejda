@@ -87,9 +87,9 @@ public class CropTask extends BaseTask<CropParameters> {
         for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
             for (PDRectangle box : cropAreas) {
                 stopTaskIfCancelled();
+                box = unrotate(page, box);
                 PDPage newPage = destinationDocument.importPage(page);
                 pagesLookup.addLookupEntry(page, newPage);
-                newPage.setMediaBox(box);
                 newPage.setCropBox(box);
                 notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             }
@@ -118,4 +118,19 @@ public class CropTask extends BaseTask<CropParameters> {
         nullSafeCloseQuietly(destinationDocument);
     }
 
+    private PDRectangle unrotate(PDPage page, PDRectangle rotated) {
+        if (page.getRotation() == 90) {
+            return new PDRectangle(page.getCropBox().getWidth() - rotated.getUpperRightY(), rotated.getLowerLeftX(),
+                    rotated.getHeight(), rotated.getWidth());
+        }
+        if (page.getRotation() == 180) {
+            return new PDRectangle(page.getCropBox().getWidth() - rotated.getUpperRightX(),
+                    page.getCropBox().getHeight() - rotated.getUpperRightY(), rotated.getWidth(), rotated.getHeight());
+        }
+        if (page.getRotation() == 270) {
+            return new PDRectangle(rotated.getLowerLeftY(), page.getCropBox().getHeight() - rotated.getUpperRightX(),
+                    rotated.getHeight(), rotated.getWidth());
+        }
+        return rotated;
+    }
 }

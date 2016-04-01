@@ -48,31 +48,73 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
 
     private CropParameters parameters;
 
-    private void setUpParameters() {
+
+    @Test
+    public void testExecuteRotated90() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
+        parameters.setSource(customInput("pdf/rotation_90_test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(555, 10), new Point(575, 60));
+        result.getPages().forEach(p -> {
+            assertEqualsRectangles(expected, p.getCropBox());
+        });
+    }
+
+    @Test
+    public void testExecuteRotated180() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
+        parameters.setSource(customInput("pdf/rotation_180_test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(535, 802), new Point(585, 822));
+        result.getPages().forEach(p -> {
+            assertEqualsRectangles(expected, p.getCropBox());
+        });
+    }
+    @Test
+    public void testExecuteRotated270() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
+        parameters.setSource(customInput("pdf/rotation_270_test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(20, 782), new Point(40, 832));
+        result.getPages().forEach(p -> {
+            assertEqualsRectangles(expected, p.getCropBox());
+        });
+    }
+
+    @Test
+    public void testExecuteOddEven() throws IOException {
         parameters = new CropParameters();
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addCropArea(ODD_PAGES_RECTANGLE);
         parameters.addCropArea(EVEN_PAGES_RECTANGLE);
-        parameters.setSource(shortInput());
+        parameters.setSource(regularInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-    }
-
-    @Test
-    public void testExecute() throws IOException {
-        setUpParameters();
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         PDDocument outDocument = testContext.assertTaskCompleted();
-        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(8);
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(22);
         for (int i = 0; i < outDocument.getNumberOfPages(); i++) {
             PDPage page = outDocument.getPage(i);
             if ((i % 2) == 0) {
                 assertEqualsRectangles(ODD_PAGES_RECTANGLE, page.getCropBox());
-                assertEqualsRectangles(ODD_PAGES_RECTANGLE, page.getMediaBox());
             } else {
                 assertEqualsRectangles(EVEN_PAGES_RECTANGLE, page.getCropBox());
-                assertEqualsRectangles(EVEN_PAGES_RECTANGLE, page.getMediaBox());
             }
         }
     }
