@@ -30,6 +30,7 @@ import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
@@ -84,11 +85,16 @@ public class SetHeaderFooterWriter implements Closeable {
             String label = new TextStampPattern().withPage(labelPageNumber, totalPages).withBatesSequence(batesSeq)
                     .withFileSequence(String.valueOf(currentFileCounter)).build(parameters.getPattern());
 
-            LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
-            headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
-                    parameters.getColor());
+            try {
+                LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
+                headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
+                        parameters.getColor());
 
-            labelPageNumber++;
+                labelPageNumber++;
+            } catch (PageNotFoundException ex) {
+                String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
+                LOG.warn(warning, ex);
+            }
         }
     }
 
