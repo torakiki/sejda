@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component.optimizaton;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -56,10 +57,9 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     }
 
     private void clean(Stream<COSDictionary> nodes) {
-        Stream<COSDictionary> xobjects = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES))
-                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
-                .map(d -> d.getDictionaryObject(COSName.XOBJECT)).filter(d -> d instanceof COSDictionary)
-                .map(d -> (COSDictionary) d);
+        Stream<COSDictionary> xobjects = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                .filter(Objects::nonNull);
         xobjects.forEach(x -> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))

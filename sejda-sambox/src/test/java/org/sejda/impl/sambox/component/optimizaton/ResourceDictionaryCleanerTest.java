@@ -80,4 +80,24 @@ public class ResourceDictionaryCleanerTest {
         assertFalse(page1.getResources().isImageXObject(COSName.getPDFName("discardMe")));
         assertFalse(page1.getResources().isImageXObject(COSName.getPDFName("discardMeToo")));
     }
+
+    @Test
+    public void noExceptionMissingResources() {
+        PDDocument doc = new PDDocument();
+        PDPage page0 = new PDPage();
+        page0.getCOSObject().setItem(COSName.RESOURCES, null);
+        doc.getDocumentCatalog().getPages().add(page0);
+        new ResourceDictionaryCleaner().accept(doc);
+    }
+
+    @Test
+    public void noExceptionMissingXObjects() {
+        PDDocument doc = new PDDocument();
+        PDPage page0 = new PDPage();
+        COSDictionary rootRes = new COSDictionary();
+        page0.getCOSObject().setItem(COSName.RESOURCES, rootRes);
+        rootRes.setItem(COSName.XOBJECT, null);
+        doc.getDocumentCatalog().getPages().add(page0);
+        new ResourceDictionaryCleaner().accept(doc);
+    }
 }

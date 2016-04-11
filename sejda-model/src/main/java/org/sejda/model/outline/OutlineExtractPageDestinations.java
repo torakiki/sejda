@@ -16,11 +16,11 @@
  */
 package org.sejda.model.outline;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Used in extracting docs by outline.
- * Keeps track of the extraction points and the associated page destination
+ * Used in extracting docs by outline. Keeps track of the extraction points and the associated page destination
  */
 public class OutlineExtractPageDestinations {
 
