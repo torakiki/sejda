@@ -20,6 +20,7 @@
 package org.sejda.impl.sambox.component;
 
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
@@ -48,6 +49,18 @@ public class PdfTextExtractorByArea {
 
     public String extractHeaderText(PDPage page) throws TaskIOException {
         return extractTextFromArea(page, getHeaderAreaRectangle(page));
+    }
+
+    public String extractAddedText(PDPage page, Point2D position) throws TaskIOException {
+        return extractTextFromArea(page, getAddedTextAreaRectangle(page, position));
+    }
+
+    private Rectangle getAddedTextAreaRectangle(PDPage page, Point2D position) {
+        PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
+        int pageHeight = (int) pageSize.getHeight();
+        int pageWidth = (int) pageSize.getWidth();
+        int guesstimateTextHeight = 12;
+        return new Rectangle((int)position.getX(), pageHeight - (int) position.getY(), pageWidth, guesstimateTextHeight);
     }
 
     private Rectangle getFooterAreaRectangle(PDPage page) {

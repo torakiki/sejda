@@ -39,10 +39,10 @@ public class FilenameFooterWriter {
     private static final Logger LOG = LoggerFactory.getLogger(FilenameFooterWriter.class);
 
     private boolean addFooter = false;
-    private HeaderFooterWriter writer;
+    private PageTextWriter writer;
 
     public FilenameFooterWriter(boolean addFooter, PDDocument document) {
-        this.writer = new HeaderFooterWriter(document);
+        this.writer = new PageTextWriter(document);
         this.addFooter = addFooter;
     }
 

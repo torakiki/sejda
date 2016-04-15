@@ -47,7 +47,7 @@ public class SetHeaderFooterWriter implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(SetHeaderFooterWriter.class);
 
     private PDDocumentHandler documentHandler;
-    private HeaderFooterWriter headerFooterWriter;
+    private PageTextWriter headerFooterWriter;
     private int totalPages;
 
     /**
@@ -56,7 +56,7 @@ public class SetHeaderFooterWriter implements Closeable {
      */
     public SetHeaderFooterWriter(PDDocumentHandler documentHandler) {
         this.documentHandler = documentHandler;
-        this.headerFooterWriter = new HeaderFooterWriter(documentHandler.getUnderlyingPDDocument());
+        this.headerFooterWriter = new PageTextWriter(documentHandler.getUnderlyingPDDocument());
         this.totalPages = documentHandler.getNumberOfPages();
     }
 

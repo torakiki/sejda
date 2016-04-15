@@ -42,13 +42,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component capable of writing headers and footers
+ * Component capable of writing text to a pdf page
  * 
  * @author Andrea Vacondio
  */
-public class HeaderFooterWriter {
+public class PageTextWriter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HeaderFooterWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PageTextWriter.class);
 
     private PDDocument document;
     // TODO define as a params member
@@ -59,29 +59,35 @@ public class HeaderFooterWriter {
      * @param document
      *            the document where we want to write the footer
      */
-    public HeaderFooterWriter(PDDocument document) {
+    public PageTextWriter(PDDocument document) {
         this.document = document;
     }
 
     public void write(PDPage page, HorizontalAlign hAlign, VerticalAlign vAlign, String label, PDFont font,
+                      Double fontSize, Color color) throws TaskIOException {
+
+        try {
+            resolveFont(label, font);
+
+            PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
+            float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
+            Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
+                vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
+
+            write(page, position, label, font, fontSize, color);
+        } catch (IOException e) {
+            throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
+        }
+    }
+
+    public void write(PDPage page, Point2D position, String label, PDFont font,
             Double fontSize, Color color) throws TaskIOException {
 
-        // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
-        // Type 1 fonts only support 8-bit code points.
-        latestSuitablefont = fontOrFallback(label, font, () -> {
-            if (canDisplay(label, latestSuitablefont)) {
-                return latestSuitablefont;
-            }
-            return findFontFor(document, label);
-        });
-        requireNotNullArg(latestSuitablefont, "Unable to find suitable font for the given label");
+        resolveFont(label, font);
 
         PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
 
         try {
-            float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
-            Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
-                    vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true,
                     true)) {
                 contentStream.beginText();
@@ -107,6 +113,18 @@ public class HeaderFooterWriter {
         } catch (IOException e) {
             throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
         }
+    }
+
+    private void resolveFont(String label, PDFont font) {
+        // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
+        // Type 1 fonts only support 8-bit code points.
+        latestSuitablefont = fontOrFallback(label, font, () -> {
+            if (canDisplay(label, latestSuitablefont)) {
+                return latestSuitablefont;
+            }
+            return findFontFor(document, label);
+        });
+        requireNotNullArg(latestSuitablefont, "Unable to find suitable font for the given label");
     }
 
     private Point2D findPositionInRotatedPage(int rotation, PDRectangle pageSize, Point2D position) {

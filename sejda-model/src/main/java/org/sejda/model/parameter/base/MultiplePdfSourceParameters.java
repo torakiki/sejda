@@ -59,6 +59,10 @@ abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters i
         sourceList.add(input);
     }
 
+    public void removeAllSources() {
+        sourceList.clear();
+    }
+
     /**
      * @return an unmodifiable view of the source list
      */
