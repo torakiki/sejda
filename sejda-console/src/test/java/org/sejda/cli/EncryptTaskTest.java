@@ -20,6 +20,7 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
@@ -65,7 +66,7 @@ public class EncryptTaskTest extends AbstractTaskTest {
     public void testPasswords_Defaults() {
         EncryptParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals("", parameters.getUserPassword());
-        assertEquals("", parameters.getOwnerPassword());
+        assertNotEquals("Random password is used as owner password when none provided by the user", "", parameters.getOwnerPassword());
     }
 
     public void testEncryptionType_Specified() {

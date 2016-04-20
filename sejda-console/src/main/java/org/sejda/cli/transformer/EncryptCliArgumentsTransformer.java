@@ -23,6 +23,8 @@ import org.sejda.cli.model.EncryptTaskCliArguments;
 import org.sejda.conversion.PdfAccessPermissionAdapter;
 import org.sejda.model.parameter.EncryptParameters;
 
+import java.util.UUID;
+
 /**
  * {@link CommandCliArgumentsTransformer} for the Encrypt task command line interface
  * 
@@ -46,7 +48,12 @@ public class EncryptCliArgumentsTransformer extends BaseCliArgumentsTransformer 
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 
-        parameters.setOwnerPassword(taskCliArguments.getAdministratorPassword());
+        String ownerPassword = taskCliArguments.getAdministratorPassword();
+        if(ownerPassword.isEmpty()){
+            ownerPassword = UUID.randomUUID().toString();
+        }
+
+        parameters.setOwnerPassword(ownerPassword);
         parameters.setUserPassword(taskCliArguments.getUserPassword());
         if (taskCliArguments.isAllow()) {
             for (PdfAccessPermissionAdapter eachAllowedPermissionAdapter : taskCliArguments.getAllow()) {
