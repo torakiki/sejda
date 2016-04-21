@@ -1,6 +1,6 @@
 /*
- * Copyright 2012 by Eduard Weissmann (edi.weissmann@gmail.com).
- * 
+ * Copyright 2016 by Eduard Weissmann (edi.weissmann@gmail.com).
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,34 @@ package org.sejda.core.service;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
+import org.sejda.model.parameter.edit.AddImageOperation;
+import org.sejda.model.parameter.edit.AddPageOperation;
 import org.sejda.model.parameter.edit.AddTextOperation;
+import org.sejda.model.parameter.edit.DeletePageOperation;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 @Ignore
 public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
 
     private EditParameters parameters;
     public static final Point2D TEXT_EDIT_POSITION = new Point(10, 10);
+    public static final Point2D IMAGE_POSITION = new Point(10, 10);
+
+    public static final int IMAGE_WIDTH = 124;
+    public static final int IMAGE_HEIGHT = 52;
 
     private EditParameters basicText(String text) throws IOException {
         return basicText(text, new PageRange(1, 1));
@@ -51,6 +63,26 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         parameters.setOutputPrefix("test_file[FILENUMBER]");
         parameters.addSource(customInput("pdf/test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        return parameters;
+    }
+
+    private EditParameters basicAddImage(PageRange pageRange) throws IOException {
+        EditParameters parameters = new EditParameters();
+        Source<?> imageSource = customNonPdfInput("image/draft.png");
+        AddImageOperation imageOperation = new AddImageOperation(imageSource, IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_POSITION, pageRange);
+        parameters.addImageOperation(imageOperation);
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        return parameters;
+    }
+
+    private EditParameters rotatedDocumentAddImage() throws IOException {
+        EditParameters parameters = basicAddImage(new PageRange(1));
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/rotated_pages.pdf"));
         return parameters;
     }
 
@@ -103,5 +135,50 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         });
     }
 
+    @Test
+    public void testAddingPngImage() throws Exception {
+        parameters = basicAddImage(new PageRange(1));
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertImageAtLocation(d, d.getPage(1), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testAddingImageToRotatedDocumentPages() throws Exception {
+        parameters = rotatedDocumentAddImage();
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertImageAtLocation(d, d.getPage(1), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+            assertImageAtLocation(d, d.getPage(2), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+            assertImageAtLocation(d, d.getPage(3), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+            assertImageAtLocation(d, d.getPage(4), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testAddingBlankPageWithImageAndTextAndRemovingPage() throws Exception {
+        parameters = basicAddImage(new PageRange(1, 1));
+        parameters.addTextOperation(new AddTextOperation("Sample text", StandardType1Font.HELVETICA_BOLD_OBLIQUE, 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(1, 1)));
+        parameters.addAddPageOperation(new AddPageOperation(1));
+        parameters.addDeletePageOperation(new DeletePageOperation(1));
+
+        // delete page operations get processed first
+        // then add page operations
+        // last the text & image operations
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(4));
+            assertTextEditAreaHasText(d.getPage(0), "Sample text");
+            assertImageAtLocation(d, d.getPage(0), IMAGE_POSITION, IMAGE_WIDTH, IMAGE_HEIGHT);
+        });
+        testContext.assertTaskCompleted();
+    }
+
     protected abstract void assertTextEditAreaHasText(PDPage page, String expectedText);
+
+    protected abstract void assertImageAtLocation(PDDocument Doc, PDPage page, Point2D position, int width, int height);
 }

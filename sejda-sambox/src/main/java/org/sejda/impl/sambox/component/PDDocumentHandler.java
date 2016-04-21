@@ -283,6 +283,15 @@ public class PDDocumentHandler implements Closeable {
     }
 
     /**
+     * Removes the given page to the underlying {@link PDDocument}
+     *
+     * @param pageNumber
+     */
+    public void removePage(int pageNumber) {
+        document.removePage(pageNumber - 1);
+    }
+
+    /**
      * Moves designated page to the end of the document.
      *
      * @param oldPageNumber
@@ -359,5 +368,15 @@ public class PDDocumentHandler implements Closeable {
     public void addBlankPage(PDRectangle mediaBox) {
         LOG.debug("Adding blank page");
         addPage(new PDPage(ofNullable(mediaBox).orElse(PDRectangle.LETTER)));
+    }
+
+    public void addBlankPageAfter(int pageNumber) {
+        if(pageNumber > 1) {
+            PDPage prevPage = document.getPage(pageNumber - 2);
+            document.getPages().insertAfter(new PDPage(prevPage.getMediaBox()), prevPage);
+        } else {
+            PDPage nextPage = document.getPage(pageNumber);
+            document.getPages().insertBefore(new PDPage(nextPage.getMediaBox()), nextPage);
+        }
     }
 }

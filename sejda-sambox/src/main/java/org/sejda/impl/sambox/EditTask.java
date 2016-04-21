@@ -20,17 +20,22 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
+import org.sejda.model.parameter.edit.AddImageOperation;
+import org.sejda.model.parameter.edit.AddPageOperation;
 import org.sejda.model.parameter.edit.AddTextOperation;
+import org.sejda.model.parameter.edit.DeletePageOperation;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +88,16 @@ public class EditTask extends BaseTask<EditParameters> {
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
 
+            for(DeletePageOperation deletePageOperation: parameters.getDeletePageOperations()) {
+                LOG.debug("Deleting page {}", deletePageOperation.getPageNumber());
+                documentHandler.removePage(deletePageOperation.getPageNumber());
+            }
+
+            for(AddPageOperation addPageOperation: parameters.getAddPageOperations()) {
+                LOG.debug("Adding new page after page {}", addPageOperation.getPageNumber() - 1);
+                documentHandler.addBlankPageAfter(addPageOperation.getPageNumber() - 1);
+            }
+
             int totalPages = documentHandler.getNumberOfPages();
 
             for (AddTextOperation textOperation : parameters.getTextOperations()) {
@@ -94,6 +109,18 @@ public class EditTask extends BaseTask<EditParameters> {
                     PDPage page = documentHandler.getPage(pageNumber);
                     PDFont font = defaultIfNull(getStandardType1Font(textOperation.getFont()), PDType1Font.HELVETICA);
                     textWriter.write(page, textOperation.getPosition(), textOperation.getText(), font, textOperation.getFontSize(), textOperation.getColor());
+                }
+            }
+
+            for(AddImageOperation imageOperation: parameters.getImageOperations()) {
+                PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
+                PDImageXObject image = PageImageWriter.toPDXImageObject(imageOperation.getImageSource());
+
+                SortedSet<Integer> pageNumbers = imageOperation.getPageRange().getPages(totalPages);
+
+                for (int pageNumber : pageNumbers) {
+                    PDPage page = documentHandler.getPage(pageNumber);
+                    imageWriter.write(page, image, imageOperation.getPosition(), imageOperation.getWidth(), imageOperation.getHeight());
                 }
             }
 

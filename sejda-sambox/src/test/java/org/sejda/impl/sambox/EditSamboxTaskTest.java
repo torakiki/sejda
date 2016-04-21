@@ -17,13 +17,21 @@
 package org.sejda.impl.sambox;
 
 import org.sejda.core.service.EditTaskTest;
+import org.sejda.impl.sambox.component.ImageLocationsExtractor;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.EditParameters;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -39,6 +47,24 @@ public class EditSamboxTaskTest extends EditTaskTest {
         try {
             assertThat(new PdfTextExtractorByArea().extractAddedText(page, TEXT_EDIT_POSITION).trim(), is(expectedText));
         } catch (TaskIOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Override
+    protected void assertImageAtLocation(PDDocument document, PDPage page, Point2D position, int width, int height) {
+        try {
+            ImageLocationsExtractor imageLocationsExtractor = new ImageLocationsExtractor();
+            imageLocationsExtractor.process(document);
+
+            java.util.List<Rectangle> imageLocations = imageLocationsExtractor.getImageLocations().get(page);
+
+            Rectangle rectangle = new Rectangle((int) position.getX(), (int) position.getY(), width, height);
+
+            assertThat(imageLocations, is(notNullValue()));
+            assertThat(imageLocations, hasItem(rectangle));
+
+        } catch (IOException e) {
             fail(e.getMessage());
         }
     }

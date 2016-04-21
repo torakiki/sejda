@@ -54,7 +54,7 @@ public final class IOUtils {
         return createTemporaryBuffer(".tmp");
     }
 
-    private static File createTemporaryBuffer(String extension) throws TaskIOException {
+    public static File createTemporaryBuffer(String extension) throws TaskIOException {
         try {
             File buffer = File.createTempFile(BUFFER_NAME, extension);
             buffer.deleteOnExit();

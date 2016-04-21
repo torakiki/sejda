@@ -24,6 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.sejda.util.RequireUtils.requireNotBlank;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -33,6 +34,7 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
@@ -118,5 +120,10 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     public PdfStreamSource customEncryptedInput(String path, String password) {
         return PdfStreamSource.newInstanceWithPassword(getClass().getClassLoader().getResourceAsStream(path),
                 randomAscii(16) + ".pdf", password);
+    }
+
+    public StreamSource customNonPdfInput(String path) {
+        String extension = FilenameUtils.getExtension(path);
+        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), randomAscii(16) + "." + extension);
     }
 }
