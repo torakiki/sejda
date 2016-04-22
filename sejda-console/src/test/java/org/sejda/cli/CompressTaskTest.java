@@ -35,13 +35,6 @@ public class CompressTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void testImageMax() {
-        OptimizeParameters parameters = defaultCommandLine().with("--imageMaxWidthOrHeight", "110")
-                .invokeSejdaConsole();
-        assertEquals(110, parameters.getImageMaxWidthOrHeight());
-    }
-
-    @Test
     public void testImageQuality() {
         OptimizeParameters parameters = defaultCommandLine().with("--imageQuality", "0.22").invokeSejdaConsole();
         assertEquals(0.22f, parameters.getImageQuality(), 0.01);

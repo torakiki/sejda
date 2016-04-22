@@ -42,7 +42,6 @@ public class CompressCliArgumentsTransformer extends BaseCliArgumentsTransformer
                     .forEach(parameters::addOptimization);
         }
         parameters.setImageDpi(taskCliArguments.getImageDpi());
-        parameters.setImageMaxWidthOrHeight(taskCliArguments.getImageMaxWidthOrHeight());
         parameters.setImageQuality(taskCliArguments.getImageQuality());
 
         return parameters;

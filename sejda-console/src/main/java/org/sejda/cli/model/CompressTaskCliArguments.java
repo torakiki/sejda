@@ -31,9 +31,6 @@ public interface CompressTaskCliArguments
     @Option(shortName = "d", description = "image DPI. Defaults to 72. (Ex --imageDpi 140) (optional)", defaultValue = "72")
     Integer getImageDpi();
 
-    @Option(shortName = "s", description = "image maximum width or height. Images larger than that will be resized down, keeping their aspect ratio. Defaults to 1280 (optional)", defaultValue = "1280")
-    Integer getImageMaxWidthOrHeight();
-
     @Option(shortName = "q", description = "image JPEG quality. Defaults to 0.8. Ex: --imageQuality 0.3 (optional)", defaultValue = "0.8")
     Float getImageQuality();
 

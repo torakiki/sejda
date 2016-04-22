@@ -32,7 +32,7 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
 
     private float imageQuality = 1.0f;
     private int imageDpi = 72;
-    private int imageMaxWidthOrHeight = 1280;
+    private int imageMinBytesSize = 0; // images under this threshold are not optimized
     private Set<Optimization> optimizations = new NullSafeSet<>();
 
     public float getImageQuality() {
@@ -51,14 +51,6 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         this.imageQuality = imageQuality;
     }
 
-    public int getImageMaxWidthOrHeight() {
-        return imageMaxWidthOrHeight;
-    }
-
-    public void setImageMaxWidthOrHeight(int imageMaxWidthOrHeight) {
-        this.imageMaxWidthOrHeight = imageMaxWidthOrHeight;
-    }
-
     public Set<Optimization> getOptimizations() {
         return optimizations;
     }
@@ -71,9 +63,13 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         this.optimizations.add(optimization);
     }
 
+    public int getImageMinBytesSize() {
+        return imageMinBytesSize;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizations).append(imageQuality)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizations).append(imageQuality).append(imageMinBytesSize)
                 .toHashCode();
     }
 
@@ -89,6 +85,7 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(getOptimizations(), parameter.getOptimizations())
                 .append(getImageQuality(), parameter.getImageQuality()).append(getImageDpi(), parameter.getImageDpi())
-                .append(getImageMaxWidthOrHeight(), parameter.getImageMaxWidthOrHeight()).isEquals();
+                .append(getImageMinBytesSize(), parameter.getImageMinBytesSize())
+                .isEquals();
     }
 }

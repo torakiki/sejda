@@ -38,12 +38,12 @@ import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.sambox.contentstream.PDFStreamEngine;
+import org.sejda.sambox.contentstream.operator.DrawObject;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
-import org.sejda.sambox.cos.COSBase;
-import org.sejda.sambox.cos.COSDictionary;
-import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.contentstream.operator.state.*;
+import org.sejda.sambox.cos.*;
 import org.sejda.sambox.encryption.MessageDigests;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -51,6 +51,7 @@ import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,10 +67,17 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
     private static final Logger LOG = LoggerFactory.getLogger(ImagesOptimizer.class);
 
     private Map<String, ReadOnlyFilteredCOSStream> optimizedByHash = new HashMap<>();
+    private Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> optimizedById = new HashMap<>();
     private OptimizeParameters parameters;
 
     ImagesOptimizer(OptimizeParameters parameters) {
         this.parameters = parameters;
+        addOperator(new Concatenate());
+        addOperator(new DrawObject());
+        addOperator(new SetGraphicsStateParameters());
+        addOperator(new Save());
+        addOperator(new Restore());
+        addOperator(new SetMatrix());
         addOperator(new XObjectOperator());
     }
 
@@ -89,51 +97,85 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
                 if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
-                    PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
-                    if (xobject instanceof PDImageXObject) {
-                        PDImageXObject image = (PDImageXObject) xobject;
-                        LOG.trace("Found image {}x{}", image.getHeight(), image.getWidth());
-                        removeMetadataIfNeeded(image);
-                        removeAlternatesIfNeeded(image);
+                    COSStream stream = (COSStream)existing;
+                    String subtype = stream.getNameAsString(COSName.SUBTYPE);
+                    if (COSName.IMAGE.getName().equals(subtype)) {
+                        long unfilteredSize = ((COSStream) existing).getFilteredLength();
+
+                        removeMetadataIfNeeded(stream);
+                        removeAlternatesIfNeeded(stream);
+
                         if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
-                            optimize(objectName, image);
+                            if(unfilteredSize > parameters.getImageMinBytesSize()) {
+                                long start = System.currentTimeMillis();
+                                PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
+                                long elapsed = System.currentTimeMillis() - start;
+                                if(elapsed > 500) LOG.debug("Loading PDXObject took " + elapsed + "ms");
+
+                                PDImageXObject image = (PDImageXObject) xobject;
+
+                                Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
+                                float imageXScale = ctmNew.getScalingFactorX();
+                                float imageYScale = ctmNew.getScalingFactorY();
+
+                                int displayHeight = (int)(imageXScale / 72.0f * parameters.getImageDpi());
+                                int displayWidth = (int)(imageYScale / 72.0f * parameters.getImageDpi());
+
+                                LOG.debug("Found image {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
+                                        image.getHeight(), image.getWidth(), displayWidth, displayHeight, imageYScale, imageXScale, unfilteredSize);
+
+                                optimize(objectName, image, existing.id(), displayWidth, displayHeight);
+                            }
                         }
-                    } else if (xobject instanceof PDFormXObject) {
-                        removeMetadataIfNeeded(xobject);
-                        removePieceInfoIfNeeded(xobject);
+                    } else if (COSName.FORM.getName().equals(subtype)) {
+                        PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
+                        removeMetadataIfNeeded(xobject.getCOSObject());
+                        removePieceInfoIfNeeded(xobject.getCOSObject());
                         showForm((PDFormXObject) xobject);
                     }
                 }
             }
         }
 
-        private void optimize(COSName objectName, PDImageXObject image) {
+        private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id, int displayWidth, int displayHeight) {
             try {
-                LOG.debug("Optimizing image {}", objectName.getName());
-                File tmpImageFile = ImageOptimizer.optimize(image.getImage(), parameters.getImageQuality(),
-                        parameters.getImageDpi(), parameters.getImageMaxWidthOrHeight());
+                LOG.debug("Optimizing image {} {} with dimensions {}x{}", objectName.getName(), id.toString(), image.getImage().getWidth(), image.getImage().getHeight());
+                ReadOnlyFilteredCOSStream optimizedImage = optimizedById.get(id);
 
-                // we wrap the existing so we can identify it later as "in use" and already processed
-                ReadOnlyFilteredCOSStream optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSObject());
+                if(optimizedImage == null) {
+                    long start = System.currentTimeMillis();
+                    File tmpImageFile = ImageOptimizer.optimize(image.getImage(), parameters.getImageQuality(),
+                            parameters.getImageDpi(), displayWidth, displayHeight);
 
-                double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSObject().getFilteredLength();
-                // can be compressed
-                if (sizeRate < 100) {
-                    String hash = Base64.getEncoder()
-                            .encodeToString(MessageDigests.md5().digest(Files.readAllBytes(tmpImageFile.toPath())));
-                    optimizedImage = optimizedByHash.get(hash);
-                    // is it the same as something we already compressed?
-                    if (isNull(optimizedImage)) {
-                        LOG.debug(String.format("Compressed image to %.2f%% of original size", sizeRate));
-                        optimizedImage = createFromJpegFile(tmpImageFile);
-                        optimizedByHash.put(hash, optimizedImage);
+                    long elapsed = System.currentTimeMillis() - start;
+                    if(elapsed > 500) LOG.debug("Optimizing image took " + elapsed + "ms");
+
+                    // we wrap the existing so we can identify it later as "in use" and already processed
+                    optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSObject());
+
+                    double sizeRate = tmpImageFile.length() * 100.0 / image.getCOSObject().getFilteredLength();
+                    // can be compressed
+                    if (sizeRate < 100) {
+                        String hash = Base64.getEncoder()
+                                .encodeToString(MessageDigests.md5().digest(Files.readAllBytes(tmpImageFile.toPath())));
+                        optimizedImage = optimizedByHash.get(hash);
+                        // is it the same as something we already compressed?
+                        if (isNull(optimizedImage)) {
+                            LOG.debug(String.format("Compressed image to %.2f%% of original size", sizeRate));
+                            optimizedImage = createFromJpegFile(tmpImageFile);
+                            optimizedByHash.put(hash, optimizedImage);
+                            optimizedById.put(id, optimizedImage);
+                        } else {
+                            LOG.debug("Reusing previously optimized image");
+                        }
                     } else {
-                        LOG.debug("Reusing previously optimized image");
+                        LOG.debug(String.format("Skipping already compressed image, result is %.2f%% of original size",
+                                sizeRate));
                     }
                 } else {
-                    LOG.trace(String.format("Skipping already compressed image, result is %.2f%% of original size",
-                            sizeRate));
+                    LOG.debug(String.format("Skipping already compressed image with id %s", id));
                 }
+
                 COSDictionary resources = context.getResources().getCOSObject();
                 COSDictionary xobjects = ofNullable(resources.getDictionaryObject(COSName.XOBJECT))
                         .filter(b -> b instanceof COSDictionary).map(b -> (COSDictionary) b).orElseGet(() -> {
@@ -152,21 +194,21 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
             }
         }
 
-        private void removeMetadataIfNeeded(PDXObject image) {
+        private void removeMetadataIfNeeded(COSStream cosObject) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_METADATA)) {
-                image.getCOSObject().removeItem(COSName.METADATA);
+                cosObject.removeItem(COSName.METADATA);
             }
         }
 
-        private void removePieceInfoIfNeeded(PDXObject image) {
+        private void removePieceInfoIfNeeded(COSStream cosObject) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_PIECE_INFO)) {
-                image.getCOSObject().removeItem(COSName.PIECE_INFO);
+                cosObject.removeItem(COSName.PIECE_INFO);
             }
         }
 
-        private void removeAlternatesIfNeeded(PDXObject image) {
+        private void removeAlternatesIfNeeded(COSStream cosObject) {
             if (parameters.getOptimizations().contains(Optimization.DISCARD_ALTERNATE_IMAGES)) {
-                image.getCOSObject().removeItem(COSName.getPDFName("Alternates"));
+                cosObject.removeItem(COSName.getPDFName("Alternates"));
             }
         }
 

@@ -53,7 +53,6 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
         parameters.addOptimization(Optimization.DISCARD_METADATA);
         parameters.setImageQuality(0.8f);
         parameters.setImageDpi(72);
-        parameters.setImageMaxWidthOrHeight(1280);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         testContext.directoryOutputTo(parameters);
     }
@@ -74,7 +73,7 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
         parameters.addSource(customInput("pdf/unoptimized.pdf"));
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(127L))));
+        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(347L))));
 
     }
 

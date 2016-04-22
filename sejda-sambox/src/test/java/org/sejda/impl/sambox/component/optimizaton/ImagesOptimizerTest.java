@@ -105,7 +105,6 @@ public class ImagesOptimizerTest {
         params.addOptimization(Optimization.COMPRESS_IMAGES);
         params.setImageQuality(0.8f);
         params.setImageDpi(72);
-        params.setImageMaxWidthOrHeight(1280);
         document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/test_optimize_repeated_images.pdf")));
         ImagesOptimizer optimizer = new ImagesOptimizer(params);

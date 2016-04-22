@@ -31,16 +31,16 @@ public class ImageOptimizer {
      * If the image is larger than maxWidthOrHeight pixels, it is downsized to fit the maxWidthOrHeight rectangle (keeping its aspect ratio). Image is saved as JPEG with specified
      * quality (1.0 is best/leave unchanged, 0.0 is worst). Image DPI is changed to dpi specified.
      */
-    public static File optimize(BufferedImage bufferedImage, float quality, int dpi, int maxWidthOrHeight)
+    public static File optimize(BufferedImage bufferedImage, float quality, int dpi, int width, int height)
             throws IOException {
         File outputFile = File.createTempFile("pdfimage", ".jpeg");
         outputFile.deleteOnExit();
         FileOutputStream fos = new FileOutputStream(outputFile);
 
         try {
-            if (bufferedImage.getHeight() > maxWidthOrHeight || bufferedImage.getWidth() > maxWidthOrHeight) {
+            if (bufferedImage.getHeight() > height || bufferedImage.getWidth() > width) {
                 LOG.debug("Resizing image");
-                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, maxWidthOrHeight);
+                bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, width, height);
             }
 
             // PNG read fix when converting to JPEG

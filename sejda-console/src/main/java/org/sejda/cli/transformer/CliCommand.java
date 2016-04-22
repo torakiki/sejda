@@ -304,7 +304,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> getArgumentsTransformer() {
             return new CompressCliArgumentsTransformer();
         }
-    }, "Compress PDF by optimizing images inside, reducing their dpi, size and/or quality.", "compress -f /tmp/file1.pdf --imageDpi 72 --imageQuality 0.8 --imageMaxWidthOrHeight 1280 -o /tmp"),
+    }, "Compress PDF by optimizing images inside, reducing their dpi, size and/or quality.", "compress -f /tmp/file1.pdf --imageDpi 72 --imageQuality 0.8 -o /tmp"),
     ADD_BACK_PAGES("addbackpages", new CliInterfacedTask<AddBackPagesTaskCliArguments, AddBackPagesParameters>() {
 
         @Override
