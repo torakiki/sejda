@@ -67,6 +67,10 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
         return imageMinBytesSize;
     }
 
+    public void setImageMinBytesSize(int imageMinBytesSize) {
+        this.imageMinBytesSize = imageMinBytesSize;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizations).append(imageQuality).append(imageMinBytesSize)
