@@ -23,8 +23,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.sejda.impl.sambox.component.OutlineUtils.getMaxOutlineLevel;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,10 +30,8 @@ import java.util.regex.Pattern;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 
@@ -105,7 +101,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
     public OutlineExtractPageDestinations getExtractPageDestinations(int level) {
         OutlineExtractPageDestinations destinations = new OutlineExtractPageDestinations();
 
-        List<OutlineItem> flatOutline = getFlatOutline();
+        List<OutlineItem> flatOutline = OutlineUtils.getFlatOutline(document);
 
         for(int i = 0; i < flatOutline.size(); i++) {
             OutlineItem item = flatOutline.get(i);
@@ -135,35 +131,4 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
         return destinations;
     }
 
-    private List<OutlineItem> getFlatOutline() {
-        PDOutlineNode outline = document.getDocumentCatalog().getDocumentOutline();
-
-        if(outline == null) return new ArrayList<>();
-
-        List<OutlineItem> result = recurseFlatOutline(outline.children(), 1);
-        Collections.sort(result);
-
-        return result;
-    }
-
-    private List<OutlineItem> recurseFlatOutline(Iterable<PDOutlineItem> items, int level) {
-        List<OutlineItem> result = new ArrayList<>();
-        for(PDOutlineItem item: items) {
-            toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
-                PDPage page = d.getPage();
-                int pageNumber;
-                if(page != null){
-                    pageNumber = pages.indexOf(page) + 1 /* 0-based index */;
-                } else {
-                    pageNumber = d.getPageNumber();
-                }
-                boolean specificLocation = d instanceof PDPageXYZDestination;
-                result.add(new OutlineItem(item.getTitle(), pageNumber, level, specificLocation));
-
-            });
-            result.addAll(recurseFlatOutline(item.children(), level + 1));
-        }
-
-        return result;
-    }
 }

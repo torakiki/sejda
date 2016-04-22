@@ -17,10 +17,16 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
@@ -29,10 +35,12 @@ import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Utility methods related to outline handling in SAMBox
  * 
@@ -68,6 +76,14 @@ public final class OutlineUtils {
             }
         }
         return maxLevel;
+    }
+
+    /**
+     * @param document
+     * @return a set containing the the outline levels having at least one page destination
+     */
+    public static Set<Integer> getOutlineLevelsWithPageDestination(PDDocument document) {
+        return getFlatOutline(document).stream().map(i -> i.level).collect(Collectors.toSet());
     }
 
     /**
@@ -119,5 +135,29 @@ public final class OutlineUtils {
         } else {
             to.closeNode();
         }
+    }
+
+    /**
+     * @param document
+     * @return A sorted flat representation of the document outline
+     */
+    public static List<OutlineItem> getFlatOutline(PDDocument document) {
+        return ofNullable(document.getDocumentCatalog().getDocumentOutline()).map(PDDocumentOutline::children)
+                .map(c -> recurseFlatOutline(document, c, 1)).orElseGet(ArrayList::new).stream()
+                .sorted(Comparator.comparingInt(i -> i.page)).collect(Collectors.toList());
+    }
+
+    private static List<OutlineItem> recurseFlatOutline(PDDocument document, Iterable<PDOutlineItem> items, int level) {
+        List<OutlineItem> result = new ArrayList<>();
+        for (PDOutlineItem item : items) {
+            toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
+                int pageNumber = ofNullable(d.getPage())
+                        .map(p -> document.getPages().indexOf(p) + 1 /* 0-based index */ )
+                        .orElseGet(() -> d.getPageNumber());
+                result.add(new OutlineItem(item.getTitle(), pageNumber, level));
+            });
+            result.addAll(recurseFlatOutline(document, item.children(), level + 1));
+        }
+        return result;
     }
 }

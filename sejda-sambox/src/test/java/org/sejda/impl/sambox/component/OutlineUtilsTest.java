@@ -28,6 +28,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
@@ -38,6 +40,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 /**
@@ -146,5 +149,80 @@ public class OutlineUtilsTest {
         assertNull(from.getTitle());
         OutlineUtils.copyOutlineDictionary(from, to);
         assertNotNull(to.getTitle());
+    }
+
+    @Test
+    public void noOutlineFlat() throws IOException {
+        try (PDDocument doc = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_no_outline.pdf")))) {
+            assertTrue(OutlineUtils.getFlatOutline(doc).isEmpty());
+        }
+    }
+
+    @Test
+    public void outlineFlat() throws IOException {
+        try (PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+            assertEquals(5, OutlineUtils.getFlatOutline(doc).size());
+        }
+    }
+
+    @Test
+    public void outlineLevels() throws IOException {
+        try (PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+            Set<Integer> levels = OutlineUtils.getOutlineLevelsWithPageDestination(doc);
+            assertEquals(3, levels.size());
+            assertTrue(levels.contains(1));
+            assertTrue(levels.contains(2));
+            assertTrue(levels.contains(3));
+        }
+    }
+
+    @Test
+    public void outlineLevelsParentHasNoLevel() {
+        PDPage page1 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("title");
+        PDOutlineItem child = new PDOutlineItem();
+        child.setTitle("child");
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page1);
+        child.addFirst(child2);
+        root.addLast(child);
+        outlines.addFirst(root);
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        Set<Integer> levels = OutlineUtils.getOutlineLevelsWithPageDestination(document);
+        assertEquals(1, levels.size());
+        assertTrue(levels.contains(3));
+    }
+
+    @Test
+    public void rootNoDestinationAndSorted() {
+        PDPage page1 = new PDPage();
+        PDPage page2 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        document.addPage(page2);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("title");
+        PDOutlineItem child = new PDOutlineItem();
+        child.setTitle("child");
+        child.setDestination(page2);
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page1);
+        root.addFirst(child);
+        root.addLast(child2);
+        outlines.addFirst(root);
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        List<OutlineItem> flat = OutlineUtils.getFlatOutline(document);
+        assertEquals(2, flat.size());
+        assertEquals("child2", flat.get(0).title);
     }
 }
