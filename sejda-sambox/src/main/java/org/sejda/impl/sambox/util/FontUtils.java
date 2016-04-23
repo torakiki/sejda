@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.sejda.fonts.OptionalUnicodeType0Font;
 import org.sejda.fonts.UnicodeType0Font;
+import org.sejda.model.pdf.FontResource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
@@ -98,7 +100,7 @@ public final class FontUtils {
         return font;
     }
 
-    private static PDFont loadFont(PDDocument document, UnicodeType0Font font) {
+    private static PDFont loadFont(PDDocument document, FontResource font) {
         InputStream in = font.getFontStream();
         try {
             PDType0Font loaded = PDType0Font.load(document, in);
@@ -122,15 +124,26 @@ public final class FontUtils {
         try {
             // lets make sure the jar is in the classpath
             Class.forName("org.sejda.fonts.UnicodeType0Font");
-            for (UnicodeType0Font font : UnicodeType0Font.values()) {
-                PDFont loaded = loadFont(document, font);
-                if (canDisplay(text, loaded)) {
-                    LOG.debug("Found suitable font {}", loaded.getName());
-                    return loaded;
-                }
+            PDFont found = findFontAmong(document, text, UnicodeType0Font.values());
+            if (nonNull(found)) {
+                return found;
             }
+            Class.forName("org.sejda.fonts.OptionalUnicodeType0Font");
+            return findFontAmong(document, text, OptionalUnicodeType0Font.values());
+
         } catch (ClassNotFoundException clf) {
             LOG.warn("Fallback fonts not available");
+        }
+        return null;
+    }
+
+    private static PDFont findFontAmong(PDDocument document, String text, FontResource... fonts) {
+        for (FontResource font : fonts) {
+            PDFont loaded = loadFont(document, font);
+            if (canDisplay(text, loaded)) {
+                LOG.debug("Found suitable font {}", loaded.getName());
+                return loaded;
+            }
         }
         return null;
     }

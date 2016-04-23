@@ -68,7 +68,7 @@ public class FontUtilsTest {
     @Test
     public void testFindFontFor() {
         assertEquals("NotoSansThai", findFontFor(new PDDocument(), "ทดสอบ").getName());
-        assertNull(findFontFor(new PDDocument(), "測試"));
+        assertNull(findFontFor(new PDDocument(), "വീട്"));
     }
 
     @Test
