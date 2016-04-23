@@ -242,6 +242,12 @@
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-icepdf</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcprov-ext-jdk15on</artifactId>
+					<groupId>org.bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.lexicalscope.jewelcli</groupId>
