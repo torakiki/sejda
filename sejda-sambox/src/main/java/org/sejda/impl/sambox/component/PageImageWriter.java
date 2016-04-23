@@ -18,28 +18,22 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import org.apache.commons.io.FilenameUtils;
-import org.imgscalr.Scalr;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.FileSource;
 import org.sejda.model.input.Source;
 import org.sejda.model.input.SourceDispatcher;
 import org.sejda.model.input.StreamSource;
-import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
-import org.sejda.sambox.util.Matrix;
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class PageImageWriter {
     private PDDocument document;
@@ -58,24 +52,6 @@ public class PageImageWriter {
         } catch (IOException e) {
             throw new TaskIOException("An error occurred writing image to the page.", e);
         }
-    }
-
-    private Point2D findPositionInRotatedPage(int rotation, int imageWidth, int imageHeight, Point2D position) {
-        // flip
-        AffineTransform transform = AffineTransform.getScaleInstance(1, -1);
-        if (rotation == 90) {
-            transform.translate(imageHeight, 0);
-        }
-        if (rotation == 180) {
-            transform.translate(imageWidth, -imageHeight);
-        }
-        if (rotation == 270) {
-            transform.translate(0, -imageWidth);
-        }
-        transform.rotate(Math.toRadians(-rotation));
-        // flip
-        transform.scale(1, -1);
-        return transform.transform(position, null);
     }
 
     public static PDImageXObject toPDXImageObject(Source<?> imageSource) throws TaskIOException {
