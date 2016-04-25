@@ -1,8 +1,15 @@
 package org.sejda.cli;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.util.CommandLineUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Represents the command line arguments passed to the {@link SejdaConsole}
@@ -12,7 +19,9 @@ import org.sejda.cli.transformer.CliCommand;
  */
 class RawArguments {
 
-    private final String[] arguments;
+    private String[] arguments;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RawArguments.class);
 
     /**
      * @param arguments
@@ -21,6 +30,8 @@ class RawArguments {
     public RawArguments(String[] arguments) {
         super();
         this.arguments = arguments.clone();
+        // support for Windows long command lines https://support.microsoft.com/en-us/kb/830473
+        loadArgumentsFromFileIfRequired();
     }
 
     public boolean isHelpRequest() {
@@ -74,5 +85,18 @@ class RawArguments {
 
     public boolean isEmptyCommandArguments() {
         return isCommandSpecified() && getCommandArguments().length == 0;
+    }
+
+    private void loadArgumentsFromFileIfRequired() {
+        // Read args from file to overcome https://support.microsoft.com/en-us/kb/830473
+        if(this.arguments.length == 1 && this.arguments[0].endsWith("args.txt")) {
+            try {
+                String argsAsString = FileUtils.readFileToString(new File(this.arguments[0]));
+                this.arguments = CommandLineUtils.translateCommandline(argsAsString);
+                LOG.info("Read arguments from file");
+            } catch (IOException e) {
+                LOG.warn("Could not read arguments from file", e);
+            }
+        }
     }
 }

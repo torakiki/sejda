@@ -136,7 +136,7 @@ public class SejdaConsole {
                 info.append(System.lineSeparator());
             });
         } catch (IOException e) {
-            LOG.error("An error occured while reading license information", e);
+            LOG.error("An error occurred while reading license information", e);
         }
         LOG.info(info.toString());
     }
