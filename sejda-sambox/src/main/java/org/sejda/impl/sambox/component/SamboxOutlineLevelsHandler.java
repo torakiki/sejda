@@ -91,7 +91,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
     private void addPageIfValid(OutlinePageDestinations destinations, PDPageDestination destination, String title) {
         if (isNotBlank(title)) {
             Matcher matcher = titleMatchingPattern.matcher(title);
-            if (matcher.matches()) {
+            if (matcher.matches() && destination.getPage() != null) {
                 destinations.addPage(pages.indexOf(destination.getPage()) + 1, title);
             }
         }
