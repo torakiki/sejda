@@ -118,11 +118,11 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 float imageXScale = ctmNew.getScalingFactorX();
                                 float imageYScale = ctmNew.getScalingFactorY();
 
-                                int displayHeight = (int)(imageXScale / 72.0f * parameters.getImageDpi());
-                                int displayWidth = (int)(imageYScale / 72.0f * parameters.getImageDpi());
+                                int displayHeight = (int)(imageYScale / 72.0f * parameters.getImageDpi());
+                                int displayWidth = (int)(imageXScale / 72.0f * parameters.getImageDpi());
 
                                 LOG.debug("Found image {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
-                                        image.getHeight(), image.getWidth(), displayWidth, displayHeight, imageYScale, imageXScale, unfilteredSize);
+                                        image.getHeight(), image.getWidth(), displayHeight, displayWidth, imageYScale, imageXScale, unfilteredSize);
 
                                 optimize(objectName, image, existing.id(), displayWidth, displayHeight);
                             }

@@ -38,8 +38,12 @@ public class ImageOptimizer {
         FileOutputStream fos = new FileOutputStream(outputFile);
 
         try {
-            if (bufferedImage.getHeight() > height || bufferedImage.getWidth() > width) {
-                LOG.debug("Resizing image");
+            int relevantDelta = 20;
+            boolean isResizeRelevant = Math.abs(bufferedImage.getWidth() - width) > relevantDelta && Math.abs(bufferedImage.getHeight() - height) > relevantDelta;
+            boolean isShirinking = bufferedImage.getHeight() > height || bufferedImage.getWidth() > width;
+
+            if (isResizeRelevant && isShirinking) {
+                LOG.debug("Resizing image from {}x{} to {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight(), width, height);
                 bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, width, height);
             }
 

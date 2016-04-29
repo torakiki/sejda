@@ -30,7 +30,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
  */
 public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    private float imageQuality = 1.0f;
+    private float imageQuality = 0.65f;
     private int imageDpi = 72;
     private int imageMinBytesSize = 0; // images under this threshold are not optimized
     private Set<Optimization> optimizations = new NullSafeSet<>();
