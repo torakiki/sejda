@@ -77,7 +77,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private AcroFormsMerger acroFormsMerger;
     private TableOfContentsCreator tocCreator;
     private FilenameFooterWriter footerWriter;
-    private PDRectangle currentPageSize = PDRectangle.LETTER;
+    private PDRectangle currentPageSize = PDRectangle.A4;
     private long pagesCounter = 0;
 
     @Override
@@ -119,7 +119,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 relativeCounter++;
 
                 PDPage page = sourceDocumentHandler.getPage(currentPage);
-                currentPageSize = page.getMediaBox();
+                // we keep rotation into account
+                currentPageSize = page.getMediaBox().rotate(page.getRotation());
                 // we don't use the original page because once added to the new tree we loose inheritable attributes
                 // so we use a page duplicate to explicitly assign inheritable resources
                 PDPage importedPage = destinationDocument.importPage(page);
@@ -128,6 +129,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
                 // processing the first page of the source
                 if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
+                    tocCreator.pageSizeIfNotSet(currentPageSize);
                     if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                         sourceBaseName = ofNullable(
                                 sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())

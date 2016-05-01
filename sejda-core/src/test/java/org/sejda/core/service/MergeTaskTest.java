@@ -36,6 +36,7 @@ import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 
 /**
  * Test for the merge task
@@ -100,6 +101,23 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         doExecuteMergeAll(false, 19, parameters);
+    }
+
+    @Test
+    public void executeMergeRotatedTocPage() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(false);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/rotated_pages.pdf", "name.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d->{
+            assertEquals(new PDRectangle(0, 0, 595, 842).rotate(90).toString(), d.getPage(0).getMediaBox().toString());
+        });
     }
 
     @Test

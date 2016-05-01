@@ -30,6 +30,7 @@ import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 
 /**
@@ -147,4 +148,15 @@ public class TableOfContentsCreatorTest {
         assertEquals(1, doc.getNumberOfPages());
     }
 
+    @Test
+    public void testToCPageSize() {
+        PDDocument doc = new PDDocument();
+        assertEquals(0, doc.getNumberOfPages());
+        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        victim.pageSizeIfNotSet(PDRectangle.LETTER);
+        victim.appendItem("test.", 100, new PDAnnotationLink());
+        victim.addToC();
+        // TODO investigate equal of PDRectange, shouldn't two rectangles be equal if they have same values?
+        assertEquals(PDRectangle.LETTER.toString(), doc.getPage(0).getMediaBox().toString());
+    }
 }

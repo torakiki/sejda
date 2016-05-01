@@ -30,6 +30,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.toc.ToCPolicy;
@@ -56,7 +57,6 @@ public class TableOfContentsCreator {
 
     private static final int FONT_SIZE = 14;
     private static final int LINE_HEIGHT = FONT_SIZE + 9;
-    private static final PDRectangle PAGE_SIZE = PDRectangle.A4;
     private static final int MARGIN = 40;
     private static final float FONT_SCALE = (float) FONT_SIZE / 1000;
     private static final String SEPARATOR = "  ";
@@ -64,6 +64,7 @@ public class TableOfContentsCreator {
     private final Deque<ToCItem> items = new LinkedList<>();
     private PDDocument document;
     private ToCPolicy policy;
+    private PDRectangle pageSize = null;
 
     public TableOfContentsCreator(ToCPolicy policy, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
@@ -111,7 +112,7 @@ public class TableOfContentsCreator {
         LinkedList<PDPage> pages = new LinkedList<>();
         if (shouldGenerateToC()) {
             PDFont font = PDType1Font.HELVETICA;
-            int maxRows = (int) (PAGE_SIZE.getHeight() - (MARGIN * 2)) / LINE_HEIGHT;
+            int maxRows = (int) (pageSize().getHeight() - (MARGIN * 2)) / LINE_HEIGHT;
             while (!items.isEmpty()) {
                 int row = 0;
                 float separatorWidth = stringLength(font, SEPARATOR);
@@ -124,7 +125,7 @@ public class TableOfContentsCreator {
                             row++;
                             font = fontOrFallback(i.text, font, () -> FontUtils.findFontFor(document, i.text));
                             requireIOCondition(nonNull(font), "Unable to find suitable font for " + i.text);
-                            float y = PAGE_SIZE.getHeight() - MARGIN - (row * LINE_HEIGHT);
+                            float y = pageSize().getHeight() - MARGIN - (row * LINE_HEIGHT);
                             stream.beginText();
                             stream.setFont(font, FONT_SIZE);
                             stream.setTextMatrix(new Matrix(AffineTransform.getTranslateInstance(MARGIN, y)));
@@ -138,7 +139,7 @@ public class TableOfContentsCreator {
                             stream.showText(pageString);
                             stream.endText();
                             i.annotation.setRectangle(
-                                    new PDRectangle(MARGIN, y, PAGE_SIZE.getWidth() - (2 * MARGIN), FONT_SIZE));
+                                    new PDRectangle(MARGIN, y, pageSize().getWidth() - (2 * MARGIN), FONT_SIZE));
                             page.getAnnotations().add(i.annotation);
                             // we didn't sanitieze the text so it's shorter then the available space and needs a separator line
                             if (itemText.equals(i.text)) {
@@ -157,7 +158,8 @@ public class TableOfContentsCreator {
 
     private String sanitize(String text, PDFont font, float separatingLineEndingX, float separatorWidth)
             throws IOException {
-        float maxLen = PAGE_SIZE.getWidth() - MARGIN - (PAGE_SIZE.getWidth() - separatingLineEndingX) - separatorWidth;
+        float maxLen = pageSize().getWidth() - MARGIN - (pageSize().getWidth() - separatingLineEndingX)
+                - separatorWidth;
         if (stringLength(font, text) > maxLen) {
             LOG.debug("Truncating ToC text to fit available space");
             int currentLength = text.length() / 2;
@@ -178,7 +180,7 @@ public class TableOfContentsCreator {
 
     private PDPage createPage(LinkedList<PDPage> pages) {
         LOG.debug("Creating new ToC page");
-        PDPage page = new PDPage(PAGE_SIZE);
+        PDPage page = new PDPage(pageSize());
         pages.add(page);
         return page;
     }
@@ -188,7 +190,7 @@ public class TableOfContentsCreator {
     }
 
     private float getPageNumberX(float separatorWidth, PDFont font, ToCItem i) throws IOException {
-        return PAGE_SIZE.getWidth() - MARGIN - separatorWidth - stringLength(font, Long.toString(i.page));
+        return pageSize().getWidth() - MARGIN - separatorWidth - stringLength(font, Long.toString(i.page));
     }
 
     private float stringLength(PDFont font, String text) throws IOException {
@@ -201,6 +203,16 @@ public class TableOfContentsCreator {
 
     public boolean shouldGenerateToC() {
         return policy != ToCPolicy.NONE;
+    }
+
+    public void pageSizeIfNotSet(PDRectangle pageSize) {
+        if (this.pageSize == null) {
+            this.pageSize = pageSize;
+        }
+    }
+
+    private PDRectangle pageSize() {
+        return Optional.ofNullable(pageSize).orElse(PDRectangle.A4);
     }
 
     private static class ToCItem {
