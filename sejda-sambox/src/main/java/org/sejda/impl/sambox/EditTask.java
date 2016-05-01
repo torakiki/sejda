@@ -88,9 +88,13 @@ public class EditTask extends BaseTask<EditParameters> {
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
 
-            for(DeletePageOperation deletePageOperation: parameters.getDeletePageOperations()) {
-                LOG.debug("Deleting page {}", deletePageOperation.getPageNumber());
-                documentHandler.removePage(deletePageOperation.getPageNumber());
+            // to be able to delete multiple pages without having issues due to index shift
+            // remove them in descending order, one by one
+            int[] pagesToDeleteSorted = parameters.getDeletePageOperations().stream().mapToInt(DeletePageOperation::getPageNumber).sorted().toArray();
+            for(int i = pagesToDeleteSorted.length - 1; i >= 0; i--) {
+                int pageNumber = pagesToDeleteSorted[i];
+                LOG.debug("Deleting page {}", pageNumber);
+                documentHandler.removePage(pageNumber);
             }
 
             for(AddPageOperation addPageOperation: parameters.getAddPageOperations()) {

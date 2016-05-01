@@ -178,6 +178,25 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         testContext.assertTaskCompleted();
     }
 
+    @Test
+    public void testRemovingMultiplePages() throws Exception {
+        EditParameters parameters = new EditParameters();
+        parameters.addDeletePageOperation(new DeletePageOperation(1));
+        parameters.addDeletePageOperation(new DeletePageOperation(3));
+        parameters.addDeletePageOperation(new DeletePageOperation(4));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(1));
+        });
+        testContext.assertTaskCompleted();
+    }
+
     protected abstract void assertTextEditAreaHasText(PDPage page, String expectedText);
 
     protected abstract void assertImageAtLocation(PDDocument Doc, PDPage page, Point2D position, int width, int height);
