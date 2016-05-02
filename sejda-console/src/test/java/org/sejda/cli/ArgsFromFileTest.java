@@ -19,19 +19,11 @@
  */
 package org.sejda.cli;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
-import org.sejda.model.RectangularBox;
-import org.sejda.model.parameter.CropParameters;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
 
 /**
  * Tests for providing args via txt file

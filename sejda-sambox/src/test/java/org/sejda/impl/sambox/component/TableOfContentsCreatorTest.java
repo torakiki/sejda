@@ -156,7 +156,6 @@ public class TableOfContentsCreatorTest {
         victim.pageSizeIfNotSet(PDRectangle.LETTER);
         victim.appendItem("test.", 100, new PDAnnotationLink());
         victim.addToC();
-        // TODO investigate equal of PDRectange, shouldn't two rectangles be equal if they have same values?
-        assertEquals(PDRectangle.LETTER.toString(), doc.getPage(0).getMediaBox().toString());
+        assertEquals(PDRectangle.LETTER, doc.getPage(0).getMediaBox());
     }
 }
