@@ -18,7 +18,7 @@
  */
 package org.sejda.core.service;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -109,7 +109,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public PdfStreamSource customInput(String path) {
         return PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader().getResourceAsStream(path),
-                randomAscii(16) + ".pdf");
+                randomAlphanumeric(16) + ".pdf");
     }
 
     public PdfStreamSource customInput(String path, String name) {
@@ -119,11 +119,11 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public PdfStreamSource customEncryptedInput(String path, String password) {
         return PdfStreamSource.newInstanceWithPassword(getClass().getClassLoader().getResourceAsStream(path),
-                randomAscii(16) + ".pdf", password);
+                randomAlphanumeric(16) + ".pdf", password);
     }
 
     public StreamSource customNonPdfInput(String path) {
         String extension = FilenameUtils.getExtension(path);
-        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), randomAscii(16) + "." + extension);
+        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), randomAlphanumeric(16) + "." + extension);
     }
 }
