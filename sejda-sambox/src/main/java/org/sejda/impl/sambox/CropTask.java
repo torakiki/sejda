@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -60,6 +61,7 @@ public class CropTask extends BaseTask<CropParameters> {
     private SingleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
+    private AcroFormsMerger acroFormsMerger;
 
     @Override
     public void before(CropParameters parameters) {
@@ -78,6 +80,14 @@ public class CropTask extends BaseTask<CropParameters> {
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);
         this.destinationDocument = new PDDocumentHandler();
+        destinationDocument.setVersionOnPDDocument(parameters.getVersion());
+        LOG.debug("Done with version");
+        destinationDocument.initialiseBasedOn(sourceDocumentHandler.getUnderlyingPDDocument());
+        destinationDocument.setCompress(parameters.isCompress());
+        LOG.debug("Done with init");
+
+        this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
+                this.destinationDocument.getUnderlyingPDDocument());
 
         List<PDRectangle> cropAreas = parameters.getCropAreas().stream().map(r -> new PDRectangle(r.getLeft(),
                 r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom())).collect(Collectors.toList());
@@ -99,9 +109,14 @@ public class CropTask extends BaseTask<CropParameters> {
                 sourceDocumentHandler.getUnderlyingPDDocument());
         clipSignatures(annotations.values());
 
-        destinationDocument.setCreatorOnPDDocument();
-        destinationDocument.setVersionOnPDDocument(parameters.getVersion());
-        destinationDocument.setCompress(parameters.isCompress());
+        acroFormsMerger.mergeForm(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
+                annotations);
+
+        if (acroFormsMerger.hasForm()) {
+            LOG.debug("Adding generated AcroForm");
+            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
+        }
+
         destinationDocument.savePDDocument(tmpFile);
         nullSafeCloseQuietly(sourceDocumentHandler);
 

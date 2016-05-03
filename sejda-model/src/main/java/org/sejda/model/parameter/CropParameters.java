@@ -23,12 +23,14 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -44,6 +46,9 @@ public class CropParameters extends SinglePdfSourceSingleOutputParameters {
     @Valid
     @NotEmpty
     private final Set<RectangularBox> cropAreas = new NullSafeSet<RectangularBox>();
+
+    @NotNull
+    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE;
 
     /**
      * @return an unmodifiable view of the crop areas.
@@ -68,9 +73,17 @@ public class CropParameters extends SinglePdfSourceSingleOutputParameters {
         cropAreas.add(area);
     }
 
+    public AcroFormPolicy getAcroFormPolicy() {
+        return acroFormPolicy;
+    }
+
+    public void setAcroFormPolicy(AcroFormPolicy acroFormPolicy) {
+        this.acroFormPolicy = acroFormPolicy;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(cropAreas).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(cropAreas).append(acroFormPolicy).toHashCode();
     }
 
     @Override
@@ -82,6 +95,9 @@ public class CropParameters extends SinglePdfSourceSingleOutputParameters {
             return false;
         }
         CropParameters parameter = (CropParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(cropAreas, parameter.cropAreas).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(cropAreas, parameter.cropAreas)
+                .append(acroFormPolicy, parameter.acroFormPolicy)
+                .isEquals();
     }
 }
