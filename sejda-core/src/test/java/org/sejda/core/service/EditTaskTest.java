@@ -24,7 +24,7 @@ import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
 import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.AddPageOperation;
+import org.sejda.model.parameter.edit.InsertPageOperation;
 import org.sejda.model.parameter.edit.AddTextOperation;
 import org.sejda.model.parameter.edit.DeletePageOperation;
 import org.sejda.model.pdf.StandardType1Font;
@@ -77,6 +77,11 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         parameters.addSource(customInput("pdf/test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
+    }
+
+    private AddTextOperation textOperationForPage(String text, int page) {
+        return new AddTextOperation(text, StandardType1Font.HELVETICA_BOLD_OBLIQUE,
+                12, Color.RED, TEXT_EDIT_POSITION, new PageRange(page, page));
     }
 
     private EditParameters rotatedDocumentAddImage() throws IOException {
@@ -162,7 +167,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     public void testAddingBlankPageWithImageAndTextAndRemovingPage() throws Exception {
         parameters = basicAddImage(new PageRange(1, 1));
         parameters.addTextOperation(new AddTextOperation("Sample text", StandardType1Font.HELVETICA_BOLD_OBLIQUE, 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(1, 1)));
-        parameters.addAddPageOperation(new AddPageOperation(1));
+        parameters.addInsertPageOperation(new InsertPageOperation(1));
         parameters.addDeletePageOperation(new DeletePageOperation(1));
 
         // delete page operations get processed first
@@ -196,6 +201,64 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         });
         testContext.assertTaskCompleted();
     }
+
+    @Test
+    public void testInsertPageBeforeFirst() throws Exception {
+        EditParameters parameters = new EditParameters();
+        parameters.addInsertPageOperation(new InsertPageOperation(1));
+        parameters.addTextOperation(textOperationForPage("Page 1 text", 1));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(2));
+            assertTextEditAreaHasText(d.getPage(0), "Page 1 text");
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testInsertPageAfterFirst() throws Exception {
+        EditParameters parameters = new EditParameters();
+        parameters.addInsertPageOperation(new InsertPageOperation(2));
+        parameters.addTextOperation(textOperationForPage("Page 2 text", 2));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(2));
+            assertTextEditAreaHasText(d.getPage(1), "Page 2 text");
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testInsertPageAfterLast() throws Exception {
+        EditParameters parameters = new EditParameters();
+        parameters.addInsertPageOperation(new InsertPageOperation(5));
+        parameters.addTextOperation(textOperationForPage("Page 5 text", 5));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(5));
+            assertTextEditAreaHasText(d.getPage(4), "Page 5 text");
+        });
+        testContext.assertTaskCompleted();
+    }
+
 
     protected abstract void assertTextEditAreaHasText(PDPage page, String expectedText);
 

@@ -21,11 +21,11 @@ package org.sejda.model.parameter.edit;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-public class AddPageOperation {
+public class InsertPageOperation {
 
     private int pageNumber;
 
-    public AddPageOperation(int pageNumber) {
+    public InsertPageOperation(int pageNumber) {
         this.pageNumber = pageNumber;
     }
 
@@ -39,7 +39,7 @@ public class AddPageOperation {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        AddPageOperation that = (AddPageOperation) o;
+        InsertPageOperation that = (InsertPageOperation) o;
 
         return new EqualsBuilder()
                 .append(pageNumber, that.pageNumber)

@@ -371,12 +371,12 @@ public class PDDocumentHandler implements Closeable {
     }
 
     public void addBlankPageAfter(int pageNumber) {
-        if(pageNumber > 1) {
-            PDPage prevPage = document.getPage(pageNumber - 2);
-            document.getPages().insertAfter(new PDPage(prevPage.getMediaBox()), prevPage);
-        } else {
-            PDPage nextPage = document.getPage(pageNumber);
-            document.getPages().insertBefore(new PDPage(nextPage.getMediaBox()), nextPage);
-        }
+        PDPage target = document.getPage(pageNumber - 1);
+        document.getPages().insertAfter(new PDPage(target.getMediaBox()), target);
+    }
+
+    public void addBlankPageBefore(int pageNumber) {
+        PDPage target = document.getPage(pageNumber - 1);
+        document.getPages().insertBefore(new PDPage(target.getMediaBox()), target);
     }
 }

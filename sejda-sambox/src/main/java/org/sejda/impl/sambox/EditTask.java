@@ -27,7 +27,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
 import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.AddPageOperation;
+import org.sejda.model.parameter.edit.InsertPageOperation;
 import org.sejda.model.parameter.edit.AddTextOperation;
 import org.sejda.model.parameter.edit.DeletePageOperation;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
@@ -97,9 +97,15 @@ public class EditTask extends BaseTask<EditParameters> {
                 documentHandler.removePage(pageNumber);
             }
 
-            for(AddPageOperation addPageOperation: parameters.getAddPageOperations()) {
-                LOG.debug("Adding new page after page {}", addPageOperation.getPageNumber() - 1);
-                documentHandler.addBlankPageAfter(addPageOperation.getPageNumber() - 1);
+            for(InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {
+                int pageNumber = insertPageOperation.getPageNumber();
+                if(pageNumber > 1) {
+                    LOG.debug("Adding new page after page {}", pageNumber - 1);
+                    documentHandler.addBlankPageAfter(pageNumber - 1);
+                } else {
+                    LOG.debug("Adding new page before page {}", pageNumber);
+                    documentHandler.addBlankPageBefore(pageNumber);
+                }
             }
 
             int totalPages = documentHandler.getNumberOfPages();
