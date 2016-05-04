@@ -106,7 +106,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                         removeAlternatesIfNeeded(stream);
 
                         if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
-                            if(unfilteredSize > parameters.getImageMinBytesSize()) {
+                            if(unfilteredSize > parameters.getImageMinBytesSize() && !isJbig2Image(existing)) {
                                 long start = System.currentTimeMillis();
                                 PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
                                 long elapsed = System.currentTimeMillis() - start;
@@ -135,6 +135,16 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                     }
                 }
             }
+        }
+
+        private boolean isJbig2Image(COSBase existing) {
+            COSBase filters = ((COSStream) existing).getFilters();
+            if(filters.equals(COSName.JBIG2_DECODE)) {
+                LOG.debug("Skipping JBIG2 encoded image");
+                return true;
+            }
+
+            return false;
         }
 
         private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id, int displayWidth, int displayHeight) {
