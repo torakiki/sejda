@@ -139,7 +139,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private boolean isJbig2Image(COSBase existing) {
             COSBase filters = ((COSStream) existing).getFilters();
-            if(filters.equals(COSName.JBIG2_DECODE)) {
+            if(filters != null && filters.equals(COSName.JBIG2_DECODE)) {
                 LOG.debug("Skipping JBIG2 encoded image");
                 return true;
             }
