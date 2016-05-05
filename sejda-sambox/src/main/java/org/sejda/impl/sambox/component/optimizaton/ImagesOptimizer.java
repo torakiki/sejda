@@ -42,8 +42,17 @@ import org.sejda.sambox.contentstream.operator.DrawObject;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
-import org.sejda.sambox.contentstream.operator.state.*;
-import org.sejda.sambox.cos.*;
+import org.sejda.sambox.contentstream.operator.state.Concatenate;
+import org.sejda.sambox.contentstream.operator.state.Restore;
+import org.sejda.sambox.contentstream.operator.state.Save;
+import org.sejda.sambox.contentstream.operator.state.SetGraphicsStateParameters;
+import org.sejda.sambox.contentstream.operator.state.SetMatrix;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.encryption.MessageDigests;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -100,15 +109,16 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                     COSStream stream = (COSStream)existing;
                     String subtype = stream.getNameAsString(COSName.SUBTYPE);
                     if (COSName.IMAGE.getName().equals(subtype)) {
-                        long unfilteredSize = ((COSStream) existing).getFilteredLength();
+                        long unfilteredSize = stream.getFilteredLength();
 
                         removeMetadataIfNeeded(stream);
                         removeAlternatesIfNeeded(stream);
 
                         if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
-                            if(unfilteredSize > parameters.getImageMinBytesSize() && !isJbig2Image(existing)) {
+                            if (unfilteredSize > parameters.getImageMinBytesSize() && !isJbig2Image(stream)) {
                                 long start = System.currentTimeMillis();
-                                PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
+                                PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(),
+                                        context.getResources());
                                 long elapsed = System.currentTimeMillis() - start;
                                 if(elapsed > 500) LOG.debug("Loading PDXObject took " + elapsed + "ms");
 
@@ -124,7 +134,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 LOG.debug("Found image {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
                                         image.getHeight(), image.getWidth(), displayHeight, displayWidth, imageYScale, imageXScale, unfilteredSize);
 
-                                optimize(objectName, image, existing.id(), displayWidth, displayHeight);
+                                optimize(objectName, image, stream.id(), displayWidth, displayHeight);
                             }
                         }
                     } else if (COSName.FORM.getName().equals(subtype)) {
@@ -137,13 +147,16 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
             }
         }
 
-        private boolean isJbig2Image(COSBase existing) {
-            COSBase filters = ((COSStream) existing).getFilters();
-            if(filters != null && filters.equals(COSName.JBIG2_DECODE)) {
+        private boolean isJbig2Image(COSStream image) {
+            COSBase filters = image.getFilters();
+            if (filters instanceof COSName) {
                 LOG.debug("Skipping JBIG2 encoded image");
-                return true;
+                return COSName.JBIG2_DECODE.equals(filters);
             }
-
+            if (filters instanceof COSArray) {
+                LOG.debug("Skipping JBIG2 encoded image");
+                return ((COSArray) filters).contains(COSName.JBIG2_DECODE);
+            }
             return false;
         }
 
