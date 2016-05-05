@@ -17,6 +17,8 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sejda.model.TopLeftRectangularBox;
@@ -41,5 +43,18 @@ public class SplitByTextTaskTest extends AbstractTaskTest {
     public void optimizedYes() {
         SplitByTextContentParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
         assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
+    }
+
+    @Test
+    public void discardOutline() {
+        SplitByTextContentParameters parameters = defaultCommandLine().withFlag("--discardOutline")
+                .invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        SplitByTextContentParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }

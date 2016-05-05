@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
@@ -35,13 +36,14 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * Specify which outline level to use for selecting bookmarks and optionally a regex to filter them.
  */
 public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputParameters
-        implements OptimizableOutputTaskParameters {
+        implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     @Min(1)
     private int level;
     private String matchingTitleRegEx;
+    private boolean discardOutline = false;
 
     public ExtractByOutlineParameters(int level) {
         this.level = level;
@@ -60,12 +62,6 @@ public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputPar
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this).appendSuper(super.toString()).append("level", level)
-                .append("matchingTitleRegEx", matchingTitleRegEx).toString();
-    }
-
-    @Override
     public OptimizationPolicy getOptimizationPolicy() {
         return optimizationPolicy;
     }
@@ -76,9 +72,25 @@ public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputPar
     }
 
     @Override
+    public boolean discardOutline() {
+        return discardOutline;
+    }
+
+    @Override
+    public void discardOutline(boolean discardOutline) {
+        this.discardOutline = discardOutline;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("level", level)
+                .append("matchingTitleRegEx", matchingTitleRegEx).toString();
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(level)
-                .append(matchingTitleRegEx).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
+                .append(level).append(matchingTitleRegEx).toHashCode();
     }
 
     @Override
@@ -91,7 +103,8 @@ public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputPar
         }
         ExtractByOutlineParameters parameter = (ExtractByOutlineParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(optimizationPolicy, parameter.optimizationPolicy).append(level, parameter.getLevel())
+                .append(optimizationPolicy, parameter.optimizationPolicy)
+                .append(discardOutline, parameter.discardOutline).append(level, parameter.getLevel())
                 .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();
     }
 }

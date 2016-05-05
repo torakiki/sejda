@@ -86,7 +86,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                 .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
             extractor.optimize();
         }
-        extractor.save(tmpFile);
+        extractor.save(tmpFile, parameters.discardOutline());
 
         closeResource();
 

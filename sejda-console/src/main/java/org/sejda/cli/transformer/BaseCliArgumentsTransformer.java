@@ -20,6 +20,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.exception.ArgumentValidationException;
+import org.sejda.cli.model.CliArgumentWithDiscardableOutline;
 import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageAndDirectoryOutput;
 import org.sejda.cli.model.CliArgumentsWithImageFileOutput;
@@ -35,6 +36,7 @@ import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
 import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
@@ -115,6 +117,17 @@ public class BaseCliArgumentsTransformer {
     protected void populateOptimizableOutputParameters(OptimizableOutputTaskParameters parameters,
             CliArgumentsWithOptimizableOutput taskCliArguments) {
         parameters.setOptimizationPolicy(taskCliArguments.getOptimize().getEnumValue());
+    }
+
+    /**
+     * Populates common parameters for a task where the output outline can be discarded
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateDiscardableOutlineParameters(DiscardableOutlineTaskParameters parameters,
+            CliArgumentWithDiscardableOutline taskCliArguments) {
+        parameters.discardOutline(taskCliArguments.isDiscardOutline());
     }
 
     /**

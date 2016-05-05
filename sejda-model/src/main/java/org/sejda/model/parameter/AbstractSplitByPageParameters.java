@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PagesSelection;
@@ -37,9 +38,10 @@ import org.sejda.model.pdf.page.PagesSelection;
  * 
  */
 public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters
-        implements PagesSelection, OptimizableOutputTaskParameters {
+        implements PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
+    private boolean discardOutline = false;
 
     @Override
     public OptimizationPolicy getOptimizationPolicy() {
@@ -49,6 +51,16 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
     @Override
     public void setOptimizationPolicy(OptimizationPolicy optimizationPolicy) {
         this.optimizationPolicy = optimizationPolicy;
+    }
+
+    @Override
+    public boolean discardOutline() {
+        return discardOutline;
+    }
+
+    @Override
+    public void discardOutline(boolean discardOutline) {
+        this.discardOutline = discardOutline;
     }
 
     /**
@@ -61,7 +73,8 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
+                .toHashCode();
     }
 
     @Override
@@ -74,6 +87,8 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
         }
         AbstractSplitByPageParameters parameter = (AbstractSplitByPageParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(optimizationPolicy, parameter.optimizationPolicy).isEquals();
+                .append(optimizationPolicy, parameter.optimizationPolicy)
+                .append(discardOutline, parameter.discardOutline)
+                .isEquals();
     }
 }

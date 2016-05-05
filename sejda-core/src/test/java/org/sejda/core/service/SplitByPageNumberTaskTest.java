@@ -19,6 +19,10 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.junit.Ignore;
@@ -70,7 +74,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     }
 
     @Test
-    public void burstOutline() throws IOException {
+    public void splitWithOutline() throws IOException {
         setUpParameters();
         parameters.setSource(largeOutlineInput());
         parameters.addPage(1);
@@ -78,7 +82,24 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         parameters.addPage(3);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(4);
+        testContext.assertOutputSize(4).forEachPdfOutput(d -> {
+            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
+    }
+
+    @Test
+    public void splitWithDiscardOutline() throws IOException {
+        setUpParameters();
+        parameters.setSource(largeOutlineInput());
+        parameters.discardOutline(true);
+        parameters.addPage(1);
+        parameters.addPage(2);
+        parameters.addPage(3);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).forEachPdfOutput(d -> {
+            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
     }
 
     public void doTestBurst() throws IOException {

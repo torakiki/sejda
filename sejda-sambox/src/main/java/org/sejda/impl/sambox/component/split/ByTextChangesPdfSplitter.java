@@ -35,7 +35,7 @@ public class ByTextChangesPdfSplitter extends AbstractPdfSplitter<SplitByTextCon
 
     public ByTextChangesPdfSplitter(PDDocument document, SplitByTextContentParameters parameters, boolean optimize)
             throws TaskIOException {
-        super(document, parameters, optimize);
+        super(document, parameters, optimize, parameters.discardOutline());
         this.outputStrategy = new SplitByTextChangesOutputStrategy(document, parameters.getTextArea(),
                 parameters.getStartsWith(), parameters.getEndsWith());
     }

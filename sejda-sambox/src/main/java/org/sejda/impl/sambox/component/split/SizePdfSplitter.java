@@ -59,7 +59,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
     private OutputSizeStrategy nextOutputStrategy;
 
     public SizePdfSplitter(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
-        super(document, parameters, optimize);
+        super(document, parameters, optimize, parameters.discardOutline());
         if (parameters.isCompress()) {
             this.nextOutputStrategy = new OutputSizeStrategy(document, parameters, optimize, () -> {
                 return new ExistingPagesSizePredictor(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);

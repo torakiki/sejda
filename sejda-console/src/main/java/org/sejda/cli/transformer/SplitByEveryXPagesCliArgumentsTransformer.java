@@ -46,6 +46,7 @@ public class SplitByEveryXPagesCliArgumentsTransformer extends BaseCliArgumentsT
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
         populateOptimizableOutputParameters(parameters, taskCliArguments);
+        populateDiscardableOutlineParameters(parameters, taskCliArguments);
 
         return parameters;
     }

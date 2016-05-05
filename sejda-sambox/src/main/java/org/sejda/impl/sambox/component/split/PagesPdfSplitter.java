@@ -37,7 +37,7 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
     private NextOutputStrategy splitPages;
 
     public PagesPdfSplitter(PDDocument document, T parameters, boolean optimize) {
-        super(document, parameters, optimize);
+        super(document, parameters, optimize, parameters.discardOutline());
         this.splitPages = new SplitPages(parameters.getPages(document.getNumberOfPages()));
     }
 

@@ -25,6 +25,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
@@ -38,7 +39,7 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * 
  */
 public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputParameters
-        implements OptimizableOutputTaskParameters {
+        implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull
     private final TopLeftRectangularBox textArea;
@@ -46,6 +47,7 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
     private String endsWith = "";
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
+    private boolean discardOutline = false;
 
     public SplitByTextContentParameters(TopLeftRectangularBox textArea) {
         this.textArea = textArea;
@@ -82,6 +84,16 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
     }
 
     @Override
+    public boolean discardOutline() {
+        return discardOutline;
+    }
+
+    @Override
+    public void discardOutline(boolean discardOutline) {
+        this.discardOutline = discardOutline;
+    }
+
+    @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).append(textArea).append(startsWith)
                 .append(endsWith).toString();
@@ -90,7 +102,8 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(textArea)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
+                .append(textArea)
                 .toHashCode();
     }
 
@@ -104,7 +117,8 @@ public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputP
         }
         SplitByTextContentParameters parameter = (SplitByTextContentParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(optimizationPolicy, parameter.optimizationPolicy).append(textArea, parameter.textArea)
+                .append(optimizationPolicy, parameter.optimizationPolicy)
+                .append(discardOutline, parameter.discardOutline).append(textArea, parameter.textArea)
                 .append(startsWith, parameter.startsWith).append(endsWith, parameter.endsWith).isEquals();
     }
 }

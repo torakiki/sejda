@@ -30,6 +30,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
@@ -51,11 +52,12 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 @NoIntersections
 @SingleOutputAllowedExtensions
 @HasSelectedPages
-public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters
-        implements PageRangeSelection, PagesSelection, OptimizableOutputTaskParameters {
+public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters implements PageRangeSelection,
+        PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
+    private boolean discardOutline = false;
     @NotNull
     @NotAllowed(disallow = { PredefinedSetOfPages.ALL_PAGES })
     private PredefinedSetOfPages predefinedSetOfPages;
@@ -128,8 +130,18 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
     }
 
     @Override
+    public boolean discardOutline() {
+        return discardOutline;
+    }
+
+    @Override
+    public void discardOutline(boolean discardOutline) {
+        this.discardOutline = discardOutline;
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
                 .append(predefinedSetOfPages).append(pageSelection).toHashCode();
     }
 
@@ -144,7 +156,8 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         ExtractPagesParameters parameter = (ExtractPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
-                .append(optimizationPolicy, parameter.optimizationPolicy).append(pageSelection, parameter.pageSelection)
+                .append(optimizationPolicy, parameter.optimizationPolicy)
+                .append(discardOutline, parameter.discardOutline).append(pageSelection, parameter.pageSelection)
                 .isEquals();
     }
 }

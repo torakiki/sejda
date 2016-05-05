@@ -20,6 +20,8 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -66,5 +68,17 @@ public class SimpleSplitTaskTest extends AbstractTaskTest {
     @Test
     public void mandatoryParams() {
         defaultCommandLine().without("-s").assertConsoleOutputContains("Option is mandatory: --predefinedPages");
+    }
+
+    @Test
+    public void discardOutline() {
+        SimpleSplitParameters parameters = defaultCommandLine().withFlag("--discardOutline").invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        SimpleSplitParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }

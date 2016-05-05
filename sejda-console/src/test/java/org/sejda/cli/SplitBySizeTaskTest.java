@@ -20,6 +20,8 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
@@ -52,5 +54,17 @@ public class SplitBySizeTaskTest extends AbstractTaskTest {
     @Test
     public void mandatoryParams() {
         defaultCommandLine().without("-s").assertConsoleOutputContains("Option is mandatory: --size");
+    }
+
+    @Test
+    public void discardOutline() {
+        SplitBySizeParameters parameters = defaultCommandLine().withFlag("--discardOutline").invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        SplitBySizeParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }

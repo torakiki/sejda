@@ -51,6 +51,7 @@ public class SplitByBookmarksCliArgumentsTransformer extends BaseCliArgumentsTra
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
         populateOptimizableOutputParameters(parameters, taskCliArguments);
+        populateDiscardableOutlineParameters(parameters, taskCliArguments);
 
         return parameters;
     }

@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
@@ -35,12 +36,13 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * 
  */
 public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParameters
-        implements OptimizableOutputTaskParameters {
+        implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     @Min(1)
     private long sizeToSplitAt;
+    private boolean discardOutline = false;
 
     public SplitBySizeParameters(long sizeToSplitAt) {
         this.sizeToSplitAt = sizeToSplitAt;
@@ -61,9 +63,20 @@ public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParamete
     }
 
     @Override
+    public boolean discardOutline() {
+        return discardOutline;
+    }
+
+    @Override
+    public void discardOutline(boolean discardOutline) {
+        this.discardOutline = discardOutline;
+    }
+
+
+    @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(sizeToSplitAt)
-                .toHashCode();
+                .append(discardOutline).toHashCode();
     }
 
     @Override
@@ -77,6 +90,7 @@ public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParamete
         SplitBySizeParameters parameter = (SplitBySizeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.getOptimizationPolicy())
-                .append(sizeToSplitAt, parameter.getSizeToSplitAt()).isEquals();
+                .append(sizeToSplitAt, parameter.getSizeToSplitAt()).append(discardOutline, parameter.discardOutline)
+                .isEquals();
     }
 }

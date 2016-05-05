@@ -120,8 +120,10 @@ public class PagesExtractor implements Closeable {
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void save(File file) throws TaskException {
-        createOutline();
+    public void save(File file, boolean discardOutline) throws TaskException {
+        if (!discardOutline) {
+            createOutline();
+        }
         LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup, originalDocument);
         clipSignatures(annotations.values());
         destinationDocument.savePDDocument(file);

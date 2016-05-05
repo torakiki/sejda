@@ -19,6 +19,8 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -86,6 +88,15 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setSource(shortInput());
     }
 
+    private void setUpParametersWithOutline() {
+        parameters = new ExtractPagesParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(true);
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.setSource(largeOutlineInput());
+    }
     private void setUpParametersPageRangesMediumFile() {
         PageRange firstRange = new PageRange(2, 3);
         PageRange secondRange = new PageRange(5, 7);
@@ -167,5 +178,28 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(1);
+    }
+
+    @Test
+    public void extractWithOutline() throws IOException {
+        setUpParametersWithOutline();
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
+            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
+    }
+
+    @Test
+    public void extractWithDiscardOutline() throws IOException {
+        setUpParametersWithOutline();
+        parameters.discardOutline(true);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
+            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
     }
 }

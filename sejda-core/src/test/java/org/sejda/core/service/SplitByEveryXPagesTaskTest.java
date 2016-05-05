@@ -19,6 +19,10 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.junit.Ignore;
@@ -88,6 +92,36 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(2);
+    }
 
+    @Test
+    public void splitWithOutline() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(3);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setSource(largeOutlineInput());
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachPdfOutput(d -> {
+            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
+    }
+
+    @Test
+    public void splitWithDiscardOutline() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(3);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setSource(largeOutlineInput());
+        parameters.discardOutline(true);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachPdfOutput(d -> {
+            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
     }
 }

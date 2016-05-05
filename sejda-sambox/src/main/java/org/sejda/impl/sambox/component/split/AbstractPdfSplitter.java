@@ -55,12 +55,14 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
     private int totalPages;
     private MultipleOutputWriter outputWriter;
     private boolean optimize = false;
+    private boolean discardOutline = false;
 
-    public AbstractPdfSplitter(PDDocument document, T parameters, boolean optimize) {
+    public AbstractPdfSplitter(PDDocument document, T parameters, boolean optimize, boolean discardOutline) {
         this.document = document;
         this.parameters = parameters;
         this.totalPages = document.getNumberOfPages();
         this.optimize = optimize;
+        this.discardOutline = discardOutline;
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
@@ -94,7 +96,7 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                     if (optimize) {
                         extractor.optimize();
                     }
-                    extractor.save(tmpFile);
+                    extractor.save(tmpFile, discardOutline);
                     extractor.reset();
                     LOG.debug("Ending split at page {} of the original document, generated document size is {}", page,
                             tmpFile.length());

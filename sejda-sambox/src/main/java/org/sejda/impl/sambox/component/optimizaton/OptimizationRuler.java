@@ -71,9 +71,8 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
         // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count the xobjects of subtype Image, so basically we try to determine if pages are
         // going to inherit images, potentially unused in which case we want to optimize
         long inheritedImage = document.getPages().streamNodes().filter(PDPageTree::isPageTreeNode)
-                .map(d -> d.getDictionaryObject(COSName.RESOURCES)).filter(d -> d instanceof COSDictionary)
-                .map(d -> (COSDictionary) d).map(d -> d.getDictionaryObject(COSName.XOBJECT))
-                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
+                .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
+                .map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
                 .flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject).filter(d -> d instanceof COSDictionary)
                 .map(d -> (COSDictionary) d).map(d -> d.getNameAsString(COSName.SUBTYPE)).filter(Objects::nonNull)
                 .filter(COSName.IMAGE.getName()::equals).count();
@@ -84,10 +83,9 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
     private boolean hasSharedXObjectDictionaries(PDDocument document) {
         // we get from all the pages resource dictionaries, all the xobject name dictionaries containing images
         List<COSDictionary> xobjectsDictionaries = document.getPages().stream().map(PDPage::getCOSObject)
-                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES))
-                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
-                .map(d -> d.getDictionaryObject(COSName.XOBJECT)).filter(d -> d instanceof COSDictionary)
-                .map(d -> (COSDictionary) d).filter(x -> {
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                .filter(Objects::nonNull).filter(x -> {
                     return x.getValues().stream().map(COSBase::getCOSObject).filter(v -> v instanceof COSDictionary)
                             .map(v -> (COSDictionary) v).map(v -> v.getNameAsString(COSName.SUBTYPE))
                             .filter(Objects::nonNull).filter(COSName.IMAGE.getName()::equals).count() > 0;

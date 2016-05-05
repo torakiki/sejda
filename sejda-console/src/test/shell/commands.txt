@@ -17,7 +17,7 @@ target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resour
 target/assembled/bin/sejda-console extractpages --help
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/extracted.pdf -s 20,100- --overwrite
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/extracted.pdf -s 20,100-110 --overwrite
-target/assembled/bin/sejda-console extractpages --help
+target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/extracted.pdf -s 20,100- --overwrite --discardOutline
 target/assembled/bin/sejda-console splitbysize --help
 target/assembled/bin/sejda-console encrypt -h
 target/assembled/bin/sejda-console encrypt -a "test a pwd" --compressed -o /tmp/sejda-smoketest/ -p [FILENUMBER]_ -f ../sejda-core/src/test/resources/pdf/large_test.pdf -v 1.5 -j overwrite
@@ -36,15 +36,18 @@ target/assembled/bin/sejda-console splitbybookmarks --help
 target/assembled/bin/sejda-console splitbybookmarks -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [BOOKMARK_NAME] -o /tmp/sejda-smoketest/ -l 2 -j overwrite --compressed -e "(.*)(How)(.+)"
 target/assembled/bin/sejda-console splitbybookmarks -f ../sejda-core/src/test/resources/pdf/large_test.pdf -p [BOOKMARK_NAME] -o /tmp/sejda-smoketest/ -l 2 -j overwrite --compressed
 target/assembled/bin/sejda-console splitbybookmarks -f ../sejda-core/src/test/resources/pdf/large_test.pdf -p [BOOKMARK_NAME] -o /tmp/sejda-smoketest/ -l 1 -j overwrite --compressed
+target/assembled/bin/sejda-console splitbybookmarks -f ../sejda-core/src/test/resources/pdf/large_test.pdf -p [BOOKMARK_NAME] -o /tmp/sejda-smoketest/ -l 1 -j overwrite --compressed --discardOutline
 target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [PAGENUMBER#####] -o /tmp/sejda-smoketest/ -j overwrite --compressed -n 3 10 100 15
 target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [CURRENTPAGE#####10] -o /tmp/sejda-smoketest/ -j overwrite --compressed -n 3 10 100 15
 target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j skip -z no
 target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER-20] -n 10 -j overwrite
 target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER-20] -n 10 -j overwrite -z yes
+target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER-20] -n 10 -j overwrite -z yes --discardOutline
 target/assembled/bin/sejda-console splitbypages -h
 target/assembled/bin/sejda-console splitbypages --help
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [PAGENUMBER#####] -o /tmp/sejda-smoketest/ -j overwrite --compressed -n 5
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite
+target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite --discardOutline
 target/assembled/bin/sejda-console splitbyevery -h
 target/assembled/bin/sejda-console splitbyevery --help
 target/assembled/bin/sejda-console unpack -h

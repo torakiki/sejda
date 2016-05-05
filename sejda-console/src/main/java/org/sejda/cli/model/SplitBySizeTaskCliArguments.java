@@ -29,8 +29,9 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbysize")
-public interface SplitBySizeTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments {
+public interface SplitBySizeTaskCliArguments
+        extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput,
+        CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
 
     @Option(shortName = "s", description = "size in bytes to split at (required)")
     Long getSize();

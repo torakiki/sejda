@@ -47,6 +47,7 @@ public class SimpleSplitCliArgumentsTransformer extends BaseCliArgumentsTransfor
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
         populateOptimizableOutputParameters(parameters, taskCliArguments);
+        populateDiscardableOutlineParameters(parameters, taskCliArguments);
 
         return parameters;
     }

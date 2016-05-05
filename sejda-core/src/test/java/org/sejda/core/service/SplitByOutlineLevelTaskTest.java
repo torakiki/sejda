@@ -19,6 +19,8 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -61,7 +63,20 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
         SplitByOutlineLevelParameters parameters = setUpParameters(2, null);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(3);
+        testContext.assertOutputSize(3).forEachPdfOutput(d -> {
+            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
+    }
+
+    @Test
+    public void testExecuteLevel2DiscardOutline() throws IOException {
+        SplitByOutlineLevelParameters parameters = setUpParameters(2, null);
+        parameters.discardOutline(true);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3).forEachPdfOutput(d -> {
+            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
     }
 
     @Test

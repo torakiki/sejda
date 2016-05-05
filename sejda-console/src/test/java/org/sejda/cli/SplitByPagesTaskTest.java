@@ -19,6 +19,9 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -45,5 +48,17 @@ public class SplitByPagesTaskTest extends AbstractTaskTest {
     @Test
     public void mandatoryParams() {
         defaultCommandLine().without("-n").assertConsoleOutputContains("Option is mandatory: --pageNumbers");
+    }
+
+    @Test
+    public void discardOutline() {
+        SplitByPagesParameters parameters = defaultCommandLine().withFlag("--discardOutline").invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        SplitByPagesParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }

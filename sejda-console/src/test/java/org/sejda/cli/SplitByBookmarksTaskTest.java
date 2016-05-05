@@ -20,6 +20,8 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
@@ -59,5 +61,18 @@ public class SplitByBookmarksTaskTest extends AbstractTaskTest {
         SplitByOutlineLevelParameters parameters = defaultCommandLine().with("--matchingRegEx", "[Chapter*]")
                 .invokeSejdaConsole();
         assertEquals("[Chapter*]", parameters.getMatchingTitleRegEx());
+    }
+
+    @Test
+    public void discardOutline() {
+        SplitByOutlineLevelParameters parameters = defaultCommandLine().withFlag("--discardOutline")
+                .invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        SplitByOutlineLevelParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }

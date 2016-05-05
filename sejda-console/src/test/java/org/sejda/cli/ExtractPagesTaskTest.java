@@ -20,6 +20,8 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -83,5 +85,17 @@ public class ExtractPagesTaskTest extends AbstractTaskTest {
     public void optimizedYes() {
         ExtractPagesParameters parameters = defaultCommandLine().with("-z", "yes").invokeSejdaConsole();
         assertEquals(OptimizationPolicy.YES, parameters.getOptimizationPolicy());
+    }
+
+    @Test
+    public void discardOutline() {
+        ExtractPagesParameters parameters = defaultCommandLine().withFlag("--discardOutline").invokeSejdaConsole();
+        assertTrue(parameters.discardOutline());
+    }
+
+    @Test
+    public void dontDiscardOutline() {
+        ExtractPagesParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.discardOutline());
     }
 }
