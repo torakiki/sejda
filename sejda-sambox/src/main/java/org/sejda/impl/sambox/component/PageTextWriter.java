@@ -18,10 +18,10 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.isNull;
 import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
 import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -115,7 +115,7 @@ public class PageTextWriter {
         }
     }
 
-    private void resolveFont(String label, PDFont font) {
+    private void resolveFont(String label, PDFont font) throws TaskIOException {
         // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
         // Type 1 fonts only support 8-bit code points.
         latestSuitablefont = fontOrFallback(label, font, () -> {
@@ -124,7 +124,9 @@ public class PageTextWriter {
             }
             return findFontFor(document, label);
         });
-        requireNotNullArg(latestSuitablefont, "Unable to find suitable font for the given label");
+        if (isNull(latestSuitablefont)) {
+            throw new TaskIOException("Unable to find suitable font for the given label \"" + label + "\"");
+        }
     }
 
     private Point2D findPositionInRotatedPage(int rotation, PDRectangle pageSize, Point2D position) {

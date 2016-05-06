@@ -54,7 +54,7 @@ public class FilenameFooterWriter {
                 writer.write(page, HorizontalAlign.RIGHT, VerticalAlign.BOTTOM, Long.toString(pageNumber),
                         PDType1Font.HELVETICA, 10d, Color.BLACK);
             } catch (TaskIOException e) {
-                LOG.warn("Unable to writer the page footer", e);
+                LOG.warn("Unable to write the page footer", e);
             }
         }
     }
