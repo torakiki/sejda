@@ -3,3 +3,7 @@ sudo: false
 script: mvn clean install javadoc:javadoc
 jdk:
   - oraclejdk8
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
