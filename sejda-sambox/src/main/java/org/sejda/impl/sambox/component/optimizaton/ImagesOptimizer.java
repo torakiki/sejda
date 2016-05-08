@@ -47,7 +47,6 @@ import org.sejda.sambox.contentstream.operator.state.Restore;
 import org.sejda.sambox.contentstream.operator.state.Save;
 import org.sejda.sambox.contentstream.operator.state.SetGraphicsStateParameters;
 import org.sejda.sambox.contentstream.operator.state.SetMatrix;
-import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
@@ -115,7 +114,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                         removeAlternatesIfNeeded(stream);
 
                         if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
-                            boolean jbig2Image = isJbig2Image(stream);
+                            boolean jbig2Image = stream.hasFilter(COSName.JBIG2_DECODE);
                             if(jbig2Image) {
                                 LOG.debug("Skipping JBIG2 encoded image");
                             }
@@ -150,17 +149,6 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                     }
                 }
             }
-        }
-
-        private boolean isJbig2Image(COSStream image) {
-            COSBase filters = image.getFilters();
-            if (filters instanceof COSName) {
-                return COSName.JBIG2_DECODE.equals(filters);
-            }
-            if (filters instanceof COSArray) {
-                return ((COSArray) filters).contains(COSName.JBIG2_DECODE);
-            }
-            return false;
         }
 
         private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id, int displayWidth, int displayHeight) {
