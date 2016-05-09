@@ -3,10 +3,7 @@ package org.sejda.model.parameter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
-import org.sejda.model.parameter.edit.AddTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
     private List<AddImageOperation> imageOperations = new ArrayList<>();
     private List<InsertPageOperation> insertPageOperations = new ArrayList<>();
     private List<DeletePageOperation> deletePageOperations = new ArrayList<>();
+    private List<HighlightTextOperation> highlightTextOperations = new ArrayList<>();
 
     public void addTextOperation(AddTextOperation operation) {
         textOperations.add(operation);
@@ -32,6 +30,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     public void addDeletePageOperation(DeletePageOperation operation) {
         deletePageOperations.add(operation);
+    }
+
+    public void addHighlightTextOperation(HighlightTextOperation operation) {
+        highlightTextOperations.add(operation);
     }
 
     public List<AddTextOperation> getTextOperations() {
@@ -50,6 +52,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
         return deletePageOperations;
     }
 
+    public List<HighlightTextOperation> getHighlightTextOperations() {
+        return highlightTextOperations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,6 +70,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .append(imageOperations, that.imageOperations)
                 .append(insertPageOperations, that.insertPageOperations)
                 .append(deletePageOperations, that.deletePageOperations)
+                .append(highlightTextOperations, that.highlightTextOperations)
                 .isEquals();
     }
 
@@ -75,6 +82,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .append(imageOperations)
                 .append(insertPageOperations)
                 .append(deletePageOperations)
+                .append(highlightTextOperations)
                 .toHashCode();
     }
 }

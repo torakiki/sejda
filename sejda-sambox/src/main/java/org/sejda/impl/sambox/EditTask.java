@@ -22,20 +22,22 @@ import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
-import org.sejda.model.parameter.edit.AddTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.*;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.graphics.color.PDColor;
+import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationTextMarkup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,6 +136,23 @@ public class EditTask extends BaseTask<EditParameters> {
                 }
             }
 
+            for(HighlightTextOperation highlightTextOperation: parameters.getHighlightTextOperations()) {
+                for(RectangularBox boundingBox: highlightTextOperation.getBoundingBoxes()){
+                    PDAnnotationTextMarkup markup = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+                    PDRectangle rect = new PDRectangle(boundingBox.getLeft(), boundingBox.getBottom(),
+                            boundingBox.getRight() - boundingBox.getLeft(), boundingBox.getTop() - boundingBox.getBottom());
+                    markup.setRectangle(rect);
+                    markup.setQuadPoints(quadsOf(rect));
+                    markup.setConstantOpacity((float) 0.4);
+                    markup.setColor(new PDColor(new float[]{
+                            highlightTextOperation.getColor().getRed(),
+                            highlightTextOperation.getColor().getGreen(),
+                            highlightTextOperation.getColor().getBlue()
+                    }, PDDeviceRGB.INSTANCE));
+                    documentHandler.getPage(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
+                }
+            }
+
             documentHandler.savePDDocument(tmpFile);
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
@@ -148,6 +167,23 @@ public class EditTask extends BaseTask<EditParameters> {
     @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
+    }
+
+    private float[] quadsOf(PDRectangle position) {
+        // work out the points forming the four corners of the annotations
+        // set out in anti clockwise form (Completely wraps the text)
+        // OK, the below doesn't match that description.
+        // It's what acrobat 7 does and displays properly!
+        float[] quads = new float[8];
+        quads[0] = position.getLowerLeftX();  // x1
+        quads[1] = position.getUpperRightY(); // y1
+        quads[2] = position.getUpperRightX(); // x2
+        quads[3] = quads[1]; // y2
+        quads[4] = quads[0];  // x3
+        quads[5] = position.getLowerLeftY(); // y3
+        quads[6] = quads[2]; // x4
+        quads[7] = quads[5]; // y5
+        return quads;
     }
 
 }

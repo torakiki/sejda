@@ -20,13 +20,11 @@ package org.sejda.core.service;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.RectangularBox;
 import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
-import org.sejda.model.parameter.edit.AddTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.*;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -35,6 +33,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.HashSet;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -43,8 +42,8 @@ import static org.junit.Assert.assertThat;
 public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
 
     private EditParameters parameters;
-    public static final Point2D TEXT_EDIT_POSITION = new Point(10, 10);
-    public static final Point2D IMAGE_POSITION = new Point(10, 10);
+    public static final Point TEXT_EDIT_POSITION = new Point(10, 10);
+    public static final Point IMAGE_POSITION = new Point(10, 10);
 
     public static final int IMAGE_WIDTH = 124;
     public static final int IMAGE_HEIGHT = 52;
@@ -257,6 +256,23 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
             assertTextEditAreaHasText(d.getPage(4), "Page 5 text");
         });
         testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void highlightText() throws IOException {
+        parameters = basicText("Sample text here");
+        parameters.addHighlightTextOperation(new HighlightTextOperation(1, new HashSet<RectangularBox>() {{
+            add(RectangularBox.newInstance(10, 10, 30, 200));
+        }}, Color.YELLOW));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertTextEditAreaHasText(d.getPage(0),
+                    "Sample text here");
+
+            assertThat(d.getPage(0).getAnnotations().size(), is(1));
+        });
     }
 
 
