@@ -63,10 +63,11 @@ public class PageTextWriter {
         this.document = document;
     }
 
-    public void write(PDPage page, HorizontalAlign hAlign, VerticalAlign vAlign, String label, PDFont font,
+    public void write(PDPage page, HorizontalAlign hAlign, VerticalAlign vAlign, String rawLabel, PDFont font,
                       Double fontSize, Color color) throws TaskIOException {
 
         try {
+            String label = removeControlCharacters(rawLabel);
             resolveFont(label, font);
 
             PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
@@ -80,8 +81,10 @@ public class PageTextWriter {
         }
     }
 
-    public void write(PDPage page, Point2D position, String label, PDFont font,
+    public void write(PDPage page, Point2D position, String rawLabel, PDFont font,
             Double fontSize, Color color) throws TaskIOException {
+
+        String label = removeControlCharacters(rawLabel);
 
         resolveFont(label, font);
 
@@ -146,5 +149,9 @@ public class PageTextWriter {
         // flip
         transform.scale(1, -1);
         return transform.transform(position, null);
+    }
+
+    private String removeControlCharacters(String in) {
+        return in.replaceAll("[\\n\\t\\r]", "");
     }
 }

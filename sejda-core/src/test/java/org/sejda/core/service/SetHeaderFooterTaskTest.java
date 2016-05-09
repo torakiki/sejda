@@ -223,6 +223,19 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         });
     }
 
+    @Test
+    public void testStrippingControlCharacters() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("\tWith \rControl \n\nChars\t\n\r");
+        parameters.setFont(StandardType1Font.HELVETICA);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "With Control Chars");
+        });
+    }
+
     protected abstract void assertFooterHasText(PDPage page, String expectedText);
 
     protected abstract void assertHeaderHasText(PDPage page, String expectedText);
