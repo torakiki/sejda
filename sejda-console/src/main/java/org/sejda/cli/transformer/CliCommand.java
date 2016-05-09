@@ -311,7 +311,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<AddBackPagesTaskCliArguments, AddBackPagesParameters> getArgumentsTransformer() {
             return new AddBackPagesCliArgumentsTransformer();
         }
-    }, "Takes one or more pages form a PDF document and adds them to one or more PDF documents after each 'n' pages.", "addbackpages -f /tmp/file1.pdf /tmp/file2.pdf -b /tmp/back.pdf -s 1 -n 2 -o /tmp"),
+    }, "Takes one or more pages from a PDF document and adds them to one or more PDF documents after each 'n' pages.", "addbackpages -f /tmp/file1.pdf /tmp/file2.pdf -b /tmp/back.pdf -s 1 -n 2 -o /tmp"),
     PORTFOLIO("portfolio", new CliInterfacedTask<AttachmentsCollectionTaskCliArguments, AttachmentsCollectionParameters>() {
 
         @Override
