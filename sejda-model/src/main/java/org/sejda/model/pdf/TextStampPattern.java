@@ -21,6 +21,7 @@ package org.sejda.model.pdf;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.model.pdf.headerfooter.NumberingStyle;
 
@@ -31,6 +32,7 @@ public class TextStampPattern {
 
     private String batesSeq;
     private String fileSeq;
+    private String filename;
 
     public TextStampPattern withPage(int currentPage, int totalPages) {
         this.currentPage = currentPage;
@@ -51,6 +53,12 @@ public class TextStampPattern {
         return this;
     }
 
+    public TextStampPattern withFilename(String filename) {
+        this.filename = filename;
+
+        return this;
+    }
+
     public String build(String pattern) {
         String result = pattern;
 
@@ -65,6 +73,10 @@ public class TextStampPattern {
         }
 
         result = StringUtils.replace(result, "[DATE]", dateNow());
+
+        if(filename != null) {
+            result = StringUtils.replace(result, "[BASE_NAME]", FilenameUtils.getBaseName(filename));
+        }
 
         if(batesSeq != null) {
             result = StringUtils.replace(result, "[BATES_NUMBER]", batesSeq);

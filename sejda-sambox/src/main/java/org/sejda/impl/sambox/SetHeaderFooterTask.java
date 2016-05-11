@@ -85,10 +85,11 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
             documentHandler.setCompress(parameters.isCompress());
 
             try (SetHeaderFooterWriter footerWriter = new SetHeaderFooterWriter(documentHandler)) {
-                footerWriter.write(parameters, currentStep);
-                documentHandler.savePDDocument(tmpFile);
                 String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                         nameRequest().originalName(source.getName()).fileNumber(currentStep));
+
+                footerWriter.write(parameters, currentStep, outName);
+                documentHandler.savePDDocument(tmpFile);
                 outputWriter.addOutput(file(tmpFile).name(outName));
             }
 

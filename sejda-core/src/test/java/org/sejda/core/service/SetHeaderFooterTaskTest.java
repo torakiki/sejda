@@ -179,12 +179,12 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     public void testWriteHeader() throws Exception {
         parameters = basicWithSources();
         parameters.setVerticalAlign(VerticalAlign.TOP);
-        parameters.setPattern("Page [PAGE_ROMAN] [PAGE_ARABIC]");
+        parameters.setPattern("Page [PAGE_ROMAN] [PAGE_ARABIC] [BASE_NAME]");
 
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertHeaderHasText(d.getPage(2), "Page III 3");
+            assertHeaderHasText(d.getPage(2), "Page III 3 test_file1");
         });
     }
 
