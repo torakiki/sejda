@@ -64,6 +64,7 @@ import static org.sejda.sambox.cos.COSName.TU;
 import static org.sejda.sambox.cos.COSName.TYPE;
 import static org.sejda.sambox.cos.COSName.V;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -190,6 +191,12 @@ public class AcroFormsMerger {
                     updateForm(originalForm, annotationsLookup, createOrReuseTerminalField,
                             createOrReuseNonTerminalField);
                     break;
+                case FLATTEN:
+                    filterNonWidgetsFields(annotationsLookup);
+                    updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
+                            createRenamingNonTerminalField);
+                    flatten();
+                    break;
                 default:
                     LOG.debug("Discarding acroform");
                 }
@@ -304,6 +311,14 @@ public class AcroFormsMerger {
 
     public boolean hasForm() {
         return !form.getFields().isEmpty();
+    }
+
+    private void flatten() {
+        try {
+            form.flatten();
+        } catch(IOException ex) {
+            LOG.warn("Failed to flatten form", ex);
+        }
     }
 
     /**

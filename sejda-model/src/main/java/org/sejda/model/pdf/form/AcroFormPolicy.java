@@ -29,7 +29,8 @@ import org.sejda.common.FriendlyNamed;
 public enum AcroFormPolicy implements FriendlyNamed {
     DISCARD("discard"),
     MERGE("merge"),
-    MERGE_RENAMING_EXISTING_FIELDS("merge_renaming");
+    MERGE_RENAMING_EXISTING_FIELDS("merge_renaming"),
+    FLATTEN("flatten");
 
     private String displayName;
 
