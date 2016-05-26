@@ -29,6 +29,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.RectangularBox;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
@@ -40,8 +41,7 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * @author Andrea Vacondio
  * 
  */
-@SingleOutputAllowedExtensions
-public class CropParameters extends SinglePdfSourceSingleOutputParameters {
+public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @Valid
     @NotEmpty

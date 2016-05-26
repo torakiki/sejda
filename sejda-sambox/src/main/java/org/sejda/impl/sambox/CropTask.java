@@ -22,6 +22,8 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
@@ -30,8 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
+import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -58,7 +60,7 @@ public class CropTask extends BaseTask<CropParameters> {
 
     private PDDocumentHandler sourceDocumentHandler = null;
     private PDDocumentHandler destinationDocument = null;
-    private SingleOutputWriter outputWriter;
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
     private AcroFormsMerger acroFormsMerger;
@@ -66,64 +68,72 @@ public class CropTask extends BaseTask<CropParameters> {
     @Override
     public void before(CropParameters parameters) {
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
     public void execute(CropParameters parameters) throws TaskException {
         int currentStep = 0;
+        int totalSteps = parameters.getSourceList().size();
+        for (PdfSource<?> source : parameters.getSourceList()) {
+            stopTaskIfCancelled();
 
-        PdfSource<?> source = parameters.getSource();
-        LOG.debug("Opening {}", source);
-        sourceDocumentHandler = source.open(documentLoader);
+            currentStep++;
 
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {}", tmpFile);
-        this.destinationDocument = new PDDocumentHandler();
-        destinationDocument.setVersionOnPDDocument(parameters.getVersion());
-        LOG.debug("Done with version");
-        destinationDocument.initialiseBasedOn(sourceDocumentHandler.getUnderlyingPDDocument());
-        destinationDocument.setCompress(parameters.isCompress());
-        LOG.debug("Done with init");
+            LOG.debug("Opening {}", source);
+            sourceDocumentHandler = source.open(documentLoader);
 
-        this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
-                this.destinationDocument.getUnderlyingPDDocument());
+            File tmpFile = createTemporaryPdfBuffer();
+            LOG.debug("Created output temporary buffer {}", tmpFile);
+            this.destinationDocument = new PDDocumentHandler();
+            destinationDocument.setVersionOnPDDocument(parameters.getVersion());
+            LOG.debug("Done with version");
+            destinationDocument.initialiseBasedOn(sourceDocumentHandler.getUnderlyingPDDocument());
+            destinationDocument.setCompress(parameters.isCompress());
+            LOG.debug("Done with init");
 
-        List<PDRectangle> cropAreas = parameters.getCropAreas().stream().map(r -> new PDRectangle(r.getLeft(),
-                r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom())).collect(Collectors.toList());
-        LOG.debug("Found {} crop boxes to apply", cropAreas.size());
+            this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
+                    this.destinationDocument.getUnderlyingPDDocument());
 
-        int totalSteps = cropAreas.size() * sourceDocumentHandler.getNumberOfPages();
-        for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
-            for (PDRectangle box : cropAreas) {
-                stopTaskIfCancelled();
-                box = unrotate(page, box);
-                PDPage newPage = destinationDocument.importPage(page);
-                pagesLookup.addLookupEntry(page, newPage);
-                newPage.setCropBox(box);
-                notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            List<PDRectangle> cropAreas = parameters.getCropAreas().stream().map(r -> new PDRectangle(r.getLeft(),
+                    r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom())).collect(Collectors.toList());
+            LOG.debug("Found {} crop boxes to apply", cropAreas.size());
+
+            for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
+                for (PDRectangle box : cropAreas) {
+                    stopTaskIfCancelled();
+                    box = unrotate(page, box);
+                    PDPage newPage = destinationDocument.importPage(page);
+                    pagesLookup.addLookupEntry(page, newPage);
+                    newPage.setCropBox(box);
+                    notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+                }
+
+            }
+            LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup,
+                    sourceDocumentHandler.getUnderlyingPDDocument());
+            clipSignatures(annotations.values());
+
+            acroFormsMerger.mergeForm(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
+                    annotations);
+
+            if (acroFormsMerger.hasForm()) {
+                LOG.debug("Adding generated AcroForm");
+                destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
             }
 
-        }
-        LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup,
-                sourceDocumentHandler.getUnderlyingPDDocument());
-        clipSignatures(annotations.values());
+            destinationDocument.savePDDocument(tmpFile);
+            nullSafeCloseQuietly(sourceDocumentHandler);
 
-        acroFormsMerger.mergeForm(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
-                annotations);
+            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            outputWriter.addOutput(file(tmpFile).name(outName));
 
-        if (acroFormsMerger.hasForm()) {
-            LOG.debug("Adding generated AcroForm");
-            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
+            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
-        destinationDocument.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(sourceDocumentHandler);
-
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
-        LOG.debug("Crop areas applied to {}", parameters.getOutput());
-
+        LOG.debug("Input documents cropped and written to {}", parameters.getOutput());
     }
 
     @Override

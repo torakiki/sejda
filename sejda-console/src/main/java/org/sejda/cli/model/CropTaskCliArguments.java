@@ -33,7 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " crop")
-public interface CropTaskCliArguments extends CliArgumentsWithPdfFileOutput, SinglePdfSourceTaskCliArguments {
+public interface CropTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "c", description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format [bottom:left][top:right]. Ex: --cropAreas [0:0][5:10] [5:0][10:10] (required)")
     List<RectangularBoxAdapter> getCropAreas();

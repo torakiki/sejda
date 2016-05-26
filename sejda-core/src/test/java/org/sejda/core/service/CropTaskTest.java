@@ -54,9 +54,9 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         parameters = new CropParameters();
         parameters.setCompress(false);
         parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
-        parameters.setSource(customInput("pdf/rotation_90_test_file.pdf"));
+        parameters.addSource(customInput("pdf/rotation_90_test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         PDDocument result = testContext.assertTaskCompleted();
         RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(555, 10), new Point(575, 60));
@@ -70,9 +70,9 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         parameters = new CropParameters();
         parameters.setCompress(false);
         parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
-        parameters.setSource(customInput("pdf/rotation_180_test_file.pdf"));
+        parameters.addSource(customInput("pdf/rotation_180_test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         PDDocument result = testContext.assertTaskCompleted();
         RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(535, 802), new Point(585, 822));
@@ -85,9 +85,9 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         parameters = new CropParameters();
         parameters.setCompress(false);
         parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
-        parameters.setSource(customInput("pdf/rotation_270_test_file.pdf"));
+        parameters.addSource(customInput("pdf/rotation_270_test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         PDDocument result = testContext.assertTaskCompleted();
         RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(20, 782), new Point(40, 832));
@@ -103,9 +103,9 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addCropArea(ODD_PAGES_RECTANGLE);
         parameters.addCropArea(EVEN_PAGES_RECTANGLE);
-        parameters.setSource(regularInput());
+        parameters.addSource(regularInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         PDDocument outDocument = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(22);
