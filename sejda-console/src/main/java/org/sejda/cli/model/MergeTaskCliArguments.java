@@ -38,7 +38,7 @@ import com.lexicalscope.jewel.cli.Option;
 public interface MergeTaskCliArguments
         extends CliArgumentsWithPdfFileOutput, MultipleOptionalPdfSourceTaskCliArguments {
 
-    @Option(shortName = "a", description = "acro forms merge policy. {discard, merge, merge_renaming}. Default is 'discard' (optional)", defaultValue = "discard")
+    @Option(shortName = "a", description = "acro forms merge policy. {discard, merge, merge_renaming, flatten}. Default is 'discard' (optional)", defaultValue = "discard")
     AcroFormPolicyAdapter getAcroForms();
 
     @Option(description = "add a blank page after each merged document if the number of pages is odd (optional)")

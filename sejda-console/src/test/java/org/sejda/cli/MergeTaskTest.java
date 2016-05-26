@@ -144,6 +144,18 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     @Test
+    public void onFlattenAcroForms() {
+        MergeParameters parameters = defaultCommandLine().with("-a", "flatten").invokeSejdaConsole();
+        assertEquals(AcroFormPolicy.FLATTEN, parameters.getAcroFormPolicy());
+    }
+
+    @Test
+    public void onMergeRenamingAcroForms() {
+        MergeParameters parameters = defaultCommandLine().with("-a", "merge_renaming").invokeSejdaConsole();
+        assertEquals(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS, parameters.getAcroFormPolicy());
+    }
+
+    @Test
     public void onTextNamesToC() {
         MergeParameters parameters = defaultCommandLine().with("-t", "file_names").invokeSejdaConsole();
         assertEquals(ToCPolicy.FILE_NAMES, parameters.getTableOfContentsPolicy());

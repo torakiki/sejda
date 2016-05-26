@@ -115,7 +115,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.forPdfOutput(d->{
+        testContext.forPdfOutput(d -> {
             assertEquals(new PDRectangle(0, 0, 595, 842).rotate(90).toString(), d.getPage(0).getMediaBox().toString());
         });
     }
@@ -225,6 +225,20 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(312).assertVersion(PdfVersion.VERSION_1_6).assertHasOutline(false)
+                .assertHasAcroforms(false);
+    }
+
+    @Test
+    public void testExecuteMergeFlattenForms() throws IOException {
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
+
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+        parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
