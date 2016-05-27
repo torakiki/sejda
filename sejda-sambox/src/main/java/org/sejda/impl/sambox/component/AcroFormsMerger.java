@@ -110,7 +110,7 @@ public class AcroFormsMerger {
 
     private final BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> createOrReuseTerminalField = (
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
-        PDField previouslyCreated = ofNullable(form.getField(existing.getFullyQualifiedName()))
+        PDField previouslyCreated = ofNullable(getField(existing.getFullyQualifiedName()))
                 .orElseGet(() -> fieldsLookup.lookup(existing));
         if (previouslyCreated == null) {
             previouslyCreated = PDFieldFactory.createFielAddingChildToParent(this.form,
@@ -131,7 +131,7 @@ public class AcroFormsMerger {
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
         PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFielAddingChildToParent(this.form,
                 existing.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
-        if (form.getField(existing.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(existing)) {
+        if (getField(existing.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(existing)) {
             newField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
             LOG.info("Existing terminal field renamed from {} to {}", existing.getPartialName(),
                     newField.getPartialName());
@@ -143,17 +143,25 @@ public class AcroFormsMerger {
 
     private final BiConsumer<PDField, LookupTable<PDField>> createOrReuseNonTerminalField = (PDField field,
             LookupTable<PDField> fieldsLookup) -> {
-        if (form.getField(field.getFullyQualifiedName()) == null && !fieldsLookup.hasLookupFor(field)) {
+        if (getField(field.getFullyQualifiedName()) == null && !fieldsLookup.hasLookupFor(field)) {
             fieldsLookup.addLookupEntry(field, PDFieldFactory.createFielAddingChildToParent(this.form,
                     field.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(field.getParent())));
         }
     };
 
+    private PDField getField(String fullyQualifiedName) {
+        if(fullyQualifiedName == null) {
+            return null;
+        }
+
+        return form.getField(fullyQualifiedName);
+    }
+
     private final BiConsumer<PDField, LookupTable<PDField>> createRenamingNonTerminalField = (PDField field,
             LookupTable<PDField> fieldsLookup) -> {
         PDField newField = PDFieldFactory.createFielAddingChildToParent(this.form, field.getCOSObject().duplicate(),
                 (PDNonTerminalField) fieldsLookup.lookup(field.getParent()));
-        if (form.getField(field.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(field)) {
+        if (getField(field.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(field)) {
             newField.setPartialName(String.format("%s%s%d", field.getPartialName(), random, ++counter));
             LOG.info("Existing non terminal field renamed from {} to {}", field.getPartialName(),
                     newField.getPartialName());
