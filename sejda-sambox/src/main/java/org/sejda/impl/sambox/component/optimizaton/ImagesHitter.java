@@ -18,12 +18,19 @@
  */
 package org.sejda.impl.sambox.component.optimizaton;
 
+import static java.util.Objects.isNull;
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.sambox.contentstream.PDFStreamEngine;
@@ -36,6 +43,8 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.font.PDType3CharProc;
+import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDTransparencyGroup;
@@ -53,24 +62,28 @@ import org.slf4j.LoggerFactory;
 public class ImagesHitter extends PDFStreamEngine implements Consumer<PDPage> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesHitter.class);
+    private Set<COSName> processedFonts = new HashSet<>();
 
     public ImagesHitter() {
         addOperator(new XObjectOperator());
+        addOperator(new Type3FontHitterOperator());
     }
 
     private class XObjectOperator extends OperatorProcessor {
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
-            if (operands.size() < 1) {
+            if (operands.isEmpty()) {
                 throw new MissingOperandException(operator, operands);
             }
             COSBase operand = operands.get(0);
             if (operand instanceof COSName) {
 
                 COSName objectName = (COSName) operand;
-                Optional<COSDictionary> xobjects = ofNullable(
-                        context.getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT))
-                                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d);
+
+                Optional<COSDictionary> xobjects = ofNullable(context.getResources())
+                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                        .filter(Objects::nonNull);
+
                 COSBase existing = xobjects.map(d -> d.getDictionaryObject(objectName))
                         .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
@@ -108,8 +121,54 @@ public class ImagesHitter extends PDFStreamEngine implements Consumer<PDPage> {
         }
     }
 
+    private class Type3FontHitterOperator extends OperatorProcessor {
+        @Override
+        public void process(Operator operator, List<COSBase> operands) throws IOException {
+            if (operands.size() < 2) {
+                throw new MissingOperandException(operator, operands);
+            }
+            COSBase operand = operands.get(0);
+            if (operand instanceof COSName) {
+                COSName fontName = (COSName) operand;
+                if (!processedFonts.contains(fontName)) {
+                    Optional<COSDictionary> fonts = ofNullable(context.getResources())
+                            .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class))
+                            .filter(Objects::nonNull);
+
+                    COSDictionary existing = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
+                            .orElseThrow(
+                                    () -> new MissingResourceException("Missing font resource: " + fontName.getName()));
+                    // type 3 fonts glyphs are content stream and they may refer to named resource. If the font resource dictionary is not present
+                    // the page resource dictionary is used instead so we have to make sure those resource are hit
+                    if (COSName.TYPE3.equals(existing.getCOSName(COSName.SUBTYPE))
+                            && isNull(existing.getItem(COSName.RESOURCES))) {
+                        LOG.trace("Found type3 font with no resource dictionary {}", fontName.getName());
+                        PDType3Font font = new PDType3Font(existing);
+                        Collection<COSBase> glyphStreams = ofNullable(
+                                existing.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class))
+                                        .map(chars -> chars.getValues()).filter(v -> !v.isEmpty())
+                                        .orElseGet(Collections::emptyList);
+                        List<PDType3CharProc> pdStreams = glyphStreams.stream().filter(s -> !(s instanceof COSStream))
+                                .map(s -> (COSStream) s).map(s -> new PDType3CharProc(font, s))
+                                .collect(Collectors.toList());
+                        for (PDType3CharProc glyph : pdStreams) {
+                            processStream(glyph);
+                        }
+                    }
+                }
+                processedFonts.add(fontName);
+            }
+        }
+
+        @Override
+        public String getName() {
+            return "Tf";
+        }
+    }
+
     @Override
     public void accept(PDPage page) {
+        processedFonts.clear();
         try {
             this.processPage(page);
             for (PDAnnotation annotation : page.getAnnotations()) {
