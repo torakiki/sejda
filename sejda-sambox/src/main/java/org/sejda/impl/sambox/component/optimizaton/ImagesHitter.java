@@ -148,9 +148,9 @@ public class ImagesHitter extends PDFStreamEngine implements Consumer<PDPage> {
                                 existing.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class))
                                         .map(chars -> chars.getValues()).filter(v -> !v.isEmpty())
                                         .orElseGet(Collections::emptyList);
-                        List<PDType3CharProc> pdStreams = glyphStreams.stream().filter(s -> !(s instanceof COSStream))
-                                .map(s -> (COSStream) s).map(s -> new PDType3CharProc(font, s))
-                                .collect(Collectors.toList());
+                        List<PDType3CharProc> pdStreams = glyphStreams.stream().map(COSBase::getCOSObject)
+                                .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
+                                .map(s -> new PDType3CharProc(font, s)).collect(Collectors.toList());
                         for (PDType3CharProc glyph : pdStreams) {
                             processStream(glyph);
                         }

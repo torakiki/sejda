@@ -53,4 +53,13 @@ public class ImagesHitterTest {
         }
     }
 
+    @Test
+    public void testType3() throws Exception {
+        try (PDDocument document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/type3.pdf")))) {
+            document.getPages().forEach(victim::accept);
+            // we are not testing much but at least we trigger the glyphs stream parsing and make sure it doesn't break anything
+        }
+    }
+
 }
