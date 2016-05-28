@@ -30,10 +30,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
-import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter containing rectangular selection to be cropped on an input pdf source.
@@ -83,7 +81,8 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(cropAreas).append(acroFormPolicy).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(cropAreas).append(acroFormPolicy)
+                .toHashCode();
     }
 
     @Override
@@ -95,9 +94,7 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
             return false;
         }
         CropParameters parameter = (CropParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(cropAreas, parameter.cropAreas)
-                .append(acroFormPolicy, parameter.acroFormPolicy)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(cropAreas, parameter.cropAreas)
+                .append(acroFormPolicy, parameter.acroFormPolicy).isEquals();
     }
 }
