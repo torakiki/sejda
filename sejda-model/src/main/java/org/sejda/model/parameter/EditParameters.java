@@ -22,11 +22,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.AddTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
-import org.sejda.model.parameter.edit.HighlightTextOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
+import org.sejda.model.parameter.edit.*;
 
 public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
