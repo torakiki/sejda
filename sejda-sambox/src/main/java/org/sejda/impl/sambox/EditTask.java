@@ -18,10 +18,7 @@ package org.sejda.impl.sambox;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PageImageWriter;
-import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
@@ -150,6 +147,22 @@ public class EditTask extends BaseTask<EditParameters> {
                             highlightTextOperation.getColor().getBlue()
                     }, PDDeviceRGB.INSTANCE));
                     documentHandler.getPage(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
+                }
+            }
+
+            PageGeometricalShapeWriter shapeWriter = new PageGeometricalShapeWriter(documentHandler.getUnderlyingPDDocument());
+            for(AddShapeOperation shapeOperation: parameters.getShapeOperations()) {
+                SortedSet<Integer> pageNumbers = shapeOperation.getPageRange().getPages(totalPages);
+                for (int pageNumber : pageNumbers) {
+                    PDPage page = documentHandler.getPage(pageNumber);
+                    shapeWriter.drawShape(
+                            shapeOperation.getShape(),
+                            page,
+                            shapeOperation.getPosition(),
+                            shapeOperation.getWidth(), shapeOperation.getHeight(),
+                            shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
+                            shapeOperation.getBorderWidth()
+                    );
                 }
             }
 

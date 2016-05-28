@@ -25,6 +25,7 @@ import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
 import org.sejda.model.parameter.edit.*;
+import org.sejda.model.parameter.edit.Shape;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -268,10 +269,20 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertTextEditAreaHasText(d.getPage(0),
-                    "Sample text here");
-
             assertThat(d.getPage(0).getAnnotations().size(), is(1));
+        });
+    }
+
+    @Test
+    public void drawShapes() throws IOException {
+        parameters = basicText("Shapes");
+        parameters.addShapeOperation(new AddShapeOperation(Shape.ELLIPSE, 100, 200, new Point(100, 100), new PageRange(1, 1), 1, Color.DARK_GRAY, null));
+        parameters.addShapeOperation(new AddShapeOperation(Shape.RECTANGLE, 100, 200, new Point(10, 10), new PageRange(2, 2), 1, Color.RED, Color.BLUE));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            // TODO: assert shapes are there
         });
     }
 

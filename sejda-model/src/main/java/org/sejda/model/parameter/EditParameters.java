@@ -32,6 +32,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     private List<AddTextOperation> textOperations = new ArrayList<>();
     private List<AddImageOperation> imageOperations = new ArrayList<>();
+    private List<AddShapeOperation> shapeOperations = new ArrayList<>();
     private List<InsertPageOperation> insertPageOperations = new ArrayList<>();
     private List<DeletePageOperation> deletePageOperations = new ArrayList<>();
     private List<HighlightTextOperation> highlightTextOperations = new ArrayList<>();
@@ -42,6 +43,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     public void addImageOperation(AddImageOperation operation) {
         imageOperations.add(operation);
+    }
+
+    public void addShapeOperation(AddShapeOperation operation) {
+        shapeOperations.add(operation);
     }
 
     public void addInsertPageOperation(InsertPageOperation operation) {
@@ -62,6 +67,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     public List<AddImageOperation> getImageOperations() {
         return imageOperations;
+    }
+
+    public List<AddShapeOperation> getShapeOperations() {
+        return shapeOperations;
     }
 
     public List<InsertPageOperation> getInsertPageOperations() {
@@ -88,6 +97,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .appendSuper(super.equals(o))
                 .append(textOperations, that.textOperations)
                 .append(imageOperations, that.imageOperations)
+                .append(shapeOperations, that.shapeOperations)
                 .append(insertPageOperations, that.insertPageOperations)
                 .append(deletePageOperations, that.deletePageOperations)
                 .append(highlightTextOperations, that.highlightTextOperations)
@@ -100,6 +110,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .appendSuper(super.hashCode())
                 .append(textOperations)
                 .append(imageOperations)
+                .append(shapeOperations)
                 .append(insertPageOperations)
                 .append(deletePageOperations)
                 .append(highlightTextOperations)
