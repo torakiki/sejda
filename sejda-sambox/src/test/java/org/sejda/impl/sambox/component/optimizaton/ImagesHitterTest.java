@@ -19,6 +19,11 @@
 package org.sejda.impl.sambox.component.optimizaton;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
 
 import org.junit.Test;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
@@ -28,6 +33,7 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
 public class ImagesHitterTest {
@@ -60,6 +66,14 @@ public class ImagesHitterTest {
             document.getPages().forEach(victim::accept);
             // we are not testing much but at least we trigger the glyphs stream parsing and make sure it doesn't break anything
         }
+    }
+
+    @Test
+    public void exceptionDoesntBubble() {
+        PDPage page = mock(PDPage.class);
+        when(page.getCropBox()).thenReturn(new PDRectangle(2f, 2f));
+        doThrow(IOException.class).when(page).getResources();
+        victim.accept(page);
     }
 
 }
