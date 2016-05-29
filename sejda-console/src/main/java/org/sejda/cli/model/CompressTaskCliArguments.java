@@ -34,7 +34,7 @@ public interface CompressTaskCliArguments
     @Option(shortName = "q", description = "image JPEG quality. Defaults to 0.8. Ex: --imageQuality 0.3 (optional)", defaultValue = "0.8")
     Float getImageQuality();
 
-    @Option(shortName = "z", description = "list of optimizations to perform. { discard_metadata, discard_outline, discard_threads, discard_spider_info, discard_piece_info, discard_mc_props, discard_alternate_images, compress_images, discard_unused_images, discard_struct_tree, discard_thumbnails }. If omitted it performs all the optimizations except discard_outline (optional)")
+    @Option(shortName = "z", description = "list of optimizations to perform. { discard_metadata, discard_outline, discard_threads, discard_spider_info, discard_piece_info, discard_mc_props, discard_alternate_images, compress_images, discard_unused_resources, discard_struct_tree, discard_thumbnails }. If omitted it performs all the optimizations except discard_outline (optional)")
     List<OptimizationAdapter> getOptimizations();
 
     boolean isOptimizations();

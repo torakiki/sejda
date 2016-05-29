@@ -19,6 +19,8 @@
 package org.sejda.impl.sambox.component.optimizaton;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -38,6 +40,7 @@ import org.sejda.sambox.pdmodel.PDPage;
  */
 public class ResourceDictionaryCleanerTest {
     private ReadOnlyFilteredCOSStream stream;
+    private InUseFontDictionary inUseFont;
     private COSStream image;
 
     @Before
@@ -46,6 +49,7 @@ public class ResourceDictionaryCleanerTest {
         image.setItem(COSName.TYPE, COSName.XOBJECT);
         image.setItem(COSName.SUBTYPE, COSName.IMAGE);
         stream = ReadOnlyFilteredCOSStream.readOnly(image);
+        inUseFont = new InUseFontDictionary(new COSDictionary());
     }
 
     @Test
@@ -56,12 +60,21 @@ public class ResourceDictionaryCleanerTest {
         rootXobjects.setItem(COSName.getPDFName("keepMe"), stream);
         rootXobjects.setItem(COSName.getPDFName("discardMe"), image);
         rootRes.setItem(COSName.XOBJECT, rootXobjects);
+        COSDictionary rootFonts = new COSDictionary();
+        rootFonts.setItem(COSName.getPDFName("keepMe"), inUseFont);
+        rootFonts.setItem(COSName.getPDFName("discardMe"), new COSDictionary());
+        rootRes.setItem(COSName.FONT, rootFonts);
         COSDictionary pageRes = new COSDictionary();
         COSDictionary pageXobjects = new COSDictionary();
         pageXobjects.setItem(COSName.getPDFName("keepMe"), stream);
         pageXobjects.setItem(COSName.getPDFName("discardMe"), image);
         pageXobjects.setItem(COSName.getPDFName("discardMeToo"), image);
         pageRes.setItem(COSName.XOBJECT, pageXobjects);
+        COSDictionary pageFonts = new COSDictionary();
+        pageFonts.setItem(COSName.getPDFName("keepMe"), inUseFont);
+        pageFonts.setItem(COSName.getPDFName("discardMe"), new COSDictionary());
+        pageFonts.setItem(COSName.getPDFName("discardMeToo"), new COSDictionary());
+        pageRes.setItem(COSName.FONT, pageFonts);
         doc.getDocumentCatalog().getPages().getCOSObject().setItem(COSName.RESOURCES, rootRes);
         PDPage page0 = new PDPage();
         PDPage page1 = new PDPage();
@@ -73,12 +86,28 @@ public class ResourceDictionaryCleanerTest {
         assertTrue(page1.getResources().isImageXObject(COSName.getPDFName("keepMe")));
         assertTrue(page1.getResources().isImageXObject(COSName.getPDFName("discardMe")));
         assertTrue(page1.getResources().isImageXObject(COSName.getPDFName("discardMeToo")));
+        COSDictionary page0fonts = page0.getResources().getCOSObject().getDictionaryObject(COSName.FONT,
+                COSDictionary.class);
+        assertNotNull(page0fonts.getDictionaryObject(COSName.getPDFName("keepMe")));
+        assertNotNull(page0fonts.getDictionaryObject(COSName.getPDFName("discardMe")));
+        COSDictionary page1fonts = page1.getResources().getCOSObject().getDictionaryObject(COSName.FONT,
+                COSDictionary.class);
+        assertNotNull(page1fonts.getDictionaryObject(COSName.getPDFName("keepMe")));
+        assertNotNull(page1fonts.getDictionaryObject(COSName.getPDFName("discardMe")));
+        assertNotNull(page1fonts.getDictionaryObject(COSName.getPDFName("discardMeToo")));
         new ResourceDictionaryCleaner().accept(doc);
         assertTrue(page0.getResources().isImageXObject(COSName.getPDFName("keepMe")));
         assertFalse(page0.getResources().isImageXObject(COSName.getPDFName("discardMe")));
         assertTrue(page1.getResources().isImageXObject(COSName.getPDFName("keepMe")));
         assertFalse(page1.getResources().isImageXObject(COSName.getPDFName("discardMe")));
         assertFalse(page1.getResources().isImageXObject(COSName.getPDFName("discardMeToo")));
+        page0fonts = page0.getResources().getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class);
+        assertNotNull(page0fonts.getDictionaryObject(COSName.getPDFName("keepMe")));
+        assertNull(page0fonts.getDictionaryObject(COSName.getPDFName("discardMe")));
+        page1fonts = page1.getResources().getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class);
+        assertNotNull(page1fonts.getDictionaryObject(COSName.getPDFName("keepMe")));
+        assertNull(page1fonts.getDictionaryObject(COSName.getPDFName("discardMe")));
+        assertNull(page1fonts.getDictionaryObject(COSName.getPDFName("discardMeToo")));
     }
 
     @Test
@@ -97,6 +126,17 @@ public class ResourceDictionaryCleanerTest {
         COSDictionary rootRes = new COSDictionary();
         page0.getCOSObject().setItem(COSName.RESOURCES, rootRes);
         rootRes.setItem(COSName.XOBJECT, null);
+        doc.getDocumentCatalog().getPages().add(page0);
+        new ResourceDictionaryCleaner().accept(doc);
+    }
+
+    @Test
+    public void noExceptionMissingFonts() {
+        PDDocument doc = new PDDocument();
+        PDPage page0 = new PDPage();
+        COSDictionary rootRes = new COSDictionary();
+        page0.getCOSObject().setItem(COSName.RESOURCES, rootRes);
+        rootRes.setItem(COSName.FONT, null);
         doc.getDocumentCatalog().getPages().add(page0);
         new ResourceDictionaryCleaner().accept(doc);
     }

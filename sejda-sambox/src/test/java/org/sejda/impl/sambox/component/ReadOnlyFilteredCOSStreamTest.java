@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.cos.COSDictionary;

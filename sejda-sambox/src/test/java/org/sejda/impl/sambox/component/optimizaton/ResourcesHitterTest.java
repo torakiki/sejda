@@ -36,9 +36,9 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
-public class ImagesHitterTest {
+public class ResourcesHitterTest {
 
-    private ImagesHitter victim = new ImagesHitter();
+    private ResourcesHitter victim = new ResourcesHitter();
 
     @Test
     public void testAccept() throws Exception {
@@ -64,7 +64,10 @@ public class ImagesHitterTest {
         try (PDDocument document = PDFParser.parse(SeekableSources
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/type3.pdf")))) {
             document.getPages().forEach(victim::accept);
-            // we are not testing much but at least we trigger the glyphs stream parsing and make sure it doesn't break anything
+            PDPage page = document.getPage(0);
+            COSDictionary pageRes = page.getResources().getCOSObject();
+            assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.FONT))
+                    .getDictionaryObject(COSName.getPDFName("A")).getCOSObject() instanceof InUseFontDictionary);
         }
     }
 

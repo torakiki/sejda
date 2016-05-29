@@ -18,6 +18,7 @@ package org.sejda.core.service;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -39,6 +40,9 @@ import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.CancellationOption;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +97,22 @@ public abstract class OptimizeTaskTest extends BaseTaskTest<OptimizeParameters> 
         parameters.addSource(customInput("pdf/draw_w_transparency.pdf"));
         execute(parameters);
         testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testRemoveFonts() throws IOException {
+        setUpParameters();
+        parameters.addSource(customInput("pdf/unused_fonts.pdf"));
+        parameters.addOptimization(Optimization.DISCARD_UNUSED_RESOURCES);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachRawOutput(p -> assertThat(sizeOfResult(p), is(lessThan(1000L))));
+        testContext.forPdfOutput(d -> {
+            for (PDPage p : d.getPages()) {
+                assertEquals(1,
+                        p.getResources().getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class).size());
+            }
+        });
     }
 
     @Test

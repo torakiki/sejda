@@ -73,7 +73,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
+        parameters.setSource(customInput("pdf/shared_resource_dic_w_fonts.pdf"));
     }
 
     private void setUpParametersPageRangesPages() {

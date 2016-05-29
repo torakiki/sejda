@@ -49,7 +49,8 @@ public class CompressTaskTest extends AbstractTaskTest {
     @Test
     public void testOptimizations() {
         OptimizeParameters parameters = defaultCommandLine()
-                .with("--optimizations", "discard_metadata compress_images discard_unused_images").invokeSejdaConsole();
+                .with("--optimizations", "discard_metadata compress_images discard_unused_resources")
+                .invokeSejdaConsole();
         assertEquals(3, parameters.getOptimizations().size());
     }
 }

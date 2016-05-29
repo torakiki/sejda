@@ -53,8 +53,8 @@ public class PagesOptimizer implements Consumer<PDPage> {
             optimizer = optimizer.andThen(new ImagesOptimizer(parameters));
         }
         // we want to be sure this is not performed before images optimization
-        if (optimizations.contains(Optimization.DISCARD_UNUSED_IMAGES)) {
-            optimizer = optimizer.andThen(new ImagesHitter());
+        if (optimizations.contains(Optimization.DISCARD_UNUSED_RESOURCES)) {
+            optimizer = optimizer.andThen(new ResourcesHitter());
         }
     }
 

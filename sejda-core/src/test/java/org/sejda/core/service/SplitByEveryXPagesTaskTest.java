@@ -72,7 +72,7 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
+        parameters.setSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -92,6 +92,20 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(2);
+    }
+
+    @Test
+    public void splitOptimizeSharedFonts() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(1);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setSource(customInput("pdf/shared_fonts.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
     }
 
     @Test

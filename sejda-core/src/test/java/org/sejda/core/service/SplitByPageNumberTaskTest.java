@@ -56,14 +56,26 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     }
 
     @Test
-    public void burstOptimize() throws IOException {
+    public void burstOptimizeImages() throws IOException {
         setUpParameters();
-        parameters.setSource(customInput("pdf/shared_resource_dic.pdf"));
+        parameters.setSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(2);
+    }
+
+    @Test
+    public void burstOptimizeFonts() throws IOException {
+        setUpParameters();
+        parameters.setSource(customInput("pdf/shared_fonts.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.addPage(1);
+        parameters.addPage(2);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
     }
 
     @Test

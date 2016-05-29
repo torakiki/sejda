@@ -57,7 +57,7 @@ final class Optimizers {
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.PIECE_INFO);
         case DISCARD_STRUCTURE_TREE:
             return (d) -> d.getDocumentCatalog().getCOSObject().removeItem(COSName.STRUCT_TREE_ROOT);
-        case DISCARD_UNUSED_IMAGES:
+        case DISCARD_UNUSED_RESOURCES:
             return new ResourceDictionaryCleaner();
         default:
             return null;

@@ -49,7 +49,7 @@ import org.sejda.util.IOUtils;
 
 /**
  * A read only, filtered, encryptable, indirect reference length {@link COSStream} whose purpose is to be read by the PDF writer during the write process. This can allow to create
- * streams from File input streams and predefined the expected dictionary without having to read anything into memory.
+ * streams from File input streams and predefine the expected dictionary without having to read anything into memory.
  * 
  * @author Andrea Vacondio
  *

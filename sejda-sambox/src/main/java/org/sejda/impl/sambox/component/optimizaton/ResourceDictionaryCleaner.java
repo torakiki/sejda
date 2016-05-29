@@ -35,9 +35,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component that walks through the page tree, finds resource dictionaries and removes any image xobject (type xobject, subtype image) that is not wrapped by a
- * {@link ReadOnlyFilteredCOSStream}. This is the step performed after pages content stream have been already parsed and all used image wrapped by a
- * {@link ReadOnlyFilteredCOSStream} and placed back to the resource dictionary. This is done in two steps because dictionaries can be shared/inherited by pages so we can't take a
- * single page, identify used images and remove the remaining because that same resource dictionary can be used by other pages.
+ * {@link ReadOnlyFilteredCOSStream} and any font that is not wrapped by a {@link InUseFontDictionary}. This is the step performed after pages content stream have been already
+ * parsed, all used image wrapped by a {@link ReadOnlyFilteredCOSStream} and all used fonts wrapped by a {@link InUseFontDictionary} and placed back to the resource dictionary.
+ * This is done in two steps because dictionaries can be shared/inherited by pages so we can't take a single page, identify used images and remove the remaining because that same
+ * resource dictionary can be used by other pages.
  * 
  * @author Andrea Vacondio
  *
@@ -48,7 +49,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
 
     @Override
     public void accept(PDDocument p) {
-        LOG.debug("Cleaning resource dictionaries from unused external objects");
+        LOG.debug("Cleaning resource dictionaries from unused resources");
         clean(p.getPages().streamNodes());
     }
 
@@ -57,9 +58,15 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     }
 
     private void clean(Stream<COSDictionary> nodes) {
-        Stream<COSDictionary> xobjects = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
-                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
-                .filter(Objects::nonNull);
+        Set<COSDictionary> resources = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        cleanXObject(resources.stream().map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                .filter(Objects::nonNull));
+        cleanFonts(resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
+                .filter(Objects::nonNull));
+    }
+
+    private void cleanXObject(Stream<COSDictionary> xobjects) {
         xobjects.forEach(x -> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
@@ -69,6 +76,16 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                     .map(e -> e.getKey()).collect(Collectors.toSet());
             LOG.trace("Removing {} xobjects from {}", toRemove.size(), x);
             toRemove.stream().forEach(x::removeItem);
+        });
+    }
+
+    private void cleanFonts(Stream<COSDictionary> fonts) {
+        fonts.forEach(f -> {
+            Set<COSName> toRemove = f.entrySet().stream()
+                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseFontDictionary)).map(e -> e.getKey())
+                    .collect(Collectors.toSet());
+            LOG.trace("Removing {} fonts from {}", toRemove.size(), f);
+            toRemove.stream().forEach(f::removeItem);
         });
     }
 }

@@ -21,12 +21,13 @@ package org.sejda.impl.sambox.component.split;
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.sambox.component.PagesExtractor;
-import org.sejda.impl.sambox.component.optimizaton.ImagesHitter;
 import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
+import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SplitBySizeParameters;
@@ -118,7 +119,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             return new ExistingPagesSizePredictor();
         };
         private boolean optimize;
-        private ImagesHitter hitter = new ImagesHitter();
+        private ResourcesHitter hitter = new ResourcesHitter();
         private ResourceDictionaryCleaner cleaner = new ResourceDictionaryCleaner();
 
         OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
@@ -160,15 +161,17 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             copy.setResources(page.getResources());
             copy.setRotation(page.getRotation());
             if (optimize) {
-                // each page must have it's own resource dic and it's own xobject name dic
-                // so we don't optimize shared resource dic or xobjects name dictionaries
+
+                // each page must have it's own resource dic and it's own xobject and font name dic
+                // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
                 COSDictionary resources = ofNullable(copy.getResources().getCOSObject()).map(COSDictionary::duplicate)
                         .orElseGet(COSDictionary::new);
                 // resources are cached in the PDPage so make sure they are replaced
                 copy.setResources(new PDResources(resources));
-                ofNullable(resources.getDictionaryObject(COSName.XOBJECT)).filter(b -> b instanceof COSDictionary)
-                        .map(b -> (COSDictionary) b).map(COSDictionary::duplicate)
-                        .ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
+                ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
+                        .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
+                ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).filter(Objects::nonNull)
+                        .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.FONT, d));
                 hitter.accept(copy);
                 cleaner.clean(copy);
             }

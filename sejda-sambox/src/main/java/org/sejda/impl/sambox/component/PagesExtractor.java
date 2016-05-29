@@ -25,11 +25,12 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
-import org.sejda.impl.sambox.component.optimizaton.ImagesHitter;
 import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
+import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
@@ -103,18 +104,18 @@ public class PagesExtractor implements Closeable {
 
     public void optimize() {
         LOG.trace("Optimizing document");
-        ImagesHitter hitter = new ImagesHitter();
+        ResourcesHitter hitter = new ResourcesHitter();
         pagesLookup.values().forEach(p -> {
-            // each page must have it's own resource dic and it's own xobject name dic
-            // so we don't optimize shared resource dic or xobjects name dictionaries
+            // each page must have it's own resource dic and it's own xobject and font name dic
+            // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
             COSDictionary resources = ofNullable(p.getResources().getCOSObject()).map(COSDictionary::duplicate)
                     .orElseGet(COSDictionary::new);
             // resources are cached in the PDPage so make sure they are replaced
             p.setResources(new PDResources(resources));
-            ofNullable(resources.getDictionaryObject(COSName.XOBJECT)).filter(b -> b instanceof COSDictionary)
-                    .map(b -> (COSDictionary) b).map(COSDictionary::duplicate)
-                    .ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
-
+            ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
+                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
+            ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).filter(Objects::nonNull)
+                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.FONT, d));
             hitter.accept(p);
         });
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
