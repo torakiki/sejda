@@ -56,14 +56,14 @@ target/assembled/bin/sejda-console unpack -f ../sejda-core/src/test/resources/pd
 target/assembled/bin/sejda-console alternatemix -h
 target/assembled/bin/sejda-console alternatemix -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 --reverseSecond --firstStep 5 --overwrite --compressed -o /tmp/sejda-smoketest/mixed.pdf
 target/assembled/bin/sejda-console crop -h
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[400:0][800:200]" --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[0:0][500:400]" --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[0:0][500:400]" --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas [0:0][500:400] --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[0:0][400:450]" "[400:0][800:450]" --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[0:0][400:450]" --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas [0:0][500:400] --overwrite
-target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/crop.pdf --cropAreas "[400:0][800:450]" "[0:0][400:450]"  --overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[400:0][800:200]" -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[0:0][500:400]" -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[0:0][500:400]" -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas [0:0][500:400] -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[0:0][400:450]" "[400:0][800:450]" -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[0:0][400:450]" -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas [0:0][500:400] -j overwrite
+target/assembled/bin/sejda-console crop -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ --cropAreas "[400:0][800:450]" "[0:0][400:450]" -j overwrite
 target/assembled/bin/sejda-console merge -h
 target/assembled/bin/sejda-console merge -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/merged.pdf --overwrite 
 target/assembled/bin/sejda-console merge -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/merged.pdf --overwrite -a merge
@@ -107,5 +107,5 @@ target/assembled/bin/sejda-console portfolio -h
 target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf ../sejda-core/src/test/resources/text_file.txt  -i details -o /tmp/sejda-smoketest/portfolio.pdf
 target/assembled/bin/sejda-console compress -h
 target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -q 0.4 -o /tmp/sejda-smoketest -j overwrite
-target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -z discard_unused_images discard_outline discard_metadata -o /tmp/sejda-smoketest -j overwrite
+target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -z discard_unused_resources discard_outline discard_metadata -o /tmp/sejda-smoketest -j overwrite
 
