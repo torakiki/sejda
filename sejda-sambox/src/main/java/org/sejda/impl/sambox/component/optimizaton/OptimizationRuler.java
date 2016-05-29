@@ -64,20 +64,32 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
     }
 
     private boolean willNeedOptimization(PDDocument document) {
-        return hasSharedXObjectDictionaries(document) || hasInheritedImages(document);
+        return hasSharedXObjectDictionaries(document) || hasSharedFontDictionaries(document)
+                || hasInheritedResources(document);
     }
 
-    private boolean hasInheritedImages(PDDocument document) {
-        // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count the xobjects of subtype Image, so basically we try to determine if pages are
-        // going to inherit images, potentially unused in which case we want to optimize
-        long inheritedImage = document.getPages().streamNodes().filter(PDPageTree::isPageTreeNode)
+    /**
+     * @param document
+     * @return true if the document page tree has non leaf nodes with fonts or images resources, inherited by page leaves.
+     */
+    private boolean hasInheritedResources(PDDocument document) {
+        // we take all the resource dictionaries in non-leaf nodes (i.e. inherited by pages) and count fonts and the xobjects of subtype Image, so basically we try to determine if
+        // pages are going to inherit images or fonts, potentially unused in which case we want to optimize
+        List<COSDictionary> resources = document.getPages().streamNodes().filter(PDPageTree::isPageTreeNode)
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
-                .map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
-                .flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject).filter(d -> d instanceof COSDictionary)
-                .map(d -> (COSDictionary) d).map(d -> d.getNameAsString(COSName.SUBTYPE)).filter(Objects::nonNull)
+                .distinct().collect(Collectors.toList());
+
+        long inheritedImage = resources.stream().map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                .filter(Objects::nonNull).flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject)
+                .filter(d -> d instanceof COSDictionary).map(d -> (COSDictionary) d)
+                .map(d -> d.getNameAsString(COSName.SUBTYPE)).filter(Objects::nonNull)
                 .filter(COSName.IMAGE.getName()::equals).count();
-        LOG.debug("Found {} inherited images potentially unused", inheritedImage);
-        return inheritedImage > 0;
+        long inheritedFonts = resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
+                .filter(Objects::nonNull).flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject)
+                .filter(d -> d instanceof COSDictionary).count();
+        LOG.debug("Found {} inherited images and {} inherited fonts potentially unused", inheritedImage,
+                inheritedFonts);
+        return (inheritedImage + inheritedFonts) > 0;
     }
 
     private boolean hasSharedXObjectDictionaries(PDDocument document) {
@@ -95,6 +107,25 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
             // if the distinct count is different it means one or more xobject name dictionary is shared among some pages so it likely contains images used by multiple pages so we
             // optimize
             LOG.debug("Found shared XObject dictionary containing image resouces");
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hasSharedFontDictionaries(PDDocument document) {
+        // we get from all the pages resource dictionaries, all the font name dictionaries
+        List<COSDictionary> fontDictionaries = document.getPages().stream().map(PDPage::getCOSObject)
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
+                .filter(Objects::nonNull).filter(x -> {
+                    return x.getValues().stream().map(COSBase::getCOSObject).filter(v -> v instanceof COSDictionary)
+                            .count() > 0;
+                }).collect(Collectors.toList());
+        long distinctFontDictionaries = fontDictionaries.stream().distinct().count();
+        if (fontDictionaries.size() > distinctFontDictionaries) {
+            // if the distinct count is different it means one or more font name dictionaries is shared among pages so it likely contains fonts used by multiple pages so we
+            // optimize
+            LOG.debug("Found shared font dictionaries");
             return true;
         }
         return false;

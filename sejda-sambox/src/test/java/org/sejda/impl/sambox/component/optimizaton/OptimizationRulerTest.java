@@ -47,9 +47,17 @@ public class OptimizationRulerTest {
     }
 
     @Test
-    public void sharedResourceDictionary() throws IOException {
+    public void sharedResourceWithImagesDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
+            assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
+        }
+    }
+
+    @Test
+    public void sharedResourceWithFontsDictionary() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_fonts.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
@@ -58,6 +66,14 @@ public class OptimizationRulerTest {
     public void sharedXobjectsDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_xobjects_dics.pdf")))) {
+            assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
+        }
+    }
+
+    @Test
+    public void sharedFontsDictionary() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_fonts_dics.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
