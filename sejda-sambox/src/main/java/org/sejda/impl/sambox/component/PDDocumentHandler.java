@@ -365,9 +365,9 @@ public class PDDocumentHandler implements Closeable {
         }
     }
 
-    public void addBlankPage(PDRectangle mediaBox) {
+    public PDPage addBlankPage(PDRectangle mediaBox) {
         LOG.debug("Adding blank page");
-        addPage(new PDPage(ofNullable(mediaBox).orElse(PDRectangle.LETTER)));
+        return addPage(new PDPage(ofNullable(mediaBox).orElse(PDRectangle.LETTER)));
     }
 
     public void addBlankPageAfter(int pageNumber) {
