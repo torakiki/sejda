@@ -56,6 +56,7 @@ public enum Optimization implements FriendlyNamed {
      */
     DISCARD_ALTERNATE_IMAGES("discard_alternate_images"),
     COMPRESS_IMAGES("compress_images"),
+    @Deprecated DISCARD_UNUSED_IMAGES("discard_unused_images"),
     DISCARD_UNUSED_RESOURCES("discard_unused_resources"),
     /**
      * PDF 32000-1:2008 14.7.2
