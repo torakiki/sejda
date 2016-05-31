@@ -55,12 +55,10 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
-    private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
     public void before(JpegToPdfParameters parameters) {
         totalSteps = parameters.getSourceList().size();
-        documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
