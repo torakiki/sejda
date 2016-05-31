@@ -33,7 +33,7 @@ import java.util.List;
  * Base parameters class for manipulations with a list of {@link org.sejda.model.input.Source}.
  *
  */
-abstract class MultipleSourceParameters extends AbstractPdfOutputParameters implements MultipleSourceTaskParameter {
+public abstract class MultipleSourceParameters extends AbstractPdfOutputParameters implements MultipleSourceTaskParameter {
 
     @NotEmpty
     @Valid
