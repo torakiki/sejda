@@ -54,7 +54,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @NotNull
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
     @NotNull
-    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.DISCARD;
+    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
     private String outputName;
     @Valid
     @NotNull

@@ -43,7 +43,7 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
     private List<FileIndexAndPage> pages = new ArrayList<FileIndexAndPage>();
 
     @NotNull
-    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.DISCARD;
+    private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
 
     public void addPage(int fileIndex, int page) {
         pages.add(new FileIndexAndPage(fileIndex, page));
