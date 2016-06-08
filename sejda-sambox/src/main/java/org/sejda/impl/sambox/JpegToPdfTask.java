@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base task handling multiple sources and creating multiple outputs
+ * SAMBox implementation of a task that converts a list of jpg sources into a PDF file
  * 
  */
 public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
