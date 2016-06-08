@@ -18,13 +18,21 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.awt.Point;
+import java.io.File;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.model.task.BaseTask;
@@ -33,16 +41,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.File;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Base task handling multiple sources and creating multiple outputs
@@ -80,7 +78,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             PDRectangle mediaBox = PDRectangle.A4;
 
-            if(image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+            if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
                 mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
             }
 
@@ -90,7 +88,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
             int width = image.getWidth();
             int height = image.getHeight();
 
-            if(width > mediaBox.getWidth()) {
+            if (width > mediaBox.getWidth()) {
                 int targetWidth = (int) mediaBox.getWidth();
                 LOG.debug("Scaling image down to fit by width {} vs  {}", width, targetWidth);
 
@@ -99,7 +97,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
                 height = Math.round((float) height / ratio);
             }
 
-            if(height > mediaBox.getHeight()) {
+            if (height > mediaBox.getHeight()) {
                 int targetHeight = (int) mediaBox.getHeight();
                 LOG.debug("Scaling image down to fit by height {} vs  {}", height, targetHeight);
 
