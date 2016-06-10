@@ -71,7 +71,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             throws TaskException {
         super.before(parameters, executionContext);
         sourceOpener = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
 
     }
 

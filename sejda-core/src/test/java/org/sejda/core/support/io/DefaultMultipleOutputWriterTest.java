@@ -27,6 +27,8 @@ import org.junit.Test;
 import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * @author Andrea Vacondio
@@ -34,10 +36,10 @@ import org.sejda.model.output.FileTaskOutput;
  */
 public class DefaultMultipleOutputWriterTest {
 
-    private MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE);
-
     @Test(expected = TaskOutputVisitException.class)
     public void testWriteNonFile() throws TaskOutputVisitException {
+        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class));
+        MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File outputFile = mock(File.class);
         new FileTaskOutput(outputFile).accept(victim);
     }

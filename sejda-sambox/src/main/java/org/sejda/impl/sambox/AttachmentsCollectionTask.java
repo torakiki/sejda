@@ -76,7 +76,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
             throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

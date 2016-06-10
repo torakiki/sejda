@@ -19,7 +19,9 @@
  */
 package org.sejda.core.support.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.io.File;
@@ -30,6 +32,8 @@ import org.sejda.core.support.io.model.FileOutput;
 import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * @author Andrea Vacondio
@@ -39,7 +43,8 @@ public class BaseOutputWriterTest {
 
     @Test
     public void testWriteFile() throws IOException, TaskOutputVisitException {
-        BaseOutputWriter victim = spy(new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE));
+        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class));
+        BaseOutputWriter victim = spy(new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context));
         File tempFile = File.createTempFile("srcTest", "");
         victim.add(FileOutput.file(tempFile).name("newName"));
 
@@ -48,6 +53,7 @@ public class BaseOutputWriterTest {
 
         output.accept(victim);
         assertFalse("temporary file not deleted", tempFile.exists());
+        assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
     }
 
 }

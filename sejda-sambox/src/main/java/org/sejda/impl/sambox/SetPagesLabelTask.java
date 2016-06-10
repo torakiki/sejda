@@ -56,7 +56,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
     public void before(SetPagesLabelParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

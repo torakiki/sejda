@@ -26,6 +26,7 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * Multiple writer default implementation
@@ -35,8 +36,8 @@ import org.sejda.model.output.StreamTaskOutput;
  */
 class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOutputWriter {
 
-    DefaultMultipleOutputWriter(ExistingOutputPolicy existingOutputPolicy) {
-        super(existingOutputPolicy);
+    DefaultMultipleOutputWriter(ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) {
+        super(existingOutputPolicy, executionContext);
     }
 
     @Override

@@ -33,10 +33,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * Test unit for the {@link OutputWriterHelper}
@@ -48,6 +51,13 @@ public class OutputWriterHelperTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    private TaskExecutionContext context;
+
+    @Before
+    public void setUp() {
+        context = new TaskExecutionContext(mock(Task.class));
+    }
 
     @Test
     public void copyStreamZipped() throws IOException {
@@ -79,7 +89,7 @@ public class OutputWriterHelperTest {
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
@@ -96,7 +106,7 @@ public class OutputWriterHelperTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
@@ -113,7 +123,7 @@ public class OutputWriterHelperTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.FAIL);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.FAIL, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
@@ -130,7 +140,7 @@ public class OutputWriterHelperTest {
         when(outFile.exists()).thenReturn(Boolean.TRUE);
 
         try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.SKIP);
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.SKIP, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
@@ -143,7 +153,7 @@ public class OutputWriterHelperTest {
         files.put("newName", folder.newFile());
 
         try {
-            OutputWriterHelper.moveToDirectory(files, folder.newFile(), ExistingOutputPolicy.OVERWRITE);
+            OutputWriterHelper.moveToDirectory(files, folder.newFile(), ExistingOutputPolicy.OVERWRITE, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
@@ -155,8 +165,9 @@ public class OutputWriterHelperTest {
         File dest = folder.newFolder();
         File tempFile = folder.newFile();
         Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
         assertEquals(2, dest.list().length);
+        assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
     }
 
     @Test
@@ -164,8 +175,9 @@ public class OutputWriterHelperTest {
         File dest = folder.newFolder();
         File tempFile = folder.newFile();
         Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.OVERWRITE);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.OVERWRITE, context);
         assertEquals(2, dest.list().length);
+        assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
     }
 
     @Test(expected = IOException.class)
@@ -173,7 +185,7 @@ public class OutputWriterHelperTest {
         File dest = folder.newFolder();
         File tempFile = folder.newFile();
         Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.FAIL);
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.FAIL, context);
     }
 
     private Map<String, File> populateWithOneExisting(File dest, File tempFile) throws IOException {
@@ -196,7 +208,7 @@ public class OutputWriterHelperTest {
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
 
         try {
-            OutputWriterHelper.moveToDirectory(files, outFile, ExistingOutputPolicy.OVERWRITE);
+            OutputWriterHelper.moveToDirectory(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));

@@ -31,6 +31,7 @@ import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * Provides support methods to handle output files. Can hold one or multiple output files and write them to the destination.
@@ -42,21 +43,24 @@ abstract class BaseOutputWriter implements TaskOutputDispatcher {
 
     Map<String, File> multipleFiles;
     private ExistingOutputPolicy existingOutputPolicy = ExistingOutputPolicy.FAIL;
+    private final TaskExecutionContext executionContext;
 
-    public BaseOutputWriter(ExistingOutputPolicy existingOutputPolicy) {
+    public BaseOutputWriter(ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) {
         this.multipleFiles = new HashMap<>();
         this.existingOutputPolicy = ObjectUtils.defaultIfNull(existingOutputPolicy, ExistingOutputPolicy.FAIL);
+        this.executionContext = executionContext;
     }
 
     @Override
     public void dispatch(FileTaskOutput output) throws IOException {
-        OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), existingOutputPolicy);
+        OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), existingOutputPolicy, executionContext);
 
     }
 
     @Override
     public void dispatch(DirectoryTaskOutput output) throws IOException {
-        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy);
+        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy,
+                executionContext);
 
     }
 
@@ -70,10 +74,4 @@ abstract class BaseOutputWriter implements TaskOutputDispatcher {
         multipleFiles.put(fileOutput.getName(), fileOutput.getFile());
     }
 
-    /**
-     * clear the collection of files awaiting to be flushed
-     */
-    void clear() {
-        multipleFiles.clear();
-    }
 }

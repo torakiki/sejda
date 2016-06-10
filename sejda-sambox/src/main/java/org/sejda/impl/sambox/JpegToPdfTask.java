@@ -59,7 +59,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
     public void before(JpegToPdfParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

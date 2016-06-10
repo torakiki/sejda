@@ -64,7 +64,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
         security = securityFromParams(parameters);
     }
 

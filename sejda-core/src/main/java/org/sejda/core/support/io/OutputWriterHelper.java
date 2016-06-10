@@ -38,6 +38,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,10 +63,12 @@ final class OutputWriterHelper {
      * @param outputFile
      * @param existingOutputPolicy
      *            policy to use if an output that already exists is found
+     * @param executionContext
+     *            current execution context
      * @throws IOException
      */
-    static void moveToFile(Map<String, File> files, File outputFile, ExistingOutputPolicy existingOutputPolicy)
-            throws IOException {
+    static void moveToFile(Map<String, File> files, File outputFile, ExistingOutputPolicy existingOutputPolicy,
+            TaskExecutionContext executionContext) throws IOException {
         if (outputFile.exists() && !outputFile.isFile()) {
             throw new IOException(String.format("Wrong output destination %s, must be a file.", outputFile));
         }
@@ -78,7 +81,7 @@ final class OutputWriterHelper {
             moveFile(entry.getValue(), outputFile, of(existingOutputPolicy).filter(p -> p != SKIP).orElseGet(() -> {
                 LOG.debug("Cannot use {} output policy for single output, replaced with {}", SKIP, FAIL);
                 return FAIL;
-            }));
+            }), executionContext);
         }
 
     }
@@ -90,10 +93,12 @@ final class OutputWriterHelper {
      * @param outputDirectory
      * @param existingOutputPolicy
      *            policy to use if an output that already exists is found
+     * @param executionContext
+     *            current execution context
      * @throws IOException
      */
     static void moveToDirectory(Map<String, File> files, File outputDirectory,
-            ExistingOutputPolicy existingOutputPolicy) throws IOException {
+            ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) throws IOException {
         if (!outputDirectory.isDirectory()) {
             throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
         }
@@ -105,7 +110,8 @@ final class OutputWriterHelper {
                 throw new IOException(String.format(
                         "Unable to move %s to the output directory, no output name specified.", entry.getValue()));
             }
-            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), existingOutputPolicy);
+            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), existingOutputPolicy,
+                    executionContext);
         }
     }
 
@@ -118,16 +124,18 @@ final class OutputWriterHelper {
      *            output file
      * @param existingOutputPolicy
      *            policy to use if an output that already exists is found
+     * @param executionContext
      * @throws IOException
      */
-    private static void moveFile(File input, File output, ExistingOutputPolicy existingOutputPolicy)
-            throws IOException {
+    private static void moveFile(File input, File output, ExistingOutputPolicy existingOutputPolicy,
+            TaskExecutionContext executionContext) throws IOException {
         if (output.exists()) {
             switch (existingOutputPolicy) {
             case OVERWRITE:
                 LOG.debug("Moving {} to {}.", input, output);
                 FileUtils.deleteQuietly(output);
                 FileUtils.moveFile(input, output);
+                executionContext.notifiableTaskMetadata().addTaskOutput(output);
                 break;
             case SKIP:
                 LOG.info("Skipping already existing output file {}", output);
@@ -140,6 +148,7 @@ final class OutputWriterHelper {
         } else {
             LOG.debug("Moving {} to {}.", input, output);
             FileUtils.moveFile(input, output);
+            executionContext.notifiableTaskMetadata().addTaskOutput(output);
         }
     }
 

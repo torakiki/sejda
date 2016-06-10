@@ -61,7 +61,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     @Override
     public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
-        outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

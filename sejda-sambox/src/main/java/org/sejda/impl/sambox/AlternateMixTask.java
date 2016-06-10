@@ -50,7 +50,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     public void before(AlternateMixParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

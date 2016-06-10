@@ -20,6 +20,7 @@
 package org.sejda.core.support.io;
 
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * Provides factory methods for available output writers.
@@ -38,10 +39,13 @@ public final class OutputWriters {
      * 
      * @param policy
      *            policy to use in case of an existing output is found
-     * @return a new instace of the default {@link SingleOutputWriter}
+     * @param executionContext
+     *            the current execution context
+     * @return a new instance of the default {@link SingleOutputWriter}
      */
-    public static SingleOutputWriter newSingleOutputWriter(ExistingOutputPolicy policy) {
-        return new DefaultSingleOutputWriter(policy);
+    public static SingleOutputWriter newSingleOutputWriter(ExistingOutputPolicy policy,
+            TaskExecutionContext executionContext) {
+        return new DefaultSingleOutputWriter(policy, executionContext);
     }
 
     /**
@@ -49,9 +53,12 @@ public final class OutputWriters {
      * 
      * @param policy
      *            policy to use in case of an existing output is found
+     * @param executionContext
+     *            the current execution context
      * @return a new instance of the default {@link MultipleOutputWriter}
      */
-    public static MultipleOutputWriter newMultipleOutputWriter(ExistingOutputPolicy policy) {
-        return new DefaultMultipleOutputWriter(policy);
+    public static MultipleOutputWriter newMultipleOutputWriter(ExistingOutputPolicy policy,
+            TaskExecutionContext executionContext) {
+        return new DefaultMultipleOutputWriter(policy, executionContext);
     }
 }

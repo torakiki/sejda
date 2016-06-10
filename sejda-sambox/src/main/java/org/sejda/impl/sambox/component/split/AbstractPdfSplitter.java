@@ -63,12 +63,14 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
         this.totalPages = document.getNumberOfPages();
         this.optimize = optimize;
         this.discardOutline = discardOutline;
-        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+
     }
 
     public void split(TaskExecutionContext executionContext) throws TaskException {
         nextOutputStrategy().ensureIsValid();
 
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(),
+                executionContext);
         try (PagesExtractor extractor = supplyPagesExtractor(document)) {
             int outputDocumentsCounter = 0;
             File tmpFile = null;

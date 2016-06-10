@@ -61,7 +61,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         if (!getWriter().supportMultiImage()) {
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
-        outputWriter = newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

@@ -66,7 +66,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
             throws TaskException {
         super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override

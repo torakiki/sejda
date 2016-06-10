@@ -47,19 +47,21 @@ public class PageDestinationsLevelPdfExtractor {
     private final OutlineExtractPageDestinations outlineDestinations;
     private final ExtractByOutlineParameters parameters;
     private final PDDocument document;
-    private final MultipleOutputWriter outputWriter;
+    private MultipleOutputWriter outputWriter;
 
     public PageDestinationsLevelPdfExtractor(PDDocument document, ExtractByOutlineParameters parameters,
             OutlineExtractPageDestinations outlineDestinations) {
         this.outlineDestinations = outlineDestinations;
         this.parameters = parameters;
         this.document = document;
-        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+
     }
 
     public void extract(TaskExecutionContext executionContext) throws TaskException {
         int outputDocumentsCounter = 0;
 
+        this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(),
+                executionContext);
         try (PagesExtractor extractor = new PagesExtractor(document)) {
 
             int totalExtractions = outlineDestinations.sections.size();

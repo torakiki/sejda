@@ -64,7 +64,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
