@@ -16,17 +16,39 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
+
+import java.io.File;
+import java.util.SortedSet;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageGeometricalShapeWriter;
+import org.sejda.impl.sambox.component.PageImageWriter;
+import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.*;
+import org.sejda.model.parameter.edit.AddImageOperation;
+import org.sejda.model.parameter.edit.AddShapeOperation;
+import org.sejda.model.parameter.edit.AddTextOperation;
+import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.HighlightTextOperation;
+import org.sejda.model.parameter.edit.InsertPageOperation;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
@@ -37,18 +59,6 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationTextMarkup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.SortedSet;
-
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
 public class EditTask extends BaseTask<EditParameters> {
 
@@ -61,7 +71,8 @@ public class EditTask extends BaseTask<EditParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(EditParameters parameters) {
+    public void before(EditParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -72,7 +83,7 @@ public class EditTask extends BaseTask<EditParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             currentStep++;
 
@@ -171,7 +182,7 @@ public class EditTask extends BaseTask<EditParameters> {
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

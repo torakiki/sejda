@@ -35,6 +35,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,8 +56,8 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     private Document pdfDocument = null;
 
     @Override
-    public void before(T parameters) throws TaskExecutionException {
-        super.before(parameters);
+    public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         if (!getWriter().supportMultiImage()) {
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
@@ -77,7 +78,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         getWriter().openWriteDestination(tmpFile, parameters);
         for (int zeroBasedPageNumber = 0; zeroBasedPageNumber < pdfDocument.getNumberOfPages(); zeroBasedPageNumber++) {
             LOG.trace("Writing page {}", zeroBasedPageNumber + 1);
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBasedPageNumber, parameters);
             if (pageImage == null) {
@@ -86,7 +87,8 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
             }
 
             getWriter().write(pageImage, parameters);
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1).outOf(numberOfPages);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(zeroBasedPageNumber + 1)
+                    .outOf(numberOfPages);
         }
         getWriter().closeDestination();
 

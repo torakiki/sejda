@@ -31,6 +31,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,8 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     private AbstractPdfSplitter<SplitBySizeParameters> splitter;
 
     @Override
-    public void before(SplitBySizeParameters parameters) {
+    public void before(SplitBySizeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -63,7 +65,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         splitter = new SizePdfSplitter(sourceDocument, parameters,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
         LOG.debug("Starting split by size {} bytes", parameters.getSizeToSplitAt());
-        splitter.split(getNotifiableTaskMetadata());
+        splitter.split(executionContext());
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }

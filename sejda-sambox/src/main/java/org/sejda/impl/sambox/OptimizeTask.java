@@ -36,6 +36,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,8 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(OptimizeParameters parameters) {
+    public void before(OptimizeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -66,7 +68,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
@@ -80,7 +82,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
             LOG.debug("Starting optimization");
             for (PDPage p : documentHandler.getPages()) {
-                stopTaskIfCancelled();
+                executionContext().assertTaskNotCancelled();
                 pagesOptimizer.accept(p);
             }
             documentOptimizer.accept(documentHandler.getUnderlyingPDDocument());
@@ -95,7 +97,7 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

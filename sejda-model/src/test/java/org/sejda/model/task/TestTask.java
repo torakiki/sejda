@@ -21,6 +21,7 @@
 package org.sejda.model.task;
 
 import org.junit.Ignore;
+import org.sejda.model.exception.TaskException;
 
 /**
  * @author Andrea Vacondio
@@ -36,7 +37,8 @@ public class TestTask extends BaseTask<TestTaskParameter> {
     }
 
     @Override
-    public void before(TestTaskParameter parameters) {
+    public void before(TestTaskParameter parameters, TaskExecutionContext context) throws TaskException {
+        super.before(parameters, context);
         // nothing
     }
 

@@ -43,6 +43,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.sejda.sambox.pdmodel.common.PDNameTreeNode;
 import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -65,7 +66,8 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(UnpackParameters parameters) {
+    public void before(UnpackParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -76,7 +78,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             try {
                 LOG.debug("Opening {}", source);
@@ -97,7 +99,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
                 nullSafeCloseQuietly(sourceDocumentHandler);
             }
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

@@ -20,24 +20,22 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.TaskParameters;
-import org.sejda.model.task.Cancellable;
 import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.NotifiableTaskMetadata;
-import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,38 +58,34 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     @Override
     public void execute(TaskParameters parameters, CancellationOption cancellationOption) {
-        StopWatch stopWatch = new StopWatch();
-        Task<? extends TaskParameters> task = null;
+        TaskExecutionContext executionContext = null;
         LOG.trace("Starting exectution for {}", parameters);
         try {
             validate(parameters);
-            task = context.getTask(parameters);
-            if(task instanceof Cancellable) {
-                cancellationOption.setCancellableTask((Cancellable)task);
-            }
-            LOG.info("Starting task ({}) execution.", task);
-            preExecution(task, stopWatch);
-            actualExecution(parameters, task);
-            postExecution(task, stopWatch);
-            LOG.info("Task ({}) executed in {}", task,
-                    DurationFormatUtils.formatDurationWords(stopWatch.getTime(), true, true));
+            executionContext = new TaskExecutionContext(context.getTask(parameters));
+            cancellationOption.setExecutionContext(executionContext);
+            LOG.info("Starting task ({}) execution.", executionContext.task());
+            preExecution(executionContext);
+            actualExecution(parameters, executionContext);
+            postExecution(executionContext);
         } catch (InvalidTaskParametersException i) {
             LOG.error("Task execution failed due to invalid parameters.", i);
-            executionFailed(i, task);
+            executionFailed(i, executionContext);
         } catch (TaskException e) {
-            LOG.error(String.format("Task (%s) execution failed.", task), e);
-            executionFailed(e, task);
+            LOG.error(String.format("Task (%s) execution failed.",
+                    ofNullable(executionContext).map(c -> c.task().toString()).orElse("")), e);
+            executionFailed(e, executionContext);
         } catch (RuntimeException e) {
-            executionFailed(e, task);
+            executionFailed(e, executionContext);
             throw e;
         }
     }
 
-    private void executionFailed(Exception e, Task<?> task) {
-        if (task == null) {
+    private void executionFailed(Exception e, TaskExecutionContext executionContext) {
+        if (executionContext == null) {
             notifyEvent(NotifiableTaskMetadata.NULL).taskFailed(e);
         } else {
-            notifyEvent(task.getNotifiableTaskMetadata()).taskFailed(e);
+            notifyEvent(executionContext.notifiableTaskMetadata()).taskFailed(e);
         }
     }
 
@@ -101,10 +95,11 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
                     .validate(parameters);
             if (!violations.isEmpty()) {
-                StringBuilder sb = new StringBuilder(String.format("Input parameters (%s) are not valid: ", parameters));
+                StringBuilder sb = new StringBuilder(
+                        String.format("Input parameters (%s) are not valid: ", parameters));
                 for (ConstraintViolation<TaskParameters> violation : violations) {
-                    sb.append(String.format("\"(%s=%s) %s\" ", violation.getPropertyPath(),
-                            violation.getInvalidValue(), violation.getMessage()));
+                    sb.append(String.format("\"(%s=%s) %s\" ", violation.getPropertyPath(), violation.getInvalidValue(),
+                            violation.getMessage()));
                 }
                 throw new InvalidTaskParametersException(sb.toString());
             }
@@ -116,17 +111,17 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     /**
      * operations needed before the actual execution
      */
-    private void preExecution(Task<?> task, StopWatch stopWatch) {
-        stopWatch.start();
-        notifyEvent(task.getNotifiableTaskMetadata()).taskStarted();
+    private void preExecution(TaskExecutionContext context) {
+        context.taskStart();
+        notifyEvent(context.notifiableTaskMetadata()).taskStarted();
     }
 
     /**
      * operations needed after the actual execution
      */
-    private void postExecution(Task<?> task, StopWatch stopWatch) {
-        stopWatch.stop();
-        notifyEvent(task.getNotifiableTaskMetadata()).taskCompleted(stopWatch.getTime());
+    private void postExecution(TaskExecutionContext context) {
+        context.taskEnded();
+        notifyEvent(context.notifiableTaskMetadata()).taskCompleted(context.executionTime());
     }
 
     /**
@@ -136,14 +131,15 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
      * @param task
      * @throws TaskException
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private void actualExecution(TaskParameters parameters, Task task) throws TaskException {
+    @SuppressWarnings("unchecked")
+    private void actualExecution(TaskParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
         try {
-            task.before(parameters);
-            task.execute(parameters);
+            executionContext.task().before(parameters, executionContext);
+            executionContext.task().execute(parameters);
         } finally {
             try {
-                task.after();
+                executionContext.task().after();
             } catch (RuntimeException e) {
                 LOG.warn("An unexpected error occurred during the execution of the 'after' phase.", e);
             }

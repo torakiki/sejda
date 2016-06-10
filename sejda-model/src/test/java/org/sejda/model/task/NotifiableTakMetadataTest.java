@@ -29,8 +29,8 @@ import org.sejda.TestUtils;
 public class NotifiableTakMetadataTest {
     @Test
     public void testEquals() {
-        NotifiableTaskMetadata eq = new TestTask().getNotifiableTaskMetadata();
-        NotifiableTaskMetadata diff = new TestTask().getNotifiableTaskMetadata();
+        NotifiableTaskMetadata eq = new NotifiableTaskMetadata(new TestTask());
+        NotifiableTaskMetadata diff = new NotifiableTaskMetadata(new TestTask());
         TestUtils.testEqualsAndHashCodes(eq, eq, eq, diff);
         TestUtils.testEqualsAndHashCodes(eq, eq, eq, NotifiableTaskMetadata.NULL);
     }

@@ -38,6 +38,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     private PDDocumentHandler sourceDocumentHandler;
 
     @Override
-    public void before(ExtractPagesParameters parameters) {
+    public void before(ExtractPagesParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
@@ -78,7 +80,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         extractor.setCompress(parameters.isCompress());
 
         LOG.debug("Extracting pages {}", pages);
-        extractor.retain(pages, getNotifiableTaskMetadata());
+        extractor.retain(pages, executionContext());
 
         File tmpFile = createTemporaryPdfBuffer();
         LOG.debug("Created output temporary buffer {}", tmpFile);

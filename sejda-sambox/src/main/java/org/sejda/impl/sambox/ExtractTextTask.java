@@ -39,6 +39,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractTextParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,8 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
     private PdfTextExtractor textExtractor;
 
     @Override
-    public void before(ExtractTextParameters parameters) throws TaskException {
+    public void before(ExtractTextParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
@@ -69,7 +71,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
     public void execute(ExtractTextParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             currentStep++;
             LOG.debug("Opening {}", source);
@@ -87,7 +89,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
             closeResources();
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

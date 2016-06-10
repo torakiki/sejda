@@ -39,6 +39,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.encryption.StandardSecurity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,8 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
     private StandardSecurity security;
 
     @Override
-    public void before(EncryptParameters parameters) {
+    public void before(EncryptParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -71,7 +73,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             try {
@@ -92,7 +94,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
                 nullSafeCloseQuietly(documentHandler);
             }
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

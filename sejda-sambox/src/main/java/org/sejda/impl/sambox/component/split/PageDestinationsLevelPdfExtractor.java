@@ -32,7 +32,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
-import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +57,7 @@ public class PageDestinationsLevelPdfExtractor {
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
-    public void extract(NotifiableTaskMetadata taskMetadata) throws TaskException {
+    public void extract(TaskExecutionContext executionContext) throws TaskException {
         int outputDocumentsCounter = 0;
 
         try (PagesExtractor extractor = new PagesExtractor(document)) {
@@ -70,7 +70,7 @@ public class PageDestinationsLevelPdfExtractor {
             boolean optimize = new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document);
 
             for (int s = 0; s < totalExtractions; s++) {
-                taskMetadata.stopTaskIfCancelled();
+                executionContext.assertTaskNotCancelled();
                 OutlineExtractPageDestinations.OutlineItemBoundaries section = outlineDestinations.sections.get(s);
                 // open
                 int page = section.startPage;
@@ -86,11 +86,11 @@ public class PageDestinationsLevelPdfExtractor {
                 outputWriter.addOutput(file(tmpFile).name(outName));
 
                 for (; page <= section.endPage; page++) {
-                    taskMetadata.stopTaskIfCancelled();
+                    executionContext.assertTaskNotCancelled();
 
                     // retain
                     LOG.trace("Retaining page {} of the original document", page);
-                    extractor.retain(page, taskMetadata);
+                    extractor.retain(page, executionContext);
                 }
 
                 // close
@@ -103,7 +103,7 @@ public class PageDestinationsLevelPdfExtractor {
                 extractor.reset();
                 LOG.debug("Ending extracting {}", section.title);
 
-                notifyEvent(taskMetadata).stepsCompleted(s).outOf(totalExtractions);
+                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(s).outOf(totalExtractions);
             }
         }
         parameters.getOutput().accept(outputWriter);

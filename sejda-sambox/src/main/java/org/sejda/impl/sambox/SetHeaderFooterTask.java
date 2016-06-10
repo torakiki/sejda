@@ -38,6 +38,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,9 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(SetHeaderFooterParameters parameters) {
+    public void before(SetHeaderFooterParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -69,7 +72,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             currentStep++;
 
@@ -93,7 +96,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 outputWriter.addOutput(file(tmpFile).name(outName));
             }
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

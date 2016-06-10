@@ -36,6 +36,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,15 +56,16 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(SetMetadataParameters parameters) {
+    public void before(SetMetadataParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
     public void execute(SetMetadataParameters parameters) throws TaskException {
-        stopTaskIfCancelled();
-        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+        executionContext().assertTaskNotCancelled();
+        notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);

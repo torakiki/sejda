@@ -34,7 +34,7 @@ import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
-import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -72,24 +72,24 @@ public class PagesExtractor implements Closeable {
         this.destinationDocument.initialiseBasedOn(originalDocument);
     }
 
-    public void retain(Set<Integer> pages, NotifiableTaskMetadata taskMetadata) throws TaskCancelledException {
+    public void retain(Set<Integer> pages, TaskExecutionContext executionContext) throws TaskCancelledException {
         int currentStep = 0;
         for (Integer page : pages) {
-            taskMetadata.stopTaskIfCancelled();
+            executionContext.assertTaskNotCancelled();
 
-            retain(page, taskMetadata);
-            notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(pages.size());
+            retain(page, executionContext);
+            notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(pages.size());
         }
     }
 
-    public void retain(int page, NotifiableTaskMetadata taskMetadata) {
+    public void retain(int page, TaskExecutionContext executionContext) {
         try {
             PDPage existingPage = originalDocument.getPage(page - 1);
             pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
             LOG.trace("Imported page number {}", page);
         } catch (PageNotFoundException ex) {
             String warning = String.format("Page %d was skipped, could not be processed", page);
-            notifyEvent(taskMetadata).taskWarning(warning);
+            notifyEvent(executionContext.notifiableTaskMetadata()).taskWarning(warning);
             LOG.warn(warning, ex);
         }
     }

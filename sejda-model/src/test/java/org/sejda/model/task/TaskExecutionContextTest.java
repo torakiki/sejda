@@ -18,26 +18,32 @@
  */
 package org.sejda.model.task;
 
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.parameter.base.TaskParameters;
+import static org.mockito.Mockito.mock;
+
+import org.junit.Test;
+import org.sejda.model.exception.TaskCancelledException;
 
 /**
- * Base class for an {@link Task}
- * 
  * @author Andrea Vacondio
- * @param <T>
- *            parameters type to be executed
+ *
  */
-public abstract class BaseTask<T extends TaskParameters> implements Task<T> {
+public class TaskExecutionContextTest {
 
-    private TaskExecutionContext executionContext;
-
-    @Override
-    public void before(T parameters, TaskExecutionContext context) throws TaskException {
-        this.executionContext = context;
+    @Test(expected = IllegalArgumentException.class)
+    public void testTaskExecutionContext() {
+        new TaskExecutionContext(null);
     }
 
-    protected TaskExecutionContext executionContext() {
-        return executionContext;
+    @Test(expected = TaskCancelledException.class)
+    public void negativeAssertTaskNotCancelled() throws TaskCancelledException {
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class));
+        victim.cancelTask();
+        victim.assertTaskNotCancelled();
+    }
+
+    @Test
+    public void positiveAssertTaskNotCancelled() throws TaskCancelledException {
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class));
+        victim.assertTaskNotCancelled();
     }
 }

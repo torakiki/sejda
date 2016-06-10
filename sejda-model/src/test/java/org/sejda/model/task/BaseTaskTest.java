@@ -20,8 +20,10 @@
 package org.sejda.model.task;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
+import org.sejda.model.exception.TaskException;
 
 /**
  * @author Andrea Vacondio
@@ -32,7 +34,8 @@ public class BaseTaskTest {
     private TestTask victim = new TestTask();
 
     @Test
-    public void testNotNullTaskMetadata() {
-        assertNotNull(victim.getNotifiableTaskMetadata());
+    public void nonNullTaskExecutionContext() throws TaskException {
+        victim.before(mock(TestTaskParameter.class), mock(TaskExecutionContext.class));
+        assertNotNull(victim.executionContext());
     }
 }

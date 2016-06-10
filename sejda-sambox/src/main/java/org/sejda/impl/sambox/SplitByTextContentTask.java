@@ -31,6 +31,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,9 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
     private AbstractPdfSplitter<SplitByTextContentParameters> splitter;
 
     @Override
-    public void before(SplitByTextContentParameters parameters) {
+    public void before(SplitByTextContentParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -64,7 +67,7 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
         splitter = new ByTextChangesPdfSplitter(sourceDocument, parameters,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
         LOG.debug("Starting to split by text content");
-        splitter.split(getNotifiableTaskMetadata());
+        splitter.split(executionContext());
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }

@@ -41,6 +41,7 @@ import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -66,7 +67,9 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(SplitDownTheMiddleParameters parameters) {
+    public void before(SplitDownTheMiddleParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -77,7 +80,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             sourceHandler = source.open(documentLoader);
@@ -162,7 +165,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
             closeResources();
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

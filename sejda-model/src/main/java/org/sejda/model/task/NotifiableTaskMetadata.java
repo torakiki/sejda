@@ -19,6 +19,8 @@
  */
 package org.sejda.model.task;
 
+import static java.util.Objects.isNull;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -27,7 +29,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.sejda.model.exception.TaskCancelledException;
 
 /**
  * An immutable set of metadata related to the task the event is notifying about.
@@ -44,19 +45,17 @@ public class NotifiableTaskMetadata implements Serializable {
     public static final NotifiableTaskMetadata NULL = new NullNotifiableTaskMetadata();
     private UUID taskIdentifier;
     private String qualifiedName;
-    private BaseTask<?> task;
 
     private NotifiableTaskMetadata() {
         // empty constructor
     }
 
-    public NotifiableTaskMetadata(BaseTask<?> task) {
-        if (task == null) {
+    public NotifiableTaskMetadata(Task<?> task) {
+        if (isNull(task)) {
             throw new IllegalArgumentException("No task given, unable to create notifiable metadata.");
         }
         this.taskIdentifier = UUID.randomUUID();
         this.qualifiedName = task.getClass().getName();
-        this.task = task;
     }
 
     /**
@@ -87,18 +86,14 @@ public class NotifiableTaskMetadata implements Serializable {
             return false;
         }
         NotifiableTaskMetadata meta = (NotifiableTaskMetadata) other;
-        return new EqualsBuilder().append(taskIdentifier, meta.taskIdentifier)
-                .append(qualifiedName, meta.qualifiedName).isEquals();
+        return new EqualsBuilder().append(taskIdentifier, meta.taskIdentifier).append(qualifiedName, meta.qualifiedName)
+                .isEquals();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("taskIdentifier", taskIdentifier)
                 .append("qualifiedName", qualifiedName).toString();
-    }
-
-    public void stopTaskIfCancelled() throws TaskCancelledException {
-        task.stopTaskIfCancelled();
     }
 
     /**

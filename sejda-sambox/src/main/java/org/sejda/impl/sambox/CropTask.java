@@ -42,6 +42,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -66,7 +67,8 @@ public class CropTask extends BaseTask<CropParameters> {
     private AcroFormsMerger acroFormsMerger;
 
     @Override
-    public void before(CropParameters parameters) {
+    public void before(CropParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
@@ -76,7 +78,7 @@ public class CropTask extends BaseTask<CropParameters> {
         int currentStep = 0;
         int totalSteps = parameters.getSourceList().size();
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             currentStep++;
 
@@ -101,12 +103,13 @@ public class CropTask extends BaseTask<CropParameters> {
 
             for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
                 for (PDRectangle box : cropAreas) {
-                    stopTaskIfCancelled();
+                    executionContext().assertTaskNotCancelled();
                     box = unrotate(page, box);
                     PDPage newPage = destinationDocument.importPage(page);
                     pagesLookup.addLookupEntry(page, newPage);
                     newPage.setCropBox(box);
-                    notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+                    notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep)
+                            .outOf(totalSteps);
                 }
 
             }
@@ -129,7 +132,7 @@ public class CropTask extends BaseTask<CropParameters> {
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

@@ -43,6 +43,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
@@ -66,7 +67,8 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
     private PDDocumentHandler destinationDocument;
 
     @Override
-    public void before(AddBackPagesParameters parameters) {
+    public void before(AddBackPagesParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -85,7 +87,7 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
 
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             this.destinationDocument = new PDDocumentHandler();
             this.destinationDocument.setCreatorOnPDDocument();
@@ -103,7 +105,7 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             LOG.debug("Adding pages and back pages");
             for (PDPage current : sourceDocumentHandler.getPages()) {
-                stopTaskIfCancelled();
+                executionContext().assertTaskNotCancelled();
                 pagesLookup.addLookupEntry(current, destinationDocument.importPage(current));
                 pageCounter++;
                 if (pageCounter % parameters.getStep() == 0) {
@@ -123,7 +125,7 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
 
             nullSafeCloseQuietly(destinationDocument);
             nullSafeCloseQuietly(sourceDocumentHandler);
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         nullSafeCloseQuietly(backPagesSource);

@@ -28,6 +28,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,8 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
     private PagesPdfSplitter<T> splitter;
 
     @Override
-    public void before(T parameters) {
+    public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -60,7 +62,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
         splitter = new PagesPdfSplitter<>(document, parameters,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
         LOG.debug("Starting split by page numbers for {} ", parameters);
-        splitter.split(getNotifiableTaskMetadata());
+        splitter.split(executionContext());
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }

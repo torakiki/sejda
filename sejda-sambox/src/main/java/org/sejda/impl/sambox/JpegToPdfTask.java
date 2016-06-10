@@ -36,6 +36,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
@@ -55,7 +56,8 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
     private MultipleOutputWriter outputWriter;
 
     @Override
-    public void before(JpegToPdfParameters parameters) {
+    public void before(JpegToPdfParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
@@ -70,7 +72,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
         PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
 
         for (Source<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             currentStep++;
 
@@ -112,7 +114,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             imageWriter.write(page, image, new Point(x, y), width, height);
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         File tmpFile = createTemporaryPdfBuffer();

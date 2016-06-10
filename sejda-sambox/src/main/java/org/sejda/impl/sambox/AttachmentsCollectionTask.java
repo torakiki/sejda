@@ -40,6 +40,7 @@ import org.sejda.model.input.Source;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
@@ -71,7 +72,9 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     private TableOfContentsCreator tocCreator;
 
     @Override
-    public void before(AttachmentsCollectionParameters parameters) {
+    public void before(AttachmentsCollectionParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
@@ -103,7 +106,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         LOG.trace("Added schema dictionary");
         int attachCounter = 0;
         for (Source<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             PDComplexFileSpecification fileSpec = new PDComplexFileSpecification(null);
             fileSpec.setFileUnicode(source.getName());
             fileSpec.setFile(source.getName());
@@ -119,7 +122,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
             tocCreator.appendItem(FilenameUtils.getName(source.getName()), ++attachCounter,
                     attachmentAnnotation(fileSpec));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             LOG.debug("Added embedded file from {}", source);
         }
 

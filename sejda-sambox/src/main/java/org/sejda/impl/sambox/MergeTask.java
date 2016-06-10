@@ -47,6 +47,7 @@ import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSInteger;
@@ -81,7 +82,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private long pagesCounter = 0;
 
     @Override
-    public void before(MergeParameters parameters) {
+    public void before(MergeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getInputList().size();
         sourceOpener = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
@@ -114,7 +116,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             long relativeCounter = 0;
             for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
-                stopTaskIfCancelled();
+                executionContext().assertTaskNotCancelled();
                 pagesCounter++;
                 relativeCounter++;
 
@@ -157,7 +159,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             if (parameters.isBlankPageIfOdd()) {
                 destinationDocument.addBlankPageIfOdd(currentPageSize);
             }
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         if (outlineMerger.hasOutline()) {

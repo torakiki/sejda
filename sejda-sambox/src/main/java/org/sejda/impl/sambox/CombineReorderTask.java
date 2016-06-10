@@ -42,6 +42,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -66,7 +67,9 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
 
     @Override
-    public void before(CombineReorderParameters parameters) {
+    public void before(CombineReorderParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         sourceOpener = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
 
@@ -96,7 +99,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         PdfRotator rotator = new PdfRotator(destinationDocument.getUnderlyingPDDocument());
 
         for (int i = 0; i < parameters.getPages().size(); i++) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             FileIndexAndPage filePage = parameters.getPages().get(i);
             int pageNum = filePage.getPage();
@@ -105,13 +108,13 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
                 PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
                 pagesLookup.addLookupEntry(page, destinationDocument.importPage(page));
                 rotator.rotate(i + 1, filePage.getRotation());
-            } catch (PageNotFoundException ex){
+            } catch (PageNotFoundException ex) {
                 String warning = String.format("Page %d was skipped, could not be processed", pageNum);
-                notifyEvent(getNotifiableTaskMetadata()).taskWarning(warning);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
                 LOG.warn(warning, ex);
             }
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         for (PDDocumentHandler document : documents) {
@@ -121,7 +124,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
 
             acroFormsMerger.mergeForm(document.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
                     annotationsLookup);
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         if (acroFormsMerger.hasForm()) {

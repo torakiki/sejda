@@ -34,7 +34,7 @@ import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.split.NextOutputStrategy;
-import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,14 +66,14 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
-    public void split(NotifiableTaskMetadata taskMetadata) throws TaskException {
+    public void split(TaskExecutionContext executionContext) throws TaskException {
         nextOutputStrategy().ensureIsValid();
 
         try (PagesExtractor extractor = supplyPagesExtractor(document)) {
             int outputDocumentsCounter = 0;
             File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
-                taskMetadata.stopTaskIfCancelled();
+                executionContext.assertTaskNotCancelled();
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
                     onOpen(page);
@@ -87,8 +87,8 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                 }
                 LOG.trace("Retaining page {} of the original document", page);
                 onRetain(page);
-                extractor.retain(page, taskMetadata);
-                notifyEvent(taskMetadata).stepsCompleted(page).outOf(totalPages);
+                extractor.retain(page, executionContext);
+                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(page).outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     onClose(page);
                     extractor.setVersion(parameters.getVersion());

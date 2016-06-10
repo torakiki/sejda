@@ -30,6 +30,7 @@ import org.sejda.impl.sambox.component.PdfAlternateMixer;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private SingleOutputWriter outputWriter;
 
     @Override
-    public void before(AlternateMixParameters parameters) {
+    public void before(AlternateMixParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
@@ -54,7 +56,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     @Override
     public void execute(AlternateMixParameters parameters) throws TaskException {
 
-        mixer.mix(getNotifiableTaskMetadata());
+        mixer.mix(executionContext());
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.setCompress(parameters.isCompress());
 

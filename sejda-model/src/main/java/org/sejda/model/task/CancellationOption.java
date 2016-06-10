@@ -18,21 +18,24 @@
  */
 package org.sejda.model.task;
 
+import static java.util.Objects.nonNull;
+
 public class CancellationOption {
 
-    private Cancellable cancellableTask;
+    private TaskExecutionContext executionContext;
 
-    public void setCancellableTask(Cancellable cancellableTask) {
-        this.cancellableTask = cancellableTask;
+    public void setExecutionContext(TaskExecutionContext executionContext) {
+        this.executionContext = executionContext;
     }
 
     public boolean isCancellable() {
-        return cancellableTask != null;
+        return nonNull(executionContext);
     }
 
     public void requestCancel() {
-        if(!isCancellable()) throw new RuntimeException("Task not yet started");
+        if (!isCancellable())
+            throw new RuntimeException("Task not yet started");
 
-        cancellableTask.cancel();
+        executionContext.cancelTask();
     }
 }

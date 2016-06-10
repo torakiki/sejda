@@ -34,6 +34,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,15 +53,16 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(SetPagesLabelParameters parameters) {
+    public void before(SetPagesLabelParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
-        stopTaskIfCancelled();
-        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+        executionContext().assertTaskNotCancelled();
+        notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);

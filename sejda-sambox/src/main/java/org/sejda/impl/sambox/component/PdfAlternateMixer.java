@@ -33,7 +33,7 @@ import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
@@ -63,11 +63,10 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     /**
      * Perform the alternate mix on the given {@link PdfMixInput}s.
      * 
-     * @param taskMetadata
-     *            metadata of the task executing the mix.
+     * @param executionContext
      * @throws TaskException
      */
-    public void mix(NotifiableTaskMetadata taskMetadata) throws TaskException {
+    public void mix(TaskExecutionContext executionContext) throws TaskException {
         firstDocumentHandler = openInput(firstInput);
         secondDocumentHandler = openInput(secondInput);
         setCreatorOnPDDocument();
@@ -83,17 +82,17 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         LookupTable<PDPage> lookupFirst = new LookupTable<>();
         LookupTable<PDPage> lookupSecond = new LookupTable<>();
         while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
-            taskMetadata.stopTaskIfCancelled();
+            executionContext.assertTaskNotCancelled();
 
             for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
                 PDPage current = firstDocumentHandler.getPage(firstDocStatus.nextPage());
                 lookupFirst.addLookupEntry(current, importPage(current));
-                notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
+                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             }
             for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
                 PDPage current = secondDocumentHandler.getPage(secondDocStatus.nextPage());
                 lookupSecond.addLookupEntry(current, importPage(current));
-                notifyEvent(taskMetadata).stepsCompleted(++currentStep).outOf(totalSteps);
+                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
             }
         }
         LookupTable<PDAnnotation> annotationsLookup = processAnnotations(lookupFirst,

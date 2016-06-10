@@ -38,6 +38,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ public class RotateTask extends BaseTask<RotateParameters> {
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(RotateParameters parameters) {
+    public void before(RotateParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -68,7 +70,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             try {
@@ -81,7 +83,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
                 PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
                 for (Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
-                    stopTaskIfCancelled();
+                    executionContext().assertTaskNotCancelled();
                     rotator.rotate(page, parameters.getRotation(page));
                 }
 
@@ -96,7 +98,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
                 nullSafeCloseQuietly(documentHandler);
             }
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

@@ -41,6 +41,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.DUPLEX;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
@@ -65,7 +66,9 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(ViewerPreferencesParameters parameters) {
+    public void before(ViewerPreferencesParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
@@ -75,7 +78,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
@@ -98,7 +101,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
             nullSafeCloseQuietly(documentHandler);
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

@@ -21,6 +21,8 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -47,6 +49,7 @@ import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.task.TestTaskParameter;
 
 /**
@@ -84,17 +87,18 @@ public class DefaultTaskExecutionServiceTest {
         parameters.setVersion(PdfVersion.VERSION_1_4);
         parameters.setCompress(true);
         victim.execute(parameters);
-        verify(task, never()).before(parameters);
+        verify(task, never()).before(eq(parameters), any());
     }
 
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
-        doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class));
+        doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class),
+                Matchers.any(TaskExecutionContext.class));
         SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
         parameters.setOutput(output);
         TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
-        verify(task).before(parameters);
+        verify(task).before(eq(parameters), any());
         verify(task).after();
         verify(task, never()).execute(parameters);
     }
@@ -109,7 +113,7 @@ public class DefaultTaskExecutionServiceTest {
         parameters.setOutput(new FileTaskOutput(file));
         when(file.isFile()).thenReturn(Boolean.FALSE);
         victim.execute(parameters);
-        verify(task, never()).before(parameters);
+        verify(task, never()).before(eq(parameters), any());
         verify(task, never()).after();
         verify(task, never()).execute(parameters);
     }

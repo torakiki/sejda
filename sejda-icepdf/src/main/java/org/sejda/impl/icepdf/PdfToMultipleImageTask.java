@@ -38,6 +38,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,8 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     private Document pdfDocument = null;
 
     @Override
-    public void before(T parameters) throws TaskExecutionException {
-        super.before(parameters);
+    public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
@@ -78,7 +79,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
         for (int currentPage : requestedPages) {
             currentStep++;
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
 
             BufferedImage pageImage = toBufferedImage(pdfDocument, zeroBased(currentPage), parameters);
             if (pageImage == null) {
@@ -99,7 +100,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                             .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

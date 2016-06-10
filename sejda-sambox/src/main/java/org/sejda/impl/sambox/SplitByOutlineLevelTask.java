@@ -30,6 +30,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,9 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
     private PageDestinationsLevelPdfSplitter splitter;
 
     @Override
-    public void before(SplitByOutlineLevelParameters parameters) {
+    public void before(SplitByOutlineLevelParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
     }
 
@@ -64,7 +67,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
         splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
         LOG.debug("Starting split by outline level for {} ", parameters);
-        splitter.split(getNotifiableTaskMetadata());
+        splitter.split(executionContext());
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }

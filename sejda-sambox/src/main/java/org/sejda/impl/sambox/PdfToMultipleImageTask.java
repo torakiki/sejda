@@ -40,6 +40,7 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,8 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
     private ImageWriter<PdfToJpegParameters> writer;
 
     @Override
-    public void before(PdfToJpegParameters parameters) throws TaskException {
+    public void before(PdfToJpegParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+        super.before(parameters, executionContext);
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy());
         writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
         if (writer == null) {
@@ -98,7 +100,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
                             .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            notifyEvent(getNotifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

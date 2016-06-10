@@ -40,6 +40,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransition;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionStyle;
@@ -61,15 +62,17 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
-    public void before(SetPagesTransitionParameters parameters) {
+    public void before(SetPagesTransitionParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
+        super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy());
     }
 
     @Override
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
-        stopTaskIfCancelled();
-        notifyEvent(getNotifiableTaskMetadata()).progressUndetermined();
+        executionContext().assertTaskNotCancelled();
+        notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
@@ -81,7 +84,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         LOG.debug("Applying transitions");
         int current = 0;
         for (PDPage page : documentHandler.getPages()) {
-            stopTaskIfCancelled();
+            executionContext().assertTaskNotCancelled();
             current++;
             ofNullable(parameters.getOrDefault(current)).ifPresent(t -> {
                 LOG.trace("Applying transition {}", t);
