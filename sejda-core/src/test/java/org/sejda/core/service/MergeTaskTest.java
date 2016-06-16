@@ -19,8 +19,11 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +39,9 @@ import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.text.PDFTextStripperByArea;
 
 /**
  * Test for the merge task
@@ -296,5 +301,23 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         assertEquals(document.getPage(6).getCropBox().getWidth(), document.getPage(7).getCropBox().getWidth(), 0);
         assertEquals(document.getPage(6).getCropBox().getHeight(), document.getPage(7).getCropBox().getHeight(), 0);
 
+    }
+
+    @Test
+    public void testExecuteMergeRangesWithFlattenForms() throws IOException {
+        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
+        inputs.add(new PdfMergeInput(customInput("pdf/forms/simple_form_with_values.pdf")));
+        MergeParameters parameters = setUpParameters(inputs);
+        parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument document = testContext.assertTaskCompleted();
+        PDPage page = document.getPage(0);
+        PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+        stripper.addRegion("completePage", new Rectangle((int) page.getCropBox().getWidth(), (int) page.getCropBox().getHeight()));
+        stripper.extractRegions(page);
+        String pageText = stripper.getTextForRegion("completePage");
+
+        assertThat(pageText, containsString("TextFieldValue"));
     }
 }

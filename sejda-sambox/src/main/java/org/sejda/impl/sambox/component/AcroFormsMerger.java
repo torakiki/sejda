@@ -65,9 +65,7 @@ import static org.sejda.sambox.cos.COSName.TYPE;
 import static org.sejda.sambox.cos.COSName.V;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -323,7 +321,13 @@ public class AcroFormsMerger {
 
     private void flatten() {
         try {
-            form.flatten();
+            List<PDField> fields = new ArrayList<>();
+
+            for (PDField field : form.getFieldTree()) {
+                fields.add(field);
+            }
+
+            form.flatten(fields, true);
         } catch(IOException ex) {
             LOG.warn("Failed to flatten form", ex);
         }
