@@ -1,13 +1,13 @@
 package org.sejda.core.support.prefix.processor;
 
-import org.junit.Test;
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 public class TextPrefixProcessorTest {
 
@@ -20,5 +20,6 @@ public class TextPrefixProcessorTest {
 
         File file = File.createTempFile(actual, ".pdf");
         assertTrue(file.exists());
+        file.delete();
     }
 }
