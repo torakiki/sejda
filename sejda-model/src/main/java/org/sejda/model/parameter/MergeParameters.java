@@ -173,7 +173,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
             return false;
         }
         MergeParameters params = (MergeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.getInputList())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.inputList)
                 .append(acroFormPolicy, params.getAcroFormPolicy())
                 .append(blankPageIfOdd, params.isBlankPageIfOdd())
                 .append(outlinePolicy, params.getOutlinePolicy())

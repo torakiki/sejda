@@ -19,8 +19,6 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Set;
-
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -62,14 +60,6 @@ public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMulti
     public void discardOutline(boolean discardOutline) {
         this.discardOutline = discardOutline;
     }
-
-    /**
-     * @param upperLimit
-     *            upper limit for the pages set.
-     * @return the set of pages to split at. All pages are greater then 0 and lesser then upperLimit.
-     */
-    @Override
-    public abstract Set<Integer> getPages(int upperLimit);
 
     @Override
     public int hashCode() {

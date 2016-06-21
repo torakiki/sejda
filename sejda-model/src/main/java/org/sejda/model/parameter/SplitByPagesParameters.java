@@ -21,8 +21,8 @@ package org.sejda.model.parameter;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -61,13 +61,8 @@ public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @Override
     public Set<Integer> getPages(int upperLimit) {
-        Set<Integer> filteredSet = new HashSet<Integer>();
-        for (Integer page : pages) {
-            if (page <= upperLimit && page > 0) {
-                filteredSet.add(page);
-            }
-        }
-        return Collections.unmodifiableSet(filteredSet);
+        return Collections
+                .unmodifiableSet(pages.stream().filter(p -> p <= upperLimit && p > 0).collect(Collectors.toSet()));
     }
 
     @Override

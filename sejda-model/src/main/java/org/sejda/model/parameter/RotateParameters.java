@@ -20,7 +20,11 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -42,8 +46,8 @@ import org.sejda.model.rotation.Rotation;
  * @author Andrea Vacondio
  * 
  */
-public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters implements PagesSelection,
-        PageRangeSelection {
+public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements PagesSelection, PageRangeSelection {
 
     @Valid
     @NotNull
@@ -73,10 +77,8 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
     }
 
     public Rotation getRotation(int page) {
-        return pageSelection.keySet().stream()
-                .filter(range -> range.contains(page)).findFirst()
-                .map(pageSelection::get).orElse(rotation);
-
+        return pageSelection.keySet().stream().filter(range -> range.contains(page)).findFirst().map(pageSelection::get)
+                .orElse(rotation);
     }
 
     public void addPageRange(PageRange range) {
@@ -124,7 +126,8 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(rotation).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(rotation).append(predefinedSetOfPages)
+                .append(pageSelection).toHashCode();
     }
 
     @Override
@@ -136,7 +139,8 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
             return false;
         }
         RotateParameters parameter = (RotateParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(rotation, parameter.getRotation())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
+                .append(pageSelection, parameter.pageSelection).append(rotation, parameter.getRotation()).isEquals();
     }
 }

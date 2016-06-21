@@ -66,6 +66,7 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
      * 
      * @param input
      */
+    @Override
     public void addSource(Source<?> input) {
         sourceList.add(input);
     }
@@ -73,6 +74,7 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
     /**
      * @return an unmodifiable view of the source list
      */
+    @Override
     public List<Source<?>> getSourceList() {
         return Collections.unmodifiableList(sourceList);
     }
