@@ -153,12 +153,12 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
         private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id, int displayWidth, int displayHeight) {
             try {
-                LOG.debug("Optimizing image {} {} with dimensions {}x{}", objectName.getName(), id.toString(), image.getImage().getWidth(), image.getImage().getHeight());
+                LOG.debug("Optimizing image {} {} with dimensions {}x{}", objectName.getName(), id.toString(), image.getWidth(), image.getHeight());
                 ReadOnlyFilteredCOSStream optimizedImage = optimizedById.get(id);
 
                 if(optimizedImage == null) {
                     long start = System.currentTimeMillis();
-                    File tmpImageFile = ImageOptimizer.optimize(image.getImage(), parameters.getImageQuality(),
+                    File tmpImageFile = ImageOptimizer.optimize(image.getImageWithoutMasks(), parameters.getImageQuality(),
                             parameters.getImageDpi(), displayWidth, displayHeight);
 
                     long elapsed = System.currentTimeMillis() - start;
