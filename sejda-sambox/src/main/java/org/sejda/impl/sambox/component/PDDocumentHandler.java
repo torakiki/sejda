@@ -68,7 +68,7 @@ public class PDDocumentHandler implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
     private static final WriteOption[] COMPRESSED_OPTS = new WriteOption[] { WriteOption.COMPRESS_STREAMS,
-            WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM };
+            WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM, WriteOption.SYNC_BODY_WRITE };
 
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
