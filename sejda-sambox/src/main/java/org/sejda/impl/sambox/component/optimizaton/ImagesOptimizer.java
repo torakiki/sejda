@@ -202,6 +202,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                 // which stores both the filtered and unfiltered bytes[] and DecodeResult
                 // potentially creating a large memory footprint
                 image.getCOSObject().unDecode();
+                LOG.debug("Used memory: {} Mb", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000);
 
             } catch (IOException | RuntimeException ex) {
                 LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
