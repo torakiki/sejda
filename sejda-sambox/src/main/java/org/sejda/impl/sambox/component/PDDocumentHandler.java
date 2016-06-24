@@ -19,6 +19,8 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.of;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
@@ -66,9 +68,11 @@ import org.slf4j.LoggerFactory;
  */
 public class PDDocumentHandler implements Closeable {
 
+    public static final String SAMBOX_USE_ASYNC_WRITER = "sejda.sambox.asyncwriter";
+
     private static final Logger LOG = LoggerFactory.getLogger(PDDocumentHandler.class);
     private static final WriteOption[] COMPRESSED_OPTS = new WriteOption[] { WriteOption.COMPRESS_STREAMS,
-            WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM, WriteOption.SYNC_BODY_WRITE };
+            WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM };
 
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
@@ -237,8 +241,14 @@ public class PDDocumentHandler implements Closeable {
      */
     public void savePDDocument(File file, StandardSecurity security) throws TaskException {
         try {
-            LOG.trace("Saving document to {}", file);
-            document.writeTo(file, security, writeOptions.toArray(new WriteOption[writeOptions.size()]));
+            if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
+                LOG.trace("Saving document to {} using async writer", file);
+                document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
+            } else {
+                LOG.trace("Saving document to {}", file);
+                document.writeTo(file, security,
+                        concat(of(WriteOption.SYNC_BODY_WRITE), writeOptions.stream()).toArray(WriteOption[]::new));
+            }
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
         }
