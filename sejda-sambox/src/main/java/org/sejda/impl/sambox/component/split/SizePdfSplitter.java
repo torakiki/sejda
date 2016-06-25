@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component.split;
 
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
@@ -32,6 +33,8 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.split.NextOutputStrategy;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
@@ -160,8 +163,22 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             copy.setMediaBox(page.getMediaBox());
             copy.setResources(page.getResources());
             copy.setRotation(page.getRotation());
+            COSArray annots = page.getCOSObject().getDictionaryObject(COSName.ANNOTS, COSArray.class);
+            if (nonNull(annots)) {
+                // we create an array where annotations are a copy of the original but without /P or /Dest possibly leaking into the page tree
+                COSArray cleanedAnnotationsCopy = new COSArray();
+                for (COSBase current : annots) {
+                    COSBase unref = current.getCOSObject();
+                    if (unref instanceof COSDictionary) {
+                        COSDictionary annotationCopy = ((COSDictionary) unref).duplicate();
+                        annotationCopy.removeItem(COSName.P);
+                        annotationCopy.removeItem(COSName.DEST);
+                        cleanedAnnotationsCopy.add(annotationCopy);
+                    }
+                }
+                copy.getCOSObject().setItem(COSName.ANNOTS, cleanedAnnotationsCopy);
+            }
             if (optimize) {
-
                 // each page must have it's own resource dic and it's own xobject and font name dic
                 // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
                 COSDictionary resources = ofNullable(copy.getResources().getCOSObject()).map(COSDictionary::duplicate)
