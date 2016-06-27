@@ -18,30 +18,18 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-
 import java.io.IOException;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.sambox.component.PagesExtractor;
-import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
-import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.split.NextOutputStrategy;
-import org.sejda.sambox.cos.COSArray;
-import org.sejda.sambox.cos.COSBase;
-import org.sejda.sambox.cos.COSDictionary;
-import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.util.IOUtils;
 
 /**
@@ -64,13 +52,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
 
     public SizePdfSplitter(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
         super(document, parameters, optimize, parameters.discardOutline());
-        if (parameters.isCompress()) {
-            this.nextOutputStrategy = new OutputSizeStrategy(document, parameters, optimize, () -> {
-                return new ExistingPagesSizePredictor(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
-            });
-        } else {
-            this.nextOutputStrategy = new OutputSizeStrategy(document, parameters, optimize);
-        }
+        this.nextOutputStrategy = new OutputSizeStrategy(document, parameters, optimize);
     }
 
     @Override
@@ -121,20 +103,18 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         private Supplier<ExistingPagesSizePredictor> predictorSupplier = () -> {
             return new ExistingPagesSizePredictor();
         };
-        private boolean optimize;
-        private ResourcesHitter hitter = new ResourcesHitter();
-        private ResourceDictionaryCleaner cleaner = new ResourceDictionaryCleaner();
+        private PageCopier copier;
 
         OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
             this.sizeLimit = parameters.getSizeToSplitAt();
             this.document = document;
-            this.optimize = optimize;
-        }
+            this.copier = new PageCopier(optimize);
+            if (parameters.isCompress()) {
+                predictorSupplier = () -> {
+                    return new ExistingPagesSizePredictor(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
+                };
+            }
 
-        OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize,
-                Supplier<ExistingPagesSizePredictor> predictorSupplier) {
-            this(document, parameters, optimize);
-            this.predictorSupplier = predictorSupplier;
         }
 
         public void newPredictor() throws TaskIOException {
@@ -150,49 +130,11 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         public void addPage(int page) throws TaskIOException {
             try {
                 if (page <= document.getNumberOfPages()) {
-                    predictor.addPage(copyOf(document.getPage(page - 1)));
+                    predictor.addPage(copier.copyOf(document.getPage(page - 1)));
                 }
             } catch (IOException e) {
                 throw new TaskIOException("Unable to simulate page " + page + " addition", e);
             }
-        }
-
-        private PDPage copyOf(PDPage page) {
-            PDPage copy = new PDPage(page.getCOSObject().duplicate());
-            copy.setCropBox(page.getCropBox());
-            copy.setMediaBox(page.getMediaBox());
-            copy.setResources(page.getResources());
-            copy.setRotation(page.getRotation());
-            COSArray annots = page.getCOSObject().getDictionaryObject(COSName.ANNOTS, COSArray.class);
-            if (nonNull(annots)) {
-                // we create an array where annotations are a copy of the original but without /P or /Dest possibly leaking into the page tree
-                COSArray cleanedAnnotationsCopy = new COSArray();
-                for (COSBase current : annots) {
-                    COSBase unref = current.getCOSObject();
-                    if (unref instanceof COSDictionary) {
-                        COSDictionary annotationCopy = ((COSDictionary) unref).duplicate();
-                        annotationCopy.removeItem(COSName.P);
-                        annotationCopy.removeItem(COSName.DEST);
-                        cleanedAnnotationsCopy.add(annotationCopy);
-                    }
-                }
-                copy.getCOSObject().setItem(COSName.ANNOTS, cleanedAnnotationsCopy);
-            }
-            if (optimize) {
-                // each page must have it's own resource dic and it's own xobject and font name dic
-                // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
-                COSDictionary resources = ofNullable(copy.getResources().getCOSObject()).map(COSDictionary::duplicate)
-                        .orElseGet(COSDictionary::new);
-                // resources are cached in the PDPage so make sure they are replaced
-                copy.setResources(new PDResources(resources));
-                ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
-                        .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
-                ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).filter(Objects::nonNull)
-                        .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.FONT, d));
-                hitter.accept(copy);
-                cleaner.clean(copy);
-            }
-            return copy;
         }
 
         public void closePredictor() {
