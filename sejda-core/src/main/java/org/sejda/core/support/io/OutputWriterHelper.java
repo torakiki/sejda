@@ -30,6 +30,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
@@ -133,8 +135,7 @@ final class OutputWriterHelper {
             switch (existingOutputPolicy) {
             case OVERWRITE:
                 LOG.debug("Moving {} to {}.", input, output);
-                FileUtils.deleteQuietly(output);
-                FileUtils.moveFile(input, output);
+                Files.move(input.toPath(), output.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 executionContext.notifiableTaskMetadata().addTaskOutput(output);
                 break;
             case SKIP:
