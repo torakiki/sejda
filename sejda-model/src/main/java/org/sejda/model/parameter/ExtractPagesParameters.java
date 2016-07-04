@@ -63,6 +63,7 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
     private PredefinedSetOfPages predefinedSetOfPages;
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+    private boolean invertSelection = false;
 
     /**
      * Creates and empty instance where page selection can be set
@@ -109,14 +110,27 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
      */
     @Override
     public Set<Integer> getPages(int upperLimit) {
+        Set<Integer> pages = new NullSafeSet<Integer>();
         if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
-            return predefinedSetOfPages.getPages(upperLimit);
+            pages = predefinedSetOfPages.getPages(upperLimit);
+        } else {
+            for (PageRange range : getPageSelection()) {
+                pages.addAll(range.getPages(upperLimit));
+            }
         }
-        Set<Integer> retSet = new NullSafeSet<Integer>();
-        for (PageRange range : getPageSelection()) {
-            retSet.addAll(range.getPages(upperLimit));
+
+        if(!invertSelection) {
+            return pages;
         }
-        return retSet;
+
+        Set<Integer> invertedPages = new NullSafeSet<Integer>();
+        for(int i = 1; i <= upperLimit; i++) {
+            if(!pages.contains(i)) {
+                invertedPages.add(i);
+            }
+        }
+
+        return invertedPages;
     }
 
     @Override
@@ -139,10 +153,18 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         this.discardOutline = discardOutline;
     }
 
+    public boolean isInvertSelection() {
+        return invertSelection;
+    }
+
+    public void setInvertSelection(boolean invertSelection) {
+        this.invertSelection = invertSelection;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
-                .append(predefinedSetOfPages).append(pageSelection).toHashCode();
+                .append(predefinedSetOfPages).append(invertSelection).append(pageSelection).toHashCode();
     }
 
     @Override
@@ -157,7 +179,9 @@ public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameter
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
                 .append(optimizationPolicy, parameter.optimizationPolicy)
-                .append(discardOutline, parameter.discardOutline).append(pageSelection, parameter.pageSelection)
+                .append(discardOutline, parameter.discardOutline)
+                .append(pageSelection, parameter.pageSelection)
+                .append(invertSelection, parameter.invertSelection)
                 .isEquals();
     }
 }

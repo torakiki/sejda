@@ -19,14 +19,6 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestListenerFactory;
@@ -40,11 +32,21 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Test for an extract pages task.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 @Ignore
 public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesParameters> {
@@ -97,6 +99,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.addPageRange(new PageRange(1, 3));
         parameters.setSource(largeOutlineInput());
     }
+
     private void setUpParametersPageRangesMediumFile() {
         PageRange firstRange = new PageRange(2, 3);
         PageRange secondRange = new PageRange(5, 7);
@@ -169,6 +172,22 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).assertPages(19);
+    }
+
+    @Test
+    public void extractPagesInvertedSelection() throws TaskException, IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setInvertSelection(true);
+        parameters.addPageRange(new PageRange(7, 9));
+        parameters.setSource(customInput("pdf/test-pdf.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        assertThat(parameters.getPages(11), is(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 10, 11))));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(8);
     }
 
     @Test
