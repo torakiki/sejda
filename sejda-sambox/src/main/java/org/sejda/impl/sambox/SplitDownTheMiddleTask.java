@@ -43,6 +43,7 @@ import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
@@ -84,16 +85,12 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             currentStep++;
             LOG.debug("Opening {}", source);
             sourceHandler = source.open(documentLoader);
-            LOG.debug("Done Opening");
             sourceHandler.getPermissions().ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
-            LOG.debug("Done with perms");
 
             destinationHandler = new PDDocumentHandler();
             destinationHandler.setVersionOnPDDocument(parameters.getVersion());
-            LOG.debug("Done with version");
             destinationHandler.initialiseBasedOn(sourceHandler.getUnderlyingPDDocument());
             destinationHandler.setCompress(parameters.isCompress());
-            LOG.debug("Done with init");
 
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
@@ -103,33 +100,39 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 PDPage page = sourceHandler.getPage(pageNumber);
                 PDRectangle trimBox = page.getTrimBox();
 
-                // landscape vs portrait
-                if (trimBox.getHeight() <= trimBox.getWidth()) {
-                    // landscape orientation
+                try {
+                    // landscape vs portrait
+                    if (trimBox.getHeight() <= trimBox.getWidth()) {
+                        // landscape orientation
 
-                    boolean leftFirst = page.getRotation() != 270 && page.getRotation() != 180;
+                        boolean leftFirst = page.getRotation() != 270 && page.getRotation() != 180;
 
-                    if(leftFirst) {
-                        importLeftPage(page, lookup);
-                        importRightPage(page, lookup);
+                        if (leftFirst) {
+                            importLeftPage(page, lookup);
+                            importRightPage(page, lookup);
+                        } else {
+                            importRightPage(page, lookup);
+                            importLeftPage(page, lookup);
+                        }
+
                     } else {
-                        importRightPage(page, lookup);
-                        importLeftPage(page, lookup);
+                        // portrait orientation
+
+                        boolean topFirst = page.getRotation() != 90 && page.getRotation() != 180;
+
+                        if (topFirst) {
+                            importTopPage(page, lookup);
+                            importBottomPage(page, lookup);
+                        } else {
+                            importBottomPage(page, lookup);
+                            importTopPage(page, lookup);
+                        }
+
                     }
-
-                } else {
-                    // portrait orientation
-
-                    boolean topFirst = page.getRotation() != 90 && page.getRotation() != 180;
-
-                    if(topFirst) {
-                        importTopPage(page, lookup);
-                        importBottomPage(page, lookup);
-                    } else {
-                        importBottomPage(page, lookup);
-                        importTopPage(page, lookup);
-                    }
-
+                } catch (PageNotFoundException ex) {
+                    String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
+                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                    LOG.warn(warning, ex);
                 }
             }
             LookupTable<PDAnnotation> annotations = processAnnotations(lookup, sourceHandler.getUnderlyingPDDocument());
