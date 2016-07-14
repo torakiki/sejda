@@ -18,11 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
@@ -34,8 +29,26 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.graphics.image.UnsupportedTiffImageException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class PageImageWriter {
+    private static final Logger LOG = LoggerFactory.getLogger(PageImageWriter.class);
+
     private PDDocument document;
 
     public PageImageWriter(PDDocument document) {
@@ -59,7 +72,7 @@ public class PageImageWriter {
             @Override
             public PDImageXObject dispatch(FileSource source) throws TaskIOException {
                 try {
-                    return PDImageXObject.createFromFile(source.getSource().getPath());
+                    return createFromFile(source.getSource().getPath());
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred creating PDImageXObject from file source", e);
                 }
@@ -73,11 +86,41 @@ public class PageImageWriter {
                     try (FileOutputStream fos = new FileOutputStream(tmp)) {
                         org.apache.commons.io.IOUtils.copyLarge(source.getSource(), fos);
                     }
-                    return PDImageXObject.createFromFile(tmp.getPath());
+                    return createFromFile(tmp.getPath());
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred creating PDImageXObject from file source", e);
                 }
             }
         });
+    }
+
+    public static PDImageXObject createFromFile(String filePath) throws TaskIOException, IOException {
+        try {
+            return PDImageXObject.createFromFile(filePath);
+        } catch (UnsupportedTiffImageException e) {
+            LOG.warn("Found unsupported TIFF compression, converting TIFF to JPEG: " + e.getMessage());
+            return PDImageXObject.createFromFile(convertTiffToJpg(filePath));
+        }
+    }
+
+    public static String convertTiffToJpg(String filePath)
+            throws IOException, TaskIOException {
+        LOG.debug(filePath);
+        BufferedImage image = ImageIO.read(new File(filePath));
+        File tmpFile = IOUtils.createTemporaryBuffer(".jpg");
+        ImageOutputStream outputStream = new FileImageOutputStream(tmpFile);
+
+        try {
+            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            writer.setOutput(outputStream);
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(1.0F);
+            writer.write(null, new IIOImage(image, null, null), param);
+        } finally {
+            org.apache.commons.io.IOUtils.closeQuietly(outputStream);
+        }
+
+        return tmpFile.getPath();
     }
 }

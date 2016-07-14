@@ -37,9 +37,14 @@ import static org.junit.Assert.assertThat;
 public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters> {
 
     private JpegToPdfParameters basicParameters() throws IOException {
+        return basicParameters("draft.png", "large.jpg");
+    }
+
+    private JpegToPdfParameters basicParameters(String... images) throws IOException {
         JpegToPdfParameters parameters = new JpegToPdfParameters();
-        parameters.addSource(customNonPdfInput("image/draft.png"));
-        parameters.addSource(customNonPdfInput("image/large.jpg"));
+        for(String image: images) {
+            parameters.addSource(customNonPdfInput("image/" + image));
+        }
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file");
@@ -68,6 +73,12 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
             assertImageAtLocation(d, d.getPage(1),
                     new Point(0, 0), (int) PDRectangle.A4.getHeight(), (int) PDRectangle.A4.getWidth());
         });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testUnsupportedTiff() throws Exception {
+        execute(basicParameters("draft.tif"));
         testContext.assertTaskCompleted();
     }
 
