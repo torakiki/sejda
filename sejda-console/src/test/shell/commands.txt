@@ -98,7 +98,6 @@ target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/res
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s all -x right -y top -t Times-Bold -l "[PAGE_ROMAN]" -j overwrite -v 1.4
 target/assembled/bin/sejda-console pdftojpeg -h
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite
-target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -z 1.3 -j overwrite
 target/assembled/bin/sejda-console extracttextbypages -h
 target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -s 1-3 -j overwrite
 target/assembled/bin/sejda-console addbackpages -h
