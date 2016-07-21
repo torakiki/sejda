@@ -116,9 +116,13 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                             OutlineItem after = flatOutline.get(j);
                             if(after.level <= item.level) {
                                 // This is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
-                                // resulting in the last half page missing from the extract. better to error on the safe side and include one extra page than have parts missing
-                                //endPage = after.xyzDestination ? after.page : after.page - 1;
-                                endPage = after.page;
+                                // resulting in the last half page missing from the extract.
+                                // Let's see. Maybe better to error on the safe side and include one extra page than have parts missing?
+                                // The downside with adding one extra page is that batched payslips or any other doc that needs precise splitting will be worse
+                                // with the extra page from the next item in there
+                                // For now choosing the precise split and we'll see if we need to change our minds
+                                endPage = after.xyzDestination ? after.page : after.page - 1;
+                                // endPage = after.page;
                                 break;
                             }
                         }

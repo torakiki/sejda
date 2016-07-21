@@ -35,6 +35,7 @@ import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
@@ -154,7 +155,15 @@ public final class OutlineUtils {
                 int pageNumber = ofNullable(d.getPage())
                         .map(p -> document.getPages().indexOf(p) + 1 /* 0-based index */ )
                         .orElseGet(() -> d.getPageNumber());
-                result.add(new OutlineItem(item.getTitle(), pageNumber, level));
+
+                boolean specificLocationInPage = false;
+                if(d instanceof PDPageXYZDestination) {
+                    PDPageXYZDestination xyzPageDest = (PDPageXYZDestination)d;
+                    // it's a specific page destination but not the top of the page
+                    specificLocationInPage = xyzPageDest.getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
+                }
+
+                result.add(new OutlineItem(item.getTitle(), pageNumber, level, specificLocationInPage));
             });
             result.addAll(recurseFlatOutline(document, item.children(), level + 1));
         }

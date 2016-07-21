@@ -41,6 +41,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.Sejda;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
@@ -282,7 +283,8 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertOutputContainsFilenames(String... filenames) {
         requireMultipleOutputs();
         Set<String> outputFiles = Arrays.stream(fileOutput.listFiles()).map(File::getName).collect(Collectors.toSet());
-        Arrays.stream(filenames).forEach(f -> assertTrue(f + " missing but expected", outputFiles.contains(f)));
+        Arrays.stream(filenames).forEach(f -> assertTrue(f + " missing but expected. Files were: " +
+                StringUtils.join(outputFiles), outputFiles.contains(f)));
         return this;
     }
 
