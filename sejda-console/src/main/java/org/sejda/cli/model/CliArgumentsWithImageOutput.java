@@ -33,9 +33,4 @@ public interface CliArgumentsWithImageOutput extends TaskCliArguments {
     int getResolution();
 
     boolean isResolution();
-
-    @Option(shortName = "z", description = "zoom factor for the generated images (EX. 1.5 generates images with a 150% zoom factor). (optional)")
-    float getUserZoom();
-
-    boolean isUserZoom();
 }

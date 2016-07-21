@@ -151,12 +151,8 @@ public class BaseCliArgumentsTransformer {
             CliArgumentsWithImageOutput taskCliArguments) {
         if (taskCliArguments.isResolution()) {
             parameters.setResolutionInDpi(taskCliArguments.getResolution());
+            parameters.setUserZoom(taskCliArguments.getResolution() / 72.0f);
         }
-        if (taskCliArguments.isUserZoom()) {
-            parameters.setUserZoom(taskCliArguments.getUserZoom());
-        }
-
-        // todo: hmmm, should populate also taskCliArguments.getColorType() but it's wired by constructor not setter... hmmm
     }
 
     private void populateCommonPdfOutputParameters(AbstractPdfOutputParameters parameters,
