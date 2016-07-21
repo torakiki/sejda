@@ -157,7 +157,6 @@ public class BaseCliArgumentsTransformer {
 
     private void populateCommonPdfOutputParameters(AbstractPdfOutputParameters parameters,
             CliArgumentsWithPdfOutput taskCliArguments) {
-        parameters.setCompress(taskCliArguments.getCompressed());
         parameters.setVersion(taskCliArguments.getPdfVersion().getVersion());
     }
 
