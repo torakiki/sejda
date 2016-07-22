@@ -20,8 +20,6 @@
 package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
@@ -40,14 +38,14 @@ public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> testParameters() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT, TestableTask.EXTRACT_TEXT_BY_PAGES,
-                TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF, TestableTask.PDF_TO_JPEG));
+        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
+                TestableTask.EXTRACT_TEXT_BY_PAGES, TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF,
+                TestableTask.PDF_TO_JPEG));
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {
         super(testableTask);
     }
-
 
     @Test
     public void specifiedValuePdfVersion() {
