@@ -160,7 +160,9 @@ public final class OutlineUtils {
                 if(d instanceof PDPageXYZDestination) {
                     PDPageXYZDestination xyzPageDest = (PDPageXYZDestination)d;
                     // it's a specific page destination but not the top of the page
-                    specificLocationInPage = xyzPageDest.getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
+                    if(xyzPageDest.getPage() != null) {
+                        specificLocationInPage = xyzPageDest.getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
+                    }
                 }
 
                 result.add(new OutlineItem(item.getTitle(), pageNumber, level, specificLocationInPage));
