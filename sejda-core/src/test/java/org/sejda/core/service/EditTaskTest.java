@@ -169,6 +169,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         parameters.addTextOperation(new AddTextOperation("Sample text", StandardType1Font.HELVETICA_BOLD_OBLIQUE, 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(1, 1)));
         parameters.addInsertPageOperation(new InsertPageOperation(1));
         parameters.addDeletePageOperation(new DeletePageOperation(1));
+        parameters.addDeletePageOperation(new DeletePageOperation(1));
 
         // delete page operations get processed first
         // then add page operations
