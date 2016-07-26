@@ -18,6 +18,13 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -25,13 +32,6 @@ import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 @Ignore
 public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters> {
@@ -71,7 +71,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
 
             // scaled down, full page, landscape
             assertImageAtLocation(d, d.getPage(1),
-                    new Point(0, 0), (int) PDRectangle.A4.getHeight(), (int) PDRectangle.A4.getWidth());
+                    new Point(0, 17), (int) PDRectangle.A4.getHeight(), 561);
         });
         testContext.assertTaskCompleted();
     }
