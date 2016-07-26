@@ -23,7 +23,7 @@ import static java.util.Objects.nonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -56,7 +56,7 @@ public final class FontUtils {
     private static final Map<StandardType1Font, PDType1Font> STANDARD_TYPE1_FONTS;
 
     static {
-        Map<StandardType1Font, PDType1Font> fontsCache = new HashMap<StandardType1Font, PDType1Font>();
+        Map<StandardType1Font, PDType1Font> fontsCache = new EnumMap<>(StandardType1Font.class);
         fontsCache.put(StandardType1Font.CURIER, PDType1Font.COURIER);
         fontsCache.put(StandardType1Font.CURIER_BOLD, PDType1Font.COURIER_BOLD);
         fontsCache.put(StandardType1Font.CURIER_BOLD_OBLIQUE, PDType1Font.COURIER_BOLD_OBLIQUE);

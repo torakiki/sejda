@@ -369,7 +369,7 @@ public enum CliCommand {
      * @return all values, sorted by display name
      */
     public static CliCommand[] sortedValues() {
-        SortedMap<String, CliCommand> map = new TreeMap<String, CliCommand>();
+        SortedMap<String, CliCommand> map = new TreeMap<>();
         for (CliCommand each : CliCommand.values()) {
             map.put(each.getDisplayName(), each);
         }

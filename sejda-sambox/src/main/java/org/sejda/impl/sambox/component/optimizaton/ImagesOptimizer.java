@@ -92,7 +92,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
     private class XObjectOperator extends OperatorProcessor {
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
-            if (operands.size() < 1) {
+            if (operands.isEmpty()) {
                 throw new MissingOperandException(operator, operands);
             }
             COSBase operand = operands.get(0);

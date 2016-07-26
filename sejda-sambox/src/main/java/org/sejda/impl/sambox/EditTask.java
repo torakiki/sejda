@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Comparator.reverseOrder;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -26,7 +27,6 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -102,12 +102,7 @@ public class EditTask extends BaseTask<EditParameters> {
 
             // to be able to delete multiple pages without having issues due to index shift
             // remove them in descending order, one by one
-            TreeSet<Integer> pagesToDeleteSorted = new TreeSet<>(new Comparator<Integer>() {
-                @Override
-                public int compare(Integer o1, Integer o2) {
-                    return - o1.compareTo(o2);
-                }
-            });
+            TreeSet<Integer> pagesToDeleteSorted = new TreeSet<>(reverseOrder());
 
             for(DeletePageOperation deleteOperation: parameters.getDeletePageOperations()) {
                 pagesToDeleteSorted.add(deleteOperation.getPageNumber());
