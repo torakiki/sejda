@@ -55,4 +55,4 @@ Sejda 1.x is licensed under Apache License, Version 2.0
 Sejda 2.x is licensed under GNU Affero Public License 3.0 
 
   [sejda.com]: http://sejda.com  
-  [SonarQube]: https://nemo.sonarqube.org/dashboard?id=org.sejda:sejda-parent&did=1
+  [SonarQube]: https://sonarqube.com/overview?id=org.sejda%3Asejda-parent
