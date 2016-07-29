@@ -41,6 +41,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -58,7 +59,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
     }
 
     private void setUpParametersEvenPagesEncrypted() {
@@ -66,7 +67,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(encryptedInput());
+        parameters.addSource(encryptedInput());
     }
 
     private void setUpParametersToOptimize() {
@@ -75,7 +76,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/shared_resource_dic_w_fonts.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_w_fonts.pdf"));
     }
 
     private void setUpParametersPageRangesPages() {
@@ -87,7 +88,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
     }
 
     private void setUpParametersWithOutline() {
@@ -97,7 +98,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addPageRange(new PageRange(1, 3));
-        parameters.setSource(largeOutlineInput());
+        parameters.addSource(largeOutlineInput());
     }
 
     private void setUpParametersPageRangesMediumFile() {
@@ -115,7 +116,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_7);
-        parameters.setSource(mediumInput());
+        parameters.addSource(mediumInput());
     }
 
     private void setUpParametersWrongPageRanges() {
@@ -125,13 +126,13 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
     }
 
     @Test
     public void extractWrongPageRages() throws IOException {
         setUpParametersWrongPageRanges();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
@@ -141,7 +142,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractOddPages() throws IOException {
         setUpParametersOddPages();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2);
@@ -150,7 +151,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractEvenPagesFromEncrypted() throws IOException {
         setUpParametersEvenPagesEncrypted();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2);
@@ -159,7 +160,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractRanges() throws IOException {
         setUpParametersPageRangesPages();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3);
@@ -168,7 +169,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractRangesMedium() throws TaskException, IOException {
         setUpParametersPageRangesMediumFile();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).assertPages(19);
@@ -179,12 +180,12 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
         parameters.addPageRange(new PageRange(7, 9));
-        parameters.setSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         assertThat(parameters.getPages(11), is(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 10, 11))));
 
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8);
@@ -193,7 +194,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractOptimized() throws IOException {
         setUpParametersToOptimize();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(1);
@@ -202,7 +203,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     @Test
     public void extractWithOutline() throws IOException {
         setUpParametersWithOutline();
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
@@ -214,11 +215,31 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     public void extractWithDiscardOutline() throws IOException {
         setUpParametersWithOutline();
         parameters.discardOutline(true);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
             assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
+        });
+    }
+
+    @Test
+    public void extractMultipleFiles() throws  IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(1, 2));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertOutputSize(2);
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getNumberOfPages(), 2);
         });
     }
 }

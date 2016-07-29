@@ -202,7 +202,7 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<ExtractPagesTaskCliArguments, ExtractPagesParameters> getArgumentsTransformer() {
             return new ExtractPagesCliArgumentsTransformer();
         }
-    }, "Extracts pages from a PDF document creating a new one containing only the selected pages. Page selection can be done using a predefined set of pages (odd, even) or as a set of ranges (from page x to y).", "extractpages -f /tmp/file1.pdf -o /tmp/output.pdf -s 1-4,7,12-14,8,20-"),
+    }, "Extracts pages from a PDF document creating a new one containing only the selected pages. Page selection can be done using a predefined set of pages (odd, even) or as a set of ranges (from page x to y).", "extractpages -f /tmp/file1.pdf -o /tmp -s 1-4,7,12-14,8,20-"),
     EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
 
         @Override

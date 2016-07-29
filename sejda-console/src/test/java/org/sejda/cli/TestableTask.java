@@ -262,7 +262,7 @@ class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProv
     }
 }
 
-class ExtractPagesDefaultsProvider extends SingleInputAndFileOutputDefaultsProvider {
+class ExtractPagesDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-p", "all");

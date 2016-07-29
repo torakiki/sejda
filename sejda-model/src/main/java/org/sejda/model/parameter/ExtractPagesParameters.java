@@ -31,8 +31,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
@@ -40,7 +40,6 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.HasSelectedPages;
 import org.sejda.model.validation.constraint.NoIntersections;
 import org.sejda.model.validation.constraint.NotAllowed;
-import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
  * Parameter class for an Extract pages task. Allow to specify a predefined set of pages to extract (odd, even) or a set of page ranges but not both. Page ranges are validated to
@@ -50,9 +49,8 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @NoIntersections
-@SingleOutputAllowedExtensions
 @HasSelectedPages
-public class ExtractPagesParameters extends SinglePdfSourceSingleOutputParameters implements PageRangeSelection,
+public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection,
         PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull

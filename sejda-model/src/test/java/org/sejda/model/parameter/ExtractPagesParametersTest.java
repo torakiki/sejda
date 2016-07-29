@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
@@ -70,11 +69,9 @@ public class ExtractPagesParametersTest {
     @Test
     public void testInvalidParameters() {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
-        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
-        victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
-        victim.setSource(input);
+        victim.addSource(input);
         TestUtils.assertInvalidParameters(victim);
     }
 }

@@ -32,8 +32,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extractpages")
-public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfFileOutput, CliArgumentsWithOptimizableOutput,
-        SinglePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
+public interface ExtractPagesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithOptimizableOutput,
+        MultiplePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
 
     @Option(shortName = "p", description = "predefined pages mode {odd or even} (optional)")
     PredefinedSetOfPagesAdapter getPredefinedPages();
