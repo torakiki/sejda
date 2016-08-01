@@ -287,6 +287,26 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         });
     }
 
+    @Test
+    public void testReplaceOneAndOnlyPage() throws Exception {
+        EditParameters parameters = new EditParameters();
+        parameters.addDeletePageOperation(new DeletePageOperation(1));
+        parameters.addInsertPageOperation(new InsertPageOperation(1));
+        parameters.addTextOperation(textOperationForPage("Page 1 text", 1));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(1));
+            assertTextEditAreaHasText(d.getPage(0), "Page 1 text");
+        });
+        testContext.assertTaskCompleted();
+    }
+
 
     protected abstract void assertTextEditAreaHasText(PDPage page, String expectedText);
 

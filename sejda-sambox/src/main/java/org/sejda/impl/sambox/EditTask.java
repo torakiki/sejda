@@ -100,6 +100,9 @@ public class EditTask extends BaseTask<EditParameters> {
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
 
+            // before we start removing pages, keep track of page size
+            PDRectangle firstPageMediaBox = documentHandler.getPage(1).getMediaBox();
+
             // to be able to delete multiple pages without having issues due to index shift
             // remove them in descending order, one by one
             TreeSet<Integer> pagesToDeleteSorted = new TreeSet<>(reverseOrder());
@@ -115,12 +118,17 @@ public class EditTask extends BaseTask<EditParameters> {
 
             for(InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {
                 int pageNumber = insertPageOperation.getPageNumber();
-                if(pageNumber > 1) {
-                    LOG.debug("Adding new page after page {}", pageNumber - 1);
-                    documentHandler.addBlankPageAfter(pageNumber - 1);
+                if(documentHandler.getNumberOfPages() == 0) {
+                    // strange place to be, right? Eg: document had 1 page, user removed it and inserted a new one in place
+                    documentHandler.addBlankPage(firstPageMediaBox);
                 } else {
-                    LOG.debug("Adding new page before page {}", pageNumber);
-                    documentHandler.addBlankPageBefore(pageNumber);
+                    if (pageNumber > 1) {
+                        LOG.debug("Adding new page after page {}", pageNumber - 1);
+                        documentHandler.addBlankPageAfter(pageNumber - 1);
+                    } else {
+                        LOG.debug("Adding new page before page {}", pageNumber);
+                        documentHandler.addBlankPageBefore(pageNumber);
+                    }
                 }
             }
 
