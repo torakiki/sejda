@@ -41,59 +41,53 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrea Vacondio
  */
-public class PageToFormXObject implements Function<PDPage, PDFormXObject> {
+public class PageToFormXObject {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageToFormXObject.class);
 
     /**
      * @return a {@link PDFormXObject} corresponding to the given {@link PDPage} or null if an error occurred
      */
-    @Override
-    public PDFormXObject apply(PDPage page) {
+    public PDFormXObject apply(PDPage page) throws IOException {
         requireNotNullArg(page, "Cannot convert a null page");
-        try {
-            PDFormXObject form = new PDFormXObject(getStream(page));
-            form.setResources(page.getResources());
-            PDRectangle mediaBox = page.getMediaBox();
-            PDRectangle boundingBox = ofNullable(page.getCropBox()).orElse(mediaBox);
+        PDFormXObject form = new PDFormXObject(getStream(page));
+        form.setResources(page.getResources());
+        PDRectangle mediaBox = page.getMediaBox();
+        PDRectangle boundingBox = ofNullable(page.getCropBox()).orElse(mediaBox);
 
-            // this comes from PDFBox Superimpose class
-            AffineTransform at = form.getMatrix().createAffineTransform();
-            at.translate(mediaBox.getLowerLeftX() - boundingBox.getLowerLeftX(),
-                    mediaBox.getLowerLeftY() - boundingBox.getLowerLeftY());
-            switch (page.getRotation()) {
-            case 90:
-                at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-                        boundingBox.getHeight() / boundingBox.getWidth());
-                at.translate(0, boundingBox.getWidth());
-                at.rotate(-Math.PI / 2.0);
-                break;
-            case 180:
-                at.translate(boundingBox.getWidth(), boundingBox.getHeight());
-                at.rotate(-Math.PI);
-                break;
-            case 270:
-                at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-                        boundingBox.getHeight() / boundingBox.getWidth());
-                at.translate(boundingBox.getHeight(), 0);
-                at.rotate(-Math.PI * 1.5);
-                break;
-            default:
-                // no additional transformations necessary
-            }
-            // Compensate for Crop Boxes not starting at 0,0
-            at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
-            if (!at.isIdentity()) {
-                form.setMatrix(at);
-            }
-
-            form.setBBox(new PDRectangle(boundingBox.getLowerLeftX(), boundingBox.getLowerLeftY(),
-                    boundingBox.getUpperRightX(), boundingBox.getUpperRightY()));
-            return form;
-        } catch (IOException e) {
-            LOG.error("Unable to tansform the given page to a form xObject", e);
+        // this comes from PDFBox Superimpose class
+        AffineTransform at = form.getMatrix().createAffineTransform();
+        at.translate(mediaBox.getLowerLeftX() - boundingBox.getLowerLeftX(),
+                mediaBox.getLowerLeftY() - boundingBox.getLowerLeftY());
+        switch (page.getRotation()) {
+        case 90:
+//            at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+//                    boundingBox.getHeight() / boundingBox.getWidth());
+            at.translate(0, boundingBox.getWidth());
+            at.rotate(-Math.PI / 2.0);
+            break;
+        case 180:
+            at.translate(boundingBox.getWidth(), boundingBox.getHeight());
+            at.rotate(-Math.PI);
+            break;
+        case 270:
+//            at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+//                    boundingBox.getHeight() / boundingBox.getWidth());
+            at.translate(boundingBox.getHeight(), 0);
+            at.rotate(-Math.PI * 1.5);
+            break;
+        default:
+            // no additional transformations necessary
         }
-        return null;
+        // Compensate for Crop Boxes not starting at 0,0
+        at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
+        if (!at.isIdentity()) {
+            form.setMatrix(at);
+        }
+
+        form.setBBox(new PDRectangle(boundingBox.getLowerLeftX(), boundingBox.getLowerLeftY(),
+                boundingBox.getUpperRightX(), boundingBox.getUpperRightY()));
+        return form;
     }
 
     private PDStream getStream(PDPage page) throws IOException {
