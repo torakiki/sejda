@@ -24,8 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
- * Process the input prefix replacing all the [CURRENTPAGE] or [CURRENTPAGE##] occurrences with the input current page number (formatted with the given pattern identified by the
- * number of # and incremented by the starting number if found). Ex:
+ * Process the input prefix replacing all the [CURRENTPAGE] or [CURRENTPAGE##] or [CURRENTPAGE##11] or [CURRENTPAGE] occurrences with the input current page number (formatted with
+ * the given pattern identified by the number of # and incremented by the starting number if found). Ex:
  * <p>
  * <b>[CURRENTPAGE]_BLA_[CURRENTPAGE####]_LAB</b> and given page number <b>2</b> will produce <b>2_BLA_0002_LAB</b>
  * </p>

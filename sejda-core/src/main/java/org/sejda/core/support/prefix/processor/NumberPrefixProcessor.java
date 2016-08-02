@@ -90,14 +90,13 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
     /**
      * @param startingNumber
      * @param num
-     * @return the number calculated as fileNumber + startingNumber
+     * @return the number calculated as num + startingNumber
      */
     private Integer getReplacementNumber(String startingNumber, Integer num) {
-        Integer retVal = num;
         if (StringUtils.isNotBlank(startingNumber)) {
-            retVal += Integer.valueOf(startingNumber);
+            return num + Integer.valueOf(startingNumber);
         }
-        return retVal;
+        return num;
     }
 
     /**
