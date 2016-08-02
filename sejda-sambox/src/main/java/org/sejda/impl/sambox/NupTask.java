@@ -143,7 +143,7 @@ public class NupTask extends BaseTask<NupParameters> {
                 int currentRow = 0;
                 int currentColumn = 0;
 
-                PDPage currentPage = currentPage = destinationDocument.addBlankPage(newSize);
+                PDPage currentPage = destinationDocument.addBlankPage(newSize);
 
                 for (int i = 1; i <= numberOfPages; i++) {
 
