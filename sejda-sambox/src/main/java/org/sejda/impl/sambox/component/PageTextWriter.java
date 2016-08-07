@@ -23,10 +23,11 @@ import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
 import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.*;
 
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
@@ -68,10 +69,15 @@ public class PageTextWriter {
 
         try {
             String label = removeControlCharacters(rawLabel);
-            resolveFont(label, font);
+            LinkedHashMap<String, PDFont> resolvedStringsToFonts = resolveFonts(label, font);
+            float stringWidth = 0.0f;
+            for(Map.Entry<String, PDFont> stringAndFont: resolvedStringsToFonts.entrySet()) {
+                String s = stringAndFont.getKey();
+                PDFont f = stringAndFont.getValue();
+                stringWidth += f.getStringWidth(s) * fontSize.floatValue() / 1000f;
+            }
 
             PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
-            float stringWidth = latestSuitablefont.getStringWidth(label) * fontSize.floatValue() / 1000f;
             Point2D position = new Point2D.Float(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
                 vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
 
@@ -86,39 +92,50 @@ public class PageTextWriter {
 
         String label = removeControlCharacters(rawLabel);
 
-        resolveFont(label, font);
+        LinkedHashMap<String, PDFont> resolvedStringsToFonts = resolveFonts(label, font);
+        int offset = 0;
 
         PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
 
-        try {
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true,
-                    true)) {
-                contentStream.beginText();
-                contentStream.setFont(latestSuitablefont, fontSize.floatValue());
-                contentStream.setNonStrokingColor(color);
+        for(Map.Entry<String, PDFont> stringAndFont: resolvedStringsToFonts.entrySet()) {
+            try {
+                PDFont resolvedFont = stringAndFont.getValue();
+                String resolvedLabel = stringAndFont.getKey();
+                Point2D resolvedPosition = new Point((int) position.getX() + offset, (int)position.getY());
 
-                if (page.getRotation() > 0) {
-                    position = findPositionInRotatedPage(page.getRotation(), pageSize, position);
+                //LOG.debug("Will write string {} using font {} at offset {}", resolvedLabel, resolvedFont.getName(), offset);
 
-                    AffineTransform tx = AffineTransform.getTranslateInstance(position.getX(), position.getY());
-                    tx.rotate(Math.toRadians(page.getRotation()));
-                    contentStream.setTextMatrix(new Matrix(tx));
+                try (PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true,
+                        true)) {
+                    contentStream.beginText();
+                    contentStream.setFont(resolvedFont, fontSize.floatValue());
+                    contentStream.setNonStrokingColor(color);
 
-                } else {
-                    contentStream.setTextMatrix(
-                            new Matrix(AffineTransform.getTranslateInstance(position.getX(), position.getY())));
+                    if (page.getRotation() > 0) {
+                        Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize, resolvedPosition);
+
+                        AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(), rotatedPosition.getY());
+                        tx.rotate(Math.toRadians(page.getRotation()));
+                        contentStream.setTextMatrix(new Matrix(tx));
+
+                    } else {
+                        contentStream.setTextMatrix(
+                                new Matrix(AffineTransform.getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY())));
+                    }
+
+                    LOG.trace("Text position {}", resolvedPosition);
+                    contentStream.showText(resolvedLabel);
+                    contentStream.endText();
                 }
 
-                LOG.trace("Text position {}", position);
-                contentStream.showText(label);
-                contentStream.endText();
+                offset += resolvedFont.getStringWidth(resolvedLabel) / 1000 * fontSize;
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
             }
-        } catch (IOException e) {
-            throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
         }
     }
 
-    private void resolveFont(String label, PDFont font) throws TaskIOException {
+    private PDFont resolveFont(String label, PDFont font) throws TaskIOException {
         // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
         // Type 1 fonts only support 8-bit code points.
         latestSuitablefont = fontOrFallback(label, font, () -> {
@@ -130,6 +147,40 @@ public class PageTextWriter {
         if (isNull(latestSuitablefont)) {
             throw new TaskIOException("Unable to find suitable font for the given label \"" + label + "\"");
         }
+        return latestSuitablefont;
+    }
+
+    /**
+     * Supports writing labels which require multiple fonts (eg: mixing thai and english words)
+     * Returns a map of string to font. Keys are ordered in the same order the strings appear in the original label.
+     *
+     * @param label
+     * @param font
+     * @return
+     * @throws TaskIOException
+     */
+    private LinkedHashMap<String, PDFont> resolveFonts(String label, PDFont font) throws TaskIOException {
+        PDFont currentFont = font;
+        StringBuilder currentString = new StringBuilder();
+
+        // we want to keep the insertion order
+        LinkedHashMap<String, PDFont> result = new LinkedHashMap<>();
+
+        for(Character c: label.toCharArray()) {
+            String s = c.toString();
+            PDFont f = resolveFont(s, font);
+            if(isNull(currentFont) || currentFont == f) {
+                currentString.append(s);
+            } else {
+                result.put(currentString.toString(), currentFont);
+                currentString = new StringBuilder(s);
+                currentFont = f;
+            }
+        }
+
+        result.put(currentString.toString(), currentFont);
+
+        return result;
     }
 
     private Point2D findPositionInRotatedPage(int rotation, PDRectangle pageSize, Point2D position) {
