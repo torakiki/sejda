@@ -68,7 +68,8 @@ public enum TestableTask {
     SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
     COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
     ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
-    PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput());
+    PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput()),
+    NUP(taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs().defaultFolderOutput());
 
     private final DefaultsProvider defaultsProvider;
 

@@ -91,6 +91,16 @@ public class CommandLineTestBuilder {
     }
 
     /**
+     * Populates default multiple input parameter
+     *
+     * @return this builder (for telescopic usage)
+     */
+    public CommandLineTestBuilder defaultMultiplePdfInputs() {
+        with("-f", "inputs/input.pdf inputs/second_input.pdf");
+        return this;
+    }
+
+    /**
      * Populates default output parameter as folder ./outputs
      * 
      * @return this builder (for telescopic usage)

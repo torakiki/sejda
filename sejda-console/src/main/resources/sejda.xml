@@ -62,5 +62,7 @@
 			/>
 		<task parameters="org.sejda.model.parameter.AttachmentsCollectionParameters" task="org.sejda.impl.sambox.AttachmentsCollectionTask"
 		/>
+
+		<task parameters="org.sejda.model.parameter.NupParameters" task="org.sejda.impl.sambox.NupTask"/>
 	</tasks>
 </sejda>
