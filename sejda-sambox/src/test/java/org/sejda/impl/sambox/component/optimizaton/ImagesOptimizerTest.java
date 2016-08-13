@@ -121,6 +121,20 @@ public class ImagesOptimizerTest {
 
     }
 
+    @Test
+    public void handlesReflection() throws Exception {
+        params.addOptimization(Optimization.COMPRESS_IMAGES);
+        params.setImageQuality(0.8f);
+        params.setImageDpi(72);
+        document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/flipped_draw.pdf")));
+        ImagesOptimizer optimizer = new ImagesOptimizer(params);
+        COSBase image = getImage(document.getPage(0), "Im1");
+        document.getPages().forEach(optimizer::accept);
+        COSBase compressed = getImage(document.getPage(0), "Im1");
+        assertNotEquals(image, compressed);
+    }
+
     private COSBase getImage(PDPage page, String name) {
         return ((COSDictionary) page.getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT))
                 .getDictionaryObject(COSName.getPDFName(name)).getCOSObject();
