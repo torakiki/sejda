@@ -78,7 +78,6 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
             if (operand instanceof COSName) {
 
                 COSName objectName = (COSName) operand;
-
                 Optional<COSDictionary> xobjects = ofNullable(context.getResources())
                         .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                         .filter(Objects::nonNull);
@@ -86,23 +85,26 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                 COSBase existing = xobjects.map(d -> d.getDictionaryObject(objectName))
                         .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
-                if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
-                    COSStream imageStream = of(existing).filter(e -> e instanceof COSStream).map(e -> (COSStream) e)
-                            .orElseThrow(() -> new IllegalArgumentException("External object unexpected type"));
+                if (existing instanceof COSStream) {
+                    if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
+                        COSStream imageStream = (COSStream) existing;
 
-                    String subtype = imageStream.getNameAsString(COSName.SUBTYPE);
-                    if (COSName.IMAGE.getName().equals(subtype)) {
-                        LOG.trace("Hit image with name {}", objectName.getName());
-                        // we wrap the existing so we can identify it later as "in use" and already processed
-                        xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
-                    } else if (COSName.FORM.getName().equals(subtype)) {
-                        PDXObject xobject = PDXObject.createXObject(imageStream, context.getResources());
-                        if (xobject instanceof PDTransparencyGroup) {
-                            context.showTransparencyGroup((PDTransparencyGroup) xobject);
-                        } else if (xobject instanceof PDFormXObject) {
-                            context.showForm((PDFormXObject) xobject);
+                        String subtype = imageStream.getNameAsString(COSName.SUBTYPE);
+                        if (COSName.IMAGE.getName().equals(subtype)) {
+                            LOG.trace("Hit image with name {}", objectName.getName());
+                            // we wrap the existing so we can identify it later as "in use" and already processed
+                            xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
+                        } else if (COSName.FORM.getName().equals(subtype)) {
+                            PDXObject xobject = PDXObject.createXObject(imageStream, context.getResources());
+                            if (xobject instanceof PDTransparencyGroup) {
+                                context.showTransparencyGroup((PDTransparencyGroup) xobject);
+                            } else if (xobject instanceof PDFormXObject) {
+                                context.showForm((PDFormXObject) xobject);
+                            }
                         }
                     }
+                } else {
+                    LOG.warn("Unexpected type {} for xObject {}", existing.getClass(), objectName.getName());
                 }
             }
         }

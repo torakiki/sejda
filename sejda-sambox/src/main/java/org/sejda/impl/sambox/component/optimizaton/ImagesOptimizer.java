@@ -104,51 +104,57 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 .map(d -> d.getDictionaryObject(objectName)).orElseThrow(
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
-                if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
-                    COSStream stream = (COSStream) existing;
-                    String subtype = stream.getNameAsString(COSName.SUBTYPE);
-                    if (COSName.IMAGE.getName().equals(subtype)) {
-                        long unfilteredSize = stream.getFilteredLength();
+                if (existing instanceof COSStream) {
+                    if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
+                        COSStream stream = (COSStream) existing;
+                        String subtype = stream.getNameAsString(COSName.SUBTYPE);
+                        if (COSName.IMAGE.getName().equals(subtype)) {
+                            long unfilteredSize = stream.getFilteredLength();
 
-                        removeMetadataIfNeeded(stream);
-                        removeAlternatesIfNeeded(stream);
+                            removeMetadataIfNeeded(stream);
+                            removeAlternatesIfNeeded(stream);
 
-                        if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
-                            boolean jbig2Image = stream.hasFilter(COSName.JBIG2_DECODE);
-                            if (jbig2Image) {
-                                LOG.debug("Skipping JBIG2 encoded image");
+                            if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
+                                boolean jbig2Image = stream.hasFilter(COSName.JBIG2_DECODE);
+                                if (jbig2Image) {
+                                    LOG.debug("Skipping JBIG2 encoded image");
+                                }
+
+                                if (unfilteredSize > parameters.getImageMinBytesSize() && !jbig2Image) {
+                                    long start = System.currentTimeMillis();
+                                    PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(),
+                                            context.getResources());
+                                    long elapsed = System.currentTimeMillis() - start;
+                                    if (elapsed > 500)
+                                        LOG.debug("Loading PDXObject took " + elapsed + "ms");
+
+                                    PDImageXObject image = (PDImageXObject) xobject;
+
+                                    Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
+                                    float imageXScale = ctmNew.getScalingFactorX();
+                                    float imageYScale = ctmNew.getScalingFactorY();
+
+                                    int displayHeight = Math
+                                            .abs((int) (imageYScale / 72.0f * parameters.getImageDpi()));
+                                    int displayWidth = Math.abs((int) (imageXScale / 72.0f * parameters.getImageDpi()));
+
+                                    LOG.debug("Found image {} {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
+                                            objectName.getName(), image.getHeight(), image.getWidth(), displayHeight,
+                                            displayWidth, imageYScale, imageXScale, unfilteredSize);
+
+                                    optimize(objectName, image, stream.id(), displayWidth, displayHeight);
+                                }
                             }
-
-                            if (unfilteredSize > parameters.getImageMinBytesSize() && !jbig2Image) {
-                                long start = System.currentTimeMillis();
-                                PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(),
-                                        context.getResources());
-                                long elapsed = System.currentTimeMillis() - start;
-                                if (elapsed > 500)
-                                    LOG.debug("Loading PDXObject took " + elapsed + "ms");
-
-                                PDImageXObject image = (PDImageXObject) xobject;
-
-                                Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
-                                float imageXScale = ctmNew.getScalingFactorX();
-                                float imageYScale = ctmNew.getScalingFactorY();
-
-                                int displayHeight = Math.abs((int) (imageYScale / 72.0f * parameters.getImageDpi()));
-                                int displayWidth = Math.abs((int) (imageXScale / 72.0f * parameters.getImageDpi()));
-
-                                LOG.debug("Found image {} {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
-                                        objectName.getName(), image.getHeight(), image.getWidth(), displayHeight,
-                                        displayWidth, imageYScale, imageXScale, unfilteredSize);
-
-                                optimize(objectName, image, stream.id(), displayWidth, displayHeight);
-                            }
+                        } else if (COSName.FORM.getName().equals(subtype)) {
+                            PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(),
+                                    context.getResources());
+                            removeMetadataIfNeeded(xobject.getCOSObject());
+                            removePieceInfoIfNeeded(xobject.getCOSObject());
+                            showForm((PDFormXObject) xobject);
                         }
-                    } else if (COSName.FORM.getName().equals(subtype)) {
-                        PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
-                        removeMetadataIfNeeded(xobject.getCOSObject());
-                        removePieceInfoIfNeeded(xobject.getCOSObject());
-                        showForm((PDFormXObject) xobject);
                     }
+                } else {
+                    LOG.warn("Unexpected type {} for xObject {}", existing.getClass(), objectName.getName());
                 }
             }
         }
