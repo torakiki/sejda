@@ -105,7 +105,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                         () -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
                 if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
-                    COSStream stream = (COSStream)existing;
+                    COSStream stream = (COSStream) existing;
                     String subtype = stream.getNameAsString(COSName.SUBTYPE);
                     if (COSName.IMAGE.getName().equals(subtype)) {
                         long unfilteredSize = stream.getFilteredLength();
@@ -115,7 +115,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
                         if (parameters.getOptimizations().contains(Optimization.COMPRESS_IMAGES)) {
                             boolean jbig2Image = stream.hasFilter(COSName.JBIG2_DECODE);
-                            if(jbig2Image) {
+                            if (jbig2Image) {
                                 LOG.debug("Skipping JBIG2 encoded image");
                             }
 
@@ -124,7 +124,8 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(),
                                         context.getResources());
                                 long elapsed = System.currentTimeMillis() - start;
-                                if(elapsed > 500) LOG.debug("Loading PDXObject took " + elapsed + "ms");
+                                if (elapsed > 500)
+                                    LOG.debug("Loading PDXObject took " + elapsed + "ms");
 
                                 PDImageXObject image = (PDImageXObject) xobject;
 
@@ -132,11 +133,12 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                 float imageXScale = ctmNew.getScalingFactorX();
                                 float imageYScale = ctmNew.getScalingFactorY();
 
-                                int displayHeight = (int)(imageYScale / 72.0f * parameters.getImageDpi());
-                                int displayWidth = (int)(imageXScale / 72.0f * parameters.getImageDpi());
+                                int displayHeight = (int) (imageYScale / 72.0f * parameters.getImageDpi());
+                                int displayWidth = (int) (imageXScale / 72.0f * parameters.getImageDpi());
 
-                                LOG.debug("Found image {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
-                                        image.getHeight(), image.getWidth(), displayHeight, displayWidth, imageYScale, imageXScale, unfilteredSize);
+                                LOG.debug("Found image {} {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
+                                        objectName.getName(), image.getHeight(), image.getWidth(), displayHeight,
+                                        displayWidth, imageYScale, imageXScale, unfilteredSize);
 
                                 optimize(objectName, image, stream.id(), displayWidth, displayHeight);
                             }
@@ -151,18 +153,21 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
             }
         }
 
-        private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id, int displayWidth, int displayHeight) {
+        private void optimize(COSName objectName, PDImageXObject image, IndirectCOSObjectIdentifier id,
+                int displayWidth, int displayHeight) {
             try {
-                LOG.debug("Optimizing image {} {} with dimensions {}x{}", objectName.getName(), id.toString(), image.getWidth(), image.getHeight());
+                LOG.debug("Optimizing image {} {} with dimensions {}x{}", objectName.getName(), id.toString(),
+                        image.getWidth(), image.getHeight());
                 ReadOnlyFilteredCOSStream optimizedImage = optimizedById.get(id);
 
-                if(optimizedImage == null) {
+                if (optimizedImage == null) {
                     long start = System.currentTimeMillis();
-                    File tmpImageFile = ImageOptimizer.optimize(image.getImageWithoutMasks(), parameters.getImageQuality(),
-                            parameters.getImageDpi(), displayWidth, displayHeight);
+                    File tmpImageFile = ImageOptimizer.optimize(image.getImageWithoutMasks(),
+                            parameters.getImageQuality(), parameters.getImageDpi(), displayWidth, displayHeight);
 
                     long elapsed = System.currentTimeMillis() - start;
-                    if(elapsed > 500) LOG.debug("Optimizing image took " + elapsed + "ms");
+                    if (elapsed > 500)
+                        LOG.debug("Optimizing image took " + elapsed + "ms");
 
                     // we wrap the existing so we can identify it later as "in use" and already processed
                     optimizedImage = ReadOnlyFilteredCOSStream.readOnly(image.getCOSObject());
@@ -202,7 +207,8 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                 // which stores both the filtered and unfiltered bytes[] and DecodeResult
                 // potentially creating a large memory footprint
                 image.getCOSObject().unDecode();
-                LOG.debug("Used memory: {} Mb", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000);
+                LOG.debug("Used memory: {} Mb",
+                        (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000);
 
             } catch (IOException | RuntimeException ex) {
                 LOG.warn("Failed to optimize image, skipping and continuing with next.", ex);
