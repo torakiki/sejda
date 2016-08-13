@@ -92,7 +92,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             if (width > mediaBox.getWidth()) {
                 int targetWidth = (int) mediaBox.getWidth();
-                LOG.debug("Scaling image down to fit by width {} vs  {}", width, targetWidth);
+                LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
 
                 float ratio = (float) width / targetWidth;
                 width = targetWidth;
@@ -101,7 +101,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             if (height > mediaBox.getHeight()) {
                 int targetHeight = (int) mediaBox.getHeight();
-                LOG.debug("Scaling image down to fit by height {} vs  {}", height, targetHeight);
+                LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
 
                 float ratio = (float) height / targetHeight;
                 height = targetHeight;
