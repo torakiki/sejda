@@ -16,13 +16,11 @@
  */
 package org.sejda.cli;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.sejda.model.nup.PageOrder;
-import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.NupParameters;
-import org.sejda.model.parameter.OptimizeParameters;
-
-import static org.junit.Assert.assertEquals;
 
 public class NupTaskTest extends AbstractTaskTest {
 
