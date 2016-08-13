@@ -33,8 +33,6 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.common.PDStream;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * a {@link Function} capable of transforming a {@link PDPage} to a {@link PDFormXObject}
@@ -42,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  */
 public class PageToFormXObject {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PageToFormXObject.class);
 
     /**
      * @return a {@link PDFormXObject} corresponding to the given {@link PDPage} or null if an error occurred
@@ -61,8 +57,8 @@ public class PageToFormXObject {
                 mediaBox.getLowerLeftY() - boundingBox.getLowerLeftY());
         switch (page.getRotation()) {
         case 90:
-//            at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-//                    boundingBox.getHeight() / boundingBox.getWidth());
+            // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+            // boundingBox.getHeight() / boundingBox.getWidth());
             at.translate(0, boundingBox.getWidth());
             at.rotate(-Math.PI / 2.0);
             break;
@@ -71,8 +67,8 @@ public class PageToFormXObject {
             at.rotate(-Math.PI);
             break;
         case 270:
-//            at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-//                    boundingBox.getHeight() / boundingBox.getWidth());
+            // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+            // boundingBox.getHeight() / boundingBox.getWidth());
             at.translate(boundingBox.getHeight(), 0);
             at.rotate(-Math.PI * 1.5);
             break;
