@@ -85,5 +85,10 @@
             <artifactId>hamcrest-all</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

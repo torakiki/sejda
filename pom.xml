@@ -196,6 +196,7 @@
 		<xmlgraphics.version>2.1</xmlgraphics.version>
 		<bouncycastle.version>1.54</bouncycastle.version>
 		<twelvemonkeys.version>3.2.1</twelvemonkeys.version>
+		<apache.poi.version>3.15-beta2</apache.poi.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -253,6 +254,11 @@
 				<groupId>com.twelvemonkeys.imageio</groupId>
 				<artifactId>imageio-jpeg</artifactId>
 				<version>${twelvemonkeys.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${apache.poi.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

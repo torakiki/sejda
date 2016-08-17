@@ -24,6 +24,10 @@ public class TopLeftRectangularBox {
         this.height = height;
     }
 
+    public TopLeftRectangularBox(Rectangle r) {
+        this(r.x, r.y, r.width, r.height);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("x", x).append("y", y).append("width", width)
@@ -50,5 +54,13 @@ public class TopLeftRectangularBox {
 
     public Rectangle asRectangle() {
         return new Rectangle(x, y, width, height);
+    }
+
+    public TopLeftRectangularBox intersection(TopLeftRectangularBox other) {
+        return new TopLeftRectangularBox(this.asRectangle().intersection(other.asRectangle()));
+    }
+
+    public TopLeftRectangularBox withPadding(int padding) {
+        return new TopLeftRectangularBox(x - padding, y - padding, width + 2 * padding, height + 2 * padding);
     }
 }

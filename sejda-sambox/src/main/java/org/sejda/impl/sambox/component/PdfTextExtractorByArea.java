@@ -19,14 +19,19 @@
  */
 package org.sejda.impl.sambox.component;
 
-import java.awt.Rectangle;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
+
+import java.awt.*;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 /**
  * Stateless component responsible for extracting text from a given area of a document page
@@ -98,5 +103,18 @@ public class PdfTextExtractorByArea {
         } catch (IOException e) {
             throw new TaskIOException("An error occurred extracting text from page.", e);
         }
+    }
+
+    public List<String> extractTextFromAreas(PDPage page, List<Rectangle> areas) throws TaskIOException {
+        List<String> results = new ArrayList<>(areas.size());
+        for (Rectangle area : areas) {
+            String text = extractTextFromArea(page, area);
+            String result = defaultIfBlank(text, "");
+            result = StringUtils.strip(result);
+            result = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(result).trim();
+            results.add(result);
+        }
+
+        return results;
     }
 }
