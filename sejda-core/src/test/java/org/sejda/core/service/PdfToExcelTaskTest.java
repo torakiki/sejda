@@ -48,6 +48,9 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
             try {
                 InputStream in = new FileInputStream(p.toFile());
                 Workbook wb = WorkbookFactory.create(in);
+
+                assertThat(wb.getNumberOfSheets(), is(2));
+
                 Sheet sheet = wb.getSheetAt(0);
 
                 assertThat(getDataRow(sheet, 0), is(Arrays.asList("OrderDate", "Region", "Rep", "Item", "Units", "Unit Cost", "Total")));
@@ -95,7 +98,6 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
         parameters.addSource(customInput("pdf/tabular-data.pdf", "tabular-data.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
-        List<Table> tables = new ArrayList<>();
         Table table = new Table();
 
         table.addColumns(new TopLeftRectangularBox(42, 39, 54, 524));
@@ -143,10 +145,28 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
         table.addRows(new TopLeftRectangularBox(42, 538, 336, 11));
         table.addRows(new TopLeftRectangularBox(42, 552, 336, 11));
 
-        tables.add(table);
+        parameters.addTable(1, table);
+        
         table = new Table();
 
-        parameters.addTables(1, tables);
+        table.addColumns(new TopLeftRectangularBox(42, 39, 54, 111));
+        table.addColumns(new TopLeftRectangularBox(99, 39, 36, 111));
+        table.addColumns(new TopLeftRectangularBox(145, 39, 46, 111));
+        table.addColumns(new TopLeftRectangularBox(195, 39, 31, 111));
+        table.addColumns(new TopLeftRectangularBox(235, 39, 35, 111));
+        table.addColumns(new TopLeftRectangularBox(264, 39, 6, 111));
+        table.addColumns(new TopLeftRectangularBox(274, 39, 45, 111));
+        table.addColumns(new TopLeftRectangularBox(329, 39, 49, 111));
+        table.addRows(new TopLeftRectangularBox(42, 39, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 53, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 67, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 82, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 96, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 110, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 124, 336, 11));
+        table.addRows(new TopLeftRectangularBox(42, 139, 336, 11));
+        
+        parameters.addTable(2, table);
 
         testContext.directoryOutputTo(parameters);
 

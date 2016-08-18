@@ -94,7 +94,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             List<List<List<String>>> all = new ArrayList<>();
             List<List<String>> dataTable = new ArrayList<>();
 
-            for (int pageNumber = 1; pageNumber < numberOfPages; pageNumber++) {
+            for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
                 PDPage page = sourceDocumentHandler.getPage(pageNumber);
 
                 for (Table table : parameters.getTables(pageNumber)) {
