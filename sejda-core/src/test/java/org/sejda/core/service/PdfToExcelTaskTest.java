@@ -18,13 +18,8 @@
  */
 package org.sejda.core.service;
 
-import org.apache.poi.ss.usermodel.*;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.sejda.model.TopLeftRectangularBox;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.excel.PdfToExcelParameters;
-import org.sejda.model.parameter.excel.Table;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,8 +28,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.sejda.model.TopLeftRectangularBox;
+import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.excel.PdfToExcelParameters;
+import org.sejda.model.parameter.excel.Table;
 
 @Ignore
 public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParameters> {
