@@ -107,14 +107,29 @@ public class PdfTextExtractorByArea {
 
     public List<String> extractTextFromAreas(PDPage page, List<Rectangle> areas) throws TaskIOException {
         List<String> results = new ArrayList<>(areas.size());
-        for (Rectangle area : areas) {
-            String text = extractTextFromArea(page, area);
-            String result = defaultIfBlank(text, "");
-            result = StringUtils.strip(result);
-            result = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(result).trim();
-            results.add(result);
-        }
 
-        return results;
+        try {
+            PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+            stripper.setSortByPosition(true);
+
+            for (int i = 0; i < areas.size(); i++) {
+                stripper.addRegion("area" + i, areas.get(i));
+            }
+
+
+            stripper.extractRegions(page);
+
+            for (int i = 0; i < areas.size(); i++) {
+                String text = stripper.getTextForRegion("area" + i);
+                String result = defaultIfBlank(text, "");
+                result = StringUtils.strip(result);
+                result = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(result).trim();
+                results.add(result);
+            }
+
+            return results;
+        } catch (IOException e) {
+            throw new TaskIOException("An error occurred extracting text from page.", e);
+        }
     }
 }

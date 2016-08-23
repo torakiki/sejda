@@ -95,6 +95,8 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             List<List<String>> dataTable = new ArrayList<>();
 
             for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
+                LOG.debug("Extracting tables from page {}", pageNumber);
+                long start = System.currentTimeMillis();
                 PDPage page = sourceDocumentHandler.getPage(pageNumber);
 
                 for (Table table : parameters.getTables(pageNumber)) {
@@ -117,6 +119,8 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     all.add(dataTable);
                     dataTable = new ArrayList<>();
                 }
+
+                LOG.debug("Done extracting tables from page {}, took {} seconds", pageNumber, (System.currentTimeMillis() - start)/1000);
             }
 
             writeExcelFile(all, tmpFile);
