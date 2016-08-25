@@ -242,7 +242,7 @@ class SplitByEveryXPagesDefaultsProvider extends SingleInputAndFolderOutputDefau
     }
 }
 
-class ExtractByBookmarksDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class ExtractByBookmarksDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-l", "1");

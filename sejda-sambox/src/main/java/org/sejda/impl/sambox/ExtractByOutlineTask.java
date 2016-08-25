@@ -23,6 +23,7 @@ import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
 import org.sejda.impl.sambox.component.split.PageDestinationsLevelPdfExtractor;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
@@ -51,18 +52,22 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
 
     @Override
     public void execute(ExtractByOutlineParameters parameters) throws TaskException {
-        LOG.debug("Opening {} ", parameters.getSource());
-        document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
+        for(PdfSource<?> source: parameters.getSourceList()) {
+            LOG.debug("Opening {} ", source);
+            document = source.open(documentLoader).getUnderlyingPDDocument();
 
-        LOG.debug("Retrieving outline information for level {} and match regex {}", parameters.getLevel(),
-                parameters.getMatchingTitleRegEx());
-        OutlineExtractPageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
-                parameters.getMatchingTitleRegEx()).getExtractPageDestinations(parameters.getLevel());
+            LOG.debug("Retrieving outline information for level {} and match regex {}", parameters.getLevel(),
+                    parameters.getMatchingTitleRegEx());
+            OutlineExtractPageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
+                    parameters.getMatchingTitleRegEx()).getExtractPageDestinations(parameters.getLevel());
 
-        LOG.debug("Starting extraction by outline, level {} and match regex {}", parameters.getLevel(),
-                parameters.getMatchingTitleRegEx());
-        new PageDestinationsLevelPdfExtractor(document, parameters, pagesDestination)
-                .extract(executionContext());
+            LOG.debug("Starting extraction by outline, level {} and match regex {}", parameters.getLevel(),
+                    parameters.getMatchingTitleRegEx());
+            new PageDestinationsLevelPdfExtractor(document, parameters, pagesDestination, source)
+                    .extract(executionContext());
+
+            nullSafeCloseQuietly(document);
+        }
 
         LOG.debug("Extraction completed and outputs written to {}", parameters.getOutput());
     }

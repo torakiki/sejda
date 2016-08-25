@@ -30,6 +30,7 @@ import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.task.TaskExecutionContext;
@@ -48,13 +49,14 @@ public class PageDestinationsLevelPdfExtractor {
     private final ExtractByOutlineParameters parameters;
     private final PDDocument document;
     private MultipleOutputWriter outputWriter;
+    private final PdfSource<?> source;
 
     public PageDestinationsLevelPdfExtractor(PDDocument document, ExtractByOutlineParameters parameters,
-            OutlineExtractPageDestinations outlineDestinations) {
+            OutlineExtractPageDestinations outlineDestinations, PdfSource<?> source) {
         this.outlineDestinations = outlineDestinations;
         this.parameters = parameters;
         this.document = document;
-
+        this.source = source;
     }
 
     public void extract(TaskExecutionContext executionContext) throws TaskException {
@@ -83,7 +85,7 @@ public class PageDestinationsLevelPdfExtractor {
                 LOG.debug("Created output temporary buffer {}", tmpFile);
 
                 String outName = nameGenerator(parameters.getOutputPrefix())
-                        .generate(nameRequest().page(page).originalName(parameters.getSource().getName())
+                        .generate(nameRequest().page(page).originalName(source.getName())
                                 .fileNumber(outputDocumentsCounter).bookmark(section.title));
                 outputWriter.addOutput(file(tmpFile).name(outName));
 

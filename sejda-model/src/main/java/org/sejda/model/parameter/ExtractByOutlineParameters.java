@@ -27,15 +27,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
  * Extract chapters to separate documents based on the bookmarks in the outline
  *
  * Specify which outline level to use for selecting bookmarks and optionally a regex to filter them.
  */
-public class ExtractByOutlineParameters extends SinglePdfSourceMultipleOutputParameters
+public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull

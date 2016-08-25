@@ -38,7 +38,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/extract_by_outline_sample.pdf"));
+        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf"));
         parameters.setOutputPrefix("[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
