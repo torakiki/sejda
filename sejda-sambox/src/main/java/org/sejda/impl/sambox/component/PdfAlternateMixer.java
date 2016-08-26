@@ -19,25 +19,16 @@
 package org.sejda.impl.sambox.component;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.sejda.common.ComponentsUtility;
-import org.sejda.common.LookupTable;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.input.PdfMixInput;
-import org.sejda.model.input.PdfMixInput.PdfMixInputProcessStatus;
-import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component providing functionalities to perform an alternate mix on two {@link PdfMixInput}.
@@ -47,18 +38,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PdfAlternateMixer extends PDDocumentHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfAlternateMixer.class);
-
-    private PdfMixInput firstInput;
-    private PdfMixInput secondInput;
-    private PDDocumentHandler firstDocumentHandler;
-    private PDDocumentHandler secondDocumentHandler;
-    private PdfSourceOpener<PDDocumentHandler> documentLoader = new DefaultPdfSourceOpener();
-
-    public PdfAlternateMixer(PdfMixInput firstInput, PdfMixInput secondInput) {
-        this.firstInput = firstInput;
-        this.secondInput = secondInput;
-    }
+    private List<PdfMixFragment> mixFragments = new ArrayList<>();
+    private int currentStep = 0;
 
     /**
      * Perform the alternate mix on the given {@link PdfMixInput}s.
@@ -66,54 +47,35 @@ public class PdfAlternateMixer extends PDDocumentHandler {
      * @param executionContext
      * @throws TaskException
      */
-    public void mix(TaskExecutionContext executionContext) throws TaskException {
-        firstDocumentHandler = openInput(firstInput);
-        secondDocumentHandler = openInput(secondInput);
+    public void mix(List<PdfMixInput> inputs, TaskExecutionContext executionContext) throws TaskException {
         setCreatorOnPDDocument();
-
-        int firstDocPages = firstDocumentHandler.getNumberOfPages();
-        int secondDocPages = secondDocumentHandler.getNumberOfPages();
-
-        PdfMixInputProcessStatus firstDocStatus = firstInput.newProcessingStatus(firstDocPages);
-        PdfMixInputProcessStatus secondDocStatus = secondInput.newProcessingStatus(secondDocPages);
-
-        int currentStep = 0;
-        int totalSteps = firstDocPages + secondDocPages;
-        LookupTable<PDPage> lookupFirst = new LookupTable<>();
-        LookupTable<PDPage> lookupSecond = new LookupTable<>();
-        while (firstDocStatus.hasNextPage() || secondDocStatus.hasNextPage()) {
-            executionContext.assertTaskNotCancelled();
-
-            for (int i = 0; i < firstInput.getStep() && firstDocStatus.hasNextPage(); i++) {
-                PDPage current = firstDocumentHandler.getPage(firstDocStatus.nextPage());
-                lookupFirst.addLookupEntry(current, importPage(current));
-                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
-            }
-            for (int i = 0; i < secondInput.getStep() && secondDocStatus.hasNextPage(); i++) {
-                PDPage current = secondDocumentHandler.getPage(secondDocStatus.nextPage());
-                lookupSecond.addLookupEntry(current, importPage(current));
-                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
-            }
+        for (PdfMixInput input : inputs) {
+            mixFragments.add(PdfMixFragment.newInstance(input));
         }
-        LookupTable<PDAnnotation> annotationsLookup = processAnnotations(lookupFirst,
-                firstDocumentHandler.getUnderlyingPDDocument());
-        clipSignatures(annotationsLookup.values());
-        annotationsLookup = processAnnotations(lookupSecond, secondDocumentHandler.getUnderlyingPDDocument());
-        clipSignatures(annotationsLookup.values());
-    }
+        int totalSteps = mixFragments.stream().map(PdfMixFragment::getNumberOfPages).reduce(0,
+                (curr, value) -> curr + value);
 
-    private PDDocumentHandler openInput(PdfMixInput input) throws TaskIOException, TaskPermissionsException {
-        LOG.debug("Opening input {} ", input.getSource());
-        PDDocumentHandler documentHandler = input.getSource().open(documentLoader);
-        documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
-        return documentHandler;
+        while (mixFragments.stream().anyMatch(PdfMixFragment::hasNextPage)) {
+            executionContext.assertTaskNotCancelled();
+            mixFragments.stream().filter(PdfMixFragment::hasNextPage).forEach(f -> {
+                for (int i = 0; i < f.getStep() && f.hasNextPage(); i++) {
+                    PDPage current = f.nextPage();
+                    f.addLookupEntry(current, importPage(current));
+                    notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep)
+                            .outOf(totalSteps);
+                }
+            });
+        }
+
+        mixFragments.stream().forEach(PdfMixFragment::saintizeAnnotations);
     }
 
     @Override
     public void close() throws IOException {
         super.close();
-        ComponentsUtility.nullSafeCloseQuietly(firstDocumentHandler);
-        ComponentsUtility.nullSafeCloseQuietly(secondDocumentHandler);
+        mixFragments.stream().forEach(ComponentsUtility::nullSafeCloseQuietly);
+        mixFragments.clear();
+        currentStep = 0;
     }
 
 }

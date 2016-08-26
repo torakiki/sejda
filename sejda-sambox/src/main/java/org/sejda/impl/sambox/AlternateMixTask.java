@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Arrays.asList;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -49,14 +50,14 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     @Override
     public void before(AlternateMixParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
-        mixer = new PdfAlternateMixer(parameters.getFirstInput(), parameters.getSecondInput());
+        mixer = new PdfAlternateMixer();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
     public void execute(AlternateMixParameters parameters) throws TaskException {
 
-        mixer.mix(executionContext());
+        mixer.mix(asList(parameters.getFirstInput(), parameters.getSecondInput()), executionContext());
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.setCompress(parameters.isCompress());
 
@@ -68,8 +69,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
 
-        LOG.debug("Alternate mix with step first document {} and step second document {} completed.", parameters
-                .getFirstInput().getStep(), parameters.getSecondInput().getStep());
+        LOG.debug("Alternate mix with step first document {} and step second document {} completed.",
+                parameters.getFirstInput().getStep(), parameters.getSecondInput().getStep());
     }
 
     @Override

@@ -72,54 +72,9 @@ public class PdfMixInput {
         return step;
     }
 
-    /**
-     * @param numberOfPages
-     *            the number of pages for this input.
-     * @return a new mix processing status for this input
-     */
-    public PdfMixInputProcessStatus newProcessingStatus(int numberOfPages) {
-        return new PdfMixInputProcessStatus(numberOfPages);
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this).append(source).append(reverse).append(step).toString();
-    }
-
-    /**
-     * Holds the status of the process for the enclosing a {@link PdfMixInput}
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    public final class PdfMixInputProcessStatus {
-
-        private int currentPage;
-        private int numberOfPages;
-
-        private PdfMixInputProcessStatus(int numberOfPages) {
-            this.numberOfPages = numberOfPages;
-            this.currentPage = (reverse) ? numberOfPages : 1;
-        }
-
-        /**
-         * @return the next page number
-         */
-        public int nextPage() {
-            int retVal = currentPage;
-            if (reverse) {
-                currentPage--;
-            } else {
-                currentPage++;
-            }
-            return retVal;
-        }
-
-        /**
-         * @return true if there is another page to be processed
-         */
-        public boolean hasNextPage() {
-            return currentPage > 0 && currentPage <= numberOfPages;
-        }
     }
 }
