@@ -18,6 +18,9 @@
  */
 package org.sejda.model.parameter;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.nup.PageOrder;
@@ -26,13 +29,16 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 /**
  * N-up task
  *
- * In printing, 2-up, 3-up, or more generally N-up refers to a page layout strategy in which multiple pre-rendered pages are composed onto a single page; achieved by reduction in size, possible rotations, and subsequent arrangement in a grid pattern.
- * The primary purpose of N-up printing is to reduce the number of pages that a printed work would otherwise require without having to re-edit, index, or flow the layout of the individual pages of an existing work.
+ * In printing, 2-up, 3-up, or more generally N-up refers to a page layout strategy in which multiple pre-rendered pages are composed onto a single page; achieved by reduction in
+ * size, possible rotations, and subsequent arrangement in a grid pattern. The primary purpose of N-up printing is to reduce the number of pages that a printed work would otherwise
+ * require without having to re-edit, index, or flow the layout of the individual pages of an existing work.
  *
  * https://en.wikipedia.org/wiki/N-up
  */
 public class NupParameters extends MultiplePdfSourceMultipleOutputParameters {
+    @Min(2)
     private final int n;
+    @NotNull
     private final PageOrder pageOrder;
 
     public NupParameters(int n) {
@@ -54,23 +60,20 @@ public class NupParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         NupParameters that = (NupParameters) o;
 
-        return new EqualsBuilder()
-                .appendSuper(super.equals(o))
-                .append(n, that.n)
+        return new EqualsBuilder().appendSuper(super.equals(o)).append(n, that.n).append(pageOrder, that.pageOrder)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .appendSuper(super.hashCode())
-                .append(n)
-                .toHashCode();
+        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(n).append(pageOrder).toHashCode();
     }
 }
