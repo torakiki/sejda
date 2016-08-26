@@ -34,9 +34,10 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * Parameter class for the alternate mix manipulation. Accepts two {@link PdfMixInput} that will be mixed.
  * 
  * @author Andrea Vacondio
- * 
+ * @deprecated use {@link AlternateMixMultipleInputParameters} instead
  */
 @SingleOutputAllowedExtensions
+@Deprecated
 public class AlternateMixParameters extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
 
     @Valid
