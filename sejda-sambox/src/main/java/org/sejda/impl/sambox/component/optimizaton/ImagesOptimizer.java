@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.core.writer.model.ImageOptimizer;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.optimization.Optimization;
@@ -140,7 +141,7 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
 
                                     LOG.debug("Found image {} {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
                                             objectName.getName(), image.getHeight(), image.getWidth(), displayHeight,
-                                            displayWidth, imageYScale, imageXScale, unfilteredSize);
+                                            displayWidth, imageYScale, imageXScale, HumanReadableSize.toString(unfilteredSize));
 
                                     optimize(objectName, image, stream.id(), displayWidth, displayHeight);
                                 }

@@ -30,6 +30,7 @@ import org.apache.xmlgraphics.ps.dsc.tools.PageExtractor;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
@@ -101,7 +102,7 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
                     extractor.save(tmpFile, discardOutline);
                     extractor.reset();
                     LOG.debug("Ending split at page {} of the original document, generated document size is {}", page,
-                            tmpFile.length());
+                            HumanReadableSize.toString(tmpFile.length()));
                 }
             }
         }

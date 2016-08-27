@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
+import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
@@ -64,7 +65,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
 
         splitter = new SizePdfSplitter(sourceDocument, parameters,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
-        LOG.debug("Starting split by size {} bytes", parameters.getSizeToSplitAt());
+        LOG.debug("Starting split by size {}", HumanReadableSize.toString(parameters.getSizeToSplitAt()));
         splitter.split(executionContext());
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
