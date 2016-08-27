@@ -26,6 +26,9 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 import org.junit.Test;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.parameter.CropParameters;
+import org.sejda.model.pdf.page.PageRange;
+
+import java.util.Arrays;
 
 /**
  * Tests for the Crop task
@@ -63,6 +66,12 @@ public class CropTaskTest extends AbstractTaskTest {
     public void tooFewTokensInCropArea() {
         defaultCommandLine().with("--cropAreas", "[4:2][3]").assertConsoleOutputContains(
                 "Unparsable rectangular box: '[4:2][3]'. Expected format is: ");
+    }
+
+    @Test
+    public void excludedPageRanges() {
+        CropParameters params = defaultCommandLine().with("--excludedPages", "1,5-6,20-").invokeSejdaConsole();
+        assertContainsAll(params.getExcludedPagesSelection(), Arrays.asList(new PageRange(1, 1), new PageRange(5,6), new PageRange(20)));
     }
 
     @Test

@@ -21,6 +21,7 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
+import org.sejda.conversion.PageRangeSetAdapter;
 import org.sejda.conversion.RectangularBoxAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -38,4 +39,9 @@ public interface CropTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOut
     @Option(shortName = "c", description = "list of rectangles crop areas. A crop area is defined by two points: bottomLeft and topRight, int the format [bottom:left][top:right]. Ex: --cropAreas [0:0][5:10] [5:0][10:10] (required)")
     List<RectangularBoxAdapter> getCropAreas();
 
+    @Option(shortName = "s", description = "pages to exclude from cropping. Will be added to the result document as they are. Accepted values: 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")
+    PageRangeSetAdapter getExcludedPages();
+
+    boolean isExcludedPages();
 }

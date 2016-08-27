@@ -29,6 +29,7 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
@@ -101,7 +102,18 @@ public class CropTask extends BaseTask<CropParameters> {
                     r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom())).collect(Collectors.toList());
             LOG.debug("Found {} crop boxes to apply", cropAreas.size());
 
+            Set<Integer> excludedPages = parameters.getExcludedPages(sourceDocumentHandler.getNumberOfPages());
+            int pageNum = 0;
             for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
+                pageNum++;
+
+                if(excludedPages.contains(pageNum)){
+                    LOG.debug("Not cropping excluded page {}", pageNum);
+                    PDPage newPage = destinationDocument.importPage(page);
+                    pagesLookup.addLookupEntry(page, newPage);
+                    continue;
+                }
+
                 for (PDRectangle box : cropAreas) {
                     executionContext().assertTaskNotCancelled();
                     box = unrotate(page, box);
@@ -111,7 +123,6 @@ public class CropTask extends BaseTask<CropParameters> {
                     notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep)
                             .outOf(totalSteps);
                 }
-
             }
             LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup,
                     sourceDocumentHandler.getUnderlyingPDDocument());

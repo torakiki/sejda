@@ -119,6 +119,26 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         }
     }
 
+    @Test
+    public void testExcludingPages() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstanceFromPoints(new Point(10, 20), new Point(60, 40)));
+        parameters.addSource(customInput("pdf/rotation_90_test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addExcludedPage(1);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        RectangularBox notCropped = RectangularBox.newInstanceFromPoints(new Point(0, 0), new Point(595, 842));
+        PDPage firstPage = result.getPage(0);
+        assertEqualsRectangles(notCropped, firstPage.getCropBox());
+
+        RectangularBox expected = RectangularBox.newInstanceFromPoints(new Point(555, 10), new Point(575, 60));
+        PDPage secondPage = result.getPage(1);
+        assertEqualsRectangles(expected, secondPage.getCropBox());
+    }
+
     private void assertEqualsRectangles(RectangularBox expected, PDRectangle found) {
         assertEquals(expected.getLeft(), (int) found.getLowerLeftX());
         assertEquals(expected.getBottom(), (int) found.getLowerLeftY());

@@ -46,6 +46,10 @@ public class CropCliArgumentsTransformer extends BaseCliArgumentsTransformer imp
             parameters.addCropArea(cropArea.getRectangularBox());
         }
 
+        if(taskCliArguments.isExcludedPages()) {
+            parameters.addAllExcludedPageRanges(taskCliArguments.getExcludedPages().getPageRangeSet());
+        }
+
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);

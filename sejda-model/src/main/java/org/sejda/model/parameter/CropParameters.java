@@ -19,8 +19,7 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -31,6 +30,7 @@ import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
@@ -47,6 +47,9 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @NotNull
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE;
+
+    @Valid
+    private final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
 
     /**
      * @return an unmodifiable view of the crop areas.
@@ -79,9 +82,42 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
         this.acroFormPolicy = acroFormPolicy;
     }
 
+    public void addExcludedPage(Integer page) {
+        addExcludedPageRange(new PageRange(page, page));
+    }
+
+    public void addExcludedPageRange(PageRange range) {
+        excludedPagesSelection.add(range);
+    }
+
+    public void addAllExcludedPageRanges(Collection<PageRange> ranges) {
+        excludedPagesSelection.addAll(ranges);
+    }
+
+    /**
+     * @return an unmodifiable view of the excludedPagesSelection
+     */
+    public Set<PageRange> getExcludedPagesSelection() {
+        return Collections.unmodifiableSet(excludedPagesSelection);
+    }
+
+    /**
+     * @param upperLimit
+     *            the number of pages of the document (upper limit).
+     * @return the set of excluded pages.
+     */
+    public Set<Integer> getExcludedPages(int upperLimit) {
+        Set<Integer> pages = new NullSafeSet<Integer>();
+        for (PageRange range : getExcludedPagesSelection()) {
+            pages.addAll(range.getPages(upperLimit));
+        }
+        return pages;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(cropAreas).append(acroFormPolicy)
+                .append(excludedPagesSelection)
                 .toHashCode();
     }
 
@@ -95,6 +131,8 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
         }
         CropParameters parameter = (CropParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(cropAreas, parameter.cropAreas)
-                .append(acroFormPolicy, parameter.acroFormPolicy).isEquals();
+                .append(acroFormPolicy, parameter.acroFormPolicy)
+                .append(excludedPagesSelection, parameter.excludedPagesSelection)
+                .isEquals();
     }
 }
