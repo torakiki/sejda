@@ -19,9 +19,16 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
 import org.sejda.core.service.AlternateMixTaskTest;
-import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.parameter.AbstractAlternateMixParameters;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * @author Andrea Vacondio
@@ -30,8 +37,17 @@ import org.sejda.model.task.Task;
 public class AlternateMixSamboxTaskTest extends AlternateMixTaskTest {
 
     @Override
-    public Task<AlternateMixParameters> getTask() {
+    public Task<AbstractAlternateMixParameters> getTask() {
         return new AlternateMixTask();
+    }
+
+    @Override
+    protected void assertHeaderContains(PDPage page, String expectedText) {
+        try {
+            assertThat(new PdfTextExtractorByArea().extractHeaderText(page).trim(), containsString(expectedText));
+        } catch (TaskIOException e) {
+            fail(e.getMessage());
+        }
     }
 
 }

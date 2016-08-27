@@ -26,8 +26,11 @@ import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.AbstractAlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * Abstract test unit for the alternate mix task
@@ -36,21 +39,40 @@ import org.sejda.model.pdf.PdfVersion;
  * 
  */
 @Ignore
-public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixParameters> {
+public abstract class AlternateMixTaskTest extends BaseTaskTest<AbstractAlternateMixParameters> {
 
-    private AlternateMixParameters parameters;
-
-    private void setUpParameters(PdfMixInput firstInput, PdfMixInput secondInput) {
-        parameters = new AlternateMixParameters(firstInput, secondInput);
-        parameters.setOutputName("outName.pdf");
+    private void setUpParameters(AbstractAlternateMixParameters parameters) {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_5);
     }
 
     @Test
+    public void threeDocsMerge() throws TaskException, IOException {
+        AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
+        params.addInput(new PdfMixInput(shortInput(), true, 1));
+        params.addInput(new PdfMixInput(stronglyEncryptedInput(), true, 3));
+        params.addInput(new PdfMixInput(largeOutlineInput()));
+        params.setOutputName("outName.pdf");
+        setUpParameters(params);
+        testContext.pdfOutputTo(params);
+        execute(params);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(13).assertVersion(PdfVersion.VERSION_1_5).forPdfOutput(d -> {
+            assertHeaderContains(d.getPage(0), "Pagina 4 di 4");
+            assertHeaderContains(d.getPage(5), "Pagina 3 di 4");
+            assertHeaderContains(d.getPage(8), "Pagina 2 di 4");
+            assertHeaderContains(d.getPage(10), "Pagina 1 di 4");
+        });
+    }
+
+    @Test
+    @Deprecated
     public void withStandardInput() throws TaskException, IOException {
-        setUpParameters(new PdfMixInput(shortInput()), new PdfMixInput(shortInput(), true, 3));
+        AlternateMixParameters parameters = new AlternateMixParameters(new PdfMixInput(shortInput()),
+                new PdfMixInput(shortInput(), true, 3));
+        parameters.setOutputName("outName.pdf");
+        setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -58,11 +80,17 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixPara
     }
 
     @Test
+    @Deprecated
     public void withEncryptedInput() throws TaskException, IOException {
-        setUpParameters(new PdfMixInput(encryptedInput()), new PdfMixInput(stronglyEncryptedInput(), true, 3));
+        AlternateMixParameters parameters = new AlternateMixParameters(new PdfMixInput(encryptedInput()),
+                new PdfMixInput(stronglyEncryptedInput(), true, 3));
+        parameters.setOutputName("outName.pdf");
+        setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);
     }
+
+    protected abstract void assertHeaderContains(PDPage page, String expectedText);
 }

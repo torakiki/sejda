@@ -19,6 +19,10 @@
  */
 package org.sejda.model.parameter;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -26,8 +30,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
@@ -38,7 +40,7 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  */
 @SingleOutputAllowedExtensions
 @Deprecated
-public class AlternateMixParameters extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
+public class AlternateMixParameters extends AbstractAlternateMixParameters {
 
     @Valid
     @NotNull
@@ -91,6 +93,11 @@ public class AlternateMixParameters extends AbstractPdfOutputParameters implemen
     @Override
     public String getOutputName() {
         return outputName;
+    }
+
+    @Override
+    public List<PdfMixInput> getInputList() {
+        return asList(getFirstInput(), getSecondInput());
     }
 
     @Override

@@ -18,7 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Arrays.asList;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -29,7 +28,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PdfAlternateMixer;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.AbstractAlternateMixParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrea Vacondio
  */
-public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
+public class AlternateMixTask extends BaseTask<AbstractAlternateMixParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
@@ -48,16 +47,18 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
     private SingleOutputWriter outputWriter;
 
     @Override
-    public void before(AlternateMixParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+    public void before(AbstractAlternateMixParameters parameters, TaskExecutionContext executionContext)
+            throws TaskException {
         super.before(parameters, executionContext);
         mixer = new PdfAlternateMixer();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
-    public void execute(AlternateMixParameters parameters) throws TaskException {
+    public void execute(AbstractAlternateMixParameters parameters) throws TaskException {
 
-        mixer.mix(asList(parameters.getFirstInput(), parameters.getSecondInput()), executionContext());
+        LOG.debug("Starting alternate mix of {} input documents", parameters.getInputList().size());
+        mixer.mix(parameters.getInputList(), executionContext());
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.setCompress(parameters.isCompress());
 
@@ -69,8 +70,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixParameters> {
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
 
-        LOG.debug("Alternate mix with step first document {} and step second document {} completed.",
-                parameters.getFirstInput().getStep(), parameters.getSecondInput().getStep());
+        LOG.debug("Alternate mix completed");
     }
 
     @Override
