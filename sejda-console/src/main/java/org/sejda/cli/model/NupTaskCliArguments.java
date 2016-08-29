@@ -24,7 +24,7 @@ public interface NupTaskCliArguments
         extends CliArgumentsWithPdfAndDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
-    @Option(shortName = "n", description = "number of pages per sheet. Only powers of 2 currently supported (4, 8, 16, 32, etc). Defaults to 4. (Ex --n 4) (optional)", defaultValue = "4")
+    @Option(shortName = "n", description = "number of pages per sheet. Only powers of 2 currently supported (2, 4, 8, 16, 32, etc). Defaults to 2. (Ex --n 4) (optional)", defaultValue = "4")
     Integer getN();
 
     @Option(shortName = "x", description = "vertical page ordering in sheets, top-down and then left-right. Default is horizontal ordering (left-right and then top-down) (optional)")
