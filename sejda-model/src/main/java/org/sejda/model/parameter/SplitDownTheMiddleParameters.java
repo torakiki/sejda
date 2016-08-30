@@ -20,12 +20,20 @@ package org.sejda.model.parameter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.repaginate.Repagination;
 
-public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutputParameters {
+import javax.validation.Valid;
+import java.util.Set;
+
+public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutputParameters implements ExcludedPagesSelection {
 
     private Repagination repagination = Repagination.NONE;
+
+    @Valid
+    public final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
 
     public Repagination getRepagination() {
         return repagination;
@@ -35,10 +43,15 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         this.repagination = repagination;
     }
 
+    public Set<PageRange> getExcludedPagesSelection() {
+        return excludedPagesSelection;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(getRepagination())
+                .append(getExcludedPagesSelection())
                 .appendSuper(super.hashCode()).toHashCode();
     }
 
@@ -52,6 +65,7 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         }
         return new EqualsBuilder()
                 .append(getRepagination(), ((SplitDownTheMiddleParameters) other).getRepagination())
+                .append(getExcludedPagesSelection(), ((SplitDownTheMiddleParameters) other).getExcludedPagesSelection())
                 .appendSuper(super.equals(other))
                 .isEquals();
     }

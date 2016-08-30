@@ -28,6 +28,7 @@ import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
+import java.util.Set;
 
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
@@ -95,10 +96,19 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
+            Set<Integer> excludedPages = parameters.getExcludedPages(sourceHandler.getNumberOfPages());
+
             LookupTable<PDPage> lookup = new LookupTable<>();
             for (int pageNumber = 1; pageNumber <= sourceHandler.getNumberOfPages(); pageNumber++) {
                 PDPage page = sourceHandler.getPage(pageNumber);
                 PDRectangle trimBox = page.getTrimBox();
+
+                if(excludedPages.contains(pageNumber)){
+                    LOG.debug("Not cropping excluded page {}", pageNumber);
+                    PDPage newPage = destinationHandler.importPage(page);
+                    lookup.addLookupEntry(page, newPage);
+                    continue;
+                }
 
                 try {
                     // landscape vs portrait

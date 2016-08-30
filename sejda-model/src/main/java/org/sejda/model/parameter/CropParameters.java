@@ -39,7 +39,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
+public class CropParameters extends MultiplePdfSourceMultipleOutputParameters implements ExcludedPagesSelection {
 
     @Valid
     @NotEmpty
@@ -49,7 +49,11 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE;
 
     @Valid
-    private final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
+    public final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
+
+    public Set<PageRange> getExcludedPagesSelection() {
+        return excludedPagesSelection;
+    }
 
     /**
      * @return an unmodifiable view of the crop areas.
@@ -80,38 +84,6 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     public void setAcroFormPolicy(AcroFormPolicy acroFormPolicy) {
         this.acroFormPolicy = acroFormPolicy;
-    }
-
-    public void addExcludedPage(Integer page) {
-        addExcludedPageRange(new PageRange(page, page));
-    }
-
-    public void addExcludedPageRange(PageRange range) {
-        excludedPagesSelection.add(range);
-    }
-
-    public void addAllExcludedPageRanges(Collection<PageRange> ranges) {
-        excludedPagesSelection.addAll(ranges);
-    }
-
-    /**
-     * @return an unmodifiable view of the excludedPagesSelection
-     */
-    public Set<PageRange> getExcludedPagesSelection() {
-        return Collections.unmodifiableSet(excludedPagesSelection);
-    }
-
-    /**
-     * @param upperLimit
-     *            the number of pages of the document (upper limit).
-     * @return the set of excluded pages.
-     */
-    public Set<Integer> getExcludedPages(int upperLimit) {
-        Set<Integer> pages = new NullSafeSet<Integer>();
-        for (PageRange range : getExcludedPagesSelection()) {
-            pages.addAll(range.getPages(upperLimit));
-        }
-        return pages;
     }
 
     @Override

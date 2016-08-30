@@ -64,6 +64,19 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
+    public void excludePages() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample.pdf");
+        parameters.addExcludedPage(1);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "L1L1R1R1");
+            assertPageText(d.getPage(1), "L2L2");
+            assertPageText(d.getPage(2), "R2R2");
+        });
+    }
+
+    @Test
     public void splitLandscapeModeRotated90() throws IOException {
         setUpParameters("pdf/split_in_two_landscape_sample_rotated_90.pdf");
         execute(parameters);
