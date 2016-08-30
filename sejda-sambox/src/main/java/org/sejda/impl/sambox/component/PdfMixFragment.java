@@ -97,7 +97,8 @@ class PdfMixFragment implements Closeable {
      * @throws TaskPermissionsException
      */
     public static PdfMixFragment newInstance(PdfMixInput input) throws TaskIOException, TaskPermissionsException {
-        LOG.debug("Opening input {} ", input.getSource());
+        LOG.debug("Opening input {} with step {} and reverse {}", input.getSource(), input.getStep(),
+                input.isReverse());
         PDDocumentHandler documentHandler = input.getSource().open(new DefaultPdfSourceOpener());
         documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
         return new PdfMixFragment(input, documentHandler);

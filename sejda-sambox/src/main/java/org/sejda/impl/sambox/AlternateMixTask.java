@@ -70,7 +70,7 @@ public class AlternateMixTask extends BaseTask<AbstractAlternateMixParameters> {
         outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
 
-        LOG.debug("Alternate mix completed");
+        LOG.debug("Alternate mix of {} files completed", parameters.getInputList().size());
     }
 
     @Override
