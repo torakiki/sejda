@@ -113,7 +113,16 @@ public class SplitByTextChangesOutputStrategy implements NextOutputStrategy {
 
     @Override
     public void ensureIsValid() throws TaskExecutionException {
-        delegate.ensureIsValid();
+        try {
+            delegate.ensureIsValid();
+        } catch(TaskExecutionException tee) {
+            // there is no closing page, so
+            boolean noTextFound = StringUtils.isBlank(getTextByPage(1));
+
+            if(noTextFound) {
+                throw tee;
+            }
+        }
     }
 
     @Override

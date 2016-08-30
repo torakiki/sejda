@@ -55,6 +55,17 @@ public abstract class SplitByTextContentTaskTest extends BaseTaskTest<SplitByTex
     }
 
     @Test
+    public void testExecuteDoesNotFailOnDocWithoutMultipleResults() throws IOException {
+        setUpParameters(new TopLeftRectangularBox(114, 70, 41, 15));
+        parameters.setSource(customInput("pdf/split_by_text_contents_sample_one.pdf"));
+        parameters.setOutputPrefix("[TEXT]");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1);
+        testContext.assertOutputContainsFilenames("00001.pdf");
+    }
+
+    @Test
     public void testNoTextFoundInAreas() throws IOException {
         setUpParameters(new TopLeftRectangularBox(1, 1, 1, 1));
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
