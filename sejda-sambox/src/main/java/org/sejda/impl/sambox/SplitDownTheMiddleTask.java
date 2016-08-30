@@ -41,6 +41,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.repaginate.Repagination;
+import org.sejda.model.split.SplitDownTheMiddleMode;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -111,18 +112,31 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 }
 
                 try {
+                    double ratio = parameters.getRatio();
+
+                    // by default determine based on page mode whether the split should be horizontal or vertical
+                    // based on whether the page is in portrait or landscape mode
+                    boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
+
+                    // allow user to override this by explicitly setting a split mode
+                    if(parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
+                        landscapeMode = false;
+                    } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
+                        landscapeMode = true;
+                    }
+
                     // landscape vs portrait
-                    if (trimBox.getHeight() <= trimBox.getWidth()) {
+                    if (landscapeMode) {
                         // landscape orientation
 
                         boolean leftFirst = page.getRotation() != 270 && page.getRotation() != 180;
 
                         if (leftFirst) {
-                            importLeftPage(page, lookup);
-                            importRightPage(page, lookup);
+                            importLeftPage(page, lookup, ratio);
+                            importRightPage(page, lookup, ratio);
                         } else {
-                            importRightPage(page, lookup);
-                            importLeftPage(page, lookup);
+                            importRightPage(page, lookup, ratio);
+                            importLeftPage(page, lookup, ratio);
                         }
 
                     } else {
@@ -131,11 +145,11 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                         boolean topFirst = page.getRotation() != 90 && page.getRotation() != 180;
 
                         if (topFirst) {
-                            importTopPage(page, lookup);
-                            importBottomPage(page, lookup);
+                            importTopPage(page, lookup, ratio);
+                            importBottomPage(page, lookup, ratio);
                         } else {
-                            importBottomPage(page, lookup);
-                            importTopPage(page, lookup);
+                            importBottomPage(page, lookup, ratio);
+                            importTopPage(page, lookup, ratio);
                         }
 
                     }
@@ -186,13 +200,18 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
     }
 
-    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup){
+    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
         PDRectangle trimBox = page.getTrimBox();
+        float w = trimBox.getWidth();
+        float r = (float) ratio;
+        float rightSideWidth = w / (r + 1);
+        float leftSideWidth = w - rightSideWidth;
+
         PDPage leftPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, leftPage);
         PDRectangle leftSide = new PDRectangle();
         leftSide.setUpperRightY(trimBox.getUpperRightY());
-        leftSide.setUpperRightX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
+        leftSide.setUpperRightX(trimBox.getLowerLeftX() + leftSideWidth);
         leftSide.setLowerLeftY(trimBox.getLowerLeftY());
         leftSide.setLowerLeftX(trimBox.getLowerLeftX());
 
@@ -201,29 +220,39 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         leftPage.setMediaBox(leftSide);
     }
 
-    private void importRightPage(PDPage page, LookupTable<PDPage> lookup){
+    private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
         PDRectangle trimBox = page.getTrimBox();
+        float w = trimBox.getWidth();
+        float r = (float) ratio;
+        float rightSideWidth = w / (r + 1);
+        float leftSideWidth = w - rightSideWidth;
+
         PDPage rightPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, rightPage);
         PDRectangle rightSide = new PDRectangle();
         rightSide.setUpperRightY(trimBox.getUpperRightY());
         rightSide.setUpperRightX(trimBox.getUpperRightX());
         rightSide.setLowerLeftY(trimBox.getLowerLeftY());
-        rightSide.setLowerLeftX(trimBox.getLowerLeftX() + trimBox.getWidth() / 2);
+        rightSide.setLowerLeftX(trimBox.getLowerLeftX() + leftSideWidth);
 
         rightPage.setCropBox(rightSide);
         rightPage.setTrimBox(rightSide);
         rightPage.setMediaBox(rightSide);
     }
 
-    private void importTopPage(PDPage page, LookupTable<PDPage> lookup){
+    private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
         PDRectangle trimBox = page.getTrimBox();
+        float h = trimBox.getHeight();
+        float r = (float) ratio;
+        float bottomSideHeight = h / (r + 1);
+        float topSideHeight = h - bottomSideHeight;
+
         PDPage topPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, topPage);
         PDRectangle upperSide = new PDRectangle();
         upperSide.setUpperRightY(trimBox.getUpperRightY());
         upperSide.setUpperRightX(trimBox.getUpperRightX());
-        upperSide.setLowerLeftY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
+        upperSide.setLowerLeftY(trimBox.getLowerLeftY() + bottomSideHeight);
         upperSide.setLowerLeftX(trimBox.getLowerLeftX());
 
         topPage.setCropBox(upperSide);
@@ -231,12 +260,17 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         topPage.setMediaBox(upperSide);
     }
 
-    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup){
+    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
         PDRectangle trimBox = page.getTrimBox();
+        float h = trimBox.getHeight();
+        float r = (float) ratio;
+        float bottomSideHeight = h / (r + 1);
+        float topSideHeight = h - bottomSideHeight;
+
         PDPage bottomPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, bottomPage);
         PDRectangle lowerSide = new PDRectangle();
-        lowerSide.setUpperRightY(trimBox.getLowerLeftY() + trimBox.getHeight() / 2);
+        lowerSide.setUpperRightY(trimBox.getLowerLeftY() + bottomSideHeight);
         lowerSide.setUpperRightX(trimBox.getUpperRightX());
         lowerSide.setLowerLeftY(trimBox.getLowerLeftY());
         lowerSide.setLowerLeftX(trimBox.getLowerLeftX());

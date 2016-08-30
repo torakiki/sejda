@@ -34,6 +34,13 @@ public class SplitDownTheMiddleCliArgumentsTransformer extends BaseCliArgumentsT
             parameters.setRepagination(taskCliArguments.getRepagination().getEnumValue());
         }
 
+        if(taskCliArguments.isExcludedPages()) {
+            parameters.addAllExcludedPageRanges(taskCliArguments.getExcludedPages().getPageRangeSet());
+        }
+
+        parameters.setRatio(taskCliArguments.getRatio());
+        parameters.setMode(taskCliArguments.getMode().getEnumValue());
+
         return parameters;
     }
 }

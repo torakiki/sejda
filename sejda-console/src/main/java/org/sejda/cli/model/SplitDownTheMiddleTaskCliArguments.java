@@ -16,10 +16,12 @@
  */
 package org.sejda.cli.model;
 
+import org.sejda.conversion.PageRangeSetAdapter;
 import org.sejda.conversion.RepaginationAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
+import org.sejda.conversion.SplitDownTheMiddleModeAdapter;
 
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitdownthemiddle")
 public interface SplitDownTheMiddleTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
@@ -29,4 +31,16 @@ public interface SplitDownTheMiddleTaskCliArguments extends CliArgumentsWithPdfA
     RepaginationAdapter getRepagination();
 
     boolean isRepagination();
+
+    @Option(shortName = "m", description = "Allows overriding the horizontal or vertical split mode. Accepted values are 'auto', 'horizontal' or 'vertical'. Defaults to 'auto'. (optional)", defaultValue = "auto")
+    SplitDownTheMiddleModeAdapter getMode();
+
+    @Option(shortName = "n", description = "Allows overriding the location of the split line. Ratio is top part / bottom part for horizontal split or left / right part for vertical. Defaults to 1, meaning split in equal parts. (optional)", defaultValue = "1")
+    Double getRatio();
+
+    @Option(shortName = "s", description = "pages to exclude from being split. Will be added to the result document as they are. Accepted values: 'num1-num2' or"
+            + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")
+    PageRangeSetAdapter getExcludedPages();
+
+    boolean isExcludedPages();
 }

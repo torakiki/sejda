@@ -31,6 +31,7 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.repaginate.Repagination;
+import org.sejda.model.split.SplitDownTheMiddleMode;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
@@ -73,6 +74,30 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
             assertPageText(d.getPage(0), "L1L1R1R1");
             assertPageText(d.getPage(1), "L2L2");
             assertPageText(d.getPage(2), "R2R2");
+        });
+    }
+
+    @Test
+    public void userSpecifiedSplitMode() throws IOException {
+        setUpParameters("pdf/alphabet.pdf");
+        parameters.setMode(SplitDownTheMiddleMode.VERTICAL);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "ABCFGHKLMPQRUVWX");
+            assertPageText(d.getPage(1), "DEIJNOSTYZ");
+        });
+    }
+
+    @Test
+    public void userSpecifiedRatio() throws IOException {
+        setUpParameters("pdf/alphabet.pdf");
+        parameters.setRatio(0.3);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "ABCDE");
+            assertPageText(d.getPage(1), "FGHIJKLMNOPQRSTUVWXYZ");
         });
     }
 
