@@ -67,7 +67,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
         splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
         LOG.debug("Starting split by outline level for {} ", parameters);
-        splitter.split(executionContext());
+        splitter.split(executionContext(), parameters.getOutputPrefix(), parameters.getSource());
 
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }

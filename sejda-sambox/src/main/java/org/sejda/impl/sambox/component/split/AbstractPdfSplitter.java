@@ -33,7 +33,8 @@ import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            the type of parameters the splitter needs to have all the information necessary to perform the split.
  */
-public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutputParameters> {
+public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);
 
@@ -64,28 +65,25 @@ public abstract class AbstractPdfSplitter<T extends SinglePdfSourceMultipleOutpu
         this.totalPages = document.getNumberOfPages();
         this.optimize = optimize;
         this.discardOutline = discardOutline;
-
     }
 
-    public void split(TaskExecutionContext executionContext) throws TaskException {
+    public void split(TaskExecutionContext executionContext, String outputPrefix, PdfSource<?> source) throws TaskException {
         nextOutputStrategy().ensureIsValid();
 
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(),
                 executionContext);
         try (PagesExtractor extractor = supplyPagesExtractor(document)) {
-            int outputDocumentsCounter = 0;
             File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
                 executionContext.assertTaskNotCancelled();
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
                     onOpen(page);
-                    outputDocumentsCounter++;
                     tmpFile = createTemporaryPdfBuffer();
                     LOG.debug("Created output temporary buffer {}", tmpFile);
-                    String outName = nameGenerator(parameters.getOutputPrefix()).generate(enrichNameGenerationRequest(
-                            nameRequest().page(page).originalName(parameters.getSource().getName())
-                                    .fileNumber(outputDocumentsCounter)));
+                    String outName = nameGenerator(outputPrefix).generate(enrichNameGenerationRequest(
+                            nameRequest().page(page).originalName(source.getName())
+                                    .fileNumber(executionContext.incrementAndGetOutputDocumentsCounter())));
                     outputWriter.addOutput(file(tmpFile).name(outName));
                 }
                 LOG.trace("Retaining page {} of the original document", page);

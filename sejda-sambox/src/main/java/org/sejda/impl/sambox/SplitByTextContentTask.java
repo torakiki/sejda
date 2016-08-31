@@ -58,16 +58,17 @@ public class SplitByTextContentTask extends BaseTask<SplitByTextContentParameter
 
     @Override
     public void execute(SplitByTextContentParameters parameters) throws TaskException {
-        PdfSource<?> source = parameters.getSource();
-        LOG.debug("Opening {}", source);
-        sourceDocumentHandler = source.open(documentLoader);
-        sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
-        PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
+        for(PdfSource<?> source : parameters.getSourceList()) {
+            LOG.debug("Opening {}", source);
+            sourceDocumentHandler = source.open(documentLoader);
+            sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
+            PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
 
-        splitter = new ByTextChangesPdfSplitter(sourceDocument, parameters,
-                new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
-        LOG.debug("Starting to split by text content");
-        splitter.split(executionContext());
+            splitter = new ByTextChangesPdfSplitter(sourceDocument, parameters,
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
+            LOG.debug("Starting to split by text content");
+            splitter.split(executionContext(), parameters.getOutputPrefix(), source);
+        }
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }

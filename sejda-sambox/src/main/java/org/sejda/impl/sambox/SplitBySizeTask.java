@@ -66,7 +66,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         splitter = new SizePdfSplitter(sourceDocument, parameters,
                 new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
         LOG.debug("Starting split by size {}", HumanReadableSize.toString(parameters.getSizeToSplitAt()));
-        splitter.split(executionContext());
+        splitter.split(executionContext(), parameters.getOutputPrefix(), parameters.getSource());
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }

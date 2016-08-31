@@ -52,7 +52,7 @@ public class SplitByTextContentParametersTest {
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
-        victim.setSource(input);
+        victim.addSource(input);
         TestUtils.assertInvalidParameters(victim);
     }
 }

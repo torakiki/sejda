@@ -39,6 +39,7 @@ public class TaskExecutionContext {
     private NotifiableTaskMetadata taskMetadata;
     private boolean cancelled = false;
     private Task<? extends TaskParameters> task;
+    private int outputDocumentsCounter = 0;
 
     public TaskExecutionContext(Task<? extends TaskParameters> task) {
         if (isNull(task)) {
@@ -78,5 +79,9 @@ public class TaskExecutionContext {
 
     public long executionTime() {
         return stopWatch.getTime();
+    }
+
+    public int incrementAndGetOutputDocumentsCounter() {
+        return ++outputDocumentsCounter;
     }
 }

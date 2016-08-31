@@ -26,8 +26,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
  * Parameter class for a split by text content change task. It lets specify an area. The task will split the document when text content in that changes.
@@ -38,7 +38,7 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * @author Eduard Weissmann
  * 
  */
-public class SplitByTextContentParameters extends SinglePdfSourceMultipleOutputParameters
+public class SplitByTextContentParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull

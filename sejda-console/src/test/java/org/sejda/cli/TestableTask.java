@@ -326,7 +326,7 @@ class CombineReorderDefaultsProvider extends MultipleInputsAndFileOutputDefaults
     }
 }
 
-class SplitByTextDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class SplitByTextDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("--top", "10").with("--left", "10").with("--width", "100")
