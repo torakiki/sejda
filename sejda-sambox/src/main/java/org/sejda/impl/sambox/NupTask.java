@@ -153,12 +153,14 @@ public class NupTask extends BaseTask<NupParameters> {
 
                     LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset + " yOffset: " + yOffset);
 
-                    PDPageContentStream currentContentStream = new PDPageContentStream(destinationDocument.getUnderlyingPDDocument(), currentPage,
-                            PDPageContentStream.AppendMode.APPEND, true, true);
-                    Matrix matrix = Matrix.getTranslateInstance(xOffset, yOffset);
-                    currentContentStream.transform(matrix);
-                    currentContentStream.drawForm(pageAsFormObject);
-                    currentContentStream.close();
+                    if(pageAsFormObject != null) {
+                        PDPageContentStream currentContentStream = new PDPageContentStream(destinationDocument.getUnderlyingPDDocument(), currentPage,
+                                PDPageContentStream.AppendMode.APPEND, true, true);
+                        Matrix matrix = Matrix.getTranslateInstance(xOffset, yOffset);
+                        currentContentStream.transform(matrix);
+                        currentContentStream.drawForm(pageAsFormObject);
+                        currentContentStream.close();
+                    }
 
                     if(parameters.getPageOrder() == PageOrder.HORIZONTAL) {
                         // increment column

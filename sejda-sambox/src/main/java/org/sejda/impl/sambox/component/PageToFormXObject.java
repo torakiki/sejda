@@ -46,7 +46,10 @@ public class PageToFormXObject {
      */
     public PDFormXObject apply(PDPage page) throws IOException {
         requireNotNullArg(page, "Cannot convert a null page");
-        PDFormXObject form = new PDFormXObject(getStream(page));
+        PDStream stream = getStream(page);
+        if(stream == null) return null;
+
+        PDFormXObject form = new PDFormXObject(stream);
         form.setResources(page.getResources());
         PDRectangle mediaBox = page.getMediaBox();
         PDRectangle boundingBox = ofNullable(page.getCropBox()).orElse(mediaBox);
