@@ -41,14 +41,16 @@ public class NupTaskTest extends AbstractTaskTest {
     }
 
     @Test
-    public void testDefaultPageOrder() {
+    public void testDefaults() {
         NupParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(4, parameters.getN());
+        assertEquals(false, parameters.isPreservePageSize());
         assertEquals(PageOrder.HORIZONTAL, parameters.getPageOrder());
     }
 
     @Test
-    public void testDefaultN() {
-        NupParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals(4, parameters.getN());
+    public void testPreservePageSize() {
+        NupParameters parameters = defaultCommandLine().withFlag("--preservePageSize").invokeSejdaConsole();
+        assertEquals(true, parameters.isPreservePageSize());
     }
 }

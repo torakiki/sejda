@@ -31,6 +31,7 @@ public class NupCliArgumentsTransformer extends BaseCliArgumentsTransformer
         }
 
         NupParameters parameters = new NupParameters(taskCliArguments.getN(), pageOrder);
+        parameters.setPreservePageSize(taskCliArguments.isPreservePageSize());
         populateAbstractParameters(parameters, taskCliArguments);
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
