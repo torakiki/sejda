@@ -30,6 +30,6 @@ public interface NupTaskCliArguments
     @Option(shortName = "x", description = "vertical page ordering in sheets, top-down and then left-right. Default is horizontal ordering (left-right and then top-down) (optional)")
     boolean isVerticalOrdering();
 
-    @Option(shortName = "p", description = "preserve original page size, scaling down the collated pages. Default is false (nup 2 of A4 will produce A3, nup 4 of A4 will produce A2 etc) (optional)")
+    @Option(shortName = "s", description = "preserve original page size, scaling down the collated pages. Default is false (nup 2 of A4 will produce A3, nup 4 of A4 will produce A2 etc) (optional)")
     boolean isPreservePageSize();
 }
