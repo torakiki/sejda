@@ -40,6 +40,7 @@ public class NupParameters extends MultiplePdfSourceMultipleOutputParameters {
     private final int n;
     @NotNull
     private final PageOrder pageOrder;
+    private boolean preservePageSize = false;
 
     public NupParameters(int n) {
         this(n, PageOrder.HORIZONTAL);
@@ -58,6 +59,14 @@ public class NupParameters extends MultiplePdfSourceMultipleOutputParameters {
         return pageOrder;
     }
 
+    public void setPreservePageSize(boolean preservePageSize) {
+        this.preservePageSize = preservePageSize;
+    }
+
+    public boolean isPreservePageSize() {
+        return preservePageSize;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -69,11 +78,12 @@ public class NupParameters extends MultiplePdfSourceMultipleOutputParameters {
         NupParameters that = (NupParameters) o;
 
         return new EqualsBuilder().appendSuper(super.equals(o)).append(n, that.n).append(pageOrder, that.pageOrder)
-                .isEquals();
+                .append(preservePageSize, that.preservePageSize).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(n).append(pageOrder).toHashCode();
+        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(n).append(pageOrder)
+                .append(preservePageSize).toHashCode();
     }
 }

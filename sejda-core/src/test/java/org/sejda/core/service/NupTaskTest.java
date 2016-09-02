@@ -25,17 +25,42 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.NupParameters;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 @Ignore
 public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
     @Test
     public void test2up() throws IOException {
         NupParameters params = getParams(2, PageOrder.HORIZONTAL, "pdf/bordered.pdf");
+
         execute(params);
         PDDocument result = testContext.assertTaskCompleted();
         testContext.assertPages(4);
+        testContext.forEachPdfOutput(d ->
+                assertEquals(new PDRectangle(1224, 792), d.getPage(1).getMediaBox())
+        );
+
+        assertPageHasText(result.getPage(0), "PAGE 1 PAGE 2");
+        assertPageHasText(result.getPage(1), "PAGE 3 PAGE 4");
+        assertPageHasText(result.getPage(2), "PAGE 5 PAGE 6");
+        assertPageHasText(result.getPage(3), "PAGE 7");
+    }
+
+    @Test
+    public void test4upPreservingSize() throws IOException {
+        NupParameters params = getParams(2, PageOrder.HORIZONTAL, "pdf/bordered.pdf");
+        params.setPreservePageSize(true);
+
+        execute(params);
+        PDDocument result = testContext.assertTaskCompleted();
+        testContext.assertPages(4);
+        testContext.forEachPdfOutput(d ->
+                        assertEquals(new PDRectangle(792, 612), d.getPage(1).getMediaBox())
+        );
 
         assertPageHasText(result.getPage(0), "PAGE 1 PAGE 2");
         assertPageHasText(result.getPage(1), "PAGE 3 PAGE 4");

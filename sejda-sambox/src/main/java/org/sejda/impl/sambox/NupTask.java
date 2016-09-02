@@ -42,6 +42,7 @@ import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 
@@ -139,24 +140,49 @@ public class NupTask extends BaseTask<NupParameters> {
                 LOG.debug(String.format("Landscape? %s, cols: %s, rows: %s, size: %s x %s", landscape, columns, rows, newSize.getWidth(), newSize.getHeight()));
             }
 
+            if(parameters.isPreservePageSize()) {
+                boolean landscape = newSize.getWidth() > newSize.getHeight();
+                newSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+                boolean originalLandscape = pageSize.getWidth() > pageSize.getHeight();
+                if(landscape && !originalLandscape) {
+                    newSize = newSize.rotate(90);
+                }
+            }
+
             try {
                 int currentRow = 0;
                 int currentColumn = 0;
 
                 PDPage currentPage = destinationDocument.addBlankPage(newSize);
 
+                LOG.debug("Original page size: " + pageSize.getWidth() + "x" + pageSize.getHeight() + ", new page size: " + newSize.getWidth() + "x" + newSize.getHeight() +
+                        ", columns: " + columns + " rows: " + rows);
+
                 for (int i = 1; i <= numberOfPages; i++) {
 
                     PDFormXObject pageAsFormObject = new PageToFormXObject().apply(sourceDocumentHandler.getPage(i));
                     float xOffset = pageSize.getWidth() * currentColumn;
                     float yOffset = newSize.getHeight() - (pageSize.getHeight() * (currentRow + 1));
+                    float xScale = 1.0f;
 
-                    LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset + " yOffset: " + yOffset);
+                    if(parameters.isPreservePageSize()) {
+                        xOffset = newSize.getWidth() / columns * currentColumn;
+                        yOffset = newSize.getHeight() - (newSize.getHeight() / rows * (currentRow + 1));
+                        xScale = (newSize.getWidth() / columns) / pageSize.getWidth();
+                    }
+
+                    LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset + " yOffset: "
+                            + yOffset + " xScale: " + xScale);
 
                     if(pageAsFormObject != null) {
                         PDPageContentStream currentContentStream = new PDPageContentStream(destinationDocument.getUnderlyingPDDocument(), currentPage,
                                 PDPageContentStream.AppendMode.APPEND, true, true);
-                        Matrix matrix = Matrix.getTranslateInstance(xOffset, yOffset);
+                        AffineTransform at = new AffineTransform();
+                        at.translate(xOffset, yOffset);
+                        at.scale(xScale, xScale);
+
+                        Matrix matrix = new Matrix(at);
+
                         currentContentStream.transform(matrix);
                         currentContentStream.drawForm(pageAsFormObject);
                         currentContentStream.close();
