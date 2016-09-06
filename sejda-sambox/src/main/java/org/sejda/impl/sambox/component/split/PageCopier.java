@@ -58,15 +58,17 @@ class PageCopier {
         if (nonNull(annots)) {
             // we create an array where annotations are a copy of the original but without /P or /Dest possibly leaking into the page tree
             COSArray cleanedAnnotationsCopy = new COSArray();
-            for (COSBase current : annots) {
-                COSBase unref = current.getCOSObject();
-                if (unref instanceof COSDictionary) {
-                    COSDictionary annotationCopy = ((COSDictionary) unref).duplicate();
-                    annotationCopy.removeItem(COSName.P);
-                    annotationCopy.removeItem(COSName.DEST);
-                    cleanedAnnotationsCopy.add(annotationCopy);
-                }
-            }
+            annots.stream().map(COSBase::getCOSObject).filter(d -> d instanceof COSDictionary)
+                    .map(d -> (COSDictionary) d).map(COSDictionary::duplicate).forEach(a -> {
+                        a.removeItem(COSName.P);
+                        a.removeItem(COSName.DEST);
+                        // remove the action if it has a destination (potentially a GoTo page destination leaking into the page tree)
+                        if (ofNullable(a.getDictionaryObject(COSName.A, COSDictionary.class))
+                                .map(d -> d.containsKey(COSName.D)).orElse(false)) {
+                            a.removeItem(COSName.A);
+                        }
+                        cleanedAnnotationsCopy.add(a);
+                    });
             copy.getCOSObject().setItem(COSName.ANNOTS, cleanedAnnotationsCopy);
         }
         if (optimize) {

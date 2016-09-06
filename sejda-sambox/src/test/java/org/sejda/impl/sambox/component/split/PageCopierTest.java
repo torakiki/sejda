@@ -32,7 +32,10 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 /**
@@ -81,6 +84,51 @@ public class PageCopierTest {
             copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
                 assertFalse(d.containsKey(COSName.P));
                 assertFalse(d.containsKey(COSName.DEST));
+            });
+        }
+    }
+
+    @Test
+    public void removeActionWithDestination() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+            PDPage page = document.getPage(0);
+            PDAnnotationLink link = new PDAnnotationLink();
+            PDActionGoTo action = new PDActionGoTo();
+            action.setDestination(PDDestination.create(COSName.C));
+            link.setAction(action);
+            page.setAnnotations(Arrays.asList(link));
+            PDPage copy = new PageCopier(false).copyOf(page);
+            assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
+                    page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
+            assertNotEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
+                    copy.getCOSObject().getDictionaryObject(COSName.ANNOTS));
+            copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
+                assertFalse(d.containsKey(COSName.P));
+                assertFalse(d.containsKey(COSName.DEST));
+                assertFalse(d.containsKey(COSName.A));
+            });
+        }
+    }
+
+    @Test
+    public void doesntRemoveActionWithoutDestination() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+            PDPage page = document.getPage(0);
+            PDAnnotationLink link = new PDAnnotationLink();
+            PDActionGoTo action = new PDActionGoTo();
+            link.setAction(action);
+            page.setAnnotations(Arrays.asList(link));
+            PDPage copy = new PageCopier(false).copyOf(page);
+            assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
+                    page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
+            assertNotEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
+                    copy.getCOSObject().getDictionaryObject(COSName.ANNOTS));
+            copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
+                assertFalse(d.containsKey(COSName.P));
+                assertFalse(d.containsKey(COSName.DEST));
+                assertTrue(d.containsKey(COSName.A));
             });
         }
     }
