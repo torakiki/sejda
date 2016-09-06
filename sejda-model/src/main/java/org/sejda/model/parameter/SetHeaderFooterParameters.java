@@ -55,6 +55,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     private BatesSequence batesSequence;
     @NotNull
     private Color color = Color.black;
+    private int fileCountStartFrom = 1;
 
     public PageRange getPageRange() {
         return pageRange;
@@ -138,11 +139,19 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
         this.color = color;
     }
 
+    public Integer getFileCountStartFrom() {
+        return fileCountStartFrom;
+    }
+
+    public void setFileCountStartFrom(Integer fileCountStartFrom) {
+        this.fileCountStartFrom = fileCountStartFrom;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
                 .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence)
-                .append(pageCountStartFrom).append(color)
+                .append(pageCountStartFrom).append(color).append(fileCountStartFrom)
                 .toHashCode();
     }
 
@@ -163,6 +172,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
                 .append(getFontSize(), parameter.getFontSize()).append(getPageRange(), parameter.getPageRange())
                 .append(getPattern(), parameter.getPattern())
                 .append(getColor(), parameter.getColor())
+                .append(getFileCountStartFrom(), parameter.getFileCountStartFrom())
                 .isEquals();
     }
 

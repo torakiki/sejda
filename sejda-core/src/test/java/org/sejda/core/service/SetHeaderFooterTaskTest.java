@@ -249,6 +249,19 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         });
     }
 
+    @Test
+    public void testFileCounterStartFrom() throws Exception {
+        SetHeaderFooterParameters parameters = basicNoSources();
+        parameters.addSource(customInput("pdf/test_file.pdf", "a.pdf"));
+        parameters.addSource(customInput("pdf/test_file.pdf", "b.pdf"));
+        parameters.setFileCountStartFrom(10);
+        parameters.setPattern("Foo");
+        parameters.setOutputPrefix("[FILENUMBER]-[BASENAME]");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputContainsFilenames("10-a.pdf", "11-b.pdf");
+    }
+
     protected abstract void assertFooterHasText(PDPage page, String expectedText);
 
     protected abstract void assertHeaderHasText(PDPage page, String expectedText);

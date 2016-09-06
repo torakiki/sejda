@@ -89,7 +89,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
             try (SetHeaderFooterWriter footerWriter = new SetHeaderFooterWriter(documentHandler)) {
                 String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                        nameRequest().originalName(source.getName()).fileNumber(currentStep));
+                        nameRequest().originalName(source.getName()).fileNumber(currentStep + parameters.getFileCountStartFrom() - 1));
 
                 footerWriter.write(parameters, currentStep, outName);
                 documentHandler.savePDDocument(tmpFile);

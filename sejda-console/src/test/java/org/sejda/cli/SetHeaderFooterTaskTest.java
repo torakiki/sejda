@@ -139,4 +139,16 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
         SetHeaderFooterParameters parameters = defaultCommandLine().with("--pageCountStartFrom", "5").invokeSejdaConsole();
         assertEquals(5, parameters.getPageCountStartFrom().intValue());
     }
+
+    @Test
+    public void fileCountStartFrom() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--fileCountStartFrom", "10").invokeSejdaConsole();
+        assertEquals(10, parameters.getFileCountStartFrom().intValue());
+    }
+
+    @Test
+    public void defaults() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(1, parameters.getFileCountStartFrom().intValue());
+    }
 }

@@ -72,6 +72,10 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
             parameters.setColor(hex2Rgb(color));
         }
 
+        if(taskCliArguments.isFileCountStartFrom()) {
+            parameters.setFileCountStartFrom(taskCliArguments.getFileCountStartFrom());
+        }
+
         return parameters;
     }
 

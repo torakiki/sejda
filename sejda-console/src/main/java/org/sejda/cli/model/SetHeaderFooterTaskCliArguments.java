@@ -76,7 +76,7 @@ public interface SetHeaderFooterTaskCliArguments
 
     boolean isBatesIncrement();
 
-    @Option(shortName = "k", description = "page number counter start from. Defaults to 1, but can be overriden to start from another offset. Ex: -c 5 -s 5-10 (optional)")
+    @Option(shortName = "k", description = "page number counter start from. Defaults to 1, but can be overridden to start from another offset. Ex: -c 5 -s 5-10 (optional)")
     Integer getPageCountStartFrom();
 
     boolean isPageCountStartFrom();
@@ -85,4 +85,9 @@ public interface SetHeaderFooterTaskCliArguments
     String getFontColor();
 
     boolean isFontColor();
+
+    @Option(shortName = "g", description = "file numbering start from. Defaults to 1, but can be overridden to start from another offset. Ex: 10 (optional)", defaultValue = "1")
+    Integer getFileCountStartFrom();
+
+    boolean isFileCountStartFrom();
 }
