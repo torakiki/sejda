@@ -18,6 +18,20 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -39,20 +53,6 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(PdfToExcelTask.class);
@@ -107,7 +107,8 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                             if (!cell.asRectangle().isEmpty()) {
                                 cellAreas.add(cell.withPadding(1).asRectangle());
                             } else {
-                                LOG.warn("Column and row do not intersect: row: " + row.toString() + ", column: " + column.toString());
+                                LOG.warn("Column and row do not intersect: row: " + row.toString() + ", column: "
+                                        + column.toString());
                             }
                         }
 
@@ -120,13 +121,14 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     dataTable = new ArrayList<>();
                 }
 
-                LOG.debug("Done extracting tables from page {}, took {} seconds", pageNumber, (System.currentTimeMillis() - start)/1000);
+                LOG.debug("Done extracting tables from page {}, took {} seconds", pageNumber,
+                        (System.currentTimeMillis() - start) / 1000);
             }
 
             writeExcelFile(all, tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest("xlsx").originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest("xlsx").originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
@@ -140,8 +142,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
 
     private void writeExcelFile(List<List<List<String>>> dataTables, File tmpFile) throws TaskException {
         Workbook wb = new XSSFWorkbook();
-        try {
-            FileOutputStream fileOut = new FileOutputStream(tmpFile);
+        try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
             for (int t = 0; t < dataTables.size(); t++) {
                 LOG.trace("Writing data table " + t);
                 List<List<String>> dataTable = dataTables.get(t);
@@ -160,9 +161,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     }
                 }
             }
-
             wb.write(fileOut);
-            fileOut.close();
         } catch (IOException ioe) {
             throw new TaskException("Could not save .xlsx file", ioe);
         }

@@ -19,19 +19,18 @@
  */
 package org.sejda.impl.sambox.component;
 
-import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 import org.apache.commons.io.IOUtils;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.text.PDFTextStripper;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.text.PDFTextStripper;
 
 /**
  * Component responsible for extracting text from an input pdf document.
@@ -76,7 +75,7 @@ public class PdfTextExtractor implements Closeable {
                     output));
         }
         try {
-            outputWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(output), encoding));
+            outputWriter = Files.newBufferedWriter(output.toPath(), Charset.forName(encoding));
             textStripper.writeText(document, outputWriter);
         } catch (IOException e) {
             throw new TaskExecutionException("An error occurred extracting text from a pdf source.", e);
