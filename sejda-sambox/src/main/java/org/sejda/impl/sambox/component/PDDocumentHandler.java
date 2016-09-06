@@ -278,6 +278,7 @@ public class PDDocumentHandler implements Closeable {
         imported.setMediaBox(page.getMediaBox());
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
+        imported.getCOSObject().removeItem(COSName.B);
         return addPage(imported);
     }
 

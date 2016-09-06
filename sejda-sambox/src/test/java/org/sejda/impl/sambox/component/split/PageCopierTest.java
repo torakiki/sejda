@@ -21,8 +21,10 @@ package org.sejda.impl.sambox.component.split;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
@@ -31,6 +33,7 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 /**
  * @author Andrea Vacondio
@@ -54,6 +57,18 @@ public class PageCopierTest {
     }
 
     @Test
+    public void discardBeads() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
+            PDPage page = document.getPage(0);
+            page.setThreadBeads(Arrays.asList(new PDThreadBead()));
+            assertFalse(page.getThreadBeads().isEmpty());
+            PDPage copy = new PageCopier(false).copyOf(page);
+            assertTrue(copy.getThreadBeads().isEmpty());
+        }
+    }
+
+    @Test
     public void pageWithAnnots() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
@@ -67,7 +82,6 @@ public class PageCopierTest {
                 assertFalse(d.containsKey(COSName.P));
                 assertFalse(d.containsKey(COSName.DEST));
             });
-
         }
     }
 

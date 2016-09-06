@@ -52,6 +52,8 @@ class PageCopier {
         copy.setMediaBox(page.getMediaBox());
         copy.setResources(page.getResources());
         copy.setRotation(page.getRotation());
+        // we remove thread beads possibly leaking into page tree
+        copy.getCOSObject().removeItem(COSName.B);
         COSArray annots = page.getCOSObject().getDictionaryObject(COSName.ANNOTS, COSArray.class);
         if (nonNull(annots)) {
             // we create an array where annotations are a copy of the original but without /P or /Dest possibly leaking into the page tree
