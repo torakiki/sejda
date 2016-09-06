@@ -121,8 +121,16 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     // allow user to override this by explicitly setting a split mode
                     if(parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
                         landscapeMode = false;
+                        // adjust to user perceived
+                        if(page.getRotation() == 90 || page.getRotation() == 270) {
+                            landscapeMode = true;
+                        }
                     } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
                         landscapeMode = true;
+                        // adjust to user perceived
+                        if(page.getRotation() == 90 || page.getRotation() == 270) {
+                            landscapeMode = false;
+                        }
                     }
 
                     // landscape vs portrait
