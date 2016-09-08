@@ -72,6 +72,19 @@ public class PageCopierTest {
     }
 
     @Test
+    public void removesParentAndPopup() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+            PDPage page = document.getPage(0);
+            PDPage copy = new PageCopier(false).copyOf(page);
+            copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
+                assertFalse(d.containsKey(COSName.PARENT));
+                assertFalse(d.containsKey(COSName.getPDFName("Popup")));
+            });
+        }
+    }
+
+    @Test
     public void pageWithAnnots() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
