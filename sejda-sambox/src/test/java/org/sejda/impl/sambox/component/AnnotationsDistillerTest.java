@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -26,12 +27,16 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.common.LookupTable;
+import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -39,6 +44,8 @@ import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionJavaScript;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationText;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -48,7 +55,7 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
  * @author Andrea Vacondio
  *
  */
-public class AnnotationsTest {
+public class AnnotationsDistillerTest {
 
     private PDPage oldPage;
     private PDPage newPage;
@@ -64,7 +71,7 @@ public class AnnotationsTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void fiterNullDocument() {
-        Annotations.processAnnotations(new LookupTable<>(), null);
+        new AnnotationsDistiller(null);
     }
 
     @Test
@@ -73,7 +80,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        Annotations.processAnnotations(lookup, doc);
+        new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(1, newPage.getAnnotations().size());
     }
 
@@ -85,7 +92,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
@@ -97,7 +104,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(0, newPage.getAnnotations().size());
         assertTrue(annotationsLookup.isEmpty());
     }
@@ -113,7 +120,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
@@ -125,13 +132,12 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
     @Test
     public void links_PageNotRelevant() {
-
         PDPage destPage = new PDPage();
         PDAnnotationLink annotation = new PDAnnotationLink();
         PDPageDestination dest = new PDPageFitDestination();
@@ -141,7 +147,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(0, newPage.getAnnotations().size());
         assertTrue(annotationsLookup.isEmpty());
     }
@@ -156,7 +162,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
@@ -178,7 +184,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
@@ -196,7 +202,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(0, newPage.getAnnotations().size());
         assertTrue(annotationsLookup.isEmpty());
     }
@@ -213,7 +219,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
     }
 
@@ -238,7 +244,7 @@ public class AnnotationsTest {
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
@@ -257,7 +263,7 @@ public class AnnotationsTest {
         when(doc.getDocumentCatalog()).thenReturn(catalog);
         when(catalog.findNamedDestinationPage(any(PDNamedDestination.class))).thenReturn(dest);
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(0, newPage.getAnnotations().size());
         assertTrue(annotationsLookup.isEmpty());
     }
@@ -277,7 +283,45 @@ public class AnnotationsTest {
         when(doc.getDocumentCatalog()).thenReturn(catalog);
         when(catalog.findNamedDestinationPage(namedDest)).thenReturn(dest);
         doc.addPage(oldPage);
-        LookupTable<PDAnnotation> annotationsLookup = Annotations.processAnnotations(lookup, doc);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
+    }
+
+    @Test
+    public void popupRelevant() throws IOException {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+            PDPage firstOrigin = doc.getPage(0);
+            PDPage firstNew = new PDPage();
+            lookup.addLookupEntry(firstOrigin, firstNew);
+            new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+            List<PDAnnotation> annotations = firstNew.getAnnotations();
+            assertFalse(annotations.isEmpty());
+            List<PDAnnotationMarkup> parent = annotations.stream().filter(a -> a instanceof PDAnnotationPopup)
+                    .map(a -> ((PDAnnotationPopup) a).getParent()).collect(Collectors.toList());
+            assertEquals(1, parent.size());
+            assertTrue(annotations.contains(parent.get(0)));
+        }
+    }
+
+    @Test
+    public void popupRelevantRevertedOrder() throws IOException {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+            PDPage firstOrigin = doc.getPage(0);
+            List<PDAnnotation> annots = firstOrigin.getAnnotations();
+            Collections.reverse(annots);
+            firstOrigin.setAnnotations(annots);
+            PDPage firstNew = new PDPage();
+            lookup.addLookupEntry(firstOrigin, firstNew);
+            new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+            List<PDAnnotation> annotations = firstNew.getAnnotations();
+            assertFalse(annotations.isEmpty());
+            List<PDAnnotationMarkup> parent = annotations.stream().filter(a -> a instanceof PDAnnotationPopup)
+                    .map(a -> ((PDAnnotationPopup) a).getParent()).collect(Collectors.toList());
+            assertEquals(1, parent.size());
+            assertTrue(annotations.contains(parent.get(0)));
+        }
+
     }
 }

@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
@@ -34,6 +33,7 @@ import java.util.stream.Collectors;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -113,8 +113,8 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
                 }
             }
 
-            LookupTable<PDAnnotation> annotationsLookup = processAnnotations(pagesLookup,
-                    sourceDocumentHandler.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(
+                    sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotationsLookup.values());
 
             destinationDocument.savePDDocument(tmpFile);

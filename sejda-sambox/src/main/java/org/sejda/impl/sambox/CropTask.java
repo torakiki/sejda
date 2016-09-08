@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
@@ -36,6 +35,7 @@ import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -99,7 +99,8 @@ public class CropTask extends BaseTask<CropParameters> {
                     this.destinationDocument.getUnderlyingPDDocument());
 
             List<PDRectangle> cropAreas = parameters.getCropAreas().stream().map(r -> new PDRectangle(r.getLeft(),
-                    r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom())).collect(Collectors.toList());
+                    r.getBottom(), r.getRight() - r.getLeft(), r.getTop() - r.getBottom()))
+                    .collect(Collectors.toList());
             LOG.debug("Found {} crop boxes to apply", cropAreas.size());
 
             Set<Integer> excludedPages = parameters.getExcludedPages(sourceDocumentHandler.getNumberOfPages());
@@ -107,7 +108,7 @@ public class CropTask extends BaseTask<CropParameters> {
             for (PDPage page : sourceDocumentHandler.getUnderlyingPDDocument().getPages()) {
                 pageNum++;
 
-                if(excludedPages.contains(pageNum)){
+                if (excludedPages.contains(pageNum)) {
                     LOG.debug("Not cropping excluded page {}", pageNum);
                     PDPage newPage = destinationDocument.importPage(page);
                     pagesLookup.addLookupEntry(page, newPage);
@@ -124,12 +125,12 @@ public class CropTask extends BaseTask<CropParameters> {
                             .outOf(totalSteps);
                 }
             }
-            LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup,
-                    sourceDocumentHandler.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(
+                    sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotations.values());
 
-            acroFormsMerger.mergeForm(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
-                    annotations);
+            acroFormsMerger.mergeForm(
+                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
 
             if (acroFormsMerger.hasForm()) {
                 LOG.debug("Adding generated AcroForm");
@@ -139,8 +140,8 @@ public class CropTask extends BaseTask<CropParameters> {
             destinationDocument.savePDDocument(tmpFile);
             nullSafeCloseQuietly(sourceDocumentHandler);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);

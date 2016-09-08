@@ -18,7 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -81,7 +80,8 @@ class PdfMixFragment implements Closeable {
      * Removes unnecessary annotations and updates the relevant ones with the new generated pages so that link annotations, etc are poiting to valid pages
      */
     public void saintizeAnnotations() {
-        clipSignatures(processAnnotations(lookups, handler.getUnderlyingPDDocument()).values());
+        clipSignatures(new AnnotationsDistiller(handler.getUnderlyingPDDocument()).retainRelevantAnnotations(lookups)
+                .values());
     }
 
     @Override

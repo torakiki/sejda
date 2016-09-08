@@ -23,7 +23,6 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -37,6 +36,7 @@ import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.FilenameFooterWriter;
 import org.sejda.impl.sambox.component.OutlineMerger;
@@ -137,7 +137,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
                         if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                             sourceBaseName = ofNullable(
                                     sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                    .map(i -> i.getTitle()).filter(StringUtils::isNotBlank).orElse(sourceBaseName);
+                                            .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
+                                            .orElse(sourceBaseName);
                         }
                         tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
                     }
@@ -155,8 +156,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
 
-            LookupTable<PDAnnotation> annotationsLookup = processAnnotations(pagesLookup,
-                    sourceDocumentHandler.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(
+                    sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotationsLookup.values());
 
             acroFormsMerger.mergeForm(

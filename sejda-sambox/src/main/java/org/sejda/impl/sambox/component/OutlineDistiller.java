@@ -21,6 +21,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
+import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ class OutlineDistiller {
     private PDDocument document;
 
     public OutlineDistiller(PDDocument document) {
-        requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
+        requireNotNullArg(document, "Unable to retrieve bookmarks from a null document.");
         this.document = document;
     }
 

@@ -20,7 +20,6 @@ package org.sejda.impl.sambox.component;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -57,19 +56,19 @@ public class PagesExtractor implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(PagesExtractor.class);
 
     private OutlineDistiller outlineMerger;
-    private PDDocument originalDocument;
+    private PDDocument origin;
     private PDDocumentHandler destinationDocument;
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
 
     public PagesExtractor(PDDocument origin) {
-        this.originalDocument = origin;
+        this.origin = origin;
         init();
     }
 
     private void init() {
-        this.outlineMerger = new OutlineDistiller(originalDocument);
+        this.outlineMerger = new OutlineDistiller(origin);
         this.destinationDocument = new PDDocumentHandler();
-        this.destinationDocument.initialiseBasedOn(originalDocument);
+        this.destinationDocument.initialiseBasedOn(origin);
     }
 
     public void retain(Set<Integer> pages, TaskExecutionContext executionContext) throws TaskCancelledException {
@@ -84,7 +83,7 @@ public class PagesExtractor implements Closeable {
 
     public void retain(int page, TaskExecutionContext executionContext) {
         try {
-            PDPage existingPage = originalDocument.getPage(page - 1);
+            PDPage existingPage = origin.getPage(page - 1);
             pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
             LOG.trace("Imported page number {}", page);
         } catch (PageNotFoundException ex) {
@@ -125,7 +124,7 @@ public class PagesExtractor implements Closeable {
         if (!discardOutline) {
             createOutline();
         }
-        LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup, originalDocument);
+        LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(origin).retainRelevantAnnotations(pagesLookup);
         clipSignatures(annotations.values());
         destinationDocument.savePDDocument(file);
     }

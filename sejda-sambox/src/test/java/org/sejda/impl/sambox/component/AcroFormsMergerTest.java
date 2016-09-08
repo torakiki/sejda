@@ -60,7 +60,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
         for (PDPage current : document.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, document);
+            annotationsLookup = new AnnotationsDistiller(document).retainRelevantAnnotations(mapping);
         }
     }
 
@@ -134,7 +134,7 @@ public class AcroFormsMergerTest {
         PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf")));
         mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
-        annotationsLookup = Annotations.processAnnotations(mapping, anotherDoc);
+        annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
         assertTrue(victim.hasForm());
@@ -154,7 +154,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
         for (PDPage current : sameDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, sameDoc);
+            annotationsLookup = new AnnotationsDistiller(sameDoc).retainRelevantAnnotations(mapping);
         }
         victim.mergeForm(sameDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
@@ -185,7 +185,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
         for (PDPage current : sameDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, sameDoc);
+            annotationsLookup = new AnnotationsDistiller(sameDoc).retainRelevantAnnotations(mapping);
         }
         victim.mergeForm(sameDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
@@ -214,7 +214,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_signature_signed.pdf")));
         for (PDPage current : anotherDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, anotherDoc);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
         }
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
@@ -241,7 +241,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")));
         for (PDPage current : anotherDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, anotherDoc);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
         }
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
@@ -267,7 +267,7 @@ public class AcroFormsMergerTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_proc_set.pdf")));
         for (PDPage current : anotherDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
-            annotationsLookup = Annotations.processAnnotations(mapping, anotherDoc);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
         }
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 

@@ -18,10 +18,23 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
+
+import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
+
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageToFormXObject;
@@ -41,19 +54,6 @@ import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.geom.AffineTransform;
-import java.io.File;
-import java.io.IOException;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 public class NupTask extends BaseTask<NupParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(NupTask.class);
@@ -97,15 +97,15 @@ public class NupTask extends BaseTask<NupParameters> {
             int numberOfPages = sourceDocumentHandler.getNumberOfPages();
 
             int documentRotation = sourceDocumentHandler.getPage(1).getRotation();
-            for(int i = 1; i <= numberOfPages; i++) {
+            for (int i = 1; i <= numberOfPages; i++) {
                 int pageRotation = sourceDocumentHandler.getPage(i).getRotation();
-                if(pageRotation != documentRotation) {
+                if (pageRotation != documentRotation) {
                     documentRotation = 0;
                     break;
                 }
             }
 
-            if(documentRotation != 0) {
+            if (documentRotation != 0) {
                 LOG.debug("Document rotation is " + documentRotation);
             }
 
@@ -115,7 +115,7 @@ public class NupTask extends BaseTask<NupParameters> {
 
             // calculate new sizes
             PDRectangle pageSize = sourceDocumentHandler.getPage(1).getMediaBox();
-            if(documentRotation == 90 || documentRotation == 270) {
+            if (documentRotation == 90 || documentRotation == 270) {
                 // Take initial document rotation into account
                 pageSize = pageSize.rotate(documentRotation);
             }
@@ -129,7 +129,7 @@ public class NupTask extends BaseTask<NupParameters> {
                 // Eg: two portrait A4's fit on a landscape A3
                 boolean landscape = newSize.getWidth() > newSize.getHeight();
 
-                if(landscape)  {
+                if (landscape) {
                     rows = rows * 2;
                     newSize = new PDRectangle(newSize.getWidth(), newSize.getHeight() * 2);
                 } else {
@@ -137,14 +137,15 @@ public class NupTask extends BaseTask<NupParameters> {
                     newSize = new PDRectangle(newSize.getWidth() * 2, newSize.getHeight());
                 }
 
-                LOG.debug(String.format("Landscape? %s, cols: %s, rows: %s, size: %s x %s", landscape, columns, rows, newSize.getWidth(), newSize.getHeight()));
+                LOG.debug(String.format("Landscape? %s, cols: %s, rows: %s, size: %s x %s", landscape, columns, rows,
+                        newSize.getWidth(), newSize.getHeight()));
             }
 
-            if(parameters.isPreservePageSize()) {
+            if (parameters.isPreservePageSize()) {
                 boolean landscape = newSize.getWidth() > newSize.getHeight();
                 newSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
                 boolean originalLandscape = pageSize.getWidth() > pageSize.getHeight();
-                if(landscape && !originalLandscape) {
+                if (landscape && !originalLandscape) {
                     newSize = newSize.rotate(90);
                 }
             }
@@ -155,8 +156,9 @@ public class NupTask extends BaseTask<NupParameters> {
 
                 PDPage currentPage = destinationDocument.addBlankPage(newSize);
 
-                LOG.debug("Original page size: " + pageSize.getWidth() + "x" + pageSize.getHeight() + ", new page size: " + newSize.getWidth() + "x" + newSize.getHeight() +
-                        ", columns: " + columns + " rows: " + rows);
+                LOG.debug("Original page size: " + pageSize.getWidth() + "x" + pageSize.getHeight()
+                        + ", new page size: " + newSize.getWidth() + "x" + newSize.getHeight() + ", columns: " + columns
+                        + " rows: " + rows);
 
                 for (int i = 1; i <= numberOfPages; i++) {
 
@@ -165,17 +167,18 @@ public class NupTask extends BaseTask<NupParameters> {
                     float yOffset = newSize.getHeight() - (pageSize.getHeight() * (currentRow + 1));
                     float xScale = 1.0f;
 
-                    if(parameters.isPreservePageSize()) {
+                    if (parameters.isPreservePageSize()) {
                         xOffset = newSize.getWidth() / columns * currentColumn;
                         yOffset = newSize.getHeight() - (newSize.getHeight() / rows * (currentRow + 1));
                         xScale = (newSize.getWidth() / columns) / pageSize.getWidth();
                     }
 
-                    LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset + " yOffset: "
-                            + yOffset + " xScale: " + xScale);
+                    LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset
+                            + " yOffset: " + yOffset + " xScale: " + xScale);
 
-                    if(pageAsFormObject != null) {
-                        PDPageContentStream currentContentStream = new PDPageContentStream(destinationDocument.getUnderlyingPDDocument(), currentPage,
+                    if (pageAsFormObject != null) {
+                        PDPageContentStream currentContentStream = new PDPageContentStream(
+                                destinationDocument.getUnderlyingPDDocument(), currentPage,
                                 PDPageContentStream.AppendMode.APPEND, true, true);
                         AffineTransform at = new AffineTransform();
                         at.translate(xOffset, yOffset);
@@ -188,7 +191,7 @@ public class NupTask extends BaseTask<NupParameters> {
                         currentContentStream.close();
                     }
 
-                    if(parameters.getPageOrder() == PageOrder.HORIZONTAL) {
+                    if (parameters.getPageOrder() == PageOrder.HORIZONTAL) {
                         // increment column
                         currentColumn += 1;
                         if (currentColumn >= columns) {
@@ -202,16 +205,16 @@ public class NupTask extends BaseTask<NupParameters> {
                             currentColumn = 0;
                             currentPage = destinationDocument.addBlankPage(newSize);
                         }
-                    } else if(parameters.getPageOrder() == PageOrder.VERTICAL) {
+                    } else if (parameters.getPageOrder() == PageOrder.VERTICAL) {
                         // increment row
                         currentRow += 1;
-                        if(currentRow >= rows) {
+                        if (currentRow >= rows) {
                             currentRow = 0;
                             currentColumn += 1;
                         }
 
                         // increment column if required, moving to next page
-                        if(currentColumn >= columns && i != numberOfPages){
+                        if (currentColumn >= columns && i != numberOfPages) {
                             currentColumn = 0;
                             currentRow = 0;
                             currentPage = destinationDocument.addBlankPage(newSize);
@@ -224,13 +227,12 @@ public class NupTask extends BaseTask<NupParameters> {
                 throw new TaskException(e);
             }
 
-
-            LookupTable<PDAnnotation> annotations = processAnnotations(pagesLookup,
-                    sourceDocumentHandler.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(
+                    sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotations.values());
 
-            acroFormsMerger.mergeForm(sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
-                    annotations);
+            acroFormsMerger.mergeForm(
+                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
 
             if (acroFormsMerger.hasForm()) {
                 LOG.debug("Adding generated AcroForm");
@@ -240,8 +242,8 @@ public class NupTask extends BaseTask<NupParameters> {
             destinationDocument.savePDDocument(tmpFile);
             nullSafeCloseQuietly(sourceDocumentHandler);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);

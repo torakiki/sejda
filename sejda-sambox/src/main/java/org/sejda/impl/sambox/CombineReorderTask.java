@@ -22,7 +22,6 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfRotator;
@@ -118,8 +118,8 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         }
 
         for (PDDocumentHandler document : documents) {
-            LookupTable<PDAnnotation> annotationsLookup = processAnnotations(pagesLookup,
-                    document.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(document.getUnderlyingPDDocument())
+                    .retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotationsLookup.values());
 
             acroFormsMerger.mergeForm(document.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),

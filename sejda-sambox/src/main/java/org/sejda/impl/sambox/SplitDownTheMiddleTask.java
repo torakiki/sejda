@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.Annotations.processAnnotations;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import java.util.Set;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -104,7 +104,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 PDPage page = sourceHandler.getPage(pageNumber);
                 PDRectangle trimBox = page.getTrimBox();
 
-                if(excludedPages.contains(pageNumber)){
+                if (excludedPages.contains(pageNumber)) {
                     LOG.debug("Not cropping excluded page {}", pageNumber);
                     PDPage newPage = destinationHandler.importPage(page);
                     lookup.addLookupEntry(page, newPage);
@@ -119,7 +119,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
 
                     // allow user to override this by explicitly setting a split mode
-                    if(parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
+                    if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
                         landscapeMode = false;
                         // adjust to user perceived
                         if(page.getRotation() == 90 || page.getRotation() == 270) {
@@ -167,7 +167,8 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     LOG.warn(warning, ex);
                 }
             }
-            LookupTable<PDAnnotation> annotations = processAnnotations(lookup, sourceHandler.getUnderlyingPDDocument());
+            LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(sourceHandler.getUnderlyingPDDocument())
+                    .retainRelevantAnnotations(lookup);
             clipSignatures(annotations.values());
 
             // repaginate
@@ -208,7 +209,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
     }
 
-    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
+    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
         PDRectangle trimBox = page.getTrimBox();
         float w = trimBox.getWidth();
         float r = (float) ratio;
@@ -228,7 +229,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         leftPage.setMediaBox(leftSide);
     }
 
-    private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
+    private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
         PDRectangle trimBox = page.getTrimBox();
         float w = trimBox.getWidth();
         float r = (float) ratio;
@@ -248,7 +249,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         rightPage.setMediaBox(rightSide);
     }
 
-    private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
+    private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
         PDRectangle trimBox = page.getTrimBox();
         float h = trimBox.getHeight();
         float r = (float) ratio;
@@ -268,7 +269,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         topPage.setMediaBox(upperSide);
     }
 
-    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio){
+    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
         PDRectangle trimBox = page.getTrimBox();
         float h = trimBox.getHeight();
         float r = (float) ratio;
