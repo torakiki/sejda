@@ -62,6 +62,9 @@ class PageCopier {
                     .map(d -> (COSDictionary) d).map(COSDictionary::duplicate).forEach(a -> {
                         a.removeItem(COSName.P);
                         a.removeItem(COSName.DEST);
+                        // Popup parent can leak into the page tree
+                        a.removeItem(COSName.getPDFName("Popup"));
+                        a.removeItem(COSName.PARENT);
                         // remove the action if it has a destination (potentially a GoTo page destination leaking into the page tree)
                         if (ofNullable(a.getDictionaryObject(COSName.A, COSDictionary.class))
                                 .map(d -> d.containsKey(COSName.D)).orElse(false)) {
