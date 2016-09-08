@@ -18,12 +18,20 @@
  */
 package org.sejda.core.support.util;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Locale;
+
+import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-
 public class HumanReadableSizeTest {
+
+    @Before
+    public void setUp() {
+        Locale.setDefault(Locale.UK);
+    }
 
     @Test
     public void bytes() {
