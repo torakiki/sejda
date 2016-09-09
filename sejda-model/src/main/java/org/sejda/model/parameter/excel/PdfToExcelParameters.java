@@ -26,6 +26,7 @@ import java.util.*;
 
 public class PdfToExcelParameters extends MultiplePdfSourceMultipleOutputParameters {
     private Map<Integer, List<Table>> tables = new HashMap<>();
+    private boolean mergeTablesSpanningMultiplePages = false;
 
     public void addTable(int pageNumber, Table table) {
         if(!this.tables.containsKey(pageNumber)) {
@@ -50,6 +51,14 @@ public class PdfToExcelParameters extends MultiplePdfSourceMultipleOutputParamet
         return result;
     }
 
+    public boolean isMergeTablesSpanningMultiplePages() {
+        return mergeTablesSpanningMultiplePages;
+    }
+
+    public void setMergeTablesSpanningMultiplePages(boolean mergeTablesSpanningMultiplePages) {
+        this.mergeTablesSpanningMultiplePages = mergeTablesSpanningMultiplePages;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,14 +68,18 @@ public class PdfToExcelParameters extends MultiplePdfSourceMultipleOutputParamet
         PdfToExcelParameters that = (PdfToExcelParameters) o;
 
         return new EqualsBuilder()
+                .appendSuper(super.equals(that))
                 .append(tables, that.tables)
+                .append(mergeTablesSpanningMultiplePages, that.mergeTablesSpanningMultiplePages)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
                 .append(tables)
+                .append(mergeTablesSpanningMultiplePages)
                 .toHashCode();
     }
 }

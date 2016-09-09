@@ -42,6 +42,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.impl.sambox.component.excel.DataTable;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
@@ -91,10 +92,10 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
 
             int numberOfPages = sourceDocumentHandler.getNumberOfPages();
 
-            List<List<List<String>>> all = new ArrayList<>();
-            List<List<String>> dataTable = new ArrayList<>();
+            List<DataTable> all = new ArrayList<>();
 
             for (int pageNumber = 1; pageNumber <= numberOfPages; pageNumber++) {
+                DataTable dataTable = new DataTable(pageNumber);
                 LOG.debug("Extracting tables from page {}", pageNumber);
                 long start = System.currentTimeMillis();
                 PDPage page = sourceDocumentHandler.getPage(pageNumber);
@@ -125,18 +126,20 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                             rowData.add(cellValues.get(i));
                             i++;
                         }
-                        dataTable.add(rowData);
+                        dataTable.addRow(rowData);
                         rowData = new ArrayList<>();
                     }
 
                     all.add(dataTable);
-                    dataTable = new ArrayList<>();
                 }
 
                 LOG.debug("Done extracting tables from page {}, took {} seconds", pageNumber,
                         (System.currentTimeMillis() - start) / 1000);
             }
 
+            if(parameters.isMergeTablesSpanningMultiplePages()){
+                all = mergeTablesSpanningMultiplePages(all);
+            }
             writeExcelFile(all, tmpFile);
 
             String outName = nameGenerator(parameters.getOutputPrefix())
@@ -152,7 +155,31 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
         LOG.debug("Input documents cropped and written to {}", parameters.getOutput());
     }
 
-    private void writeExcelFile(List<List<List<String>>> dataTables, File tmpFile) throws TaskException {
+    private List<DataTable> mergeTablesSpanningMultiplePages(List<DataTable> dataTables) {
+        List<DataTable> results = new ArrayList<>();
+        DataTable current = null;
+
+        for(DataTable dt: dataTables) {
+            if(current != null) {
+                if(current.hasSameColumnsAs(dt)){
+                    current = current.mergeWith(dt);
+                } else {
+                    results.add(current);
+                    current = dt;
+                }
+            } else {
+                current = dt;
+            }
+        }
+
+        if(current != null) {
+            results.add(current);
+        }
+
+        return results;
+    }
+
+    private void writeExcelFile(List<DataTable> dataTables, File tmpFile) throws TaskException {
         LOG.debug("Writing data to excel file");
         long start = System.currentTimeMillis();
 
@@ -160,11 +187,12 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
         try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
             for (int t = 0; t < dataTables.size(); t++) {
                 LOG.debug("Writing data table " + t);
-                List<List<String>> dataTable = dataTables.get(t);
-                Sheet sheet = wb.createSheet(String.format("Table %d", t));
+                DataTable dataTable = dataTables.get(t);
+                List<List<String>> data = dataTable.getData();
+                Sheet sheet = wb.createSheet(String.format("Table %d (%s)", t + 1, dataTable.getPagesAsString()));
 
-                for (int r = 0; r < dataTable.size(); r++) {
-                    List<String> dataRow = dataTable.get(r);
+                for (int r = 0; r < data.size(); r++) {
+                    List<String> dataRow = data.get(r);
                     LOG.debug("Writing row " + r + " of " + dataRow.size() + " values");
 
                     Row row = sheet.createRow(r);

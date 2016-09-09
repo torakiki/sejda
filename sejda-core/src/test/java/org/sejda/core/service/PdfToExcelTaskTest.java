@@ -57,10 +57,41 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
                 assertThat(wb.getNumberOfSheets(), is(2));
 
                 Sheet sheet = wb.getSheetAt(0);
+                assertThat(sheet.getPhysicalNumberOfRows(), is(37));
+                assertThat(sheet.getSheetName(), is("Table 1 (Page 1)"));
 
                 assertThat(getDataRow(sheet, 0), is(Arrays.asList("OrderDate", "Region", "Rep", "Item", "Units", "Unit Cost", "Total")));
                 assertThat(getDataRow(sheet, 10), is(Arrays.asList("6/8/15", "East", "Jones", "Binder", "60", "8.99", "539.40")));
                 assertThat(getDataRow(sheet, 13), is(Arrays.asList("7/29/15", "East", "Parent", "Binder", "81", "19.99", "1,619.19")));
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void testMergedTables() throws IOException {
+        PdfToExcelParameters params = getParams();
+        params.setMergeTablesSpanningMultiplePages(true);
+        execute(params);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).assertOutputContainsFilenames("tabular-data.xlsx").forEachRawOutput(p -> {
+            try {
+                InputStream in = new FileInputStream(p.toFile());
+                Workbook wb = WorkbookFactory.create(in);
+
+                assertThat(wb.getNumberOfSheets(), is(1));
+
+                Sheet sheet = wb.getSheetAt(0);
+                assertThat(sheet.getPhysicalNumberOfRows(), is(44));
+                assertThat(sheet.getSheetName(), is("Table 1 (Pages 1, 2)"));
+
+                assertThat(getDataRow(sheet, 0), is(Arrays.asList("OrderDate", "Region", "Rep", "Item", "Units", "Unit Cost", "Total")));
+                assertThat(getDataRow(sheet, 10), is(Arrays.asList("6/8/15", "East", "Jones", "Binder", "60", "8.99", "539.40")));
+                assertThat(getDataRow(sheet, 13), is(Arrays.asList("7/29/15", "East", "Parent", "Binder", "81", "19.99", "1,619.19")));
+                assertThat(getDataRow(sheet, 37), is(Arrays.asList("9/10/16", "Central", "Gill", "Pencil", "7", "1.29", "9.03")));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -159,7 +190,7 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
         table.addColumns(new TopLeftRectangularBox(145, 39, 46, 111));
         table.addColumns(new TopLeftRectangularBox(195, 39, 31, 111));
         table.addColumns(new TopLeftRectangularBox(235, 39, 35, 111));
-        table.addColumns(new TopLeftRectangularBox(264, 39, 6, 111));
+//        table.addColumns(new TopLeftRectangularBox(264, 39, 6, 111));
         table.addColumns(new TopLeftRectangularBox(274, 39, 45, 111));
         table.addColumns(new TopLeftRectangularBox(329, 39, 49, 111));
         table.addRows(new TopLeftRectangularBox(42, 39, 336, 11));
