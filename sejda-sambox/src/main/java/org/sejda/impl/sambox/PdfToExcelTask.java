@@ -100,8 +100,8 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                 PDPage page = sourceDocumentHandler.getPage(pageNumber);
 
                 for (Table table : parameters.getTables(pageNumber)) {
+                    List<Rectangle> cellAreas = new ArrayList<>();
                     for (TopLeftRectangularBox row : table.getRows()) {
-                        List<Rectangle> cellAreas = new ArrayList<>();
                         for (TopLeftRectangularBox column : table.getColumns()) {
                             TopLeftRectangularBox cell = row.intersection(column);
                             if (!cell.asRectangle().isEmpty()) {
@@ -111,10 +111,22 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                                         + column.toString());
                             }
                         }
+                    }
 
-                        List<String> cellValues = new PdfTextExtractorByArea().extractTextFromAreas(page, cellAreas);
-                        LOG.trace("Cell values: " + StringUtils.join(cellValues, ","));
-                        dataTable.add(cellValues);
+                    LOG.debug("Extracting text for {} table cells", cellAreas.size());
+                    long startTimingCells = System.currentTimeMillis();
+                    List<String> cellValues = new PdfTextExtractorByArea().extractTextFromAreas(page, cellAreas);
+                    LOG.debug("Text extraction took {} seconds", (System.currentTimeMillis() - startTimingCells)/ 1000);
+
+                    int i = 0;
+                    ArrayList<String> rowData = new ArrayList<>();
+                    for (TopLeftRectangularBox row : table.getRows()) {
+                        for (TopLeftRectangularBox column : table.getColumns()) {
+                            rowData.add(cellValues.get(i));
+                            i++;
+                        }
+                        dataTable.add(rowData);
+                        rowData = new ArrayList<>();
                     }
 
                     all.add(dataTable);
@@ -141,27 +153,34 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
     }
 
     private void writeExcelFile(List<List<List<String>>> dataTables, File tmpFile) throws TaskException {
+        LOG.debug("Writing data to excel file");
+        long start = System.currentTimeMillis();
+
         Workbook wb = new XSSFWorkbook();
         try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
             for (int t = 0; t < dataTables.size(); t++) {
-                LOG.trace("Writing data table " + t);
+                LOG.debug("Writing data table " + t);
                 List<List<String>> dataTable = dataTables.get(t);
                 Sheet sheet = wb.createSheet(String.format("Table %d", t));
 
                 for (int r = 0; r < dataTable.size(); r++) {
-                    LOG.trace("Writing row " + r);
                     List<String> dataRow = dataTable.get(r);
+                    LOG.debug("Writing row " + r + " of " + dataRow.size() + " values");
+
                     Row row = sheet.createRow(r);
 
                     for (int i = 0; i < dataRow.size(); i++) {
                         String stringValue = dataRow.get(i);
                         row.createCell(i).setCellValue(stringValue);
-
-                        sheet.autoSizeColumn(i);
                     }
+                }
+
+                for(int c = 0; c < sheet.getRow(0).getPhysicalNumberOfCells(); c++) {
+                    sheet.autoSizeColumn(c);
                 }
             }
             wb.write(fileOut);
+            LOG.debug("Done writing data to excel file, took {} seconds", (System.currentTimeMillis() - start)/1000);
         } catch (IOException ioe) {
             throw new TaskException("Could not save .xlsx file", ioe);
         }
