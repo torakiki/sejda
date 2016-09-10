@@ -1,9 +1,30 @@
 language: java
 sudo: false
-script: mvn clean install javadoc:javadoc
+before_install:
+- openssl aes-256-cbc -K $encrypted_e19597da4fac_key -iv $encrypted_e19597da4fac_iv
+  -in pgp.asc.enc -out pgp.asc -d
+- gpg --fast-import pgp.asc
+before_script: mvn javadoc:javadoc -DskipTests=true -B -V
+script: mvn clean install
 jdk:
-  - oraclejdk8
+- oraclejdk8
 addons:
   apt:
     packages:
-      - oracle-java8-installer
+    - oracle-java8-installer
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file_glob: true
+  api_key:
+    secure: Ca89OLPkZ/qQ4/Ky2FBy7V0gFlhD8MGPWKLFI0FX/yCJn5I3ZmzSEIFBozym1HmG23zdofB2RfVn11c4EF1hjh2r3XUjucBV5L8xN0BLtA8s82OALBilfD+tmvUzhWUP7sG2enyeoAYFF+mNxkRFz4rx3Wn/tP1qeHDD54UNyUo=
+  on:
+    tags: true
+  file:
+  - sejda-console/target/*.deb
+  - sejda-console/target/*.zip
+  - sejda-distribution/target/*.zip    
+env:
+  global:
+    secure: YqXA0mY5JW3EwtKQjWLMD7Q4dpHVoIpfgYjG2D1D2X67KfekN6h5NaQWCQsPV0AJvznbF/bWoNjUGscncukA2MW/Fz1kXmnnuFmsFQNQAYBCilO5L8/MPWd0UFmHNJQYq5NGw9ajduB46E8K3URMPzseZsZo6IPalJ9i1VKF/Cg=
+  
