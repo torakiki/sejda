@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -117,7 +116,8 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     LOG.debug("Extracting text for {} table cells", cellAreas.size());
                     long startTimingCells = System.currentTimeMillis();
                     List<String> cellValues = new PdfTextExtractorByArea().extractTextFromAreas(page, cellAreas);
-                    LOG.debug("Text extraction took {} seconds", (System.currentTimeMillis() - startTimingCells)/ 1000);
+                    LOG.debug("Text extraction took {} seconds",
+                            (System.currentTimeMillis() - startTimingCells) / 1000);
 
                     int i = 0;
                     ArrayList<String> rowData = new ArrayList<>();
@@ -137,7 +137,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                         (System.currentTimeMillis() - start) / 1000);
             }
 
-            if(parameters.isMergeTablesSpanningMultiplePages()){
+            if (parameters.isMergeTablesSpanningMultiplePages()) {
                 all = mergeTablesSpanningMultiplePages(all);
             }
             writeExcelFile(all, tmpFile);
@@ -159,9 +159,9 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
         List<DataTable> results = new ArrayList<>();
         DataTable current = null;
 
-        for(DataTable dt: dataTables) {
-            if(current != null) {
-                if(current.hasSameColumnsAs(dt)){
+        for (DataTable dt : dataTables) {
+            if (current != null) {
+                if (current.hasSameColumnsAs(dt)) {
                     current = current.mergeWith(dt);
                 } else {
                     results.add(current);
@@ -172,7 +172,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             }
         }
 
-        if(current != null) {
+        if (current != null) {
             results.add(current);
         }
 
@@ -203,12 +203,12 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     }
                 }
 
-                for(int c = 0; c < sheet.getRow(0).getPhysicalNumberOfCells(); c++) {
+                for (int c = 0; c < sheet.getRow(0).getPhysicalNumberOfCells(); c++) {
                     sheet.autoSizeColumn(c);
                 }
             }
             wb.write(fileOut);
-            LOG.debug("Done writing data to excel file, took {} seconds", (System.currentTimeMillis() - start)/1000);
+            LOG.debug("Done writing data to excel file, took {} seconds", (System.currentTimeMillis() - start) / 1000);
         } catch (IOException ioe) {
             throw new TaskException("Could not save .xlsx file", ioe);
         }
