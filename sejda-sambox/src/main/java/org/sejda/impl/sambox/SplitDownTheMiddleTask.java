@@ -254,7 +254,6 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         float h = trimBox.getHeight();
         float r = (float) ratio;
         float bottomSideHeight = h / (r + 1);
-        float topSideHeight = h - bottomSideHeight;
 
         PDPage topPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, topPage);
@@ -274,7 +273,6 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         float h = trimBox.getHeight();
         float r = (float) ratio;
         float bottomSideHeight = h / (r + 1);
-        float topSideHeight = h - bottomSideHeight;
 
         PDPage bottomPage = destinationHandler.importPage(page);
         lookup.addLookupEntry(page, bottomPage);
