@@ -71,7 +71,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             actualExecution(parameters, executionContext);
             postExecution(executionContext);
         } catch (InvalidTaskParametersException i) {
-            LOG.error("Task execution failed due to invalid parameters.", i);
+            LOG.error("Task execution failed due to invalid parameters: " + String.join(". ", i.getReasons()), i);
             executionFailed(i, executionContext);
         } catch (TaskException e) {
             LOG.error(String.format("Task (%s) execution failed.",
