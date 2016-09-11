@@ -22,6 +22,7 @@ package org.sejda.cli;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
@@ -45,6 +46,9 @@ public class DefaultTaskExecutionFailedEventListener implements EventListener<Ta
      * @return string containing the message in the failing cause exception of the event
      */
     private String extractFailingCauseMessage(TaskExecutionFailedEvent event) {
+        if(event.getFailingCause() instanceof InvalidTaskParametersException) {
+            return String.join(". ", ((InvalidTaskParametersException)event.getFailingCause()).getReasons());
+        }
         return ExceptionUtils.getMessage(event.getFailingCause());
     }
 

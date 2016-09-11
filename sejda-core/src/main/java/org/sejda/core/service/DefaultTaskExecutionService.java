@@ -23,6 +23,8 @@ package org.sejda.core.service;
 import static java.util.Optional.ofNullable;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -59,7 +61,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     @Override
     public void execute(TaskParameters parameters, CancellationOption cancellationOption) {
         TaskExecutionContext executionContext = null;
-        LOG.trace("Starting exectution for {}", parameters);
+        LOG.trace("Starting execution for {}", parameters);
         try {
             validate(parameters);
             executionContext = new TaskExecutionContext(context.getTask(parameters));
@@ -97,11 +99,14 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             if (!violations.isEmpty()) {
                 StringBuilder sb = new StringBuilder(
                         String.format("Input parameters (%s) are not valid: ", parameters));
+
+                List<String> reasons = new ArrayList<>();
                 for (ConstraintViolation<TaskParameters> violation : violations) {
                     sb.append(String.format("\"(%s=%s) %s\" ", violation.getPropertyPath(), violation.getInvalidValue(),
                             violation.getMessage()));
+                    reasons.add(violation.getMessage());
                 }
-                throw new InvalidTaskParametersException(sb.toString());
+                throw new InvalidTaskParametersException(sb.toString(), reasons);
             }
         } else {
             LOG.info("Validation skipped.");

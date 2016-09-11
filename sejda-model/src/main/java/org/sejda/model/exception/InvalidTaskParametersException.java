@@ -20,6 +20,8 @@
  */
 package org.sejda.model.exception;
 
+import java.util.List;
+
 /**
  * Exception thrown after validation of the task parameters if the validation fails.
  * 
@@ -29,20 +31,14 @@ package org.sejda.model.exception;
 public class InvalidTaskParametersException extends TaskException {
 
     private static final long serialVersionUID = 1046358680829746043L;
+    private List<String> reasons;
 
-    public InvalidTaskParametersException() {
-        super();
-    }
-
-    public InvalidTaskParametersException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public InvalidTaskParametersException(String message) {
+    public InvalidTaskParametersException(String message, List<String> reasons) {
         super(message);
+        this.reasons = reasons;
     }
 
-    public InvalidTaskParametersException(Throwable cause) {
-        super(cause);
+    public List<String> getReasons() {
+        return reasons;
     }
 }
