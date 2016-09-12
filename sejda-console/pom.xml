@@ -17,6 +17,12 @@
 	<profiles>
 		<profile>
 			<id>release</id>
+			<activation>
+				<property>
+					<name>env.TRAVIS</name>
+					<value>true</value>
+				</property>
+			</activation>
 			<build>
 				<plugins>
 					<!-- creates the binary distributable sejda-console*-bin.zip -->

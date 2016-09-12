@@ -34,5 +34,5 @@ deploy:
     key: 
       secure: dLhy8d+Dra+0tVMnm/JPkhQvvIYBq/6EMS3E8TNHmkoYJmF5bUvWJZdopLn7E+HEG9n4KGaELA37NHdJsxkYMQIV0A5kF0MvrMVKf9ls9MKNT4lNDtub+FP3GxCRdZJvJBPnX9ND1y1dcXj7/c+3BadXTT2r2yZeulERD+uMiGg=
     dry-run: true
-    on:
-      tags: true
+#    on:
+#      tags: true
