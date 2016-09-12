@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -100,11 +101,34 @@ public final class FontUtils {
         return font;
     }
 
+    // caches fonts, PER DOCUMENT
+    // has no auto-magical way to clear the cache when doc processing is done
+    // if you use this in a long lived process, call the cache clear method to avoid leaking memory
+    private static Map<PDDocument, Map<String, PDFont>> loadedFontCache = new HashMap<>();
+
+    public static void clearLoadedFontCache() {
+        loadedFontCache.clear();
+    }
+
+    public static void clearLoadedFontCache(PDDocument document) {
+        loadedFontCache.remove(document);
+    }
+
     private static PDFont loadFont(PDDocument document, FontResource font) {
+        if(!loadedFontCache.containsKey(document)){
+            loadedFontCache.put(document, new HashMap<>());
+        }
+
+        Map<String, PDFont> docCache = loadedFontCache.get(document);
+        if(docCache.containsKey(font.getResource())){
+            return docCache.get(font.getResource());
+        }
+
         InputStream in = font.getFontStream();
         try {
             PDType0Font loaded = PDType0Font.load(document, in);
             LOG.trace("Loaded font {}", loaded.getName());
+            docCache.put(font.getResource(), loaded);
             return loaded;
         } catch (IOException e) {
             LOG.warn("Failed to load font " + font, e);

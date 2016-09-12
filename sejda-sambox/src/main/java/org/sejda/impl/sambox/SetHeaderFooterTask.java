@@ -32,6 +32,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SetHeaderFooterWriter;
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -95,6 +96,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 footerWriter.write(parameters, currentFileCounter, outName);
                 documentHandler.savePDDocument(tmpFile);
                 outputWriter.addOutput(file(tmpFile).name(outName));
+                FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);

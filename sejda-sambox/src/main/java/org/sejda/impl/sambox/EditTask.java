@@ -37,6 +37,7 @@ import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageGeometricalShapeWriter;
 import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
@@ -195,6 +196,8 @@ public class EditTask extends BaseTask<EditParameters> {
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
+
+            FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }

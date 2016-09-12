@@ -25,6 +25,11 @@ import java.io.InputStream;
  */
 public interface FontResource {
     /**
+     * @return Unique identifier
+     *
+     */
+    String getResource();
+    /**
      * @return the stream where the font is read from
      */
     InputStream getFontStream();

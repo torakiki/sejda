@@ -19,6 +19,8 @@
  */
 package org.sejda.impl.sambox.util;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -31,6 +33,7 @@ import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 import org.junit.Test;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 
 /**
@@ -88,5 +91,14 @@ public class FontUtilsTest {
     public void testFontOrFallbackNullSipplier() {
         PDType1Font expected = getStandardType1Font(StandardType1Font.CURIER);
         assertEquals(expected, fontOrFallback("कसौटी", expected, null));
+    }
+
+    @Test
+    public void testCaching() {
+        PDDocument doc = new PDDocument();
+        PDFont expected = FontUtils.findFontFor(doc, "ทดสอบ");
+
+        PDFont actual = findFontFor(doc, "ทด");
+        assertTrue("Font is cached, same instance is returned", expected == actual);
     }
 }

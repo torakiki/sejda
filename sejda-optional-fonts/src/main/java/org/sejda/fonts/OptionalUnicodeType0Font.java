@@ -31,6 +31,11 @@ public enum OptionalUnicodeType0Font implements FontResource {
     }
 
     @Override
+    public String getResource() {
+        return resource;
+    }
+
+    @Override
     public InputStream getFontStream() {
         return this.getClass().getResourceAsStream(resource);
     }
