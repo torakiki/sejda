@@ -95,7 +95,7 @@ public final class FontUtils {
      */
     public static PDFont fontOrFallback(String text, PDFont font, Supplier<PDFont> fallbackSupplier) {
         if (nonNull(fallbackSupplier) && !canDisplay(text, font)) {
-            LOG.info("Text cannot be written with font {}, using fallback", font.getName());
+            LOG.debug("Text cannot be written with font {}, using fallback", font.getName());
             return fallbackSupplier.get();
         }
         return font;
