@@ -34,10 +34,6 @@
 			"uploadPattern": "org/sejda/sejda-core/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "sejda-example/target/(.*)\\.(jar|asc|md5|pom)",
-			"uploadPattern": "org/sejda/sejda-example/${project.version}/$1.$2"
-		},
-		{
 			"includePattern": "sejda-fonts/target/(.*)\\.(jar|asc|md5|pom)",
 			"uploadPattern": "org/sejda/sejda-fonts/${project.version}/$1.$2"
 		},
