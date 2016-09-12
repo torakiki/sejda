@@ -52,7 +52,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.3</version>
+						<version>2.10.4</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -72,6 +72,16 @@
 							<autoVersionSubmodules>true</autoVersionSubmodules>
 							<localCheckout>true</localCheckout>
 						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>perform</goal>
+								</goals>
+								<configuration>
+									<dryRun>true</dryRun>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

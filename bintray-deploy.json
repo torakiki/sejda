@@ -26,19 +26,23 @@
 	"files": 
 	[
 		{
-			"includePattern": "(.*)/target/(.*\\.jar)",
+			"includePattern": "(.*)/target/(.*?jar)",
+			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/$2"
 		},
 		{
-			"includePattern": "(.*)/target/(.*\\.asc)",
+			"includePattern": "(.*)\/target\/(.*\\.asc)",
+			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/$2"
 		},
 		{
-			"includePattern": "(.*)/target/(.*\\.md5)",
+			"includePattern": "(.*)\/target\/(.*?md5)",
+			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/$2"
 		},
 		{
 			"includePattern": "(.*)/target/(.*\\.pom)",
+			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/$2"
 		},
 		{
