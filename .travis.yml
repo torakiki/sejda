@@ -5,7 +5,7 @@ before_install:
   -in pgp.asc.enc -out pgp.asc -d
 - gpg --fast-import pgp.asc
 before_script: mvn javadoc:javadoc -DskipTests=true -B -V
-script: mvn clean install
+script: mvn clean install -DskipTests
 jdk:
 - oraclejdk8
 addons:

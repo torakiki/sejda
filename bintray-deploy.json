@@ -36,7 +36,7 @@
 			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
 		{
-			"includePattern": ".*/target/(.*\\.md5)",
+			"includePattern": "sejda-conversion/target/(.*\\.md5)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
@@ -44,6 +44,10 @@
 			"includePattern": "(.*)/target/(.*\\.pom)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
 			"uploadPattern": "org/sejda/$1/${project.version}/$2"
+		},
+		{
+			"includePattern": "sejda-model/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-model/${project.version}/$1.$2"
 		},
 		{
 			"includePattern": "target/(.*\\.pom)",
