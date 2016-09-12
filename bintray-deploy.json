@@ -26,28 +26,40 @@
 	"files": 
 	[
 		{
-			"includePattern": "(.*)/target/(.*\\.jar)",
-			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/${project.version}/$2"
+			"includePattern": "sejda-conversion/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-conversion/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "(.*)/target/(.*\\.asc)",
-			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/${project.version}/$2"
+			"includePattern": "sejda-core/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-core/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "sejda-conversion/target/(.*\\.md5)",
-			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/${project.version}/$2"
+			"includePattern": "sejda-example/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-example/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "(.*)/target/(.*\\.pom)",
-			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/${project.version}/$2"
+			"includePattern": "sejda-fonts/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-fonts/${project.version}/$1.$2"
+		},
+		{
+			"includePattern": "sejda-icepdf/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-icepdf/${project.version}/$1.$2"
+		},
+		{
+			"includePattern": "sejda-image-writers/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-image-writers/${project.version}/$1.$2"
 		},
 		{
 			"includePattern": "sejda-model/target/(.*)\\.(jar|asc|md5|pom)",
 			"uploadPattern": "org/sejda/sejda-model/${project.version}/$1.$2"
+		},
+		{
+			"includePattern": "sejda-optional-fonts/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-optional-fonts/${project.version}/$1.$2"
+		},
+		{
+			"includePattern": "sejda-sambox/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-sambox/${project.version}/$1.$2"
 		},
 		{
 			"includePattern": "target/(.*\\.pom)",
