@@ -5,26 +5,34 @@ before_install:
   -in pgp.asc.enc -out pgp.asc -d
 - gpg --fast-import pgp.asc
 before_script: mvn javadoc:javadoc -DskipTests=true -B -V
-script: mvn clean install
+script: mvn clean install -DcreateChecksum=true
 jdk:
 - oraclejdk8
 addons:
   apt:
     packages:
     - oracle-java8-installer
-deploy:
-  provider: releases
-  skip_cleanup: true
-  file_glob: true
-  api_key:
-    secure: Ca89OLPkZ/qQ4/Ky2FBy7V0gFlhD8MGPWKLFI0FX/yCJn5I3ZmzSEIFBozym1HmG23zdofB2RfVn11c4EF1hjh2r3XUjucBV5L8xN0BLtA8s82OALBilfD+tmvUzhWUP7sG2enyeoAYFF+mNxkRFz4rx3Wn/tP1qeHDD54UNyUo=
-  on:
-    tags: true
-  file:
-  - sejda-console/target/*.deb
-  - sejda-console/target/*.zip
-  - sejda-distribution/target/*.zip    
+#GPG_PASSPHRASE
 env:
   global:
     secure: YqXA0mY5JW3EwtKQjWLMD7Q4dpHVoIpfgYjG2D1D2X67KfekN6h5NaQWCQsPV0AJvznbF/bWoNjUGscncukA2MW/Fz1kXmnnuFmsFQNQAYBCilO5L8/MPWd0UFmHNJQYq5NGw9ajduB46E8K3URMPzseZsZo6IPalJ9i1VKF/Cg=
-  
+deploy:
+  - provider: releases
+    skip_cleanup: true
+    file_glob: true
+    api_key:
+      secure: Ca89OLPkZ/qQ4/Ky2FBy7V0gFlhD8MGPWKLFI0FX/yCJn5I3ZmzSEIFBozym1HmG23zdofB2RfVn11c4EF1hjh2r3XUjucBV5L8xN0BLtA8s82OALBilfD+tmvUzhWUP7sG2enyeoAYFF+mNxkRFz4rx3Wn/tP1qeHDD54UNyUo=
+    on:
+      tags: true
+    file:
+    - sejda-console/target/*.deb
+    - sejda-console/target/*.zip
+    - sejda-distribution/target/*.zip
+  - provider: bintray
+    file: "target/bintray/bintray-deploy.json"
+    user: "sejdapdf"
+    key: 
+      secure: dLhy8d+Dra+0tVMnm/JPkhQvvIYBq/6EMS3E8TNHmkoYJmF5bUvWJZdopLn7E+HEG9n4KGaELA37NHdJsxkYMQIV0A5kF0MvrMVKf9ls9MKNT4lNDtub+FP3GxCRdZJvJBPnX9ND1y1dcXj7/c+3BadXTT2r2yZeulERD+uMiGg=
+    dry-run: true
+    on:
+      tags: true
