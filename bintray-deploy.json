@@ -26,36 +26,36 @@
 	"files": 
 	[
 		{
-			"includePattern": "(.*)/target/(.*?jar)",
+			"includePattern": "(.*)/target/(.*\\.jar)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/$2"
+			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
 		{
-			"includePattern": "(.*)\/target\/(.*\\.asc)",
+			"includePattern": "(.*)/target/(.*\\.asc)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/$2"
+			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
 		{
-			"includePattern": "(.*)\/target\/(.*?md5)",
+			"includePattern": ".*/target/(.*\\.md5)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/$2"
+			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
 		{
 			"includePattern": "(.*)/target/(.*\\.pom)",
 			"excludePattern": ".*/(sejda-console|sejda-distribution)/.*",
-			"uploadPattern": "org/sejda/$1/$2"
+			"uploadPattern": "org/sejda/$1/${project.version}/$2"
 		},
 		{
 			"includePattern": "target/(.*\\.pom)",
-			"uploadPattern": "org/sejda/$1"
+			"uploadPattern": "org/sejda/sejda-parent/$1"
 		},
 		{
 			"includePattern": "target/(.*\\.asc)",
-			"uploadPattern": "org/sejda/$1"
+			"uploadPattern": "org/sejda/sejda-parent/$1"
 		},
 		{
 			"includePattern": "target/(.*\\.md5)",
-			"uploadPattern": "org/sejda/$1"
+			"uploadPattern": "org/sejda/sejda-parent/$1"
 		}
 	],
 
