@@ -18,20 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,6 +39,20 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(PdfToExcelTask.class);
@@ -109,6 +109,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                             } else {
                                 LOG.warn("Column and row do not intersect: row: " + row.toString() + ", column: "
                                         + column.toString());
+                                cellAreas.add(new Rectangle(0, 0, 0, 0));
                             }
                         }
                     }
