@@ -18,8 +18,10 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignature;
 import static org.sejda.sambox.cos.COSName.A;
@@ -65,16 +67,19 @@ import static org.sejda.sambox.cos.COSName.TYPE;
 import static org.sejda.sambox.cos.COSName.V;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
+import org.sejda.impl.sambox.util.AcroFormUtils;
 import org.sejda.model.pdf.form.AcroFormPolicy;
-import org.sejda.sambox.cos.COSArray;
-import org.sejda.sambox.cos.COSBase;
-import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -110,7 +115,7 @@ public class AcroFormsMerger {
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
         PDField previouslyCreated = ofNullable(getField(existing.getFullyQualifiedName()))
                 .orElseGet(() -> fieldsLookup.lookup(existing));
-        if (previouslyCreated == null) {
+        if (isNull(previouslyCreated)) {
             previouslyCreated = PDFieldFactory.createFielAddingChildToParent(this.form,
                     existing.getCOSObject().duplicate(),
                     (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
@@ -118,8 +123,8 @@ public class AcroFormsMerger {
             fieldsLookup.addLookupEntry(existing, previouslyCreated);
         }
         if (!previouslyCreated.isTerminal()) {
-            LOG.warn("Cannot merge terminal field because a non terminal field with the same name already exsts: "
-                    + existing.getFullyQualifiedName());
+            LOG.warn("Cannot merge terminal field because a non terminal field with the same name already exists: {}",
+                    existing.getFullyQualifiedName());
             return null;
         }
         return (PDTerminalField) previouslyCreated;
@@ -129,7 +134,7 @@ public class AcroFormsMerger {
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
         PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFielAddingChildToParent(this.form,
                 existing.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
-        if (getField(existing.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(existing)) {
+        if (nonNull(getField(existing.getFullyQualifiedName())) || fieldsLookup.hasLookupFor(existing)) {
             newField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
             LOG.info("Existing terminal field renamed from {} to {}", existing.getPartialName(),
                     newField.getPartialName());
@@ -148,11 +153,7 @@ public class AcroFormsMerger {
     };
 
     private PDField getField(String fullyQualifiedName) {
-        if(fullyQualifiedName == null) {
-            return null;
-        }
-
-        return form.getField(fullyQualifiedName);
+        return ofNullable(fullyQualifiedName).map(form::getField).orElse(null);
     }
 
     private final BiConsumer<PDField, LookupTable<PDField>> createRenamingNonTerminalField = (PDField field,
@@ -181,24 +182,21 @@ public class AcroFormsMerger {
      *            lookup for relevant annotations
      */
     public void mergeForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup) {
-        if (originalForm != null) {
+        if (nonNull(originalForm)) {
             if (originalForm.hasXFA()) {
                 LOG.warn("Merge of XFA forms is not supported");
             } else {
                 LOG.debug("Merging acroforms with policy {}", policy);
                 switch (policy) {
                 case MERGE_RENAMING_EXISTING_FIELDS:
-                    filterNonWidgetsFields(annotationsLookup);
                     updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
                             createRenamingNonTerminalField);
                     break;
                 case MERGE:
-                    filterNonWidgetsFields(annotationsLookup);
                     updateForm(originalForm, annotationsLookup, createOrReuseTerminalField,
                             createOrReuseNonTerminalField);
                     break;
                 case FLATTEN:
-                    filterNonWidgetsFields(annotationsLookup);
                     updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
                             createRenamingNonTerminalField);
                     flatten();
@@ -217,28 +215,26 @@ public class AcroFormsMerger {
      * 
      * @param annotationsLookup
      */
-    private void filterNonWidgetsFields(LookupTable<PDAnnotation> annotationsLookup) {
-        for (PDAnnotation current : annotationsLookup.values()) {
-            if (current instanceof PDAnnotationWidget) {
-                current.getCOSObject().removeItems(FIELD_KEYS);
-            }
-        }
-        LOG.debug("Removed fields keys from widget annotations");
+    private void removeFieldKeysFromWidgets(Collection<PDAnnotationWidget> annotations) {
+        annotations.stream().map(PDAnnotation::getCOSObject).forEach(a -> a.removeItems(FIELD_KEYS));
+        LOG.trace("Removed fields keys from widget annotations");
     }
 
-    private void updateForm(PDAcroForm originalForm, LookupTable<PDAnnotation> widgets,
+    private void updateForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup,
             BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> getTerminalField,
             BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField) {
-        mergeFormDictionary(originalForm);
+        AcroFormUtils.mergeDefaults(originalForm, form);
         LookupTable<PDField> fieldsLookup = new LookupTable<>();
         for (PDField field : originalForm.getFieldTree()) {
             if (!field.isTerminal()) {
                 createNonTerminalField.accept(field, fieldsLookup);
             } else {
-                List<PDAnnotationWidget> relevantWidgets = findMappedWidgetsFor((PDTerminalField) field, widgets);
+                List<PDAnnotationWidget> relevantWidgets = findMappedWidgetsFor((PDTerminalField) field,
+                        annotationsLookup);
                 if (!relevantWidgets.isEmpty()) {
                     PDTerminalField terminalField = getTerminalField.apply((PDTerminalField) field, fieldsLookup);
                     if (nonNull(terminalField)) {
+                        removeFieldKeysFromWidgets(relevantWidgets);
                         for (PDAnnotationWidget widget : relevantWidgets) {
                             terminalField.addWidgetIfMissing(widget);
                         }
@@ -251,67 +247,35 @@ public class AcroFormsMerger {
         }
         this.form.addFields(originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
                 .collect(Collectors.toList()));
-    }
-
-    private void mergeFormDictionary(PDAcroForm originalForm) {
-        if (!form.isNeedAppearances() && originalForm.isNeedAppearances()) {
-            form.setNeedAppearances(true);
-        }
-        String da = originalForm.getDefaultAppearance();
-        if (isBlank(form.getDefaultAppearance()) && !isBlank(da)) {
-            form.setDefaultAppearance(da);
-        }
-        int quadding = originalForm.getCOSObject().getInt(COSName.Q);
-        if (quadding != -1 && !form.getCOSObject().containsKey(COSName.Q)) {
-            form.setQuadding(quadding);
-        }
-        final COSDictionary formResources = ofNullable(form.getCOSObject().getDictionaryObject(COSName.DR))
-                .map(r -> (COSDictionary) r).orElseGet(COSDictionary::new);
-        ofNullable(originalForm.getCOSObject().getDictionaryObject(COSName.DR)).map(r -> (COSDictionary) r)
-                .ifPresent(dr -> {
-                    for (COSName currentKey : dr.keySet()) {
-                        ofNullable(dr.getDictionaryObject(currentKey)).ifPresent(value -> {
-                            if (value instanceof COSDictionary) {
-                                mergeResourceDictionaryValue(formResources, (COSDictionary) value, currentKey);
-                            } else if (value instanceof COSArray) {
-                                mergeResourceArrayValue(formResources, (COSArray) value, currentKey);
-                            } else {
-                                LOG.warn("Unsupported resource dictionary type {}", value);
+        // let's process those annotations containing merged widget/fields dictionaries and somehow not referenced by originalForm acroform (ex. empty fields array)
+        annotationsLookup.values().stream().filter(a -> a instanceof PDAnnotationWidget)
+                .filter(a -> a.getCOSObject().containsKey(COSName.T)).map(a -> (PDAnnotationWidget) a).collect(toList())
+                .forEach(w -> {
+                    PDField orphanField = PDFieldFactory.createField(originalForm, w.getCOSObject(), null);
+                    if (orphanField instanceof PDTerminalField) {
+                        PDTerminalField newOrphanField = getTerminalField.apply((PDTerminalField) orphanField,
+                                fieldsLookup);
+                        if (nonNull(newOrphanField)) {
+                            w.getCOSObject().removeItems(FIELD_KEYS);
+                            newOrphanField.addWidgetIfMissing(w);
+                            newOrphanField.getCOSObject().removeItems(WIDGET_KEYS);
+                            if (isNull(getField(newOrphanField.getFullyQualifiedName()))) {
+                                this.form.addFields(Arrays.asList(newOrphanField));
                             }
-                        });
+                        }
                     }
                 });
-        form.getCOSObject().setItem(COSName.DR, formResources);
-        LOG.debug("Merged AcroForm dictionary");
-    }
-
-    private void mergeResourceArrayValue(COSDictionary formResources, COSArray value, COSName currentKey) {
-        COSArray currentItem = ofNullable(formResources.getDictionaryObject(currentKey)).map(i -> (COSArray) i)
-                .orElseGet(COSArray::new);
-        for (COSBase item : value) {
-            if (!currentItem.contains(item)) {
-                currentItem.add(item);
-            }
-        }
-        formResources.setItem(currentKey, currentItem);
-    }
-
-    private void mergeResourceDictionaryValue(final COSDictionary formResources, COSDictionary value,
-            COSName currentKey) {
-        COSDictionary currentItem = ofNullable(formResources.getDictionaryObject(currentKey))
-                .map(i -> (COSDictionary) i).orElseGet(COSDictionary::new);
-        currentItem.mergeWithoutOverwriting(value);
-        formResources.setItem(currentKey, currentItem);
     }
 
     /**
      * @param field
-     * @param widgets
+     * @param annotationsLookup
      * @return the list of relevant widgets for the given field.
      */
-    private List<PDAnnotationWidget> findMappedWidgetsFor(PDTerminalField field, LookupTable<PDAnnotation> widgets) {
-        return field.getWidgets().stream().map(widgets::lookup).filter(w -> w instanceof PDAnnotationWidget)
-                .map(w -> (PDAnnotationWidget) w).collect(Collectors.toList());
+    private List<PDAnnotationWidget> findMappedWidgetsFor(PDTerminalField field,
+            LookupTable<PDAnnotation> annotationsLookup) {
+        return field.getWidgets().stream().map(annotationsLookup::lookup).filter(w -> w instanceof PDAnnotationWidget)
+                .map(w -> (PDAnnotationWidget) w).collect(toList());
 
     }
 
@@ -322,13 +286,11 @@ public class AcroFormsMerger {
     private void flatten() {
         try {
             List<PDField> fields = new ArrayList<>();
-
             for (PDField field : form.getFieldTree()) {
                 fields.add(field);
             }
-
             form.flatten(fields, true);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             LOG.warn("Failed to flatten form", ex);
         }
     }
@@ -351,6 +313,9 @@ public class AcroFormsMerger {
             } else if (clipSignature(current)) {
                 form.setSignaturesExist(true);
             }
+        }
+        if (isBlank(form.getDefaultAppearance())) {
+            form.setDefaultAppearance("/Helv 0 Tf 0 g ");
         }
         return form;
     }
