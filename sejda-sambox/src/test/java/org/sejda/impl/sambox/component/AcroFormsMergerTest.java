@@ -121,6 +121,55 @@ public class AcroFormsMergerTest {
     }
 
     @Test
+    public void mergeWithHierarchy() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertTrue(victim.hasForm());
+            PDAcroForm form = victim.getForm();
+            assertNotNull(form.getField("node.leaf"));
+            assertEquals(5, form.getFields().size());
+        }
+    }
+
+    @Test
+    public void mergeRenamingWithHierarchy() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS, destination);
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+            mapping.clear();
+            annotationsLookup.clear();
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertTrue(victim.hasForm());
+            PDAcroForm form = victim.getForm();
+            assertNotNull(form.getField("node.leaf"));
+            assertEquals(6, form.getFields().size());
+        }
+    }
+
+    @Test
     public void mergeHalfFormWithAnnotations() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
