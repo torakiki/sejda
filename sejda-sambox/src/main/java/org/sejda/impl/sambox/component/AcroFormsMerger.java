@@ -241,7 +241,7 @@ public class AcroFormsMerger {
                         terminalField.getCOSObject().removeItems(WIDGET_KEYS);
                     }
                 } else {
-                    LOG.info("Discarded not relevant field {}", field.getPartialName());
+                    LOG.debug("Discarded not relevant field {}", field.getPartialName());
                 }
             }
         }

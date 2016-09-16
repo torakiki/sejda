@@ -33,6 +33,7 @@ import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
@@ -56,6 +57,7 @@ public class PagesExtractor implements Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(PagesExtractor.class);
 
     private OutlineDistiller outlineMerger;
+    private AcroFormsMerger acroFormsMerger;
     private PDDocument origin;
     private PDDocumentHandler destinationDocument;
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
@@ -69,6 +71,8 @@ public class PagesExtractor implements Closeable {
         this.outlineMerger = new OutlineDistiller(origin);
         this.destinationDocument = new PDDocumentHandler();
         this.destinationDocument.initialiseBasedOn(origin);
+        this.acroFormsMerger = new AcroFormsMerger(AcroFormPolicy.MERGE,
+                this.destinationDocument.getUnderlyingPDDocument());
     }
 
     public void retain(Set<Integer> pages, TaskExecutionContext executionContext) throws TaskCancelledException {
@@ -124,8 +128,17 @@ public class PagesExtractor implements Closeable {
         if (!discardOutline) {
             createOutline();
         }
+
         LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(origin).retainRelevantAnnotations(pagesLookup);
         clipSignatures(annotations.values());
+
+        acroFormsMerger.mergeForm(origin.getDocumentCatalog().getAcroForm(), annotations);
+
+        if (acroFormsMerger.hasForm()) {
+            LOG.debug("Adding generated AcroForm");
+            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
+        }
+
         destinationDocument.savePDDocument(file);
     }
 

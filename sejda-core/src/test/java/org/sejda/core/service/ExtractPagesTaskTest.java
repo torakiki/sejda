@@ -19,6 +19,19 @@
  */
 package org.sejda.core.service;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.core.TestListenerFactory;
@@ -31,18 +44,6 @@ import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Test for an extract pages task.
@@ -240,6 +241,25 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.assertOutputSize(2);
         testContext.forEachPdfOutput(d -> {
             assertEquals(d.getNumberOfPages(), 2);
+        });
+    }
+
+    @Test
+    public void extractWithForms() throws  IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(1, 1));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addSource(formInput());
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertOutputSize(1);
+        testContext.forEachPdfOutput(d -> {
+            assertNotNull(d.getDocumentCatalog().getAcroForm());
         });
     }
 }

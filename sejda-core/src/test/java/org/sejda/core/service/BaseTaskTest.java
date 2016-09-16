@@ -101,6 +101,11 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
                 "encrypted-test-file.pdf", "test");
     }
 
+    public PdfStreamSource formInput() {
+        return PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf"), "test-form.pdf");
+    }
+
     public PdfStreamSource stronglyEncryptedInput() {
         return PdfStreamSource.newInstanceWithPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES256_user_pwd.pdf"),
@@ -124,6 +129,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public StreamSource customNonPdfInput(String path) {
         String extension = FilenameUtils.getExtension(path);
-        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), randomAlphanumeric(16) + "." + extension);
+        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path),
+                randomAlphanumeric(16) + "." + extension);
     }
 }
