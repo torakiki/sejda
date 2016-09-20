@@ -19,7 +19,7 @@
 		"name": "${project.version}",
 		"desc": "Sejda version ${project.version}",
 		"released": "${timestamp}",
-		"vcs_tag": "${TRAVIS_TAG}",
+		"vcs_tag": "${project.version}",
 		"gpgSign": false
 	},
 
@@ -58,16 +58,8 @@
 			"uploadPattern": "org/sejda/sejda-sambox/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "target/(.*\\.pom)",
-			"uploadPattern": "org/sejda/sejda-parent/$1"
-		},
-		{
-			"includePattern": "target/(.*\\.asc)",
-			"uploadPattern": "org/sejda/sejda-parent/$1"
-		},
-		{
-			"includePattern": "target/(.*\\.md5)",
-			"uploadPattern": "org/sejda/sejda-parent/$1"
+			"includePattern": "target/(.*)\\.(asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-parent//${project.version}/$1.$2"
 		}
 	],
 
