@@ -59,7 +59,7 @@
 		},
 		{
 			"includePattern": "target/(.*)\\.(asc|md5|pom)",
-			"uploadPattern": "org/sejda/sejda-parent//${project.version}/$1.$2"
+			"uploadPattern": "org/sejda/sejda-parent/${project.version}/$1.$2"
 		}
 	],
 
