@@ -23,6 +23,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
+import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
  * Parameters for the optimize task, which compresses images found in the PDF changing their DPI to 144 by default. Depending on JPG codecs found on the system, this might not work
@@ -33,6 +34,7 @@ public class OptimizeParameters extends MultiplePdfSourceMultipleOutputParameter
     private float imageQuality = 0.65f;
     private int imageDpi = 72;
     private int imageMinBytesSize = 0; // images under this threshold are not optimized
+    @NotEmpty
     private Set<Optimization> optimizations = new NullSafeSet<>();
 
     public float getImageQuality() {

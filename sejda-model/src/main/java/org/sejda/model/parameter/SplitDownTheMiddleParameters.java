@@ -18,6 +18,11 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.Set;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
@@ -26,16 +31,16 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.repaginate.Repagination;
 import org.sejda.model.split.SplitDownTheMiddleMode;
 
-import javax.validation.Valid;
-import java.util.Set;
+public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements ExcludedPagesSelection {
 
-public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutputParameters implements ExcludedPagesSelection {
-
+    @NotNull
     private Repagination repagination = Repagination.NONE;
     @Valid
-    public final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
+    public final Set<PageRange> excludedPagesSelection = new NullSafeSet<>();
     // Defaults to Auto, meaning the pages will be split horizontally if in portrait mode or vertically in landscape mode
     // Allows user to override this and force horizontal or vertical split
+    @NotNull
     private SplitDownTheMiddleMode mode = SplitDownTheMiddleMode.AUTO;
 
     // Ratio is left part's width / right part's width or top part's height / bottom part's height
@@ -51,6 +56,7 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         this.repagination = repagination;
     }
 
+    @Override
     public Set<PageRange> getExcludedPagesSelection() {
         return excludedPagesSelection;
     }
@@ -73,12 +79,8 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getRepagination())
-                .append(getExcludedPagesSelection())
-                .append(getRatio())
-                .append(getMode())
-                .appendSuper(super.hashCode()).toHashCode();
+        return new HashCodeBuilder().append(getRepagination()).append(getExcludedPagesSelection()).append(getRatio())
+                .append(getMode()).appendSuper(super.hashCode()).toHashCode();
     }
 
     @Override
@@ -89,12 +91,10 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         if (!(other instanceof SplitDownTheMiddleParameters)) {
             return false;
         }
-        return new EqualsBuilder()
-                .append(getRepagination(), ((SplitDownTheMiddleParameters) other).getRepagination())
-                .append(getExcludedPagesSelection(), ((SplitDownTheMiddleParameters) other).getExcludedPagesSelection())
-                .append(getRatio(), ((SplitDownTheMiddleParameters) other).getRatio())
-                .append(getMode(), ((SplitDownTheMiddleParameters) other).getMode())
-                .appendSuper(super.equals(other))
-                .isEquals();
+        SplitDownTheMiddleParameters parameter = (SplitDownTheMiddleParameters) other;
+        return new EqualsBuilder().append(getRepagination(), parameter.getRepagination())
+                .append(getExcludedPagesSelection(), parameter.getExcludedPagesSelection())
+                .append(getRatio(), parameter.getRatio()).append(getMode(), parameter.getMode())
+                .appendSuper(super.equals(other)).isEquals();
     }
 }

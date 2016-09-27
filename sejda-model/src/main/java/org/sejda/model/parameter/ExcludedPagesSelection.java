@@ -18,11 +18,11 @@
  */
 package org.sejda.model.parameter;
 
-import org.sejda.common.collection.NullSafeSet;
-import org.sejda.model.pdf.page.PageRange;
-
 import java.util.Collection;
 import java.util.Set;
+
+import org.sejda.common.collection.NullSafeSet;
+import org.sejda.model.pdf.page.PageRange;
 
 public interface ExcludedPagesSelection {
 
@@ -46,7 +46,7 @@ public interface ExcludedPagesSelection {
      * @return the set of excluded pages.
      */
     default Set<Integer> getExcludedPages(int upperLimit) {
-        Set<Integer> pages = new NullSafeSet<Integer>();
+        Set<Integer> pages = new NullSafeSet<>();
         for (PageRange range : getExcludedPagesSelection()) {
             pages.addAll(range.getPages(upperLimit));
         }

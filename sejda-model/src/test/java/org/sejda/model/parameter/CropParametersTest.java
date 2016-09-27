@@ -32,6 +32,7 @@ import org.sejda.model.RectangularBox;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
@@ -60,6 +61,20 @@ public class CropParametersTest {
         Set<RectangularBox> areas = victim.getCropAreas();
         assertEquals(1, areas.size());
         assertTrue(areas.contains(area));
+    }
+
+    @Test
+    public void testExcludedPages() {
+        CropParameters victim = new CropParameters();
+        RectangularBox area = RectangularBox.newInstance(0, 1, 10, 9);
+        victim.addCropArea(area);
+        victim.addExcludedPage(2);
+        victim.addExcludedPageRange(new PageRange(5, 8));
+        Set<Integer> excluded = victim.getExcludedPages(6);
+        assertEquals(3, excluded.size());
+        assertTrue(excluded.contains(2));
+        assertTrue(excluded.contains(5));
+        assertTrue(excluded.contains(6));
     }
 
     @Test
