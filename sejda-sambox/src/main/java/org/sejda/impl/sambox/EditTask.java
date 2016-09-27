@@ -32,23 +32,14 @@ import java.util.TreeSet;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PageGeometricalShapeWriter;
-import org.sejda.impl.sambox.component.PageImageWriter;
-import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.AddShapeOperation;
-import org.sejda.model.parameter.edit.AddTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
-import org.sejda.model.parameter.edit.HighlightTextOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
+import org.sejda.model.parameter.edit.*;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -135,13 +126,13 @@ public class EditTask extends BaseTask<EditParameters> {
 
             int totalPages = documentHandler.getNumberOfPages();
 
-            for (AddTextOperation textOperation : parameters.getTextOperations()) {
+            for (AppendTextOperation textOperation : parameters.getAppendTextOperations()) {
                 PageTextWriter textWriter = new PageTextWriter(documentHandler.getUnderlyingPDDocument());
 
                 SortedSet<Integer> pageNumbers = textOperation.getPageRange().getPages(totalPages);
 
                 for (int pageNumber : pageNumbers) {
-                    PDPage page = documentHandler.getPage(pageNumber);
+                    PDPage page = documentHandler.getPageCached(pageNumber);
                     PDFont font = defaultIfNull(getStandardType1Font(textOperation.getFont()), PDType1Font.HELVETICA);
                     textWriter.write(page, textOperation.getPosition(), textOperation.getText(), font, textOperation.getFontSize(), textOperation.getColor());
                 }
@@ -154,7 +145,7 @@ public class EditTask extends BaseTask<EditParameters> {
                 SortedSet<Integer> pageNumbers = imageOperation.getPageRange().getPages(totalPages);
 
                 for (int pageNumber : pageNumbers) {
-                    PDPage page = documentHandler.getPage(pageNumber);
+                    PDPage page = documentHandler.getPageCached(pageNumber);
                     imageWriter.write(page, image, imageOperation.getPosition(), imageOperation.getWidth(), imageOperation.getHeight());
                 }
             }
@@ -172,7 +163,7 @@ public class EditTask extends BaseTask<EditParameters> {
                             highlightTextOperation.getColor().getGreen(),
                             highlightTextOperation.getColor().getBlue()
                     }, PDDeviceRGB.INSTANCE));
-                    documentHandler.getPage(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
+                    documentHandler.getPageCached(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
                 }
             }
 
@@ -180,7 +171,7 @@ public class EditTask extends BaseTask<EditParameters> {
             for(AddShapeOperation shapeOperation: parameters.getShapeOperations()) {
                 SortedSet<Integer> pageNumbers = shapeOperation.getPageRange().getPages(totalPages);
                 for (int pageNumber : pageNumbers) {
-                    PDPage page = documentHandler.getPage(pageNumber);
+                    PDPage page = documentHandler.getPageCached(pageNumber);
                     shapeWriter.drawShape(
                             shapeOperation.getShape(),
                             page,
@@ -189,6 +180,15 @@ public class EditTask extends BaseTask<EditParameters> {
                             shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
                             shapeOperation.getBorderWidth()
                     );
+                }
+            }
+
+            PageTextReplacer textReplacer = new PageTextReplacer(documentHandler.getUnderlyingPDDocument());
+            for(EditTextOperation editTextOperation: parameters.getEditTextOperations()) {
+                SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
+                for (int pageNumber : pageNumbers) {
+                    PDPage page = documentHandler.getPageCached(pageNumber);
+                    textReplacer.replaceText(page, editTextOperation.getText(), editTextOperation.getBoundingBox());
                 }
             }
 

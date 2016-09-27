@@ -26,15 +26,19 @@ import org.sejda.model.parameter.edit.*;
 
 public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    private List<AddTextOperation> textOperations = new ArrayList<>();
+    private List<AppendTextOperation> appendTextOperations = new ArrayList<>();
+    private List<EditTextOperation> editTextOperations = new ArrayList<>();
     private List<AddImageOperation> imageOperations = new ArrayList<>();
     private List<AddShapeOperation> shapeOperations = new ArrayList<>();
     private List<InsertPageOperation> insertPageOperations = new ArrayList<>();
     private List<DeletePageOperation> deletePageOperations = new ArrayList<>();
     private List<HighlightTextOperation> highlightTextOperations = new ArrayList<>();
 
-    public void addTextOperation(AddTextOperation operation) {
-        textOperations.add(operation);
+    public void addAppendTextOperation(AppendTextOperation operation) {
+        appendTextOperations.add(operation);
+    }
+    public void addEditTextOperation(EditTextOperation operation) {
+        editTextOperations.add(operation);
     }
 
     public void addImageOperation(AddImageOperation operation) {
@@ -57,8 +61,12 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
         highlightTextOperations.add(operation);
     }
 
-    public List<AddTextOperation> getTextOperations() {
-        return textOperations;
+    public List<AppendTextOperation> getAppendTextOperations() {
+        return appendTextOperations;
+    }
+
+    public List<EditTextOperation> getEditTextOperations() {
+        return editTextOperations;
     }
 
     public List<AddImageOperation> getImageOperations() {
@@ -91,7 +99,8 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
-                .append(textOperations, that.textOperations)
+                .append(appendTextOperations, that.appendTextOperations)
+                .append(editTextOperations, that.editTextOperations)
                 .append(imageOperations, that.imageOperations)
                 .append(shapeOperations, that.shapeOperations)
                 .append(insertPageOperations, that.insertPageOperations)
@@ -104,7 +113,8 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
-                .append(textOperations)
+                .append(appendTextOperations)
+                .append(editTextOperations)
                 .append(imageOperations)
                 .append(shapeOperations)
                 .append(insertPageOperations)

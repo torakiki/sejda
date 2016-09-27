@@ -21,6 +21,7 @@ package org.sejda.core.service;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.RectangularBox;
+import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
@@ -35,6 +36,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -55,9 +57,9 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
 
     private EditParameters basicText(String text, PageRange pageRange) throws IOException {
         EditParameters parameters = new EditParameters();
-        AddTextOperation textOperation = new AddTextOperation(text, StandardType1Font.HELVETICA_BOLD_OBLIQUE,
+        AppendTextOperation textOperation = new AppendTextOperation(text, StandardType1Font.HELVETICA_BOLD_OBLIQUE,
                 12, Color.RED, TEXT_EDIT_POSITION, pageRange);
-        parameters.addTextOperation(textOperation);
+        parameters.addAppendTextOperation(textOperation);
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -79,14 +81,15 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         return parameters;
     }
 
-    private AddTextOperation textOperationForPage(String text, int page) {
-        return new AddTextOperation(text, StandardType1Font.HELVETICA_BOLD_OBLIQUE,
+    private AppendTextOperation textOperationForPage(String text, int page) {
+        return new AppendTextOperation(text, StandardType1Font.HELVETICA_BOLD_OBLIQUE,
                 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(page, page));
     }
 
     private EditParameters rotatedDocumentAddImage() throws IOException {
         EditParameters parameters = basicAddImage(new PageRange(1));
         parameters.removeAllSources();
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
         parameters.addSource(customInput("pdf/rotated_pages.pdf"));
         return parameters;
     }
@@ -141,6 +144,32 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     }
 
     @Test
+    public void testDocumentWithCroppedPagesHeader() throws Exception {
+        parameters = basicText("Sample text here", new PageRange(1));
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/cropped_test_file.pdf"));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertTextEditAreaHasText(d.getPage(0), "Sample text here");
+        });
+    }
+
+    @Test
+    public void testDocumentWithRotatedCroppedPagesHeader() throws Exception {
+        parameters = basicText("Sample text here", new PageRange(1));
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/rotated_cropped_test_file.pdf"));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertTextEditAreaHasText(d.getPage(0), "Sample text here");
+        });
+    }
+
+    @Test
     public void testAddingPngImage() throws Exception {
         parameters = basicAddImage(new PageRange(1));
         execute(parameters);
@@ -166,7 +195,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     @Test
     public void testAddingBlankPageWithImageAndTextAndRemovingPage() throws Exception {
         parameters = basicAddImage(new PageRange(1, 1));
-        parameters.addTextOperation(new AddTextOperation("Sample text", StandardType1Font.HELVETICA_BOLD_OBLIQUE, 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(1, 1)));
+        parameters.addAppendTextOperation(new AppendTextOperation("Sample text", StandardType1Font.HELVETICA_BOLD_OBLIQUE, 12, Color.RED, TEXT_EDIT_POSITION, new PageRange(1, 1)));
         parameters.addInsertPageOperation(new InsertPageOperation(1));
         parameters.addDeletePageOperation(new DeletePageOperation(1));
         parameters.addDeletePageOperation(new DeletePageOperation(1));
@@ -207,7 +236,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     public void testInsertPageBeforeFirst() throws Exception {
         EditParameters parameters = new EditParameters();
         parameters.addInsertPageOperation(new InsertPageOperation(1));
-        parameters.addTextOperation(textOperationForPage("Page 1 text", 1));
+        parameters.addAppendTextOperation(textOperationForPage("Page 1 text", 1));
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -226,7 +255,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     public void testInsertPageAfterFirst() throws Exception {
         EditParameters parameters = new EditParameters();
         parameters.addInsertPageOperation(new InsertPageOperation(2));
-        parameters.addTextOperation(textOperationForPage("Page 2 text", 2));
+        parameters.addAppendTextOperation(textOperationForPage("Page 2 text", 2));
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -245,7 +274,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     public void testInsertPageAfterLast() throws Exception {
         EditParameters parameters = new EditParameters();
         parameters.addInsertPageOperation(new InsertPageOperation(5));
-        parameters.addTextOperation(textOperationForPage("Page 5 text", 5));
+        parameters.addAppendTextOperation(textOperationForPage("Page 5 text", 5));
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -292,7 +321,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         EditParameters parameters = new EditParameters();
         parameters.addDeletePageOperation(new DeletePageOperation(1));
         parameters.addInsertPageOperation(new InsertPageOperation(1));
-        parameters.addTextOperation(textOperationForPage("Page 1 text", 1));
+        parameters.addAppendTextOperation(textOperationForPage("Page 1 text", 1));
 
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -307,6 +336,152 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         testContext.assertTaskCompleted();
     }
 
+    @Test
+    public void testEditExistingText() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(70, 94, 205, 21);
+        parameters.addEditTextOperation(new EditTextOperation("Redacted out :)", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/paragraphs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(1));
+            assertTextAreaHasText(d.getPage(0), "Redacted out :)", redactArea);
+            assertPageTextDoesNotContain(d.getPage(0), "What is Lorem Ipsum?");
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditExistingText_rotated() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(129, 33, 246, 21);
+        parameters.addEditTextOperation(new EditTextOperation("Redacted out :)", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/rotated_paragraphs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(1));
+            assertTextAreaHasText(d.getPage(0), "Redacted out :)", redactArea);
+            assertPageTextDoesNotContain(d.getPage(0), "This is red text on a rotated page");
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditTextWithinXForms() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea1 = new TopLeftRectangularBox(681, 70, 169, 28);
+        TopLeftRectangularBox redactArea2 = new TopLeftRectangularBox(680, 189, 104, 16);
+        parameters.addEditTextOperation(new EditTextOperation("Redacted out :)", redactArea1, new PageRange(1, 1)));
+        parameters.addEditTextOperation(new EditTextOperation("Another replacement", redactArea2, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/2-up-sample.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Why do we use it?");
+            assertTextAreaHasText(d.getPage(0), "Redacted out :)", redactArea1);
+            assertPageTextDoesNotContain(d.getPage(0), "humour and the like");
+            assertTextAreaHasText(d.getPage(0), "Another replacement", redactArea2);
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Ignore("When doc is rotated and cropped somehow the position is shifted, incorrect")
+    @Test
+    public void testEditExistingText_rotatedCropped() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(60, 5, 246, 21);
+        parameters.addEditTextOperation(new EditTextOperation("This is red", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/cropped_rotated_paragraphs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "This is red text on a rotated page.");
+            assertTextAreaHasText(d.getPage(0), "This is red", redactArea);
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditExistingTextWithSubsetFontKeepsOriginalFont() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(325, 36, 36, 15);
+        parameters.addEditTextOperation(new EditTextOperation("Tootal", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/tabular-data.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Total");
+            assertTextAreaHasText(d.getPage(0), "Tootal", redactArea);
+            assertThat("No new fonts are added => original font is reused", size(d.getPage(0).getResources().getFontNames().iterator()), is(2));
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditExistingTextWithSubsetFontUsesReplacementFont() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(325, 36, 36, 15);
+        parameters.addEditTextOperation(new EditTextOperation("XYZW", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/tabular-data.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Total");
+            assertTextAreaHasText(d.getPage(0), "XYZW", redactArea);
+            assertThat("New fonts are added => original font is not reused", size(d.getPage(0).getResources().getFontNames().iterator()), is(3));
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    /**
+     * Returns the number of elements remaining in {@code iterator}. The iterator
+     * will be left exhausted: its {@code hasNext()} method will return
+     * {@code false}.
+     */
+    public static int size(Iterator<?> iterator) {
+        int count = 0;
+        while (iterator.hasNext()) {
+            iterator.next();
+            count++;
+        }
+        return count;
+    }
+
+    protected abstract void assertPageTextDoesNotContain(PDPage page, String expectedNotFoundText);
+
+    protected abstract void assertTextAreaHasText(PDPage page, String expectedText, TopLeftRectangularBox area);
 
     protected abstract void assertTextEditAreaHasText(PDPage page, String expectedText);
 

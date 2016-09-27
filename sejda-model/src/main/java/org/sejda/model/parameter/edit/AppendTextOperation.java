@@ -24,7 +24,7 @@ import org.sejda.model.pdf.page.PageRange;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-public class AddTextOperation {
+public class AppendTextOperation {
 
     private String text;
     private StandardType1Font font;
@@ -33,7 +33,7 @@ public class AddTextOperation {
     private Point2D position;
     private PageRange pageRange;
 
-    public AddTextOperation(String text, StandardType1Font font, double fontSize, Color color, Point2D position, PageRange pageRange) {
+    public AppendTextOperation(String text, StandardType1Font font, double fontSize, Color color, Point2D position, PageRange pageRange) {
         this.text = text;
         this.font = font;
         this.fontSize = fontSize;
@@ -72,7 +72,7 @@ public class AddTextOperation {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        AddTextOperation that = (AddTextOperation) o;
+        AppendTextOperation that = (AppendTextOperation) o;
 
         return new EqualsBuilder()
                 .append(fontSize, that.fontSize)

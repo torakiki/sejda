@@ -19,7 +19,7 @@
  */
 package org.sejda.model;
 
-import java.awt.Point;
+import java.awt.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -162,5 +162,9 @@ public final class RectangularBox {
             throw new IllegalArgumentException("null point is not allowed.");
         }
         return newInstance(bottomLeft.y, bottomLeft.x, topRight.y, topRight.x);
+    }
+
+    public TopLeftRectangularBox toTopLeftRectangularBox() {
+        return new TopLeftRectangularBox(left, top, right - left, bottom - top);
     }
 }

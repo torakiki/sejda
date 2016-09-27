@@ -19,24 +19,29 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
-import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
-import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
-import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
-
 import org.junit.Test;
+import org.sejda.fonts.UnicodeType0Font;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+
+import java.io.IOException;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.sejda.impl.sambox.util.FontUtils.*;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class FontUtilsTest {
 
@@ -69,6 +74,7 @@ public class FontUtilsTest {
     @Test
     public void testFindFontFor() {
         assertEquals("NotoSansThai", findFontFor(new PDDocument(), "ทดสอบ").getName());
+        assertEquals("NotoSans", findFontFor(new PDDocument(), "αυτό είναι ένα τεστ").getName());
         assertNull(findFontFor(new PDDocument(), "വീട്"));
     }
 
@@ -98,5 +104,46 @@ public class FontUtilsTest {
 
         PDFont actual = findFontFor(doc, "ทด");
         assertTrue("Font is cached, same instance is returned", expected == actual);
+    }
+
+    @Test
+    public void testCanDisplayThai() {
+        PDFont noto = FontUtils.loadFont(new PDDocument(), UnicodeType0Font.NOTO_SANS_THAI_REGULAR);
+        assertThat(FontUtils.canDisplay("นี่คือการทดสอบ", noto), is(true));
+    }
+
+    @Test
+    public void testCanDisplayType0FontsThatDontThrow() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/2-up-sample.pdf");
+
+        PDResources res = doc.getPage(0).getResources();
+        PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Form2"));
+        PDResources formRes = form.getResources();
+        PDFont font = formRes.getFont(COSName.getPDFName("F0"));
+
+        assertThat(font.getName(), is("Arial-BoldMT"));
+        assertThat(FontUtils.canDisplay("Redacted out :)", font), is(false));
+    }
+
+    @Test
+    public void testLoadingFullFontFromSystemForSubsetFonts() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/subset-font.pdf");
+
+        PDResources res = doc.getPage(0).getResources();
+        PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Xf1"));
+        PDResources formRes = form.getResources();
+        PDFont font = formRes.getFont(COSName.getPDFName("F1"));
+        assertThat(font.getName(), is("PXAAAA+Verdana"));
+
+        PDFont original = new FontUtils.FontSubsetting(font).loadOriginal(doc);
+        // relies on Verdana font being present on the system
+        assertThat(original.getName(), is("Verdana"));
+    }
+
+    private PDDocument getTestDoc(String name) throws TaskIOException {
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
+                .getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
+
+        return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
     }
 }

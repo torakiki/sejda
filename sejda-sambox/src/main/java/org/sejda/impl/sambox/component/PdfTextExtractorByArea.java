@@ -99,7 +99,11 @@ public class PdfTextExtractorByArea {
             stripper.addRegion("area1", area);
             stripper.extractRegions(page);
 
-            return stripper.getTextForRegion("area1");
+            String result = stripper.getTextForRegion("area1");
+            result = defaultIfBlank(result, "");
+            result = StringUtils.strip(result);
+            result = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(result).trim();
+            return result;
         } catch (IOException e) {
             throw new TaskIOException("An error occurred extracting text from page.", e);
         }
@@ -115,7 +119,6 @@ public class PdfTextExtractorByArea {
             for (int i = 0; i < areas.size(); i++) {
                 stripper.addRegion("area" + i, areas.get(i));
             }
-
 
             stripper.extractRegions(page);
 

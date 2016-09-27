@@ -10,16 +10,19 @@ import java.awt.*;
 /**
  * Rectangle representation that defines (0, 0) as top-left corner.
  * Increasing x increases its width.
+ *
+ * It's usually what the client sees, so 0,0 is the top left coordinate from the crop box.
+ * If the crop and media boxes differ, these coordindates would need to be adjusted to be media box 0,0 relative.
  */
 public class TopLeftRectangularBox {
-    final int x;
-    final int y;
+    final int left;
+    final int top;
     final int width;
     final int height;
 
-    public TopLeftRectangularBox(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
+    public TopLeftRectangularBox(int left, int top, int width, int height) {
+        this.left = left;
+        this.top = top;
         this.width = width;
         this.height = height;
     }
@@ -30,13 +33,13 @@ public class TopLeftRectangularBox {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("x", x).append("y", y).append("width", width)
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("left", left).append("top", top).append("width", width)
                 .append("height", height).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(x).append(y).append(width).append(height).toHashCode();
+        return new HashCodeBuilder().append(left).append(top).append(width).append(height).toHashCode();
     }
 
     @Override
@@ -48,12 +51,12 @@ public class TopLeftRectangularBox {
             return false;
         }
         TopLeftRectangularBox instance = (TopLeftRectangularBox) other;
-        return new EqualsBuilder().append(x, instance.x).append(y, instance.y)
+        return new EqualsBuilder().append(left, instance.left).append(top, instance.top)
                 .append(width, instance.width).append(height, instance.height).isEquals();
     }
 
     public Rectangle asRectangle() {
-        return new Rectangle(x, y, width, height);
+        return new Rectangle(left, top, width, height);
     }
 
     public TopLeftRectangularBox intersection(TopLeftRectangularBox other) {
@@ -61,6 +64,10 @@ public class TopLeftRectangularBox {
     }
 
     public TopLeftRectangularBox withPadding(int padding) {
-        return new TopLeftRectangularBox(x - padding, y - padding, width + 2 * padding, height + 2 * padding);
+        return new TopLeftRectangularBox(left - padding, top - padding, width + 2 * padding, height + 2 * padding);
+    }
+
+    public boolean containsPoint(float x, float y) {
+        return this.left < x && this.left + width  > x && this.top < y && this.top + height > y;
     }
 }

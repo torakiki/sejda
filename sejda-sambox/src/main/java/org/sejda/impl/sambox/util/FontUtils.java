@@ -20,23 +20,22 @@ package org.sejda.impl.sambox.util;
 
 import static java.util.Objects.nonNull;
 
+import java.awt.geom.GeneralPath;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.fontbox.ttf.TrueTypeFont;
 import org.sejda.fonts.OptionalUnicodeType0Font;
 import org.sejda.fonts.UnicodeType0Font;
 import org.sejda.model.pdf.FontResource;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDType0Font;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.font.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,8 +94,10 @@ public final class FontUtils {
      */
     public static PDFont fontOrFallback(String text, PDFont font, Supplier<PDFont> fallbackSupplier) {
         if (nonNull(fallbackSupplier) && !canDisplay(text, font)) {
-            LOG.debug("Text cannot be written with font {}, using fallback", font.getName());
-            return fallbackSupplier.get();
+            PDFont fallback = fallbackSupplier.get();
+            String fallbackName = fallback == null ? null : fallback.getName();
+            LOG.info("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(), fallbackName);
+            return fallback;
         }
         return font;
     }
@@ -114,7 +115,7 @@ public final class FontUtils {
         loadedFontCache.remove(document);
     }
 
-    private static PDFont loadFont(PDDocument document, FontResource font) {
+    public static PDFont loadFont(PDDocument document, FontResource font) {
         if(!loadedFontCache.containsKey(document)){
             loadedFontCache.put(document, new HashMap<>());
         }
@@ -165,11 +166,31 @@ public final class FontUtils {
         for (FontResource font : fonts) {
             PDFont loaded = loadFont(document, font);
             if (canDisplay(text, loaded)) {
-                LOG.debug("Found suitable font {}", loaded.getName());
+                LOG.debug("Found suitable font {} to display '{}'", loaded.getName(), loaded, text);
                 return loaded;
             }
         }
         return null;
+    }
+
+    /**
+     * Check is given text contains only unicode whitespace characters
+     *
+     * @param text
+     * @return
+     */
+    public static boolean isOnlyWhitespace(String text) {
+        return text.replaceAll("\\p{Zs}", "").length() == 0;
+    }
+
+    /**
+     * Removes all unicode whitespace characters from the input string
+     *
+     * @param text
+     * @return
+     */
+    public static String removeWhitespace(String text) {
+        return text.replaceAll("\\p{Zs}", "");
     }
 
     /**
@@ -178,14 +199,152 @@ public final class FontUtils {
      * @return true if the given font can display the given text
      */
     public static boolean canDisplay(String text, PDFont font) {
+        if(font == null) return false;
+
+        //LOG.debug("Can display '{}' using {}?", text, font);
+
         try {
-            if (nonNull(font)) {
-                font.encode(text);
-                return true;
+            // remove all whitespace characters and check only if those can be written using the font
+            byte[] encoded = font.encode(removeWhitespace(text));
+
+            if(font instanceof PDType0Font) {
+                InputStream in = new ByteArrayInputStream(encoded);
+                while (in.available() > 0) {
+                    int code = font.readCode(in);
+
+                    //LOG.debug("Read codePoint {}", code);
+
+                    PDType0Font type0Font = (PDType0Font) font;
+                    GeneralPath path = type0Font.getPath(code);
+//                    if(path != null) {
+//                        LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
+//                    }
+
+                    if (path == null || path.getBounds2D().getWidth() == 0) {
+                        return false;
+                    }
+                }
             }
+
+            return true;
         } catch (IllegalArgumentException | IOException e) {
-            // nothing
+            //LOG.debug("Cannot display text with font", e);
         }
         return false;
+    }
+
+    public static boolean isBold(PDFont font) {
+        String lowercasedName = font.getName().toLowerCase();
+        return lowercasedName.contains("bold");
+    }
+
+    public static boolean isItalic(PDFont font) {
+        String lowercasedName = font.getName().toLowerCase();
+        return lowercasedName.contains("italic") || lowercasedName.contains("oblique");
+    }
+
+    /**
+     * Helper for subset fonts. Determines if a font is subset, computes original font name.
+     * Provides methods for loading the original full font from the system, if available, or loading a fallback font.
+     */
+    public static class FontSubsetting {
+        public final String fontName;
+        public final boolean isSubset;
+        public final PDFont subsetFont;
+
+        public FontSubsetting(PDFont subsetFont) {
+            this.subsetFont = subsetFont;
+
+            // is it a subset font? ABCDEF+Verdana
+            String[] fontNameFragments = subsetFont.getName().split("\\+");
+
+            if(fontNameFragments.length == 2 && fontNameFragments[0].length() == 6) {
+                this.isSubset = true;
+                this.fontName = fontNameFragments[1];
+            } else {
+                this.isSubset = false;
+                this.fontName = null;
+            }
+        }
+
+        public PDFont loadOriginalOrSimilar(PDDocument document) {
+            PDFont original = loadOriginal(document);
+            if(original == null) {
+                return loadSimilar(document);
+            } else {
+                return original;
+            }
+        }
+
+        /**
+         * Tries to load the original full font from the system
+         *
+         */
+        public PDFont loadOriginal(PDDocument document) {
+            String lookupName = fontName.replace("-", " ");
+
+            LOG.debug("Searching the system for a font matching name '{}'", lookupName);
+
+            FontMapping<TrueTypeFont> fontMapping = FontMappers.instance().getTrueTypeFont(lookupName, null);
+            if(fontMapping != null && fontMapping.getFont() != null && !fontMapping.isFallback()) {
+                TrueTypeFont mappedFont = fontMapping.getFont();
+
+                try {
+                    LOG.debug("Original font available on the system: {}", fontName);
+                    return PDType0Font.load(document, mappedFont.getOriginalData());
+                } catch (IOException ioe) {
+                    LOG.warn("Failed to load font from system", ioe);
+                    try {
+                        mappedFont.close();
+                    } catch (IOException e) {
+                        LOG.warn("Failed closing font", e);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * Tries to load a similar full font from the system
+         */
+        public PDFont loadSimilar(PDDocument document) {
+            String lookupName = fontName.replace("-", " ");
+
+
+            // Eg: Arial-BoldMT
+            PDFontDescriptor descriptor = new PDFontDescriptor(new COSDictionary());
+            descriptor.setFontName(fontName.split("-")[0]);
+            descriptor.setForceBold(FontUtils.isBold(subsetFont));
+            descriptor.setItalic(FontUtils.isItalic(subsetFont));
+
+            LOG.debug("Searching the system for a font matching name '{}' and description [name:{}, bold:{}, italic:{}]", lookupName, descriptor.getFontName(), descriptor.isForceBold(), descriptor.isItalic());
+
+            FontMapping<TrueTypeFont> fontMapping = FontMappers.instance().getTrueTypeFont(lookupName, descriptor);
+            if(fontMapping != null && fontMapping.getFont() != null) {
+                TrueTypeFont mappedFont = fontMapping.getFont();
+
+                try {
+                    if(fontMapping.isFallback()) {
+                        LOG.debug("Fallback font available on the system: {} (for {})", mappedFont.getName(), fontName);
+                    } else {
+                        LOG.debug("Original font available on the system: {}", fontName);
+                    }
+
+                    return PDType0Font.load(document, mappedFont.getOriginalData());
+                } catch (IOException ioe) {
+                    LOG.warn("Failed to load font from system", ioe);
+                } finally {
+                    try {
+                        mappedFont.close();
+                    } catch (IOException e) {
+                        LOG.warn("Failed closing font", e);
+                    }
+                }
+            }
+
+            return null;
+        }
+
     }
 }

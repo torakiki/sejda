@@ -28,10 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.PageLabelUtils;
@@ -320,6 +317,24 @@ public class PDDocumentHandler implements Closeable {
     public PDPage getPage(int pageNumber) {
         return document.getPage(pageNumber - 1);
     }
+
+    /**
+     * Returns the same PDPage object each time, given a page number
+     * This is required for things like text redacting, which updates the PDPage resources
+     * (getting a new PDPage object each time would overwrite any previous changes)
+     *
+     * @param pageNumber
+     * @return
+     */
+    private Map<Integer, PDPage > pagesCache = new HashMap<>();
+    public PDPage getPageCached(int pageNumber) {
+        if(!pagesCache.containsKey(pageNumber)) {
+            pagesCache.put(pageNumber, getPage(pageNumber));
+        }
+
+        return pagesCache.get(pageNumber);
+    }
+
 
     public PDPageTree getPages() {
         return document.getPages();
