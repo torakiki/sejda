@@ -19,6 +19,7 @@
  */
 package org.sejda.impl.sambox.util;
 
+import org.apache.fontbox.ttf.TrueTypeFont;
 import org.junit.Test;
 import org.sejda.fonts.UnicodeType0Font;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -28,6 +29,8 @@ import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDResources;
+import org.sejda.sambox.pdmodel.font.FontMappers;
+import org.sejda.sambox.pdmodel.font.FontMapping;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
@@ -127,6 +130,11 @@ public class FontUtilsTest {
 
     @Test
     public void testLoadingFullFontFromSystemForSubsetFonts() throws TaskIOException, IOException {
+        boolean isVerdanaAvailable = isFontAvailableOnSystem("Verdana");
+        if(!isVerdanaAvailable) {
+            return;
+        }
+
         PDDocument doc = getTestDoc("pdf/subset-font.pdf");
 
         PDResources res = doc.getPage(0).getResources();
@@ -145,5 +153,10 @@ public class FontUtilsTest {
                 .getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
 
         return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
+    }
+
+    private boolean isFontAvailableOnSystem(String name) {
+        FontMapping<TrueTypeFont> result =  FontMappers.instance().getTrueTypeFont(name, null);
+        return result != null && !result.isFallback();
     }
 }
