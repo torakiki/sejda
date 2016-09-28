@@ -166,7 +166,7 @@ public final class FontUtils {
         for (FontResource font : fonts) {
             PDFont loaded = loadFont(document, font);
             if (canDisplay(text, loaded)) {
-                LOG.debug("Found suitable font {} to display '{}'", loaded.getName(), loaded, text);
+                LOG.debug("Found suitable font {} to display '{}'", loaded, text);
                 return loaded;
             }
         }

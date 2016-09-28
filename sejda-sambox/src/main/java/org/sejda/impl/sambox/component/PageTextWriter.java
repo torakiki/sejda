@@ -28,6 +28,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 import org.sejda.core.support.util.StringUtils;
 import org.sejda.impl.sambox.util.FontUtils;
@@ -75,11 +76,11 @@ public class PageTextWriter {
 
         try {
             String label = normalizeWhitespace(rawLabel);
-            LinkedHashMap<String, PDFont> resolvedStringsToFonts = resolveFonts(label, font);
+            List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
             float stringWidth = 0.0f;
-            for(Map.Entry<String, PDFont> stringAndFont: resolvedStringsToFonts.entrySet()) {
-                String s = stringAndFont.getKey();
-                PDFont f = stringAndFont.getValue();
+            for(TextWithFont stringAndFont: resolvedStringsToFonts) {
+                String s = stringAndFont.getText();
+                PDFont f = stringAndFont.getFont();
                 stringWidth += f.getStringWidth(s) * fontSize.floatValue() / 1000f;
             }
 
@@ -111,7 +112,7 @@ public class PageTextWriter {
 
         String label = normalizeWhitespace(rawLabel);
 
-        LinkedHashMap<String, PDFont> resolvedStringsToFonts = resolveFonts(label, font);
+        List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
         int offset = 0;
 
         PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
@@ -145,10 +146,10 @@ public class PageTextWriter {
             contentStream.setTextRenderingMode(renderingMode);
             contentStream.setNonStrokingColor(color);
 
-            for (Map.Entry<String, PDFont> stringAndFont : resolvedStringsToFonts.entrySet()) {
+            for (TextWithFont stringAndFont : resolvedStringsToFonts) {
                 try {
-                    PDFont resolvedFont = stringAndFont.getValue();
-                    String resolvedLabel = stringAndFont.getKey();
+                    PDFont resolvedFont = stringAndFont.getFont();
+                    String resolvedLabel = stringAndFont.getText();
                     double resolvedFontSize = fontSize;
 
                     if(FontUtils.isOnlyWhitespace(resolvedLabel)) {
@@ -198,7 +199,7 @@ public class PageTextWriter {
 
                     offset += resolvedFont.getStringWidth(resolvedLabel) / 1000 * fontSize;
                 } catch (IOException e) {
-                    throw new TaskIOException("An error occurred writing the header or footer of the page.", e);
+                    throw new TaskIOException("An error occurred writing text to the page.", e);
                 }
             }
 
@@ -225,21 +226,39 @@ public class PageTextWriter {
         return latestSuitablefont;
     }
 
+    public static class TextWithFont {
+        private final PDFont font;
+        private final String text;
+
+        public TextWithFont(String text, PDFont font) {
+            this.font = font;
+            this.text = text;
+        }
+
+        public PDFont getFont() {
+            return font;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
     /**
      * Supports writing labels which require multiple fonts (eg: mixing thai and english words)
-     * Returns a map of string to font. Keys are ordered in the same order the strings appear in the original label.
+     * Returns a list of text with associated font.
      *
      * @param label
      * @param font
      * @return
      * @throws TaskIOException
      */
-    private LinkedHashMap<String, PDFont> resolveFonts(String label, PDFont font) throws TaskIOException {
+    List<TextWithFont> resolveFonts(String label, PDFont font) throws TaskIOException {
         PDFont currentFont = font;
         StringBuilder currentString = new StringBuilder();
 
         // we want to keep the insertion order
-        LinkedHashMap<String, PDFont> result = new LinkedHashMap<>();
+        List<TextWithFont> result = new ArrayList<>();
 
         Iterator<Integer> codePointIterator = label.codePoints().iterator();
         while(codePointIterator.hasNext()) {
@@ -247,17 +266,12 @@ public class PageTextWriter {
 
             String s = new String(Character.toChars(codePoint));
 
-            if(s.equals(" ")) {
-                currentString.append(s);
-                continue;
-            }
-
             PDFont f = resolveFont(s, font);
-            if(currentFont == f) {
+            if(s.equals(" ") || currentFont == f) {
                 currentString.append(s);
             } else {
-                if(currentString.toString().length() > 0) {
-                    result.put(currentString.toString(), currentFont);
+                if(currentString.length() > 0) {
+                    result.add(new TextWithFont(currentString.toString(), currentFont));
                 }
 
                 currentString = new StringBuilder(s);
@@ -265,7 +279,7 @@ public class PageTextWriter {
             }
         }
 
-        result.put(currentString.toString(), currentFont);
+        result.add(new TextWithFont(currentString.toString(), currentFont));
 
         return result;
     }
