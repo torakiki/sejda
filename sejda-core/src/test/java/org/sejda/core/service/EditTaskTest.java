@@ -106,6 +106,17 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     }
 
     @Test
+    public void testTextWithUnicodeNonBreakingSpace() throws Exception {
+        parameters = basicText("This is\u00A0non breaking space");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertTextEditAreaHasText(d.getPage(0),
+                    "This is non breaking space");
+        });
+    }
+
+    @Test
     public void testThaiCharacters() throws Exception {
         parameters = basicText("นี่คือการทดสอบ");
         execute(parameters);

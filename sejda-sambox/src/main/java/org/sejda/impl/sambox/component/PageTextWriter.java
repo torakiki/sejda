@@ -29,6 +29,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.*;
 
+import org.sejda.core.support.util.StringUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
@@ -291,7 +292,8 @@ public class PageTextWriter {
     private String normalizeWhitespace(String in) {
         // removes control characters like \n, \r or \t
         // replaces all whitespace (eg: &nbsp;) with ' ' (space)
-        return in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
+        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
+        return StringUtils.nbspAsWhitespace(result);
     }
 
     // taken from PDFTextStreamEngine
