@@ -290,7 +290,7 @@ public class AcroFormsMerger {
                 fields.add(field);
             }
             form.flatten(fields, true);
-        } catch (IOException ex) {
+        } catch (IOException | UnsupportedOperationException ex) {
             LOG.warn("Failed to flatten form", ex);
         }
     }
