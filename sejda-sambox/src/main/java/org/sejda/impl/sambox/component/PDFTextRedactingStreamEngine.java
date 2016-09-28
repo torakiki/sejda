@@ -115,6 +115,11 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             // find name of XForm
             PDResources resources = getResources();
             COSName existingFormName = findNameOf(resources, form);
+            if(existingFormName == null) {
+                // fallback to current page resources
+                resources = getCurrentPage().getResources();
+                existingFormName = findNameOf(resources, form);
+            }
 
             if (existingFormName == null) throw new RuntimeException("Could not find form in page resources");
 
