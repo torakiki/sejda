@@ -113,7 +113,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             this.filteredStreamWriter = new ContentStreamWriter(from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
 
             // find name of XForm
-            PDResources resources = getCurrentPage().getResources();
+            PDResources resources = getResources();
             COSName existingFormName = findNameOf(resources, form);
 
             if (existingFormName == null) throw new RuntimeException("Could not find form in page resources");
