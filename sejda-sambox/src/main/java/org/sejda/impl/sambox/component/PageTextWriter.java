@@ -35,13 +35,13 @@ import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.color.PDColor;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
@@ -75,7 +75,7 @@ public class PageTextWriter {
                       Double fontSize, Color color) throws TaskIOException {
 
         try {
-            String label = normalizeWhitespace(rawLabel);
+            String label = StringUtils.normalizeWhitespace(rawLabel);
             List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
             float stringWidth = 0.0f;
             for(TextWithFont stringAndFont: resolvedStringsToFonts) {
@@ -110,7 +110,7 @@ public class PageTextWriter {
     public void write(PDPage page, Point2D position, String rawLabel, PDFont font,
             Double fontSize, PDColor color, RenderingMode renderingMode) throws TaskIOException {
 
-        String label = normalizeWhitespace(rawLabel);
+        String label = StringUtils.normalizeWhitespace(rawLabel);
 
         List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
         int offset = 0;
@@ -152,14 +152,11 @@ public class PageTextWriter {
                     String resolvedLabel = stringAndFont.getText();
                     double resolvedFontSize = fontSize;
 
-                    if(FontUtils.isOnlyWhitespace(resolvedLabel)) {
-                        // most of the times subset fonts don't contain space, instead space is simulated by offsetting the next word
-                        // so don't write space with a fallback font, just increment the offset
-                        float widthOfSpace = calculateWidthOfSpace(resolvedFont);
-                        offset += widthOfSpace;
-                        // TODO: support for multiple spaces, should the offset be proportional to the number of spaces?
-                        LOG.debug("Writing '{}' by offsetting with {}", resolvedLabel, widthOfSpace);
-                        continue;
+                    // some fonts don't have glyphs for space. figure out if that's the case and switch to a standard font as fallback
+                    if(resolvedLabel.equals(" ")) {
+                        if(!FontUtils.canDisplaySpace(resolvedFont)) {
+                            resolvedFont = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
+                        }
                     }
 
                     // when switching from one font to the other (eg: some letters aren't supported by the original font)
@@ -267,7 +264,17 @@ public class PageTextWriter {
             String s = new String(Character.toChars(codePoint));
 
             PDFont f = resolveFont(s, font);
-            if(s.equals(" ") || currentFont == f) {
+            if(s.equals(" ")) {
+                // we want space to be a separate text item
+                // because some fonts are missing the space glyph
+                // so we'll handle it separate from the other chars
+                if(currentString.length() > 0) {
+                    result.add(new TextWithFont(currentString.toString(), currentFont));
+                }
+                result.add(new TextWithFont(" ", currentFont));
+                currentString = new StringBuilder();
+                currentFont = f;
+            } else if(currentFont == f) {
                 currentString.append(s);
             } else {
                 if(currentString.length() > 0) {
@@ -277,6 +284,10 @@ public class PageTextWriter {
                 currentString = new StringBuilder(s);
                 currentFont = f;
             }
+        }
+
+        for(TextWithFont each: result) {
+            LOG.debug("Will write '{}' with {}", each.getText(), each.getFont());
         }
 
         result.add(new TextWithFont(currentString.toString(), currentFont));
@@ -301,45 +312,5 @@ public class PageTextWriter {
         // flip
         transform.scale(1, -1);
         return transform.transform(position, null);
-    }
-
-    private String normalizeWhitespace(String in) {
-        // removes control characters like \n, \r or \t
-        // replaces all whitespace (eg: &nbsp;) with ' ' (space)
-        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
-        return StringUtils.nbspAsWhitespace(result);
-    }
-
-    // taken from PDFTextStreamEngine
-    private float calculateWidthOfSpace(PDFont font) {
-        float glyphSpaceToTextSpaceFactor = 1 / 1000f;
-        if (font instanceof PDType3Font)
-        {
-            glyphSpaceToTextSpaceFactor = font.getFontMatrix().getScaleX();
-        }
-
-        float spaceWidthText = 0;
-        try
-        {
-            // to avoid crash as described in PDFBOX-614, see what the space displacement should be
-            spaceWidthText = font.getSpaceWidth() * glyphSpaceToTextSpaceFactor;
-        }
-        catch (Throwable exception)
-        {
-            LOG.warn(exception.getMessage(), exception);
-        }
-
-        if (spaceWidthText == 0)
-        {
-            spaceWidthText = font.getAverageFontWidth() * glyphSpaceToTextSpaceFactor;
-            // the average space width appears to be higher than necessary so make it smaller
-            spaceWidthText *= .80f;
-        }
-        if (spaceWidthText == 0)
-        {
-            spaceWidthText = 1.0f; // if could not find font, use a generic value
-        }
-
-        return spaceWidthText;
     }
 }

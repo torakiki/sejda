@@ -51,5 +51,20 @@ public class PageTextWriterTest {
         assertThat(textAndFonts.get(3).getText(), is("α"));
     }
 
+    @Test
+    public void resolvedSpaceSeparately() throws TaskIOException {
+        PageTextWriter writer = new PageTextWriter(new PDDocument());
+        List<PageTextWriter.TextWithFont> textAndFonts = writer.resolveFonts("ab cd", helvetica);
+
+        assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(0).getText(), is("ab"));
+
+        assertThat(textAndFonts.get(1).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(1).getText(), is(" "));
+
+        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(2).getText(), is("cd"));
+    }
+
 
 }

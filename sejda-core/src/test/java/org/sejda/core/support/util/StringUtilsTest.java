@@ -24,10 +24,10 @@ public class StringUtilsTest {
 
     @Test
     public void testNbsp() throws Exception {
-        assertEquals("result", StringUtils.nbspAsWhitespace((char) 160 + "result").trim());
-        assertEquals("result", StringUtils.nbspAsWhitespace("result" + (char) 160).trim());
-        assertEquals("", StringUtils.nbspAsWhitespace("" + (char) 160).trim());
-        assertEquals("", StringUtils.nbspAsWhitespace((char) 160 + "" + (char) 160).trim());
-        assertEquals("Foo bar", StringUtils.nbspAsWhitespace("Foo" + (char) 160 + "bar"));
+        assertEquals("result", StringUtils.normalizeWhitespace((char) 160 + "result").trim());
+        assertEquals("result", StringUtils.normalizeWhitespace("result" + (char) 160).trim());
+        assertEquals("", StringUtils.normalizeWhitespace("" + (char) 160).trim());
+        assertEquals("", StringUtils.normalizeWhitespace((char) 160 + "" + (char) 160).trim());
+        assertEquals("Foo bar", StringUtils.normalizeWhitespace("Foo" + (char) 160 + "bar"));
     }
 }

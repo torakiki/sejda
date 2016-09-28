@@ -193,10 +193,18 @@ public final class FontUtils {
         return text.replaceAll("\\p{Zs}", "");
     }
 
+    public static boolean canDisplaySpace(PDFont font) {
+        try {
+            font.encode(" ");
+        } catch (IllegalArgumentException | IOException | UnsupportedOperationException e) {
+            // Nope
+        }
+        return false;
+    }
+
     /**
-     * @param text
-     * @param font
-     * @return true if the given font can display the given text
+     * Returns true if the given font can display the given text.
+     * IMPORTANT: Ignores all whitespace in text.
      */
     public static boolean canDisplay(String text, PDFont font) {
         if(font == null) return false;

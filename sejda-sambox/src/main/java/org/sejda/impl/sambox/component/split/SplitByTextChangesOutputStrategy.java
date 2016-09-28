@@ -58,7 +58,7 @@ public class SplitByTextChangesOutputStrategy implements NextOutputStrategy {
         for (int pageNumber = 1; pageNumber <= document.getNumberOfPages(); pageNumber++) {
             PDPage page = document.getDocumentCatalog().getPages().get(pageNumber - 1);
 
-            String pageText = org.sejda.core.support.util.StringUtils.nbspAsWhitespace(extractTextFromPageArea(page, area)).trim();
+            String pageText = org.sejda.core.support.util.StringUtils.normalizeWhitespace(extractTextFromPageArea(page, area)).trim();
 
             // checks if the page text matches any (optional) prefixes/suffixes specified
             if(isNotBlank(startsWith)){

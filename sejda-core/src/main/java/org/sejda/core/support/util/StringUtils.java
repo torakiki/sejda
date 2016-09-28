@@ -22,13 +22,15 @@ public final class StringUtils {
     }
 
     /**
-     * Why this method? Because when extracting text from PDFs you may get back non breaking space, which is technically different than whitespace but for the purpose of text
-     * comparison and extraction it actually should behave the same.
-     *
-     * @return the input string with all non breaking space chars replaced by whitespace char ' '
+     * Removes control characters like \n, \t or \r
+     * Replaces whitespace, including Unicode 'non-breaking-space', with plain regular 'space'
      */
-    public static String nbspAsWhitespace(String in) {
-        return in.replace((char) 160, ' ');
+    public static String normalizeWhitespace(String in) {
+        // removes control characters like \n, \r or \t
+        // replaces all whitespace (eg: &nbsp;) with ' ' (space)
+        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
+        result = result.replace((char) 160, ' ');;
+        return result;
     }
 
     // Useful to debug weird strings that contain non breaking spaces

@@ -147,7 +147,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertTextEditAreaHasText(d.getPage(1), "S a m p l e  t e x t  h e r e");
+            assertTextEditAreaHasText(d.getPage(1), "S a m p l e t e x t h e r e");
             assertTextEditAreaHasText(d.getPage(2), "Sample text here");
             assertTextEditAreaHasText(d.getPage(3), "Sample text here");
             assertTextEditAreaHasText(d.getPage(4), "Sample text here");
@@ -472,6 +472,26 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
             assertPageTextDoesNotContain(d.getPage(0), "Total");
             assertTextAreaHasText(d.getPage(0), "XYZW", redactArea);
             assertThat("New fonts are added => original font is not reused", size(d.getPage(0).getResources().getFontNames().iterator()), is(3));
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditExistingTextWithFontThatHasNoSpaceGlyph() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(100, 77, 108, 16);
+        parameters.addEditTextOperation(new EditTextOperation("Cdoul Cmpu", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/no-space-in-font.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Cloud Copmuting");
+            assertTextAreaHasText(d.getPage(0), "Cdoul Cmpu", redactArea);
         });
         testContext.assertTaskCompleted();
     }
