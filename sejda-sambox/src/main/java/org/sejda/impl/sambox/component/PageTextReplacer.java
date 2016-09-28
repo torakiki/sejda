@@ -63,7 +63,7 @@ public class PageTextReplacer {
 
         PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
         if(engine.redactedTextPosition == null) {
-            throw new TaskException("No text found to replace in the bounding box specified");
+            throw new TaskException("No text found to replace in bounding box: " + boundingBox.toString());
         } else {
             LOG.debug("Redacted text '{}' at position {}", engine.redactedString, engine.redactedTextPosition);
         }
