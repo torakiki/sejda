@@ -227,7 +227,7 @@ public final class FontUtils {
             }
 
             return true;
-        } catch (IllegalArgumentException | IOException e) {
+        } catch (IllegalArgumentException | IOException | UnsupportedOperationException e) {
             //LOG.debug("Cannot display text with font", e);
         }
         return false;
