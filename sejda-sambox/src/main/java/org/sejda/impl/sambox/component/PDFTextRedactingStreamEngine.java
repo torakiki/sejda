@@ -28,6 +28,7 @@ import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.color.PDColor;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+import org.sejda.sambox.pdmodel.graphics.state.PDTextState;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 import org.sejda.sambox.text.PDFTextStreamEngine;
 import org.sejda.sambox.text.TextPosition;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.io.CountingWritableByteChannel.from;
 
 /**
@@ -51,6 +53,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     private static final Logger LOG = LoggerFactory.getLogger(PDFTextRedactingStreamEngine.class);
 
     public StringBuilder redactedString = new StringBuilder();
+    public float redactedStringWidth = 0;
     public PDFont redactedFont;
     public float redactedFontSize;
     public PDColor redactedFontColor;
@@ -58,6 +61,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     public RenderingMode redactedTextRenderingMode;
 
     private boolean matchesRedactionFilter = false;
+    private boolean matchesRedactionFilterPartially = false;
+    private List<COSBase> filteredOperands = new ArrayList<>();
     private PDStream filteredStream;
     private ContentStreamWriter filteredStreamWriter;
 
@@ -164,6 +169,78 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     }
 
     @Override
+    public void showTextStrings(COSArray array) throws IOException
+    {
+        PDTextState textState = getGraphicsState().getTextState();
+        float fontSize = textState.getFontSize();
+        float horizontalScaling = textState.getHorizontalScaling() / 100f;
+        PDFont font = textState.getFont();
+        boolean isVertical = ofNullable(font).map(f -> f.isVertical()).orElse(false);
+
+        List<COSBase> filteredParams = new ArrayList<>();
+        this.matchesRedactionFilterPartially = false;
+
+        for (COSBase obj : array)
+        {
+            if (obj instanceof COSNumber)
+            {
+                float tj = ((COSNumber) obj).floatValue();
+
+                // calculate the combined displacements
+                float tx, ty;
+                if (isVertical)
+                {
+                    tx = 0;
+                    ty = -tj / 1000 * fontSize;
+                }
+                else
+                {
+                    tx = -tj / 1000 * fontSize * horizontalScaling;
+                    ty = 0;
+                }
+
+                applyTextAdjustment(tx, ty);
+                filteredParams.add(obj);
+            }
+            else if (obj instanceof COSString)
+            {
+                // Handling scenarios where we want to edit part of a show text operation
+                // EG: the show text operation displays "This is a sentence" but the user wants to redact/replace "This is"
+                // Not all text would be redacted out, instead of only the partial match.
+
+                this.matchesRedactionFilter = false;
+                this.redactedStringWidth = 0;
+
+                byte[] string = ((COSString) obj).getBytes();
+                showText(string);
+
+                if(this.matchesRedactionFilter) {
+                    this.matchesRedactionFilterPartially = true;
+
+                    float filteredTj = - (this.redactedStringWidth * 1000 / fontSize / horizontalScaling );
+                    LOG.debug("Font size: {} {}", fontSize, horizontalScaling);
+                    LOG.debug("Redacted text filteredTJ: {}, for redactedStringWidth: {} and '{}'", filteredTj, redactedStringWidth, this.redactedString.toString());
+                    filteredParams.add(new COSFloat(filteredTj));
+                } else {
+                    filteredParams.add(obj);
+                }
+            }
+            else
+            {
+                throw new IOException("Unknown type in array for TJ operation:" + obj);
+            }
+        }
+
+        if(this.matchesRedactionFilterPartially) {
+            this.matchesRedactionFilter = true;
+            this.filteredOperands = new ArrayList<>();
+            COSArray cosArray = new COSArray();
+            cosArray.addAll(filteredParams);
+            this.filteredOperands.add(cosArray);
+        }
+    }
+
+    @Override
     protected void processOperator(Operator operator, List<COSBase> operands) throws IOException
     {
         boolean skip = false;
@@ -176,7 +253,17 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         }
 
         if(matchesRedactionFilter || skip) {
-            LOG.debug("Filtering out current text operator: {}", operator.getName());
+            if(this.matchesRedactionFilterPartially && this.filteredOperands.size() > 0) {
+                LOG.debug("Partially filtering out current text operator: {}", operator.getName());
+
+                LOG.debug("Writing operands: {}", this.filteredOperands);
+                LOG.debug("Writing operator: {}", operator.getName());
+
+                filteredStreamWriter.writeTokens(new ArrayList<Object>(this.filteredOperands));
+                filteredStreamWriter.writeTokens(operator);
+            } else {
+                LOG.debug("Filtering out current text operator: {}", operator.getName());
+            }
         } else {
             //LOG.debug("Writing operands: {}", operands);
             //LOG.debug("Writing operator: {}", operator.getName());
@@ -196,6 +283,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             matchesRedactionFilter = true;
 
             redactedString.append(text.getUnicode());
+            redactedStringWidth += text.getWidth();
             redactedFont = text.getFont();
 
             redactedFontSize = text.getYScale();

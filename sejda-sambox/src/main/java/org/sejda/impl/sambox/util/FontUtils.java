@@ -28,6 +28,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.sejda.fonts.OptionalUnicodeType0Font;
 import org.sejda.fonts.UnicodeType0Font;
@@ -264,7 +265,8 @@ public final class FontUtils {
             this.subsetFont = subsetFont;
 
             // is it a subset font? ABCDEF+Verdana
-            String[] fontNameFragments = subsetFont.getName().split("\\+");
+            String fontName = StringUtils.trimToEmpty(subsetFont.getName());
+            String[] fontNameFragments = fontName.split("\\+");
 
             if(fontNameFragments.length == 2 && fontNameFragments[0].length() == 6) {
                 this.isSubset = true;

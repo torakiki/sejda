@@ -496,6 +496,28 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         testContext.assertTaskCompleted();
     }
 
+    @Test
+    public void testEditExistingTextWithPartialMatchInShowTextAdjustedOperand() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(174, 60, 107, 26);
+        TopLeftRectangularBox secondArea = new TopLeftRectangularBox(396, 60, 74, 23);
+        parameters.addEditTextOperation(new EditTextOperation("Hi", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/show-text-adjusted.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "He llo World!");
+            assertTextAreaHasText(d.getPage(0), "Hi", redactArea);
+            assertTextAreaHasText(d.getPage(0), "World!", secondArea);
+        });
+        testContext.assertTaskCompleted();
+    }
+
     /**
      * Returns the number of elements remaining in {@code iterator}. The iterator
      * will be left exhausted: its {@code hasNext()} method will return
