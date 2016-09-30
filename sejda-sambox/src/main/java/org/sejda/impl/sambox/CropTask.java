@@ -129,8 +129,14 @@ public class CropTask extends BaseTask<CropParameters> {
                     sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotations.values());
 
-            acroFormsMerger.mergeForm(
-                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
+            try {
+                acroFormsMerger.mergeForm(
+                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
+            } catch(IllegalArgumentException ex) {
+                String warning = "Failed to handle AcroForms";
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                LOG.warn(warning, ex);
+            }
 
             if (acroFormsMerger.hasForm()) {
                 LOG.debug("Adding generated AcroForm");
