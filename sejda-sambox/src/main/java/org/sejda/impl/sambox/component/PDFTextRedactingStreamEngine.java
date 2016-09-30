@@ -278,7 +278,10 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         float x = text.getXDirAdj();
         float y = text.getYDirAdj();
 
-        if (box.containsPoint(x, y)) {
+        boolean inBoundingBox = box.containsPoint(x, y) && box.containsPoint(x, y - text.getHeightDir()) &&
+                box.containsPoint(x + text.getWidthDirAdj(), y);
+
+        if (inBoundingBox) {
             // current Text operator should be filtered out
             matchesRedactionFilter = true;
 

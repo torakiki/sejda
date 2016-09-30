@@ -500,7 +500,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
     public void testEditExistingTextWithPartialMatchInShowTextAdjustedOperand() throws Exception {
         EditParameters parameters = new EditParameters();
         TopLeftRectangularBox redactArea = new TopLeftRectangularBox(174, 60, 107, 26);
-        TopLeftRectangularBox secondArea = new TopLeftRectangularBox(396, 60, 74, 23);
+        TopLeftRectangularBox secondArea = new TopLeftRectangularBox(393, 58, 76, 26);
         parameters.addEditTextOperation(new EditTextOperation("Hi", redactArea, new PageRange(1, 1)));
 
         testContext.directoryOutputTo(parameters);
@@ -514,6 +514,28 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
             assertPageTextDoesNotContain(d.getPage(0), "He llo World!");
             assertTextAreaHasText(d.getPage(0), "Hi", redactArea);
             assertTextAreaHasText(d.getPage(0), "World!", secondArea);
+        });
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testEditExistingTextWhenBoundingBoxOverlapsOtherTextPartially() throws Exception {
+        EditParameters parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(69, 126, 69, 22);
+        TopLeftRectangularBox secondArea = new TopLeftRectangularBox(69, 140, 142, 17);
+        parameters.addEditTextOperation(new EditTextOperation("ASDFGH", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/paragraphs.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Lorem Ipsum is simply dummy");
+            assertTextAreaHasText(d.getPage(0), "ASDFGH", redactArea);
+            assertTextAreaHasText(d.getPage(0), "been the industry's standard", secondArea);
         });
         testContext.assertTaskCompleted();
     }
