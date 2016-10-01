@@ -344,7 +344,6 @@ public final class FontUtils {
                     return PDType0Font.load(document, mappedFont.getOriginalData());
                 } catch (IOException ioe) {
                     LOG.warn("Failed to load font from system", ioe);
-                } finally {
                     try {
                         mappedFont.close();
                     } catch (IOException e) {
