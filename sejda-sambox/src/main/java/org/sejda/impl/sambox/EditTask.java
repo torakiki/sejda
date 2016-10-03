@@ -126,6 +126,15 @@ public class EditTask extends BaseTask<EditParameters> {
 
             int totalPages = documentHandler.getNumberOfPages();
 
+            PageTextReplacer textReplacer = new PageTextReplacer(documentHandler.getUnderlyingPDDocument());
+            for(EditTextOperation editTextOperation: parameters.getEditTextOperations()) {
+                SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
+                for (int pageNumber : pageNumbers) {
+                    PDPage page = documentHandler.getPageCached(pageNumber);
+                    textReplacer.replaceText(page, editTextOperation.getText(), editTextOperation.getBoundingBox());
+                }
+            }
+
             for (AppendTextOperation textOperation : parameters.getAppendTextOperations()) {
                 PageTextWriter textWriter = new PageTextWriter(documentHandler.getUnderlyingPDDocument());
 
@@ -180,15 +189,6 @@ public class EditTask extends BaseTask<EditParameters> {
                             shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
                             shapeOperation.getBorderWidth()
                     );
-                }
-            }
-
-            PageTextReplacer textReplacer = new PageTextReplacer(documentHandler.getUnderlyingPDDocument());
-            for(EditTextOperation editTextOperation: parameters.getEditTextOperations()) {
-                SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
-                for (int pageNumber : pageNumbers) {
-                    PDPage page = documentHandler.getPageCached(pageNumber);
-                    textReplacer.replaceText(page, editTextOperation.getText(), editTextOperation.getBoundingBox());
                 }
             }
 
