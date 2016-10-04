@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
 import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
@@ -163,11 +164,14 @@ public class PageTextWriter {
                     // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
                     // the previous letter
                     if (resolvedFont != font) {
-                        double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-                        double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+                        if(nonNull(font.getFontDescriptor()) &&
+                                nonNull(resolvedFont) && nonNull(resolvedFont.getFontDescriptor())) {
+                            double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+                            double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
 
-                        resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
-                        LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+                            resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
+                            LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+                        }
                     }
 
                     Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());
