@@ -540,6 +540,28 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         testContext.assertTaskCompleted();
     }
 
+    @Test
+    public void testEditExistingTextWhenOperandsInReverseOrder() throws Exception {
+        parameters = new EditParameters();
+        TopLeftRectangularBox redactArea = new TopLeftRectangularBox(114, 605, 186, 25);
+        TopLeftRectangularBox secondArea = new TopLeftRectangularBox(114, 605, 30, 25);
+        parameters.addEditTextOperation(new EditTextOperation("Replaced", redactArea, new PageRange(1, 1)));
+
+        testContext.directoryOutputTo(parameters);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/show-text-unordered.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertPageTextDoesNotContain(d.getPage(0), "Hello World");
+            assertTextAreaHasText(d.getPage(0), "Replaced", redactArea);
+            assertTextAreaHasText(d.getPage(0), "Re", secondArea);
+        });
+        testContext.assertTaskCompleted();
+    }
+
     /**
      * Returns the number of elements remaining in {@code iterator}. The iterator
      * will be left exhausted: its {@code hasNext()} method will return

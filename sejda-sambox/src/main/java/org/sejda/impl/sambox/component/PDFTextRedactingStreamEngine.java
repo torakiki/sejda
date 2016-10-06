@@ -313,12 +313,21 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             redactedFontColor = getGraphicsState().getNonStrokingColor();
 
             if(redactedTextPosition == null) {
-                LOG.debug("position: {},{} vs {},{}", text.getX(), text.getY(), text.getXDirAdj(), text.getYDirAdj());
+                LOG.debug("Position: {},{}", text.getX(), text.getY());
 
                 //LOG.debug("fontSize {} fontSizePt {} yScale {}, maxHeight {}", text.getFontSize(), text.getFontSizeInPt(), text.getYScale(), text.getHeight());
                 redactedTextPosition = new Point((int)x, (int)y);
                 redactedTextRenderingMode = getGraphicsState().getTextState().getRenderingMode();
+            } else {
+                // sometimes words aren't in left to right order in the text stream
+                // Order date might be written "date" then "Order"
+                // check if the current position is more to the left, replace if so
+                LOG.debug("Found more to the left position: {},{}", text.getX(), text.getY());
 
+                if(redactedTextPosition.getX() > x) {
+                    redactedTextPosition = new Point((int)x, (int)y);
+                    redactedTextRenderingMode = getGraphicsState().getTextState().getRenderingMode();
+                }
             }
         }
     }

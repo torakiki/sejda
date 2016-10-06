@@ -69,8 +69,6 @@ public class PageTextReplacer {
             throw new TaskIOException(e);
         }
 
-        PageTextWriter textWriter = new PageTextWriter(document);
-
         PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
         if(engine.redactedTextPosition == null) {
             // we could not find text in the specified bounding box
@@ -90,6 +88,10 @@ public class PageTextReplacer {
         } else {
             LOG.debug("Redacted text '{}' at position {}", engine.redactedString, engine.redactedTextPosition);
         }
+
+        if(replacementText.isEmpty()) return;
+
+        PageTextWriter textWriter = new PageTextWriter(document);
 
         Point position = new Point((int)engine.redactedTextPosition.getX(), (int) pageSize.getHeight() - (int)engine.redactedTextPosition.getY());
 
