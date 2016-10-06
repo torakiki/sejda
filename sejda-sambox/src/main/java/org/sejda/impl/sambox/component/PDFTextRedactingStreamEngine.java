@@ -39,7 +39,9 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.Optional.ofNullable;
 import static org.sejda.io.CountingWritableByteChannel.from;
@@ -65,6 +67,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     private List<COSBase> filteredOperands = new ArrayList<>();
     private PDStream filteredStream;
     private ContentStreamWriter filteredStreamWriter;
+
+    private Set<IndirectCOSObjectIdentifier> redactedFormXObjectIds = new HashSet<>();
 
     private TopLeftRectangularBox box;
 
@@ -113,6 +117,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         PDStream tmpStream = this.filteredStream;
         ContentStreamWriter tmpWriter = this.filteredStreamWriter;
 
+        String tmpRedactedString = this.redactedString.toString();
+
         try {
             this.filteredStream = new PDStream();
             this.filteredStreamWriter = new ContentStreamWriter(from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
@@ -133,21 +139,30 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             super.showForm(form);
             org.sejda.util.IOUtils.close(this.filteredStreamWriter);
 
-            // replace the form stream
-            PDFormXObject newForm = new PDFormXObject(getFilteredStream().getCOSObject());
-            newForm.setMatrix(form.getMatrix().createAffineTransform());
-            newForm.setFormType(form.getFormType());
-            newForm.setBBox(form.getBBox());
-            newForm.setResources(form.getResources());
-            newForm.setStructParents(form.getStructParents());
+            boolean formWasRedacted = !tmpRedactedString.equals(this.redactedString.toString());
 
-            // points to the same object id
-            newForm.getCOSObject().getCOSObject().idIfAbsent(form.getCOSObject().getCOSObject().id());
+            if(formWasRedacted) {
+                LOG.debug("Redaction occurred in FormXObject {} ({})", existingFormName, form);
 
-            LOG.debug("Updating FormXObject {} with {}", existingFormName, newForm);
+                // replace the form stream
+                PDFormXObject newForm = new PDFormXObject(getFilteredStream().getCOSObject());
+                newForm.setMatrix(form.getMatrix().createAffineTransform());
+                newForm.setFormType(form.getFormType());
+                newForm.setBBox(form.getBBox());
+                newForm.setResources(form.getResources());
+                newForm.setStructParents(form.getStructParents());
 
-            resources.put(existingFormName, newForm);
-            resources.getResourceCache().put(newForm.getCOSObject().getCOSObject().id().objectIdentifier, newForm);
+                // points to the same object id
+                newForm.getCOSObject().getCOSObject().idIfAbsent(form.getCOSObject().getCOSObject().id());
+
+                LOG.debug("Updating FormXObject {} with {}", existingFormName, newForm);
+
+                resources.put(existingFormName, newForm);
+                resources.getResourceCache().put(newForm.getCOSObject().getCOSObject().id().objectIdentifier, newForm);
+
+                // keep track of which forms were already redacted
+                redactedFormXObjectIds.add(newForm.getCOSObject().getCOSObject().id());
+            }
 
             LOG.debug("Done processing FormXObject {}", form);
         } finally {
@@ -312,4 +327,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         );
     }
 
+    public Set<IndirectCOSObjectIdentifier> getRedactedFormXObjectIds() {
+        return redactedFormXObjectIds;
+    }
 }

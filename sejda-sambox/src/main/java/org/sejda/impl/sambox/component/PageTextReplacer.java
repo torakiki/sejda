@@ -20,6 +20,7 @@ import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -30,6 +31,10 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Replaces existing text in a page. Existing text is specified by a bounding box.
@@ -45,16 +50,21 @@ public class PageTextReplacer {
     private static final Logger LOG = LoggerFactory.getLogger(PageTextReplacer.class);
 
     private PDDocument document;
+    private Map<TopLeftRectangularBox, Set<IndirectCOSObjectIdentifier>> redactedResourceIdsPerBoundingBox = new HashMap<>();
 
     public PageTextReplacer(PDDocument document) {
         this.document = document;
     }
 
-    public void replaceText(PDPage page, String replacementText, TopLeftRectangularBox boundingBox) throws TaskException {
+    public void replaceText(PDPage page, int pageNum, String replacementText, TopLeftRectangularBox boundingBox) throws TaskException {
         PDFTextRedactingStreamEngine engine = null;
         try {
             engine = new PDFTextRedactingStreamEngine(boundingBox);
             engine.processPage(page);
+            if(!redactedResourceIdsPerBoundingBox.containsKey(boundingBox)) {
+                redactedResourceIdsPerBoundingBox.put(boundingBox, new HashSet<>());
+            }
+            redactedResourceIdsPerBoundingBox.get(boundingBox).addAll(engine.getRedactedFormXObjectIds());
         } catch (IOException e) {
             throw new TaskIOException(e);
         }
@@ -63,7 +73,20 @@ public class PageTextReplacer {
 
         PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
         if(engine.redactedTextPosition == null) {
-            throw new TaskException("No text found to replace in bounding box: " + boundingBox.toString());
+            // we could not find text in the specified bounding box
+            // this could mean that:
+            // - (rare) we are processing page1, page2, and both have same shared FormXObject drawn.
+            // When we process page1 we redacted the shared FormXObject, so page2 will not find a match.
+            if(!redactedResourceIdsPerBoundingBox.get(boundingBox).isEmpty()) {
+                // for this bounding box we previously redacted a FormXObject.
+                // TODO: we won't figure it out if the same shared FormXObject is rendered in a different position (hence different bounding box)
+                LOG.debug("No text found to replace on page {} in bounding box {}, but same bounding box was redacted for a previous page in a shared FormXObject");
+                return;
+            }
+
+            //
+            // - there's a bug, so failing hard will help us identify it and prevent silent failures
+            throw new TaskException("No text found to replace on page "+ pageNum +" in bounding box: " + boundingBox.toString());
         } else {
             LOG.debug("Redacted text '{}' at position {}", engine.redactedString, engine.redactedTextPosition);
         }

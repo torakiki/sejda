@@ -131,7 +131,7 @@ public class EditTask extends BaseTask<EditParameters> {
                 SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
-                    textReplacer.replaceText(page, editTextOperation.getText(), editTextOperation.getBoundingBox());
+                    textReplacer.replaceText(page, pageNumber, editTextOperation.getText(), editTextOperation.getBoundingBox());
                 }
             }
 
