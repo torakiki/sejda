@@ -260,6 +260,11 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     {
         boolean skip = false;
         matchesRedactionFilter = false;
+        matchesRedactionFilterPartially = false;
+        this.filteredOperands = new ArrayList<>();
+
+        //System.out.println(operands.toString() + " " + operator.toString());
+
         super.processOperator(operator, operands);
 
         if(operator.getName().equals("TD") || operator.getName().equals("\"") || operator.getName().equals("'") ||
