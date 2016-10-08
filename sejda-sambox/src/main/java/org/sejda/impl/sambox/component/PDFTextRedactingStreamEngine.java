@@ -62,6 +62,9 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     public RenderingMode redactedTextRenderingMode;
 
     private StringBuilder lastShownString = new StringBuilder();
+    private float lastShownStringFirstX = 0;
+    private float lastShownStringLastX = 0;
+
     private boolean matchesRedactionFilter = false;
     private boolean matchesRedactionFilterPartially = false;
     private List<COSBase> filteredOperands = new ArrayList<>();
@@ -232,7 +235,15 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 if(this.matchesRedactionFilter) {
                     this.matchesRedactionFilterPartially = true;
 
-                    float redactedStringWidth = font.getStringWidth(this.lastShownString.toString());
+                    float redactedStringWidth = 0;
+                    try {
+                        redactedStringWidth = font.getStringWidth(this.lastShownString.toString());
+                    } catch (IllegalArgumentException e) {
+                        // can fail with java.lang.IllegalArgumentException: U+0041 is not available in this font's encoding: built-in (TTF)
+                        // we then fallback to calculating the string width based on what the text position reports
+                        // the text position metrics can be inaccurate, so it's not the main source of info
+                        redactedStringWidth = this.lastShownStringLastX - this.lastShownStringFirstX;
+                    }
                     float filteredTj = - (redactedStringWidth / horizontalScaling );
 
                     filteredParams.add(new COSFloat(filteredTj));
@@ -306,8 +317,13 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             matchesRedactionFilter = true;
 
             redactedString.append(text.getUnicode());
-            lastShownString.append(text.getUnicode());
             redactedFont = text.getFont();
+
+            if(lastShownString.length() == 0){
+                lastShownStringFirstX = x;
+            }
+            lastShownString.append(text.getUnicode());
+            lastShownStringLastX = x + text.getWidthDirAdj();
 
             redactedFontSize = text.getYScale();
             redactedFontColor = getGraphicsState().getNonStrokingColor();
