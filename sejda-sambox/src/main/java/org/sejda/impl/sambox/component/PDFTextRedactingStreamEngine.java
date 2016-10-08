@@ -55,13 +55,13 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     private static final Logger LOG = LoggerFactory.getLogger(PDFTextRedactingStreamEngine.class);
 
     public StringBuilder redactedString = new StringBuilder();
-    public float redactedStringWidth = 0;
     public PDFont redactedFont;
     public float redactedFontSize;
     public PDColor redactedFontColor;
     public Point redactedTextPosition;
     public RenderingMode redactedTextRenderingMode;
 
+    private StringBuilder lastShownString = new StringBuilder();
     private boolean matchesRedactionFilter = false;
     private boolean matchesRedactionFilterPartially = false;
     private List<COSBase> filteredOperands = new ArrayList<>();
@@ -224,7 +224,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 // Not all text would be redacted out, instead of only the partial match.
 
                 this.matchesRedactionFilter = false;
-                this.redactedStringWidth = 0;
+                this.lastShownString = new StringBuilder();
 
                 byte[] string = ((COSString) obj).getBytes();
                 showText(string);
@@ -232,9 +232,9 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 if(this.matchesRedactionFilter) {
                     this.matchesRedactionFilterPartially = true;
 
-                    float filteredTj = - (this.redactedStringWidth * 1000 / fontSize / horizontalScaling );
-                    LOG.debug("Font size: {} {}", fontSize, horizontalScaling);
-                    LOG.debug("Redacted text filteredTJ: {}, for redactedStringWidth: {} and '{}'", filteredTj, redactedStringWidth, this.redactedString.toString());
+                    float redactedStringWidth = font.getStringWidth(this.lastShownString.toString());
+                    float filteredTj = - (redactedStringWidth / horizontalScaling );
+
                     filteredParams.add(new COSFloat(filteredTj));
                 } else {
                     filteredParams.add(obj);
@@ -306,7 +306,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             matchesRedactionFilter = true;
 
             redactedString.append(text.getUnicode());
-            redactedStringWidth += text.getWidth();
+            lastShownString.append(text.getUnicode());
             redactedFont = text.getFont();
 
             redactedFontSize = text.getYScale();
@@ -322,9 +322,9 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 // sometimes words aren't in left to right order in the text stream
                 // Order date might be written "date" then "Order"
                 // check if the current position is more to the left, replace if so
-                LOG.debug("Found more to the left position: {},{}", text.getX(), text.getY());
-
                 if(redactedTextPosition.getX() > x) {
+                    LOG.debug("Found more to the left position: {},{}", text.getX(), text.getY());
+
                     redactedTextPosition = new Point((int)x, (int)y);
                     redactedTextRenderingMode = getGraphicsState().getTextState().getRenderingMode();
                 }

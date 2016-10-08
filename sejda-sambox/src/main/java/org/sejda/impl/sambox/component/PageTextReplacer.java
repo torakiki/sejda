@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Replaces existing text in a page. Existing text is specified by a bounding box.
@@ -69,11 +66,18 @@ public class PageTextReplacer {
             throw new TaskIOException(e);
         }
 
-        PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
+        if(engine.redactedTextPosition != null) {
+            LOG.debug("Redacted text '{}' at position {}", engine.redactedString, engine.redactedTextPosition);
+        }
+
+        // we're done
+        if(replacementText.isEmpty()) return;
+
+        // we need to know the position and style of the replaced text, to write the replacement with the same
         if(engine.redactedTextPosition == null) {
             // we could not find text in the specified bounding box
             // this could mean that:
-            // - (rare) we are processing page1, page2, and both have same shared FormXObject drawn.
+            // 1) we are processing page1, page2, and both have same shared FormXObject drawn.
             // When we process page1 we redacted the shared FormXObject, so page2 will not find a match.
             if(!redactedResourceIdsPerBoundingBox.get(boundingBox).isEmpty()) {
                 // for this bounding box we previously redacted a FormXObject.
@@ -82,17 +86,15 @@ public class PageTextReplacer {
                 return;
             }
 
-            //
-            // - there's a bug, so failing hard will help us identify it and prevent silent failures
-            throw new TaskException("No text found to replace on page "+ pageNum +" in bounding box: " + boundingBox.toString());
-        } else {
-            LOG.debug("Redacted text '{}' at position {}", engine.redactedString, engine.redactedTextPosition);
+            // 2) if we could not redact the text, we won't know the position and style to write the replacement text
+            // let's fail hard, this could be a bug
+            String msg = "No text found to replace on page "+ pageNum +" in bounding box: " + boundingBox.toString() + ". Replacement text was '" + replacementText +"'";
+            throw new TaskException(msg);
         }
-
-        if(replacementText.isEmpty()) return;
 
         PageTextWriter textWriter = new PageTextWriter(document);
 
+        PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
         Point position = new Point((int)engine.redactedTextPosition.getX(), (int) pageSize.getHeight() - (int)engine.redactedTextPosition.getY());
 
         PDFont originalFont = engine.redactedFont;
