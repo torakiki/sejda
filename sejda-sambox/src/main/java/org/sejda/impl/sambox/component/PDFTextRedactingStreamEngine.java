@@ -239,8 +239,9 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                     if(font != null) {
                         try {
                             redactedStringWidth = font.getStringWidth(this.lastShownString.toString());
-                        } catch (IllegalArgumentException e) {
-                            // can fail with java.lang.IllegalArgumentException: U+0041 is not available in this font's encoding: built-in (TTF)
+                        } catch (IllegalArgumentException | UnsupportedOperationException e) {
+                            // can fail with: java.lang.IllegalArgumentException: U+0041 is not available in this font's encoding: built-in (TTF)
+                            // java.lang.UnsupportedOperationException: Not implemented: Type3
                         }
                     }
 
