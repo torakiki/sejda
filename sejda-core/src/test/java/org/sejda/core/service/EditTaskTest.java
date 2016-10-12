@@ -18,6 +18,16 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.RectangularBox;
@@ -25,21 +35,18 @@ import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.input.Source;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.*;
+import org.sejda.model.parameter.edit.AddImageOperation;
+import org.sejda.model.parameter.edit.AddShapeOperation;
+import org.sejda.model.parameter.edit.AppendTextOperation;
+import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.EditTextOperation;
+import org.sejda.model.parameter.edit.HighlightTextOperation;
+import org.sejda.model.parameter.edit.InsertPageOperation;
 import org.sejda.model.parameter.edit.Shape;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 @Ignore
 public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
@@ -147,7 +154,7 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertTextEditAreaHasText(d.getPage(1), "S a m p l e t e x t h e r e");
+            assertTextEditAreaHasText(d.getPage(1), "Sample text here");
             assertTextEditAreaHasText(d.getPage(2), "Sample text here");
             assertTextEditAreaHasText(d.getPage(3), "Sample text here");
             assertTextEditAreaHasText(d.getPage(4), "Sample text here");
