@@ -16,10 +16,36 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
+import static org.sejda.io.CountingWritableByteChannel.from;
+
+import java.awt.Point;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.sambox.contentstream.operator.Operator;
-import org.sejda.sambox.contentstream.operator.color.*;
-import org.sejda.sambox.cos.*;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingColor;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingColorN;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingColorSpace;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingDeviceCMYKColor;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingDeviceGrayColor;
+import org.sejda.sambox.contentstream.operator.color.SetNonStrokingDeviceRGBColor;
+import org.sejda.sambox.contentstream.operator.color.SetStrokingColor;
+import org.sejda.sambox.contentstream.operator.color.SetStrokingColorSpace;
+import org.sejda.sambox.contentstream.operator.color.SetStrokingDeviceCMYKColor;
+import org.sejda.sambox.contentstream.operator.color.SetStrokingDeviceGrayColor;
+import org.sejda.sambox.contentstream.operator.color.SetStrokingDeviceRGBColor;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
+import org.sejda.sambox.cos.COSFloat;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSNumber;
+import org.sejda.sambox.cos.COSString;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.output.ContentStreamWriter;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
@@ -32,23 +58,11 @@ import org.sejda.sambox.pdmodel.graphics.state.PDTextState;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 import org.sejda.sambox.text.PDFTextStreamEngine;
 import org.sejda.sambox.text.TextPosition;
-import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Optional.ofNullable;
-import static org.sejda.io.CountingWritableByteChannel.from;
-
 /**
- * Given a bounding box, it removes all show text operators that write text within that bounding box.
- * Provides font and text metrics about the redacted text in the context found.
+ * Given a bounding box, it removes all show text operators that write text within that bounding box. Provides font and text metrics about the redacted text in the context found.
  */
 public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
 
@@ -75,7 +89,6 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
 
     private TopLeftRectangularBox box;
 
-
     public PDFTextRedactingStreamEngine(TopLeftRectangularBox box) throws IOException {
         super();
         // process commands that change the color of text
@@ -94,7 +107,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         this.box = box;
 
         this.filteredStream = new PDStream();
-        this.filteredStreamWriter = new ContentStreamWriter(from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
+        this.filteredStreamWriter = new ContentStreamWriter(
+                from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
     }
 
     public PDStream getFilteredStream() {
@@ -102,8 +116,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     }
 
     @Override
-    public void processPage(PDPage page) throws IOException
-    {
+    public void processPage(PDPage page) throws IOException {
         super.processPage(page);
         org.sejda.util.IOUtils.close(this.filteredStreamWriter);
 
@@ -114,8 +127,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     }
 
     @Override
-    public void showForm(PDFormXObject form) throws IOException
-    {
+    public void showForm(PDFormXObject form) throws IOException {
         // save
         PDStream tmpStream = this.filteredStream;
         ContentStreamWriter tmpWriter = this.filteredStreamWriter;
@@ -124,18 +136,20 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
 
         try {
             this.filteredStream = new PDStream();
-            this.filteredStreamWriter = new ContentStreamWriter(from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
+            this.filteredStreamWriter = new ContentStreamWriter(
+                    from(filteredStream.createOutputStream(COSName.FLATE_DECODE)));
 
             // find name of XForm
             PDResources resources = getResources();
             COSName existingFormName = findNameOf(resources, form);
-            if(existingFormName == null) {
+            if (existingFormName == null) {
                 // fallback to current page resources
                 resources = getCurrentPage().getResources();
                 existingFormName = findNameOf(resources, form);
             }
 
-            if (existingFormName == null) throw new RuntimeException("Could not find form in page resources");
+            if (existingFormName == null)
+                throw new RuntimeException("Could not find form in page resources");
 
             LOG.debug("Processing FormXObject {} ({})", existingFormName, form);
 
@@ -144,7 +158,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
 
             boolean formWasRedacted = !tmpRedactedString.equals(this.redactedString.toString());
 
-            if(formWasRedacted) {
+            if (formWasRedacted) {
                 LOG.debug("Redaction occurred in FormXObject {} ({})", existingFormName, form);
 
                 // replace the form stream
@@ -187,8 +201,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     }
 
     @Override
-    public void showTextStrings(COSArray array) throws IOException
-    {
+    public void showTextStrings(COSArray array) throws IOException {
         PDTextState textState = getGraphicsState().getTextState();
         float fontSize = textState.getFontSize();
         float horizontalScaling = textState.getHorizontalScaling() / 100f;
@@ -198,30 +211,23 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         List<COSBase> filteredParams = new ArrayList<>();
         this.matchesRedactionFilterPartially = false;
 
-        for (COSBase obj : array)
-        {
-            if (obj instanceof COSNumber)
-            {
+        for (COSBase obj : array) {
+            if (obj instanceof COSNumber) {
                 float tj = ((COSNumber) obj).floatValue();
 
                 // calculate the combined displacements
                 float tx, ty;
-                if (isVertical)
-                {
+                if (isVertical) {
                     tx = 0;
                     ty = -tj / 1000 * fontSize;
-                }
-                else
-                {
+                } else {
                     tx = -tj / 1000 * fontSize * horizontalScaling;
                     ty = 0;
                 }
 
                 applyTextAdjustment(tx, ty);
                 filteredParams.add(obj);
-            }
-            else if (obj instanceof COSString)
-            {
+            } else if (obj instanceof COSString) {
                 // Handling scenarios where we want to edit part of a show text operation
                 // EG: the show text operation displays "This is a sentence" but the user wants to redact/replace "This is"
                 // Not all text would be redacted out, instead of only the partial match.
@@ -232,11 +238,11 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 byte[] string = ((COSString) obj).getBytes();
                 showText(string);
 
-                if(this.matchesRedactionFilter) {
+                if (this.matchesRedactionFilter) {
                     this.matchesRedactionFilterPartially = true;
 
                     float redactedStringWidth = 0;
-                    if(font != null) {
+                    if (font != null) {
                         try {
                             redactedStringWidth = font.getStringWidth(this.lastShownString.toString());
                         } catch (IllegalArgumentException | UnsupportedOperationException e) {
@@ -245,26 +251,24 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                         }
                     }
 
-                    if(redactedStringWidth == 0) {
+                    if (redactedStringWidth == 0) {
                         // we then fallback to calculating the string width based on what the text position reports
                         // the text position metrics can be inaccurate, so it's not the main source of info
                         redactedStringWidth = this.lastShownStringLastX - this.lastShownStringFirstX;
                     }
 
-                    float filteredTj = - (redactedStringWidth / horizontalScaling );
+                    float filteredTj = -(redactedStringWidth / horizontalScaling);
 
                     filteredParams.add(new COSFloat(filteredTj));
                 } else {
                     filteredParams.add(obj);
                 }
-            }
-            else
-            {
+            } else {
                 throw new IOException("Unknown type in array for TJ operation:" + obj);
             }
         }
 
-        if(this.matchesRedactionFilterPartially) {
+        if (this.matchesRedactionFilterPartially) {
             this.matchesRedactionFilter = true;
             this.filteredOperands = new ArrayList<>();
             COSArray cosArray = new COSArray();
@@ -274,24 +278,23 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
     }
 
     @Override
-    protected void processOperator(Operator operator, List<COSBase> operands) throws IOException
-    {
+    protected void processOperator(Operator operator, List<COSBase> operands) throws IOException {
         boolean skip = false;
         matchesRedactionFilter = false;
         matchesRedactionFilterPartially = false;
         this.filteredOperands = new ArrayList<>();
 
-        //System.out.println(operands.toString() + " " + operator.toString());
+        // System.out.println(operands.toString() + " " + operator.toString());
 
         super.processOperator(operator, operands);
 
-        if(operator.getName().equals("TD") || operator.getName().equals("\"") || operator.getName().equals("'") ||
-                operator.getName().equals("T*")) {
+        if (operator.getName().equals("TD") || operator.getName().equals("\"") || operator.getName().equals("'")
+                || operator.getName().equals("T*")) {
             skip = true;
         }
 
-        if(matchesRedactionFilter || skip) {
-            if(this.matchesRedactionFilterPartially && this.filteredOperands.size() > 0) {
+        if (matchesRedactionFilter || skip) {
+            if (this.matchesRedactionFilterPartially && this.filteredOperands.size() > 0) {
                 LOG.debug("Partially filtering out current text operator: {}", operator.getName());
 
                 LOG.debug("Writing operands: {}", this.filteredOperands);
@@ -303,8 +306,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
                 LOG.debug("Filtering out current text operator: {}", operator.getName());
             }
         } else {
-            //LOG.debug("Writing operands: {}", operands);
-            //LOG.debug("Writing operator: {}", operator.getName());
+            // LOG.debug("Writing operands: {}", operands);
+            // LOG.debug("Writing operator: {}", operator.getName());
 
             filteredStreamWriter.writeTokens(new ArrayList<Object>(operands));
             filteredStreamWriter.writeTokens(operator);
@@ -316,8 +319,8 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
         float x = text.getXDirAdj();
         float y = text.getYDirAdj();
 
-        boolean inBoundingBox = box.containsPoint(x, y) && box.containsPoint(x, y - text.getHeightDir()) &&
-                box.containsPoint(x + text.getWidthDirAdj(), y);
+        boolean inBoundingBox = box.containsPoint(x, y) && box.containsPoint(x, y - text.getHeightDir())
+                && box.containsPoint(x + text.getWidthDirAdj(), y);
 
         if (inBoundingBox) {
             // current Text operator should be filtered out
@@ -326,7 +329,7 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             redactedString.append(text.getUnicode());
             redactedFont = text.getFont();
 
-            if(lastShownString.length() == 0){
+            if (lastShownString.length() == 0) {
                 lastShownStringFirstX = x;
             }
             lastShownString.append(text.getUnicode());
@@ -335,33 +338,24 @@ public class PDFTextRedactingStreamEngine extends PDFTextStreamEngine {
             redactedFontSize = text.getYScale();
             redactedFontColor = getGraphicsState().getNonStrokingColor();
 
-            if(redactedTextPosition == null) {
+            if (redactedTextPosition == null) {
                 LOG.debug("Position: {},{}", text.getX(), text.getY());
 
-                //LOG.debug("fontSize {} fontSizePt {} yScale {}, maxHeight {}", text.getFontSize(), text.getFontSizeInPt(), text.getYScale(), text.getHeight());
-                redactedTextPosition = new Point((int)x, (int)y);
+                // LOG.debug("fontSize {} fontSizePt {} yScale {}, maxHeight {}", text.getFontSize(), text.getFontSizeInPt(), text.getYScale(), text.getHeight());
+                redactedTextPosition = new Point((int) x, (int) y);
                 redactedTextRenderingMode = getGraphicsState().getTextState().getRenderingMode();
             } else {
                 // sometimes words aren't in left to right order in the text stream
                 // Order date might be written "date" then "Order"
                 // check if the current position is more to the left, replace if so
-                if(redactedTextPosition.getX() > x) {
+                if (redactedTextPosition.getX() > x) {
                     LOG.debug("Found more to the left position: {},{}", text.getX(), text.getY());
 
-                    redactedTextPosition = new Point((int)x, (int)y);
+                    redactedTextPosition = new Point((int) x, (int) y);
                     redactedTextRenderingMode = getGraphicsState().getTextState().getRenderingMode();
                 }
             }
         }
-    }
-
-    private void logMatrix(String which, Matrix matrix) {
-        LOG.debug("Matrix {}: scale {},{}  scaling {},{}  translate {},{}  shear {},{}", which,
-                matrix.getScaleX(), matrix.getScaleY(),
-                matrix.getScalingFactorX(), matrix.getScalingFactorY(),
-                matrix.getTranslateX(), matrix.getTranslateY(),
-                matrix.getShearX(), matrix.getShearY()
-        );
     }
 
     public Set<IndirectCOSObjectIdentifier> getRedactedFormXObjectIds() {
