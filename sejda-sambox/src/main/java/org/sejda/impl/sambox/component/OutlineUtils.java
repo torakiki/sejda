@@ -19,6 +19,7 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
@@ -121,6 +123,31 @@ public final class OutlineUtils {
     }
 
     /**
+     * Creates a clone of the given page destination pointing to the given new page. If an error occur it falls back to a {@link PDPageXYZDestination}.
+     * 
+     * @param dest
+     * @param destPage
+     *            the new pointed page
+     * @return
+     */
+    public static PDPageDestination clonePageDestination(PDPageDestination dest, PDPage destPage) {
+        requireNotNullArg(dest, "Cannot clone a null destination");
+        try {
+            PDDestination clonedDestination = PDDestination.create(dest.getCOSObject().duplicate());
+            if (clonedDestination instanceof PDPageDestination) {
+                ((PDPageDestination) clonedDestination).setPage(destPage);
+                return (PDPageDestination) clonedDestination;
+            }
+        } catch (IOException e) {
+            LOG.warn("Unable to clone page destination", e);
+        }
+        // this should never happen
+        PDPageXYZDestination ret = new PDPageXYZDestination();
+        ret.setPage(destPage);
+        return ret;
+    }
+
+    /**
      * Copies the dictionary from the given {@link PDOutlineItem} to the destination one
      * 
      * @param from
@@ -157,11 +184,12 @@ public final class OutlineUtils {
                         .orElseGet(() -> d.getPageNumber());
 
                 boolean specificLocationInPage = false;
-                if(d instanceof PDPageXYZDestination) {
-                    PDPageXYZDestination xyzPageDest = (PDPageXYZDestination)d;
+                if (d instanceof PDPageXYZDestination) {
+                    PDPageXYZDestination xyzPageDest = (PDPageXYZDestination) d;
                     // it's a specific page destination but not the top of the page
-                    if(xyzPageDest.getPage() != null) {
-                        specificLocationInPage = xyzPageDest.getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
+                    if (xyzPageDest.getPage() != null) {
+                        specificLocationInPage = xyzPageDest
+                                .getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
                     }
                 }
 

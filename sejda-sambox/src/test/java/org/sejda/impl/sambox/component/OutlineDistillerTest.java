@@ -18,8 +18,11 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -32,6 +35,9 @@ import org.sejda.io.SeekableSources;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.util.IOUtils;
@@ -106,5 +112,29 @@ public class OutlineDistillerTest {
         new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
         assertTrue(outline.hasChildren());
         assertEquals(1, outline.getOpenCount());
+    }
+
+    @Test
+    public void destinationTypeIsPreservedInLeaves() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf")))) {
+            mapping.addLookupEntry(document.getPage(2), new PDPage());
+            PDDocumentOutline outline = new PDDocumentOutline();
+            new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+            PDDestination clonedDest = outline.getFirstChild().getDestination();
+            assertThat(clonedDest, is(instanceOf(PDPageFitWidthDestination.class)));
+            assertEquals(806, ((PDPageFitWidthDestination) clonedDest).getTop());
+        }
+    }
+
+    @Test
+    public void destinationTypeIsPreservedInNodes() throws IOException {
+        mapping.addLookupEntry(document.getPage(2), new PDPage());
+        PDDocumentOutline outline = new PDDocumentOutline();
+        new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+        PDDestination clonedDest = outline.getFirstChild().getDestination();
+        assertThat(clonedDest, is(instanceOf(PDPageXYZDestination.class)));
+        assertEquals(759, ((PDPageXYZDestination) clonedDest).getTop());
+        assertEquals(56, ((PDPageXYZDestination) clonedDest).getLeft());
     }
 }

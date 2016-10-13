@@ -19,6 +19,7 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.impl.sambox.component.OutlineUtils.clonePageDestination;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
@@ -78,11 +79,12 @@ class OutlineDistiller {
                     clone.addLast(clonedChild);
                 });
             }
-            Optional<PDPage> destinationPage = toPageDestination(node, document.getDocumentCatalog())
-                    .map(PDPageDestination::getPage).map(p -> pagesLookup.lookup(p));
+            Optional<PDPageDestination> pageDestination = toPageDestination(node, document.getDocumentCatalog());
+            Optional<PDPage> destinationPage = pageDestination.map(PDPageDestination::getPage)
+                    .map(p -> pagesLookup.lookup(p));
             if (clone.hasChildren() || destinationPage.isPresent()) {
                 copyOutlineDictionary(node, clone);
-                destinationPage.ifPresent(p -> clone.setDestination(p));
+                destinationPage.ifPresent(p -> clone.setDestination(clonePageDestination(pageDestination.get(), p)));
                 return Optional.of(clone);
             }
             return Optional.empty();
@@ -100,7 +102,7 @@ class OutlineDistiller {
             if (mapped != null) {
                 PDOutlineItem retVal = new PDOutlineItem();
                 copyOutlineDictionary(origin, retVal);
-                retVal.setDestination(mapped);
+                retVal.setDestination(clonePageDestination(d, mapped));
                 return Optional.of(retVal);
             }
             return Optional.empty();

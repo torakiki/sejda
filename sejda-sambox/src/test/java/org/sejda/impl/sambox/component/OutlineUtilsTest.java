@@ -18,10 +18,13 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -39,7 +42,9 @@ import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitHeightDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
@@ -123,6 +128,24 @@ public class OutlineUtilsTest {
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
         when(catalog.findNamedDestinationPage(any())).thenReturn(dest);
         assertEquals(dest, OutlineUtils.toPageDestination(victim, catalog).get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void clonePageDestinationNullDest() {
+        OutlineUtils.clonePageDestination(null, new PDPage());
+    }
+
+    @Test
+    public void clonePageDestinationSameType() {
+        PDPage origin = new PDPage();
+        PDPage newPage = new PDPage();
+        PDPageFitHeightDestination destination = new PDPageFitHeightDestination();
+        destination.setPage(origin);
+        destination.setLeft(20);
+        PDPageDestination cloned = OutlineUtils.clonePageDestination(destination, newPage);
+        assertThat(cloned, is(instanceOf(PDPageFitHeightDestination.class)));
+        assertEquals(newPage, cloned.getPage());
+        assertEquals(20, ((PDPageFitHeightDestination) cloned).getLeft());
     }
 
     @Test
