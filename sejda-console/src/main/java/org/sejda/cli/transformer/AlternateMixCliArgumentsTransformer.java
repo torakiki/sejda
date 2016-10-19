@@ -19,9 +19,12 @@
  */
 package org.sejda.cli.transformer;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
-import org.sejda.conversion.PdfFileSourceAdapter;
+import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.parameter.AlternateMixParameters;
 
@@ -31,8 +34,8 @@ import org.sejda.model.parameter.AlternateMixParameters;
  * @author Eduard Weissmann
  * 
  */
-public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> {
+public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransformer
+        implements CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> {
 
     /**
      * Transforms {@link AlternateMixTaskCliArguments} to {@link AlternateMixParameters}
@@ -42,18 +45,17 @@ public class AlternateMixCliArgumentsTransformer extends BaseCliArgumentsTransfo
      */
     @Override
     public AlternateMixParameters toTaskParameters(AlternateMixTaskCliArguments taskCliArguments) {
-        if (taskCliArguments.getFiles().size() != 2) {
-            throw new ArgumentValidationException("Please specify two files as input parameters, found "
-                    + taskCliArguments.getFiles().size());
+        List<PdfFileSource> sources = taskCliArguments.getFiles().stream().flatMap(a -> a.getPdfFileSources().stream())
+                .collect(Collectors.toList());
+        if (sources.size() != 2) {
+            throw new ArgumentValidationException(
+                    "Please specify two files as input parameters, found " + taskCliArguments.getFiles().size());
         }
 
-        PdfFileSourceAdapter f1 = taskCliArguments.getFiles().get(0);
-        PdfFileSourceAdapter f2 = taskCliArguments.getFiles().get(1);
-
-        PdfMixInput input1 = new PdfMixInput(f1.getPdfFileSource(), taskCliArguments.isReverseFirst(),
+        PdfMixInput input1 = new PdfMixInput(sources.get(0), taskCliArguments.isReverseFirst(),
                 taskCliArguments.getFirstStep());
 
-        PdfMixInput input2 = new PdfMixInput(f2.getPdfFileSource(), taskCliArguments.isReverseSecond(),
+        PdfMixInput input2 = new PdfMixInput(sources.get(1), taskCliArguments.isReverseSecond(),
                 taskCliArguments.getSecondStep());
 
         AlternateMixParameters parameters = new AlternateMixParameters(input1, input2);

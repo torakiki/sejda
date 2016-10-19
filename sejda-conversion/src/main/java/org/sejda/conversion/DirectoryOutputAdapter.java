@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.output.DirectoryTaskOutput;
 
 /**
@@ -39,7 +40,7 @@ public class DirectoryOutputAdapter {
         Path directory = Paths.get(directoryPath).toAbsolutePath().normalize();
 
         if (!Files.isDirectory(directory)) {
-            throw new IllegalArgumentException("Path '" + directory.toString() + "' is not an existing directory");
+            throw new ConversionException("Path '" + directory.toString() + "' is not an existing directory");
         }
 
         this.pdfDirectoryOutput = new DirectoryTaskOutput(directory.toFile());

@@ -68,6 +68,8 @@ public class MergeTaskTest extends AbstractTaskTest {
         createTestPdfFile("/tmp/merge/file2.pdf");
         createTestPdfFile("/tmp/merge/file3.pdf");
         createTestPdfFile("/tmp/merge/file4.pdf");
+        createTestPdfFile("/tmp/merge/file5.txt");
+        createTestPdfFile("/tmp/merge/subdir/file5.pdf");
 
         createTestTextFile("./location/filenames.csv",
                 "/tmp/merge/file3.pdf, /tmp/merge/file1.pdf, /tmp/merge/file2.pdf");
@@ -188,6 +190,15 @@ public class MergeTaskTest extends AbstractTaskTest {
         defaultCommandLine().without("-f").with("-d", "/tmp/merge").with("-e", "([^\\s]+(\\.(norris))$)")
                 .assertConsoleOutputContains("No input files specified in");
 
+    }
+
+    @Test
+    public void wildcardInput() {
+        MergeParameters parameters = defaultCommandLine().without("-f")
+                .with("-f", "/tmp/merge/*.pdf /tmp/inputFile1.pdf").invokeSejdaConsole();
+
+        assertPdfMergeInputsFilesList(parameters, filesList("/tmp/merge/file1.pdf", "/tmp/merge/file2.pdf",
+                "/tmp/merge/file3.pdf", "/tmp/merge/file4.pdf", "/tmp/inputFile1.pdf"));
     }
 
     @Test

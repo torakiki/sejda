@@ -53,4 +53,11 @@ public class CompressTaskTest extends AbstractTaskTest {
                 .invokeSejdaConsole();
         assertEquals(3, parameters.getOptimizations().size());
     }
+
+    @Test
+    public void wildcardInput() {
+        OptimizeParameters parameters = defaultCommandLine().without("-f").with("-f", "./inputs/*.pdf")
+                .invokeSejdaConsole();
+        assertEquals(5, parameters.getSourceList().size());
+    }
 }

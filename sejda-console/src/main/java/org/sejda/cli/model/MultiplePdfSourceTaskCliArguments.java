@@ -20,7 +20,7 @@ package org.sejda.cli.model;
 
 import java.util.List;
 
-import org.sejda.conversion.PdfFileSourceAdapter;
+import org.sejda.conversion.WildcardsPdfFileSourceAdapter;
 
 import com.lexicalscope.jewel.cli.Option;
 
@@ -32,5 +32,5 @@ import com.lexicalscope.jewel.cli.Option;
  */
 public interface MultiplePdfSourceTaskCliArguments extends TaskCliArguments {
     @Option(shortName = "f", description = "pdf files to operate on. A list of existing pdf files (EX. -f /tmp/file1.pdf or -f /tmp/password_protected_file2.pdf:secret123) (required)")
-    List<PdfFileSourceAdapter> getFiles();
+    List<WildcardsPdfFileSourceAdapter> getFiles();
 }

@@ -25,6 +25,7 @@ target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pd
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p rotated_ -r 180 -m all -j overwrite -v 1.5
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -m all -j skip
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -s 4,12-14 -j overwrite
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/forms/*.pdf -o /tmp/sejda-smoketest/ -r 90 -m all -j overwrite
 target/assembled/bin/sejda-console -h setmetadata
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a Torakiki -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.5
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.5
@@ -75,6 +76,7 @@ target/assembled/bin/sejda-console merge -f ../sejda-core/src/test/resources/pdf
 target/assembled/bin/sejda-console merge -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_outline.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/merged.pdf --overwrite -a merge -s all:2-4:all: -b retain
 target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf -e "test(.*).pdf" -o /tmp/sejda-smoketest/merged.pdf --overwrite -a merge -s all:2-4:all:
 target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf -e "test(.*).pdf" -o /tmp/sejda-smoketest/merged.pdf --overwrite -a merge -s all:2-4:all: -t file_names
+target/assembled/bin/sejda-console merge -f ../sejda-core/src/test/resources/pdf/forms/*.pdf -o /tmp/sejda-smoketest/merged.pdf --overwrite -a merge
 target/assembled/bin/sejda-console settransitions -h
 target/assembled/bin/sejda-console setpagetransitions -h
 # TODO: folder contains encrypted files, maybe fix this by creating separate folders for encrypted and un-encrypted files

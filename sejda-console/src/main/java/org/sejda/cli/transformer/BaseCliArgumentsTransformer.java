@@ -33,7 +33,6 @@ import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
 import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
 import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
@@ -168,9 +167,8 @@ public class BaseCliArgumentsTransformer {
      */
     protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters,
             MultiplePdfSourceTaskCliArguments taskCliArguments) {
-        for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
-            parameters.addSource(eachAdapter.getPdfFileSource());
-        }
+        taskCliArguments.getFiles().stream().flatMap(a -> a.getPdfFileSources().stream())
+                .forEach(parameters::addSource);
     }
 
     /**
@@ -181,9 +179,8 @@ public class BaseCliArgumentsTransformer {
      */
     protected void populateSourceParameters(MultiplePdfSourceTaskParameters parameters,
             MultipleOptionalPdfSourceTaskCliArguments taskCliArguments) {
-        for (PdfFileSourceAdapter eachAdapter : taskCliArguments.getFiles()) {
-            parameters.addSource(eachAdapter.getPdfFileSource());
-        }
+        taskCliArguments.getFiles().stream().flatMap(a -> a.getPdfFileSources().stream())
+                .forEach(parameters::addSource);
     }
 
     /**

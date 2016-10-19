@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.sejda.conversion.exception.ConversionException;
 
 /**
  * @author Andrea Vacondio
@@ -36,12 +37,12 @@ public class DirectoryOutputAdapterTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ConversionException.class)
     public void testNegative() {
         new DirectoryOutputAdapter("/I/dont/exist");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = ConversionException.class)
     public void testFile() throws IOException {
         new DirectoryOutputAdapter(folder.newFile().getAbsolutePath());
     }

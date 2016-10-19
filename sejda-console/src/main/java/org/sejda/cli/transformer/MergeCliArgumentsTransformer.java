@@ -19,13 +19,12 @@
  */
 package org.sejda.cli.transformer;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.sejda.cli.model.MergeTaskCliArguments;
 import org.sejda.conversion.MultiplePdfMergeInputAdapter;
-import org.sejda.conversion.PdfFileSourceAdapter;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
@@ -78,7 +77,8 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer
             }
 
         } else if (taskCliArguments.isFiles()) {
-            inputFiles = extractFiles(taskCliArguments.getFiles());
+            inputFiles = taskCliArguments.getFiles().stream().flatMap(a -> a.getPdfFileSources().stream())
+                    .collect(Collectors.toList());
         } else if (taskCliArguments.isFilesListConfig()) {
             inputFiles = taskCliArguments.getFilesListConfig().getFileSourceList();
         }
@@ -102,13 +102,5 @@ public class MergeCliArgumentsTransformer extends BaseCliArgumentsTransformer
         MultiplePdfMergeInputAdapter mergeInputsAdapter = new MultiplePdfMergeInputAdapter(inputFiles,
                 taskCliArguments.getPageSelection().ranges());
         return mergeInputsAdapter;
-    }
-
-    private List<PdfFileSource> extractFiles(List<PdfFileSourceAdapter> adapters) {
-        List<PdfFileSource> result = new ArrayList<>();
-        for (PdfFileSourceAdapter eachAdapter : adapters) {
-            result.add(eachAdapter.getPdfFileSource());
-        }
-        return result;
     }
 }
