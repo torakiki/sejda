@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
         assertFalse(new File("./outputs/fileOutput.pdf").exists());
 
         TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();
-        assertOutputFile(result.getOutput(), new File("./outputs/fileOutput.pdf"));
+        assertOutputFile(result.getOutput(), Paths.get("./outputs/fileOutput.pdf"));
     }
 
     @Test

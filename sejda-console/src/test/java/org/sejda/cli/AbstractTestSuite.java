@@ -193,7 +193,7 @@ public abstract class AbstractTestSuite {
         });
     }
 
-    protected void assertOutputFile(TaskOutput<?> output, final File outputFile) throws TaskException {
+    protected void assertOutputFile(TaskOutput<?> output, final Path expected) throws TaskException {
         output.accept(new TaskOutputDispatcher() {
 
             @Override
@@ -208,7 +208,7 @@ public abstract class AbstractTestSuite {
 
             @Override
             public void dispatch(FileTaskOutput output) {
-                assertEquals(output.getDestination(), outputFile);
+                assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
             }
         });
     }
