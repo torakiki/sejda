@@ -41,6 +41,11 @@ public class DirectoryOutputAdapterTest {
         new DirectoryOutputAdapter("/I/dont/exist");
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testFile() throws IOException {
+        new DirectoryOutputAdapter(folder.newFile().getAbsolutePath());
+    }
+
     @Test
     public void testPositive() throws IOException {
         assertNotNull(new DirectoryOutputAdapter(folder.newFolder().getAbsolutePath()).getPdfDirectoryOutput());

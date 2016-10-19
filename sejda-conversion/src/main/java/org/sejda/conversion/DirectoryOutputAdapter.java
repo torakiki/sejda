@@ -39,7 +39,7 @@ public class DirectoryOutputAdapter {
         Path directory = Paths.get(directoryPath).toAbsolutePath().normalize();
 
         if (!Files.isDirectory(directory)) {
-            throw new IllegalArgumentException("Path '" + directory.toString() + "' is not an existing diretory");
+            throw new IllegalArgumentException("Path '" + directory.toString() + "' is not an existing directory");
         }
 
         this.pdfDirectoryOutput = new DirectoryTaskOutput(directory.toFile());
