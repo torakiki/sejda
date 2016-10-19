@@ -19,7 +19,7 @@
  */
 package org.sejda.conversion;
 
-import java.io.File;
+import java.nio.file.Paths;
 
 import org.sejda.model.output.FileTaskOutput;
 
@@ -34,7 +34,7 @@ public class FileOutputAdapter {
     private final FileTaskOutput fileOutput;
 
     public FileOutputAdapter(String path) {
-        this.fileOutput = new FileTaskOutput(new File(path));
+        this.fileOutput = new FileTaskOutput(Paths.get(path).toAbsolutePath().normalize().toFile());
     }
 
     /**
