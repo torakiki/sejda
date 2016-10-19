@@ -21,7 +21,7 @@ package org.sejda.cli;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.junit.Test;
@@ -50,13 +50,13 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
     @Test
     public void negative_NotFound() {
         defaultCommandLine().with("-o", "output-doesntexist")
-                .assertConsoleOutputContains("Path 'output-doesntexist' does not exist");
+                .assertConsoleOutputContains("is not an existing directory");
     }
 
     @Test
     public void positive() throws TaskException {
         TaskParameters result = defaultCommandLine().with("-o", "./outputs").invokeSejdaConsole();
-        assertOutputFolder(result, new File("./outputs"));
+        assertOutputFolder(result, Paths.get("./outputs"));
     }
 
     @Test

@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -162,15 +163,17 @@ public abstract class AbstractTestSuite {
             }
         }
 
-        assertTrue("File '" + file + "'"
-                + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"), found);
+        assertTrue(
+                "File '" + file + "'"
+                        + (StringUtils.isEmpty(password) ? " and no password" : " and password '" + password + "'"),
+                found);
     }
 
     protected boolean matchesPdfFileSource(File file, String password, PdfSource<?> each) {
         return (each.getSource().equals(file) && StringUtils.equals(each.getPassword(), password));
     }
 
-    protected void assertOutputFolder(TaskParameters result, final File outputFolder) throws TaskException {
+    protected void assertOutputFolder(TaskParameters result, final Path expected) throws TaskException {
         result.getOutput().accept(new TaskOutputDispatcher() {
 
             @Override
@@ -180,7 +183,7 @@ public abstract class AbstractTestSuite {
 
             @Override
             public void dispatch(DirectoryTaskOutput output) {
-                assertEquals(output.getDestination(), outputFolder);
+                assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
             }
 
             @Override
