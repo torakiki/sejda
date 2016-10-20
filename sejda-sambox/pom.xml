@@ -101,15 +101,5 @@
 			<version>${hibernate-validator.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>jdepend</groupId>
-			<artifactId>jdepend</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

@@ -55,9 +55,22 @@ public class PageImageWriter {
         this.document = document;
     }
 
-    public void write(PDPage page, PDImageXObject image, Point2D position, float width, float height) throws TaskIOException {
+    public void append(PDPage page, PDImageXObject image, Point2D position, float width, float height)
+            throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND);
+
+    }
+
+    public void prepend(PDPage page, PDImageXObject image, Point2D position, float width, float height)
+            throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND);
+
+    }
+
+    private void write(PDPage page, PDImageXObject image, Point2D position, float width, float height,
+            PDPageContentStream.AppendMode mode) throws TaskIOException {
         try {
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, mode, true, true)) {
 
                 contentStream.drawImage(image, (float) position.getX(), (float) position.getY(), width, height);
                 contentStream.close();
@@ -103,8 +116,7 @@ public class PageImageWriter {
         }
     }
 
-    public static String convertTiffToJpg(String filePath)
-            throws IOException, TaskIOException {
+    public static String convertTiffToJpg(String filePath) throws IOException, TaskIOException {
         LOG.debug(filePath);
         BufferedImage image = ImageIO.read(new File(filePath));
         File tmpFile = IOUtils.createTemporaryBuffer(".jpg");

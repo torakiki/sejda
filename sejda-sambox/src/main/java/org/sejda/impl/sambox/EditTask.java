@@ -155,7 +155,7 @@ public class EditTask extends BaseTask<EditParameters> {
 
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
-                    imageWriter.write(page, image, imageOperation.getPosition(), imageOperation.getWidth(), imageOperation.getHeight());
+                    imageWriter.append(page, image, imageOperation.getPosition(), imageOperation.getWidth(), imageOperation.getHeight());
                 }
             }
 

@@ -68,11 +68,7 @@
 			<artifactId>hibernate-validator</artifactId>
 			<version>${hibernate-validator.version}</version>
 			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>jdepend</groupId>
-			<artifactId>jdepend</artifactId>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-model</artifactId>
@@ -80,11 +76,6 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
