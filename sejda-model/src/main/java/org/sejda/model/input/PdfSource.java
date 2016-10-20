@@ -47,6 +47,11 @@ public interface PdfSource<T> {
     String getPassword();
 
     /**
+     * Updates the password needed to open the source. Can be null.
+     */
+    void setPassword(String password);
+
+    /**
      * Dispatch method to open the source.
      * 
      * @param <R>

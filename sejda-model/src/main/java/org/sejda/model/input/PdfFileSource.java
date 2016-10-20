@@ -31,7 +31,7 @@ import org.sejda.model.validation.constraint.PdfFile;
  * @author Andrea Vacondio
  * 
  */
-public final class PdfFileSource extends AbstractPdfSource<File> {
+public class PdfFileSource extends AbstractPdfSource<File> {
 
     @PdfFile
     private final File file;
@@ -72,7 +72,7 @@ public final class PdfFileSource extends AbstractPdfSource<File> {
      */
     public static PdfFileSource newInstanceWithPassword(File file, String password) {
         if (file == null || !file.isFile()) {
-            throw new IllegalArgumentException("A not null File instance that isFile is expected.");
+            throw new IllegalArgumentException("A not null File instance that isFile is expected. Path: " + file);
         }
         return new PdfFileSource(file, password);
     }

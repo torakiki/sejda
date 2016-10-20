@@ -71,6 +71,10 @@ public abstract class AbstractPdfSource<T> implements PdfSource<T> {
         return password;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     /**
      * @return the password in bytes or null if no password has been set
      */
