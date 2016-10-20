@@ -19,7 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -51,6 +52,7 @@ public class CropParameters extends MultiplePdfSourceMultipleOutputParameters im
     @Valid
     public final Set<PageRange> excludedPagesSelection = new NullSafeSet<PageRange>();
 
+    @Override
     public Set<PageRange> getExcludedPagesSelection() {
         return excludedPagesSelection;
     }

@@ -18,20 +18,19 @@
  */
 package org.sejda.model.parameter;
 
+import java.awt.Color;
+
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
-import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
-
-import java.awt.*;
 
 /**
  * Parameters configuring how to label the header/footer of a set of pages in a given pdf document.
@@ -47,7 +46,6 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     private StandardType1Font font = StandardType1Font.HELVETICA;
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
-    @Min(1)
     private double fontSize = 10d;
     @NotNull
     private String pattern;
