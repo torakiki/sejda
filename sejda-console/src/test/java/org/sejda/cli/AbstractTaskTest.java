@@ -59,10 +59,12 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
         createTestPdfFile("./inputs/input-unprotected.pdf");
         createTestPdfFile("./inputs/back.pdf");
         createTestFolder("./outputs");
+        createTestFile("./inputs/logo.png", getClass().getResourceAsStream("/image/draft.png"));
 
         createTestTextFile("./inputs/file1.txt", "this is a test file");
         createTestPdfFile("/tmp/file1.pdf");
         createTestPdfFile("/tmp/file2.pdf");
         createTestPdfFile("/tmp/back.pdf");
+        createTestFile("/tmp/logo.png", getClass().getResourceAsStream("/image/draft.png"));
     }
 }

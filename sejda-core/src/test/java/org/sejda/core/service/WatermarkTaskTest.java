@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -51,13 +52,13 @@ import org.sejda.sambox.pdmodel.common.PDStream;
 public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters> {
 
     private WatermarkParameters pngParams() throws IOException {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"), 103, 248);
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
         setUpParams(parameters);
         return parameters;
     }
 
     private WatermarkParameters tiffParams() throws IOException {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tif"), 103, 248);
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tif"));
         setUpParams(parameters);
         return parameters;
     }
@@ -110,8 +111,9 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
 
     @Test
     public void testAddingPngImageScaled() throws Exception {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"), 83, 200);
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
         setUpParams(parameters);
+        parameters.setDimension(new Dimension(200, 83));
         parameters.addPageRange(new PageRange(1, 1));
         execute(parameters);
         testContext.assertTaskCompleted();

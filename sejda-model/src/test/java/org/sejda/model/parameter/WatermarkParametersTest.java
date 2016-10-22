@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
+import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.Set;
 
@@ -44,13 +45,13 @@ public class WatermarkParametersTest {
     @Test
     public void testEquals() {
         FileSource source = mock(FileSource.class);
-        WatermarkParameters eq1 = new WatermarkParameters(source, 10, 10);
+        WatermarkParameters eq1 = new WatermarkParameters(source);
         eq1.setOpacity(50);
-        WatermarkParameters eq2 = new WatermarkParameters(source, 10, 10);
+        WatermarkParameters eq2 = new WatermarkParameters(source);
         eq2.setOpacity(50);
-        WatermarkParameters eq3 = new WatermarkParameters(source, 10, 10);
+        WatermarkParameters eq3 = new WatermarkParameters(source);
         eq3.setOpacity(50);
-        WatermarkParameters diff = new WatermarkParameters(source, 10, 10);
+        WatermarkParameters diff = new WatermarkParameters(source);
         diff.setOpacity(50);
         diff.setLocation(Location.OVER);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
@@ -58,8 +59,7 @@ public class WatermarkParametersTest {
 
     @Test
     public void getPages() {
-        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"),
-                10, 10);
+        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"));
         victim.addPageRange(new PageRange(5, 8));
         victim.addPageRange(new PageRange(3, 3));
         victim.addPageRange(new PageRange(10));
@@ -70,7 +70,7 @@ public class WatermarkParametersTest {
 
     @Test
     public void invalidParametersEmptyWatermark() {
-        WatermarkParameters victim = new WatermarkParameters(null, 10, 10);
+        WatermarkParameters victim = new WatermarkParameters(null);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
         MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
@@ -80,8 +80,7 @@ public class WatermarkParametersTest {
 
     @Test
     public void invalidParametersOpacity() {
-        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"),
-                10, 10);
+        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"));
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
         MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
@@ -92,8 +91,8 @@ public class WatermarkParametersTest {
 
     @Test
     public void invalidParametersImageSize() {
-        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"),
-                -10, -10);
+        WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"));
+        victim.setDimension(new Dimension(-300, 300));
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
         MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);

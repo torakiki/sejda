@@ -108,4 +108,7 @@ target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources
 target/assembled/bin/sejda-console compress -h
 target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -q 0.4 -o /tmp/sejda-smoketest -j overwrite
 target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -z discard_unused_resources discard_outline discard_metadata -o /tmp/sejda-smoketest -j overwrite
+target/assembled/bin/sejda-console watermark -h
+target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -c 30,50 -a 32 -w ../sejda-core/src/test/resources/image/draft.png -o /tmp/sejda-smoketest -j overwrite
+target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest -s 1,3-5 -p water -c 400,20 -d 200x40 -j overwrite -l over -w ../sejda-core/src/test/resources/image/draft.png
 

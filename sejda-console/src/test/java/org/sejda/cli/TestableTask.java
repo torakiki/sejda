@@ -69,7 +69,8 @@ public enum TestableTask {
     COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
     ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
     PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput()),
-    NUP(taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs().defaultFolderOutput());
+    NUP(taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs().defaultFolderOutput()),
+    WATERMARK(new WatermarkDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -338,5 +339,12 @@ class AddBackPagesDefaultsProvider extends MultipleInputsAndFolderOutputDefaults
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-b", "inputs/back.pdf");
+    }
+}
+
+class WatermarkDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-w", "inputs/logo.png").with("-c", "50,30");
     }
 }

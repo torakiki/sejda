@@ -18,6 +18,7 @@
  */
 package org.sejda.model.parameter;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.Collection;
@@ -38,7 +39,7 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.validation.constraint.NoIntersections;
-import org.sejda.model.validation.constraint.Positive;
+import org.sejda.model.validation.constraint.PositiveDimensions;
 import org.sejda.model.watermark.Location;
 
 /**
@@ -60,17 +61,13 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
     @Min(0)
     @Max(100)
     private int opacity = 100;
-    @Positive
-    public final float height;
-    @Positive
-    public final float width;
+    @PositiveDimensions
+    private Dimension dimension;
     @NotNull
     private Point2D position = new Point();
 
-    public WatermarkParameters(Source<?> watermark, float height, float width) {
+    public WatermarkParameters(Source<?> watermark) {
         this.watermark = watermark;
-        this.height = height;
-        this.width = width;
     }
 
     /**
@@ -142,10 +139,18 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         this.position = position;
     }
 
+    public Dimension getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(Dimension dimenstion) {
+        this.dimension = dimenstion;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(watermark).append(pageSelection)
-                .append(location).append(height).append(width).append(opacity).append(position).toHashCode();
+                .append(location).append(dimension).append(opacity).append(position).toHashCode();
     }
 
     @Override
@@ -159,7 +164,7 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         WatermarkParameters parameter = (WatermarkParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(watermark, parameter.watermark)
                 .append(pageSelection, parameter.pageSelection).append(location, parameter.location)
-                .append(height, parameter.height).append(width, parameter.width).append(opacity, parameter.opacity)
+                .append(dimension, parameter.dimension).append(opacity, parameter.opacity)
                 .append(position, parameter.position).isEquals();
     }
 }

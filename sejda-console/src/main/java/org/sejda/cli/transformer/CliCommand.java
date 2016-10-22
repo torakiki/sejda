@@ -62,6 +62,7 @@ import org.sejda.cli.model.SplitDownTheMiddleTaskCliArguments;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.cli.model.UnpackTaskCliArguments;
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
+import org.sejda.cli.model.WatermarkTaskCliArguments;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
@@ -90,6 +91,7 @@ import org.sejda.model.parameter.SplitByTextContentParameters;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
+import org.sejda.model.parameter.WatermarkParameters;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
@@ -327,7 +329,14 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<NupTaskCliArguments, NupParameters> getArgumentsTransformer() {
             return new NupCliArgumentsTransformer();
         }
-    }, "Composes multiple PDF pages (4, 8, 16, 32) per sheet.", "nup -n 4 -f /tmp/file1.pdf -o /tmp");
+    }, "Composes multiple PDF pages (4, 8, 16, 32) per sheet.", "nup -n 4 -f /tmp/file1.pdf -o /tmp"),
+    WATERMARK("watermark", new CliInterfacedTask<WatermarkTaskCliArguments, WatermarkParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<WatermarkTaskCliArguments, WatermarkParameters> getArgumentsTransformer() {
+            return new WatermarkCliArgumentsTransformer();
+        }
+    }, "Stamps a watermark image on multiple PDF documents.", "watermark -f /tmp/file1.pdf -o /tmp -w /tmp/logo.png -l behind -d 300x100 -c 20,50 -a 30");
 
     private String displayName;
     private String description;

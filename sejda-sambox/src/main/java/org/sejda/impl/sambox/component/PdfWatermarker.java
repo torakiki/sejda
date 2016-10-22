@@ -18,6 +18,8 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
+
 import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
@@ -55,7 +57,9 @@ public class PdfWatermarker {
         group.setKnockout();
         this.form.setGroup(group);
         // calculate bbox using dpi scale
-        PDRectangle bbox = new PDRectangle(parameters.width, parameters.height);
+        PDRectangle bbox = ofNullable(parameters.getDimension())
+                .map(d -> new PDRectangle((float) d.getWidth(), (float) d.getHeight()))
+                .orElseGet(() -> new PDRectangle(watermark.getWidth(), watermark.getHeight()));
         form.setBBox(bbox);
 
         try (PDPageContentStream contentStream = new PDPageContentStream(document, form)) {
