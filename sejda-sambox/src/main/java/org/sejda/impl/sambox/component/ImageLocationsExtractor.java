@@ -18,10 +18,21 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.sejda.sambox.contentstream.PDFStreamEngine;
-import org.sejda.sambox.contentstream.operator.DrawObject;
 import org.sejda.sambox.contentstream.operator.Operator;
-import org.sejda.sambox.contentstream.operator.state.*;
+import org.sejda.sambox.contentstream.operator.OperatorProcessor;
+import org.sejda.sambox.contentstream.operator.state.Concatenate;
+import org.sejda.sambox.contentstream.operator.state.Restore;
+import org.sejda.sambox.contentstream.operator.state.Save;
+import org.sejda.sambox.contentstream.operator.state.SetGraphicsStateParameters;
+import org.sejda.sambox.contentstream.operator.state.SetMatrix;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -31,24 +42,17 @@ import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.util.Matrix;
 
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public class ImageLocationsExtractor extends PDFStreamEngine {
 
     private Map<PDPage, List<Rectangle>> imageLocations = new HashMap<>();
 
     public ImageLocationsExtractor() {
         addOperator(new Concatenate());
-        addOperator(new DrawObject());
         addOperator(new SetGraphicsStateParameters());
         addOperator(new Save());
         addOperator(new Restore());
         addOperator(new SetMatrix());
+        addOperator(new XObjectOperator());
     }
 
     public void process(PDDocument document) throws IOException {
@@ -58,10 +62,9 @@ public class ImageLocationsExtractor extends PDFStreamEngine {
         }
     }
 
-    @Override
-    protected void processOperator(Operator operator, List<COSBase> operands) throws IOException {
-        String operation = operator.getName();
-        if ("Do".equals(operation)) {
+    private class XObjectOperator extends OperatorProcessor {
+        @Override
+        public void process(Operator operator, List<COSBase> operands) throws IOException {
             COSName objectName = (COSName) operands.get(0);
             PDXObject xobject = getResources().getXObject(objectName);
             if (xobject instanceof PDImageXObject) {
@@ -72,15 +75,17 @@ public class ImageLocationsExtractor extends PDFStreamEngine {
                 if (!imageLocations.containsKey(getCurrentPage())) {
                     imageLocations.put(getCurrentPage(), new ArrayList<>());
                 }
-                imageLocations.get(getCurrentPage()).add(
-                        new Rectangle((int) ctmNew.getTranslateX(), (int) ctmNew.getTranslateY(), (int) imageXScale, (int) imageYScale)
-                );
+                imageLocations.get(getCurrentPage()).add(new Rectangle((int) ctmNew.getTranslateX(),
+                        (int) ctmNew.getTranslateY(), (int) imageXScale, (int) imageYScale));
             } else if (xobject instanceof PDFormXObject) {
                 PDFormXObject form = (PDFormXObject) xobject;
                 showForm(form);
             }
-        } else {
-            super.processOperator(operator, operands);
+        }
+
+        @Override
+        public String getName() {
+            return "Do";
         }
     }
 

@@ -16,6 +16,18 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+
 import org.sejda.core.service.EditTaskTest;
 import org.sejda.impl.sambox.component.ImageLocationsExtractor;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
@@ -27,14 +39,6 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
 public class EditSamboxTaskTest extends EditTaskTest {
 
     @Override
@@ -45,10 +49,11 @@ public class EditSamboxTaskTest extends EditTaskTest {
     @Override
     protected void assertPageTextDoesNotContain(PDPage page, String expectedNotFoundText) {
         PDRectangle cropBox = page.getCropBox();
-        Rectangle fullPage = new Rectangle(0, 0, (int)cropBox.getWidth(), (int)cropBox.getHeight());
+        Rectangle fullPage = new Rectangle(0, 0, (int) cropBox.getWidth(), (int) cropBox.getHeight());
 
         try {
-            assertThat(new PdfTextExtractorByArea().extractTextFromArea(page, fullPage).trim(), not(containsString(expectedNotFoundText)));
+            assertThat(new PdfTextExtractorByArea().extractTextFromArea(page, fullPage).trim(),
+                    not(containsString(expectedNotFoundText)));
         } catch (TaskIOException e) {
             fail(e.getMessage());
         }
@@ -57,7 +62,8 @@ public class EditSamboxTaskTest extends EditTaskTest {
     @Override
     protected void assertTextAreaHasText(PDPage page, String expectedText, TopLeftRectangularBox area) {
         try {
-            assertThat(new PdfTextExtractorByArea().extractTextFromArea(page, area.asRectangle()).trim(), is(expectedText));
+            assertThat(new PdfTextExtractorByArea().extractTextFromArea(page, area.asRectangle()).trim(),
+                    is(expectedText));
         } catch (TaskIOException e) {
             fail(e.getMessage());
         }
@@ -66,7 +72,8 @@ public class EditSamboxTaskTest extends EditTaskTest {
     @Override
     protected void assertTextEditAreaHasText(PDPage page, String expectedText) {
         try {
-            assertThat(new PdfTextExtractorByArea().extractAddedText(page, TEXT_EDIT_POSITION).trim(), is(expectedText));
+            assertThat(new PdfTextExtractorByArea().extractAddedText(page, TEXT_EDIT_POSITION).trim(),
+                    is(expectedText));
         } catch (TaskIOException e) {
             fail(e.getMessage());
         }

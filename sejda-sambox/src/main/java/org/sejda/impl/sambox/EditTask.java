@@ -32,14 +32,25 @@ import java.util.TreeSet;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageGeometricalShapeWriter;
+import org.sejda.impl.sambox.component.PageImageWriter;
+import org.sejda.impl.sambox.component.PageTextReplacer;
+import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.*;
+import org.sejda.model.parameter.edit.AddImageOperation;
+import org.sejda.model.parameter.edit.AddShapeOperation;
+import org.sejda.model.parameter.edit.AppendTextOperation;
+import org.sejda.model.parameter.edit.DeletePageOperation;
+import org.sejda.model.parameter.edit.EditTextOperation;
+import org.sejda.model.parameter.edit.HighlightTextOperation;
+import org.sejda.model.parameter.edit.InsertPageOperation;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -155,7 +166,8 @@ public class EditTask extends BaseTask<EditParameters> {
 
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
-                    imageWriter.append(page, image, imageOperation.getPosition(), imageOperation.getWidth(), imageOperation.getHeight());
+                    imageWriter.append(page, image, imageOperation.getPosition(), imageOperation.getWidth(),
+                            imageOperation.getHeight(), null);
                 }
             }
 

@@ -50,7 +50,7 @@ public class PositiveNumberValidator implements ConstraintValidator<Positive, Nu
         } else if (value instanceof BigInteger) {
             return ((BigInteger) value).compareTo(BigInteger.ZERO) == 1;
         } else {
-            return value.longValue() > 0;
+            return value.floatValue() > 0;
         }
     }
 }

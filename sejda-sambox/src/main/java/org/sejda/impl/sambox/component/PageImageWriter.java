@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -41,8 +42,12 @@ import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
+import org.sejda.sambox.pdmodel.graphics.PDXObject;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.graphics.image.UnsupportedTiffImageException;
+import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,25 +60,38 @@ public class PageImageWriter {
         this.document = document;
     }
 
-    public void append(PDPage page, PDImageXObject image, Point2D position, float width, float height)
-            throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND);
-
+    public void append(PDPage page, PDImageXObject image, Point2D position, float width, float height,
+            PDExtendedGraphicsState gs) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true);
     }
 
-    public void prepend(PDPage page, PDImageXObject image, Point2D position, float width, float height)
-            throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND);
-
+    public void append(PDPage page, PDFormXObject image, Point2D position, float width, float height,
+            PDExtendedGraphicsState gs) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true);
     }
 
-    private void write(PDPage page, PDImageXObject image, Point2D position, float width, float height,
-            PDPageContentStream.AppendMode mode) throws TaskIOException {
-        try {
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page, mode, true, true)) {
+    public void prepend(PDPage page, PDImageXObject image, Point2D position, float width, float height,
+            PDExtendedGraphicsState gs) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false);
+    }
 
-                contentStream.drawImage(image, (float) position.getX(), (float) position.getY(), width, height);
-                contentStream.close();
+    public void prepend(PDPage page, PDFormXObject image, Point2D position, float width, float height,
+            PDExtendedGraphicsState gs) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false);
+    }
+
+    private void write(PDPage page, PDXObject image, Point2D position, float width, float height,
+            PDPageContentStream.AppendMode mode, PDExtendedGraphicsState gs, boolean resetContext)
+            throws TaskIOException {
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page, mode, true, resetContext)) {
+            if (image instanceof PDFormXObject) {
+                contentStream.drawImage((PDFormXObject) image, new Matrix(
+                        new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY())),
+                        gs);
+            } else {
+                contentStream.drawImage((PDImageXObject) image, new Matrix(
+                        new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY())),
+                        gs);
             }
         } catch (IOException e) {
             throw new TaskIOException("An error occurred writing image to the page.", e);

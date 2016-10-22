@@ -38,6 +38,7 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.validation.constraint.NoIntersections;
+import org.sejda.model.validation.constraint.Positive;
 import org.sejda.model.watermark.Location;
 
 /**
@@ -59,14 +60,17 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
     @Min(0)
     @Max(100)
     private int opacity = 100;
-    @Min(1)
-    @Max(100)
-    private int scale = 100;
+    @Positive
+    public final float height;
+    @Positive
+    public final float width;
     @NotNull
     private Point2D position = new Point();
 
-    public WatermarkParameters(Source<?> watermark) {
+    public WatermarkParameters(Source<?> watermark, float height, float width) {
         this.watermark = watermark;
+        this.height = height;
+        this.width = width;
     }
 
     /**
@@ -117,10 +121,6 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         this.opacity = opacity;
     }
 
-    public int getScale() {
-        return scale;
-    }
-
     public Location getLocation() {
         return location;
     }
@@ -134,15 +134,6 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         this.location = location;
     }
 
-    /**
-     * The image scale between 1% and 100%
-     * 
-     * @param scale
-     */
-    public void setScale(int scale) {
-        this.scale = scale;
-    }
-
     public Point2D getPosition() {
         return position;
     }
@@ -154,7 +145,7 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(watermark).append(pageSelection)
-                .append(location).append(scale).append(opacity).append(position).toHashCode();
+                .append(location).append(height).append(width).append(opacity).append(position).toHashCode();
     }
 
     @Override
@@ -168,7 +159,7 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         WatermarkParameters parameter = (WatermarkParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(watermark, parameter.watermark)
                 .append(pageSelection, parameter.pageSelection).append(location, parameter.location)
-                .append(scale, parameter.scale).append(opacity, parameter.opacity).append(position, parameter.position)
-                .isEquals();
+                .append(height, parameter.height).append(width, parameter.width).append(opacity, parameter.opacity)
+                .append(position, parameter.position).isEquals();
     }
 }

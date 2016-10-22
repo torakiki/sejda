@@ -69,4 +69,24 @@ public class PositiveNumberValidatorTest {
         assertFalse(victim.isValid(-1l, null));
     }
 
+    @Test
+    public void testValiFloat() {
+        assertTrue(victim.isValid(0.3f, null));
+    }
+
+    @Test
+    public void testInvalidFloat() {
+        assertFalse(victim.isValid(-0.1f, null));
+    }
+
+    @Test
+    public void testValiDouble() {
+        assertTrue(victim.isValid(0.3d, null));
+    }
+
+    @Test
+    public void testInvaliddouble() {
+        assertFalse(victim.isValid(-0.1d, null));
+    }
+
 }

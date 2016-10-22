@@ -31,6 +31,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.validation.constraint.Positive;
 
 /**
  * Parameters configuring how to label the header/footer of a set of pages in a given pdf document.
@@ -46,6 +47,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     private StandardType1Font font = StandardType1Font.HELVETICA;
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
+    @Positive
     private double fontSize = 10d;
     @NotNull
     private String pattern;
