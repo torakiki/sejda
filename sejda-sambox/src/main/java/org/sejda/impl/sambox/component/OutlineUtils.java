@@ -40,7 +40,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,29 +55,6 @@ public final class OutlineUtils {
 
     private OutlineUtils() {
         // utility
-    }
-
-    /**
-     * @param document
-     * @return the max outline level where a page destination (page destination, named destination, goto action) is defined.
-     */
-    public static int getMaxOutlineLevel(PDDocument document) {
-        return getMaxOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), document.getDocumentCatalog(), 0);
-    }
-
-    private static int getMaxOutlineLevel(PDOutlineNode node, PDDocumentCatalog catalog, int parentLevel) {
-        int maxLevel = parentLevel;
-        if (node != null) {
-            for (PDOutlineItem current : node.children()) {
-                if (isPageDestination(current, catalog)) {
-                    int maxBookmarkBranchLevel = getMaxOutlineLevel(current, catalog, parentLevel + 1);
-                    if (maxBookmarkBranchLevel > maxLevel) {
-                        maxLevel = maxBookmarkBranchLevel;
-                    }
-                }
-            }
-        }
-        return maxLevel;
     }
 
     /**
@@ -116,10 +92,6 @@ public final class OutlineUtils {
             LOG.warn("Unable to get outline item destination ", e);
         }
         return Optional.empty();
-    }
-
-    private static boolean isPageDestination(PDOutlineItem current, PDDocumentCatalog catalog) {
-        return toPageDestination(current, catalog).isPresent();
     }
 
     /**

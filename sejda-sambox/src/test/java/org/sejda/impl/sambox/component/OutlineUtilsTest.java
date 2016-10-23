@@ -53,21 +53,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
  *
  */
 public class OutlineUtilsTest {
-    @Test
-    public void outlineMaxDepth() throws IOException {
-        try (PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
-            assertEquals(3, OutlineUtils.getMaxOutlineLevel(doc));
-        }
-    }
-
-    @Test
-    public void noOutlineMaxDepth() throws IOException {
-        try (PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_no_outline.pdf")))) {
-            assertEquals(0, OutlineUtils.getMaxOutlineLevel(doc));
-        }
-    }
 
     @Test
     public void toPageDestinationEmpty() {
@@ -203,7 +188,7 @@ public class OutlineUtilsTest {
     }
 
     @Test
-    public void outlineLevelsParentHasNoLevel() {
+    public void outlineLevelsParentHasNoPageDest() {
         PDPage page1 = new PDPage();
         PDDocument document = new PDDocument();
         document.addPage(page1);

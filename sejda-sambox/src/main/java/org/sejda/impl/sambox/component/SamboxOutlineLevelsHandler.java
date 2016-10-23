@@ -20,20 +20,13 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.impl.sambox.component.OutlineUtils.getMaxOutlineLevel;
-import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDPageTree;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 
 /**
  * SAMBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
@@ -45,56 +38,22 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private PDDocument document;
-    private PDPageTree pages;
 
     public SamboxOutlineLevelsHandler(PDDocument document, String matchingTitleRegEx) {
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
         this.document = document;
-        this.pages = document.getPages();
         if (isNotBlank(matchingTitleRegEx)) {
             this.titleMatchingPattern = Pattern.compile(matchingTitleRegEx);
         }
     }
 
     @Override
-    public int getMaxOutlineDepth() {
-        return getMaxOutlineLevel(document);
-    }
-
-    @Override
     public OutlinePageDestinations getPageDestinationsForLevel(int level) {
         OutlinePageDestinations destinations = new OutlinePageDestinations();
-        addPageIfOutlineLevel(document.getDocumentCatalog().getDocumentOutline(), 1, destinations, level);
+        OutlineUtils.getFlatOutline(document).stream().filter(i -> i.level == level).filter(i -> isNotBlank(i.title))
+                .filter(i -> titleMatchingPattern.matcher(i.title).matches())
+                .forEach(i -> destinations.addPage(i.page, i.title));
         return destinations;
-    }
-
-    private void addPageIfOutlineLevel(PDOutlineNode outline, int currentLevel, OutlinePageDestinations destinations,
-            int levelToAdd) {
-        if (outline != null) {
-            for (PDOutlineItem current : outline.children())
-                if (currentLevel <= levelToAdd) {
-                    toPageDestination(current, document.getDocumentCatalog()).ifPresent(d -> {
-                        if (isLevelToBeAdded(currentLevel, levelToAdd)) {
-                            addPageIfValid(destinations, d, current.getTitle());
-                        } else {
-                            addPageIfOutlineLevel(current, currentLevel + 1, destinations, levelToAdd);
-                        }
-                    });
-                }
-        }
-    }
-
-    private boolean isLevelToBeAdded(int currentLevel, int levelToAdd) {
-        return currentLevel == levelToAdd;
-    }
-
-    private void addPageIfValid(OutlinePageDestinations destinations, PDPageDestination destination, String title) {
-        if (isNotBlank(title)) {
-            Matcher matcher = titleMatchingPattern.matcher(title);
-            if (matcher.matches() && destination.getPage() != null) {
-                destinations.addPage(pages.indexOf(destination.getPage()) + 1, title);
-            }
-        }
     }
 
     @Override
@@ -103,18 +62,18 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
 
         List<OutlineItem> flatOutline = OutlineUtils.getFlatOutline(document);
 
-        for(int i = 0; i < flatOutline.size(); i++) {
+        for (int i = 0; i < flatOutline.size(); i++) {
             OutlineItem item = flatOutline.get(i);
-            if(item.level == level) {
+            if (item.level == level) {
                 int startPage = item.page;
                 String title = item.title;
 
                 if (isNotBlank(title)) {
                     if (titleMatchingPattern.matcher(title).matches()) {
                         int endPage = document.getNumberOfPages();
-                        for(int j = i + 1; j < flatOutline.size(); j++) {
+                        for (int j = i + 1; j < flatOutline.size(); j++) {
                             OutlineItem after = flatOutline.get(j);
-                            if(after.level <= item.level) {
+                            if (after.level <= item.level) {
                                 // This is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
                                 // resulting in the last half page missing from the extract.
                                 // Let's see. Maybe better to error on the safe side and include one extra page than have parts missing?

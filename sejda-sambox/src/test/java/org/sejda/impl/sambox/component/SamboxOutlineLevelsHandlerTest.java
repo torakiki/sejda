@@ -18,15 +18,18 @@
  */
 package org.sejda.impl.sambox.component;
 
-import org.sejda.io.SeekableSources;
-import org.sejda.sambox.input.PDFParser;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.sejda.io.SeekableSources;
+import org.sejda.sambox.input.PDFParser;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
 /**
  * @author Andrea Vacondio
@@ -38,21 +41,6 @@ public class SamboxOutlineLevelsHandlerTest {
         return PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(name)));
     }
 
-    @Test
-    public void positiveGetGoToBookmarkMaxDepth() throws IOException {
-        try (PDDocument document = fromResource("pdf/test_outline.pdf")) {
-            org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
-            assertEquals(3, victim.getMaxOutlineDepth());
-        }
-    }
-
-    @Test
-    public void negativeGetGoToBookmarkMaxDepth() throws IOException {
-        try (PDDocument document = fromResource("pdf/test_no_outline.pdf")) {
-            org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
-            assertEquals(0, victim.getMaxOutlineDepth());
-        }
-    }
 
     @Test
     public void getPageNumbersAtOutlineLevel() throws IOException {
@@ -78,5 +66,27 @@ public class SamboxOutlineLevelsHandlerTest {
             org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, "(.+)page(.*)");
             assertEquals(1, victim.getPageDestinationsForLevel(2).getPages().size());
         }
+    }
+
+    @Test
+    public void parentsNoPageDests() {
+        PDPage page1 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("title");
+        PDOutlineItem child = new PDOutlineItem();
+        child.setTitle("child");
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page1);
+        child.addFirst(child2);
+        root.addLast(child);
+        outlines.addFirst(root);
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
+        assertEquals(0, victim.getPageDestinationsForLevel(2).getPages().size());
+        assertEquals(1, victim.getPageDestinationsForLevel(3).getPages().size());
     }
 }

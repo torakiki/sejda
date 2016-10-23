@@ -27,11 +27,6 @@ package org.sejda.model.outline;
 public interface OutlineLevelsHandler {
 
     /**
-     * @return the max depth level in the pdf document outline associated to this handler.
-     */
-    int getMaxOutlineDepth();
-
-    /**
      * @param level
      * @return page sections found at the given outline level
      */
