@@ -93,7 +93,7 @@ public class SignatureClipperTest {
 
     @Test
     public void clipField() {
-        PDField field = PDFieldFactory.createFielAddingChildToParent(new PDAcroForm(new PDDocument()), dictionary,
+        PDField field = PDFieldFactory.createFieldAddingChildToParent(new PDAcroForm(new PDDocument()), dictionary,
                 null);
         assertTrue(SignatureClipper.clipSignature(field));
         assertFalse(field.getCOSObject().containsKey(COSName.V));
@@ -104,7 +104,7 @@ public class SignatureClipperTest {
     @Test
     public void clipFieldNotSignature() {
         dictionary.setItem(COSName.FT, COSName.BTN);
-        PDField field = PDFieldFactory.createFielAddingChildToParent(new PDAcroForm(new PDDocument()), dictionary,
+        PDField field = PDFieldFactory.createFieldAddingChildToParent(new PDAcroForm(new PDDocument()), dictionary,
                 null);
         SignatureClipper.clipSignature(field);
         assertTrue(field.getCOSObject().containsKey(COSName.V));

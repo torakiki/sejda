@@ -113,10 +113,10 @@ public class AcroFormsMerger {
 
     private final BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> createOrReuseTerminalField = (
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
-        PDField previouslyCreated = ofNullable(getField(existing.getFullyQualifiedName()))
+        PDField previouslyCreated = ofNullable(getMergedField(existing.getFullyQualifiedName()))
                 .orElseGet(() -> fieldsLookup.lookup(existing));
         if (isNull(previouslyCreated)) {
-            previouslyCreated = PDFieldFactory.createFielAddingChildToParent(this.form,
+            previouslyCreated = PDFieldFactory.createFieldAddingChildToParent(this.form,
                     existing.getCOSObject().duplicate(),
                     (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
             previouslyCreated.getCOSObject().removeItem(COSName.KIDS);
@@ -132,9 +132,9 @@ public class AcroFormsMerger {
 
     private final BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> createRenamingTerminalField = (
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
-        PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFielAddingChildToParent(this.form,
+        PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFieldAddingChildToParent(this.form,
                 existing.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
-        if (nonNull(getField(existing.getFullyQualifiedName())) || fieldsLookup.hasLookupFor(existing)) {
+        if (nonNull(getMergedField(existing.getFullyQualifiedName())) || fieldsLookup.hasLookupFor(existing)) {
             newField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
             LOG.info("Existing terminal field renamed from {} to {}", existing.getPartialName(),
                     newField.getPartialName());
@@ -146,25 +146,28 @@ public class AcroFormsMerger {
 
     private final BiConsumer<PDField, LookupTable<PDField>> createOrReuseNonTerminalField = (PDField field,
             LookupTable<PDField> fieldsLookup) -> {
-        if (getField(field.getFullyQualifiedName()) == null && !fieldsLookup.hasLookupFor(field)) {
-            fieldsLookup.addLookupEntry(field, PDFieldFactory.createFielAddingChildToParent(this.form,
-                    field.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(field.getParent())));
+        if (getMergedField(field.getFullyQualifiedName()) == null && !fieldsLookup.hasLookupFor(field)) {
+            PDField newField = PDFieldFactory.createFieldAddingChildToParent(this.form,
+                    field.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(field.getParent()));
+            newField.getCOSObject().removeItem(COSName.KIDS);
+            fieldsLookup.addLookupEntry(field, newField);
         }
     };
 
-    private PDField getField(String fullyQualifiedName) {
+    private PDField getMergedField(String fullyQualifiedName) {
         return ofNullable(fullyQualifiedName).map(form::getField).orElse(null);
     }
 
     private final BiConsumer<PDField, LookupTable<PDField>> createRenamingNonTerminalField = (PDField field,
             LookupTable<PDField> fieldsLookup) -> {
-        PDField newField = PDFieldFactory.createFielAddingChildToParent(this.form, field.getCOSObject().duplicate(),
+        PDField newField = PDFieldFactory.createFieldAddingChildToParent(this.form, field.getCOSObject().duplicate(),
                 (PDNonTerminalField) fieldsLookup.lookup(field.getParent()));
-        if (getField(field.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(field)) {
+        if (getMergedField(field.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(field)) {
             newField.setPartialName(String.format("%s%s%d", field.getPartialName(), random, ++counter));
             LOG.info("Existing non terminal field renamed from {} to {}", field.getPartialName(),
                     newField.getPartialName());
         }
+        newField.getCOSObject().removeItem(COSName.KIDS);
         fieldsLookup.addLookupEntry(field, newField);
     };
 
@@ -225,7 +228,8 @@ public class AcroFormsMerger {
             BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField) {
         AcroFormUtils.mergeDefaults(originalForm, form);
         LookupTable<PDField> fieldsLookup = new LookupTable<>();
-        for (PDField field : originalForm.getFieldTree()) {
+        // it must be a pre order visit because we have to process non terminal first otherwise terminal ones won't get a parent
+        originalForm.getFieldTree().stream().forEach(field -> {
             if (!field.isTerminal()) {
                 createNonTerminalField.accept(field, fieldsLookup);
             } else {
@@ -241,10 +245,11 @@ public class AcroFormsMerger {
                         terminalField.getCOSObject().removeItems(WIDGET_KEYS);
                     }
                 } else {
-                    LOG.debug("Discarded not relevant field {}", field.getPartialName());
+                    LOG.debug("Discarded not relevant field {}", field.getFullyQualifiedName());
                 }
             }
-        }
+        });
+
         this.form.addFields(originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
                 .collect(Collectors.toList()));
         // let's process those annotations containing merged widget/fields dictionaries and somehow not referenced by originalForm acroform (ex. empty fields array)
@@ -259,7 +264,7 @@ public class AcroFormsMerger {
                             w.getCOSObject().removeItems(FIELD_KEYS);
                             newOrphanField.addWidgetIfMissing(w);
                             newOrphanField.getCOSObject().removeItems(WIDGET_KEYS);
-                            if (isNull(getField(newOrphanField.getFullyQualifiedName()))) {
+                            if (isNull(getMergedField(newOrphanField.getFullyQualifiedName()))) {
                                 this.form.addFields(Arrays.asList(newOrphanField));
                             }
                         }
@@ -277,10 +282,6 @@ public class AcroFormsMerger {
         return field.getWidgets().stream().map(annotationsLookup::lookup).filter(w -> w instanceof PDAnnotationWidget)
                 .map(w -> (PDAnnotationWidget) w).collect(toList());
 
-    }
-
-    public boolean hasForm() {
-        return !form.getFields().isEmpty();
     }
 
     private void flatten() {
@@ -303,7 +304,7 @@ public class AcroFormsMerger {
     public PDAcroForm getForm() {
         for (PDField current : form.getFieldTree()) {
             if (!current.isTerminal() && !((PDNonTerminalField) current).hasChildren()) {
-                LOG.info("Removing non terminal field with no child {}", current.getPartialName());
+                LOG.info("Removing non terminal field with no child {}", current.getFullyQualifiedName());
                 if (nonNull(current.getParent())) {
                     current.getParent().removeChild(current);
                 } else {

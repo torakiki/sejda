@@ -175,10 +175,10 @@ public class MergeTask extends BaseTask<MergeParameters> {
             destinationDocument.setDocumentOutline(outlineMerger.getOutline());
         }
 
-        if (acroFormsMerger.hasForm()) {
+        ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
             LOG.debug("Adding generated AcroForm");
-            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
-        }
+            destinationDocument.setDocumentAcroForm(f);
+        });
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");

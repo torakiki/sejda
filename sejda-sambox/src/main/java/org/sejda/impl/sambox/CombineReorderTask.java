@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
@@ -48,7 +49,6 @@ import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  * SAMBox implementation of a task that allows combining multiple pdf sources, allowing reordering of the pdf pages regardless of the ordering in the original sources.
  * 
@@ -127,10 +127,10 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
-        if (acroFormsMerger.hasForm()) {
+        ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
             LOG.debug("Adding generated AcroForm");
-            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
-        }
+            destinationDocument.setDocumentAcroForm(f);
+        });
 
         destinationDocument.savePDDocument(tmpFile);
         closeResources();

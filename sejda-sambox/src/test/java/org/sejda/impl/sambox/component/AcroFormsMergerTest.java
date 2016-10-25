@@ -73,7 +73,7 @@ public class AcroFormsMergerTest {
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
         victim.mergeForm(null, annotationsLookup);
-        assertFalse(victim.hasForm());
+        assertTrue(victim.getForm().getFields().isEmpty());
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
@@ -84,7 +84,7 @@ public class AcroFormsMergerTest {
         assertNotNull(document.getDocumentCatalog().getAcroForm());
         annotationsLookup.clear();
         victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
-        assertFalse(victim.hasForm());
+        assertTrue(victim.getForm().getFields().isEmpty());
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
@@ -96,7 +96,7 @@ public class AcroFormsMergerTest {
         assertNotNull(form);
         form.getCOSObject().setString(COSName.XFA, "Something");
         victim.mergeForm(form, annotationsLookup);
-        assertFalse(victim.hasForm());
+        assertTrue(victim.getForm().getFields().isEmpty());
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
@@ -106,7 +106,7 @@ public class AcroFormsMergerTest {
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.DISCARD, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
         victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
-        assertFalse(victim.hasForm());
+        assertTrue(victim.getForm().getFields().isEmpty());
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
@@ -116,7 +116,7 @@ public class AcroFormsMergerTest {
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         assertNotNull(document.getDocumentCatalog().getAcroForm());
         victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
-        assertTrue(victim.hasForm());
+        assertFalse(victim.getForm().getFields().isEmpty());
         assertNull(destination.getDocumentCatalog().getAcroForm());
     }
 
@@ -135,7 +135,7 @@ public class AcroFormsMergerTest {
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-            assertTrue(victim.hasForm());
+            assertFalse(victim.getForm().getFields().isEmpty());
             PDAcroForm form = victim.getForm();
             assertNotNull(form.getField("node.leaf"));
             assertEquals(5, form.getFields().size());
@@ -162,7 +162,7 @@ public class AcroFormsMergerTest {
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-            assertTrue(victim.hasForm());
+            assertFalse(victim.getForm().getFields().isEmpty());
             PDAcroForm form = victim.getForm();
             assertNotNull(form.getField("node.leaf"));
             assertEquals(6, form.getFields().size());
@@ -184,7 +184,7 @@ public class AcroFormsMergerTest {
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-            assertTrue(victim.hasForm());
+            assertFalse(victim.getForm().getFields().isEmpty());
             assertNull(destination.getDocumentCatalog().getAcroForm());
         }
     }
@@ -203,7 +203,7 @@ public class AcroFormsMergerTest {
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-            assertTrue(victim.hasForm());
+            assertFalse(victim.getForm().getFields().isEmpty());
             PDAcroForm form = victim.getForm();
             assertEquals(2, form.getFields().size());
             assertEquals(6, destPage.getAnnotations().size());
@@ -227,7 +227,8 @@ public class AcroFormsMergerTest {
         }
         victim.mergeForm(sameDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-        assertTrue(victim.hasForm());
+        assertFalse(victim.getForm().getFields().isEmpty());
+
         assertEquals(4, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field.isTerminal()) {
@@ -258,7 +259,7 @@ public class AcroFormsMergerTest {
         }
         victim.mergeForm(sameDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-        assertTrue(victim.hasForm());
+        assertFalse(victim.getForm().getFields().isEmpty());
         assertEquals(8, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field instanceof PDRadioButton) {
@@ -287,7 +288,8 @@ public class AcroFormsMergerTest {
         }
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-        assertTrue(victim.hasForm());
+        assertFalse(victim.getForm().getFields().isEmpty());
+
         PDAcroForm form = victim.getForm();
         assertNotNull(form);
         PDField signature = null;

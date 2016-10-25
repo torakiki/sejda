@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
@@ -234,10 +235,10 @@ public class NupTask extends BaseTask<NupParameters> {
             acroFormsMerger.mergeForm(
                     sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
 
-            if (acroFormsMerger.hasForm()) {
+            ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
                 LOG.debug("Adding generated AcroForm");
-                destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
-            }
+                destinationDocument.setDocumentAcroForm(f);
+            });
 
             destinationDocument.savePDDocument(tmpFile);
             nullSafeCloseQuietly(sourceDocumentHandler);

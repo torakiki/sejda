@@ -134,10 +134,10 @@ public class PagesExtractor implements Closeable {
 
         acroFormsMerger.mergeForm(origin.getDocumentCatalog().getAcroForm(), annotations);
 
-        if (acroFormsMerger.hasForm()) {
+        ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
             LOG.debug("Adding generated AcroForm");
-            destinationDocument.setDocumentAcroForm(acroFormsMerger.getForm());
-        }
+            destinationDocument.setDocumentAcroForm(f);
+        });
 
         destinationDocument.savePDDocument(file);
     }
