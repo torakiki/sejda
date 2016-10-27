@@ -99,7 +99,8 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
 
     @Test
     public void labelPattern() {
-        SetHeaderFooterParameters parameters = defaultCommandLine().with("-l", "\"Page [PAGE_ROMAN]\"").invokeSejdaConsole();
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-l", "\"Page [PAGE_ROMAN]\"")
+                .invokeSejdaConsole();
         assertEquals("Page [PAGE_ROMAN]", parameters.getPattern());
     }
 
@@ -116,7 +117,8 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
 
     @Test
     public void batesStartFrom() {
-        SetHeaderFooterParameters parameters = defaultCommandLine().with("--batesStartFrom", "123456").invokeSejdaConsole();
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--batesStartFrom", "123456")
+                .invokeSejdaConsole();
         assertEquals("123456", parameters.getBatesSequence().next());
     }
 
@@ -136,14 +138,28 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
 
     @Test
     public void pageCountStartFrom() {
-        SetHeaderFooterParameters parameters = defaultCommandLine().with("--pageCountStartFrom", "5").invokeSejdaConsole();
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--pageCountStartFrom", "5")
+                .invokeSejdaConsole();
         assertEquals(5, parameters.getPageCountStartFrom().intValue());
     }
 
     @Test
     public void fileCountStartFrom() {
-        SetHeaderFooterParameters parameters = defaultCommandLine().with("--fileCountStartFrom", "10").invokeSejdaConsole();
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("--fileCountStartFrom", "10")
+                .invokeSejdaConsole();
         assertEquals(10, parameters.getFileCountStartFrom().intValue());
+    }
+
+    @Test
+    public void testOutputPrefix_Specified() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
+        assertEquals("fooPrefix", parameters.getOutputPrefix());
+    }
+
+    @Test
+    public void testOutputPrefix_Default() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals("", parameters.getOutputPrefix());
     }
 
     @Test

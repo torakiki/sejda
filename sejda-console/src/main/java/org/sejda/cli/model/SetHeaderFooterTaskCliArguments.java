@@ -34,8 +34,8 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setheaderfooter")
-public interface SetHeaderFooterTaskCliArguments
-        extends CliArgumentsWithPdfAndDirectoryOutput, MultiplePdfSourceTaskCliArguments {
+public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPrefixableOutput,
+        CliArgumentsWithPdfAndDirectoryOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "s", description = "page range selection. You can set the pages where the header/footer will be applied. Accepted values: 'all' or 'num1-num2' or"
             + " 'num-' (EX. -s 12-14) (optional)", defaultValue = "all")
@@ -81,7 +81,7 @@ public interface SetHeaderFooterTaskCliArguments
 
     boolean isPageCountStartFrom();
 
-    @Option(shortName = "c", description = "font color. Defaults to black #000000. Ex: -c AA3399 (optional)", defaultValue = "#000000")
+    @Option(shortName = "c", description = "font color. Defaults to black #000000. Ex: -c #AA3399 (optional)", defaultValue = "#000000")
     String getFontColor();
 
     boolean isFontColor();

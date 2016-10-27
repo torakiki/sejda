@@ -48,6 +48,7 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
         populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
         populateAbstractParameters(parameters, taskCliArguments);
+        populateOutputPrefix(parameters, taskCliArguments);
 
         Long startFrom = 1L;
         Integer increment = 1;
