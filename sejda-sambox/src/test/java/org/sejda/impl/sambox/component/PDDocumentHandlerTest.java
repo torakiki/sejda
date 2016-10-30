@@ -20,6 +20,8 @@ package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -30,6 +32,7 @@ import org.sejda.io.SeekableSources;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 /**
@@ -52,5 +55,13 @@ public class PDDocumentHandlerTest {
             assertEquals(page.getResources(), copy.getResources());
             assertTrue(copy.getThreadBeads().isEmpty());
         }
+    }
+
+    @Test
+    public void testAddBlankPageIfOdd() throws Exception {
+        PDDocumentHandler handler = new PDDocumentHandler();
+        assertNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
+        handler.addBlankPage(new PDRectangle(10, 10));
+        assertNotNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
     }
 }
