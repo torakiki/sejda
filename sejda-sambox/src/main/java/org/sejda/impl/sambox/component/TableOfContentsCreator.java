@@ -18,6 +18,8 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.lang.Math.ceil;
+import static java.lang.Math.round;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
@@ -113,10 +115,11 @@ public class TableOfContentsCreator {
         if (shouldGenerateToC()) {
             PDFont font = PDType1Font.HELVETICA;
             int maxRows = (int) (pageSize().getHeight() - (MARGIN * 2)) / LINE_HEIGHT;
+            long indexPages = round(ceil((double) items.size() / maxRows));
             while (!items.isEmpty()) {
                 int row = 0;
                 float separatorWidth = stringLength(font, SEPARATOR);
-                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, font);
+                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, font, indexPages);
                 PDPage page = createPage(pages);
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                     while (!items.isEmpty() && row < maxRows) {
@@ -132,9 +135,9 @@ public class TableOfContentsCreator {
                             String itemText = sanitize(i.text, font, separatingLineEndingX, separatorWidth);
                             stream.showText(itemText);
 
-                            String pageString = SEPARATOR + Long.toString(i.page);
+                            String pageString = SEPARATOR + Long.toString(i.page + indexPages);
                             stream.setTextMatrix(new Matrix(AffineTransform.getTranslateInstance(
-                                    getPageNumberX(separatorWidth, PDType1Font.HELVETICA, i), y)));
+                                    getPageNumberX(separatorWidth, PDType1Font.HELVETICA, i.page + indexPages), y)));
                             stream.setFont(PDType1Font.HELVETICA, FONT_SIZE);
                             stream.showText(pageString);
                             stream.endText();
@@ -185,12 +188,12 @@ public class TableOfContentsCreator {
         return page;
     }
 
-    private float getSeparatingLineEndingX(float separatorWidth, PDFont font) throws IOException {
-        return getPageNumberX(separatorWidth, font, items.peekLast());
+    private float getSeparatingLineEndingX(float separatorWidth, PDFont font, long indexPages) throws IOException {
+        return getPageNumberX(separatorWidth, font, items.peekLast().page + indexPages);
     }
 
-    private float getPageNumberX(float separatorWidth, PDFont font, ToCItem i) throws IOException {
-        return pageSize().getWidth() - MARGIN - separatorWidth - stringLength(font, Long.toString(i.page));
+    private float getPageNumberX(float separatorWidth, PDFont font, long pageNumber) throws IOException {
+        return pageSize().getWidth() - MARGIN - separatorWidth - stringLength(font, Long.toString(pageNumber));
     }
 
     private float stringLength(PDFont font, String text) throws IOException {
