@@ -165,8 +165,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     annotationsLookup);
 
             if (parameters.isBlankPageIfOdd()) {
-                destinationDocument.addBlankPageIfOdd(currentPageSize);
-                pagesCounter++;
+                ofNullable(destinationDocument.addBlankPageIfOdd(currentPageSize)).ifPresent(p -> pagesCounter++);
             }
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }

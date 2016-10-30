@@ -28,7 +28,11 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.PageLabelUtils;
@@ -319,22 +323,21 @@ public class PDDocumentHandler implements Closeable {
     }
 
     /**
-     * Returns the same PDPage object each time, given a page number
-     * This is required for things like text redacting, which updates the PDPage resources
-     * (getting a new PDPage object each time would overwrite any previous changes)
+     * Returns the same PDPage object each time, given a page number This is required for things like text redacting, which updates the PDPage resources (getting a new PDPage
+     * object each time would overwrite any previous changes)
      *
      * @param pageNumber
      * @return
      */
-    private Map<Integer, PDPage > pagesCache = new HashMap<>();
+    private Map<Integer, PDPage> pagesCache = new HashMap<>();
+
     public PDPage getPageCached(int pageNumber) {
-        if(!pagesCache.containsKey(pageNumber)) {
+        if (!pagesCache.containsKey(pageNumber)) {
             pagesCache.put(pageNumber, getPage(pageNumber));
         }
 
         return pagesCache.get(pageNumber);
     }
-
 
     public PDPageTree getPages() {
         return document.getPages();
@@ -384,11 +387,13 @@ public class PDDocumentHandler implements Closeable {
      * 
      * @param mediaBox
      *            media box size for the blank page
+     * @return the added page or null if no page has been added
      */
-    public void addBlankPageIfOdd(PDRectangle mediaBox) {
+    public PDPage addBlankPageIfOdd(PDRectangle mediaBox) {
         if (document.getNumberOfPages() % 2 != 0) {
-            addBlankPage(mediaBox);
+            return addBlankPage(mediaBox);
         }
+        return null;
     }
 
     public PDPage addBlankPage(PDRectangle mediaBox) {
