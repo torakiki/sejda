@@ -18,8 +18,10 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -32,6 +34,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.text.PDFTextStripper;
 
 /**
  * @author Andrea Vacondio
@@ -157,5 +160,17 @@ public class TableOfContentsCreatorTest {
         victim.appendItem("test.", 100, new PDAnnotationLink());
         victim.addToC();
         assertEquals(PDRectangle.LETTER, doc.getPage(0).getMediaBox());
+    }
+
+    @Test
+    public void indexPageIsConsideredInPageNumbers() throws IOException {
+        PDDocument doc = new PDDocument();
+        assertEquals(0, doc.getNumberOfPages());
+        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        victim.appendItem(
+                "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
+                100, new PDAnnotationLink());
+        victim.addToC();
+        assertThat(new PDFTextStripper().getText(doc), containsString("101"));
     }
 }
