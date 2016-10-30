@@ -38,7 +38,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf"));
+        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file1.pdf"));
         parameters.setOutputPrefix("[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
@@ -74,6 +74,17 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
                 "16_Assemblies and Profiles.pdf", "17_Versioning Repositories and Releases.pdf", "18_WebDevelopment.pdf"
 
         ).assertOutputSize(18).assertPages("17_Versioning Repositories and Releases.pdf", 2);
+    }
+
+    @Test
+    public void testBatchFilesWithConflictingOutputFiles() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(2, null);
+        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf"));
+        parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertOutputContainsFilenames("file1_1_Invoking Maven.pdf", "file2_1_Invoking Maven.pdf");
+        testContext.assertOutputSize(36);
     }
 
     @Test
