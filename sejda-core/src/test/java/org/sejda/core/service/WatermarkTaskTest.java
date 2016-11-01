@@ -58,7 +58,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     }
 
     private WatermarkParameters tiffParams() throws IOException {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tif"));
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tiff"));
         setUpParams(parameters);
         return parameters;
     }

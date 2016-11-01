@@ -130,22 +130,41 @@ public class PageImageWriter {
             return PDImageXObject.createFromFile(filePath);
         } catch (UnsupportedTiffImageException e) {
             LOG.warn("Found unsupported TIFF compression, converting TIFF to JPEG: " + e.getMessage());
-            return PDImageXObject.createFromFile(convertTiffToJpg(filePath));
+
+            try {
+                return PDImageXObject.createFromFile(convertTiffToJpg(filePath));
+            } catch (UnsupportedOperationException ex) {
+                if(ex.getMessage().contains("alpha channel")) {
+                    LOG.warn("Found alpha channel image, JPEG compression failed, converting TIFF to PNG");
+                    return PDImageXObject.createFromFile(convertTiffToPng(filePath));
+                } else {
+                    throw ex;
+                }
+            }
         }
     }
 
     public static String convertTiffToJpg(String filePath) throws IOException, TaskIOException {
-        LOG.debug(filePath);
+        return convertImageTo(filePath, "jpeg");
+    }
+
+    public static String convertTiffToPng(String filePath) throws IOException, TaskIOException {
+        return convertImageTo(filePath, "png");
+    }
+
+    public static String convertImageTo(String filePath, String format) throws IOException, TaskIOException {
         BufferedImage image = ImageIO.read(new File(filePath));
-        File tmpFile = IOUtils.createTemporaryBuffer(".jpg");
+        File tmpFile = IOUtils.createTemporaryBuffer("." + format);
         ImageOutputStream outputStream = new FileImageOutputStream(tmpFile);
 
         try {
-            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
             writer.setOutput(outputStream);
             ImageWriteParam param = writer.getDefaultWriteParam();
-            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality(1.0F);
+            if(format.equals("jpeg")) {
+                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                param.setCompressionQuality(1.0F);
+            }
             writer.write(null, new IIOImage(image, null, null), param);
         } finally {
             org.apache.commons.io.IOUtils.closeQuietly(outputStream);

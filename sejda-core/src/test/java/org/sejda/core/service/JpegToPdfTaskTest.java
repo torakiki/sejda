@@ -77,8 +77,14 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
     }
 
     @Test
+    public void testUnsupportedTiffWithAlpha() throws Exception {
+        execute(basicParameters("draft.tiff"));
+        testContext.assertTaskCompleted();
+    }
+
+    @Test
     public void testUnsupportedTiff() throws Exception {
-        execute(basicParameters("draft.tif"));
+        execute(basicParameters("draft_no_alpha.tif"));
         testContext.assertTaskCompleted();
     }
 
