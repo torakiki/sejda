@@ -18,23 +18,22 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.AcroFormsMerger;
 import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -44,7 +43,6 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.nup.PageOrder;
 import org.sejda.model.parameter.NupParameters;
-import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -63,8 +61,6 @@ public class NupTask extends BaseTask<NupParameters> {
     private PDDocumentHandler destinationDocument = null;
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
-    private LookupTable<PDPage> pagesLookup = new LookupTable<>();
-    private AcroFormsMerger acroFormsMerger;
 
     @Override
     public void before(NupParameters parameters, TaskExecutionContext executionContext) throws TaskException {
@@ -92,8 +88,7 @@ public class NupTask extends BaseTask<NupParameters> {
             destinationDocument.initialiseBasedOn(sourceDocumentHandler.getUnderlyingPDDocument());
             destinationDocument.setCompress(parameters.isCompress());
 
-            this.acroFormsMerger = new AcroFormsMerger(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS,
-                    this.destinationDocument.getUnderlyingPDDocument());
+            LookupTable<PDPage> pagesLookup = new LookupTable<>();
 
             int numberOfPages = sourceDocumentHandler.getNumberOfPages();
 
@@ -122,6 +117,7 @@ public class NupTask extends BaseTask<NupParameters> {
             }
 
             PDRectangle newSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+            Map<PDPage, Offsets> offsetsMap = new HashMap<>();
 
             int columns = 1;
             int rows = 1;
@@ -163,7 +159,8 @@ public class NupTask extends BaseTask<NupParameters> {
 
                 for (int i = 1; i <= numberOfPages; i++) {
 
-                    PDFormXObject pageAsFormObject = new PageToFormXObject().apply(sourceDocumentHandler.getPage(i));
+                    PDPage sourcePage = sourceDocumentHandler.getPage(i);
+                    PDFormXObject pageAsFormObject = new PageToFormXObject().apply(sourcePage);
                     float xOffset = pageSize.getWidth() * currentColumn;
                     float yOffset = newSize.getHeight() - (pageSize.getHeight() * (currentRow + 1));
                     float xScale = 1.0f;
@@ -176,6 +173,8 @@ public class NupTask extends BaseTask<NupParameters> {
 
                     LOG.debug("Column: " + currentColumn + ", row: " + currentRow + ", xOffset: " + xOffset
                             + " yOffset: " + yOffset + " xScale: " + xScale);
+
+                    offsetsMap.put(sourcePage, new Offsets(xOffset, yOffset, xScale));
 
                     if (pageAsFormObject != null) {
                         PDPageContentStream currentContentStream = new PDPageContentStream(
@@ -190,6 +189,8 @@ public class NupTask extends BaseTask<NupParameters> {
                         currentContentStream.transform(matrix);
                         currentContentStream.drawForm(pageAsFormObject);
                         currentContentStream.close();
+
+                        pagesLookup.addLookupEntry(sourcePage, currentPage);
                     }
 
                     if (parameters.getPageOrder() == PageOrder.HORIZONTAL) {
@@ -228,17 +229,48 @@ public class NupTask extends BaseTask<NupParameters> {
                 throw new TaskException(e);
             }
 
-            LookupTable<PDAnnotation> annotations = new AnnotationsDistiller(
+            LookupTable<PDAnnotation> oldToNewAnnotations = new AnnotationsDistiller(
                     sourceDocumentHandler.getUnderlyingPDDocument()).retainRelevantAnnotations(pagesLookup);
-            clipSignatures(annotations.values());
 
-            acroFormsMerger.mergeForm(
-                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
+            LOG.debug("Copying over {} annotations to the new doc", oldToNewAnnotations.values().size());
 
-            ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
-                LOG.debug("Adding generated AcroForm");
-                destinationDocument.setDocumentAcroForm(f);
-            });
+            for(int i = 1; i <= sourceDocumentHandler.getNumberOfPages(); i++) {
+                PDPage oldPage = sourceDocumentHandler.getPage(i);
+                List<PDAnnotation> oldPageAnnotations = oldPage.getAnnotations();
+                for(PDAnnotation oldAnnotation: oldPageAnnotations) {
+                    PDAnnotation newAnnotation = oldToNewAnnotations.lookup(oldAnnotation);
+                    PDPage newPage = pagesLookup.lookup(oldPage);
+
+                    if(newPage != null && newAnnotation != null) {
+                        Offsets offsets = offsetsMap.get(oldPage);
+                        PDRectangle oldRectangle = newAnnotation.getRectangle();
+
+                        AffineTransform at = new AffineTransform();
+                        at.translate(offsets.xOffset, offsets.yOffset);
+                        at.scale(offsets.xScale, offsets.xScale);
+
+                        Matrix matrix = new Matrix(at);
+
+                        float x1 = oldRectangle.getLowerLeftX();
+                        float y1 = oldRectangle.getLowerLeftY();
+                        float x2 = oldRectangle.getUpperRightX();
+                        float y2 = oldRectangle.getUpperRightY();
+
+                        Point2D.Float p0 = matrix.transformPoint(x1, y1);
+                        Point2D.Float p1 = matrix.transformPoint(x2, y1);
+                        Point2D.Float p2 = matrix.transformPoint(x2, y2);
+
+                        float width = (float)(p1.getX() - p0.getX());
+                        float height = (float)(p2.getY() - p1.getY());
+
+                        PDRectangle newRect = new PDRectangle((float)p0.getX(), (float)p0.getY(), width, height);
+
+                        newAnnotation.setRectangle(newRect);
+                        LOG.debug("Copying over annotation to page {}", destinationDocument.getPages().indexOf(newPage));
+                        newPage.getAnnotations().add(newAnnotation);
+                    }
+                }
+            }
 
             destinationDocument.savePDDocument(tmpFile);
             nullSafeCloseQuietly(sourceDocumentHandler);
@@ -257,7 +289,18 @@ public class NupTask extends BaseTask<NupParameters> {
     @Override
     public void after() {
         nullSafeCloseQuietly(sourceDocumentHandler);
-        pagesLookup.clear();
         nullSafeCloseQuietly(destinationDocument);
+    }
+
+    static final class Offsets {
+        public final float xOffset;
+        public final float yOffset;
+        public final float xScale;
+
+        public Offsets(float xOffset, float yOffset, float xScale) {
+            this.xOffset = xOffset;
+            this.yOffset = yOffset;
+            this.xScale = xScale;
+        }
     }
 }

@@ -26,10 +26,17 @@ import org.sejda.model.parameter.NupParameters;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.action.PDActionURI;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @Ignore
 public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
@@ -102,8 +109,53 @@ public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
         assertPageHasText(result.getPage(1), "PAGE 5 PAGE 7PAGE 6");
     }
 
+    @Test
+    public void testKeepingLinks() throws IOException {
+        NupParameters params = getParams(2, PageOrder.HORIZONTAL, "pdf/doc-with-links.pdf");
+        execute(params);
+        PDDocument result = testContext.assertTaskCompleted();
+        testContext.assertPages(1);
+
+        List<PDAnnotation> annotations = result.getPage(0).getAnnotations();
+
+        // Ehm.. the list has 4 items, but only 2 unique
+        assertThat(new HashSet<>(annotations).size(), is(2));
+
+        PDAnnotation link1 = annotations.stream()
+                .filter(a -> a instanceof PDAnnotationLink)
+                .filter(a -> ((PDActionURI) ((PDAnnotationLink) a).getAction()).getURI().contains("google.com"))
+                .findFirst().get();
+
+        assertThat(link1.getRectangle(), is(new PDRectangle(684, 561, 149, 45)));
+    }
+
+    @Test
+    public void testKeepingLinksWhenPreservingPageSize() throws IOException {
+        NupParameters params = getParams(2, PageOrder.HORIZONTAL, "pdf/doc-with-links.pdf", true);
+        execute(params);
+        PDDocument result = testContext.assertTaskCompleted();
+        testContext.assertPages(1);
+
+        List<PDAnnotation> annotations = result.getPage(0).getAnnotations();
+
+        // Ehm.. the list has 4 items, but only 2 unique
+        assertThat(new HashSet<>(annotations).size(), is(2));
+
+        PDAnnotation link1 = annotations.stream()
+                .filter(a -> a instanceof PDAnnotationLink)
+                .filter(a -> ((PDActionURI) ((PDAnnotationLink) a).getAction()).getURI().contains("google.com"))
+                .findFirst().get();
+
+        assertThat(link1.getRectangle(), is(new PDRectangle(442.58823f, 363.0f, 539.0f - 442.58823f, 392.11765f - 363.0f)));
+    }
+
     private NupParameters getParams(int n, PageOrder order, String input) throws IOException {
+        return getParams(n, order, input, false);
+    }
+
+    private NupParameters getParams(int n, PageOrder order, String input, boolean preservePageSize) throws IOException {
         NupParameters parameters = new NupParameters(n, order);
+        parameters.setPreservePageSize(preservePageSize);
         parameters.addSource(customInput(input));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
