@@ -22,7 +22,7 @@ import org.sejda.model.pdf.FontResource;
 
 public enum OptionalUnicodeType0Font implements FontResource {
     NOTO_SANS_CJK_REGULAR("/optional/fonts/sans/NotoSansCJKtc-Regular.ttf"),
-    NOTO_SANS_HEBREW_REGULAR("/optional/fonts/sans/NotoSansHebrew-Regular.ttf");
+    NOTO_SANS_HINDI_REGULAR("/optional/fonts/sans/NotoSansDevanagari-Regular.ttf");
 
     private String resource;
 
