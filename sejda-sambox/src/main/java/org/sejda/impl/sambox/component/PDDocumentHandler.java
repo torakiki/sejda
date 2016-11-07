@@ -277,6 +277,8 @@ public class PDDocumentHandler implements Closeable {
         PDPage imported = new PDPage(page.getCOSObject().duplicate());
         imported.setCropBox(page.getCropBox());
         imported.setMediaBox(page.getMediaBox());
+        imported.setBleedBox(page.getBleedBox());
+
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
         imported.getCOSObject().removeItem(COSName.B);
@@ -401,13 +403,17 @@ public class PDDocumentHandler implements Closeable {
         return addPage(new PDPage(ofNullable(mediaBox).orElse(PDRectangle.LETTER)));
     }
 
-    public void addBlankPageAfter(int pageNumber) {
+    public PDPage addBlankPageAfter(int pageNumber) {
         PDPage target = document.getPage(pageNumber - 1);
-        document.getPages().insertAfter(new PDPage(target.getMediaBox()), target);
+        PDPage result = new PDPage(target.getMediaBox());
+        document.getPages().insertAfter(result, target);
+        return result;
     }
 
-    public void addBlankPageBefore(int pageNumber) {
+    public PDPage addBlankPageBefore(int pageNumber) {
         PDPage target = document.getPage(pageNumber - 1);
-        document.getPages().insertBefore(new PDPage(target.getMediaBox()), target);
+        PDPage result = new PDPage(target.getMediaBox());
+        document.getPages().insertBefore(result, target);
+        return result;
     }
 }
