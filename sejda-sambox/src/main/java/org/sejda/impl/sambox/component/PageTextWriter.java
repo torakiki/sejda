@@ -222,7 +222,7 @@ public class PageTextWriter {
             return findFontFor(document, label);
         });
         if (isNull(latestSuitablefont)) {
-            throw new TaskIOException("Unable to find suitable font for the given label \"" + label + "\"");
+            throw new TaskIOException("Unable to find suitable font for the given label \"" + StringUtils.asUnicodes(label) + "\"");
         }
         return latestSuitablefont;
     }

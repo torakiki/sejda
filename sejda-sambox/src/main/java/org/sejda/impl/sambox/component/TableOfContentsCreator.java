@@ -34,6 +34,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 
+import org.sejda.core.support.util.StringUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -127,7 +128,7 @@ public class TableOfContentsCreator {
                         if (nonNull(i)) {
                             row++;
                             font = fontOrFallback(i.text, font, () -> FontUtils.findFontFor(document, i.text));
-                            requireIOCondition(nonNull(font), "Unable to find suitable font for " + i.text);
+                            requireIOCondition(nonNull(font), "Unable to find suitable font for " + StringUtils.asUnicodes(i.text));
                             float y = pageSize().getHeight() - MARGIN - (row * LINE_HEIGHT);
                             stream.beginText();
                             stream.setFont(font, FONT_SIZE);

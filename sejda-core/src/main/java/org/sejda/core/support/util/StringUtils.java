@@ -33,11 +33,15 @@ public final class StringUtils {
         return result;
     }
 
-    // Useful to debug weird strings that contain non breaking spaces
-    public static String asAsciiCodes(String in) {
+    // Useful to debug weird strings
+    public static String asUnicodes(String in) {
+        if(in == null) return null;
+
         StringBuilder result = new StringBuilder();
-        for (char c : in.toCharArray()) {
-            result.append((int) c).append(" ");
+        for (int offset = 0; offset < in.length(); ) {
+            int codepoint = in.codePointAt(offset);
+            result.append("\\u").append(codepoint);
+            offset += Character.charCount(codepoint);
         }
         return result.toString();
     }

@@ -30,4 +30,9 @@ public class StringUtilsTest {
         assertEquals("", StringUtils.normalizeWhitespace((char) 160 + "" + (char) 160).trim());
         assertEquals("Foo bar", StringUtils.normalizeWhitespace("Foo" + (char) 160 + "bar"));
     }
+
+    @Test
+    public void asUnicodes() {
+        assertEquals("\\u32\\u230\\u101\\u1514", StringUtils.asUnicodes(" æeת"));
+    }
 }
