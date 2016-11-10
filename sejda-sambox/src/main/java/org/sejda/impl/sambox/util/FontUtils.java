@@ -346,7 +346,7 @@ public final class FontUtils {
                     LOG.warn("Failed to load font from system", ioe);
                     try {
                         mappedFont.close();
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         LOG.warn("Failed closing font", e);
                     }
                 }
