@@ -101,7 +101,7 @@ public final class AnnotationsDistiller {
         if (destination instanceof PDPageDestination) {
             PDPage destPage = relevantPages.lookup(((PDPageDestination) destination).getPage());
             if (nonNull(destPage)) {
-                // not a page dest
+                // relevant page dest
                 PDAnnotationLink duplicate = (PDAnnotationLink) duplicate(annotation, relevantPages);
                 duplicate.getCOSObject().removeItem(COSName.A);
                 PDPageDestination newDestination = (PDPageDestination) PDDestination.create(destination.getCOSObject());
