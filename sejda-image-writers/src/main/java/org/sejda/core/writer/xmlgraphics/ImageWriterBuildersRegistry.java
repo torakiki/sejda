@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.writer.model.ImageWriter.ImageWriterBuilder;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
  * Type safe registry for {@link ImageWriterBuilder}s.
@@ -33,7 +33,7 @@ import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
  */
 class ImageWriterBuildersRegistry {
 
-    private final Map<Class<? extends AbstractPdfToImageParameters>, ImageWriterBuilder<?>> builders = new HashMap<Class<? extends AbstractPdfToImageParameters>, ImageWriterBuilder<?>>();
+    private final Map<Class<? extends PdfToImageParameters>, ImageWriterBuilder<?>> builders = new HashMap<>();
 
     /**
      * Adds the builder to the registry associating it to the given task parameter class.
@@ -42,7 +42,7 @@ class ImageWriterBuildersRegistry {
      * @param params
      * @param builder
      */
-    <T extends AbstractPdfToImageParameters> void addBuilder(Class<T> params, ImageWriterBuilder<T> builder) {
+    <T extends PdfToImageParameters> void addBuilder(Class<T> params, ImageWriterBuilder<T> builder) {
         builders.put(params, builder);
     }
 
@@ -52,7 +52,7 @@ class ImageWriterBuildersRegistry {
      * @return the builder for the given task parameter.
      */
     @SuppressWarnings("unchecked")
-    <T extends AbstractPdfToImageParameters> ImageWriterBuilder<T> getBuilder(T params) {
+    <T extends PdfToImageParameters> ImageWriterBuilder<T> getBuilder(T params) {
         return (ImageWriterBuilder<T>) builders.get(params.getClass());
     }
 }

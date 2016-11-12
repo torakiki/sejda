@@ -19,7 +19,7 @@
  */
 package org.sejda.core.writer.model;
 
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
  * Abstract factory to create {@link ImageWriter}s. Implementations of this interface must be thread safe since the factory instance is going to be shared among the tasks using it.
@@ -37,5 +37,5 @@ public interface ImageWriterAbstractFactory {
      * @param params
      * @return an ImageWriter which can write images for the input task parameters or null if no writer suitable for the given parameters is found.
      */
-    <T extends AbstractPdfToImageParameters> ImageWriter<T> createImageWriter(T params);
+    <T extends PdfToImageParameters> ImageWriter<T> createImageWriter(T params);
 }

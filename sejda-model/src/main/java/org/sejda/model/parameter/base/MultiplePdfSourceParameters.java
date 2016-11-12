@@ -38,7 +38,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @author Andrea Vacondio
  * 
  */
-abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters implements
+public abstract class MultiplePdfSourceParameters extends AbstractPdfOutputParameters implements
         MultiplePdfSourceTaskParameters {
 
     @NotEmpty

@@ -29,5 +29,5 @@ import com.lexicalscope.jewel.cli.CommandLineInterface;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftojpeg")
 public interface PdfToJpegTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, SinglePdfSourceTaskCliArguments {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 }

@@ -41,9 +41,9 @@ import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
  * @author Eduard Weissmann
@@ -146,7 +146,7 @@ public class BaseCliArgumentsTransformer {
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
 
-    private void populateCommonImageOutputParameters(AbstractPdfToImageParameters parameters,
+    private void populateCommonImageOutputParameters(PdfToImageParameters parameters,
             CliArgumentsWithImageOutput taskCliArguments) {
         if (taskCliArguments.isResolution()) {
             parameters.setResolutionInDpi(taskCliArguments.getResolution());

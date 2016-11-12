@@ -26,6 +26,7 @@ import java.io.OutputStream;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
  * Interface for a writer capable of writing {@link RenderedImage}. A writer implementation is a statefull component which may or may not support write of multiple images on a
@@ -39,7 +40,7 @@ import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
  * @author Andrea Vacondio
  * 
  */
-public interface ImageWriter<T extends AbstractPdfToImageParameters> extends Closeable {
+public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
 
     /**
      * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, AbstractPdfToImageParameters)} in order to be
@@ -98,7 +99,7 @@ public interface ImageWriter<T extends AbstractPdfToImageParameters> extends Clo
      * @param <T>
      *            type of the built {@link ImageWriter}
      */
-    interface ImageWriterBuilder<T extends AbstractPdfToImageParameters> {
+    interface ImageWriterBuilder<T extends PdfToImageParameters> {
 
         /**
          * @return the newly built instance.

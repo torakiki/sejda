@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.apache.xmlgraphics.image.writer.ImageWriterParams;
 import org.sejda.model.image.TiffCompressionType;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-abstract class BaseTiffImageWriterAdapter<T extends AbstractPdfToImageParameters> extends AbstractImageWriterAdapter<T> {
+abstract class BaseTiffImageWriterAdapter<T extends PdfToImageParameters> extends AbstractImageWriterAdapter<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseTiffImageWriterAdapter.class);
 

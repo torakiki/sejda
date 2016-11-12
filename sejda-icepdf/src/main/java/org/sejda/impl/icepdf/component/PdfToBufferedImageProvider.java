@@ -26,7 +26,7 @@ import org.icepdf.core.pobjects.Document;
 import org.icepdf.core.pobjects.PDimension;
 import org.icepdf.core.pobjects.Page;
 import org.icepdf.core.util.GraphicsRenderingHints;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public final class PdfToBufferedImageProvider {
      * @param parameters
      * @return the corresponding {@link BufferedImage}
      */
-    public static BufferedImage toBufferedImage(Document document, int page, AbstractPdfToImageParameters parameters) {
+    public static BufferedImage toBufferedImage(Document document, int page, PdfToImageParameters parameters) {
         try {
             Page currentPage = document.getPageTree().getPage(page);
             currentPage.init();

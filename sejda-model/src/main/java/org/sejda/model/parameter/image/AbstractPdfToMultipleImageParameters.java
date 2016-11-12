@@ -24,18 +24,20 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.model.output.MultipleTaskOutput;
-import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.image.ImageType;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.model.validation.constraint.Positive;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to multiple images of a specified type.
@@ -43,17 +45,59 @@ import org.sejda.model.pdf.page.PredefinedSetOfPages;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfToImageParameters
-        implements MultipleOutputTaskParameters, PageRangeSelection, PagesSelection {
+public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements PageRangeSelection, PagesSelection, PdfToImageParameters {
+
+    public static final int DEFAULT_DPI = 72;
+
+    @Min(1)
+    private int resolutionInDpi = DEFAULT_DPI;
+    @NotNull
+    private ImageColorType outputImageColorType;
+    @Valid
+    @Positive
+    private float userZoom = 1.0f;
 
     AbstractPdfToMultipleImageParameters(ImageColorType outputImageColorType) {
-        super(outputImageColorType);
+        this.outputImageColorType = outputImageColorType;
     }
 
-    private String outputPrefix = "";
-    @Valid
+    public ImageColorType getOutputImageColorType() {
+        return outputImageColorType;
+    }
+
+    @Override
+    public void setOutputImageColorType(ImageColorType outputImageColorType) {
+        this.outputImageColorType = outputImageColorType;
+    }
+
+    public float getUserZoom() {
+        return userZoom;
+    }
+
+    /**
+     * Controls the resolution of the resulting images. Works well with vector pdf files, not with the ones that already have images embedded.
+     *
+     * @param userZoom
+     *            how much should the pdf page be zoomed in before it gets rendered as an image.
+     */
+    public void setUserZoom(float userZoom) {
+        this.userZoom = userZoom;
+    }
+
+    /**
+     * @return the type of image the task executing this parameter will convert the pdf source to.
+     */
     @NotNull
-    private MultipleTaskOutput<?> output;
+    public abstract ImageType getOutputImageType();
+
+    public int getResolutionInDpi() {
+        return resolutionInDpi;
+    }
+
+    public void setResolutionInDpi(int resolutionInDpi) {
+        this.resolutionInDpi = resolutionInDpi;
+    }
 
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
@@ -95,41 +139,30 @@ public abstract class AbstractPdfToMultipleImageParameters extends AbstractPdfTo
     }
 
     @Override
-    public String getOutputPrefix() {
-        return outputPrefix;
-    }
+    public boolean equals(Object o) {
+        if (this == o) return true;
 
-    @Override
-    public void setOutputPrefix(String outputPrefix) {
-        this.outputPrefix = outputPrefix;
-    }
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @Override
-    public MultipleTaskOutput<?> getOutput() {
-        return output;
-    }
+        AbstractPdfToMultipleImageParameters that = (AbstractPdfToMultipleImageParameters) o;
 
-    @Override
-    public void setOutput(MultipleTaskOutput<?> output) {
-        this.output = output;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(o))
+                .append(resolutionInDpi, that.resolutionInDpi)
+                .append(userZoom, that.userZoom)
+                .append(outputImageColorType, that.outputImageColorType)
+                .append(pageSelection, that.pageSelection)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(outputPrefix)
-                .append(pageSelection).toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof AbstractPdfToMultipleImageParameters)) {
-            return false;
-        }
-        AbstractPdfToMultipleImageParameters parameter = (AbstractPdfToMultipleImageParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output)
-                .append(outputPrefix, parameter.outputPrefix).append(pageSelection, parameter.pageSelection).isEquals();
+        return new HashCodeBuilder(17, 37)
+                .appendSuper(super.hashCode())
+                .append(resolutionInDpi)
+                .append(outputImageColorType)
+                .append(userZoom)
+                .append(pageSelection)
+                .toHashCode();
     }
 }

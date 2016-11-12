@@ -37,6 +37,7 @@ import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.task.BaseTask;
@@ -50,7 +51,6 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
 
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> sourceOpener = new DefaultPdfSourceOpener();
-    private PDDocumentHandler documentHandler = null;
     private ImageWriter<PdfToJpegParameters> writer;
 
     @Override
@@ -70,46 +70,53 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
 
     @Override
     public void execute(PdfToJpegParameters parameters) throws TaskException {
-        documentHandler = parameters.getSource().open(sourceOpener);
-
-        Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
-        if (requestedPages == null || requestedPages.isEmpty()) {
-            throw new TaskExecutionException("No page has been selected for conversion.");
-        }
-
         int currentStep = 0;
-        int totalSteps = requestedPages.size();
-        LOG.trace("Found {} pages to convert", totalSteps);
+        int currentFileNumber = 0;
+        int totalSteps = parameters.getSourceList().size();
 
-        for (int currentPage : requestedPages) {
-            currentStep++;
+        for(PdfSource<?> source: parameters.getSourceList()) {
+            executionContext().assertTaskNotCancelled();
 
-            File tmpFile = createTemporaryBuffer();
-            LOG.debug("Created output temporary buffer {} ", tmpFile);
-            LOG.trace("Writing page {}", currentPage);
+            PDDocumentHandler documentHandler = source.open(sourceOpener);
 
-            BufferedImage pageImage = documentHandler.renderImage(currentPage, parameters.getResolutionInDpi());
+            Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
+            if (requestedPages == null || requestedPages.isEmpty()) {
+                throw new TaskExecutionException("No page has been selected for conversion.");
+            }
 
-            writer.openWriteDestination(tmpFile, parameters);
-            LOG.trace("Writing page {}", currentPage);
-            writer.write(pageImage, parameters);
-            writer.closeDestination();
+            LOG.trace("Found {} pages to convert", totalSteps);
 
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
-                            .originalName(parameters.getSource().getName()).fileNumber(currentStep));
-            outputWriter.addOutput(file(tmpFile).name(outName));
+            for (int currentPage : requestedPages) {
+                currentStep++;
 
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+                File tmpFile = createTemporaryBuffer();
+                LOG.debug("Created output temporary buffer {} ", tmpFile);
+                LOG.trace("Writing page {}", currentPage);
+
+                BufferedImage pageImage = documentHandler.renderImage(currentPage, parameters.getResolutionInDpi());
+
+                writer.openWriteDestination(tmpFile, parameters);
+                LOG.trace("Writing page {}", currentPage);
+                writer.write(pageImage, parameters);
+                writer.closeDestination();
+
+                String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                        nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
+                                .originalName(source.getName()).fileNumber(currentFileNumber));
+                outputWriter.addOutput(file(tmpFile).name(outName));
+
+                notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            }
+
+            nullSafeCloseQuietly(documentHandler);
         }
 
         parameters.getOutput().accept(outputWriter);
-        LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
+        LOG.debug("Documents converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
     }
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
         nullSafeCloseQuietly(writer);
     }
 }

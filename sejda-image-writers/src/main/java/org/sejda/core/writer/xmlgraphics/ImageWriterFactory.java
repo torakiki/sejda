@@ -25,10 +25,7 @@ import org.sejda.core.writer.model.ImageWriterAbstractFactory;
 import org.sejda.core.writer.xmlgraphics.JpegImageWriterAdapter.JpegImageWriterAdapterBuilder;
 import org.sejda.core.writer.xmlgraphics.MultipleOutputTiffImageWriterAdapter.MultipleOutputTiffImageWriterAdapterBuilder;
 import org.sejda.core.writer.xmlgraphics.SingleOutputTiffImageWriterAdapter.SingleOutputTiffImageWriterAdapterBuilder;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
-import org.sejda.model.parameter.image.PdfToJpegParameters;
-import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
-import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.parameter.image.*;
 
 /**
  * {@link ImageWriterAbstractFactory} implementation returning {@link ImageWriter} XML Graphics implementations.
@@ -49,7 +46,7 @@ public class ImageWriterFactory implements ImageWriterAbstractFactory {
     }
 
     @Override
-    public <T extends AbstractPdfToImageParameters> ImageWriter<T> createImageWriter(T params) {
+    public <T extends PdfToImageParameters> ImageWriter<T> createImageWriter(T params) {
         ImageWriterBuilder<T> builder = BUILDERS_REGISTRY.getBuilder(params);
         if (builder != null) {
             return builder.build();

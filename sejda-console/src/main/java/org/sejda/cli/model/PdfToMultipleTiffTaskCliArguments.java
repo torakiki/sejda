@@ -33,7 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftomultipletiff")
 public interface PdfToMultipleTiffTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, SinglePdfSourceTaskCliArguments {
+        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "x", description = "image compression type: { none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate. Default is 'none' } (optional)", defaultValue = "none")
     TiffCompressionTypeAdapter getCompressionType();

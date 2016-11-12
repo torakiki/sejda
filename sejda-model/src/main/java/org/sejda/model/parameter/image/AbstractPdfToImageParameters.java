@@ -38,7 +38,7 @@ import org.sejda.model.validation.constraint.Positive;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfToImageParameters extends AbstractParameters implements SinglePdfSourceTaskParameters {
+public abstract class AbstractPdfToImageParameters extends AbstractParameters implements SinglePdfSourceTaskParameters, PdfToImageParameters {
 
     public static final int DEFAULT_DPI = 72;
 
@@ -68,6 +68,10 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
 
     public ImageColorType getOutputImageColorType() {
         return outputImageColorType;
+    }
+
+    public void setOutputImageColorType(ImageColorType outputImageColorType) {
+        this.outputImageColorType = outputImageColorType;
     }
 
     public float getUserZoom() {

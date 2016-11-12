@@ -31,7 +31,7 @@ import org.apache.xmlgraphics.image.codec.util.SeekableOutputStream;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
  * Abstract implementation of an adapter for an xml graphics image writer
@@ -41,7 +41,7 @@ import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
  * @author Andrea Vacondio
  * 
  */
-abstract class AbstractImageWriterAdapter<T extends AbstractPdfToImageParameters> implements ImageWriter<T> {
+abstract class AbstractImageWriterAdapter<T extends PdfToImageParameters> implements ImageWriter<T> {
 
     private OutputStream outputDestination;
 

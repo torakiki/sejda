@@ -61,7 +61,7 @@ public enum TestableTask {
     CROP(new CropDefaultsProvider()),
     PDF_TO_SINGLE_TIFF(new PdfToSingleTiffDefaultsProvider()),
     PDF_TO_MULTIPLE_TIFF(new PdfToMultipleTiffDefaultsProvider()),
-    PDF_TO_JPEG(new SingleInputAndFolderOutputDefaultsProvider()),
+    PDF_TO_JPEG(new MultipleInputsAndFolderOutputDefaultsProvider()),
     SET_HEADER_FOOTER(new SetHeaderFooterDefaultsProvider()),
     COMBINE_REORDER(new CombineReorderDefaultsProvider()),
     SPLIT_DOWN_THE_MIDDLE(new MultipleInputsAndFolderOutputDefaultsProvider()),
@@ -313,7 +313,7 @@ class PdfToSingleTiffDefaultsProvider extends SingleInputAndFileOutputDefaultsPr
     }
 }
 
-class PdfToMultipleTiffDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class PdfToMultipleTiffDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("--colorType", "gray_scale");

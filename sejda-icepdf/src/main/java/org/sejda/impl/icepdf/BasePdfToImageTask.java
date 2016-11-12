@@ -25,7 +25,7 @@ import org.sejda.core.writer.context.ImageWriterContext;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToImageParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  * 
  */
-abstract class BasePdfToImageTask<T extends AbstractPdfToImageParameters> extends BaseTask<T> {
+abstract class BasePdfToImageTask<T extends PdfToImageParameters> extends BaseTask<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(BasePdfToImageTask.class);
 

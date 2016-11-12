@@ -53,29 +53,40 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     @Test
     public void testExecuteEncryptedStreamToMultipleImage() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        parameters.setSource(encryptedInput());
+        parameters.addSource(encryptedInput());
         doExecute(parameters, 4);
     }
 
     @Test
     public void testExecuteStreamToMultipleImage() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        parameters.setSource(customInput("pdf/test_jpg.pdf"));
+        parameters.addSource(customInput("pdf/test_jpg.pdf"));
         doExecute(parameters, 1);
     }
 
     @Test
     public void testExecuteStreamToMultipleImageWithPageSelection() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         parameters.addPageRange(new PageRange(2, 3));
         doExecute(parameters, 2);
     }
 
     @Test
+    public void testMultipleInputs() throws IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        parameters.addSource(mediumInput());
+        parameters.addSource(regularInput());
+        parameters.addPageRange(new PageRange(1, 1));
+        parameters.setOutputPrefix("[BASENAME]-[PAGENUMBER]");
+        doExecute(parameters, 2);
+    }
+
+
+    @Test
     public void testWrongPageSelection() {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         parameters.addPageRange(new PageRange(10));
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
