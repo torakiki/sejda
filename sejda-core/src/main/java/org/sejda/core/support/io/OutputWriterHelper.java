@@ -148,7 +148,17 @@ final class OutputWriterHelper {
             }
         } else {
             LOG.debug("Moving {} to {}.", input, output);
-            FileUtils.moveFile(input, output);
+            try {
+                FileUtils.moveFile(input, output);
+            } catch(IOException ex) {
+                if(ex.getMessage().contains("Failed to delete original file")) {
+                    // Don't crash the task because we have leftover temp files, just warn
+                    LOG.warn(ex.getMessage());
+                    input.deleteOnExit();
+                } else {
+                    throw ex;
+                }
+            }
             executionContext.notifiableTaskMetadata().addTaskOutput(output);
         }
     }
