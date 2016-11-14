@@ -43,7 +43,7 @@ import org.sejda.model.parameter.image.PdfToImageParameters;
 public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
 
     /**
-     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, AbstractPdfToImageParameters)} in order to be
+     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, PdfToImageParameters)} in order to be
      * able to write images.
      * 
      * @param destination
@@ -55,7 +55,7 @@ public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
     void openWriteDestination(OutputStream destination, T params) throws TaskIOException;
 
     /**
-     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, AbstractPdfToImageParameters)} in order to be
+     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, PdfToImageParameters)} in order to be
      * able to write images.
      * 
      * @param destination
