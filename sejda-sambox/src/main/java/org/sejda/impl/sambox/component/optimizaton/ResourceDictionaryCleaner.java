@@ -71,8 +71,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
                     .filter(e -> e.getValue().getCOSObject() instanceof COSStream)
-                    .filter(e -> ((COSStream) e.getValue().getCOSObject()).getItem(COSName.SUBTYPE)
-                            .equals(COSName.IMAGE))
+                    .filter(e -> COSName.IMAGE.equals(((COSStream) e.getValue().getCOSObject()).getItem(COSName.SUBTYPE)))
                     .map(e -> e.getKey()).collect(Collectors.toSet());
             LOG.trace("Removing {} xobjects from {}", toRemove.size(), x);
             toRemove.stream().forEach(x::removeItem);
