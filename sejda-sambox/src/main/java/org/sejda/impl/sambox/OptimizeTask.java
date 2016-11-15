@@ -24,6 +24,7 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
@@ -81,10 +82,21 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
             pagesOptimizer = new PagesOptimizer(parameters);
 
             LOG.debug("Starting optimization");
-            for (PDPage p : documentHandler.getPages()) {
+            int pageNum = 0;
+            Iterator<PDPage> iterator = documentHandler.getPages().iterator();
+            while(iterator.hasNext()) {
                 executionContext().assertTaskNotCancelled();
-                pagesOptimizer.accept(p);
+                pageNum++;
+                try {
+                    PDPage page = iterator.next();
+                    pagesOptimizer.accept(page);
+                } catch (Exception ex) {
+                    String warning = String.format("Page %d was skipped, could not be processed", pageNum);
+                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                    LOG.warn(warning, ex);
+                }
             }
+
             documentOptimizer.accept(documentHandler.getUnderlyingPDDocument());
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
