@@ -26,7 +26,11 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
+import java.awt.geom.AffineTransform;
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
@@ -35,7 +39,9 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.AnnotationsDistiller;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageToFormXObject;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
@@ -45,9 +51,12 @@ import org.sejda.model.split.SplitDownTheMiddleMode;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,45 +130,27 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     // allow user to override this by explicitly setting a split mode
                     if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
                         landscapeMode = false;
-                        // adjust to user perceived
-                        if(page.getRotation() == 90 || page.getRotation() == 270) {
-                            landscapeMode = true;
-                        }
                     } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
                         landscapeMode = true;
-                        // adjust to user perceived
-                        if(page.getRotation() == 90 || page.getRotation() == 270) {
-                            landscapeMode = false;
-                        }
+                    }
+
+                    // adjust to user perceived
+                    if(page.getRotation() == 90 || page.getRotation() == 270) {
+                        landscapeMode = !landscapeMode;
                     }
 
                     // landscape vs portrait
                     if (landscapeMode) {
                         // landscape orientation
 
-                        boolean leftFirst = page.getRotation() != 270 && page.getRotation() != 180;
-
-                        if (leftFirst) {
-                            importLeftPage(page, lookup, ratio);
-                            importRightPage(page, lookup, ratio);
-                        } else {
-                            importRightPage(page, lookup, ratio);
-                            importLeftPage(page, lookup, ratio);
-                        }
+                        importLeftPage(page, lookup, ratio);
+                        importRightPage(page, lookup, ratio);
 
                     } else {
                         // portrait orientation
 
-                        boolean topFirst = page.getRotation() != 90 && page.getRotation() != 180;
-
-                        if (topFirst) {
-                            importTopPage(page, lookup, ratio);
-                            importBottomPage(page, lookup, ratio);
-                        } else {
-                            importBottomPage(page, lookup, ratio);
-                            importTopPage(page, lookup, ratio);
-                        }
-
+                        importTopPage(page, lookup, ratio);
+                        importBottomPage(page, lookup, ratio);
                     }
                 } catch (PageNotFoundException ex) {
                     String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
@@ -209,82 +200,77 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
     }
 
-    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
-        PDRectangle trimBox = page.getTrimBox();
+    private Map<PDPage, PDFormXObject> cache = new HashMap<>();
+
+    private PDFormXObject getPageAsFormXObject(PDPage page) throws IOException {
+        if(!cache.containsKey(page)) {
+            cache.put(page, new PageToFormXObject().apply(page));
+        }
+
+        return cache.get(page);
+    }
+
+    private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
         float w = trimBox.getWidth();
         float r = (float) ratio;
         float rightSideWidth = w / (r + 1);
         float leftSideWidth = w - rightSideWidth;
 
-        PDPage leftPage = destinationHandler.importPage(page);
-        lookup.addLookupEntry(page, leftPage);
-        PDRectangle leftSide = new PDRectangle();
-        leftSide.setUpperRightY(trimBox.getUpperRightY());
-        leftSide.setUpperRightX(trimBox.getLowerLeftX() + leftSideWidth);
-        leftSide.setLowerLeftY(trimBox.getLowerLeftY());
-        leftSide.setLowerLeftX(trimBox.getLowerLeftX());
-
-        leftPage.setCropBox(leftSide);
-        leftPage.setTrimBox(leftSide);
-        leftPage.setMediaBox(leftSide);
+        importPage(page, lookup, leftSideWidth, trimBox.getHeight(), 0, 0);
     }
 
-    private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
-        PDRectangle trimBox = page.getTrimBox();
+    private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
         float w = trimBox.getWidth();
         float r = (float) ratio;
         float rightSideWidth = w / (r + 1);
         float leftSideWidth = w - rightSideWidth;
 
-        PDPage rightPage = destinationHandler.importPage(page);
-        lookup.addLookupEntry(page, rightPage);
-        PDRectangle rightSide = new PDRectangle();
-        rightSide.setUpperRightY(trimBox.getUpperRightY());
-        rightSide.setUpperRightX(trimBox.getUpperRightX());
-        rightSide.setLowerLeftY(trimBox.getLowerLeftY());
-        rightSide.setLowerLeftX(trimBox.getLowerLeftX() + leftSideWidth);
-
-        rightPage.setCropBox(rightSide);
-        rightPage.setTrimBox(rightSide);
-        rightPage.setMediaBox(rightSide);
+        importPage(page, lookup, rightSideWidth, trimBox.getHeight(), -leftSideWidth, 0);
     }
 
-    private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
-        PDRectangle trimBox = page.getTrimBox();
+    private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
+        float h = trimBox.getHeight();
+        float r = (float) ratio;
+        float bottomSideHeight = h / (r + 1);
+        float topSideHeight = h - bottomSideHeight;
+
+        importPage(page, lookup, trimBox.getWidth(), topSideHeight, 0, -bottomSideHeight);
+    }
+
+    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
         float h = trimBox.getHeight();
         float r = (float) ratio;
         float bottomSideHeight = h / (r + 1);
 
-        PDPage topPage = destinationHandler.importPage(page);
-        lookup.addLookupEntry(page, topPage);
-        PDRectangle upperSide = new PDRectangle();
-        upperSide.setUpperRightY(trimBox.getUpperRightY());
-        upperSide.setUpperRightX(trimBox.getUpperRightX());
-        upperSide.setLowerLeftY(trimBox.getLowerLeftY() + bottomSideHeight);
-        upperSide.setLowerLeftX(trimBox.getLowerLeftX());
-
-        topPage.setCropBox(upperSide);
-        topPage.setTrimBox(upperSide);
-        topPage.setMediaBox(upperSide);
+        importPage(page, lookup, trimBox.getWidth(), bottomSideHeight, 0, 0);
     }
 
-    private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio) {
-        PDRectangle trimBox = page.getTrimBox();
-        float h = trimBox.getHeight();
-        float r = (float) ratio;
-        float bottomSideHeight = h / (r + 1);
+    private void importPage(PDPage sourcePage, LookupTable<PDPage> lookup, float width, float height, float xOffset, float yOffset) throws TaskIOException {
+        PDRectangle newMediaBox = new PDRectangle(width, height);
 
-        PDPage bottomPage = destinationHandler.importPage(page);
-        lookup.addLookupEntry(page, bottomPage);
-        PDRectangle lowerSide = new PDRectangle();
-        lowerSide.setUpperRightY(trimBox.getLowerLeftY() + bottomSideHeight);
-        lowerSide.setUpperRightX(trimBox.getUpperRightX());
-        lowerSide.setLowerLeftY(trimBox.getLowerLeftY());
-        lowerSide.setLowerLeftX(trimBox.getLowerLeftX());
+        PDPage newPage = destinationHandler.addBlankPage(newMediaBox);
+        lookup.addLookupEntry(sourcePage, newPage);
 
-        bottomPage.setCropBox(lowerSide);
-        bottomPage.setTrimBox(lowerSide);
-        bottomPage.setMediaBox(lowerSide);
+        try {
+            PDFormXObject pageAsFormObject = getPageAsFormXObject(sourcePage);
+            PDPageContentStream currentContentStream = new PDPageContentStream(
+                    destinationHandler.getUnderlyingPDDocument(), newPage,
+                    PDPageContentStream.AppendMode.APPEND, true, true);
+            AffineTransform at = new AffineTransform();
+            at.translate(xOffset, yOffset);
+
+            Matrix matrix = new Matrix(at);
+
+            currentContentStream.transform(matrix);
+            currentContentStream.drawForm(pageAsFormObject);
+            currentContentStream.close();
+        } catch (IOException ex) {
+            throw new TaskIOException(ex);
+        }
     }
 
     @Override

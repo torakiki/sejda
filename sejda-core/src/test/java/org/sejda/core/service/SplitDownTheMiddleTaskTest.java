@@ -97,7 +97,9 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2).forPdfOutput(d -> {
             assertPageText(d.getPage(0), "ABCDE");
+            assertMediaBox(d.getPage(0), 612f, 182.76f);
             assertPageText(d.getPage(1), "FGHIJKLMNOPQRSTUVWXYZ");
+            assertMediaBox(d.getPage(1), 612f, 609.23f);
         });
     }
 
@@ -107,6 +109,7 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertPages(4).forPdfOutput(d -> {
+            assertMediaBox(d.getPage(0), 842.f, 595.0f);
             assertPageText(d.getPage(0), "L1L1");
             assertPageText(d.getPage(1), "R1R1");
             assertPageText(d.getPage(2), "L2L2");
@@ -257,5 +260,10 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         } catch (IOException e) {
             fail(e.getMessage());
         }
+    }
+
+    public void assertMediaBox(PDPage page, float width, float height) {
+        assertEquals(page.getMediaBox().getWidth(), width, 0.01);
+        assertEquals(page.getMediaBox().getHeight(), height, 0.01);
     }
 }
