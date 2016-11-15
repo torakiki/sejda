@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.OutputStream;
 
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToImageParameters;
 
 /**
