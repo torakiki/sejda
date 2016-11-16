@@ -90,6 +90,18 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
+    public void userSpecifiedSplitModeRotated() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample_rotated_90.pdf");
+        parameters.setMode(SplitDownTheMiddleMode.VERTICAL);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+        });
+    }
+
+    @Test
     public void userSpecifiedRatio() throws IOException {
         setUpParameters("pdf/alphabet.pdf");
         parameters.setRatio(0.3);

@@ -126,17 +126,16 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     // by default determine based on page mode whether the split should be horizontal or vertical
                     // based on whether the page is in portrait or landscape mode
                     boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
+                    // adjust to user perceived
+                    if(page.getRotation() == 90 || page.getRotation() == 270) {
+                        landscapeMode = !landscapeMode;
+                    }
 
                     // allow user to override this by explicitly setting a split mode
                     if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
                         landscapeMode = false;
                     } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
                         landscapeMode = true;
-                    }
-
-                    // adjust to user perceived
-                    if(page.getRotation() == 90 || page.getRotation() == 270) {
-                        landscapeMode = !landscapeMode;
                     }
 
                     // landscape vs portrait
