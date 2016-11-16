@@ -90,6 +90,17 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
+    public void croppedRotated() throws IOException {
+        setUpParameters("pdf/cropped_alphabet.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "FGHKLMPQRUVWX");
+            assertPageText(d.getPage(1), "IJNOSTYZ");
+        });
+    }
+
+    @Test
     public void userSpecifiedSplitModeRotated() throws IOException {
         setUpParameters("pdf/split_in_two_landscape_sample_rotated_90.pdf");
         parameters.setMode(SplitDownTheMiddleMode.VERTICAL);
