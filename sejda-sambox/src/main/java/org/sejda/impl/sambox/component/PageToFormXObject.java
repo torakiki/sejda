@@ -79,7 +79,7 @@ public class PageToFormXObject {
             // no additional transformations necessary
         }
         // Compensate for Crop Boxes not starting at 0,0
-//        at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
+        at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
         if (!at.isIdentity()) {
             form.setMatrix(at);
         }

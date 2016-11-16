@@ -210,42 +210,62 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     }
 
     private void importLeftPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle mediaBox = page.getMediaBox().rotate(page.getRotation());
         PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
+
+        float cropLeftMargin = trimBox.getLowerLeftX() - mediaBox.getLowerLeftX();
+        float cropBottomMargin = trimBox.getLowerLeftY() - mediaBox.getLowerLeftY();
+
         float w = trimBox.getWidth();
         float r = (float) ratio;
         float rightSideWidth = w / (r + 1);
         float leftSideWidth = w - rightSideWidth;
 
-        importPage(page, lookup, leftSideWidth, trimBox.getHeight(), 0, 0);
+        importPage(page, lookup, leftSideWidth, trimBox.getHeight(), cropLeftMargin, cropBottomMargin);
     }
 
     private void importRightPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle mediaBox = page.getMediaBox().rotate(page.getRotation());
         PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
+
+        float cropLeftMargin = trimBox.getLowerLeftX() - mediaBox.getLowerLeftX();
+        float cropBottomMargin = trimBox.getLowerLeftY() - mediaBox.getLowerLeftY();
+
         float w = trimBox.getWidth();
         float r = (float) ratio;
         float rightSideWidth = w / (r + 1);
         float leftSideWidth = w - rightSideWidth;
 
-        importPage(page, lookup, rightSideWidth, trimBox.getHeight(), -leftSideWidth, 0);
+        importPage(page, lookup, rightSideWidth, trimBox.getHeight(), -leftSideWidth + cropLeftMargin, cropBottomMargin);
     }
 
     private void importTopPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle mediaBox = page.getMediaBox().rotate(page.getRotation());
         PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
+
+        float cropLeftMargin = trimBox.getLowerLeftX() - mediaBox.getLowerLeftX();
+        float cropBottomMargin = trimBox.getLowerLeftY() - mediaBox.getLowerLeftY();
+
         float h = trimBox.getHeight();
         float r = (float) ratio;
         float bottomSideHeight = h / (r + 1);
         float topSideHeight = h - bottomSideHeight;
 
-        importPage(page, lookup, trimBox.getWidth(), topSideHeight, 0, -bottomSideHeight);
+        importPage(page, lookup, trimBox.getWidth(), topSideHeight, cropLeftMargin, - bottomSideHeight + cropBottomMargin);
     }
 
     private void importBottomPage(PDPage page, LookupTable<PDPage> lookup, double ratio) throws TaskIOException {
+        PDRectangle mediaBox = page.getMediaBox().rotate(page.getRotation());
         PDRectangle trimBox = page.getTrimBox().rotate(page.getRotation());
+
+        float cropLeftMargin = trimBox.getLowerLeftX() - mediaBox.getLowerLeftX();
+        float cropBottomMargin = trimBox.getLowerLeftY() - mediaBox.getLowerLeftY();
+
         float h = trimBox.getHeight();
         float r = (float) ratio;
         float bottomSideHeight = h / (r + 1);
 
-        importPage(page, lookup, trimBox.getWidth(), bottomSideHeight, 0, 0);
+        importPage(page, lookup, trimBox.getWidth(), bottomSideHeight, cropLeftMargin, cropBottomMargin);
     }
 
     private void importPage(PDPage sourcePage, LookupTable<PDPage> lookup, float width, float height, float xOffset, float yOffset) throws TaskIOException {
