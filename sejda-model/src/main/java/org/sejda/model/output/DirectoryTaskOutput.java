@@ -48,7 +48,7 @@ public class DirectoryTaskOutput implements MultipleTaskOutput<File> {
      */
     public DirectoryTaskOutput(File directory) {
         if (directory == null || !directory.isDirectory()) {
-            throw new IllegalArgumentException("A not null directory instance is expected.");
+            throw new IllegalArgumentException("A not null directory instance is expected. Path: " + directory);
         }
         this.directory = directory;
     }
