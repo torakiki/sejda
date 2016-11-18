@@ -39,10 +39,7 @@ import java.util.Set;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PageToFormXObject;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.impl.sambox.util.RectangleUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -60,6 +57,7 @@ import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,6 +188,10 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     }
                 }
             }
+
+            PDDocumentOutline destinationOutline = new PDDocumentOutline();
+            new OutlineDistiller(sourceHandler.getUnderlyingPDDocument()).appendRelevantOutlineTo(destinationOutline, pagesLookup);
+            destinationHandler.getUnderlyingPDDocument().getDocumentCatalog().setDocumentOutline(destinationOutline);
 
             destinationHandler.savePDDocument(tmpFile);
 

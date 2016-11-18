@@ -42,6 +42,7 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,18 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(2).forPdfOutput(d -> {
             assertPageText(d.getPage(0), "PQRSUVWXY");
             assertPageText(d.getPage(1), "FGHIKLMN");
+        });
+    }
+
+    @Test
+    public void outlineHandling() throws IOException {
+        setUpParameters("pdf/test_outline.pdf");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(6).forPdfOutput(d -> {
+
+            List<PDOutlineItem> outlineItems = iteratorToList(d.getDocumentCatalog().getDocumentOutline().children().iterator());
+            assertThat(outlineItems.size(), is(2));
         });
     }
 

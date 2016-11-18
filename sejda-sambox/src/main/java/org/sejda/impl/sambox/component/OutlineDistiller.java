@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  *
  */
-class OutlineDistiller {
+public class OutlineDistiller {
     private static final Logger LOG = LoggerFactory.getLogger(OutlineDistiller.class);
 
     private PDDocument document;
