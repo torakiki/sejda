@@ -38,6 +38,11 @@ import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.pdmodel.PDPage;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Andrea Vacondio
@@ -131,5 +136,20 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         String extension = FilenameUtils.getExtension(path);
         return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path),
                 randomAlphanumeric(16) + "." + extension);
+    }
+
+    public <T> List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {
+        return iteratorToList(page.getAnnotations().stream()
+                .filter(a -> clazz.isInstance(a))
+                .map(a -> (T) a)
+                .iterator());
+    }
+
+    public <T> List<T> iteratorToList(Iterator<T> iterator) {
+        List<T> result = new ArrayList<>();
+        while(iterator.hasNext()) {
+            result.add(iterator.next());
+        }
+        return result;
     }
 }
