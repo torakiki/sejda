@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.ScaleType;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
@@ -47,54 +48,69 @@ public class PdfScaler {
         this.type = type;
     }
 
-    public void scale(PDDocumentHandler documentHandler, double scale) throws TaskIOException {
+    public void scale(PDDocument doc, double scale) throws TaskIOException {
         if (scale != 1) {
-            for (PDPage page : documentHandler.getPages()) {
-                try (PDPageContentStream contentStream = new PDPageContentStream(
-                        documentHandler.getUnderlyingPDDocument(), page, AppendMode.PREPEND, true)) {
-                    PDRectangle crop = page.getCropBox();
-                    AffineTransform transform = AffineTransform.getTranslateInstance(
-                            (crop.getWidth() - (crop.getWidth() * scale)) / 2,
-                            (crop.getHeight() - (crop.getHeight() * scale)) / 2);
-                    transform.scale(scale, scale);
-                    Matrix matrix = new Matrix(transform);
+            for (PDPage page : doc.getPages()) {
+                try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
+                    Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
                     contentStream.transform(matrix);
                     if (ScaleType.PAGE == type) {
-                        Rectangle2D newCrop = page.getCropBox().transform(matrix).getBounds2D();
-                        page.setCropBox(new PDRectangle((float) newCrop.getX(), (float) newCrop.getY(),
-                                (float) newCrop.getWidth(), (float) newCrop.getHeight()));
-                        Rectangle2D newMedia = page.getMediaBox().transform(matrix).getBounds2D();
-                        page.setMediaBox(new PDRectangle((float) newMedia.getX(), (float) newMedia.getY(),
-                                (float) newMedia.getWidth(), (float) newMedia.getHeight()));
+                        scalePageBoxes(scale, page);
+                    } else {
+                        scaleContentBoxes(scale, page);
                     }
-                    scaleBoxes(scale, page, matrix);
 
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred writing scaling the page.", e);
                 }
             }
         }
-
     }
 
-    private void scaleBoxes(double scale, PDPage page, Matrix transform) {
+    private Matrix getMatrix(double scale, PDRectangle crop, PDRectangle toScale) {
+        if (ScaleType.CONTENT == type) {
+            AffineTransform transform = AffineTransform.getTranslateInstance(
+                    (crop.getWidth() - (toScale.getWidth() * scale)) / 2,
+                    (crop.getHeight() - (toScale.getHeight() * scale)) / 2);
+            transform.scale(scale, scale);
+            return new Matrix(transform);
+        }
+        return new Matrix(AffineTransform.getScaleInstance(scale, scale));
+    }
+
+    private void scaleContentBoxes(double scale, PDPage page) {
         PDRectangle cropBox = page.getCropBox();
         // we adjust art and bleed same as Acrobat does
         if (scale > 1) {
             page.setBleedBox(cropBox);
+            page.setTrimBox(cropBox);
         } else {
-            Rectangle2D newBleed = page.getBleedBox().transform(transform).getBounds2D();
-            page.setBleedBox(new PDRectangle((float) newBleed.getX(), (float) newBleed.getY(),
-                    (float) newBleed.getWidth(), (float) newBleed.getHeight()));
+            page.setBleedBox(new PDRectangle(page.getBleedBox()
+                    .transform(getMatrix(scale, page.getCropBox(), page.getBleedBox())).getBounds2D()));
+            page.setTrimBox(new PDRectangle(
+                    page.getTrimBox().transform(getMatrix(scale, page.getCropBox(), page.getTrimBox())).getBounds2D()));
         }
-        Rectangle2D newArt = page.getArtBox().transform(transform).getBounds2D();
+        Rectangle2D newArt = page.getArtBox().transform(getMatrix(scale, page.getCropBox(), page.getArtBox()))
+                .getBounds2D();
         if (newArt.getX() < cropBox.getLowerLeftX() || newArt.getY() < cropBox.getLowerLeftX()) {
             // we overlow the cropbox
             page.setArtBox(page.getCropBox());
         } else {
-            page.setArtBox(new PDRectangle((float) newArt.getX(), (float) newArt.getY(), (float) newArt.getWidth(),
-                    (float) newArt.getHeight()));
+            page.setArtBox(new PDRectangle(newArt));
         }
+    }
+
+    private void scalePageBoxes(double scale, PDPage page) {
+        page.setArtBox(new PDRectangle(
+                page.getArtBox().transform(getMatrix(scale, page.getCropBox(), page.getArtBox())).getBounds2D()));
+        page.setBleedBox(new PDRectangle(
+                page.getBleedBox().transform(getMatrix(scale, page.getCropBox(), page.getBleedBox())).getBounds2D()));
+        page.setTrimBox(new PDRectangle(
+                page.getTrimBox().transform(getMatrix(scale, page.getCropBox(), page.getTrimBox())).getBounds2D()));
+        page.setCropBox(new PDRectangle(
+                page.getCropBox().transform(getMatrix(scale, page.getCropBox(), page.getCropBox())).getBounds2D()));
+        page.setMediaBox(new PDRectangle(
+                page.getMediaBox().transform(getMatrix(scale, page.getMediaBox(), page.getMediaBox())).getBounds2D()));
     }
 
 }

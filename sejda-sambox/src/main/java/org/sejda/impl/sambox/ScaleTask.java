@@ -84,7 +84,7 @@ public class ScaleTask extends BaseTask<ScaleParameters> {
                 File tmpFile = createTemporaryPdfBuffer();
                 LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-                scaler.scale(documentHandler, parameters.scale);
+                scaler.scale(documentHandler.getUnderlyingPDDocument(), parameters.scale);
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());
                 documentHandler.setCompress(parameters.isCompress());
