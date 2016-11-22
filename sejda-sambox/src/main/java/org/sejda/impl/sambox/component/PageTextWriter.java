@@ -198,7 +198,10 @@ public class PageTextWriter {
                     LOG.trace("Text position {}", resolvedPosition);
                     contentStream.showText(resolvedLabel);
 
-                    offset += resolvedFont.getStringWidth(resolvedLabel) / 1000 * fontSize;
+                    // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
+                    // use the largest value between font average width and text string width
+                    double textWidth = Math.max(resolvedFont.getAverageFontWidth(), resolvedFont.getStringWidth(resolvedLabel)) / 1000 * fontSize;
+                    offset += textWidth;
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred writing text to the page.", e);
                 }

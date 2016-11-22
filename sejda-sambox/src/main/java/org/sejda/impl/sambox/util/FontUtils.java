@@ -197,6 +197,7 @@ public final class FontUtils {
     public static boolean canDisplaySpace(PDFont font) {
         try {
             font.encode(" ");
+            return true;
         } catch (IllegalArgumentException | IOException | UnsupportedOperationException e) {
             // Nope
         }
