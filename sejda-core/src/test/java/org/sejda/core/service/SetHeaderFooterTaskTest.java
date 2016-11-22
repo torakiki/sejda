@@ -104,7 +104,7 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertFooterHasText(d.getPage(0), "Bam - นี่คือการทดสอบ - Some english text after");
+            assertFooterHasText(d.getPage(0), "Bam - นี่คือการทดสอบ  - Some english text after");
         });
     }
 
