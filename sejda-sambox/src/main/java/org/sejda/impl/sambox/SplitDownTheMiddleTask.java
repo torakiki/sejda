@@ -326,11 +326,19 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
                     Offsets offsets = offsetsMap.get(newPage);
 
+                    if(offsets == null) {
+                        // this page was imported without splitting it, was in excludedPages
+                        continue;
+                    }
+
                     PDRectangle newPageBoundsInOldPage = new PDRectangle(-offsets.xOffset, -offsets.yOffset, offsets.newWidth, offsets.newHeight);
                     newPageBoundsInOldPage = RectangleUtils.rotate(-oldPage.getRotation(), newPageBoundsInOldPage, rotatedOldMediaBox);
                     PDRectangle oldRectangle = newAnnotation.getRectangle();
 
-                    if(oldRectangle == null) continue;
+                    if(oldRectangle == null) {
+                        // annotation has no presentation bounds, can happen for some form fields
+                        continue;
+                    }
 
                     if(RectangleUtils.intersect(newPageBoundsInOldPage, oldRectangle)) {
                         if(newAnnotation.getNormalAppearanceStream() != null) {

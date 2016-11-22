@@ -137,6 +137,15 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
+    public void excludedPages() throws IOException {
+        setUpParameters("pdf/test_outline.pdf");
+        parameters.addExcludedPage(1);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(5);
+    }
+
+    @Test
     public void annotationsHandling() throws IOException {
         setUpParameters("pdf/alphabet.pdf");
         execute(parameters);
