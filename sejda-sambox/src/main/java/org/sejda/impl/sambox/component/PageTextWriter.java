@@ -166,11 +166,18 @@ public class PageTextWriter {
                     if (resolvedFont != font) {
                         if(nonNull(font.getFontDescriptor()) &&
                                 nonNull(resolvedFont) && nonNull(resolvedFont.getFontDescriptor())) {
-                            double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-                            double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+                            try {
+                                if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null &&
+                                        resolvedFont.getFontDescriptor() != null && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
+                                    double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+                                    double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
 
-                            resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
-                            LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+                                    resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
+                                    LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+                                }
+                            } catch (Exception e) {
+                                LOG.warn("Could not calculate fallback font size", e);
+                            }
                         }
                     }
 
