@@ -90,17 +90,7 @@ public class PageToFormXObject {
     }
 
     private PDStream getStream(PDPage page) throws IOException {
-        COSBase base = page.getCOSObject().getDictionaryObject(COSName.CONTENTS);
-        if (base instanceof COSStream) {
-            // the common case, 1 content stream, we just pass it with a cloned dictionary, so we can change dictionary values (ex. add the Form type) but we don't need to read the
-            // stream into memory
-            COSStream existing = (COSStream) base;
-            return new PDStream(new ReadOnlyFilteredCOSStream(existing.duplicate(), existing.getFilteredStream(),
-                    existing.getFilteredLength()));
-        } else if (base instanceof COSArray && ((COSArray) base).size() > 0) {
-            return new PDStream(page.getContents(), COSName.FLATE_DECODE);
-        }
-        return null;
+        return new PDStream(page.getContents(), COSName.FLATE_DECODE);
     }
 
 }
