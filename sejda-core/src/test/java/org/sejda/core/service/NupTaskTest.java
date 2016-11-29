@@ -110,6 +110,16 @@ public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
     }
 
     @Test
+    public void test2upWithDuplicatedCroppedPages() throws IOException {
+        NupParameters params = getParams(2, PageOrder.VERTICAL, "pdf/split-down-the-middle-with-cropboxes.pdf");
+        execute(params);
+        PDDocument result = testContext.assertTaskCompleted();
+        testContext.assertPages(2);
+        assertPageHasText(result.getPage(0), "L1 L1 R1 R1");
+        assertPageHasText(result.getPage(1), "L2 L2 R2 R2");
+    }
+
+    @Test
     public void testKeepingLinks() throws IOException {
         NupParameters params = getParams(2, PageOrder.HORIZONTAL, "pdf/doc-with-links.pdf");
         execute(params);
