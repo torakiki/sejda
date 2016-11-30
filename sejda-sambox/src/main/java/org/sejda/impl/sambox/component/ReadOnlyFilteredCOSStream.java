@@ -55,22 +55,28 @@ import org.sejda.util.IOUtils;
  *
  */
 public class ReadOnlyFilteredCOSStream extends COSStream {
-    private InputStream stream;
+    private InputStreamSupplier<InputStream> stream;
     private long length;
     private COSDictionary wrapped;
 
     ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
+        this(existingDictionary, () -> stream, length);
+        requireNotNullArg(stream, "input stream cannot be null");
+    }
+
+    public ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStreamSupplier<InputStream> stream,
+            long length) {
         super(ofNullable(existingDictionary)
                 .orElseThrow(() -> new IllegalArgumentException("wrapped dictionary cannot be null")));
-        requireNotNullArg(stream, "input stream cannot be null");
+        requireNotNullArg(stream, "input stream provider cannot be null");
         this.stream = stream;
         this.length = length;
         this.wrapped = existingDictionary;
     }
 
     @Override
-    protected InputStream doGetFilteredStream() {
-        return stream;
+    protected InputStream doGetFilteredStream() throws IOException {
+        return stream.get();
     }
 
     @Override
@@ -155,8 +161,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     }
 
     @Override
-    public void close() {
-        IOUtils.closeQuietly(stream);
+    public void close() throws IOException {
+        IOUtils.closeQuietly(stream.get());
     }
 
     /**
@@ -232,5 +238,10 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
                 return new ReadOnlyFilteredCOSStream(dictionary, new DeflaterInputStream(source.getSource()), -1);
             }
         });
+    }
+
+    @FunctionalInterface
+    public interface InputStreamSupplier<T extends InputStream> {
+        T get() throws IOException;
     }
 }

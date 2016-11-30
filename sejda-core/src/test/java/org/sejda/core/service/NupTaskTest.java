@@ -18,6 +18,14 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.nup.PageOrder;
@@ -29,14 +37,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionURI;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 @Ignore
 public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
@@ -117,6 +117,18 @@ public abstract class NupTaskTest extends BaseTaskTest<NupParameters> {
         testContext.assertPages(2);
         assertPageHasText(result.getPage(0), "L1 L1 R1 R1");
         assertPageHasText(result.getPage(1), "L2 L2 R2 R2");
+    }
+
+    @Test
+    @Ignore
+    // TODO
+    public void test2upWithSomeSharedContentStream() throws IOException {
+        NupParameters params = getParams(2, PageOrder.VERTICAL, "pdf/some-pages-share-contentstream.pdf");
+        execute(params);
+        PDDocument result = testContext.assertTaskCompleted();
+        testContext.assertPages(2);
+        assertPageHasText(result.getPage(0), "First L1 L1");
+        assertPageHasText(result.getPage(1), "Third R1 R1");
     }
 
     @Test

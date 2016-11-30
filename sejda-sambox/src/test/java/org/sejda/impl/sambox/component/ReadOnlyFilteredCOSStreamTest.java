@@ -39,7 +39,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.InputStreamSupplier;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.cos.COSDictionary;
@@ -69,8 +69,13 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullConstructor() {
-        new ReadOnlyFilteredCOSStream(new COSDictionary(), null, 1);
+    public void nullStream() {
+        new ReadOnlyFilteredCOSStream(new COSDictionary(), (InputStream) null, 1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void nullSupplier() {
+        new ReadOnlyFilteredCOSStream(new COSDictionary(), (InputStreamSupplier) null, 1);
     }
 
     @Test(expected = IllegalArgumentException.class)
