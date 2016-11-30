@@ -92,15 +92,15 @@ public class ExtractTextByPagesTask extends BaseTask<ExtractTextByPagesParameter
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), current, current);
-            textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(current)
+            try (PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), tmpFile)) {
+                textExtractor.extract(documentHandler.getPage(current));
+            }
+
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest(SejdaFileExtensions.TXT_EXTENSION).page(current)
                             .originalName(parameters.getSource().getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
-
             // close resource
-            nullSafeCloseQuietly(textExtractor);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 

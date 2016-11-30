@@ -19,19 +19,20 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 /**
  * Stateless component responsible for extracting text from a given area of a document page
@@ -65,14 +66,16 @@ public class PdfTextExtractorByArea {
         int pageHeight = (int) pageSize.getHeight();
         int pageWidth = (int) pageSize.getWidth();
         int guesstimateTextHeight = 12;
-        return new Rectangle((int)position.getX(), pageHeight - (int) position.getY(), pageWidth, guesstimateTextHeight);
+        return new Rectangle((int) position.getX(), pageHeight - (int) position.getY(), pageWidth,
+                guesstimateTextHeight);
     }
 
     private Rectangle getFooterAreaRectangle(PDPage page) {
         PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
         int pageHeight = (int) pageSize.getHeight();
         int pageWidth = (int) pageSize.getWidth();
-        return new Rectangle(0, pageHeight - GUESSTIMATE_HEADER_FOOTER_HEIGHT, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
+        return new Rectangle(0, pageHeight - GUESSTIMATE_HEADER_FOOTER_HEIGHT, pageWidth,
+                GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }
 
     private Rectangle getHeaderAreaRectangle(PDPage page) {
@@ -91,7 +94,7 @@ public class PdfTextExtractorByArea {
      * @return the extracted text
      * @throws TaskIOException
      */
-    public String extractTextFromArea(PDPage page, Rectangle area) throws TaskIOException {
+    public String extractTextFromArea(PDPage page, Rectangle2D area) throws TaskIOException {
         try {
             PDFTextStripperByArea stripper = new PDFTextStripperByArea();
 

@@ -19,6 +19,9 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.nonNull;
+
+import java.awt.geom.Rectangle2D;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +32,11 @@ import java.nio.file.Files;
 import org.apache.commons.io.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.text.PDFTextStripper;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component responsible for extracting text from an input pdf document.
@@ -40,22 +46,41 @@ import org.sejda.sambox.text.PDFTextStripper;
  */
 public class PdfTextExtractor implements Closeable {
 
-    private PDFTextStripper textStripper = null;
-    private Writer outputWriter;
-    private String encoding;
+    private static final Logger LOG = LoggerFactory.getLogger(PdfTextExtractor.class);
 
-    public PdfTextExtractor(String encoding) throws TaskException {
-        this(encoding, 1, Integer.MAX_VALUE);
+    private PdfTextExtractorByArea textStripper = null;
+    private Writer outputWriter;
+
+    public PdfTextExtractor(String encoding, File output) throws TaskException {
+        textStripper = new PdfTextExtractorByArea();
+        if (output == null || !output.isFile() || !output.canWrite()) {
+            throw new TaskException(
+                    String.format("Cannot write extracted text to a the given output file '%s'", output));
+        }
+        try {
+            outputWriter = Files.newBufferedWriter(output.toPath(), Charset.forName(encoding));
+        } catch (IOException e) {
+            throw new TaskExecutionException("An error occurred creating a file writer", e);
+        }
     }
 
-    public PdfTextExtractor(String encoding, int startPageOneBased, int endPageIncluding) throws TaskException {
-        try {
-            this.encoding = encoding;
-            textStripper = new PDFTextStripper();
-            textStripper.setStartPage(startPageOneBased);
-            textStripper.setEndPage(endPageIncluding);
-        } catch (IOException e) {
-            throw new TaskException("Unable to create text extractor.", e);
+    /**
+     * Extract text from the input page writing it to the given output file.
+     * 
+     * @param page
+     */
+    public void extract(PDPage page) {
+        if (nonNull(page) && page.hasContents()) {
+            try {
+                outputWriter.write(textStripper.extractTextFromArea(page,
+                        new Rectangle2D.Float(0, 0, page.getCropBox().getWidth(), page.getCropBox().getHeight())));
+                outputWriter.write(System.lineSeparator());
+                outputWriter.flush();
+            } catch (IOException | TaskIOException e) {
+                LOG.warn("Skipping page, an error occurred extracting text.", e);
+            }
+        } else {
+            LOG.warn("Skipping null or no content page");
         }
     }
 
@@ -63,22 +88,12 @@ public class PdfTextExtractor implements Closeable {
      * Extract text from the input document writing it to the given output file.
      * 
      * @param document
-     * @param output
-     * @throws TaskException
      */
-    public void extract(PDDocument document, File output) throws TaskException {
-        if (document == null) {
-            throw new TaskException("Unable to extract text from a null document.");
-        }
-        if (output == null || !output.isFile() || !output.canWrite()) {
-            throw new TaskException(String.format("Cannot write extracted text to a the given output file '%s'.",
-                    output));
-        }
-        try {
-            outputWriter = Files.newBufferedWriter(output.toPath(), Charset.forName(encoding));
-            textStripper.writeText(document, outputWriter);
-        } catch (IOException e) {
-            throw new TaskExecutionException("An error occurred extracting text from a pdf source.", e);
+    public void extract(PDDocument document) {
+        if (nonNull(document)) {
+            document.getPages().forEach(this::extract);
+        } else {
+            LOG.warn("Unable to extract text from a null document.");
         }
     }
 
@@ -86,4 +101,5 @@ public class PdfTextExtractor implements Closeable {
     public void close() {
         IOUtils.closeQuietly(outputWriter);
     }
+
 }

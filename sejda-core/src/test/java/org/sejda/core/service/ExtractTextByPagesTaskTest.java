@@ -20,6 +20,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -63,6 +64,22 @@ public abstract class ExtractTextByPagesTaskTest extends BaseTaskTest<ExtractTex
         ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
         assertTrue(failListener.isFailed());
+    }
+
+    @Test
+    public void textCroppedOut() throws IOException {
+        setUpParameters();
+        parameters.setSource(customInput("pdf/text_cropped_out.pdf"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).assertOutputContainsFilenames("1_test_file.txt").forEachRawOutput(p -> {
+            try {
+                assertEquals("First page", Files.lines(p).findFirst().get());
+                assertFalse(Files.lines(p).anyMatch(s -> "Content".equals(s)));
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        });
     }
 
     @Test

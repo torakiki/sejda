@@ -23,15 +23,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.internal.matchers.Contains;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.internal.matchers.StartsWith;
 import org.sejda.model.exception.TaskException;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * @author Andrea Vacondio
@@ -41,41 +42,49 @@ public class PdfTextExtractorTest {
 
     @Rule
     public ExpectedException expected = ExpectedException.none();
-    private PdfTextExtractor victim;
-    private PDDocument doc;
-    private File file;
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
-    @Before
-    public void setUp() throws TaskException {
-        victim = new PdfTextExtractor("UTF-8");
-        doc = mock(PDDocument.class);
-        file = mock(File.class);
+    @Test
+    public void skipNullPage() throws IOException, TaskException {
+        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
+        victim.extract((PDPage) null);
     }
 
     @Test
-    public void testNullDocExtract() throws TaskException {
-        expected.expectMessage(new Contains("Unable to extract text from a null document."));
-        victim.extract(null, null);
+    public void skipNoContentsPage() throws IOException, TaskException {
+        PDPage page = mock(PDPage.class);
+        when(page.hasContents()).thenReturn(Boolean.FALSE);
+        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
+        victim.extract(page);
+    }
+
+    @Test
+    public void skipNullDocument() throws IOException, TaskException {
+        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
+        victim.extract((PDDocument) null);
     }
 
     @Test
     public void testNullFileExtract() throws TaskException {
         expected.expectMessage(new StartsWith("Cannot write extracted text"));
-        victim.extract(doc, null);
+        new PdfTextExtractor("UTF-8", null);
     }
 
     @Test
     public void testNotFileExtract() throws TaskException {
+        File file = mock(File.class);
         expected.expectMessage(new StartsWith("Cannot write extracted text"));
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        victim.extract(doc, file);
+        new PdfTextExtractor("UTF-8", file);
     }
 
     @Test
     public void testCannotWriteFileExtract() throws TaskException {
+        File file = mock(File.class);
         expected.expectMessage(new StartsWith("Cannot write extracted text"));
         when(file.isFile()).thenReturn(Boolean.TRUE);
         when(file.canWrite()).thenReturn(Boolean.FALSE);
-        victim.extract(doc, file);
+        new PdfTextExtractor("UTF-8", file);
     }
 }

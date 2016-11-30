@@ -19,9 +19,13 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,7 +51,6 @@ public abstract class ExtractTextTaskTest extends BaseTaskTest<ExtractTextParame
     private void setUpParameters() throws IOException {
         parameters = new ExtractTextParameters();
         testContext.directoryOutputTo(parameters);
-        parameters.addSource(customInput("pdf/enc_test_test_file.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setTextEncoding("UTF-8");
     }
@@ -55,6 +58,7 @@ public abstract class ExtractTextTaskTest extends BaseTaskTest<ExtractTextParame
     @Test
     public void executeUnethicalExtract() throws TaskException, IOException {
         setUpParameters();
+        parameters.addSource(customInput("pdf/enc_test_test_file.pdf"));
         new WithUnethicalReadProperty(true) {
             @Override
             public void execute() throws IOException {
@@ -66,8 +70,25 @@ public abstract class ExtractTextTaskTest extends BaseTaskTest<ExtractTextParame
     }
 
     @Test
+    public void textCroppedOut() throws IOException {
+        setUpParameters();
+        parameters.addSource(customInput("pdf/text_cropped_out.pdf"));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).forEachRawOutput(p -> {
+            try {
+                assertEquals("First page", Files.lines(p).findFirst().get());
+                assertFalse(Files.lines(p).anyMatch(s -> "Content".equals(s)));
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        });
+    }
+
+    @Test
     public void failedExtractMissingPermission() throws TaskException, IOException {
         setUpParameters();
+        parameters.addSource(customInput("pdf/enc_test_test_file.pdf"));
         new WithUnethicalReadProperty(false) {
             @Override
             public void execute() {

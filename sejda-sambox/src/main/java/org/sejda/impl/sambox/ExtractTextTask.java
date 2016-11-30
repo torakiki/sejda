@@ -56,14 +56,12 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
     private PDDocumentHandler documentHandler = null;
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
-    private PdfTextExtractor textExtractor;
 
     @Override
     public void before(ExtractTextParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
-        textExtractor = new PdfTextExtractor(parameters.getTextEncoding());
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
@@ -81,13 +79,16 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
             File tmpFile = createTemporaryBuffer();
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
-            textExtractor.extract(documentHandler.getUnderlyingPDDocument(), tmpFile);
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest(SejdaFileExtensions.TXT_EXTENSION).originalName(source.getName()).fileNumber(
-                            currentStep));
+            try (PdfTextExtractor textExtractor = new PdfTextExtractor(parameters.getTextEncoding(), tmpFile)) {
+                textExtractor.extract(documentHandler.getUnderlyingPDDocument());
+            }
+
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest(SejdaFileExtensions.TXT_EXTENSION).originalName(source.getName())
+                            .fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            closeResources();
+            nullSafeCloseQuietly(documentHandler);
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
@@ -99,11 +100,7 @@ public class ExtractTextTask extends BaseTask<ExtractTextParameters> {
 
     @Override
     public void after() {
-        closeResources();
+        nullSafeCloseQuietly(documentHandler);
     }
 
-    private void closeResources() {
-        nullSafeCloseQuietly(documentHandler);
-        nullSafeCloseQuietly(textExtractor);
-    }
 }
