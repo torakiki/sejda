@@ -70,7 +70,8 @@ public enum TestableTask {
     ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
     PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput()),
     NUP(taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs().defaultFolderOutput()),
-    WATERMARK(new WatermarkDefaultsProvider());
+    WATERMARK(new WatermarkDefaultsProvider()),
+    SCALE(new ScaleDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
 
@@ -151,6 +152,7 @@ public enum TestableTask {
     boolean isMultipleSource() {
         return getCorrespondingCliCommand().hasMultipleSource();
     }
+
     boolean isMultiplePdfSource() {
         return getCorrespondingCliCommand().hasMultiplePdfSource();
     }
@@ -346,5 +348,12 @@ class WatermarkDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsPro
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-w", "inputs/logo.png").with("-c", "50,30");
+    }
+}
+
+class ScaleDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return super.provideDefaults(taskName).with("-s", "1.1");
     }
 }

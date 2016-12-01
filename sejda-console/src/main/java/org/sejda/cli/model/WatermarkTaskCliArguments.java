@@ -41,7 +41,7 @@ public interface WatermarkTaskCliArguments extends CliArgumentsWithPdfAndDirecto
 
     boolean isPageSelection();
 
-    @Option(shortName = "l", description = "watermark location relative to the page content. { behind, over }. Default is behind  (optional)", defaultValue = "behind")
+    @Option(shortName = "l", description = "watermark location relative to the page content. { behind, over }. Default is 'behind'  (optional)", defaultValue = "behind")
     WatermarkLocationAdapter getLocation();
 
     @Option(shortName = "a", description = "watermark opacity, between 0 (transparent) and 100 (fully opaque). Default is 100. (optional)", defaultValue = "100")

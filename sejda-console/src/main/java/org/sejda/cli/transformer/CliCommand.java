@@ -47,6 +47,7 @@ import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
 import org.sejda.cli.model.RotateTaskCliArguments;
+import org.sejda.cli.model.ScaleTaskCliArguments;
 import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
 import org.sejda.cli.model.SetMetadataTaskCliArguments;
 import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
@@ -78,6 +79,7 @@ import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.parameter.NupParameters;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.parameter.RotateParameters;
+import org.sejda.model.parameter.ScaleParameters;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.parameter.SetPagesLabelParameters;
@@ -336,7 +338,14 @@ public enum CliCommand {
         protected CommandCliArgumentsTransformer<WatermarkTaskCliArguments, WatermarkParameters> getArgumentsTransformer() {
             return new WatermarkCliArgumentsTransformer();
         }
-    }, "Stamps a watermark image on multiple PDF documents.", "watermark -f /tmp/file1.pdf -o /tmp -w /tmp/logo.png -l behind -d 300x100 -c 20,50 -a 30");
+    }, "Stamps a watermark image on multiple PDF documents.", "watermark -f /tmp/file1.pdf -o /tmp -w /tmp/logo.png -l behind -d 300x100 -c 20,50 -a 30"),
+    SCALE("scale", new CliInterfacedTask<ScaleTaskCliArguments, ScaleParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<ScaleTaskCliArguments, ScaleParameters> getArgumentsTransformer() {
+            return new ScaleCliArgumentsTransformer();
+        }
+    }, "Scales pages or pages content of multiple PDF documents.", "scale -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp -t content -s 0.7");
 
     private String displayName;
     private String description;

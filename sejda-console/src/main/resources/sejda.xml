@@ -34,5 +34,6 @@
 		<task parameters="org.sejda.model.parameter.AttachmentsCollectionParameters" task="org.sejda.impl.sambox.AttachmentsCollectionTask"/>
 		<task parameters="org.sejda.model.parameter.NupParameters" task="org.sejda.impl.sambox.NupTask"/>
 		<task parameters="org.sejda.model.parameter.WatermarkParameters" task="org.sejda.impl.sambox.WatermarkTask"/>
+		<task parameters="org.sejda.model.parameter.ScaleParameters" task="org.sejda.impl.sambox.ScaleTask"/>		
 	</tasks>
 </sejda>

@@ -71,7 +71,7 @@ public class ScaleTask extends BaseTask<ScaleParameters> {
     public void execute(ScaleParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        LOG.debug("Starting scale {}", parameters.getScaleType());
+        LOG.debug("Starting scale '{}'", parameters.getScaleType());
         for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
             currentStep++;
