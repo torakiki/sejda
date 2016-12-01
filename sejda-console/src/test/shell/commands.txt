@@ -111,5 +111,5 @@ target/assembled/bin/sejda-console compress -f ../sejda-core/src/test/resources/
 target/assembled/bin/sejda-console watermark -h
 target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -c 30,50 -a 32 -w ../sejda-core/src/test/resources/image/draft.png -o /tmp/sejda-smoketest -j overwrite
 target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest -s 1,3-5 -p water -c 400,20 -d 200x40 -j overwrite -l over -w ../sejda-core/src/test/resources/image/draft.png
-target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -t content -s 0.7
+target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -t content -s 0.7 -j overwrite
 target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -t page -s 0.7 -p scaled_
