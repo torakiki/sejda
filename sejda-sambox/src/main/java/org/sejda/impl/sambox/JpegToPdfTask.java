@@ -33,6 +33,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.model.task.BaseTask;
@@ -76,7 +77,16 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             currentStep++;
 
-            PDImageXObject image = PageImageWriter.toPDXImageObject(source);
+            PDImageXObject image = null;
+            try {
+                image = PageImageWriter.toPDXImageObject(source);
+            } catch (TaskIOException ex) {
+                String warning = String.format("Image %s was skipped, could not be processed", source.getName());
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                LOG.warn(warning, ex);
+            }
+
+            if(image == null)  continue;
 
             PDRectangle mediaBox = PDRectangle.A4;
 
