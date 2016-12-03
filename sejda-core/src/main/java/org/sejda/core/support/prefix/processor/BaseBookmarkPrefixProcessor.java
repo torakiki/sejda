@@ -22,6 +22,8 @@ package org.sejda.core.support.prefix.processor;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
+import java.util.regex.Matcher;
+
 /**
  * Base class for a prefix processor replacing a prefix name with a bookmark value. A regexp can be specified to tell the processor which characters have to be removed from the
  * bookmark value (typically those non valid in a file name).
@@ -45,7 +47,7 @@ class BaseBookmarkPrefixProcessor implements PrefixProcessor {
         if (request != null && StringUtils.isNotBlank(request.getBookmark())) {
             String bookmarkName = request.getBookmark().replaceAll(toBeReplacedRegex, "");
             if (StringUtils.isNotBlank(bookmarkName)) {
-                return retVal.replaceAll(prefixNameRegex, bookmarkName);
+                return retVal.replaceAll(prefixNameRegex, Matcher.quoteReplacement(bookmarkName));
             }
         }
         return retVal;

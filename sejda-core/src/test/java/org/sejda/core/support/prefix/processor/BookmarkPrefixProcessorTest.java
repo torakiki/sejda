@@ -55,4 +55,12 @@ public class BookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
         assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
     }
 
+    @Test
+    public void testUnescapedRegexGroup() {
+        String prefix = "[BOOKMARK_NAME]";
+        String bookmark = "book$5";
+        String expected = "book$5";
+        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+    }
+
 }

@@ -59,6 +59,14 @@ public class BasenamePrefixProcessorTest extends BasePrefixProcessorTest {
         assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
     }
 
+    @Test
+    public void testUnescapedRegexInBasename() {
+        String prefix = "[BASENAME]";
+        String originalName = "x$5.pdf";
+        String expected = "x$5";
+        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+    }
+
     @Override
     PrefixProcessor getProcessor() {
         return victim;
