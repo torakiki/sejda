@@ -77,4 +77,8 @@ public class FileIndexAndPage {
     public String toString() {
         return String.format("%d:%d:%d", fileIndex, page, rotation.getDegrees());
     }
+
+    public boolean isAddBlankPage() {
+        return page < 0 || fileIndex < 0;
+    }
 }

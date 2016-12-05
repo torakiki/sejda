@@ -33,6 +33,7 @@ import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripper;
 
 @Ignore
@@ -83,6 +84,32 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
         assertPageHasText(outDocument, 8, "4b");
         assertPageHasText(outDocument, 9, "10b");
         assertPageHasText(outDocument, 10, "11b");
+    }
+
+    @Test
+    public void addingBlankPages() throws TaskException, IOException {
+        setUpParameters(basicInputs());
+        parameters.addPage(-1, -1);
+        parameters.addPage(0, 1);
+        parameters.addPage(1, 1);
+        parameters.addPage(-1, -1);
+        parameters.addPage(0, 3);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        PDDocument outDocument = testContext.assertTaskCompleted();
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6);
+
+        assertPageHasText(outDocument, 1, "");
+        assertPageHasText(outDocument, 2, "1a");
+        assertPageHasText(outDocument, 3, "1b");
+        assertPageHasText(outDocument, 4, "");
+        assertPageHasText(outDocument, 5, "3a");
+
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox(), PDRectangle.A4);
+            assertEquals(d.getPage(2).getMediaBox(), d.getPage(3).getMediaBox());
+        });
     }
 
     @Test
