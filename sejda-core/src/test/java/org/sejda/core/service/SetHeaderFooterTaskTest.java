@@ -124,6 +124,24 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
+    public void testWithScaling() throws Exception {
+        parameters = basicNoSources();
+        parameters.setAddMargins(true);
+
+        parameters.addSource(customInput("pdf/no_margins_test_file.pdf"));
+        parameters.setPattern("Test footer");
+        parameters.setFontSize(15);
+        parameters.setVerticalAlign(VerticalAlign.TOP);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertHeaderHasText(d.getPage(0), "Test footer");
+        });
+    }
+
+    @Test
     public void testLogicalPage() throws Exception {
         parameters = basicWithSources();
         parameters.setPattern("Page [PAGE_ARABIC]");

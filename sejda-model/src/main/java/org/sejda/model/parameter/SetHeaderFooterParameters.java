@@ -56,6 +56,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     @NotNull
     private Color color = Color.black;
     private int fileCountStartFrom = 1;
+    private boolean addMargins = false;
 
     public PageRange getPageRange() {
         return pageRange;
@@ -147,11 +148,19 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
         this.fileCountStartFrom = fileCountStartFrom;
     }
 
+    public boolean isAddMargins() {
+        return addMargins;
+    }
+
+    public void setAddMargins(boolean addMargins) {
+        this.addMargins = addMargins;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
                 .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence)
-                .append(pageCountStartFrom).append(color).append(fileCountStartFrom)
+                .append(pageCountStartFrom).append(color).append(fileCountStartFrom).append(addMargins)
                 .toHashCode();
     }
 
@@ -173,6 +182,7 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
                 .append(getPattern(), parameter.getPattern())
                 .append(getColor(), parameter.getColor())
                 .append(getFileCountStartFrom(), parameter.getFileCountStartFrom())
+                .append(isAddMargins(), parameter.isAddMargins())
                 .isEquals();
     }
 

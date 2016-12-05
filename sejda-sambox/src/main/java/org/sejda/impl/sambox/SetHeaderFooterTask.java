@@ -31,6 +31,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfScaler;
 import org.sejda.impl.sambox.component.SetHeaderFooterWriter;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
@@ -38,6 +39,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
@@ -87,6 +89,10 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
             documentHandler.setCompress(parameters.isCompress());
+
+            if(parameters.isAddMargins()){
+                new PdfScaler(ScaleType.CONTENT).scale(documentHandler.getUnderlyingPDDocument(), 0.9);
+            }
 
             try (SetHeaderFooterWriter footerWriter = new SetHeaderFooterWriter(documentHandler)) {
                 int currentFileCounter = currentStep + parameters.getFileCountStartFrom() - 1;
