@@ -139,6 +139,19 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         assertEqualsRectangles(expected, secondPage.getCropBox());
     }
 
+    @Test
+    public void testKeepsBookmarks() throws IOException {
+        parameters = new CropParameters();
+        parameters.addCropArea(ODD_PAGES_RECTANGLE);
+        parameters.addSource(customInput("pdf/bigger_outline_test.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        PDDocument outDocument = testContext.assertTaskCompleted();
+        int outlineSize = iteratorToList(outDocument.getDocumentCatalog().getDocumentOutline().children().iterator()).size();
+        assertEquals(4, outlineSize);
+    }
+
     private void assertEqualsRectangles(RectangularBox expected, PDRectangle found) {
         assertEquals(expected.getLeft(), (int) found.getLowerLeftX());
         assertEquals(expected.getBottom(), (int) found.getLowerLeftY());

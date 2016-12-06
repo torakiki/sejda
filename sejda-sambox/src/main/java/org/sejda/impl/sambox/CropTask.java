@@ -35,10 +35,7 @@ import java.util.stream.Collectors;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.AcroFormsMerger;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -48,6 +45,7 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,6 +141,10 @@ public class CropTask extends BaseTask<CropParameters> {
                 LOG.debug("Adding generated AcroForm");
                 destinationDocument.setDocumentAcroForm(f);
             });
+
+            PDDocumentOutline destinationOutline = new PDDocumentOutline();
+            new OutlineDistiller(sourceDocumentHandler.getUnderlyingPDDocument()).appendRelevantOutlineTo(destinationOutline, pagesLookup);
+            destinationDocument.getUnderlyingPDDocument().getDocumentCatalog().setDocumentOutline(destinationOutline);
 
             destinationDocument.savePDDocument(tmpFile);
             nullSafeCloseQuietly(sourceDocumentHandler);
