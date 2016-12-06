@@ -39,7 +39,6 @@ import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.optimization.Optimization;
 import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.sambox.contentstream.PDFStreamEngine;
-import org.sejda.sambox.contentstream.operator.DrawObject;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
@@ -82,7 +81,6 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
     ImagesOptimizer(OptimizeParameters parameters) {
         this.parameters = parameters;
         addOperator(new Concatenate());
-        addOperator(new DrawObject());
         addOperator(new SetGraphicsStateParameters());
         addOperator(new Save());
         addOperator(new Restore());
