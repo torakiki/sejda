@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sejda validation="true">
+	<notification async="false"/>
+	<tasks>
+		<task parameters="org.sejda.model.parameter.OcrTextByPagesParameters" task="org.sejda.impl.sambox.ocr.OcrTextByPagesTask"/>
+		<task parameters="org.sejda.model.parameter.OcrTextParameters" task="org.sejda.impl.sambox.ocr.OcrTextTask"/>
+	</tasks>
+</sejda>
