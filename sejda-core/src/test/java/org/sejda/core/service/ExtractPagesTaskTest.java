@@ -168,7 +168,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     @Test
-    public void extractRangesMedium() throws TaskException, IOException {
+    public void extractRangesMedium() throws IOException {
         setUpParametersPageRangesMediumFile();
         testContext.directoryOutputTo(parameters);
         execute(parameters);

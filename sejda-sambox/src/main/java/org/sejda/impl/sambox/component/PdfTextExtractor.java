@@ -21,11 +21,9 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
 
-import java.awt.geom.Rectangle2D;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 
@@ -48,17 +46,16 @@ public class PdfTextExtractor implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfTextExtractor.class);
 
-    private PdfTextExtractorByArea textStripper = null;
-    private Writer outputWriter;
+    private PdfVisibleTextStripper textStripper = null;
 
     public PdfTextExtractor(String encoding, File output) throws TaskException {
-        textStripper = new PdfTextExtractorByArea();
         if (output == null || !output.isFile() || !output.canWrite()) {
             throw new TaskException(
                     String.format("Cannot write extracted text to a the given output file '%s'", output));
         }
         try {
-            outputWriter = Files.newBufferedWriter(output.toPath(), Charset.forName(encoding));
+            textStripper = new PdfVisibleTextStripper(
+                    Files.newBufferedWriter(output.toPath(), Charset.forName(encoding)));
         } catch (IOException e) {
             throw new TaskExecutionException("An error occurred creating a file writer", e);
         }
@@ -72,11 +69,8 @@ public class PdfTextExtractor implements Closeable {
     public void extract(PDPage page) {
         if (nonNull(page) && page.hasContents()) {
             try {
-                outputWriter.write(textStripper.extractTextFromArea(page,
-                        new Rectangle2D.Float(0, 0, page.getCropBox().getWidth(), page.getCropBox().getHeight())));
-                outputWriter.write(System.lineSeparator());
-                outputWriter.flush();
-            } catch (IOException | TaskIOException e) {
+                textStripper.extract(page);
+            } catch (TaskIOException e) {
                 LOG.warn("Skipping page, an error occurred extracting text.", e);
             }
         } else {
@@ -99,7 +93,7 @@ public class PdfTextExtractor implements Closeable {
 
     @Override
     public void close() {
-        IOUtils.closeQuietly(outputWriter);
+        IOUtils.closeQuietly(textStripper);
     }
 
 }

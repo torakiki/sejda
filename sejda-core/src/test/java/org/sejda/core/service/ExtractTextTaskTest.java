@@ -99,4 +99,19 @@ public abstract class ExtractTextTaskTest extends BaseTaskTest<ExtractTextParame
             }
         };
     }
+
+    @Test
+    public void testExecute() throws IOException {
+        setUpParameters();
+        parameters.addSource(regularInput());
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).forEachRawOutput(p -> {
+            try {
+                assertEquals("GNU AFFERO GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get().trim());
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        });
+    }
 }

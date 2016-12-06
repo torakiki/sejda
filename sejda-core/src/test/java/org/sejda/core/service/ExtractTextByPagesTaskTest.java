@@ -92,11 +92,11 @@ public abstract class ExtractTextByPagesTaskTest extends BaseTaskTest<ExtractTex
                 .assertOutputContainsFilenames("1_test_file.txt", "2_test_file.txt", "3_test_file.txt")
                 .forEachRawOutput(p -> {
                     try {
-                        if (p.getFileName().equals("1_test_file.txt")) {
-                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get());
+                        if (p.getFileName().toString().equals("1_test_file.txt")) {
+                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get().trim());
                         }
-                        if (p.getFileName().equals("3_test_file.txt")) {
-                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get());
+                        if (p.getFileName().toString().equals("3_test_file.txt")) {
+                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get().trim());
                         }
                     } catch (IOException e) {
                         fail(e.getMessage());
@@ -112,11 +112,11 @@ public abstract class ExtractTextByPagesTaskTest extends BaseTaskTest<ExtractTex
         testContext.assertOutputSize(4).assertOutputContainsFilenames("1_test_file.txt", "2_test_file.txt",
                 "3_test_file.txt", "4_test_file.txt").forEachRawOutput(p -> {
                     try {
-                        if (p.getFileName().equals("1_test_file.txt")) {
-                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get());
+                        if (p.getFileName().toString().equals("1_test_file.txt")) {
+                            assertEquals("GNU LIBRARY GENERAL PUBLIC LICENSE", Files.lines(p).findFirst().get().trim());
                         }
-                        if (p.getFileName().equals("3_test_file.txt")) {
-                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get());
+                        if (p.getFileName().toString().equals("3_test_file.txt")) {
+                            assertEquals("and installation of the library.", Files.lines(p).findFirst().get().trim());
                         }
                     } catch (IOException e) {
                         fail(e.getMessage());
