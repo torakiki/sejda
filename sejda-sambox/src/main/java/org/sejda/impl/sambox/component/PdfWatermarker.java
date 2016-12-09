@@ -20,6 +20,7 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
 
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
@@ -53,14 +54,30 @@ public class PdfWatermarker {
         PDImageXObject watermark = PageImageWriter.toPDXImageObject(parameters.getWatermark());
         form = new PDFormXObject();
         form.setResources(new PDResources());
+
         PDTransparencyGroupAttributes group = new PDTransparencyGroupAttributes();
         group.setKnockout();
         this.form.setGroup(group);
-        // calculate bbox using dpi scale
+
         PDRectangle bbox = ofNullable(parameters.getDimension())
                 .map(d -> new PDRectangle((float) d.getWidth(), (float) d.getHeight()))
                 .orElseGet(() -> new PDRectangle(watermark.getWidth(), watermark.getHeight()));
         form.setBBox(bbox);
+
+        int degrees = parameters.getRotationDegrees();
+        while(degrees > 360) {
+            degrees -= 360;
+        }
+        while(degrees < 0) {
+            degrees += 360;
+        }
+
+        if(degrees != 0) {
+            AffineTransform at = form.getMatrix().createAffineTransform();
+            double radians = degrees * Math.PI / 180;
+            at.rotate(radians, bbox.getWidth() / 2, bbox.getHeight() / 2);
+            form.setMatrix(at);
+        }
 
         try (PDPageContentStream contentStream = new PDPageContentStream(document, form)) {
             contentStream.drawImage(watermark, 0, 0, form.getBBox().getWidth(), form.getBBox().getHeight());

@@ -65,6 +65,7 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
     private Dimension dimension;
     @NotNull
     private Point2D position = new Point();
+    private int rotationDegrees;
 
     public WatermarkParameters(Source<?> watermark) {
         this.watermark = watermark;
@@ -147,10 +148,20 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         this.dimension = dimenstion;
     }
 
+    public int getRotationDegrees() {
+        return rotationDegrees;
+    }
+
+    public void setRotationDegrees(int rotationDegrees) {
+        this.rotationDegrees = rotationDegrees;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(watermark).append(pageSelection)
-                .append(location).append(dimension).append(opacity).append(position).toHashCode();
+                .append(location).append(dimension).append(opacity).append(position)
+                .append(rotationDegrees)
+                .toHashCode();
     }
 
     @Override
@@ -165,6 +176,8 @@ public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParamete
         return new EqualsBuilder().appendSuper(super.equals(other)).append(watermark, parameter.watermark)
                 .append(pageSelection, parameter.pageSelection).append(location, parameter.location)
                 .append(dimension, parameter.dimension).append(opacity, parameter.opacity)
-                .append(position, parameter.position).isEquals();
+                .append(position, parameter.position)
+                .append(rotationDegrees, parameter.rotationDegrees)
+                .isEquals();
     }
 }

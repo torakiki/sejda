@@ -128,6 +128,19 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     }
 
     @Test
+    public void testRotation() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters);
+        parameters.setDimension(new Dimension(200, 83));
+        parameters.setRotationDegrees(45);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(68, -8, 200, 83));
+        });
+    }
+
+    @Test
     public void testLocation() throws IOException {
         WatermarkParameters parameters = pngParams();
         parameters.addPageRange(new PageRange(1, 1));
