@@ -16,14 +16,14 @@
  */
 package org.sejda.core.support.util;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class StringUtilsTest {
 
     @Test
-    public void testNbsp() throws Exception {
+    public void testNbsp() {
         assertEquals("result", StringUtils.normalizeWhitespace((char) 160 + "result").trim());
         assertEquals("result", StringUtils.normalizeWhitespace("result" + (char) 160).trim());
         assertEquals("", StringUtils.normalizeWhitespace("" + (char) 160).trim());

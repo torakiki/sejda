@@ -18,10 +18,13 @@
  */
 package org.sejda.impl.sambox.component.excel;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class DataTable {
 
@@ -101,7 +104,6 @@ public class DataTable {
                 sb.append(pageNumber);
                 i++;
             }
-            ;
         } else {
             sb.append("Page ").append(pageNumbers.iterator().next());
         }

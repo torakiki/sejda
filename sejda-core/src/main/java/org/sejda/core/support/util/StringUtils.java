@@ -29,7 +29,7 @@ public final class StringUtils {
         // removes control characters like \n, \r or \t
         // replaces all whitespace (eg: &nbsp;) with ' ' (space)
         String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
-        result = result.replace((char) 160, ' ');;
+        result = result.replace((char) 160, ' ');
         return result;
     }
 

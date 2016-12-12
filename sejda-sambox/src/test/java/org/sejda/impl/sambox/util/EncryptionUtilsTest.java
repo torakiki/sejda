@@ -36,7 +36,7 @@ import org.sejda.sambox.encryption.StandardSecurityEncryption;
 public class EncryptionUtilsTest {
 
     @Test
-    public void testSecurityFromParams() throws Exception {
+    public void testSecurityFromParams() {
         EncryptParameters params = new EncryptParameters(PdfEncryption.AES_ENC_256);
         params.setOwnerPassword("Chuck");
         params.setUserPassword("Norris");

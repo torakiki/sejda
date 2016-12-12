@@ -24,7 +24,10 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.commons.io.IOUtils;
@@ -36,7 +39,12 @@ import org.sejda.model.pdf.FontResource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.font.*;
+import org.sejda.sambox.pdmodel.font.FontMappers;
+import org.sejda.sambox.pdmodel.font.FontMapping;
+import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,12 +125,12 @@ public final class FontUtils {
     }
 
     public static PDFont loadFont(PDDocument document, FontResource font) {
-        if(!loadedFontCache.containsKey(document)){
+        if (!loadedFontCache.containsKey(document)) {
             loadedFontCache.put(document, new HashMap<>());
         }
 
         Map<String, PDFont> docCache = loadedFontCache.get(document);
-        if(docCache.containsKey(font.getResource())){
+        if (docCache.containsKey(font.getResource())) {
             return docCache.get(font.getResource());
         }
 
@@ -205,30 +213,30 @@ public final class FontUtils {
     }
 
     /**
-     * Returns true if the given font can display the given text.
-     * IMPORTANT: Ignores all whitespace in text.
+     * Returns true if the given font can display the given text. IMPORTANT: Ignores all whitespace in text.
      */
     public static boolean canDisplay(String text, PDFont font) {
-        if(font == null) return false;
+        if (font == null)
+            return false;
 
-        //LOG.debug("Can display '{}' using {}?", text, font);
+        // LOG.debug("Can display '{}' using {}?", text, font);
 
         try {
             // remove all whitespace characters and check only if those can be written using the font
             byte[] encoded = font.encode(removeWhitespace(text));
 
-            if(font instanceof PDType0Font) {
+            if (font instanceof PDType0Font) {
                 InputStream in = new ByteArrayInputStream(encoded);
                 while (in.available() > 0) {
                     int code = font.readCode(in);
 
-                    //LOG.debug("Read codePoint {}", code);
+                    // LOG.debug("Read codePoint {}", code);
 
                     PDType0Font type0Font = (PDType0Font) font;
                     GeneralPath path = type0Font.getPath(code);
-//                    if(path != null) {
-//                        LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
-//                    }
+                    // if(path != null) {
+                    // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
+                    // }
 
                     if (path == null || path.getBounds2D().getWidth() == 0) {
                         return false;
@@ -238,7 +246,7 @@ public final class FontUtils {
 
             return true;
         } catch (IllegalArgumentException | IOException | UnsupportedOperationException e) {
-            //LOG.debug("Cannot display text with font", e);
+            // LOG.debug("Cannot display text with font", e);
         }
         return false;
     }
@@ -254,8 +262,8 @@ public final class FontUtils {
     }
 
     /**
-     * Helper for subset fonts. Determines if a font is subset, computes original font name.
-     * Provides methods for loading the original full font from the system, if available, or loading a fallback font.
+     * Helper for subset fonts. Determines if a font is subset, computes original font name. Provides methods for loading the original full font from the system, if available, or
+     * loading a fallback font.
      */
     public static class FontSubsetting {
         public final String fontName;
@@ -269,7 +277,7 @@ public final class FontUtils {
             String fontName = StringUtils.trimToEmpty(subsetFont.getName());
             String[] fontNameFragments = fontName.split("\\+");
 
-            if(fontNameFragments.length == 2 && fontNameFragments[0].length() == 6) {
+            if (fontNameFragments.length == 2 && fontNameFragments[0].length() == 6) {
                 this.isSubset = true;
                 this.fontName = fontNameFragments[1];
             } else {
@@ -280,11 +288,10 @@ public final class FontUtils {
 
         public PDFont loadOriginalOrSimilar(PDDocument document) {
             PDFont original = loadOriginal(document);
-            if(original == null) {
+            if (original == null) {
                 return loadSimilar(document);
-            } else {
-                return original;
             }
+            return original;
         }
 
         /**
@@ -297,7 +304,7 @@ public final class FontUtils {
             LOG.debug("Searching the system for a font matching name '{}'", lookupName);
 
             FontMapping<TrueTypeFont> fontMapping = FontMappers.instance().getTrueTypeFont(lookupName, null);
-            if(fontMapping != null && fontMapping.getFont() != null && !fontMapping.isFallback()) {
+            if (fontMapping != null && fontMapping.getFont() != null && !fontMapping.isFallback()) {
                 TrueTypeFont mappedFont = fontMapping.getFont();
 
                 try {
@@ -322,21 +329,22 @@ public final class FontUtils {
         public PDFont loadSimilar(PDDocument document) {
             String lookupName = fontName.replace("-", " ");
 
-
             // Eg: Arial-BoldMT
             PDFontDescriptor descriptor = new PDFontDescriptor(new COSDictionary());
             descriptor.setFontName(fontName.split("-")[0]);
             descriptor.setForceBold(FontUtils.isBold(subsetFont));
             descriptor.setItalic(FontUtils.isItalic(subsetFont));
 
-            LOG.debug("Searching the system for a font matching name '{}' and description [name:{}, bold:{}, italic:{}]", lookupName, descriptor.getFontName(), descriptor.isForceBold(), descriptor.isItalic());
+            LOG.debug(
+                    "Searching the system for a font matching name '{}' and description [name:{}, bold:{}, italic:{}]",
+                    lookupName, descriptor.getFontName(), descriptor.isForceBold(), descriptor.isItalic());
 
             FontMapping<TrueTypeFont> fontMapping = FontMappers.instance().getTrueTypeFont(lookupName, descriptor);
-            if(fontMapping != null && fontMapping.getFont() != null) {
+            if (fontMapping != null && fontMapping.getFont() != null) {
                 TrueTypeFont mappedFont = fontMapping.getFont();
 
                 try {
-                    if(fontMapping.isFallback()) {
+                    if (fontMapping.isFallback()) {
                         LOG.debug("Fallback font available on the system: {} (for {})", mappedFont.getName(), fontName);
                     } else {
                         LOG.debug("Original font available on the system: {}", fontName);

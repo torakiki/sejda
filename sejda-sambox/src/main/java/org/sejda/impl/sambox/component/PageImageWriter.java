@@ -134,12 +134,11 @@ public class PageImageWriter {
             try {
                 return PDImageXObject.createFromFile(convertTiffToJpg(filePath));
             } catch (UnsupportedOperationException ex) {
-                if(ex.getMessage().contains("alpha channel")) {
+                if (ex.getMessage().contains("alpha channel")) {
                     LOG.warn("Found alpha channel image, JPEG compression failed, converting TIFF to PNG");
                     return PDImageXObject.createFromFile(convertTiffToPng(filePath));
-                } else {
-                    throw ex;
                 }
+                throw ex;
             }
         }
     }
@@ -161,7 +160,7 @@ public class PageImageWriter {
             ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
             writer.setOutput(outputStream);
             ImageWriteParam param = writer.getDefaultWriteParam();
-            if(format.equals("jpeg")) {
+            if (format.equals("jpeg")) {
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 param.setCompressionQuality(1.0F);
             }

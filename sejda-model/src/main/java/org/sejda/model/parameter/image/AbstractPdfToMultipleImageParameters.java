@@ -62,6 +62,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
         this.outputImageColorType = outputImageColorType;
     }
 
+    @Override
     public ImageColorType getOutputImageColorType() {
         return outputImageColorType;
     }
@@ -71,6 +72,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
         this.outputImageColorType = outputImageColorType;
     }
 
+    @Override
     public float getUserZoom() {
         return userZoom;
     }
@@ -81,6 +83,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
      * @param userZoom
      *            how much should the pdf page be zoomed in before it gets rendered as an image.
      */
+    @Override
     public void setUserZoom(float userZoom) {
         this.userZoom = userZoom;
     }
@@ -91,10 +94,12 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
     @NotNull
     public abstract ImageType getOutputImageType();
 
+    @Override
     public int getResolutionInDpi() {
         return resolutionInDpi;
     }
 
+    @Override
     public void setResolutionInDpi(int resolutionInDpi) {
         this.resolutionInDpi = resolutionInDpi;
     }
