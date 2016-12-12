@@ -119,7 +119,17 @@ public class CropTask extends BaseTask<CropParameters> {
                     box = unrotate(page, box);
                     PDPage newPage = destinationDocument.importPage(page);
                     pagesLookup.addLookupEntry(page, newPage);
-                    newPage.setCropBox(box);
+
+                    // adjust for any existing trim boxes
+                    PDRectangle mediaBox = page.getMediaBox();
+                    PDRectangle boundingBox = ofNullable(page.getTrimBox()).orElse(mediaBox);
+
+                    float deltaX = boundingBox.getLowerLeftX() - mediaBox.getLowerLeftX();
+                    float deltaY = boundingBox.getLowerLeftY() - mediaBox.getLowerLeftY();
+
+                    PDRectangle adjustedBox = new PDRectangle(box.getLowerLeftX() + deltaX, box.getLowerLeftY() + deltaY, box.getWidth(), box.getHeight());
+
+                    newPage.setCropBox(adjustedBox);
                     notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep)
                             .outOf(totalSteps);
                 }

@@ -19,6 +19,8 @@
 package org.sejda.core.service;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,7 +41,11 @@ import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.text.PDFTextStripperByArea;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -136,6 +142,29 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         String extension = FilenameUtils.getExtension(path);
         return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path),
                 randomAlphanumeric(16) + "." + extension);
+    }
+
+    public void assertPageText(PDPage page, String text) {
+        PDFTextStripperByArea textStripper;
+        try {
+            textStripper = new PDFTextStripperByArea();
+            PDRectangle pageSize = page.getCropBox();
+            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
+            if(page.getRotation() == 90 || page.getRotation() == 270) {
+                cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
+            }
+            textStripper.setSortByPosition(true);
+            textStripper.addRegion("area1", cropBoxRectangle);
+            textStripper.extractRegions(page);
+            assertEquals(text, textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", ""));
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+    }
+
+    public void assertMediaBox(PDPage page, float width, float height) {
+        assertEquals(page.getMediaBox().getWidth(), width, 0.01);
+        assertEquals(page.getMediaBox().getHeight(), height, 0.01);
     }
 
     public <T> List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {

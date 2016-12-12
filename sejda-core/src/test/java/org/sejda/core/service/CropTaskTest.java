@@ -152,6 +152,32 @@ public abstract class CropTaskTest extends BaseTaskTest<CropParameters> {
         assertEquals(4, outlineSize);
     }
 
+    @Test
+    public void testDocWithExistingCrop() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstance(127, 87, 357, 366));
+        parameters.addSource(customInput("pdf/cropped_alphabet.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        assertPageText(result.getPage(0), "LMNQRS");
+    }
+
+    @Test
+    public void testDocWithExistingCropRotated() throws IOException {
+        parameters = new CropParameters();
+        parameters.setCompress(false);
+        parameters.addCropArea(RectangularBox.newInstance(82, 136, 173, 359));
+        parameters.addSource(customInput("pdf/cropped_rotated_alphabet.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        PDDocument result = testContext.assertTaskCompleted();
+        assertPageText(result.getPage(0), "MR");
+    }
+
     private void assertEqualsRectangles(RectangularBox expected, PDRectangle found) {
         assertEquals(expected.getLeft(), (int) found.getLowerLeftX());
         assertEquals(expected.getBottom(), (int) found.getLowerLeftY());

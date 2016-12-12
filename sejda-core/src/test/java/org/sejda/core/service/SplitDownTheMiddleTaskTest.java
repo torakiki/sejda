@@ -401,27 +401,4 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
             assertPageText(d.getPage(11), "12");
         });
     }
-
-    public void assertPageText(PDPage page, String text) {
-        PDFTextStripperByArea textStripper;
-        try {
-            textStripper = new PDFTextStripperByArea();
-            PDRectangle pageSize = page.getCropBox();
-            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
-            if(page.getRotation() == 90 || page.getRotation() == 270) {
-                cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
-            }
-            textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", cropBoxRectangle);
-            textStripper.extractRegions(page);
-            assertEquals(text, textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", ""));
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-    }
-
-    public void assertMediaBox(PDPage page, float width, float height) {
-        assertEquals(page.getMediaBox().getWidth(), width, 0.01);
-        assertEquals(page.getMediaBox().getHeight(), height, 0.01);
-    }
 }
