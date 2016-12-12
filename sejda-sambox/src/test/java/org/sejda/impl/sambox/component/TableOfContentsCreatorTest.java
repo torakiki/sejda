@@ -163,6 +163,27 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
+    public void testToCForLargePageSize() {
+        PDDocument doc = new PDDocument();
+        assertEquals(0, doc.getNumberOfPages());
+        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        victim.pageSizeIfNotSet(PDRectangle.A1);
+        victim.appendItem("test.", 100, new PDAnnotationLink());
+        victim.addToC();
+        assertEquals(39.64, victim.getFontSize(), 0.1);
+    }
+
+    @Test
+    public void testStringsThatMixMultipleFontRequirements() {
+        PDDocument doc = new PDDocument();
+        assertEquals(0, doc.getNumberOfPages());
+        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        victim.appendItem("1-abc-עברית", 100, new PDAnnotationLink());
+        victim.addToC();
+        assertEquals(1, doc.getNumberOfPages());
+    }
+
+    @Test
     public void indexPageIsConsideredInPageNumbers() throws IOException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());

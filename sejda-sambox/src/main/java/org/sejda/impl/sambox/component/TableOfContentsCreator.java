@@ -22,20 +22,17 @@ import static java.lang.Math.ceil;
 import static java.lang.Math.round;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 import static org.sejda.util.RequireUtils.requireArg;
-import static org.sejda.util.RequireUtils.requireIOCondition;
 import static org.sejda.util.RequireUtils.requireNotBlank;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
-import java.awt.geom.AffineTransform;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 
-import org.sejda.core.support.util.StringUtils;
-import org.sejda.impl.sambox.util.FontUtils;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -45,7 +42,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,21 +54,27 @@ public class TableOfContentsCreator {
 
     private static final Logger LOG = LoggerFactory.getLogger(TableOfContentsCreator.class);
 
-    private static final int FONT_SIZE = 14;
-    private static final int LINE_HEIGHT = FONT_SIZE + 9;
-    private static final int MARGIN = 40;
-    private static final float FONT_SCALE = (float) FONT_SIZE / 1000;
+    private static final int DEFAULT_FONT_SIZE = 14;
+    private static final int DEFAULT_LINE_HEIGHT = DEFAULT_FONT_SIZE + 9;
+    private static final int DEFAULT_MARGIN = 40;
     private static final String SEPARATOR = "  ";
 
     private final Deque<ToCItem> items = new LinkedList<>();
     private PDDocument document;
     private ToCPolicy policy;
     private PDRectangle pageSize = null;
+    private float fontSize;
+    private PDFont font = PDType1Font.HELVETICA;
+    private float lineHeight;
+
+    private PageTextWriter writer;
 
     public TableOfContentsCreator(ToCPolicy policy, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
         this.document = document;
+        this.writer = new PageTextWriter(document);
         this.policy = ofNullable(policy).orElse(ToCPolicy.NONE);
+        recalculateFontSize();
     }
 
     /**
@@ -106,48 +108,45 @@ public class TableOfContentsCreator {
                     }
                 });
             });
-        } catch (IOException e) {
-            LOG.error("An error occured while create the ToC. Skipping ToC creation.", e);
+        } catch (IOException | TaskIOException e ) {
+            LOG.error("An error occurred while create the ToC. Skipping ToC creation.", e);
         }
     }
 
-    private LinkedList<PDPage> generateToC() throws IOException {
+    private LinkedList<PDPage> generateToC() throws TaskIOException, IOException {
         LinkedList<PDPage> pages = new LinkedList<>();
         if (shouldGenerateToC()) {
-            PDFont font = PDType1Font.HELVETICA;
-            int maxRows = (int) (pageSize().getHeight() - (MARGIN * 2)) / LINE_HEIGHT;
+            int maxRows = (int) ((pageSize().getHeight() - (DEFAULT_MARGIN * 2)) / lineHeight);
             long indexPages = round(ceil((double) items.size() / maxRows));
+
             while (!items.isEmpty()) {
                 int row = 0;
-                float separatorWidth = stringLength(font, SEPARATOR);
-                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, font, indexPages);
+
+                float separatorWidth = stringLength(SEPARATOR);
+                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, indexPages);
+
                 PDPage page = createPage(pages);
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                     while (!items.isEmpty() && row < maxRows) {
                         ToCItem i = items.poll();
                         if (nonNull(i)) {
                             row++;
-                            font = fontOrFallback(i.text, font, () -> FontUtils.findFontFor(document, i.text));
-                            requireIOCondition(nonNull(font), "Unable to find suitable font for " + StringUtils.asUnicodes(i.text));
-                            float y = pageSize().getHeight() - MARGIN - (row * LINE_HEIGHT);
-                            stream.beginText();
-                            stream.setFont(font, FONT_SIZE);
-                            stream.setTextMatrix(new Matrix(AffineTransform.getTranslateInstance(MARGIN, y)));
-                            String itemText = sanitize(i.text, font, separatingLineEndingX, separatorWidth);
-                            stream.showText(itemText);
+                            float y = pageSize().getHeight() - DEFAULT_MARGIN - (row * lineHeight);
+                            float x = DEFAULT_MARGIN;
+                            String itemText = sanitize(i.text, separatingLineEndingX, separatorWidth);
+                            writeText(page, itemText, x, y);
 
                             String pageString = SEPARATOR + Long.toString(i.page + indexPages);
-                            stream.setTextMatrix(new Matrix(AffineTransform.getTranslateInstance(
-                                    getPageNumberX(separatorWidth, PDType1Font.HELVETICA, i.page + indexPages), y)));
-                            stream.setFont(PDType1Font.HELVETICA, FONT_SIZE);
-                            stream.showText(pageString);
-                            stream.endText();
+                            float x2 = getPageNumberX(separatorWidth, i.page + indexPages);
+                            writeText(page, pageString, x2, y);
+
                             i.annotation.setRectangle(
-                                    new PDRectangle(MARGIN, y, pageSize().getWidth() - (2 * MARGIN), FONT_SIZE));
+                                    new PDRectangle(DEFAULT_MARGIN, y, pageSize().getWidth() - (2 * DEFAULT_MARGIN), fontSize));
                             page.getAnnotations().add(i.annotation);
-                            // we didn't sanitieze the text so it's shorter then the available space and needs a separator line
+
+                            // we didn't sanitize the text so it's shorter then the available space and needs a separator line
                             if (itemText.equals(i.text)) {
-                                stream.moveTo(MARGIN + separatorWidth + stringLength(font, i.text), y);
+                                stream.moveTo(DEFAULT_MARGIN + separatorWidth + stringLength(i.text), y);
                                 stream.lineTo(separatingLineEndingX, y);
                                 stream.setLineWidth(0.5f);
                                 stream.stroke();
@@ -160,20 +159,23 @@ public class TableOfContentsCreator {
         return pages;
     }
 
-    private String sanitize(String text, PDFont font, float separatingLineEndingX, float separatorWidth)
-            throws IOException {
-        float maxLen = pageSize().getWidth() - MARGIN - (pageSize().getWidth() - separatingLineEndingX)
+    private void writeText(PDPage page, String s, float x, float y) throws TaskIOException {
+        writer.write(page, new Point.Float(x, y), s, font, (double) fontSize, Color.BLACK);
+    }
+
+    private String sanitize(String text, float separatingLineEndingX, float separatorWidth) throws TaskIOException {
+        float maxLen = pageSize().getWidth() - DEFAULT_MARGIN - (pageSize().getWidth() - separatingLineEndingX)
                 - separatorWidth;
-        if (stringLength(font, text) > maxLen) {
+        if (stringLength(text) > maxLen) {
             LOG.debug("Truncating ToC text to fit available space");
             int currentLength = text.length() / 2;
-            while (stringLength(font, text.substring(0, currentLength)) > maxLen) {
+            while (stringLength(text.substring(0, currentLength)) > maxLen) {
                 currentLength /= 2;
             }
             int currentChunk = currentLength;
             while (currentChunk > 1) {
                 currentChunk /= 2;
-                if (stringLength(font, text.substring(0, currentLength + currentChunk)) < maxLen) {
+                if (stringLength(text.substring(0, currentLength + currentChunk)) < maxLen) {
                     currentLength += currentChunk;
                 }
             }
@@ -189,16 +191,16 @@ public class TableOfContentsCreator {
         return page;
     }
 
-    private float getSeparatingLineEndingX(float separatorWidth, PDFont font, long indexPages) throws IOException {
-        return getPageNumberX(separatorWidth, font, items.peekLast().page + indexPages);
+    private float getSeparatingLineEndingX(float separatorWidth, long indexPages) throws TaskIOException {
+        return getPageNumberX(separatorWidth, items.peekLast().page + indexPages);
     }
 
-    private float getPageNumberX(float separatorWidth, PDFont font, long pageNumber) throws IOException {
-        return pageSize().getWidth() - MARGIN - separatorWidth - stringLength(font, Long.toString(pageNumber));
+    private float getPageNumberX(float separatorWidth, long pageNumber) throws TaskIOException {
+        return pageSize().getWidth() - DEFAULT_MARGIN - separatorWidth - stringLength(Long.toString(pageNumber));
     }
 
-    private float stringLength(PDFont font, String text) throws IOException {
-        return font.getStringWidth(text) * FONT_SCALE;
+    private float stringLength(String text) throws TaskIOException {
+        return (float) writer.getStringWidth(text, font, fontSize);
     }
 
     public boolean hasToc() {
@@ -212,11 +214,23 @@ public class TableOfContentsCreator {
     public void pageSizeIfNotSet(PDRectangle pageSize) {
         if (this.pageSize == null) {
             this.pageSize = pageSize;
+            recalculateFontSize();
         }
+    }
+
+    private void recalculateFontSize() {
+        float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
+
+        this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
+        this.lineHeight = scalingFactor * DEFAULT_LINE_HEIGHT;
     }
 
     private PDRectangle pageSize() {
         return Optional.ofNullable(pageSize).orElse(PDRectangle.A4);
+    }
+
+    public float getFontSize() {
+        return fontSize;
     }
 
     private static class ToCItem {

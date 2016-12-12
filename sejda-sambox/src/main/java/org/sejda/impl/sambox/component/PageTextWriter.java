@@ -309,6 +309,61 @@ public class PageTextWriter {
         return result;
     }
 
+    /**
+     * Calculates the string's width, using the same algorithms to resolve fallback fonts as the write() method.
+     * @throws TaskIOException
+     */
+    public int getStringWidth(String rawLabel, PDFont font, float fontSize) throws TaskIOException {
+        String label = StringUtils.normalizeWhitespace(rawLabel);
+
+        List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
+        int offset = 0;
+        for (TextWithFont stringAndFont : resolvedStringsToFonts) {
+            try {
+                PDFont resolvedFont = stringAndFont.getFont();
+                String resolvedLabel = stringAndFont.getText();
+                double resolvedFontSize = fontSize;
+
+                // some fonts don't have glyphs for space. figure out if that's the case and switch to a standard font as fallback
+                if(resolvedLabel.equals(" ")) {
+                    if(!FontUtils.canDisplaySpace(resolvedFont)) {
+                        resolvedFont = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
+                    }
+                }
+
+                // when switching from one font to the other (eg: some letters aren't supported by the original font)
+                // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
+                // the previous letter
+                if (resolvedFont != font) {
+                    if(nonNull(font.getFontDescriptor()) &&
+                            nonNull(resolvedFont) && nonNull(resolvedFont.getFontDescriptor())) {
+                        try {
+                            if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null &&
+                                    resolvedFont.getFontDescriptor() != null && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
+                                double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+                                double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
+
+                                resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
+                                LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+                            }
+                        } catch (Exception e) {
+                            LOG.warn("Could not calculate fallback font size", e);
+                        }
+                    }
+                }
+
+                // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
+                // use the largest value between font average width and text string width
+                double textWidth = Math.max(resolvedFont.getAverageFontWidth(), resolvedFont.getStringWidth(resolvedLabel)) / 1000 * fontSize;
+                offset += textWidth;
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred writing text to the page.", e);
+            }
+        }
+
+        return offset;
+    }
+
     private Point2D findPositionInRotatedPage(int rotation, PDRectangle pageSize, Point2D position) {
         LOG.debug("Found rotation {}", rotation);
         // flip
