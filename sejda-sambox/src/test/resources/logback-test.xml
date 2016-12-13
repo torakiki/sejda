@@ -13,7 +13,7 @@
 
 	<!-- careful here. when the build is too verbose Travis-CI starts terminating it too early and deeming build failure.
 	change it locally when investigating something, but please don't commit it changed -->
-	<root level="INFO">
+	<root level="WARN">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
