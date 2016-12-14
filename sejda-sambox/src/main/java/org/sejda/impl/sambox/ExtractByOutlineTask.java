@@ -59,7 +59,7 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
             LOG.debug("Retrieving outline information for level {} and match regex {}", parameters.getLevel(),
                     parameters.getMatchingTitleRegEx());
             OutlineExtractPageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
-                    parameters.getMatchingTitleRegEx()).getExtractPageDestinations(parameters.getLevel());
+                    parameters.getMatchingTitleRegEx()).getExtractPageDestinations(parameters.getLevel(), parameters.isIncludePageAfter());
 
             LOG.debug("Starting extraction by outline, level {} and match regex {}", parameters.getLevel(),
                     parameters.getMatchingTitleRegEx());

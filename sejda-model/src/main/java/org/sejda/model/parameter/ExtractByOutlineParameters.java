@@ -44,6 +44,7 @@ public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputP
     private int level;
     private String matchingTitleRegEx;
     private boolean discardOutline = false;
+    private boolean includePageAfter = false;
 
     public ExtractByOutlineParameters(int level) {
         this.level = level;
@@ -81,16 +82,27 @@ public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputP
         this.discardOutline = discardOutline;
     }
 
+    public boolean isIncludePageAfter() {
+        return includePageAfter;
+    }
+
+    public void setIncludePageAfter(boolean includePageAfter) {
+        this.includePageAfter = includePageAfter;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).append("level", level)
-                .append("matchingTitleRegEx", matchingTitleRegEx).toString();
+                .append("matchingTitleRegEx", matchingTitleRegEx)
+                .append("includePageAfter", includePageAfter)
+                .toString();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
-                .append(level).append(matchingTitleRegEx).toHashCode();
+                .append(level).append(matchingTitleRegEx).append(includePageAfter)
+                .toHashCode();
     }
 
     @Override
@@ -105,6 +117,8 @@ public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputP
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.optimizationPolicy)
                 .append(discardOutline, parameter.discardOutline).append(level, parameter.getLevel())
-                .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx()).isEquals();
+                .append(matchingTitleRegEx, parameter.getMatchingTitleRegEx())
+                .append(includePageAfter, parameter.isIncludePageAfter())
+                .isEquals();
     }
 }

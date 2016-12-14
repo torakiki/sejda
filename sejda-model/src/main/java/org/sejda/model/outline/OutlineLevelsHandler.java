@@ -28,9 +28,10 @@ public interface OutlineLevelsHandler {
 
     /**
      * @param level
+     * @param includePageAfter
      * @return page sections found at the given outline level
      */
     OutlinePageDestinations getPageDestinationsForLevel(int level);
 
-    OutlineExtractPageDestinations getExtractPageDestinations(int level);
+    OutlineExtractPageDestinations getExtractPageDestinations(int level, boolean includePageAfter);
 }

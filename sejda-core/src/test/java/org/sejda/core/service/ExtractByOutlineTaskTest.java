@@ -33,12 +33,20 @@ import org.sejda.model.pdf.PdfVersion;
 @Ignore
 public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOutlineParameters> {
 
+    private ExtractByOutlineParameters setUpParameters(int level) {
+        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", null);
+    }
+
     private ExtractByOutlineParameters setUpParameters(int level, String regEx) {
+        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", regEx);
+    }
+
+    private ExtractByOutlineParameters setUpParameters(int level, String sourceFile, String regEx) {
         ExtractByOutlineParameters parameters = new ExtractByOutlineParameters(level);
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file1.pdf"));
+        parameters.addSource(customInput(sourceFile, "file1.pdf"));
         parameters.setOutputPrefix("[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
@@ -46,7 +54,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void testSplitDeeperLevel() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(3, null);
+        ExtractByOutlineParameters parameters = setUpParameters(3);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext
@@ -62,7 +70,8 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void testSplitAtTopLevel() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(2, null);
+        ExtractByOutlineParameters parameters = setUpParameters(2);
+        parameters.setIncludePageAfter(true);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputContainsFilenames("1_Invoking Maven.pdf", "2_Creating a new Project jar.pdf",
@@ -78,7 +87,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void testBatchFilesWithConflictingOutputFiles() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(2, null);
+        ExtractByOutlineParameters parameters = setUpParameters(2);
         parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf"));
         parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         testContext.directoryOutputTo(parameters);
@@ -90,6 +99,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     @Test
     public void testWithMatchingText() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(3, "(Using)+.+");
+        parameters.setIncludePageAfter(true);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputSize(3).assertPages("1_Using Profiles.pdf", 2)
@@ -100,6 +110,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     public void testWithMatchingTextAndOptimization() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(3, "(Using)+.+");
         parameters.setOptimizationPolicy(OptimizationPolicy.YES);
+        parameters.setIncludePageAfter(true);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputSize(3).assertPages("1_Using Profiles.pdf", 2)
@@ -118,12 +129,33 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void testNonExistingLevel() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(4, null);
+        ExtractByOutlineParameters parameters = setUpParameters(4);
         testContext.directoryOutputTo(parameters);
         TestListenerFailed failListener = TestListenerFactory.newFailedListener();
         ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
         assertTrue(failListener.isFailed());
+    }
+
+    @Test
+    public void testIncludingPageAfterOff() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertOutputContainsFilenames("1_Employee One.pdf", "3_Employee Three.pdf", "2_Employee Two.pdf");
+        testContext.assertOutputSize(3);
+        testContext.assertPages("1_Employee One.pdf", 1);
+    }
+
+    @Test
+    public void testIncludingPageAfterOn() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        parameters.setIncludePageAfter(true);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertOutputContainsFilenames("1_Employee One.pdf", "3_Employee Three.pdf", "2_Employee Two.pdf");
+        testContext.assertOutputSize(3);
+        testContext.assertPages("1_Employee One.pdf", 2);
     }
 
 }

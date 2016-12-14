@@ -57,7 +57,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
     }
 
     @Override
-    public OutlineExtractPageDestinations getExtractPageDestinations(int level) {
+    public OutlineExtractPageDestinations getExtractPageDestinations(int level, boolean includePageAfter) {
         OutlineExtractPageDestinations destinations = new OutlineExtractPageDestinations();
 
         List<OutlineItem> flatOutline = OutlineUtils.getFlatOutline(document);
@@ -74,13 +74,18 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                         for (int j = i + 1; j < flatOutline.size(); j++) {
                             OutlineItem after = flatOutline.get(j);
                             if (after.level <= item.level) {
-                                // This is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
+                                // Looking at bookmark's xyzDestination flag is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
                                 // resulting in the last half page missing from the extract.
+
                                 // Let's see. Maybe better to error on the safe side and include one extra page than have parts missing?
                                 // The downside with adding one extra page is that batched payslips or any other doc that needs precise splitting will be worse
                                 // with the extra page from the next item in there
                                 // For now choosing the precise split and we'll see if we need to change our minds
-                                endPage = after.xyzDestination ? after.page : after.page - 1;
+
+                                // If the bookmark has a xyz destination but the output document would actually be single page, we should not include page after
+                                // Eg: a payslip document where each page has a bookmark (xyz destination) that points to the page, bookmark text is employee name
+
+                                endPage = includePageAfter ? after.page : after.page - 1;
                                 // endPage = after.page;
                                 break;
                             }
