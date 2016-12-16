@@ -20,6 +20,7 @@
 package org.sejda.core.support.prefix.processor;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -32,47 +33,47 @@ public class PrefixTypeTest {
     private static final String NO_PREFIX = "NO_PREFIX";
     @Test
     public void isFoundIn() {
-        PrefixType.BASENAME.isFoundIn("Chuck_[BASENAME]_Norris");
-        PrefixType.BASENAME.isFoundIn("[BASENAME]_Norris");
-        PrefixType.BASENAME.isFoundIn("Chuck_[BASENAME]");
-        PrefixType.BASENAME.isFoundIn("[BASENAME]");
+        assertTrue(PrefixType.BASENAME.isFoundIn("Chuck_[BASENAME]_Norris"));
+        assertTrue(PrefixType.BASENAME.isFoundIn("[BASENAME]_Norris"));
+        assertTrue(PrefixType.BASENAME.isFoundIn("Chuck_[BASENAME]"));
+        assertTrue(PrefixType.BASENAME.isFoundIn("[BASENAME]"));
 
-        PrefixType.BOOKMARK.isFoundIn("Chuck_[BOOKMARK_NAME]_Norris");
-        PrefixType.BOOKMARK.isFoundIn("Chuck_[BOOKMARK_NAME]");
-        PrefixType.BOOKMARK.isFoundIn("[BOOKMARK_NAME]_Norris");
-        PrefixType.BOOKMARK.isFoundIn("[BOOKMARK_NAME]");
+        assertTrue(PrefixType.BOOKMARK.isFoundIn("Chuck_[BOOKMARK_NAME]_Norris"));
+        assertTrue(PrefixType.BOOKMARK.isFoundIn("Chuck_[BOOKMARK_NAME]"));
+        assertTrue(PrefixType.BOOKMARK.isFoundIn("[BOOKMARK_NAME]_Norris"));
+        assertTrue(PrefixType.BOOKMARK.isFoundIn("[BOOKMARK_NAME]"));
 
-        PrefixType.BOOKMARK_STRICT.isFoundIn("Chuck_[BOOKMARK_NAME_STRICT]_Norris");
-        PrefixType.BOOKMARK_STRICT.isFoundIn("Chuck_[BOOKMARK_NAME_STRICT]");
-        PrefixType.BOOKMARK_STRICT.isFoundIn("[BOOKMARK_NAME_STRICT]_Norris");
-        PrefixType.BOOKMARK_STRICT.isFoundIn("[BOOKMARK_NAME_STRICT]");
+        assertTrue(PrefixType.BOOKMARK_STRICT.isFoundIn("Chuck_[BOOKMARK_NAME_STRICT]_Norris"));
+        assertTrue(PrefixType.BOOKMARK_STRICT.isFoundIn("Chuck_[BOOKMARK_NAME_STRICT]"));
+        assertTrue(PrefixType.BOOKMARK_STRICT.isFoundIn("[BOOKMARK_NAME_STRICT]_Norris"));
+        assertTrue(PrefixType.BOOKMARK_STRICT.isFoundIn("[BOOKMARK_NAME_STRICT]"));
 
-        PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE]_Norris");
-        PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE]");
-        PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE]_Norris");
-        PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE]");
-        PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE##]");
-        PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE##]_Norris");
-        PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE##]");
-        PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE##]_Norris");
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE]_Norris"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE]"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE]_Norris"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE]"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE##]"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE##]_Norris"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("Chuck_[CURRENTPAGE##]"));
+        assertTrue(PrefixType.CURRENTPAGE.isFoundIn("[CURRENTPAGE##]_Norris"));
 
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER]_Norris");
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER]");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER]_Norris");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER]");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##]");
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##]_Norris");
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##]");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##]_Norris");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##10]");
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##10]_Norris");
-        PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##10]");
-        PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##10]_Norris");
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER]_Norris"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER]_Norris"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##]_Norris"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##]_Norris"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##10]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##10]_Norris"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("Chuck_[FILENUMBER##10]"));
+        assertTrue(PrefixType.FILENUMBER.isFoundIn("[FILENUMBER##10]_Norris"));
 
-        PrefixType.TIMESTAMP.isFoundIn("Chuck_[TIMESTAMP]_Norris");
-        PrefixType.TIMESTAMP.isFoundIn("Chuck_[TIMESTAMP]");
-        PrefixType.TIMESTAMP.isFoundIn("[TIMESTAMP]_Norris");
-        PrefixType.TIMESTAMP.isFoundIn("[TIMESTAMP]");
+        assertTrue(PrefixType.TIMESTAMP.isFoundIn("Chuck_[TIMESTAMP]_Norris"));
+        assertTrue(PrefixType.TIMESTAMP.isFoundIn("Chuck_[TIMESTAMP]"));
+        assertTrue(PrefixType.TIMESTAMP.isFoundIn("[TIMESTAMP]_Norris"));
+        assertTrue(PrefixType.TIMESTAMP.isFoundIn("[TIMESTAMP]"));
 
     }
 
