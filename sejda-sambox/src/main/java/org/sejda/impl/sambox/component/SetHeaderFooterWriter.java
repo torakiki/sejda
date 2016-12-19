@@ -32,7 +32,6 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
 import org.sejda.model.task.TaskExecutionContext;
-import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
