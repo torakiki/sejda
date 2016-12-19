@@ -55,7 +55,6 @@ import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
@@ -117,14 +116,8 @@ public class EditTask extends BaseTask<EditParameters> {
             }
 
             for(Integer pageNumber : pagesToDeleteSorted) {
-                try {
-                    LOG.debug("Deleting page {}", pageNumber);
-                    documentHandler.removePage(pageNumber);
-                } catch (PageNotFoundException ex) {
-                    String warning = String.format("Page %d was not deleted, could not be processed", pageNumber);
-                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                    LOG.warn(warning, ex);
-                }
+                LOG.debug("Deleting page {}", pageNumber);
+                documentHandler.removePage(pageNumber);
             }
 
             for(InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {

@@ -53,7 +53,6 @@ import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
-import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -126,41 +125,35 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     continue;
                 }
 
-                try {
-                    double ratio = parameters.getRatio();
+                double ratio = parameters.getRatio();
 
-                    // by default determine based on page mode whether the split should be horizontal or vertical
-                    // based on whether the page is in portrait or landscape mode
-                    boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
-                    // adjust to user perceived
-                    if(page.getRotation() == 90 || page.getRotation() == 270) {
-                        landscapeMode = !landscapeMode;
-                    }
+                // by default determine based on page mode whether the split should be horizontal or vertical
+                // based on whether the page is in portrait or landscape mode
+                boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
+                // adjust to user perceived
+                if(page.getRotation() == 90 || page.getRotation() == 270) {
+                    landscapeMode = !landscapeMode;
+                }
 
-                    // allow user to override this by explicitly setting a split mode
-                    if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
-                        landscapeMode = false;
-                    } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
-                        landscapeMode = true;
-                    }
+                // allow user to override this by explicitly setting a split mode
+                if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
+                    landscapeMode = false;
+                } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
+                    landscapeMode = true;
+                }
 
-                    // landscape vs portrait
-                    if (landscapeMode) {
-                        // landscape orientation
+                // landscape vs portrait
+                if (landscapeMode) {
+                    // landscape orientation
 
-                        importLeftPage(page, ratio);
-                        importRightPage(page, ratio);
+                    importLeftPage(page, ratio);
+                    importRightPage(page, ratio);
 
-                    } else {
-                        // portrait orientation
+                } else {
+                    // portrait orientation
 
-                        importTopPage(page, ratio);
-                        importBottomPage(page, ratio);
-                    }
-                } catch (PageNotFoundException ex) {
-                    String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
-                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                    LOG.warn(warning, ex);
+                    importTopPage(page, ratio);
+                    importBottomPage(page, ratio);
                 }
             }
 

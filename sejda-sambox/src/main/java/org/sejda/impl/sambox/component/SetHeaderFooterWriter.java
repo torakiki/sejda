@@ -89,17 +89,11 @@ public class SetHeaderFooterWriter implements Closeable {
                     .withFilename(filename)
                     .build(parameters.getPattern());
 
-            try {
-                LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
-                headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
-                        parameters.getColor());
+            LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
+            headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
+                    parameters.getColor());
 
-                labelPageNumber++;
-            } catch (PageNotFoundException ex) {
-                String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
-                notifyEvent(executionContext.notifiableTaskMetadata()).taskWarning(warning);
-                LOG.warn(warning, ex);
-            }
+            labelPageNumber++;
         }
     }
 

@@ -86,15 +86,9 @@ public class PagesExtractor implements Closeable {
     }
 
     public void retain(int page, TaskExecutionContext executionContext) {
-        try {
-            PDPage existingPage = origin.getPage(page - 1);
-            pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
-            LOG.trace("Imported page number {}", page);
-        } catch (PageNotFoundException ex) {
-            String warning = String.format("Page %d was skipped, could not be processed", page);
-            notifyEvent(executionContext.notifiableTaskMetadata()).taskWarning(warning);
-            LOG.warn(warning, ex);
-        }
+        PDPage existingPage = origin.getPage(page - 1);
+        pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
+        LOG.trace("Imported page number {}", page);
     }
 
     public void setVersion(PdfVersion version) {

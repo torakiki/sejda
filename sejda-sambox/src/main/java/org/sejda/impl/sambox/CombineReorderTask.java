@@ -45,7 +45,6 @@ import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
@@ -114,17 +113,11 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
                 }
                 destinationDocument.addBlankPage(mediaBox);
             } else {
-                try {
-                    PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
-                    PDPage newPage = destinationDocument.importPage(page);
-                    lastPage = newPage;
-                    pagesLookup.addLookupEntry(page, newPage);
-                    rotator.rotate(i + 1, filePage.getRotation());
-                } catch (PageNotFoundException ex) {
-                    String warning = String.format("Page %d was skipped, could not be processed", pageNum);
-                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                    LOG.warn(warning, ex);
-                }
+                PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
+                PDPage newPage = destinationDocument.importPage(page);
+                lastPage = newPage;
+                pagesLookup.addLookupEntry(page, newPage);
+                rotator.rotate(i + 1, filePage.getRotation());
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
