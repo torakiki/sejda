@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
 import java.io.Closeable;
@@ -30,6 +31,7 @@ import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.TextStampPattern;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
@@ -60,7 +62,7 @@ public class SetHeaderFooterWriter implements Closeable {
         this.totalPages = documentHandler.getNumberOfPages();
     }
 
-    public void write(SetHeaderFooterParameters parameters, int currentFileCounter, String filename) throws TaskIOException {
+    public void write(SetHeaderFooterParameters parameters, int currentFileCounter, String filename, TaskExecutionContext executionContext) throws TaskIOException {
         PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
         Double fontSize = defaultIfNull(parameters.getFontSize(), 10d);
 
@@ -95,6 +97,7 @@ public class SetHeaderFooterWriter implements Closeable {
                 labelPageNumber++;
             } catch (PageNotFoundException ex) {
                 String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
+                notifyEvent(executionContext.notifiableTaskMetadata()).taskWarning(warning);
                 LOG.warn(warning, ex);
             }
         }

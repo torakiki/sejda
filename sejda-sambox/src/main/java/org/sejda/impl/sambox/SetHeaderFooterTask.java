@@ -99,7 +99,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                         nameRequest().originalName(source.getName()).fileNumber(currentFileCounter));
 
-                footerWriter.write(parameters, currentFileCounter, outName);
+                footerWriter.write(parameters, currentFileCounter, outName, executionContext());
                 documentHandler.savePDDocument(tmpFile);
                 outputWriter.addOutput(file(tmpFile).name(outName));
                 FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());
