@@ -187,26 +187,24 @@ public class AcroFormsMerger {
     public void mergeForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup) {
         if (nonNull(originalForm)) {
             if (originalForm.hasXFA()) {
-                LOG.warn("Merge of XFA forms is not supported");
-            } else {
-                LOG.debug("Merging acroforms with policy {}", policy);
-                switch (policy) {
-                case MERGE_RENAMING_EXISTING_FIELDS:
-                    updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
-                            createRenamingNonTerminalField);
-                    break;
-                case MERGE:
-                    updateForm(originalForm, annotationsLookup, createOrReuseTerminalField,
-                            createOrReuseNonTerminalField);
-                    break;
-                case FLATTEN:
-                    updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
-                            createRenamingNonTerminalField);
-                    flatten();
-                    break;
-                default:
-                    LOG.debug("Discarding acroform");
-                }
+                LOG.warn("The AcroForm has XFA resurces which will be ignored");
+            }
+            LOG.debug("Merging acroforms with policy {}", policy);
+            switch (policy) {
+            case MERGE_RENAMING_EXISTING_FIELDS:
+                updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
+                        createRenamingNonTerminalField);
+                break;
+            case MERGE:
+                updateForm(originalForm, annotationsLookup, createOrReuseTerminalField, createOrReuseNonTerminalField);
+                break;
+            case FLATTEN:
+                updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
+                        createRenamingNonTerminalField);
+                flatten();
+                break;
+            default:
+                LOG.debug("Discarding acroform");
             }
         } else {
             LOG.debug("Skipped acroform merge, nothing to merge");
