@@ -277,6 +277,11 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
         try {
             PDFormXObject pageAsFormObject = getPageAsFormXObject(sourcePage);
+            if(pageAsFormObject == null) {
+                int pageNumber = sourceHandler.getPages().indexOf(sourcePage) + 1;
+                String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+            }
             PDPageContentStream currentContentStream = new PDPageContentStream(
                     destinationHandler.getUnderlyingPDDocument(), newPage,
                     PDPageContentStream.AppendMode.APPEND, true, true);

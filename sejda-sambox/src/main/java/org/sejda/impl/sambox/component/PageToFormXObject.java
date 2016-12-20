@@ -47,6 +47,7 @@ public class PageToFormXObject {
     public PDFormXObject apply(PDPage page) throws IOException {
         requireNotNullArg(page, "Cannot convert a null page");
         PDStream stream = getStream(page);
+        if(stream == null) return null;
 
         PDFormXObject form = new PDFormXObject(stream);
         form.setResources(page.getResources());
