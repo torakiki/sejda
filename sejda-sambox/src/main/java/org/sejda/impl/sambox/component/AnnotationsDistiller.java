@@ -125,14 +125,21 @@ public final class AnnotationsDistiller {
             if (duplicate instanceof PDAnnotationMarkup) {
                 PDAnnotationPopup popup = ((PDAnnotationMarkup) duplicate).getPopup();
                 if (nonNull(popup)) {
-                    PDAnnotationPopup popupDuplicate = ofNullable((PDAnnotationPopup) annotationsLookup.lookup(popup))
-                            .orElseGet(() -> (PDAnnotationPopup) duplicate(popup, relevantPages));
-                    ((PDAnnotationMarkup) duplicate).setPopup(popupDuplicate);
-                    if (nonNull(popupDuplicate.getParent())) {
-                        popupDuplicate.setParent((PDAnnotationMarkup) duplicate);
-                        LOG.trace("Popup parent annotation updated");
+                    COSName subtype = popup.getCOSObject().getCOSName(COSName.SUBTYPE);
+                    if (COSName.POPUP.equals(subtype)) {
+                        PDAnnotationPopup popupDuplicate = ofNullable(
+                                (PDAnnotationPopup) annotationsLookup.lookup(popup))
+                                        .orElseGet(() -> (PDAnnotationPopup) duplicate(popup, relevantPages));
+                        ((PDAnnotationMarkup) duplicate).setPopup(popupDuplicate);
+                        if (nonNull(popupDuplicate.getParent())) {
+                            popupDuplicate.setParent((PDAnnotationMarkup) duplicate);
+                            LOG.trace("Popup parent annotation updated");
+                        }
+                        keptAnnotations.add(popupDuplicate);
+                    } else {
+                        ((PDAnnotationMarkup) duplicate).setPopup(null);
+                        LOG.warn("Removed Popup annotation of unexpected subtype {}", subtype);
                     }
-                    keptAnnotations.add(popupDuplicate);
                 }
             }
             keptAnnotations.add(duplicate);

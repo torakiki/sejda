@@ -20,6 +20,7 @@ package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -301,6 +302,27 @@ public class AnnotationsDistillerTest {
                     .map(a -> ((PDAnnotationPopup) a).getParent()).collect(Collectors.toList());
             assertEquals(1, parent.size());
             assertTrue(annotations.contains(parent.get(0)));
+        }
+    }
+
+    @Test
+    public void removePopupIfGarbage() throws IOException {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+            PDPage firstOrigin = doc.getPage(0);
+            // let's put some garbage in place of the popup
+            firstOrigin.getAnnotations().stream().filter(a -> !(a instanceof PDAnnotationPopup))
+                    .forEach(a -> a.getCOSObject().setItem(COSName.POPUP, new PDPage()));
+            PDPage firstNew = new PDPage();
+            lookup.addLookupEntry(firstOrigin, firstNew);
+            new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+            List<PDAnnotation> annotations = firstNew.getAnnotations();
+            assertFalse(annotations.isEmpty());
+
+            PDAnnotationMarkup parent = annotations.stream().filter(a -> a instanceof PDAnnotationMarkup)
+                    .map(a -> ((PDAnnotationMarkup) a)).findFirst().get();
+
+            assertNull(parent.getPopup());
         }
     }
 
