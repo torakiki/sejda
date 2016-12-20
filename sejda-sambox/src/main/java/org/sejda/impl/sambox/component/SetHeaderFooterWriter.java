@@ -19,7 +19,6 @@
 package org.sejda.impl.sambox.component;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
 
 import java.io.Closeable;
@@ -61,7 +60,8 @@ public class SetHeaderFooterWriter implements Closeable {
         this.totalPages = documentHandler.getNumberOfPages();
     }
 
-    public void write(SetHeaderFooterParameters parameters, int currentFileCounter, String filename, TaskExecutionContext executionContext) throws TaskIOException {
+    public void write(SetHeaderFooterParameters parameters, int currentFileCounter, String filename,
+            TaskExecutionContext executionContext) throws TaskIOException {
         PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
         Double fontSize = defaultIfNull(parameters.getFontSize(), 10d);
 
@@ -84,8 +84,7 @@ public class SetHeaderFooterWriter implements Closeable {
             }
 
             String label = new TextStampPattern().withPage(labelPageNumber, totalPages).withBatesSequence(batesSeq)
-                    .withFileSequence(String.valueOf(currentFileCounter))
-                    .withFilename(filename)
+                    .withFileSequence(String.valueOf(currentFileCounter)).withFilename(filename)
                     .build(parameters.getPattern());
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
