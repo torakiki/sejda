@@ -141,6 +141,24 @@ public class EditTask extends BaseTask<EditParameters> {
 
             int totalPages = documentHandler.getNumberOfPages();
 
+            // add shapes before adding text: supports edits where a user first adds a white rectangle over some existing text (like a whiteout),
+            // then writes something on top of that whiteout.
+            PageGeometricalShapeWriter shapeWriter = new PageGeometricalShapeWriter(documentHandler.getUnderlyingPDDocument());
+            for(AddShapeOperation shapeOperation: parameters.getShapeOperations()) {
+                SortedSet<Integer> pageNumbers = shapeOperation.getPageRange().getPages(totalPages);
+                for (int pageNumber : pageNumbers) {
+                    PDPage page = documentHandler.getPageCached(pageNumber);
+                    shapeWriter.drawShape(
+                            shapeOperation.getShape(),
+                            page,
+                            shapeOperation.getPosition(),
+                            shapeOperation.getWidth(), shapeOperation.getHeight(),
+                            shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
+                            shapeOperation.getBorderWidth()
+                    );
+                }
+            }
+
             PageTextReplacer textReplacer = new PageTextReplacer(documentHandler.getUnderlyingPDDocument());
             for(EditTextOperation editTextOperation: parameters.getEditTextOperations()) {
                 SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
@@ -189,22 +207,6 @@ public class EditTask extends BaseTask<EditParameters> {
                             highlightTextOperation.getColor().getBlue()
                     }, PDDeviceRGB.INSTANCE));
                     documentHandler.getPageCached(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
-                }
-            }
-
-            PageGeometricalShapeWriter shapeWriter = new PageGeometricalShapeWriter(documentHandler.getUnderlyingPDDocument());
-            for(AddShapeOperation shapeOperation: parameters.getShapeOperations()) {
-                SortedSet<Integer> pageNumbers = shapeOperation.getPageRange().getPages(totalPages);
-                for (int pageNumber : pageNumbers) {
-                    PDPage page = documentHandler.getPageCached(pageNumber);
-                    shapeWriter.drawShape(
-                            shapeOperation.getShape(),
-                            page,
-                            shapeOperation.getPosition(),
-                            shapeOperation.getWidth(), shapeOperation.getHeight(),
-                            shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
-                            shapeOperation.getBorderWidth()
-                    );
                 }
             }
 
