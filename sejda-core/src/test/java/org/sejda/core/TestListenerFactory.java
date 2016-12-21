@@ -1,6 +1,7 @@
 package org.sejda.core;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -148,7 +149,7 @@ public final class TestListenerFactory {
      */
     public static class TestListenerWarnings implements EventListener<TaskExecutionWarningEvent> {
 
-        private List<String> warnings = Collections.emptyList();
+        private List<String> warnings = new ArrayList<>();
 
         @Override
         public void onEvent(TaskExecutionWarningEvent event) {

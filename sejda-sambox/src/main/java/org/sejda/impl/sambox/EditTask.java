@@ -122,9 +122,9 @@ public class EditTask extends BaseTask<EditParameters> {
                     String warning = String.format("Page %d was not deleted, could not be processed.", pageNumber);
                     LOG.warn(warning);
                     notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                } else {
+                    documentHandler.removePage(pageNumber);
                 }
-
-                documentHandler.removePage(pageNumber);
             }
 
             for(InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {

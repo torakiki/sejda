@@ -30,6 +30,8 @@ import java.util.Iterator;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.RectangularBox;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.input.Source;
@@ -248,6 +250,31 @@ public abstract class EditTaskTest extends BaseTaskTest<EditParameters> {
             assertThat(d.getNumberOfPages(), is(1));
         });
         testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void testRemovingPagesThatDoNotExist() throws Exception {
+        EditParameters parameters = new EditParameters();
+
+        parameters.addDeletePageOperation(new DeletePageOperation(1));
+        parameters.addDeletePageOperation(new DeletePageOperation(4));
+        parameters.addDeletePageOperation(new DeletePageOperation(10));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        TestListenerFactory.TestListenerWarnings warningsListener = TestListenerFactory.newWarningsListener();
+        ThreadLocalNotificationContext.getContext().addListener(warningsListener);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertThat(d.getNumberOfPages(), is(2));
+        });
+        assertThat(warningsListener.getWarnings().size(), is(1));
+        assertThat(warningsListener.getWarnings().get(0), is("Page 10 was not deleted, could not be processed."));
     }
 
     @Test
