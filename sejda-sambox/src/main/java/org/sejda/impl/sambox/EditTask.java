@@ -117,6 +117,13 @@ public class EditTask extends BaseTask<EditParameters> {
 
             for(Integer pageNumber : pagesToDeleteSorted) {
                 LOG.debug("Deleting page {}", pageNumber);
+
+                if(documentHandler.getNumberOfPages() < pageNumber) {
+                    String warning = String.format("Page %d was not deleted, could not be processed.", pageNumber);
+                    LOG.warn(warning);
+                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                }
+
                 documentHandler.removePage(pageNumber);
             }
 
