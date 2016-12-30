@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
 import org.sejda.model.exception.TaskCancelledException;
+import org.sejda.model.exception.TaskExecutionException;
 
 /**
  * @author Andrea Vacondio
@@ -31,19 +32,31 @@ public class TaskExecutionContextTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testTaskExecutionContext() {
-        new TaskExecutionContext(null);
+        new TaskExecutionContext(null, true);
     }
 
     @Test(expected = TaskCancelledException.class)
     public void negativeAssertTaskNotCancelled() throws TaskCancelledException {
-        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class));
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), true);
         victim.cancelTask();
         victim.assertTaskNotCancelled();
     }
 
     @Test
     public void positiveAssertTaskNotCancelled() throws TaskCancelledException {
-        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class));
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), true);
         victim.assertTaskNotCancelled();
+    }
+
+    @Test
+    public void lenient() throws TaskExecutionException {
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), true);
+        victim.assertTaskIsLenient(new Exception("Test"));
+    }
+
+    @Test(expected = TaskExecutionException.class)
+    public void nonLenient() throws TaskExecutionException {
+        TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), false);
+        victim.assertTaskIsLenient(new Exception("Test"));
     }
 }

@@ -38,7 +38,7 @@ public class DefaultMultipleOutputWriterTest {
 
     @Test(expected = TaskOutputVisitException.class)
     public void testWriteNonFile() throws TaskOutputVisitException {
-        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class));
+        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class), true);
         MultipleOutputWriter victim = OutputWriters.newMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File outputFile = mock(File.class);
         new FileTaskOutput(outputFile).accept(victim);

@@ -52,9 +52,22 @@ public interface Notifier {
     void taskStarted();
 
     /**
-     * Notifies about a task warning
+     * Notifies about a task
+     * 
+     * @param warning
+     *            warning warning message
      */
     void taskWarning(String warning);
+
+    /**
+     * Notifies about a task warning
+     * 
+     * @param warning
+     *            warning message
+     * @param e
+     *            exception causing the warning
+     */
+    void taskWarning(String warning, Exception e);
 
     /**
      * Notifies about a task progress which is undetermined
@@ -62,8 +75,7 @@ public interface Notifier {
     void progressUndetermined();
 
     /**
-     * Notifies about a certain amount of steps completed:
-     * <code>
+     * Notifies about a certain amount of steps completed: <code>
      * notifyEvent().stepsCompleted(2).outOf(10);
      * </code>
      * 
@@ -74,8 +86,7 @@ public interface Notifier {
     OngoingNotification stepsCompleted(int completed);
 
     /**
-     * Notifies about a certain amount of steps completed:
-     * <code>
+     * Notifies about a certain amount of steps completed: <code>
      * notifyEvent().stepsCompleted(new BigDecimal("2").outOf(10);
      * </code>
      * 

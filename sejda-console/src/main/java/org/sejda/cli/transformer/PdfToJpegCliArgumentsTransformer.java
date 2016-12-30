@@ -40,7 +40,7 @@ public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransforme
     public PdfToJpegParameters toTaskParameters(PdfToJpegTaskCliArguments taskCliArguments) {
         PdfToJpegParameters parameters = new PdfToJpegParameters();
         populateSourceParameters(parameters, taskCliArguments);
-        populateAbstractParameters(parameters, taskCliArguments);
+        populateAbstractMultipleImageParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 
         if (taskCliArguments.isPageSelection()) {

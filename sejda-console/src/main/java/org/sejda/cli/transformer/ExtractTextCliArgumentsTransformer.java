@@ -28,8 +28,8 @@ import org.sejda.model.parameter.ExtractTextParameters;
  * @author Eduard Weissmann
  * 
  */
-public class ExtractTextCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> {
+public class ExtractTextCliArgumentsTransformer extends BaseCliArgumentsTransformer
+        implements CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> {
 
     /**
      * Transforms {@link ExtractTextTaskCliArguments} to {@link ExtractTextParameters}
@@ -40,6 +40,7 @@ public class ExtractTextCliArgumentsTransformer extends BaseCliArgumentsTransfor
     @Override
     public ExtractTextParameters toTaskParameters(ExtractTextTaskCliArguments taskCliArguments) {
         final ExtractTextParameters parameters = new ExtractTextParameters();
+        populateCommonParameters(parameters, taskCliArguments);
         populateCommonMultipleOutputParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 

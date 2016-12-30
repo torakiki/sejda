@@ -2,12 +2,15 @@ package org.sejda.core;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.sejda.model.notification.EventListener;
-import org.sejda.model.notification.event.*;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.notification.event.TaskExecutionWarningEvent;
 
 /**
  * Factory used by tests to create event listeners.

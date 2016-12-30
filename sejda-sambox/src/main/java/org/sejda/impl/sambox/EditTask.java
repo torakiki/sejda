@@ -55,6 +55,7 @@ import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
@@ -111,25 +112,30 @@ public class EditTask extends BaseTask<EditParameters> {
             // remove them in descending order, one by one
             TreeSet<Integer> pagesToDeleteSorted = new TreeSet<>(reverseOrder());
 
-            for(DeletePageOperation deleteOperation: parameters.getDeletePageOperations()) {
+            for (DeletePageOperation deleteOperation : parameters.getDeletePageOperations()) {
                 pagesToDeleteSorted.add(deleteOperation.getPageNumber());
             }
 
-            for(Integer pageNumber : pagesToDeleteSorted) {
+            for (Integer pageNumber : pagesToDeleteSorted) {
                 LOG.debug("Deleting page {}", pageNumber);
 
-                if(documentHandler.getNumberOfPages() < pageNumber) {
-                    String warning = String.format("Page %d was not deleted, could not be processed.", pageNumber);
-                    LOG.warn(warning);
-                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                if (documentHandler.getNumberOfPages() < pageNumber) {
+                    notifyEvent(executionContext().notifiableTaskMetadata())
+                            .taskWarning(String.format("Page %d was not deleted, could not be processed.", pageNumber));
                 } else {
-                    documentHandler.removePage(pageNumber);
+                    try {
+                        documentHandler.removePage(pageNumber);
+                    } catch (PageNotFoundException e) {
+                        executionContext().assertTaskIsLenient(e);
+                        notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                                String.format("Page %d was not deleted, could not be processed", pageNumber), e);
+                    }
                 }
             }
 
-            for(InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {
+            for (InsertPageOperation insertPageOperation : parameters.getInsertPageOperations()) {
                 int pageNumber = insertPageOperation.getPageNumber();
-                if(documentHandler.getNumberOfPages() == 0) {
+                if (documentHandler.getNumberOfPages() == 0) {
                     // strange place to be, right? Eg: document had 1 page, user removed it and inserted a new one in place
                     PDPage added = documentHandler.addBlankPage(firstPageMediaBox);
                     added.setRotation(firstPageRotation);
@@ -150,28 +156,25 @@ public class EditTask extends BaseTask<EditParameters> {
 
             // add shapes before adding text: supports edits where a user first adds a white rectangle over some existing text (like a whiteout),
             // then writes something on top of that whiteout.
-            PageGeometricalShapeWriter shapeWriter = new PageGeometricalShapeWriter(documentHandler.getUnderlyingPDDocument());
-            for(AddShapeOperation shapeOperation: parameters.getShapeOperations()) {
+            PageGeometricalShapeWriter shapeWriter = new PageGeometricalShapeWriter(
+                    documentHandler.getUnderlyingPDDocument());
+            for (AddShapeOperation shapeOperation : parameters.getShapeOperations()) {
                 SortedSet<Integer> pageNumbers = shapeOperation.getPageRange().getPages(totalPages);
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
-                    shapeWriter.drawShape(
-                            shapeOperation.getShape(),
-                            page,
-                            shapeOperation.getPosition(),
-                            shapeOperation.getWidth(), shapeOperation.getHeight(),
-                            shapeOperation.getBorderColor(), shapeOperation.getBackgroundColor(),
-                            shapeOperation.getBorderWidth()
-                    );
+                    shapeWriter.drawShape(shapeOperation.getShape(), page, shapeOperation.getPosition(),
+                            shapeOperation.getWidth(), shapeOperation.getHeight(), shapeOperation.getBorderColor(),
+                            shapeOperation.getBackgroundColor(), shapeOperation.getBorderWidth());
                 }
             }
 
             PageTextReplacer textReplacer = new PageTextReplacer(documentHandler.getUnderlyingPDDocument());
-            for(EditTextOperation editTextOperation: parameters.getEditTextOperations()) {
+            for (EditTextOperation editTextOperation : parameters.getEditTextOperations()) {
                 SortedSet<Integer> pageNumbers = editTextOperation.getPageRange().getPages(totalPages);
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
-                    textReplacer.replaceText(page, pageNumber, editTextOperation.getText(), editTextOperation.getBoundingBox());
+                    textReplacer.replaceText(page, pageNumber, editTextOperation.getText(),
+                            editTextOperation.getBoundingBox());
                 }
             }
 
@@ -183,11 +186,12 @@ public class EditTask extends BaseTask<EditParameters> {
                 for (int pageNumber : pageNumbers) {
                     PDPage page = documentHandler.getPageCached(pageNumber);
                     PDFont font = defaultIfNull(getStandardType1Font(textOperation.getFont()), PDType1Font.HELVETICA);
-                    textWriter.write(page, textOperation.getPosition(), textOperation.getText(), font, textOperation.getFontSize(), textOperation.getColor());
+                    textWriter.write(page, textOperation.getPosition(), textOperation.getText(), font,
+                            textOperation.getFontSize(), textOperation.getColor());
                 }
             }
 
-            for(AddImageOperation imageOperation: parameters.getImageOperations()) {
+            for (AddImageOperation imageOperation : parameters.getImageOperations()) {
                 PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
                 PDImageXObject image = PageImageWriter.toPDXImageObject(imageOperation.getImageSource());
 
@@ -200,26 +204,26 @@ public class EditTask extends BaseTask<EditParameters> {
                 }
             }
 
-            for(HighlightTextOperation highlightTextOperation: parameters.getHighlightTextOperations()) {
-                for(RectangularBox boundingBox: highlightTextOperation.getBoundingBoxes()){
-                    PDAnnotationTextMarkup markup = new PDAnnotationTextMarkup(PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
+            for (HighlightTextOperation highlightTextOperation : parameters.getHighlightTextOperations()) {
+                for (RectangularBox boundingBox : highlightTextOperation.getBoundingBoxes()) {
+                    PDAnnotationTextMarkup markup = new PDAnnotationTextMarkup(
+                            PDAnnotationTextMarkup.SUB_TYPE_HIGHLIGHT);
                     PDRectangle rect = new PDRectangle(boundingBox.getLeft(), boundingBox.getBottom(),
-                            boundingBox.getRight() - boundingBox.getLeft(), boundingBox.getTop() - boundingBox.getBottom());
+                            boundingBox.getRight() - boundingBox.getLeft(),
+                            boundingBox.getTop() - boundingBox.getBottom());
                     markup.setRectangle(rect);
                     markup.setQuadPoints(quadsOf(rect));
                     markup.setConstantOpacity((float) 0.4);
-                    markup.setColor(new PDColor(new float[]{
-                            highlightTextOperation.getColor().getRed(),
-                            highlightTextOperation.getColor().getGreen(),
-                            highlightTextOperation.getColor().getBlue()
-                    }, PDDeviceRGB.INSTANCE));
+                    markup.setColor(new PDColor(new float[] { highlightTextOperation.getColor().getRed(),
+                            highlightTextOperation.getColor().getGreen(), highlightTextOperation.getColor().getBlue() },
+                            PDDeviceRGB.INSTANCE));
                     documentHandler.getPageCached(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
                 }
             }
 
             documentHandler.savePDDocument(tmpFile);
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = nameGenerator(parameters.getOutputPrefix())
+                    .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());
@@ -241,11 +245,11 @@ public class EditTask extends BaseTask<EditParameters> {
         // OK, the below doesn't match that description.
         // It's what acrobat 7 does and displays properly!
         float[] quads = new float[8];
-        quads[0] = position.getLowerLeftX();  // x1
+        quads[0] = position.getLowerLeftX(); // x1
         quads[1] = position.getUpperRightY(); // y1
         quads[2] = position.getUpperRightX(); // x2
         quads[3] = quads[1]; // y2
-        quads[4] = quads[0];  // x3
+        quads[4] = quads[0]; // x3
         quads[5] = position.getLowerLeftY(); // y3
         quads[6] = quads[2]; // x4
         quads[7] = quads[5]; // y5

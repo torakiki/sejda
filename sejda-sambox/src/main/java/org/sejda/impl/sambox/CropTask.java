@@ -35,7 +35,11 @@ import java.util.stream.Collectors;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.OutlineDistiller;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
@@ -127,7 +131,8 @@ public class CropTask extends BaseTask<CropParameters> {
                     float deltaX = boundingBox.getLowerLeftX() - mediaBox.getLowerLeftX();
                     float deltaY = boundingBox.getLowerLeftY() - mediaBox.getLowerLeftY();
 
-                    PDRectangle adjustedBox = new PDRectangle(box.getLowerLeftX() + deltaX, box.getLowerLeftY() + deltaY, box.getWidth(), box.getHeight());
+                    PDRectangle adjustedBox = new PDRectangle(box.getLowerLeftX() + deltaX,
+                            box.getLowerLeftY() + deltaY, box.getWidth(), box.getHeight());
 
                     newPage.setCropBox(adjustedBox);
                     notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep)
@@ -140,11 +145,11 @@ public class CropTask extends BaseTask<CropParameters> {
 
             try {
                 acroFormsMerger.mergeForm(
-                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(), annotations);
-            } catch(IllegalArgumentException ex) {
-                String warning = "Failed to handle AcroForms";
-                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                LOG.warn(warning, ex);
+                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
+                        annotations);
+            } catch (IllegalArgumentException e) {
+                executionContext().assertTaskIsLenient(e);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning("Failed to handle AcroForms", e);
             }
 
             ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
@@ -153,7 +158,8 @@ public class CropTask extends BaseTask<CropParameters> {
             });
 
             PDDocumentOutline destinationOutline = new PDDocumentOutline();
-            new OutlineDistiller(sourceDocumentHandler.getUnderlyingPDDocument()).appendRelevantOutlineTo(destinationOutline, pagesLookup);
+            new OutlineDistiller(sourceDocumentHandler.getUnderlyingPDDocument())
+                    .appendRelevantOutlineTo(destinationOutline, pagesLookup);
             destinationDocument.getUnderlyingPDDocument().getDocumentCatalog().setDocumentOutline(destinationOutline);
 
             destinationDocument.savePDDocument(tmpFile);

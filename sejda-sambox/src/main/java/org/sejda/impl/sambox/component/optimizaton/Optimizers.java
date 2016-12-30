@@ -21,7 +21,6 @@ package org.sejda.impl.sambox.component.optimizaton;
 import java.util.function.Consumer;
 
 import org.sejda.model.optimization.Optimization;
-import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -65,7 +64,7 @@ final class Optimizers {
         }
     }
 
-    static Consumer<PDPage> pageOptimizer(Optimization optimization, OptimizeParameters parameters) {
+    static Consumer<PDPage> pageOptimizer(Optimization optimization) {
         switch (optimization) {
         case DISCARD_PIECE_INFO:
             return (p) -> p.getCOSObject().removeItem(COSName.getPDFName("PieceInfo"));

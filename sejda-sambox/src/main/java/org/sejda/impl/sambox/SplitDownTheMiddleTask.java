@@ -39,7 +39,11 @@ import java.util.Set;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.OutlineDistiller;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageToFormXObject;
 import org.sejda.impl.sambox.util.RectangleUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -53,6 +57,7 @@ import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -124,36 +129,41 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     pagesLookup.addLookupEntry(page, newPage);
                     continue;
                 }
+                try {
+                    double ratio = parameters.getRatio();
 
-                double ratio = parameters.getRatio();
+                    // by default determine based on page mode whether the split should be horizontal or vertical
+                    // based on whether the page is in portrait or landscape mode
+                    boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
+                    // adjust to user perceived
+                    if (page.getRotation() == 90 || page.getRotation() == 270) {
+                        landscapeMode = !landscapeMode;
+                    }
 
-                // by default determine based on page mode whether the split should be horizontal or vertical
-                // based on whether the page is in portrait or landscape mode
-                boolean landscapeMode = trimBox.getHeight() <= trimBox.getWidth();
-                // adjust to user perceived
-                if(page.getRotation() == 90 || page.getRotation() == 270) {
-                    landscapeMode = !landscapeMode;
-                }
+                    // allow user to override this by explicitly setting a split mode
+                    if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
+                        landscapeMode = false;
+                    } else if (parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
+                        landscapeMode = true;
+                    }
 
-                // allow user to override this by explicitly setting a split mode
-                if (parameters.getMode() == SplitDownTheMiddleMode.HORIZONTAL) {
-                    landscapeMode = false;
-                } else if(parameters.getMode() == SplitDownTheMiddleMode.VERTICAL) {
-                    landscapeMode = true;
-                }
+                    // landscape vs portrait
+                    if (landscapeMode) {
+                        // landscape orientation
 
-                // landscape vs portrait
-                if (landscapeMode) {
-                    // landscape orientation
+                        importLeftPage(page, ratio);
+                        importRightPage(page, ratio);
 
-                    importLeftPage(page, ratio);
-                    importRightPage(page, ratio);
+                    } else {
+                        // portrait orientation
 
-                } else {
-                    // portrait orientation
-
-                    importTopPage(page, ratio);
-                    importBottomPage(page, ratio);
+                        importTopPage(page, ratio);
+                        importBottomPage(page, ratio);
+                    }
+                } catch (PageNotFoundException e) {
+                    executionContext().assertTaskIsLenient(e);
+                    notifyEvent(executionContext().notifiableTaskMetadata())
+                            .taskWarning(String.format("Page %d was skipped, could not be processed", pageNumber), e);
                 }
             }
 
@@ -183,7 +193,8 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
             }
 
             PDDocumentOutline destinationOutline = new PDDocumentOutline();
-            new OutlineDistiller(sourceHandler.getUnderlyingPDDocument()).appendRelevantOutlineTo(destinationOutline, pagesLookup);
+            new OutlineDistiller(sourceHandler.getUnderlyingPDDocument()).appendRelevantOutlineTo(destinationOutline,
+                    pagesLookup);
             destinationHandler.getUnderlyingPDDocument().getDocumentCatalog().setDocumentOutline(destinationOutline);
 
             destinationHandler.savePDDocument(tmpFile);
@@ -205,7 +216,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
     private Map<PDPage, PDFormXObject> cache = new HashMap<>();
 
     private PDFormXObject getPageAsFormXObject(PDPage page) throws IOException {
-        if(!cache.containsKey(page)) {
+        if (!cache.containsKey(page)) {
             cache.put(page, new PageToFormXObject().apply(page));
         }
 
@@ -242,7 +253,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         float bottomSideHeight = h / (r + 1);
         float topSideHeight = h - bottomSideHeight;
 
-        importPage(page, trimBox.getWidth(), topSideHeight, 0, - bottomSideHeight);
+        importPage(page, trimBox.getWidth(), topSideHeight, 0, -bottomSideHeight);
     }
 
     private void importBottomPage(PDPage page, double ratio) throws TaskIOException {
@@ -257,7 +268,8 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
     private Map<PDPage, Offsets> offsetsMap = new HashMap<>();
 
-    private void importPage(PDPage sourcePage, float width, float height, float xOffset, float yOffset) throws TaskIOException {
+    private void importPage(PDPage sourcePage, float width, float height, float xOffset, float yOffset)
+            throws TaskIOException {
         PDRectangle newMediaBox = new PDRectangle(width, height);
 
         PDRectangle mediaBox = sourcePage.getMediaBox().rotate(sourcePage.getRotation());
@@ -267,7 +279,7 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
         float cropBottomMargin = trimBox.getLowerLeftY() - mediaBox.getLowerLeftY();
 
         PDPage newPage = destinationHandler.addBlankPage(newMediaBox);
-        if(pagesLookup.hasLookupFor(sourcePage)) {
+        if (pagesLookup.hasLookupFor(sourcePage)) {
             secondPagesLookup.addLookupEntry(sourcePage, newPage);
         } else {
             pagesLookup.addLookupEntry(sourcePage, newPage);
@@ -277,14 +289,14 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
         try {
             PDFormXObject pageAsFormObject = getPageAsFormXObject(sourcePage);
-            if(pageAsFormObject == null) {
+            if (pageAsFormObject == null) {
                 int pageNumber = sourceHandler.getPages().indexOf(sourcePage) + 1;
-                String warning = String.format("Page %d was skipped, could not be processed", pageNumber);
-                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
+                notifyEvent(executionContext().notifiableTaskMetadata())
+                        .taskWarning(String.format("Page %d was skipped, could not be processed", pageNumber));
             }
             PDPageContentStream currentContentStream = new PDPageContentStream(
-                    destinationHandler.getUnderlyingPDDocument(), newPage,
-                    PDPageContentStream.AppendMode.APPEND, true, true);
+                    destinationHandler.getUnderlyingPDDocument(), newPage, PDPageContentStream.AppendMode.APPEND, true,
+                    true);
             AffineTransform at = new AffineTransform();
             at.translate(xOffset + cropLeftMargin, yOffset + cropBottomMargin);
 
@@ -303,43 +315,47 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                 .retainRelevantAnnotations(lookup);
         clipSignatures(annotations.values());
 
-//        LOG.info("Processing {} annotations", annotations.values().size());
+        // LOG.info("Processing {} annotations", annotations.values().size());
 
-        for(int i = 1; i <= sourceHandler.getNumberOfPages(); i++) {
+        for (int i = 1; i <= sourceHandler.getNumberOfPages(); i++) {
             PDPage oldPage = sourceHandler.getPage(i);
             List<PDAnnotation> oldPageAnnotations = oldPage.getAnnotations();
-            for(PDAnnotation oldAnnotation: oldPageAnnotations) {
+            for (PDAnnotation oldAnnotation : oldPageAnnotations) {
                 PDAnnotation newAnnotation = annotations.lookup(oldAnnotation);
                 PDPage newPage = lookup.lookup(oldPage);
 
-                if(newPage != null && newAnnotation != null) {
+                if (newPage != null && newAnnotation != null) {
 
                     PDRectangle oldMediaBox = oldPage.getMediaBox();
                     PDRectangle oldTrimBox = oldPage.getTrimBox();
                     PDRectangle rotatedOldMediaBox = oldMediaBox.rotate(oldPage.getRotation());
                     PDRectangle rotatedOldTrimBox = oldTrimBox.rotate(oldPage.getRotation());
 
-                    float rotatedCropLeftMargin = rotatedOldTrimBox.getLowerLeftX() - rotatedOldMediaBox.getLowerLeftX();
-                    float rotatedCropBottomMargin = rotatedOldTrimBox.getLowerLeftY() - rotatedOldMediaBox.getLowerLeftY();
+                    float rotatedCropLeftMargin = rotatedOldTrimBox.getLowerLeftX()
+                            - rotatedOldMediaBox.getLowerLeftX();
+                    float rotatedCropBottomMargin = rotatedOldTrimBox.getLowerLeftY()
+                            - rotatedOldMediaBox.getLowerLeftY();
 
                     Offsets offsets = offsetsMap.get(newPage);
 
-                    if(offsets == null) {
+                    if (offsets == null) {
                         // this page was imported without splitting it, was in excludedPages
                         continue;
                     }
 
-                    PDRectangle newPageBoundsInOldPage = new PDRectangle(-offsets.xOffset, -offsets.yOffset, offsets.newWidth, offsets.newHeight);
-                    newPageBoundsInOldPage = RectangleUtils.rotate(-oldPage.getRotation(), newPageBoundsInOldPage, rotatedOldMediaBox);
+                    PDRectangle newPageBoundsInOldPage = new PDRectangle(-offsets.xOffset, -offsets.yOffset,
+                            offsets.newWidth, offsets.newHeight);
+                    newPageBoundsInOldPage = RectangleUtils.rotate(-oldPage.getRotation(), newPageBoundsInOldPage,
+                            rotatedOldMediaBox);
                     PDRectangle oldRectangle = newAnnotation.getRectangle();
 
-                    if(oldRectangle == null) {
+                    if (oldRectangle == null) {
                         // annotation has no presentation bounds, can happen for some form fields
                         continue;
                     }
 
-                    if(RectangleUtils.intersect(newPageBoundsInOldPage, oldRectangle)) {
-                        if(newAnnotation.getNormalAppearanceStream() != null) {
+                    if (RectangleUtils.intersect(newPageBoundsInOldPage, oldRectangle)) {
+                        if (newAnnotation.getNormalAppearanceStream() != null) {
                             PDRectangle mediaBox = oldPage.getMediaBox();
                             PDRectangle boundingBox = ofNullable(oldPage.getCropBox()).orElse(mediaBox);
 
@@ -347,47 +363,50 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
 
                             // this comes from PDFBox Superimpose class
                             AffineTransform at = new AffineTransform();
-                            //at.translate(mediaBox.getLowerLeftX() - boundingBox.getLowerLeftX(),
-                            //        mediaBox.getLowerLeftY() - boundingBox.getLowerLeftY());
+                            // at.translate(mediaBox.getLowerLeftX() - boundingBox.getLowerLeftX(),
+                            // mediaBox.getLowerLeftY() - boundingBox.getLowerLeftY());
                             switch (oldPage.getRotation()) {
-                                case 90:
-                                    // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-                                    // boundingBox.getHeight() / boundingBox.getWidth());
-                                    at.translate(0, boundingBox.getWidth());
-                                    at.rotate(-Math.PI / 2.0);
-                                    break;
-                                case 180:
-                                    at.translate(boundingBox.getWidth(), boundingBox.getHeight());
-                                    at.rotate(-Math.PI);
-                                    break;
-                                case 270:
-                                    // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
-                                    // boundingBox.getHeight() / boundingBox.getWidth());
-                                    at.translate(boundingBox.getHeight(), 0);
-                                    at.rotate(-Math.PI * 1.5);
-                                    break;
-                                default:
-                                    // no additional transformations necessary
+                            case 90:
+                                // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+                                // boundingBox.getHeight() / boundingBox.getWidth());
+                                at.translate(0, boundingBox.getWidth());
+                                at.rotate(-Math.PI / 2.0);
+                                break;
+                            case 180:
+                                at.translate(boundingBox.getWidth(), boundingBox.getHeight());
+                                at.rotate(-Math.PI);
+                                break;
+                            case 270:
+                                // at.scale(boundingBox.getWidth() / boundingBox.getHeight(),
+                                // boundingBox.getHeight() / boundingBox.getWidth());
+                                at.translate(boundingBox.getHeight(), 0);
+                                at.rotate(-Math.PI * 1.5);
+                                break;
+                            default:
+                                // no additional transformations necessary
                             }
                             // Compensate for Crop Boxes not starting at 0,0
-                            //at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
-                            Rectangle2D transformedRect = at.createTransformedShape(oldRectangle.toGeneralPath()).getBounds2D();
+                            // at.translate(-boundingBox.getLowerLeftX(), -boundingBox.getLowerLeftY());
+                            Rectangle2D transformedRect = at.createTransformedShape(oldRectangle.toGeneralPath())
+                                    .getBounds2D();
 
-                            PDRectangle newRect = new PDRectangle((float)transformedRect.getX(),
-                                    (float)transformedRect.getY(),
-                                    (float)transformedRect.getWidth(),
-                                    (float)transformedRect.getHeight());
+                            PDRectangle newRect = new PDRectangle((float) transformedRect.getX(),
+                                    (float) transformedRect.getY(), (float) transformedRect.getWidth(),
+                                    (float) transformedRect.getHeight());
 
-                            newRect = RectangleUtils.translate(offsets.xOffset - rotatedCropLeftMargin, offsets.yOffset - rotatedCropBottomMargin, newRect);
+                            newRect = RectangleUtils.translate(offsets.xOffset - rotatedCropLeftMargin,
+                                    offsets.yOffset - rotatedCropBottomMargin, newRect);
 
                             newAnnotation.setRectangle(newRect);
 
-                            LOG.debug("Updating annotation {} to page {}", newAnnotation, destinationHandler.getPages().indexOf(newPage));
+                            LOG.debug("Updating annotation {} to page {}", newAnnotation,
+                                    destinationHandler.getPages().indexOf(newPage));
                             int idx = newPage.getAnnotations().indexOf(newAnnotation);
                             newPage.getAnnotations().set(idx, newAnnotation);
                         }
                     } else {
-                        LOG.debug("Removing annotation {} to page {}", newAnnotation, destinationHandler.getPages().indexOf(newPage));
+                        LOG.debug("Removing annotation {} to page {}", newAnnotation,
+                                destinationHandler.getPages().indexOf(newPage));
                         newPage.getAnnotations().remove(newAnnotation);
                     }
                 }

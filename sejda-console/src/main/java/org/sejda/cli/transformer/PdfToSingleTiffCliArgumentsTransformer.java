@@ -45,7 +45,7 @@ public class PdfToSingleTiffCliArgumentsTransformer extends BaseCliArgumentsTran
         parameters.setCompressionType(taskCliArguments.getCompressionType().getEnumValue());
 
         populateSourceParameters(parameters, taskCliArguments);
-        populateAbstractParameters(parameters, taskCliArguments);
+        populateAbstractSingleImageParameters(parameters, taskCliArguments);
 
         return parameters;
     }

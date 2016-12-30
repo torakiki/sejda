@@ -40,6 +40,7 @@ public class ExtractTextByPagesCliArgumentsTransformer extends BaseCliArgumentsT
     @Override
     public ExtractTextByPagesParameters toTaskParameters(ExtractTextByPagesTaskCliArguments taskCliArguments) {
         final ExtractTextByPagesParameters parameters = new ExtractTextByPagesParameters();
+        populateCommonParameters(parameters, taskCliArguments);
         populateCommonMultipleOutputParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 

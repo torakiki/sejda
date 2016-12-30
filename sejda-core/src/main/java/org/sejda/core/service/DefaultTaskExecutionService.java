@@ -64,7 +64,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
         LOG.trace("Starting execution for {}", parameters);
         try {
             validate(parameters);
-            executionContext = new TaskExecutionContext(context.getTask(parameters));
+            executionContext = new TaskExecutionContext(context.getTask(parameters), parameters.isLenient());
             cancellationOption.setExecutionContext(executionContext);
             LOG.info("Starting task ({}) execution.", executionContext.task());
             preExecution(executionContext);

@@ -84,16 +84,15 @@ public class OptimizeTask extends BaseTask<OptimizeParameters> {
             LOG.debug("Starting optimization");
             int pageNum = 0;
             Iterator<PDPage> iterator = documentHandler.getPages().iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 executionContext().assertTaskNotCancelled();
                 pageNum++;
                 try {
                     PDPage page = iterator.next();
                     pagesOptimizer.accept(page);
-                } catch (Exception ex) {
-                    String warning = String.format("Page %d was skipped, could not be processed", pageNum);
-                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                    LOG.warn(warning, ex);
+                } catch (Exception e) {
+                    notifyEvent(executionContext().notifiableTaskMetadata())
+                            .taskWarning(String.format("Page %d was skipped, could not be optimized", pageNum), e);
                 }
             }
 

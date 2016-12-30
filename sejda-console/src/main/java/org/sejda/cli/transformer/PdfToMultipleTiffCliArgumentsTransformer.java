@@ -45,7 +45,7 @@ public class PdfToMultipleTiffCliArgumentsTransformer extends BaseCliArgumentsTr
         parameters.setCompressionType(taskCliArguments.getCompressionType().getEnumValue());
 
         populateSourceParameters(parameters, taskCliArguments);
-        populateAbstractParameters(parameters, taskCliArguments);
+        populateAbstractMultipleImageParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
 
         if (taskCliArguments.isPageSelection()) {

@@ -48,4 +48,15 @@ public interface TaskParameters {
      *            the policy to set
      */
     void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy);
+
+    /**
+     * @return if the task has to be executed in lenient mode, trying to overcome execution errors
+     */
+    boolean isLenient();
+
+    /**
+     * @param lenient
+     *            true if the task has to be executed in lenient mode, trying to overcome execution errors
+     */
+    void setLenient(boolean lenient);
 }

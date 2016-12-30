@@ -56,7 +56,7 @@ public class OutputWriterHelperTest {
 
     @Before
     public void setUp() {
-        context = new TaskExecutionContext(mock(Task.class));
+        context = new TaskExecutionContext(mock(Task.class), true);
     }
 
     @Test

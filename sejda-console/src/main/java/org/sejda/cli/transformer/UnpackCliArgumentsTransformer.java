@@ -40,6 +40,7 @@ public class UnpackCliArgumentsTransformer extends BaseCliArgumentsTransformer i
     @Override
     public UnpackParameters toTaskParameters(UnpackTaskCliArguments taskCliArguments) {
         UnpackParameters parameters = new UnpackParameters(taskCliArguments.getOutput().getPdfDirectoryOutput());
+        populateCommonParameters(parameters, taskCliArguments);
         parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
         populateSourceParameters(parameters, taskCliArguments);
         return parameters;

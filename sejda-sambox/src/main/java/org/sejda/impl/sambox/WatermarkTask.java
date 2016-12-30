@@ -39,6 +39,7 @@ import org.sejda.model.parameter.WatermarkParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,13 @@ public class WatermarkTask extends BaseTask<WatermarkParameters> {
                 PdfWatermarker watermarker = new PdfWatermarker(parameters, documentHandler.getUnderlyingPDDocument());
                 for (Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
                     executionContext().assertTaskNotCancelled();
-                    watermarker.mark(documentHandler.getPage(page));
+                    try {
+                        watermarker.mark(documentHandler.getPage(page));
+                    } catch (PageNotFoundException e) {
+                        executionContext().assertTaskIsLenient(e);
+                        notifyEvent(executionContext().notifiableTaskMetadata())
+                                .taskWarning(String.format("Page %d was skipped, could not be watermarked", page), e);
+                    }
                 }
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());

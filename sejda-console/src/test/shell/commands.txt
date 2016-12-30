@@ -47,7 +47,7 @@ target/assembled/bin/sejda-console splitbypages -h
 target/assembled/bin/sejda-console splitbypages --help
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [PAGENUMBER#####] -o /tmp/sejda-smoketest/ -j overwrite -n 5
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite
-target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite --discardOutline
+target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite --discardOutline --lenient
 target/assembled/bin/sejda-console splitbyevery -h
 target/assembled/bin/sejda-console splitbyevery --help
 target/assembled/bin/sejda-console unpack -h
@@ -98,9 +98,9 @@ target/assembled/bin/sejda-console setheaderfooter -h
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -d 12 -s 5- -x right -t Courier -k 1 -l "[PAGE_ARABIC] my footer" -j overwrite -v 1.5
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s all -x right -y top -t Times-Bold -l "[PAGE_ROMAN]" -j overwrite -v 1.5
 target/assembled/bin/sejda-console pdftojpeg -h
-target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite
+target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite --lenient
 target/assembled/bin/sejda-console extracttextbypages -h
-target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -s 1-3 -j overwrite
+target/assembled/bin/sejda-console extracttextbypages -f ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -s 1-3 -j overwrite --lenient
 target/assembled/bin/sejda-console addbackpages -h
 target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite -o /tmp/sejda-smoketest/ 
 target/assembled/bin/sejda-console portfolio -h

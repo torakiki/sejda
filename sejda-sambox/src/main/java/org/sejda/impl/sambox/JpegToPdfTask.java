@@ -77,54 +77,50 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
             currentStep++;
 
-            PDImageXObject image = null;
             try {
-                image = PageImageWriter.toPDXImageObject(source);
-            } catch (TaskIOException ex) {
-                String warning = String.format("Image %s was skipped, could not be processed", source.getName());
-                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warning);
-                LOG.warn(warning, ex);
+                PDImageXObject image = PageImageWriter.toPDXImageObject(source);
+                PDRectangle mediaBox = PDRectangle.A4;
+
+                if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                }
+
+                PDPage page = documentHandler.addBlankPage(mediaBox);
+
+                // full page (scaled down only)
+                int width = image.getWidth();
+                int height = image.getHeight();
+
+                if (width > mediaBox.getWidth()) {
+                    int targetWidth = (int) mediaBox.getWidth();
+                    LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
+
+                    float ratio = (float) width / targetWidth;
+                    width = targetWidth;
+                    height = Math.round((float) height / ratio);
+                }
+
+                if (height > mediaBox.getHeight()) {
+                    int targetHeight = (int) mediaBox.getHeight();
+                    LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
+
+                    float ratio = (float) height / targetHeight;
+                    height = targetHeight;
+                    width = Math.round((float) width / ratio);
+                }
+
+                // centered on page
+                int x = ((int) mediaBox.getWidth() - width) / 2;
+                int y = ((int) mediaBox.getHeight() - height) / 2;
+
+                imageWriter.append(page, image, new Point(x, y), width, height, null);
+
+                notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            } catch (TaskIOException e) {
+                executionContext().assertTaskIsLenient(e);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                        String.format("Image %s was skipped, could not be processed", source.getName()), e);
             }
-
-            if(image == null)  continue;
-
-            PDRectangle mediaBox = PDRectangle.A4;
-
-            if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-            }
-
-            PDPage page = documentHandler.addBlankPage(mediaBox);
-
-            // full page (scaled down only)
-            int width = image.getWidth();
-            int height = image.getHeight();
-
-            if (width > mediaBox.getWidth()) {
-                int targetWidth = (int) mediaBox.getWidth();
-                LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
-
-                float ratio = (float) width / targetWidth;
-                width = targetWidth;
-                height = Math.round((float) height / ratio);
-            }
-
-            if (height > mediaBox.getHeight()) {
-                int targetHeight = (int) mediaBox.getHeight();
-                LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
-
-                float ratio = (float) height / targetHeight;
-                height = targetHeight;
-                width = Math.round((float) width / ratio);
-            }
-
-            // centered on page
-            int x = ((int) mediaBox.getWidth() - width) / 2;
-            int y = ((int) mediaBox.getHeight() - height) / 2;
-
-            imageWriter.append(page, image, new Point(x, y), width, height, null);
-
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         File tmpFile = createTemporaryPdfBuffer();

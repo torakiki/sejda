@@ -23,6 +23,7 @@ import static java.util.Objects.isNull;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.sejda.model.exception.TaskCancelledException;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +40,16 @@ public class TaskExecutionContext {
     private NotifiableTaskMetadata taskMetadata;
     private boolean cancelled = false;
     private Task<? extends TaskParameters> task;
+    private boolean lenient;
     private int outputDocumentsCounter = 0;
 
-    public TaskExecutionContext(Task<? extends TaskParameters> task) {
+    public TaskExecutionContext(Task<? extends TaskParameters> task, boolean lenient) {
         if (isNull(task)) {
             throw new IllegalArgumentException("Task cannot be null");
         }
         this.taskMetadata = new NotifiableTaskMetadata(task);
         this.task = task;
+        this.lenient = lenient;
     }
 
     public NotifiableTaskMetadata notifiableTaskMetadata() {
@@ -83,5 +86,17 @@ public class TaskExecutionContext {
 
     public int incrementAndGetOutputDocumentsCounter() {
         return ++outputDocumentsCounter;
+    }
+
+    /**
+     * 
+     * @param e
+     *            the exception the lenient task can recover from
+     * @throws TaskExecutionException
+     */
+    public void assertTaskIsLenient(Exception e) throws TaskExecutionException {
+        if (!lenient) {
+            throw new TaskExecutionException(e);
+        }
     }
 }

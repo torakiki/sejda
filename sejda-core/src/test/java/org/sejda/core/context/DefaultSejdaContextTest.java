@@ -20,13 +20,13 @@
  */
 package org.sejda.core.context;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskNotFoundException;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.ChildTestTaskParameter;
 import org.sejda.model.task.Task;
@@ -58,23 +58,7 @@ public class DefaultSejdaContextTest {
 
     @Test(expected = TaskNotFoundException.class)
     public void testGetTaskNegative() throws TaskException {
-        Task<? extends TaskParameters> task = victim.getTask(new TaskParameters() {
-
-            @Override
-            public TaskOutput getOutput() {
-                return null;
-            }
-
-            @Override
-            public ExistingOutputPolicy getExistingOutputPolicy() {
-                return ExistingOutputPolicy.SKIP;
-            }
-
-            @Override
-            public void setExistingOutputPolicy(ExistingOutputPolicy existingOutputPolicy) {
-                // nothing
-            }
-        });
+        Task<? extends TaskParameters> task = victim.getTask(mock(TaskParameters.class));
         Assert.assertNotNull(task);
     }
 }

@@ -24,7 +24,12 @@ import java.math.BigDecimal;
 
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.notification.event.*;
+import org.sejda.model.notification.event.AbstractNotificationEvent;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.notification.event.TaskExecutionWarningEvent;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,12 +56,10 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     /**
      * Entry point to create a notification using DSL.
      * <p>
-     * Examples:
-     * <code>
+     * Examples: <code>
      * NotifiableTaskMetadata taskMetadata = ...
      * notifyEvent(taskMetadata).stepsCompleted(2).outOf(10);
-     * </code>
-     * <code>
+     * </code> <code>
      * notifyEvent(taskMetadata).taskCompleted();
      * </code>
      * </p>
@@ -84,13 +87,20 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     @Override
     public void taskWarning(String warning) {
+        LOG.warn(warning);
+        notifyListeners(new TaskExecutionWarningEvent(warning, taskMetadata));
+    }
+
+    @Override
+    public void taskWarning(String warning, Exception e) {
+        LOG.warn(warning, e);
         notifyListeners(new TaskExecutionWarningEvent(warning, taskMetadata));
     }
 
     @Override
     public void progressUndetermined() {
-        notifyListeners(new PercentageOfWorkDoneChangedEvent(PercentageOfWorkDoneChangedEvent.UNDETERMINED,
-                taskMetadata));
+        notifyListeners(
+                new PercentageOfWorkDoneChangedEvent(PercentageOfWorkDoneChangedEvent.UNDETERMINED, taskMetadata));
     }
 
     @Override
@@ -112,8 +122,8 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     @Override
     public void outOf(BigDecimal total) {
-        notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage.multiply(
-                PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN),
+        notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage
+                .multiply(PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN),
                 taskMetadata));
 
     }

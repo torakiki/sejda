@@ -33,7 +33,9 @@ import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
 import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
 import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
+import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
@@ -93,6 +95,7 @@ public class BaseCliArgumentsTransformer {
     protected void populateAbstractParameters(AbstractPdfOutputParameters parameters,
             CliArgumentsWithPdfOutput taskCliArguments) {
         populateCommonPdfOutputParameters(parameters, taskCliArguments);
+        populateCommonParameters(parameters, taskCliArguments);
     }
 
     /**
@@ -101,8 +104,9 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractPdfToMultipleImageParameters parameters,
+    protected void populateAbstractMultipleImageParameters(AbstractPdfToMultipleImageParameters parameters,
             CliArgumentsWithImageAndDirectoryOutput taskCliArguments) {
+        populateCommonParameters(parameters, taskCliArguments);
         populateCommonMultipleOutputParameters(parameters, taskCliArguments);
         populateCommonImageOutputParameters(parameters, taskCliArguments);
     }
@@ -135,8 +139,9 @@ public class BaseCliArgumentsTransformer {
      * @param parameters
      * @param taskCliArguments
      */
-    protected void populateAbstractParameters(AbstractPdfToSingleImageParameters parameters,
+    protected void populateAbstractSingleImageParameters(AbstractPdfToSingleImageParameters parameters,
             CliArgumentsWithImageFileOutput taskCliArguments) {
+        populateCommonParameters(parameters, taskCliArguments);
         parameters.setOutput(taskCliArguments.getOutput().getFileOutput());
         if (taskCliArguments.getOverwrite()) {
             parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -157,6 +162,16 @@ public class BaseCliArgumentsTransformer {
     private void populateCommonPdfOutputParameters(AbstractPdfOutputParameters parameters,
             CliArgumentsWithPdfOutput taskCliArguments) {
         parameters.setVersion(taskCliArguments.getPdfVersion().getVersion());
+    }
+
+    /**
+     * Populates attributes common to every {@link AbstractParameters}
+     * 
+     * @param parameters
+     * @param taskCliArguments
+     */
+    protected void populateCommonParameters(AbstractParameters parameters, TaskCliArguments taskCliArguments) {
+        parameters.setLenient(taskCliArguments.isLenient());
     }
 
     /**
@@ -199,7 +214,7 @@ public class BaseCliArgumentsTransformer {
     }
 
     /**
-     * Populates output directory and existing putput policy for tasks with multiple output
+     * Populates output directory and existing output policy for tasks with multiple output
      * 
      * @param parameters
      * @param taskCliArguments

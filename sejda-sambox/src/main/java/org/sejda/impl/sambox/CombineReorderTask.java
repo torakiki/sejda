@@ -45,10 +45,12 @@ import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * SAMBox implementation of a task that allows combining multiple pdf sources, allowing reordering of the pdf pages regardless of the ordering in the original sources.
  * 
@@ -106,18 +108,24 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             FileIndexAndPage filePage = parameters.getPages().get(i);
             int pageNum = filePage.getPage();
 
-            if(filePage.isAddBlankPage()) {
+            if (filePage.isAddBlankPage()) {
                 PDRectangle mediaBox = PDRectangle.A4;
-                if(lastPage != null) {
+                if (lastPage != null) {
                     mediaBox = lastPage.getMediaBox();
                 }
                 destinationDocument.addBlankPage(mediaBox);
             } else {
-                PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
-                PDPage newPage = destinationDocument.importPage(page);
-                lastPage = newPage;
-                pagesLookup.addLookupEntry(page, newPage);
-                rotator.rotate(i + 1, filePage.getRotation());
+                try {
+                    PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
+                    PDPage newPage = destinationDocument.importPage(page);
+                    lastPage = newPage;
+                    pagesLookup.addLookupEntry(page, newPage);
+                    rotator.rotate(i + 1, filePage.getRotation());
+                } catch (PageNotFoundException e) {
+                    executionContext().assertTaskIsLenient(e);
+                    notifyEvent(executionContext().notifiableTaskMetadata())
+                            .taskWarning(String.format("Page %d was skipped, could not be processed", pageNum), e);
+                }
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);

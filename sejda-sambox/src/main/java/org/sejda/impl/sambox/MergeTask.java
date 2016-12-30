@@ -52,6 +52,7 @@ import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
@@ -119,30 +120,35 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 executionContext().assertTaskNotCancelled();
                 pagesCounter++;
                 relativeCounter++;
+                try {
+                    PDPage page = sourceDocumentHandler.getPage(currentPage);
+                    // we keep rotation into account
+                    currentPageSize = page.getMediaBox().rotate(page.getRotation());
+                    // we don't use the original page because once added to the new tree we loose inheritable attributes
+                    // so we use a page duplicate to explicitly assign inheritable resources
+                    PDPage importedPage = destinationDocument.importPage(page);
+                    pagesLookup.addLookupEntry(page, importedPage);
 
-                PDPage page = sourceDocumentHandler.getPage(currentPage);
-                // we keep rotation into account
-                currentPageSize = page.getMediaBox().rotate(page.getRotation());
-                // we don't use the original page because once added to the new tree we loose inheritable attributes
-                // so we use a page duplicate to explicitly assign inheritable resources
-                PDPage importedPage = destinationDocument.importPage(page);
-                pagesLookup.addLookupEntry(page, importedPage);
-
-                String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
-                // processing the first page of the source
-                if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
-                    tocCreator.pageSizeIfNotSet(currentPageSize);
-                    if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
-                        sourceBaseName = ofNullable(
-                                sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                        .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
-                                        .orElse(sourceBaseName);
+                    String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
+                    // processing the first page of the source
+                    if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
+                        tocCreator.pageSizeIfNotSet(currentPageSize);
+                        if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
+                            sourceBaseName = ofNullable(
+                                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
+                                            .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
+                                            .orElse(sourceBaseName);
+                        }
+                        tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
                     }
-                    tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
-                }
 
-                this.footerWriter.addFooter(importedPage, sourceBaseName, pagesCounter);
-                LOG.trace("Added imported page");
+                    this.footerWriter.addFooter(importedPage, sourceBaseName, pagesCounter);
+                    LOG.trace("Added imported page");
+                } catch (PageNotFoundException e) {
+                    executionContext().assertTaskIsLenient(e);
+                    notifyEvent(executionContext().notifiableTaskMetadata())
+                            .taskWarning(String.format("Page %d was skipped, could not be processed", currentPage), e);
+                }
             }
             relativeCounter = 0;
 

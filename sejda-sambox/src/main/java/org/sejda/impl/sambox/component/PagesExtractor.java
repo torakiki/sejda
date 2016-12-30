@@ -32,6 +32,7 @@ import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -40,6 +41,7 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.slf4j.Logger;
@@ -74,7 +76,8 @@ public class PagesExtractor implements Closeable {
                 this.destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void retain(Set<Integer> pages, TaskExecutionContext executionContext) throws TaskCancelledException {
+    public void retain(Set<Integer> pages, TaskExecutionContext executionContext)
+            throws TaskCancelledException, TaskExecutionException {
         int currentStep = 0;
         for (Integer page : pages) {
             executionContext.assertTaskNotCancelled();
@@ -84,10 +87,16 @@ public class PagesExtractor implements Closeable {
         }
     }
 
-    public void retain(int page, TaskExecutionContext executionContext) {
-        PDPage existingPage = origin.getPage(page - 1);
-        pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
-        LOG.trace("Imported page number {}", page);
+    public void retain(int page, TaskExecutionContext executionContext) throws TaskExecutionException {
+        try {
+            PDPage existingPage = origin.getPage(page - 1);
+            pagesLookup.addLookupEntry(existingPage, destinationDocument.importPage(existingPage));
+            LOG.trace("Imported page number {}", page);
+        } catch (PageNotFoundException e) {
+            executionContext.assertTaskIsLenient(e);
+            notifyEvent(executionContext.notifiableTaskMetadata())
+                    .taskWarning(String.format("Page %d was skipped, could not be processed", page), e);
+        }
     }
 
     public void setVersion(PdfVersion version) {

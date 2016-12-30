@@ -34,6 +34,7 @@ public abstract class AbstractParameters implements TaskParameters {
 
     @NotNull
     private ExistingOutputPolicy existingOutputPolicy = ExistingOutputPolicy.FAIL;
+    private boolean lenient = false;
 
     @Override
     public ExistingOutputPolicy getExistingOutputPolicy() {
@@ -46,8 +47,18 @@ public abstract class AbstractParameters implements TaskParameters {
     }
 
     @Override
+    public boolean isLenient() {
+        return lenient;
+    }
+
+    @Override
+    public void setLenient(boolean lenient) {
+        this.lenient = lenient;
+    }
+
+    @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(existingOutputPolicy).toHashCode();
+        return new HashCodeBuilder().append(existingOutputPolicy).append(lenient).toHashCode();
     }
 
     @Override
@@ -59,7 +70,8 @@ public abstract class AbstractParameters implements TaskParameters {
             return false;
         }
         AbstractParameters parameter = (AbstractParameters) other;
-        return new EqualsBuilder().append(existingOutputPolicy, parameter.existingOutputPolicy).isEquals();
+        return new EqualsBuilder().append(existingOutputPolicy, parameter.existingOutputPolicy)
+                .append(lenient, parameter.lenient).isEquals();
     }
 
     @Override

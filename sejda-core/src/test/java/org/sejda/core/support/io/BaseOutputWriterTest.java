@@ -43,7 +43,7 @@ public class BaseOutputWriterTest {
 
     @Test
     public void testWriteFile() throws IOException, TaskOutputVisitException {
-        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class));
+        TaskExecutionContext context = new TaskExecutionContext(mock(Task.class), true);
         BaseOutputWriter victim = spy(new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context));
         File tempFile = File.createTempFile("srcTest", "");
         victim.add(FileOutput.file(tempFile).name("newName"));

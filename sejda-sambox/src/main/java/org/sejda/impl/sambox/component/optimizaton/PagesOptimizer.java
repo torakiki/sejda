@@ -49,7 +49,7 @@ public class PagesOptimizer implements Consumer<PDPage> {
         Set<Optimization> optimizations = ofNullable(parameters).map(OptimizeParameters::getOptimizations)
                 .orElse(emptySet());
         optimizations.forEach(o -> {
-            ofNullable(pageOptimizer(o, parameters)).ifPresent(toAdd -> optimizer = optimizer.andThen(toAdd));
+            ofNullable(pageOptimizer(o)).ifPresent(toAdd -> optimizer = optimizer.andThen(toAdd));
         });
         if (optimizations.stream().anyMatch(ImagesOptimizer::canOptimizeFor)) {
             optimizer = optimizer.andThen(new ImagesOptimizer(parameters));

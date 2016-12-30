@@ -32,4 +32,7 @@ public interface TaskCliArguments {
 
     @Option(shortName = "h", description = "prints usage information. Can be used to detail options for a command '-h command' (optional)")
     boolean isHelp();
+
+    @Option(description = "executes the task in 'lenient' mode trying to overcome errors, at the expense of data integrity (optional)")
+    boolean isLenient();
 }
