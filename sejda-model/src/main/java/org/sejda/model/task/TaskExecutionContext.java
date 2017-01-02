@@ -23,7 +23,7 @@ import static java.util.Objects.isNull;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.sejda.model.exception.TaskCancelledException;
-import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,11 +92,11 @@ public class TaskExecutionContext {
      * 
      * @param e
      *            the exception the lenient task can recover from
-     * @throws TaskExecutionException
+     * @throws TaskNonLenientExecutionException
      */
-    public void assertTaskIsLenient(Exception e) throws TaskExecutionException {
+    public void assertTaskIsLenient(Exception e) throws TaskNonLenientExecutionException {
         if (!lenient) {
-            throw new TaskExecutionException(e);
+            throw new TaskNonLenientExecutionException(e);
         }
     }
 }

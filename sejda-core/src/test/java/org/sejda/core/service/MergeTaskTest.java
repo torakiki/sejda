@@ -22,14 +22,18 @@ package org.sejda.core.service;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.core.TestListenerFactory;
+import org.sejda.core.TestListenerFactory.TestListenerFailed;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -314,10 +318,41 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         PDDocument document = testContext.assertTaskCompleted();
         PDPage page = document.getPage(0);
         PDFTextStripperByArea stripper = new PDFTextStripperByArea();
-        stripper.addRegion("completePage", new Rectangle((int) page.getCropBox().getWidth(), (int) page.getCropBox().getHeight()));
+        stripper.addRegion("completePage",
+                new Rectangle((int) page.getCropBox().getWidth(), (int) page.getCropBox().getHeight()));
         stripper.extractRegions(page);
         String pageText = stripper.getTextForRegion("completePage");
 
         assertThat(pageText, containsString("TextFieldValue"));
+    }
+
+    @Test
+    public void executeMergeMissingPageNonLenient() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(false);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
+        testContext.pdfOutputTo(parameters);
+        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
+        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        execute(parameters);
+        assertTrue(failListener.isFailed());
+    }
+
+    @Test
+    public void executeMergeMissingPageLenient() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setCompress(false);
+        parameters.setLenient(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(3).assertVersion(PdfVersion.VERSION_1_6);
     }
 }
