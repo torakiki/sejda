@@ -131,8 +131,10 @@ public class CropTask extends BaseTask<CropParameters> {
                     float deltaX = boundingBox.getLowerLeftX() - mediaBox.getLowerLeftX();
                     float deltaY = boundingBox.getLowerLeftY() - mediaBox.getLowerLeftY();
 
-                    PDRectangle adjustedBox = new PDRectangle(box.getLowerLeftX() + deltaX,
-                            box.getLowerLeftY() + deltaY, box.getWidth(), box.getHeight());
+                    float x = mediaBox.getLowerLeftX() + box.getLowerLeftX() + deltaX;
+                    float y = mediaBox.getLowerLeftY() + box.getLowerLeftY() + deltaY;
+
+                    PDRectangle adjustedBox = new PDRectangle(x, y, box.getWidth(), box.getHeight());
 
                     newPage.setCropBox(adjustedBox);
                     notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep)
