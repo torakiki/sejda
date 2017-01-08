@@ -176,6 +176,20 @@ public class OutlineUtilsTest {
     }
 
     @Test
+    public void outlineFlatIntPageDestinations() throws IOException {
+        try (PDDocument doc = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/destination_pages_as_int.pdf")))) {
+            List<OutlineItem> flatOutline = OutlineUtils.getFlatOutline(doc);
+            assertEquals(5, flatOutline.size());
+            assertEquals(1, flatOutline.get(0).page);
+            assertEquals(1, flatOutline.get(1).page);
+            assertEquals(3, flatOutline.get(2).page);
+            assertEquals(3, flatOutline.get(3).page);
+            assertEquals(5, flatOutline.get(4).page);
+        }
+    }
+
+    @Test
     public void outlineLevels() throws IOException {
         try (PDDocument doc = PDFParser.parse(
                 SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {

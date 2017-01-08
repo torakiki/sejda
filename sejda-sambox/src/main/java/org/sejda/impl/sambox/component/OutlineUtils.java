@@ -153,7 +153,7 @@ public final class OutlineUtils {
             toPageDestination(item, document.getDocumentCatalog()).ifPresent(d -> {
                 int pageNumber = ofNullable(d.getPage())
                         .map(p -> document.getPages().indexOf(p) + 1 /* 0-based index */ )
-                        .orElseGet(() -> d.getPageNumber());
+                        .orElseGet(() -> d.getPageNumber() + 1);
 
                 boolean specificLocationInPage = false;
                 if (d instanceof PDPageXYZDestination) {
