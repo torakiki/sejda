@@ -44,13 +44,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.EditParameters;
-import org.sejda.model.parameter.edit.AddImageOperation;
-import org.sejda.model.parameter.edit.AddShapeOperation;
-import org.sejda.model.parameter.edit.AppendTextOperation;
-import org.sejda.model.parameter.edit.DeletePageOperation;
-import org.sejda.model.parameter.edit.EditTextOperation;
-import org.sejda.model.parameter.edit.HighlightTextOperation;
-import org.sejda.model.parameter.edit.InsertPageOperation;
+import org.sejda.model.parameter.edit.*;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -218,6 +212,23 @@ public class EditTask extends BaseTask<EditParameters> {
                             highlightTextOperation.getColor().getGreen(), highlightTextOperation.getColor().getBlue() },
                             PDDeviceRGB.INSTANCE));
                     documentHandler.getPageCached(highlightTextOperation.getPageNumber()).getAnnotations().add(markup);
+                }
+            }
+
+            for (StrikethroughTextOperation strikethroughTextOperation : parameters.getStrikethroughTextOperation()) {
+                for (RectangularBox boundingBox : strikethroughTextOperation.getBoundingBoxes()) {
+                    PDAnnotationTextMarkup markup = new PDAnnotationTextMarkup(
+                            PDAnnotationTextMarkup.SUB_TYPE_STRIKEOUT);
+                    PDRectangle rect = new PDRectangle(boundingBox.getLeft(), boundingBox.getBottom(),
+                            boundingBox.getRight() - boundingBox.getLeft(),
+                            boundingBox.getTop() - boundingBox.getBottom());
+                    markup.setRectangle(rect);
+                    markup.setQuadPoints(quadsOf(rect));
+                    markup.setConstantOpacity((float) 1);
+                    markup.setColor(new PDColor(new float[]{strikethroughTextOperation.getColor().getRed(),
+                            strikethroughTextOperation.getColor().getGreen(), strikethroughTextOperation.getColor().getBlue()},
+                            PDDeviceRGB.INSTANCE));
+                    documentHandler.getPageCached(strikethroughTextOperation.getPageNumber()).getAnnotations().add(markup);
                 }
             }
 

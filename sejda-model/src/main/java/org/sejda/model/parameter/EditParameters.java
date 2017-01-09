@@ -33,6 +33,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
     private List<InsertPageOperation> insertPageOperations = new ArrayList<>();
     private List<DeletePageOperation> deletePageOperations = new ArrayList<>();
     private List<HighlightTextOperation> highlightTextOperations = new ArrayList<>();
+    private List<StrikethroughTextOperation> strikethroughTextOperation = new ArrayList<>();
 
     public void addAppendTextOperation(AppendTextOperation operation) {
         appendTextOperations.add(operation);
@@ -59,6 +60,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     public void addHighlightTextOperation(HighlightTextOperation operation) {
         highlightTextOperations.add(operation);
+    }
+
+    public void addStrikethroughTextOperation(StrikethroughTextOperation operation) {
+        strikethroughTextOperation.add(operation);
     }
 
     public List<AppendTextOperation> getAppendTextOperations() {
@@ -89,6 +94,10 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
         return highlightTextOperations;
     }
 
+    public List<StrikethroughTextOperation> getStrikethroughTextOperation() {
+        return strikethroughTextOperation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,6 +115,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .append(insertPageOperations, that.insertPageOperations)
                 .append(deletePageOperations, that.deletePageOperations)
                 .append(highlightTextOperations, that.highlightTextOperations)
+                .append(strikethroughTextOperation, that.strikethroughTextOperation)
                 .isEquals();
     }
 
@@ -120,6 +130,7 @@ public class EditParameters extends MultiplePdfSourceMultipleOutputParameters {
                 .append(insertPageOperations)
                 .append(deletePageOperations)
                 .append(highlightTextOperations)
+                .append(strikethroughTextOperation)
                 .toHashCode();
     }
 }
