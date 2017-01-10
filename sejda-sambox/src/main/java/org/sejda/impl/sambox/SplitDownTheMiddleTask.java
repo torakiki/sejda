@@ -151,8 +151,13 @@ public class SplitDownTheMiddleTask extends BaseTask<SplitDownTheMiddleParameter
                     if (landscapeMode) {
                         // landscape orientation
 
-                        importLeftPage(page, ratio);
-                        importRightPage(page, ratio);
+                        if(parameters.isRightToLeft()) {
+                            importRightPage(page, ratio);
+                            importLeftPage(page, ratio);
+                        } else {
+                            importLeftPage(page, ratio);
+                            importRightPage(page, ratio);
+                        }
 
                     } else {
                         // portrait orientation

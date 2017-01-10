@@ -399,4 +399,19 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
             assertPageText(d.getPage(11), "12");
         });
     }
+
+    @Test
+    public void rightToLeftLandscapeMode() throws IOException {
+        setUpParameters("pdf/split_in_two_landscape_sample.pdf");
+        parameters.setRightToLeft(true);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4).forPdfOutput(d -> {
+            assertPageText(d.getPage(0), "R1R1");
+            assertPageText(d.getPage(1), "L1L1");
+            assertPageText(d.getPage(2), "R2R2");
+            assertPageText(d.getPage(3), "L2L2");
+        });
+
+    }
 }

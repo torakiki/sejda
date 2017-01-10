@@ -48,6 +48,11 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
     // Allows user to override the ratio and split in unequal parts.
     private double ratio = 1.0d;
 
+    /**
+     * Determines if this document is written in a right-to-left language, so right page goes before left one when splitting down the middle.
+     */
+    private boolean rightToLeft = false;
+
     public Repagination getRepagination() {
         return repagination;
     }
@@ -77,10 +82,19 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         this.ratio = ratio;
     }
 
+    public boolean isRightToLeft() {
+        return rightToLeft;
+    }
+
+    public void setRightToLeft(boolean rightToLeft) {
+        this.rightToLeft = rightToLeft;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getRepagination()).append(getExcludedPagesSelection()).append(getRatio())
-                .append(getMode()).appendSuper(super.hashCode()).toHashCode();
+                .append(getMode()).append(isRightToLeft())
+                .appendSuper(super.hashCode()).toHashCode();
     }
 
     @Override
@@ -95,6 +109,7 @@ public class SplitDownTheMiddleParameters extends MultiplePdfSourceMultipleOutpu
         return new EqualsBuilder().append(getRepagination(), parameter.getRepagination())
                 .append(getExcludedPagesSelection(), parameter.getExcludedPagesSelection())
                 .append(getRatio(), parameter.getRatio()).append(getMode(), parameter.getMode())
+                .append(isRightToLeft(), parameter.isRightToLeft())
                 .appendSuper(super.equals(other)).isEquals();
     }
 }
