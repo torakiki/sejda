@@ -39,6 +39,7 @@ import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,13 @@ public class RotateTask extends BaseTask<RotateParameters> {
                 PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
                 for (Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
                     executionContext().assertTaskNotCancelled();
-                    rotator.rotate(page, parameters.getRotation(page));
+                    try {
+                        rotator.rotate(page, parameters.getRotation(page));
+                    } catch (PageNotFoundException e) {
+                        executionContext().assertTaskIsLenient(e);
+                        notifyEvent(executionContext().notifiableTaskMetadata())
+                                .taskWarning(String.format("Page %d was skipped, could not be rotated", page), e);
+                    }
                 }
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());
