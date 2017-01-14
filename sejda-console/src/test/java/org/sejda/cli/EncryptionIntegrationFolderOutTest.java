@@ -53,7 +53,7 @@ public class EncryptionIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Test
     public void executeExampleUsageWithEncryptedFileAsInput() {
-        String exampleUsage = testableTask.getExampleUsage();
+        String exampleUsage = testableTask.command.getExampleUsage();
         // use an encrypted file as input instead of the regular input file
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // quick hack for decrypt
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one

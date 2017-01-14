@@ -19,7 +19,8 @@
  */
 package org.sejda.cli;
 
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.CliCommands;
 import org.sejda.cli.util.FormattingUtils;
 
 /**
@@ -44,12 +45,12 @@ public final class GeneralHelpFormatter {
         helpMessage.append("Sejda Console").append(DOUBLE_LINE_BREAK).append("Basic commands:")
                 .append(DOUBLE_LINE_BREAK);
 
-        for (CliCommand each : CliCommand.sortedValues()) {
+        for (CliCommand each : CliCommands.COMMANDS) {
             helpMessage.append(formatCommandText(each));
         }
 
-        helpMessage.append("Use \"sejda-console <command> -h\" for help regarding a specific command").append(
-                DOUBLE_LINE_BREAK);
+        helpMessage.append("Use \"sejda-console <command> -h\" for help regarding a specific command")
+                .append(DOUBLE_LINE_BREAK);
 
         return helpMessage.toString();
     }
@@ -76,7 +77,7 @@ public final class GeneralHelpFormatter {
 
     private static int getMaxWidthOfCommandDisplayName() {
         int max = 0;
-        for (CliCommand each : CliCommand.values()) {
+        for (CliCommand each : CliCommands.COMMANDS) {
             max = Math.max(max, each.getDisplayName().length());
         }
 

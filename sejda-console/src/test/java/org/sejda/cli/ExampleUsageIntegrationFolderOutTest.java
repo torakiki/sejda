@@ -45,7 +45,7 @@ public class ExampleUsageIntegrationFolderOutTest extends AbstractTaskTraitTest 
 
     @Test
     public void executeExampleUsage() {
-        String exampleUsage = testableTask.getExampleUsage();
+        String exampleUsage = testableTask.command.getExampleUsage();
         exampleUsage = StringUtils.replace(exampleUsage, "-e \".+(Chapter)+.+\"", "-e \".+(page)+.+\""); // quick hack for split by bookmarks (Chapter is better for help, page
                                                                                                          // actually exists in the sample pdf)
 

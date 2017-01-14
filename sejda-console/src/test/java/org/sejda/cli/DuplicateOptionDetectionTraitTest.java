@@ -37,8 +37,8 @@ public class DuplicateOptionDetectionTraitTest extends AcrossAllTasksTraitTest {
 
     @Test
     public void testDuplicateOptionsAreDetected() {
-        assertTrue(testableTask.getExampleUsage().contains("-f")); // -f option is already specified
-        assertConsoleOutputContains(testableTask.getExampleUsage() + " -f /tmp/file2.pdf",
+        assertTrue(testableTask.command.getExampleUsage().contains("-f")); // -f option is already specified
+        assertConsoleOutputContains(testableTask.command.getExampleUsage() + " -f /tmp/file2.pdf",
                 "Option '-f' is specified twice"); // specifying it again will override the first one, creating confusing outputs. user probably wants to specify a list of inputs,
                                                    // which is done in a different way
     }

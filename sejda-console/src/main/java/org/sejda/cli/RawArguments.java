@@ -1,15 +1,16 @@
 package org.sejda.cli;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.CliCommands;
 import org.sejda.cli.util.CommandLineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Represents the command line arguments passed to the {@link SejdaConsole}
@@ -59,15 +60,15 @@ class RawArguments {
     }
 
     /**
-     * @return {@link CliCommand} specified or null if no known command was specified (first or second supplied argument can be matched to a known command)
+     * @return {@link StandardCliCommand} specified or null if no known command was specified (first or second supplied argument can be matched to a known command)
      */
     public CliCommand getCliCommand() {
-        if (arguments.length >= 1 && CliCommand.findByDisplayNameSilently(arguments[0]) != null) {
-            return CliCommand.findByDisplayNameSilently(arguments[0]);
+        if (arguments.length >= 1 && CliCommands.findByDisplayNameSilently(arguments[0]) != null) {
+            return CliCommands.findByDisplayNameSilently(arguments[0]);
         }
 
-        if (arguments.length >= 2 && CliCommand.findByDisplayNameSilently(arguments[1]) != null) {
-            return CliCommand.findByDisplayNameSilently(arguments[1]);
+        if (arguments.length >= 2 && CliCommands.findByDisplayNameSilently(arguments[1]) != null) {
+            return CliCommands.findByDisplayNameSilently(arguments[1]);
         }
         return null;
     }

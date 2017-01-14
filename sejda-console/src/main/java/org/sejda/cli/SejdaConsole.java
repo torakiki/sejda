@@ -26,10 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.cli.command.CliCommand;
 import org.sejda.cli.exception.ArgumentValidationException;
 import org.sejda.cli.exception.DefaultUncaughtExceptionHandler;
 import org.sejda.cli.exception.ExceptionUtils;
-import org.sejda.cli.transformer.CliCommand;
 import org.sejda.core.Sejda;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

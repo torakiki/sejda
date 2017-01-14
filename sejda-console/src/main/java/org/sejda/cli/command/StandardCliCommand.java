@@ -17,32 +17,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli.transformer;
+package org.sejda.cli.command;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.model.AddBackPagesTaskCliArguments;
 import org.sejda.cli.model.AlternateMixTaskCliArguments;
 import org.sejda.cli.model.AttachmentsCollectionTaskCliArguments;
-import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
-import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
 import org.sejda.cli.model.CombineReorderTaskCliArguments;
-import org.sejda.cli.model.CompressTaskCliArguments;
-import org.sejda.cli.model.CropTaskCliArguments;
 import org.sejda.cli.model.DecryptTaskCliArguments;
 import org.sejda.cli.model.EncryptTaskCliArguments;
 import org.sejda.cli.model.ExtractByBookmarksTaskCliArguments;
 import org.sejda.cli.model.ExtractPagesTaskCliArguments;
-import org.sejda.cli.model.ExtractTextByPagesTaskCliArguments;
-import org.sejda.cli.model.ExtractTextTaskCliArguments;
 import org.sejda.cli.model.MergeTaskCliArguments;
-import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
-import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
-import org.sejda.cli.model.MultipleSourceTaskCliArguments;
-import org.sejda.cli.model.NupTaskCliArguments;
 import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
@@ -53,31 +38,50 @@ import org.sejda.cli.model.SetMetadataTaskCliArguments;
 import org.sejda.cli.model.SetPageLabelsTaskCliArguments;
 import org.sejda.cli.model.SetPageTransitionsTaskCliArguments;
 import org.sejda.cli.model.SimpleSplitTaskCliArguments;
-import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
 import org.sejda.cli.model.SplitByBookmarksTaskCliArguments;
 import org.sejda.cli.model.SplitByEveryXPagesTaskCliArguments;
 import org.sejda.cli.model.SplitByPagesTaskCliArguments;
 import org.sejda.cli.model.SplitBySizeTaskCliArguments;
-import org.sejda.cli.model.SplitByTextTaskCliArguments;
-import org.sejda.cli.model.SplitDownTheMiddleTaskCliArguments;
 import org.sejda.cli.model.TaskCliArguments;
 import org.sejda.cli.model.UnpackTaskCliArguments;
 import org.sejda.cli.model.ViewerPreferencesTaskCliArguments;
 import org.sejda.cli.model.WatermarkTaskCliArguments;
+import org.sejda.cli.transformer.AddBackPagesCliArgumentsTransformer;
+import org.sejda.cli.transformer.AlternateMixCliArgumentsTransformer;
+import org.sejda.cli.transformer.AttachmentsCollectionCliArgumentsTransformer;
+import org.sejda.cli.transformer.CombineReorderCliArgumentsTransformer;
+import org.sejda.cli.transformer.CommandCliArgumentsTransformer;
+import org.sejda.cli.transformer.DecryptCliArgumentsTransformer;
+import org.sejda.cli.transformer.EncryptCliArgumentsTransformer;
+import org.sejda.cli.transformer.ExtractByBookmarksCliArgumentsTransformer;
+import org.sejda.cli.transformer.ExtractPagesCliArgumentsTransformer;
+import org.sejda.cli.transformer.MergeCliArgumentsTransformer;
+import org.sejda.cli.transformer.PdfToJpegCliArgumentsTransformer;
+import org.sejda.cli.transformer.PdfToMultipleTiffCliArgumentsTransformer;
+import org.sejda.cli.transformer.PdfToSingleTiffCliArgumentsTransformer;
+import org.sejda.cli.transformer.RotateCliArgumentsTransformer;
+import org.sejda.cli.transformer.ScaleCliArgumentsTransformer;
+import org.sejda.cli.transformer.SetHeaderFooterCliArgumentsTransformer;
+import org.sejda.cli.transformer.SetMetadataCliArgumentsTransformer;
+import org.sejda.cli.transformer.SetPageLabelsCliArgumentsTransformer;
+import org.sejda.cli.transformer.SetPageTransitionsCliArgumentsTransformer;
+import org.sejda.cli.transformer.SimpleSplitCliArgumentsTransformer;
+import org.sejda.cli.transformer.SplitByBookmarksCliArgumentsTransformer;
+import org.sejda.cli.transformer.SplitByEveryXPagesCliArgumentsTransformer;
+import org.sejda.cli.transformer.SplitByPagesCliArgumentsTransformer;
+import org.sejda.cli.transformer.SplitBySizeCliArgumentsTransformer;
+import org.sejda.cli.transformer.UnpackCliArgumentsTransformer;
+import org.sejda.cli.transformer.ViewerPreferencesCliArgumentsTransformer;
+import org.sejda.cli.transformer.WatermarkCliArgumentsTransformer;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.parameter.CombineReorderParameters;
-import org.sejda.model.parameter.CropParameters;
 import org.sejda.model.parameter.DecryptParameters;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.parameter.ExtractPagesParameters;
-import org.sejda.model.parameter.ExtractTextByPagesParameters;
-import org.sejda.model.parameter.ExtractTextParameters;
 import org.sejda.model.parameter.MergeParameters;
-import org.sejda.model.parameter.NupParameters;
-import org.sejda.model.parameter.OptimizeParameters;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.parameter.ScaleParameters;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
@@ -89,8 +93,6 @@ import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.parameter.SplitBySizeParameters;
-import org.sejda.model.parameter.SplitByTextContentParameters;
-import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.parameter.WatermarkParameters;
@@ -99,17 +101,13 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
-import com.lexicalscope.jewel.cli.Cli;
-import com.lexicalscope.jewel.cli.CliFactory;
-
 /**
  * Enumeration of commands supported through the console
  * 
  * @author Eduard Weissmann
  * 
  */
-// TODO: Docs: Detail descriptions that refer back to the pdf specs in a more user-friendly way. Keep this is sync with the website
-public enum CliCommand {
+public enum StandardCliCommand implements CliCommand {
 
     DECRYPT("decrypt", new CliInterfacedTask<DecryptTaskCliArguments, DecryptParameters>() {
 
@@ -209,22 +207,6 @@ public enum CliCommand {
             return new ExtractPagesCliArgumentsTransformer();
         }
     }, "Extracts pages from a PDF document creating a new one containing only the selected pages. Page selection can be done using a predefined set of pages (odd, even) or as a set of ranges (from page x to y).", "extractpages -f /tmp/file1.pdf -o /tmp -s 1-4,7,12-14,8,20-"),
-    EXTRACT_TEXT("extracttext", new CliInterfacedTask<ExtractTextTaskCliArguments, ExtractTextParameters>() {
-
-        @Override
-        protected CommandCliArgumentsTransformer<ExtractTextTaskCliArguments, ExtractTextParameters> getArgumentsTransformer() {
-            return new ExtractTextCliArgumentsTransformer();
-        }
-
-    }, "Given a collection of PDF documents, creates a collection of text files containing text extracted from them.", "extracttext -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\""),
-    EXTRACT_TEXT_BY_PAGES("extracttextbypages", new CliInterfacedTask<ExtractTextByPagesTaskCliArguments, ExtractTextByPagesParameters>() {
-
-        @Override
-        protected CommandCliArgumentsTransformer<ExtractTextByPagesTaskCliArguments, ExtractTextByPagesParameters> getArgumentsTransformer() {
-            return new ExtractTextByPagesCliArgumentsTransformer();
-        }
-
-    }, "Extracts text from a single PDF document creating a collection of text files each containing text extracted from a single page.", "extracttextbypages -f /tmp/file1.pdf -o /tmp -e \"ISO-8859-1\" -s \"1,12-14\""),
     SET_METADATA("setmetadata", new CliInterfacedTask<SetMetadataTaskCliArguments, SetMetadataParameters>() {
 
         @Override
@@ -248,13 +230,6 @@ public enum CliCommand {
             return new SetPageTransitionsCliArgumentsTransformer();
         }
     }, "Given a PDF document, applies the selected pages transitions (to use the document as a slide show presentation) as defined in the PDF 32000-1:2008, chapter 12.4.4.", "setpagetransitions -f /tmp/file1.pdf -o /tmp/output.pdf --defaultTransition fade:2:10 --transitions push_left_to_right:3:20:2 dissolve:1:10:3"),
-    CROP("crop", new CliInterfacedTask<CropTaskCliArguments, CropParameters>() {
-
-        @Override
-        protected CommandCliArgumentsTransformer<CropTaskCliArguments, CropParameters> getArgumentsTransformer() {
-            return new CropCliArgumentsTransformer();
-        }
-    }, "Given a PDF document and a set of rectangular boxes, creates an output PDF document where pages are cropped according to the input rectangular boxes. Input boxes are set as cropbox on the resulting document pages (see PDF 32000-1:2008, chapter 7.7.3.3, Table 30). Resulting document will have a number of pages that is the the number of pages of the original document multiplied by the number of rectangular boxes.", "crop -f /tmp/file1.pdf -o /tmp/ --cropAreas [0:0][5:10] [5:0][10:10]"),
     PDF_TO_SINGLE_TIFF("pdftosingletiff", new CliInterfacedTask<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters>() {
 
         @Override
@@ -290,27 +265,7 @@ public enum CliCommand {
             return new CombineReorderCliArgumentsTransformer();
         }
     }, "Combines multiple PDF documents reordering the pages if required.", "combinereorder -f /tmp/file1.pdf /tmp/file2.pdf -n 0:1 1:2 0:3 -o /tmp/output.pdf"),
-    SPLIT_DOWN_THE_MIDDLE("splitdownthemiddle", new CliInterfacedTask<SplitDownTheMiddleTaskCliArguments, SplitDownTheMiddleParameters>() {
 
-        @Override
-        protected CommandCliArgumentsTransformer<SplitDownTheMiddleTaskCliArguments, SplitDownTheMiddleParameters> getArgumentsTransformer() {
-            return new SplitDownTheMiddleCliArgumentsTransformer();
-        }
-    }, "Splits document pages in two, reordering pages if necessary.", "splitdownthemiddle -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp"),
-    SPLIT_BY_TEXT("splitbytext", new CliInterfacedTask<SplitByTextTaskCliArguments, SplitByTextContentParameters>() {
-
-        @Override
-        protected CommandCliArgumentsTransformer<SplitByTextTaskCliArguments, SplitByTextContentParameters> getArgumentsTransformer() {
-            return new SplitByTextCliArgumentsTransformer();
-        }
-    }, "Splits a PDF document by text content, extracting separate documents when specific text changes from page to page.", "splitbytext -f /tmp/file1.pdf --top 114 --left 70 --width 41 --height 15 -o /tmp"),
-    COMPRESS("compress", new CliInterfacedTask<CompressTaskCliArguments, OptimizeParameters>() {
-
-        @Override
-        protected CommandCliArgumentsTransformer<CompressTaskCliArguments, OptimizeParameters> getArgumentsTransformer() {
-            return new CompressCliArgumentsTransformer();
-        }
-    }, "Compress PDF by optimizing images inside, reducing their dpi, size and/or quality.", "compress -f /tmp/file1.pdf --imageDpi 72 --imageQuality 0.8 -o /tmp"),
     ADD_BACK_PAGES("addbackpages", new CliInterfacedTask<AddBackPagesTaskCliArguments, AddBackPagesParameters>() {
 
         @Override
@@ -325,13 +280,7 @@ public enum CliCommand {
             return new AttachmentsCollectionCliArgumentsTransformer();
         }
     }, "Creates a portfolio/collection of attachments.", "portfolio -f /tmp/file1.txt /tmp/file2.pdf -i details -o /tmp/portfolio.pdf"),
-    NUP("nup", new CliInterfacedTask<NupTaskCliArguments, NupParameters>() {
 
-        @Override
-        protected CommandCliArgumentsTransformer<NupTaskCliArguments, NupParameters> getArgumentsTransformer() {
-            return new NupCliArgumentsTransformer();
-        }
-    }, "Composes multiple PDF pages (4, 8, 16, 32) per sheet.", "nup -n 4 -f /tmp/file1.pdf -o /tmp"),
     WATERMARK("watermark", new CliInterfacedTask<WatermarkTaskCliArguments, WatermarkParameters>() {
 
         @Override
@@ -347,147 +296,41 @@ public enum CliCommand {
         }
     }, "Scales pages or pages content of multiple PDF documents.", "scale -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp -t content -s 0.7");
 
-    private String displayName;
-    private String description;
-    private String exampleUsage;
-    private CliInterfacedTask<? extends TaskCliArguments, ? extends TaskParameters> cliInterfacedTask;
+    private BaseCliCommand command;
 
-    private CliCommand(String displayName,
+    private StandardCliCommand(String displayName,
             CliInterfacedTask<? extends TaskCliArguments, ? extends TaskParameters> cliTask, String description,
             String exampleUsage) {
-        this.displayName = displayName;
-        this.exampleUsage = exampleUsage;
-        this.cliInterfacedTask = cliTask;
-        this.description = description;
+        this.command = new BaseCliCommand(displayName, cliTask, description, exampleUsage);
     }
 
-    /**
-     * @return the user friendly name
-     */
+    @Override
     public String getDisplayName() {
-        return displayName;
+        return command.getDisplayName();
     }
 
-    /**
-     * @return task description, explaining what the task does in a nutshell
-     */
+    @Override
     public String getDescription() {
-        return description;
+        return command.getDescription();
     }
 
-    /**
-     * @return extended task description, explaining what the task does in detail, providing an example
-     */
+    @Override
     public String getExampleUsage() {
-        return exampleUsage;
+        return command.getExampleUsage();
     }
 
-    public static CliCommand findByDisplayNameSilently(String displayName) {
-        for (CliCommand eachCommand : CliCommand.values()) {
-            if (StringUtils.equalsIgnoreCase(displayName, eachCommand.getDisplayName())) {
-                return eachCommand;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return all values, sorted by display name
-     */
-    public static CliCommand[] sortedValues() {
-        SortedMap<String, CliCommand> map = new TreeMap<>();
-        for (CliCommand each : CliCommand.values()) {
-            map.put(each.getDisplayName(), each);
-        }
-        return map.values().toArray(new CliCommand[map.values().size()]);
-    }
-
-    /**
-     * @param rawArguments
-     * @return task parameters out of the raw string arguments passed as input (removing the command argument for example)
-     */
-    public TaskParameters parseTaskParameters(String[] rawArguments) {
-        return cliInterfacedTask.getTaskParameters(rawArguments);
-    }
-
-    /**
-     * @return help message, detailing purpose, usage and parameter valid values
-     */
+    @Override
     public String getHelpMessage() {
-        StringBuilder result = new StringBuilder();
-
-        result.append(getDescription());
-        result.append("\n\n");
-
-        result.append("Example usage: ").append(TaskCliArguments.EXECUTABLE_NAME).append(" ").append(getExampleUsage());
-        result.append("\n\n");
-
-        result.append(cliInterfacedTask.createCli().getHelpMessage());
-
-        return result.toString();
+        return command.getHelpMessage();
     }
 
-    public boolean hasFolderOutput() {
-        return isInheritingTraitsFrom(CliArgumentsWithDirectoryOutput.class);
+    @Override
+    public TaskParameters parseTaskParameters(String[] rawArguments) {
+        return command.parseTaskParameters(rawArguments);
     }
 
-    public boolean hasPrefixableOutput() {
-        return isInheritingTraitsFrom(CliArgumentsWithPrefixableOutput.class);
-    }
-
-    public boolean hasMultiplePdfSource() {
-        return isInheritingTraitsFrom(MultipleOptionalPdfSourceTaskCliArguments.class)
-                || isInheritingTraitsFrom(MultiplePdfSourceTaskCliArguments.class);
-    }
-
-    public boolean hasMultipleSource() {
-        return isInheritingTraitsFrom(MultipleSourceTaskCliArguments.class);
-    }
-
-    public boolean hasSinglePdfSource() {
-        return isInheritingTraitsFrom(SinglePdfSourceTaskCliArguments.class);
-    }
-
-    boolean isInheritingTraitsFrom(Class<?> parentClazz) {
-        return parentClazz.isAssignableFrom(getCliArgumentsClass());
-    }
-
+    @Override
     public Class<?> getCliArgumentsClass() {
-        return cliInterfacedTask.getCliArgumentsClass();
-    }
-}
-
-/**
- * Base class defining the contract for {@link org.sejda.model.task.Task}s with a cli interface
- * 
- * @author Eduard Weissmann
- * 
- * @param <T>
- * @param
- *            <P>
- */
-abstract class CliInterfacedTask<T extends TaskCliArguments, P extends TaskParameters> {
-
-    @SuppressWarnings("unchecked")
-    protected Class<T> getCliArgumentsClass() {
-        // returning T.class see http://www.artima.com/weblogs/viewpost.jsp?thread=208860
-        ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-        return (Class<T>) parameterizedType.getActualTypeArguments()[0];
-    }
-
-    protected abstract CommandCliArgumentsTransformer<T, P> getArgumentsTransformer();
-
-    protected Cli<T> createCli() {
-        return CliFactory.createCli(getCliArgumentsClass());
-    }
-
-    protected P getTaskParameters(String[] rawArguments) {
-        try {
-            T cliArguments = createCli().parseArguments(rawArguments);
-            return getArgumentsTransformer().toTaskParameters(cliArguments);
-        } catch (com.lexicalscope.jewel.cli.ArgumentValidationException e) {
-            throw new org.sejda.cli.exception.ArgumentValidationException(e.getMessage(), e);
-        }
+        return command.getCliArgumentsClass();
     }
 }

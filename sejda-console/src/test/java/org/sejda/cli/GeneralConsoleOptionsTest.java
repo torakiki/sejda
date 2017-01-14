@@ -25,7 +25,8 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.CliCommands;
 import org.sejda.core.Sejda;
 
 /**
@@ -54,7 +55,7 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
         List<String> expectedStrings = new ArrayList<String>();
         expectedStrings.add("Basic commands:");
 
-        for (CliCommand eachCommand : CliCommand.values()) {
+        for (CliCommand eachCommand : CliCommands.COMMANDS) {
             // each command should be mentioned
             expectedStrings.add(eachCommand.getDisplayName());
             // together with its description
@@ -71,7 +72,8 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
     public void testExecuteLicense() throws IOException {
-        assertConsoleOutputContains("--license", IOUtils.toString(getClass().getResourceAsStream("/sejda-console/LICENSE.txt")));
+        assertConsoleOutputContains("--license",
+                IOUtils.toString(getClass().getResourceAsStream("/sejda-console/LICENSE.txt")));
     }
 
     @Test

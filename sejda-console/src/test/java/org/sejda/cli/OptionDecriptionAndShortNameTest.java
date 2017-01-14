@@ -53,9 +53,9 @@ public class OptionDecriptionAndShortNameTest extends AcrossAllTasksTraitTest {
             boolean hasOptionalityInfo = StringUtils.endsWith(description, "(optional)")
                     || StringUtils.endsWith(description, "(required)");
             if (!hasOptionalityInfo) {
-                throw new SejdaRuntimeException(getTaskName()
-                        + " is missing optionality information [(optional) or (required)] on "
-                        + eachMethod.getMethodName());
+                throw new SejdaRuntimeException(
+                        getTaskName() + " is missing optionality information [(optional) or (required)] on "
+                                + eachMethod.getMethodName());
             }
         }
     }
@@ -65,8 +65,8 @@ public class OptionDecriptionAndShortNameTest extends AcrossAllTasksTraitTest {
 
         for (MethodAndOption eachMethod : extractOptionAnnotations()) {
             if (eachMethod.getNonBlankShortNames().isEmpty() && eachMethod.isNotBooleanFlag()) {
-                throw new SejdaRuntimeException(getTaskName() + " has missing short name on "
-                        + eachMethod.getMethodName());
+                throw new SejdaRuntimeException(
+                        getTaskName() + " has missing short name on " + eachMethod.getMethodName());
             }
         }
     }
@@ -91,7 +91,7 @@ public class OptionDecriptionAndShortNameTest extends AcrossAllTasksTraitTest {
     private Collection<MethodAndOption> extractOptionAnnotations() {
         Collection<MethodAndOption> result = new ArrayList<OptionDecriptionAndShortNameTest.MethodAndOption>();
 
-        Class<?> cliCommandClass = testableTask.getCorrespondingCliCommand().getCliArgumentsClass();
+        Class<?> cliCommandClass = testableTask.command.getCliArgumentsClass();
 
         for (Method eachMethod : cliCommandClass.getMethods()) {
             final Option optionAnnotation = eachMethod.getAnnotation(Option.class);

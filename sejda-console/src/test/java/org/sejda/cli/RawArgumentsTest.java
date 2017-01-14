@@ -27,7 +27,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
-import org.sejda.cli.transformer.CliCommand;
+import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.CliCommands;
 
 /**
  * Tests for {@link RawArguments}
@@ -54,7 +55,7 @@ public class RawArgumentsTest {
         assertTrue(rawArgumentsFrom("unknownCommand --options -f /tmp/file1.pdf").isNoCommandSpecified());
         assertTrue(rawArgumentsFrom(" ").isNoCommandSpecified());
 
-        for (CliCommand eachCliCommand : CliCommand.values()) {
+        for (CliCommand eachCliCommand : CliCommands.COMMANDS) {
             assertFalse(rawArgumentsFrom(eachCliCommand.getDisplayName() + " -h").isNoCommandSpecified());
             assertFalse(rawArgumentsFrom("-h " + eachCliCommand.getDisplayName()).isNoCommandSpecified());
         }
@@ -62,7 +63,7 @@ public class RawArgumentsTest {
 
     @Test
     public void getCliCommand() {
-        for (CliCommand eachCliCommand : CliCommand.values()) {
+        for (CliCommand eachCliCommand : CliCommands.COMMANDS) {
             assertEquals(eachCliCommand, rawArgumentsFrom(eachCliCommand.getDisplayName() + " -h").getCliCommand());
             assertEquals(eachCliCommand, rawArgumentsFrom("-h " + eachCliCommand.getDisplayName()).getCliCommand());
         }

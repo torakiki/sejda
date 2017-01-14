@@ -26,10 +26,16 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
-import org.sejda.cli.transformer.CliCommand;
-
+import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.ProCliCommand;
+import org.sejda.cli.command.StandardCliCommand;
+import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
+import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
+import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
+import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
+import org.sejda.cli.model.MultipleSourceTaskCliArguments;
+import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
 /**
  * Enumeration of all cli tasks, configured for testing
  * 
@@ -39,48 +45,51 @@ import org.sejda.cli.transformer.CliCommand;
 @Ignore
 public enum TestableTask {
 
-    DECRYPT,
-    ENCRYPT,
-    ROTATE(new RotateDefaultsProvider()),
-    SET_VIEWER_PREFERENCES,
-    ALTERNATE_MIX(new MultipleInputsAndFileOutputDefaultsProvider()),
-    UNPACK,
-    MERGE(new MultipleInputsAndFileOutputDefaultsProvider()),
-    SPLIT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
-    SPLIT_BY_SIZE(new SplitBySizeDefaultsProvider()),
-    SPLIT_BY_PAGES(new SplitByPagesDefaultsProvider()),
-    SPLIT_BY_EVERY(new SplitByEveryXPagesDefaultsProvider()),
-    SIMPLE_SPLIT(new SimpleSplitDefaultsProvider()),
-    EXTRACT_BY_BOOKMARKS(new SplitByBookmarksDefaultsProvider()),
-    EXTRACT_PAGES(new ExtractPagesDefaultsProvider()),
-    EXTRACT_TEXT,
-    EXTRACT_TEXT_BY_PAGES(new ExtractTextPagesDefaultsProvider()),
-    SET_METADATA(new SetMetadataDefaultsProvider()),
-    SET_PAGE_LABELS(new SetPageLabelsDefaultsProvider()),
-    SET_PAGE_TRANSITIONS(new SetPageTransitionsDefaultsProvider()),
-    CROP(new CropDefaultsProvider()),
-    PDF_TO_SINGLE_TIFF(new PdfToSingleTiffDefaultsProvider()),
-    PDF_TO_MULTIPLE_TIFF(new PdfToMultipleTiffDefaultsProvider()),
-    PDF_TO_JPEG(new MultipleInputsAndFolderOutputDefaultsProvider()),
-    SET_HEADER_FOOTER(new SetHeaderFooterDefaultsProvider()),
-    COMBINE_REORDER(new CombineReorderDefaultsProvider()),
-    SPLIT_DOWN_THE_MIDDLE(new MultipleInputsAndFolderOutputDefaultsProvider()),
-    SPLIT_BY_TEXT(new SplitByTextDefaultsProvider()),
-    COMPRESS(new MultipleInputsAndFolderOutputDefaultsProvider()),
-    ADD_BACK_PAGES(new AddBackPagesDefaultsProvider()),
-    PORTFOLIO(taskName -> new CommandLineTestBuilder(taskName).defaultMultipleNonPdfInputs().defaultFileOutput()),
-    NUP(taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs().defaultFolderOutput()),
-    WATERMARK(new WatermarkDefaultsProvider()),
-    SCALE(new ScaleDefaultsProvider());
+    DECRYPT(StandardCliCommand.DECRYPT),
+    ENCRYPT(StandardCliCommand.ENCRYPT),
+    ROTATE(StandardCliCommand.ROTATE, new RotateDefaultsProvider()),
+    SET_VIEWER_PREFERENCES(StandardCliCommand.SET_VIEWER_PREFERENCES),
+    ALTERNATE_MIX(StandardCliCommand.ALTERNATE_MIX, new MultipleInputsAndFileOutputDefaultsProvider()),
+    UNPACK(StandardCliCommand.UNPACK),
+    MERGE(StandardCliCommand.MERGE, new MultipleInputsAndFileOutputDefaultsProvider()),
+    SPLIT_BY_BOOKMARKS(StandardCliCommand.SPLIT_BY_BOOKMARKS, new SplitByBookmarksDefaultsProvider()),
+    SPLIT_BY_SIZE(StandardCliCommand.SPLIT_BY_SIZE, new SplitBySizeDefaultsProvider()),
+    SPLIT_BY_PAGES(StandardCliCommand.SPLIT_BY_PAGES, new SplitByPagesDefaultsProvider()),
+    SPLIT_BY_EVERY(StandardCliCommand.SPLIT_BY_EVERY, new SplitByEveryXPagesDefaultsProvider()),
+    SIMPLE_SPLIT(StandardCliCommand.SIMPLE_SPLIT, new SimpleSplitDefaultsProvider()),
+    EXTRACT_BY_BOOKMARKS(StandardCliCommand.EXTRACT_BY_BOOKMARKS, new SplitByBookmarksDefaultsProvider()),
+    EXTRACT_PAGES(StandardCliCommand.EXTRACT_PAGES, new ExtractPagesDefaultsProvider()),
+    EXTRACT_TEXT(ProCliCommand.EXTRACT_TEXT),
+    EXTRACT_TEXT_BY_PAGES(ProCliCommand.EXTRACT_TEXT_BY_PAGES, new ExtractTextPagesDefaultsProvider()),
+    SET_METADATA(StandardCliCommand.SET_METADATA, new SetMetadataDefaultsProvider()),
+    SET_PAGE_LABELS(StandardCliCommand.SET_PAGE_LABELS, new SetPageLabelsDefaultsProvider()),
+    SET_PAGE_TRANSITIONS(StandardCliCommand.SET_PAGE_TRANSITIONS, new SetPageTransitionsDefaultsProvider()),
+    CROP(ProCliCommand.CROP, new CropDefaultsProvider()),
+    PDF_TO_SINGLE_TIFF(StandardCliCommand.PDF_TO_SINGLE_TIFF, new PdfToSingleTiffDefaultsProvider()),
+    PDF_TO_MULTIPLE_TIFF(StandardCliCommand.PDF_TO_MULTIPLE_TIFF, new PdfToMultipleTiffDefaultsProvider()),
+    PDF_TO_JPEG(StandardCliCommand.PDF_TO_JPEG, new MultipleInputsAndFolderOutputDefaultsProvider()),
+    SET_HEADER_FOOTER(StandardCliCommand.SET_HEADER_FOOTER, new SetHeaderFooterDefaultsProvider()),
+    COMBINE_REORDER(StandardCliCommand.COMBINE_REORDER, new CombineReorderDefaultsProvider()),
+    SPLIT_DOWN_THE_MIDDLE(ProCliCommand.SPLIT_DOWN_THE_MIDDLE, new MultipleInputsAndFolderOutputDefaultsProvider()),
+    SPLIT_BY_TEXT(ProCliCommand.SPLIT_BY_TEXT, new SplitByTextDefaultsProvider()),
+    COMPRESS(ProCliCommand.COMPRESS, new MultipleInputsAndFolderOutputDefaultsProvider()),
+    ADD_BACK_PAGES(StandardCliCommand.ADD_BACK_PAGES, new AddBackPagesDefaultsProvider()),
+    PORTFOLIO(StandardCliCommand.PORTFOLIO, taskName -> new CommandLineTestBuilder(taskName)
+            .defaultMultipleNonPdfInputs().defaultFileOutput()),
+    NUP(ProCliCommand.NUP, taskName -> new CommandLineTestBuilder(taskName).defaultMultiplePdfInputs()
+            .defaultFolderOutput()),
+    WATERMARK(StandardCliCommand.WATERMARK, new WatermarkDefaultsProvider()),
+    SCALE(StandardCliCommand.SCALE, new ScaleDefaultsProvider());
 
     private final DefaultsProvider defaultsProvider;
+    public final CliCommand command;
 
-    private TestableTask() {
-        // defaults
-        this.defaultsProvider = new DefaultDefaultsProvider();
+    private TestableTask(CliCommand command) {
+        this(command, new DefaultDefaultsProvider());
     }
 
-    private TestableTask(DefaultsProvider defaultsProvider) {
+    private TestableTask(CliCommand command, DefaultsProvider defaultsProvider) {
+        this.command = command;
         this.defaultsProvider = defaultsProvider;
     }
 
@@ -90,19 +99,6 @@ public enum TestableTask {
 
     String getTaskName() {
         return name().toLowerCase().replaceAll("_", "");
-    }
-
-    String getExampleUsage() {
-        return getCorrespondingCliCommand().getExampleUsage();
-    }
-
-    /**
-     * @return the {@link CliCommand} matching this {@link TestableTask}
-     * 
-     */
-    public CliCommand getCorrespondingCliCommand() {
-        return Arrays.stream(CliCommand.values()).filter(c -> StringUtils.equalsIgnoreCase(c.name(), this.name()))
-                .findFirst().orElse(null);
     }
 
     public static List<TestableTask> allTasks() {
@@ -122,15 +118,15 @@ public enum TestableTask {
     }
 
     public static List<TestableTask> getTasksWithMultipleSouceFiles() {
-        return getTasksWith(TestableTask::isMultiplePdfSource);
+        return getTasksWith(TestableTask::hasMultiplePdfSource);
     }
 
     public static List<TestableTask> getTasksWithSingleSouceFiles() {
-        return getTasksWith(TestableTask::isSinglePdfSource);
+        return getTasksWith(TestableTask::hasSinglePdfSource);
     }
 
     public static List<TestableTask> getTasksWithFolderOutputAndPdfInput() {
-        return getTasksWith(t -> !t.isMultipleSource() && t.hasFolderOutput());
+        return getTasksWith(t -> !t.hasMultipleSource() && t.hasFolderOutput());
     }
 
     public static List<TestableTask> getTasksWithPrefixableOutput() {
@@ -142,23 +138,28 @@ public enum TestableTask {
     }
 
     boolean hasFolderOutput() {
-        return getCorrespondingCliCommand().hasFolderOutput();
+        return isInheritingTraitsFrom(CliArgumentsWithDirectoryOutput.class);
     }
 
     boolean hasPrefixableOutput() {
-        return getCorrespondingCliCommand().hasPrefixableOutput();
+        return isInheritingTraitsFrom(CliArgumentsWithPrefixableOutput.class);
     }
 
-    boolean isMultipleSource() {
-        return getCorrespondingCliCommand().hasMultipleSource();
+    boolean hasMultiplePdfSource() {
+        return isInheritingTraitsFrom(MultipleOptionalPdfSourceTaskCliArguments.class)
+                || isInheritingTraitsFrom(MultiplePdfSourceTaskCliArguments.class);
     }
 
-    boolean isMultiplePdfSource() {
-        return getCorrespondingCliCommand().hasMultiplePdfSource();
+    boolean hasMultipleSource() {
+        return isInheritingTraitsFrom(MultipleSourceTaskCliArguments.class);
     }
 
-    boolean isSinglePdfSource() {
-        return getCorrespondingCliCommand().hasSinglePdfSource();
+    boolean hasSinglePdfSource() {
+        return isInheritingTraitsFrom(SinglePdfSourceTaskCliArguments.class);
+    }
+
+    boolean isInheritingTraitsFrom(Class<?> parentClazz) {
+        return parentClazz.isAssignableFrom(command.getCliArgumentsClass());
     }
 }
 
