@@ -1,5 +1,5 @@
 /*
- * Created on Aug 29, 2011
+ * Created on Aug 25, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
@@ -17,30 +17,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli;
+package org.sejda.cli.command;
 
-import java.util.Collection;
-
-import org.junit.runners.Parameterized.Parameters;
-import org.sejda.cli.command.TestableTask;
-import org.sejda.cli.command.TestableTasks;
+import org.sejda.cli.CommandLineTestBuilder;
+import org.sejda.cli.DefaultsProvider;
 
 /**
- * 
- * Base class for trait tests that run across all defined tasks
+ * a Testable task
  * 
  * @author Eduard Weissmann
  * 
  */
-public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
+public interface TestableTask {
 
-    public AcrossAllTasksTraitTest(TestableTask testableTask) {
-        super(testableTask);
+    DefaultsProvider getDefaultsProvider();
+
+    CliCommand getCommand();
+
+    default public CommandLineTestBuilder getCommandLineDefaults() {
+        return getDefaultsProvider().provideDefaults(getCommand().getDisplayName());
     }
-
-    @Parameters
-    public final static Collection<Object[]> testParameters() {
-        return asParameterizedTestData(TestableTasks.allTasks());
-    }
-
 }

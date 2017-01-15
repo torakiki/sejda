@@ -21,6 +21,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.ScaleParameters;
 import org.sejda.model.scale.ScaleType;
 
@@ -31,7 +32,7 @@ import org.sejda.model.scale.ScaleType;
 public class ScaleTaskTest extends AbstractTaskTest {
 
     public ScaleTaskTest() {
-        super(TestableTask.SCALE);
+        super(StandardTestableTask.SCALE);
     }
 
     @Test

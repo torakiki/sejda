@@ -24,6 +24,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
@@ -36,7 +38,7 @@ public class MultipleInputSourceFilesTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithMultipleSouceFiles());
+        return asParameterizedTestData(TestableTasks.getTasksWithMultipleSouceFiles());
     }
 
     public MultipleInputSourceFilesTraitTest(TestableTask testableTask) {

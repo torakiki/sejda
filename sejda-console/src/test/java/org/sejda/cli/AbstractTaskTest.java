@@ -20,6 +20,7 @@
 package org.sejda.cli;
 
 import org.junit.Before;
+import org.sejda.cli.command.TestableTask;
 
 /**
  * Base class for task test suites, creates default inputs and output files/folders.<br/>
@@ -44,11 +45,11 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
     }
 
     protected String describeExpectations() {
-        return "In the context of task " + testableTask.name();
+        return "In the context of task " + testableTask.getCommand().getDisplayName();
     }
 
     protected String getTaskName() {
-        return testableTask.getTaskName();
+        return testableTask.getCommand().getDisplayName();
     }
 
     @Before
@@ -62,6 +63,7 @@ public abstract class AbstractTaskTest extends AbstractTestSuite {
         createTestFile("./inputs/logo.png", getClass().getResourceAsStream("/image/draft.png"));
 
         createTestTextFile("./inputs/file1.txt", "this is a test file");
+        createTestTextFile("/tmp/file1.txt", "this is a test file");
         createTestPdfFile("/tmp/file1.pdf");
         createTestPdfFile("/tmp/file2.pdf");
         createTestPdfFile("/tmp/back.pdf");

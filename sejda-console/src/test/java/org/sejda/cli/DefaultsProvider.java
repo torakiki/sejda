@@ -1,5 +1,5 @@
 /*
- * Created on 14 gen 2017
+ * Created on 15 gen 2017
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,20 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli.command;
-
-import java.util.Arrays;
-import java.util.List;
+package org.sejda.cli;
 
 /**
  * @author Andrea Vacondio
  *
  */
-public class ProCliCommandsProvider implements CommandsProvider {
+@FunctionalInterface
+public interface DefaultsProvider {
 
-    @Override
-    public List<CliCommand> commands() {
-        return Arrays.asList(ProCliCommand.values());
-    }
-
+    CommandLineTestBuilder provideDefaults(String taskName);
 }
+

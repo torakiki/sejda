@@ -102,7 +102,7 @@ import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
- * Enumeration of commands supported through the console
+ * Enumeration of commands supported through the standard version of the sejda-console
  * 
  * @author Eduard Weissmann
  * 

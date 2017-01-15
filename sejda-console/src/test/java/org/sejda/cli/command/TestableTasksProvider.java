@@ -1,5 +1,5 @@
 /*
- * Created on 14 gen 2017
+ * Created on 15 gen 2017
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -18,33 +18,12 @@
  */
 package org.sejda.cli.command;
 
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.StreamSupport.stream;
-
-import java.util.Comparator;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
- * Available commands for the command line
- * 
  * @author Andrea Vacondio
+ *
  */
-public class CliCommands {
-
-    /**
-     * Sorted list of available commands
-     */
-    public static final List<CliCommand> COMMANDS;
-
-    static {
-        COMMANDS = stream(ServiceLoader.load(CommandsProvider.class).spliterator(), false)
-                .flatMap(p -> p.commands().stream()).sorted(Comparator.comparing(c -> c.getDisplayName()))
-                .collect(toList());
-    }
-
-    public static CliCommand findByDisplayNameSilently(String displayName) {
-        return COMMANDS.stream().filter(c -> c.getDisplayName().equalsIgnoreCase(displayName)).findFirst().orElse(null);
-    }
-
+interface TestableTasksProvider {
+    List<TestableTask> tasks();
 }

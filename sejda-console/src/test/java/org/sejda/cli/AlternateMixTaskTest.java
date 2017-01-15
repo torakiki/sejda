@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.AlternateMixParameters;
 
 /**
@@ -35,7 +36,7 @@ import org.sejda.model.parameter.AlternateMixParameters;
 public class AlternateMixTaskTest extends AbstractTaskTest {
 
     public AlternateMixTaskTest() {
-        super(TestableTask.ALTERNATE_MIX);
+        super(StandardTestableTask.ALTERNATE_MIX);
     }
 
     @Override

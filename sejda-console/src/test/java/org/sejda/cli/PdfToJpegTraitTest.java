@@ -27,6 +27,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.cli.command.TestableTask;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.pdf.page.PageRange;
@@ -42,7 +44,7 @@ public class PdfToJpegTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.PDF_TO_JPEG } });
+        return Arrays.asList(new Object[][] { { StandardTestableTask.PDF_TO_JPEG } });
     }
 
     @Test

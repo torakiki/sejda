@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.SplitByPagesParameters;
 
 /**
@@ -36,7 +37,7 @@ import org.sejda.model.parameter.SplitByPagesParameters;
 public class SplitByPagesTaskTest extends AbstractTaskTest {
 
     public SplitByPagesTaskTest() {
-        super(TestableTask.SPLIT_BY_PAGES);
+        super(StandardTestableTask.SPLIT_BY_PAGES);
     }
 
     @Test

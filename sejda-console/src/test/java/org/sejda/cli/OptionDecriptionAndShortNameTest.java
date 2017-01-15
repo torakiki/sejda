@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.sejda.cli.command.TestableTask;
 import org.sejda.model.exception.SejdaRuntimeException;
 
 import com.lexicalscope.jewel.cli.Option;
@@ -91,7 +92,7 @@ public class OptionDecriptionAndShortNameTest extends AcrossAllTasksTraitTest {
     private Collection<MethodAndOption> extractOptionAnnotations() {
         Collection<MethodAndOption> result = new ArrayList<OptionDecriptionAndShortNameTest.MethodAndOption>();
 
-        Class<?> cliCommandClass = testableTask.command.getCliArgumentsClass();
+        Class<?> cliCommandClass = testableTask.getCommand().getCliArgumentsClass();
 
         for (Method eachMethod : cliCommandClass.getMethods()) {
             final Option optionAnnotation = eachMethod.getAnnotation(Option.class);

@@ -22,6 +22,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.cli.command.TestableTask;
 
 /**
  * Test for duplicate option detection
@@ -37,8 +38,8 @@ public class DuplicateOptionDetectionTraitTest extends AcrossAllTasksTraitTest {
 
     @Test
     public void testDuplicateOptionsAreDetected() {
-        assertTrue(testableTask.command.getExampleUsage().contains("-f")); // -f option is already specified
-        assertConsoleOutputContains(testableTask.command.getExampleUsage() + " -f /tmp/file2.pdf",
+        assertTrue(testableTask.getCommand().getExampleUsage().contains("-f")); // -f option is already specified
+        assertConsoleOutputContains(testableTask.getCommand().getExampleUsage() + " -f /tmp/file2.pdf",
                 "Option '-f' is specified twice"); // specifying it again will override the first one, creating confusing outputs. user probably wants to specify a list of inputs,
                                                    // which is done in a different way
     }

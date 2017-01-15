@@ -23,6 +23,9 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * Test verifying the help request feature for commands
@@ -34,7 +37,7 @@ public class MandatoryInputAndOutputParametersTraitTest extends AbstractTaskTrai
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.MERGE));
+        return asParameterizedTestData(TestableTasks.allTasksExceptFor(StandardTestableTask.MERGE));
     }
 
     public MandatoryInputAndOutputParametersTraitTest(TestableTask testableTask) {

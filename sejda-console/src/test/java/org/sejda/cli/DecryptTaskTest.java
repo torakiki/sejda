@@ -22,6 +22,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.DecryptParameters;
 
 /**
@@ -33,7 +34,7 @@ import org.sejda.model.parameter.DecryptParameters;
 public class DecryptTaskTest extends AbstractTaskTest {
 
     public DecryptTaskTest() {
-        super(TestableTask.DECRYPT);
+        super(StandardTestableTask.DECRYPT);
     }
 
     @Test

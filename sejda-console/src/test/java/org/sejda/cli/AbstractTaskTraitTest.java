@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.sejda.cli.command.TestableTask;
 
 /**
  * Abstract base class for tests for task traits

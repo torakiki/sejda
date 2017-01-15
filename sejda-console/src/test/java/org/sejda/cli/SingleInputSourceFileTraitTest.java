@@ -24,6 +24,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 
 /**
@@ -36,7 +38,7 @@ public class SingleInputSourceFileTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        return asParameterizedTestData(TestableTask.getTasksWithSingleSouceFiles());
+        return asParameterizedTestData(TestableTasks.getTasksWithSingleSouceFiles());
     }
 
     public SingleInputSourceFileTraitTest(TestableTask testableTask) {

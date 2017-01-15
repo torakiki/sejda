@@ -29,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * Test encrypted files across all pdf implementations (sambox and icepdf) - due to collisions between the libraries that each pdf implementation uses for encryption, there might
@@ -41,7 +43,8 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWith(t -> !t.hasMultipleSource() && !t.hasFolderOutput()));
+        return asParameterizedTestData(TestableTasks
+                .getTasksWith(t -> !TestableTasks.hasMultipleSource(t) && !TestableTasks.hasFolderOutput(t)));
     }
 
     @Override
@@ -58,7 +61,7 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
     @Test
     public void executeExampleUsageWithEncryptedFileAsInput() {
         System.out.println("running " + testableTask);
-        String exampleUsage = testableTask.command.getExampleUsage();
+        String exampleUsage = testableTask.getCommand().getExampleUsage();
         // use an encrypted file as input instead of the regular input file
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
 

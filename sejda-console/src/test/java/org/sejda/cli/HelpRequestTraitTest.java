@@ -21,6 +21,7 @@ package org.sejda.cli;
 
 import org.junit.Test;
 import org.sejda.cli.command.CliCommand;
+import org.sejda.cli.command.TestableTask;
 
 /**
  * Test verifying the help request feature for commands
@@ -59,7 +60,7 @@ public class HelpRequestTraitTest extends AcrossAllTasksTraitTest {
      * 
      */
     private void doTestExecuteCommandHelp(String commandLineForHelpRequest) {
-        CliCommand cliCommmand = testableTask.command;
+        CliCommand cliCommmand = testableTask.getCommand();
         assertConsoleOutputContains(commandLineForHelpRequest, cliCommmand.getDescription(), "Example usage: ",
                 "Usage: sejda-console " + getTaskName() + " options");
     }

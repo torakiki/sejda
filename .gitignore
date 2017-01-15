@@ -4,6 +4,7 @@
 .project
 .settings/
 target/
+sejda-console-pro/
 *.iml
 *.ipr
 .idea

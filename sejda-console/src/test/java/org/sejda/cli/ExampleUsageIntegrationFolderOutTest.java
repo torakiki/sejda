@@ -26,33 +26,33 @@ import java.util.Collection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.StandardConsoleOnly;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * @author Andrea Vacondio
  *
  */
+@Category(StandardConsoleOnly.class)
 public class ExampleUsageIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithFolderOutputAndPdfInput());
+        return asParameterizedTestData(TestableTasks.getTasksWithFolderOutputAndPdfInput());
     }
 
     public ExampleUsageIntegrationFolderOutTest(TestableTask testableTask) {
-            super(testableTask);
-        }
+        super(testableTask);
+    }
 
     @Test
     public void executeExampleUsage() {
-        String exampleUsage = testableTask.command.getExampleUsage();
+        String exampleUsage = testableTask.getCommand().getExampleUsage();
         exampleUsage = StringUtils.replace(exampleUsage, "-e \".+(Chapter)+.+\"", "-e \".+(page)+.+\""); // quick hack for split by bookmarks (Chapter is better for help, page
                                                                                                          // actually exists in the sample pdf)
-
-        if (testableTask == TestableTask.SPLIT_BY_TEXT) {
-            overwriteTestPdfFile("/tmp/file1.pdf", "/pdf/split_by_text_contents_sample.pdf");
-        }
-
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 
         assertTaskCompletes(exampleUsage + " -j overwrite");

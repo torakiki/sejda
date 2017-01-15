@@ -1,5 +1,5 @@
 /*
- * Created on 30 dic 2016
+ * Created on 15 gen 2017
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,34 +16,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli;
+package org.sejda.cli.command;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
-import org.sejda.cli.command.TestableTask;
-import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.cli.CommandLineTestBuilder;
+import org.sejda.cli.DefaultsProvider;
 
 /**
  * @author Andrea Vacondio
  *
  */
-public class LenientTraitTest extends AcrossAllTasksTraitTest {
-    public LenientTraitTest(TestableTask testableTask) {
-        super(testableTask);
-    }
+public class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
-    @Test
-    public void lenient() {
-
-        TaskParameters result = defaultCommandLine().withFlag("--lenient").invokeSejdaConsole();
-        assertTrue(result.isLenient());
-    }
-
-    @Test
-    public void nonLenient() {
-        TaskParameters result = defaultCommandLine().without("--lenient").invokeSejdaConsole();
-        assertFalse(result.isLenient());
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
     }
 }

@@ -54,7 +54,7 @@ import org.sejda.model.parameter.base.TaskParameters;
 public class CommandLineTestBuilder {
 
     private final String taskName;
-    private final Map<String, String> optionsAndValues = new HashMap<String, String>();
+    private final Map<String, String> optionsAndValues = new HashMap<>();
 
     public CommandLineTestBuilder(String taskName) {
         this.taskName = taskName;

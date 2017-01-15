@@ -25,6 +25,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
 
 /**
@@ -37,7 +39,7 @@ public class PrefixableOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithPrefixableOutput());
+        return asParameterizedTestData(TestableTasks.getTasksWithPrefixableOutput());
     }
 
     public PrefixableOutputTraitTest(TestableTask testableTask) {

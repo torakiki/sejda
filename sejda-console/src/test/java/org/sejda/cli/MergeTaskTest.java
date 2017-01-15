@@ -39,6 +39,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
@@ -56,7 +57,7 @@ import org.sejda.model.toc.ToCPolicy;
 public class MergeTaskTest extends AbstractTaskTest {
 
     public MergeTaskTest() {
-        super(TestableTask.MERGE);
+        super(StandardTestableTask.MERGE);
     }
 
     @Override

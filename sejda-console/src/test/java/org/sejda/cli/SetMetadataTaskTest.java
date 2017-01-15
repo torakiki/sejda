@@ -24,6 +24,7 @@ import static org.junit.Assert.fail;
 import java.util.Map.Entry;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.pdf.PdfMetadataKey;
 
@@ -36,7 +37,7 @@ import org.sejda.model.pdf.PdfMetadataKey;
 public class SetMetadataTaskTest extends AbstractTaskTest {
 
     public SetMetadataTaskTest() {
-        super(TestableTask.SET_METADATA);
+        super(StandardTestableTask.SET_METADATA);
     }
 
     @Test

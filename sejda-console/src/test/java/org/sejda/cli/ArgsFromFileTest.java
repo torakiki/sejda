@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.sejda.cli.command.TestableTask;
 
 /**
  * Tests for providing args via txt file

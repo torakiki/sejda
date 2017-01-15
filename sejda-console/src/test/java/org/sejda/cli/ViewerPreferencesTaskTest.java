@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.EnumSet;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
@@ -44,7 +45,7 @@ import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 public class ViewerPreferencesTaskTest extends AbstractTaskTest {
 
     public ViewerPreferencesTaskTest() {
-        super(TestableTask.SET_VIEWER_PREFERENCES);
+        super(StandardTestableTask.SET_VIEWER_PREFERENCES);
     }
 
     @Test

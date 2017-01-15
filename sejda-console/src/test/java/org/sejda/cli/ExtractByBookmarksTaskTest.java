@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 
@@ -31,7 +32,7 @@ import org.sejda.model.parameter.ExtractByOutlineParameters;
 public class ExtractByBookmarksTaskTest extends AbstractTaskTest {
 
     public ExtractByBookmarksTaskTest() {
-        super(TestableTask.EXTRACT_BY_BOOKMARKS);
+        super(StandardTestableTask.EXTRACT_BY_BOOKMARKS);
     }
 
     @Test

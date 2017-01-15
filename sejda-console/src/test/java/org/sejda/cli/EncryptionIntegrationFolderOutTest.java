@@ -28,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * @author Andrea Vacondio
@@ -37,7 +39,7 @@ public class EncryptionIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWithFolderOutputAndPdfInput());
+        return asParameterizedTestData(TestableTasks.getTasksWithFolderOutputAndPdfInput());
     }
 
     @Override
@@ -53,7 +55,7 @@ public class EncryptionIntegrationFolderOutTest extends AbstractTaskTraitTest {
 
     @Test
     public void executeExampleUsageWithEncryptedFileAsInput() {
-        String exampleUsage = testableTask.command.getExampleUsage();
+        String exampleUsage = testableTask.getCommand().getExampleUsage();
         // use an encrypted file as input instead of the regular input file
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // quick hack for decrypt
         exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one

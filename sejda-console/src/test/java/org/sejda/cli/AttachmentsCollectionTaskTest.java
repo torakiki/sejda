@@ -21,6 +21,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.pdf.collection.InitialView;
 
@@ -31,7 +32,7 @@ import org.sejda.model.pdf.collection.InitialView;
 public class AttachmentsCollectionTaskTest extends AbstractTaskTest {
 
     public AttachmentsCollectionTaskTest() {
-        super(TestableTask.PORTFOLIO);
+        super(StandardTestableTask.PORTFOLIO);
     }
 
     @Test
