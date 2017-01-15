@@ -55,7 +55,7 @@ public class FileSource extends AbstractSource<File> {
 
     public static FileSource newInstance(File file) {
         if (file == null || !file.isFile()) {
-            throw new IllegalArgumentException("A not null File instance that isFile is expected.");
+            throw new IllegalArgumentException("A not null File instance that isFile is expected. Path: " + file);
         }
         return new FileSource(file);
     }
