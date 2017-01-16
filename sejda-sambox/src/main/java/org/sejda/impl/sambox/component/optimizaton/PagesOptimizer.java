@@ -21,7 +21,6 @@ package org.sejda.impl.sambox.component.optimizaton;
 import static java.util.Collections.emptySet;
 import static java.util.Optional.ofNullable;
 import static org.sejda.impl.sambox.component.optimizaton.Optimizers.pageOptimizer;
-import static org.sejda.model.optimization.Optimization.DISCARD_UNUSED_IMAGES;
 import static org.sejda.model.optimization.Optimization.DISCARD_UNUSED_RESOURCES;
 
 import java.util.Set;
@@ -55,7 +54,7 @@ public class PagesOptimizer implements Consumer<PDPage> {
             optimizer = optimizer.andThen(new ImagesOptimizer(parameters));
         }
         // we want to be sure this is not performed before images optimization
-        if (optimizations.contains(DISCARD_UNUSED_RESOURCES) || optimizations.contains(DISCARD_UNUSED_IMAGES)) {
+        if (optimizations.contains(DISCARD_UNUSED_RESOURCES)) {
             optimizer = optimizer.andThen(new ResourcesHitter());
         }
     }

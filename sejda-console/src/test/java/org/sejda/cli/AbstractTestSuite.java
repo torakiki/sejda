@@ -48,7 +48,7 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.output.TaskOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
-import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
@@ -117,8 +117,8 @@ public abstract class AbstractTestSuite {
     }
 
     protected void assertHasFileSource(TaskParameters parameters, File file, String password) {
-        if (parameters instanceof AlternateMixParameters) {
-            assertHasFileSource((AlternateMixParameters) parameters, file, password);
+        if (parameters instanceof AlternateMixMultipleInputParameters) {
+            assertHasFileSource((AlternateMixMultipleInputParameters) parameters, file, password);
         } else if (parameters instanceof MergeParameters) {
             assertHasFileSource((MergeParameters) parameters, file, password);
         } else if (parameters instanceof SinglePdfSourceTaskParameters) {
@@ -145,10 +145,9 @@ public abstract class AbstractTestSuite {
         assertHasFileSource(sourcesList, file, password);
     }
 
-    protected void assertHasFileSource(AlternateMixParameters parameters, File file, String password) {
-        assertHasFileSource(
-                Arrays.asList(parameters.getFirstInput().getSource(), parameters.getSecondInput().getSource()), file,
-                password);
+    protected void assertHasFileSource(AlternateMixMultipleInputParameters parameters, File file, String password) {
+        assertHasFileSource(Arrays.asList(parameters.getInputList().get(0).getSource(),
+                parameters.getInputList().get(1).getSource()), file, password);
     }
 
     protected void assertHasFileSource(MultiplePdfSourceTaskParameters parameters, File file, String password) {

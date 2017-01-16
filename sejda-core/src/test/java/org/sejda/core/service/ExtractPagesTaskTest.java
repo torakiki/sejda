@@ -37,7 +37,6 @@ import org.junit.Test;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
@@ -177,7 +176,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     @Test
-    public void extractPagesInvertedSelection() throws TaskException, IOException {
+    public void extractPagesInvertedSelection() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
         parameters.addPageRange(new PageRange(7, 9));

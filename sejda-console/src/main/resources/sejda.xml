@@ -6,7 +6,7 @@
 		<task parameters="org.sejda.model.parameter.EncryptParameters" task="org.sejda.impl.sambox.EncryptTask"/>
 		<task parameters="org.sejda.model.parameter.RotateParameters" task="org.sejda.impl.sambox.RotateTask"/>
 		<task parameters="org.sejda.model.parameter.ViewerPreferencesParameters" task="org.sejda.impl.sambox.ViewerPreferencesTask"/>
-		<task parameters="org.sejda.model.parameter.AlternateMixParameters" task="org.sejda.impl.sambox.AlternateMixTask"/>
+		<task parameters="org.sejda.model.parameter.AlternateMixMultipleInputParameters" task="org.sejda.impl.sambox.AlternateMixTask"/>
 		<task parameters="org.sejda.model.parameter.UnpackParameters" task="org.sejda.impl.sambox.UnpackTask"/>
 		<task parameters="org.sejda.model.parameter.MergeParameters" task="org.sejda.impl.sambox.MergeTask"/>
 		<task parameters="org.sejda.model.parameter.SplitByOutlineLevelParameters" task="org.sejda.impl.sambox.SplitByOutlineLevelTask"/>

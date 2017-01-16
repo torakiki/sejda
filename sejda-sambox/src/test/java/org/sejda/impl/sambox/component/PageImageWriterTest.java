@@ -18,22 +18,20 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 
-import java.io.IOException;
-
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 public class PageImageWriterTest {
 
     @Test
-    public void testTiffWithAlphaToPDXImageObject() throws IOException, TaskIOException {
+    public void testTiffWithAlphaToPDXImageObject() throws TaskIOException {
         PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/draft.tiff"));
         assertThat(result.getHeight(), is(103));
     }

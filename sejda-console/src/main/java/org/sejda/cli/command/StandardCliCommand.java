@@ -74,7 +74,7 @@ import org.sejda.cli.transformer.UnpackCliArgumentsTransformer;
 import org.sejda.cli.transformer.ViewerPreferencesCliArgumentsTransformer;
 import org.sejda.cli.transformer.WatermarkCliArgumentsTransformer;
 import org.sejda.model.parameter.AddBackPagesParameters;
-import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.parameter.AttachmentsCollectionParameters;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.parameter.DecryptParameters;
@@ -137,10 +137,10 @@ public enum StandardCliCommand implements CliCommand {
             return new ViewerPreferencesCliArgumentsTransformer();
         }
     }, "Given a collection of PDF documents, applies the selected viewer preferences.", "setviewerpreferences -f /tmp/file1.pdf -o /tmp --centerWindow --displayDocTitle --fitWindow --hideMenu --hideToolbar --hideWindowUI --layout onecolumn --mode fullscreen --nfsMode nfsthumbs"),
-    ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixParameters>() {
+    ALTERNATE_MIX("alternatemix", new CliInterfacedTask<AlternateMixTaskCliArguments, AlternateMixMultipleInputParameters>() {
 
         @Override
-        protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixParameters> getArgumentsTransformer() {
+        protected CommandCliArgumentsTransformer<AlternateMixTaskCliArguments, AlternateMixMultipleInputParameters> getArgumentsTransformer() {
             return new AlternateMixCliArgumentsTransformer();
         }
     }, "Given two PDF documents, creates a single output PDF document taking pages alternatively from the two input. Pages can be taken in straight or reverse order and using a configurable step (number of pages before the process switch from a document to the other).", "alternatemix -f /tmp/file1.pdf /tmp/file2.pdf -o /tmp/output.pdf --reverseSecond"),

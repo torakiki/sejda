@@ -28,7 +28,7 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PdfAlternateMixer;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.parameter.AbstractAlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Andrea Vacondio
  */
-public class AlternateMixTask extends BaseTask<AbstractAlternateMixParameters> {
+public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AlternateMixTask.class);
 
@@ -47,7 +47,7 @@ public class AlternateMixTask extends BaseTask<AbstractAlternateMixParameters> {
     private SingleOutputWriter outputWriter;
 
     @Override
-    public void before(AbstractAlternateMixParameters parameters, TaskExecutionContext executionContext)
+    public void before(AlternateMixMultipleInputParameters parameters, TaskExecutionContext executionContext)
             throws TaskException {
         super.before(parameters, executionContext);
         mixer = new PdfAlternateMixer();
@@ -55,7 +55,7 @@ public class AlternateMixTask extends BaseTask<AbstractAlternateMixParameters> {
     }
 
     @Override
-    public void execute(AbstractAlternateMixParameters parameters) throws TaskException {
+    public void execute(AlternateMixMultipleInputParameters parameters) throws TaskException {
 
         LOG.debug("Starting alternate mix of {} input documents", parameters.getInputList().size());
         mixer.mix(parameters.getInputList(), executionContext());

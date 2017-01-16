@@ -23,12 +23,9 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.AbstractAlternateMixParameters;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
-import org.sejda.model.parameter.AlternateMixParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.sambox.pdmodel.PDPage;
 
@@ -39,16 +36,16 @@ import org.sejda.sambox.pdmodel.PDPage;
  * 
  */
 @Ignore
-public abstract class AlternateMixTaskTest extends BaseTaskTest<AbstractAlternateMixParameters> {
+public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMultipleInputParameters> {
 
-    private void setUpParameters(AbstractAlternateMixParameters parameters) {
+    private void setUpParameters(AlternateMixMultipleInputParameters parameters) {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_5);
     }
 
     @Test
-    public void threeDocsMerge() throws TaskException, IOException {
+    public void threeDocsMerge() throws IOException {
         AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
         params.addInput(new PdfMixInput(shortInput(), true, 1));
         params.addInput(new PdfMixInput(stronglyEncryptedInput(), true, 3));
@@ -67,10 +64,10 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AbstractAlternat
     }
 
     @Test
-    @Deprecated
-    public void withStandardInput() throws TaskException, IOException {
-        AlternateMixParameters parameters = new AlternateMixParameters(new PdfMixInput(shortInput()),
-                new PdfMixInput(shortInput(), true, 3));
+    public void withStandardInput() throws IOException {
+        AlternateMixMultipleInputParameters parameters = new AlternateMixMultipleInputParameters();
+        parameters.addInput(new PdfMixInput(shortInput()));
+        parameters.addInput(new PdfMixInput(shortInput(), true, 3));
         parameters.setOutputName("outName.pdf");
         setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
@@ -80,10 +77,10 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AbstractAlternat
     }
 
     @Test
-    @Deprecated
-    public void withEncryptedInput() throws TaskException, IOException {
-        AlternateMixParameters parameters = new AlternateMixParameters(new PdfMixInput(encryptedInput()),
-                new PdfMixInput(stronglyEncryptedInput(), true, 3));
+    public void withEncryptedInput() throws IOException {
+        AlternateMixMultipleInputParameters parameters = new AlternateMixMultipleInputParameters();
+        parameters.addInput(new PdfMixInput(encryptedInput()));
+        parameters.addInput(new PdfMixInput(stronglyEncryptedInput(), true, 3));
         parameters.setOutputName("outName.pdf");
         setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
