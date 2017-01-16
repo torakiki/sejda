@@ -32,6 +32,8 @@ import org.sejda.model.task.Task;
 /**
  * Default implementation of the {@link SejdaContext}. It loads Sejda configuration from the xml configuration file specified by the system property <b>sejda.config.file</b> or
  * from the expected <b>sejda.xml</b> in the classpath.
+ *
+ * If no <b>sejda.xml</b> is found in the classpath a default configuration is loaded: <b>sejda.default.xml</b>
  * 
  * @author Andrea Vacondio
  * 

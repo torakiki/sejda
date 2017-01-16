@@ -47,6 +47,7 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationStreamProvider.class);
 
     private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
+    private static final String DEFAULT_CONFIG_FILE_NAME = "sejda.default.xml";
 
     @Override
     public InputStream getConfigurationStream() throws ConfigurationException {
@@ -82,6 +83,10 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     private InputStream getDefaultConfigurationStream() {
         LOG.debug("Loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME);
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream(USER_CONFIG_FILE_NAME);
+        InputStream result = Thread.currentThread().getContextClassLoader().getResourceAsStream(USER_CONFIG_FILE_NAME);
+        if(result == null) {
+            result = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
+        }
+        return result;
     }
 }
