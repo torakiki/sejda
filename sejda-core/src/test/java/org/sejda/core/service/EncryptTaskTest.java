@@ -20,6 +20,8 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -85,6 +87,58 @@ public abstract class EncryptTaskTest extends BaseTaskTest<EncryptParameters> {
             assertTrue(d.getCurrentAccessPermission().canExtractContent());
             assertTrue(d.getCurrentAccessPermission().canFillInForm());
 
+        });
+    }
+
+    @Test
+    public void enablingPrintDegraded() throws IOException {
+        setUpParameters(PdfEncryption.STANDARD_ENC_128);
+        parameters.setOwnerPassword("test");
+        parameters.addPermission(PdfAccessPermission.DEGRADATED_PRINT);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertTrue(d.isEncrypted());
+            assertFalse(d.getCurrentAccessPermission().canPrint());
+            assertTrue(d.getCurrentAccessPermission().canPrintDegraded());
+        });
+    }
+
+    @Test
+    public void enablingPrint() throws IOException {
+        setUpParameters(PdfEncryption.STANDARD_ENC_128);
+        parameters.setOwnerPassword("test");
+        parameters.addPermission(PdfAccessPermission.PRINT);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertTrue(d.isEncrypted());
+            assertTrue(d.getCurrentAccessPermission().canPrint());
+            assertFalse(d.getCurrentAccessPermission().canPrintDegraded());
+        });
+    }
+
+    @Test
+    public void defaultPermissions() throws IOException {
+        setUpParameters(PdfEncryption.STANDARD_ENC_128);
+        assertEquals(parameters.getPermissions().size(), 0);
+
+        parameters.setOwnerPassword("test");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertTrue(d.isEncrypted());
+            assertFalse(d.getCurrentAccessPermission().canAssembleDocument());
+            assertFalse(d.getCurrentAccessPermission().canExtractContent());
+            assertTrue(d.getCurrentAccessPermission().canExtractForAccessibility());
+            assertFalse(d.getCurrentAccessPermission().canFillInForm());
+            assertFalse(d.getCurrentAccessPermission().canModify());
+            assertFalse(d.getCurrentAccessPermission().canModifyAnnotations());
+            assertFalse(d.getCurrentAccessPermission().canPrint());
+            assertFalse(d.getCurrentAccessPermission().canPrintDegraded());
         });
     }
 }
