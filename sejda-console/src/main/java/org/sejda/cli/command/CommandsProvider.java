@@ -21,8 +21,9 @@ package org.sejda.cli.command;
 import java.util.List;
 
 /**
+ * Provides {@link CliCommand}s
+ * 
  * @author Andrea Vacondio
- *
  */
 public interface CommandsProvider {
     List<CliCommand> commands();

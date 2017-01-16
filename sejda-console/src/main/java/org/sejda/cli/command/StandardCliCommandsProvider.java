@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Providers for {@link CliCommand} available in the standard version of the sejda console
+ * 
  * @author Andrea Vacondio
  *
  */

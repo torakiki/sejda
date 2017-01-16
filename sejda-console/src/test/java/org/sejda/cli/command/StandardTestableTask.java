@@ -22,8 +22,9 @@ import org.sejda.cli.CommandLineTestBuilder;
 import org.sejda.cli.DefaultsProvider;
 
 /**
+ * {@link TestableTask} available in the standard sejda console
+ * 
  * @author Andrea Vacondio
- *
  */
 public enum StandardTestableTask implements TestableTask {
 
