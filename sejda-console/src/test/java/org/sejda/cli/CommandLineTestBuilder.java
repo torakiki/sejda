@@ -19,9 +19,9 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -190,8 +190,8 @@ public class CommandLineTestBuilder {
     }
 
     public <T> T invokeSejdaConsole() {
-        return (T) new CommandLineExecuteTestHelper(true).invokeConsoleAndReturnTaskParameters(this
-                .toCommandLineString());
+        return (T) new CommandLineExecuteTestHelper(true)
+                .invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
     }
 }
 
@@ -205,29 +205,34 @@ public class CommandLineTestBuilder {
 class CommandLineExecuteTestHelper {
     protected TaskExecutionService taskExecutionService;
     private SystemOutRecordingStream newSystemOut = new SystemOutRecordingStream(System.out);
+    private Map<CustomizableProps, String> customs;
 
     CommandLineExecuteTestHelper(boolean useMockTaskExecutionService) {
+        this(useMockTaskExecutionService, new HashMap<>());
+        customs.put(CustomizableProps.APP_NAME, "Sejda Console");
+        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/LICENSE.txt");
+    }
+
+    CommandLineExecuteTestHelper(boolean useMockTaskExecutionService, Map<CustomizableProps, String> customs) {
         if (useMockTaskExecutionService) {
             taskExecutionService = mock(TaskExecutionService.class);
         } else {
             taskExecutionService = new DefaultTaskExecutionService();
         }
+        this.customs = customs;
     }
 
     private SejdaConsole getConsole(String commandLine) {
         String[] args = parseCommandLineArgs(commandLine);
-        return new SejdaConsole(args, new DefaultTaskExecutionAdapter(taskExecutionService));
+        return new SejdaConsole(args, new DefaultTaskExecutionAdapter(taskExecutionService), customs);
     }
 
     /**
      * Simulate's java's cli argument parsing. That means {@code java MyProgram 1234 www.caltech.edu "olive festival"} has 3 arguments: <br/>
      * <ul>
-     * <li>
-     * args[0] = "1234"</li>
-     * <li>
-     * args[1] = "www.caltech.edu"</li>
-     * <li>
-     * args[2] = "olive festival"</li>
+     * <li>args[0] = "1234"</li>
+     * <li>args[1] = "www.caltech.edu"</li>
+     * <li>args[2] = "olive festival"</li>
      * <ul/>
      * 
      */
@@ -301,8 +306,7 @@ class CommandLineExecuteTestHelper {
         invokeConsoleIgnoringExpectedExceptions(commandLine);
 
         // now Mockito can provide some context to verification failures, yay
-        verify(
-                taskExecutionService,
+        verify(taskExecutionService,
                 once("Command '" + commandLine
                         + "' did not reach task execution, as was expected. Console output was: \n"
                         + getCapturedSystemOut())).execute(taskPrametersCaptor.capture());

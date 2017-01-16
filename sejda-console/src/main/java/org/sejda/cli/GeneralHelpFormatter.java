@@ -19,6 +19,8 @@
  */
 package org.sejda.cli;
 
+import java.util.Map;
+
 import org.sejda.cli.command.CliCommand;
 import org.sejda.cli.command.CliCommands;
 import org.sejda.cli.util.FormattingUtils;
@@ -35,14 +37,16 @@ public final class GeneralHelpFormatter {
     private static final String DOUBLE_LINE_BREAK = "\n\n";
     private static final int LINE_WIDTH = 80;
     private final int maximumLengthForCommandDisplayName;
+    private final Map<CustomizableProps, String> customs;
 
-    public GeneralHelpFormatter() {
+    public GeneralHelpFormatter(Map<CustomizableProps, String> customs) {
         this.maximumLengthForCommandDisplayName = getMaxWidthOfCommandDisplayName();
+        this.customs = customs;
     }
 
     public String getFormattedString() {
         StringBuilder helpMessage = new StringBuilder();
-        helpMessage.append("Sejda Console").append(DOUBLE_LINE_BREAK).append("Basic commands:")
+        helpMessage.append(customs.get(CustomizableProps.APP_NAME)).append(DOUBLE_LINE_BREAK).append("Basic commands:")
                 .append(DOUBLE_LINE_BREAK);
 
         for (CliCommand each : CliCommands.COMMANDS) {

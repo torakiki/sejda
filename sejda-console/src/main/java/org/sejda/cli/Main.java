@@ -19,6 +19,9 @@
  */
 package org.sejda.cli;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.sejda.core.service.DefaultTaskExecutionService;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -41,7 +44,10 @@ public final class Main {
         // bridging between jul and slf4j
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
-        new SejdaConsole(args, getTaskExecutionAdapter()).execute();
+        Map<CustomizableProps, String> customs = new HashMap<>();
+        customs.put(CustomizableProps.APP_NAME, "Sejda Console");
+        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/LICENSE.txt");
+        new SejdaConsole(args, getTaskExecutionAdapter(), customs).execute();
     }
 
     private static TaskExecutionAdapter getTaskExecutionAdapter() {
