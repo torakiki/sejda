@@ -20,8 +20,8 @@
 package org.sejda.cli;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.junit.Test;
 import org.sejda.cli.command.StandardTestableTask;

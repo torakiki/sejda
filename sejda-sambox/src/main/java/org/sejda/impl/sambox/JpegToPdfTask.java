@@ -97,7 +97,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
                     float ratio = (float) width / targetWidth;
                     width = targetWidth;
-                    height = Math.round((float) height / ratio);
+                    height = Math.round(height / ratio);
                 }
 
                 if (height > mediaBox.getHeight()) {
@@ -106,7 +106,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
                     float ratio = (float) height / targetHeight;
                     height = targetHeight;
-                    width = Math.round((float) width / ratio);
+                    width = Math.round(width / ratio);
                 }
 
                 // centered on page

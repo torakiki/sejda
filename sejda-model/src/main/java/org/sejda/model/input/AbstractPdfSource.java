@@ -71,6 +71,7 @@ public abstract class AbstractPdfSource<T> implements PdfSource<T> {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }

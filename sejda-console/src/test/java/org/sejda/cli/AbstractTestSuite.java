@@ -19,11 +19,11 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

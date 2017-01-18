@@ -21,6 +21,7 @@ package org.sejda.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class ArgsFromFileTest extends AcrossAllTasksTraitTest {
     public void readArgsFromFile() throws IOException {
         File tmp = File.createTempFile("console", "args.txt");
         tmp.deleteOnExit();
-        FileUtils.write(tmp, defaultCommandLine().toCommandLineString());
+        FileUtils.write(tmp, defaultCommandLine().toCommandLineString(), Charset.defaultCharset());
 
         new CommandLineExecuteTestHelper(true).invokeConsoleAndReturnTaskParameters(tmp.getAbsolutePath());
     }

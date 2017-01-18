@@ -25,6 +25,7 @@ import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -210,7 +211,7 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
     protected List<String> doParseFileNames(File file) throws IOException {
         List<String> resultingFileNames = new ArrayList<>();
 
-        List<String> lines = IOUtils.readLines(new FileInputStream(file));
+        List<String> lines = IOUtils.readLines(new FileInputStream(file), Charset.defaultCharset());
         for (String eachLine : lines) {
             String[] splitLine = StringUtils.split(eachLine.toString(), ",");
             resultingFileNames.addAll(Arrays.asList(splitLine));

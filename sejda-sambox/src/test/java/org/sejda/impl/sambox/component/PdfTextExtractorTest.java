@@ -47,22 +47,25 @@ public class PdfTextExtractorTest {
 
     @Test
     public void skipNullPage() throws IOException, TaskException {
-        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
-        victim.extract((PDPage) null);
+        try (PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile())) {
+            victim.extract((PDPage) null);
+        }
     }
 
     @Test
     public void skipNoContentsPage() throws IOException, TaskException {
         PDPage page = mock(PDPage.class);
         when(page.hasContents()).thenReturn(Boolean.FALSE);
-        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
-        victim.extract(page);
+        try (PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile())) {
+            victim.extract(page);
+        }
     }
 
     @Test
     public void skipNullDocument() throws IOException, TaskException {
-        PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile());
-        victim.extract((PDDocument) null);
+        try (PdfTextExtractor victim = new PdfTextExtractor("UTF-8", folder.newFile())) {
+            victim.extract((PDDocument) null);
+        }
     }
 
     @Test
