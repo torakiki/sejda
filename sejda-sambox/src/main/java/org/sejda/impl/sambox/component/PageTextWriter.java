@@ -24,11 +24,13 @@ import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
 import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.sejda.core.support.util.StringUtils;
@@ -136,8 +138,8 @@ public class PageTextWriter {
             cropOffsetY = cropSize.getLowerLeftX();
         }
 
-        LOG.debug("media: {} crop: {}", mediaSize, cropSize);
-        LOG.debug("offsets: {}, {} and rotation", cropOffsetX, cropOffsetY, page.getRotation());
+        LOG.trace("media: {} crop: {}", mediaSize, cropSize);
+        LOG.trace("offsets: {}, {} and rotation", cropOffsetX, cropOffsetY, page.getRotation());
 
         position = new Point((int) position.getX() + (int)cropOffsetX, (int)position.getY() + (int)cropOffsetY);
 
@@ -186,17 +188,19 @@ public class PageTextWriter {
                     contentStream.setFont(resolvedFont, (float) resolvedFontSize);
 
                     if (page.getRotation() > 0) {
-                        LOG.debug("Unrotated position {}", resolvedPosition);
+                        LOG.trace("Unrotated position {}", resolvedPosition);
                         Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize, resolvedPosition);
 
-                        LOG.debug("Will write string '{}' using font {} at position {}", resolvedLabel, resolvedFont.getName(), rotatedPosition);
+                        LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
+                                resolvedFont.getName(), rotatedPosition);
 
                         AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(), rotatedPosition.getY());
                         tx.rotate(Math.toRadians(page.getRotation()));
                         contentStream.setTextMatrix(new Matrix(tx));
 
                     } else {
-                        LOG.debug("Will write string '{}' using font {} at position {}", resolvedLabel, resolvedFont.getName(), resolvedPosition);
+                        LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
+                                resolvedFont.getName(), resolvedPosition);
 
                         contentStream.setTextMatrix(
                                 new Matrix(AffineTransform.getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY())));
@@ -301,7 +305,7 @@ public class PageTextWriter {
         }
 
         for(TextWithFont each: result) {
-            LOG.debug("Will write '{}' with {}", each.getText(), each.getFont());
+            LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
         }
 
         result.add(new TextWithFont(currentString.toString(), currentFont));
