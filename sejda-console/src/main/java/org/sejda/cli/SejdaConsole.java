@@ -56,6 +56,7 @@ public class SejdaConsole {
         this.taskExecutionAdapter = taskExecutionAdapter;
         this.customs = ofNullable(customs).map(HashMap::new).orElseGet(HashMap::new);
         this.customs.putIfAbsent(CustomizableProps.APP_NAME, "Sejda Console");
+        Sejda.CREATOR = String.format("%s %s", this.customs.get(CustomizableProps.APP_NAME), Sejda.VERSION);
     }
 
     /**
