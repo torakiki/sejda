@@ -26,6 +26,10 @@
 	"files": 
 	[
 		{
+			"includePattern": "sejda-console/target/(.*)\\.(jar|asc|md5|pom)",
+			"uploadPattern": "org/sejda/sejda-console/${project.version}/$1.$2"
+		},
+		{
 			"includePattern": "sejda-conversion/target/(.*)\\.(jar|asc|md5|pom)",
 			"uploadPattern": "org/sejda/sejda-conversion/${project.version}/$1.$2"
 		},
