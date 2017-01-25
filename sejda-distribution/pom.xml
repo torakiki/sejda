@@ -78,11 +78,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-example</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
 			<artifactId>sejda-conversion</artifactId>
 			<version>${project.version}</version>
 		</dependency>
