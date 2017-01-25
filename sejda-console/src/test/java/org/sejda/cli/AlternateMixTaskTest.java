@@ -24,7 +24,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.sejda.model.parameter.AlternateMixParameters;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 
 /**
  * Tests for the AlternateMixTask command line interface
@@ -35,50 +36,50 @@ import org.sejda.model.parameter.AlternateMixParameters;
 public class AlternateMixTaskTest extends AbstractTaskTest {
 
     public AlternateMixTaskTest() {
-        super(TestableTask.ALTERNATE_MIX);
+        super(StandardTestableTask.ALTERNATE_MIX);
     }
 
     @Override
     protected CommandLineTestBuilder defaultCommandLine() {
-        return new CommandLineTestBuilder(getTaskName()).with("-f", "inputs/input.pdf inputs/second_input.pdf").with(
-                "-o", "./outputs/fileOutput.pdf");
+        return new CommandLineTestBuilder(getTaskName()).with("-f", "inputs/input.pdf inputs/second_input.pdf")
+                .with("-o", "./outputs/fileOutput.pdf");
     }
 
     @Test
     public void testFlagOptions_on() {
-        AlternateMixParameters parameters = defaultCommandLine().withFlag("--reverseFirst").withFlag("--reverseSecond")
-                .invokeSejdaConsole();
-        assertTrue(parameters.getFirstInput().isReverse());
-        assertTrue(parameters.getSecondInput().isReverse());
+        AlternateMixMultipleInputParameters parameters = defaultCommandLine().withFlag("--reverseFirst")
+                .withFlag("--reverseSecond").invokeSejdaConsole();
+        assertTrue(parameters.getInputList().get(0).isReverse());
+        assertTrue(parameters.getInputList().get(1).isReverse());
     }
 
     @Test
     public void testFlagOptions_off() {
-        AlternateMixParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertFalse(parameters.getFirstInput().isReverse());
-        assertFalse(parameters.getSecondInput().isReverse());
+        AlternateMixMultipleInputParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertFalse(parameters.getInputList().get(0).isReverse());
+        assertFalse(parameters.getInputList().get(1).isReverse());
     }
 
     @Test
     public void testDefaults() {
-        AlternateMixParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals(1, parameters.getFirstInput().getStep());
-        assertEquals(1, parameters.getSecondInput().getStep());
+        AlternateMixMultipleInputParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals(1, parameters.getInputList().get(0).getStep());
+        assertEquals(1, parameters.getInputList().get(1).getStep());
     }
 
     @Test
     public void testNonDefaults() {
-        AlternateMixParameters parameters = defaultCommandLine().with("--firstStep", "5").with("--secondStep", "9")
-                .invokeSejdaConsole();
-        assertEquals(5, parameters.getFirstInput().getStep());
-        assertEquals(9, parameters.getSecondInput().getStep());
+        AlternateMixMultipleInputParameters parameters = defaultCommandLine().with("--firstStep", "5")
+                .with("--secondStep", "9").invokeSejdaConsole();
+        assertEquals(5, parameters.getInputList().get(0).getStep());
+        assertEquals(9, parameters.getInputList().get(1).getStep());
     }
 
     @Test
     public void testFileInputs_positive() {
-        AlternateMixParameters parameters = defaultCommandLine().invokeSejdaConsole();
-        assertEquals("input.pdf", parameters.getFirstInput().getSource().getName());
-        assertEquals("second_input.pdf", parameters.getSecondInput().getSource().getName());
+        AlternateMixMultipleInputParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        assertEquals("input.pdf", parameters.getInputList().get(0).getSource().getName());
+        assertEquals("second_input.pdf", parameters.getInputList().get(1).getSource().getName());
     }
 
     @Test

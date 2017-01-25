@@ -24,6 +24,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.cli.command.TestableTask;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 
@@ -41,7 +43,8 @@ public class PageRangesTraitTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return asParameterizedTestData(
-                Arrays.asList(TestableTask.PDF_TO_JPEG, TestableTask.PDF_TO_MULTIPLE_TIFF, TestableTask.EXTRACT_PAGES));
+                Arrays.asList(StandardTestableTask.PDF_TO_JPEG, StandardTestableTask.PDF_TO_MULTIPLE_TIFF,
+                        StandardTestableTask.EXTRACT_PAGES));
     }
 
     @Test

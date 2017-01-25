@@ -19,6 +19,8 @@
  */
 package org.sejda.cli;
 
+import static java.util.Optional.ofNullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,13 +46,17 @@ public class SejdaConsole {
     private static final Logger LOG = LoggerFactory.getLogger(SejdaConsole.class);
 
     private final RawArguments arguments;
-
+    private final Map<CustomizableProps, String> customs;
     private final TaskExecutionAdapter taskExecutionAdapter;
 
-    public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter) {
+    public SejdaConsole(String[] rawArguments, TaskExecutionAdapter taskExecutionAdapter,
+            Map<CustomizableProps, String> customs) {
         Thread.setDefaultUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler());
         this.arguments = new RawArguments(rawArguments.clone());
         this.taskExecutionAdapter = taskExecutionAdapter;
+        this.customs = ofNullable(customs).map(HashMap::new).orElseGet(HashMap::new);
+        this.customs.putIfAbsent(CustomizableProps.APP_NAME, "Sejda Console");
+        Sejda.CREATOR = String.format("%s %s", this.customs.get(CustomizableProps.APP_NAME), Sejda.VERSION);
     }
 
     /**
@@ -123,20 +129,21 @@ public class SejdaConsole {
     }
 
     private void printGeneralHelp() {
-        LOG.info(new GeneralHelpFormatter().getFormattedString());
+        LOG.info(new GeneralHelpFormatter(customs).getFormattedString());
     }
 
     private void printVersionAndLicense() {
-        StringBuilder info = new StringBuilder(String.format("\nSejda Console (Version %s)\n", Sejda.VERSION));
+        StringBuilder info = new StringBuilder(
+                String.format("\n%s (Version %s)\n", customs.get(CustomizableProps.APP_NAME), Sejda.VERSION));
         info.append("(see http://www.sejda.org for more information)\n\n");
-        try (BufferedReader buffer = new BufferedReader(
-                new InputStreamReader(SejdaConsole.class.getResourceAsStream("/sejda-console/LICENSE.txt")))) {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(
+                SejdaConsole.class.getResourceAsStream(customs.get(CustomizableProps.LICENSE_PATH))))) {
             buffer.lines().forEach(l -> {
                 info.append(l);
                 info.append(System.lineSeparator());
             });
         } catch (IOException e) {
-            LOG.error("An error occurred while reading license information", e);
+            LOG.error("An error occurred while reading license information, please refer to http://www.sejda.org", e);
         }
         LOG.info(info.toString());
     }

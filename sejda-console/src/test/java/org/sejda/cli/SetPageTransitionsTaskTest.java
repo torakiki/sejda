@@ -20,10 +20,11 @@
 package org.sejda.cli;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
@@ -37,7 +38,7 @@ import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 public class SetPageTransitionsTaskTest extends AbstractTaskTest {
 
     public SetPageTransitionsTaskTest() {
-        super(TestableTask.SET_PAGE_TRANSITIONS);
+        super(StandardTestableTask.SET_PAGE_TRANSITIONS);
     }
 
     @Test

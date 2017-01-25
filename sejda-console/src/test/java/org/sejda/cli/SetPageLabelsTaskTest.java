@@ -22,6 +22,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
@@ -35,7 +36,7 @@ import org.sejda.model.pdf.label.PdfPageLabel;
 public class SetPageLabelsTaskTest extends AbstractTaskTest {
 
     public SetPageLabelsTaskTest() {
-        super(TestableTask.SET_PAGE_LABELS);
+        super(StandardTestableTask.SET_PAGE_LABELS);
     }
 
     @Test

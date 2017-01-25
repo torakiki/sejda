@@ -48,9 +48,10 @@ public class OcrTextExtractorTest {
     @Test
     public void testSetEmptyLanguage() {
         OCR ocr = mock(OCR.class);
-        OcrTextExtractor victim = new OcrTextExtractor(mock(Writer.class), ocr);
-        victim.setLanguage(Collections.emptySet());
-        verify(ocr).setLanguage("eng");
+        try (OcrTextExtractor victim = new OcrTextExtractor(mock(Writer.class), ocr)) {
+            victim.setLanguage(Collections.emptySet());
+            verify(ocr).setLanguage("eng");
+        }
     }
 
     @Test
@@ -59,8 +60,9 @@ public class OcrTextExtractorTest {
         Set<Locale> locales = new LinkedHashSet<>();
         locales.add(Locale.ENGLISH);
         locales.add(Locale.ITALIAN);
-        OcrTextExtractor victim = new OcrTextExtractor(mock(Writer.class), ocr);
-        victim.setLanguage(locales);
-        verify(ocr).setLanguage("eng+ita");
+        try (OcrTextExtractor victim = new OcrTextExtractor(mock(Writer.class), ocr)) {
+            victim.setLanguage(locales);
+            verify(ocr).setLanguage("eng+ita");
+        }
     }
 }

@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.page.PageRange;
@@ -39,7 +40,7 @@ import org.sejda.model.pdf.page.PageRange;
 public class ExtractPagesTaskTest extends AbstractTaskTest {
 
     public ExtractPagesTaskTest() {
-        super(TestableTask.EXTRACT_PAGES);
+        super(StandardTestableTask.EXTRACT_PAGES);
     }
 
     @Test

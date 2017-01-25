@@ -28,6 +28,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.cli.command.TestableTask;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 
@@ -41,7 +43,7 @@ public class ImageFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] { { TestableTask.PDF_TO_SINGLE_TIFF } });
+        return Arrays.asList(new Object[][] { { StandardTestableTask.PDF_TO_SINGLE_TIFF } });
     }
 
     public ImageFormatOutputTraitTest(TestableTask testableTask) {

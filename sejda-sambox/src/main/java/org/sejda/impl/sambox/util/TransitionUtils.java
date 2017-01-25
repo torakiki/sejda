@@ -116,9 +116,11 @@ public final class TransitionUtils {
         switch (from.getStyle()) {
         case BOX_INWARD:
         case SPLIT_HORIZONTAL_INWARD:
+        case SPLIT_VERTICAL_INWARD:
             to.setMotion(PDTransitionMotion.I);
             break;
         case BOX_OUTWARD:
+        case SPLIT_HORIZONTAL_OUTWARD:
         case SPLIT_VERTICAL_OUTWARD:
             to.setMotion(PDTransitionMotion.O);
             break;

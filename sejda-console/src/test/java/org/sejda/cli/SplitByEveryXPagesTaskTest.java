@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 
 /**
@@ -36,7 +37,7 @@ import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 public class SplitByEveryXPagesTaskTest extends AbstractTaskTest {
 
     public SplitByEveryXPagesTaskTest() {
-        super(TestableTask.SPLIT_BY_EVERY);
+        super(StandardTestableTask.SPLIT_BY_EVERY);
     }
 
     @Test

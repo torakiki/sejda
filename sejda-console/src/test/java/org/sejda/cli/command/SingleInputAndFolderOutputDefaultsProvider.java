@@ -1,5 +1,5 @@
 /*
- * Created on 27 ago 2016
+ * Created on 15 gen 2017
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,23 +16,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.parameter;
+package org.sejda.cli.command;
 
-import java.util.List;
-
-import org.sejda.model.input.PdfMixInput;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.parameter.base.SingleOutputTaskParameters;
+import org.sejda.cli.CommandLineTestBuilder;
+import org.sejda.cli.DefaultsProvider;
 
 /**
  * @author Andrea Vacondio
  *
  */
-public abstract class AbstractAlternateMixParameters extends AbstractPdfOutputParameters
-        implements SingleOutputTaskParameters {
+public class SingleInputAndFolderOutputDefaultsProvider implements DefaultsProvider {
 
-    /**
-     * @return the list of the documents to be mixed
-     */
-    public abstract List<PdfMixInput> getInputList();
+    @Override
+    public CommandLineTestBuilder provideDefaults(String taskName) {
+        return new CommandLineTestBuilder(taskName).defaultSingleInput().defaultFolderOutput();
+    }
 }

@@ -27,6 +27,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * Integration tests, running without mocks the example usage for each task
@@ -39,7 +41,7 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return asParameterizedTestData(
-                TestableTask.allTasksExceptFor(TestableTask.getTasksWith(TestableTask::hasFolderOutput)));
+                TestableTasks.allTasksExceptFor(TestableTasks.getTasksWith(TestableTasks::hasFolderOutput)));
     }
 
     public ExampleUsageIntegrationTest(TestableTask testableTask) {
@@ -48,7 +50,8 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
 
     @Test
     public void executeExampleUsage() {
-        String exampleUsage = testableTask.command.getExampleUsage();
+        String exampleUsage = testableTask.getCommand().getExampleUsage();
+        System.out.println(testableTask.getCommand());
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
         assertTaskCompletes(exampleUsage + " --overwrite");
     }

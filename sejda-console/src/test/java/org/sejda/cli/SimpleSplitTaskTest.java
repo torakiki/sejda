@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SimpleSplitParameters;
 
@@ -38,7 +39,7 @@ import org.sejda.model.parameter.SimpleSplitParameters;
 public class SimpleSplitTaskTest extends AbstractTaskTest {
 
     public SimpleSplitTaskTest() {
-        super(TestableTask.SIMPLE_SPLIT);
+        super(StandardTestableTask.SIMPLE_SPLIT);
     }
 
     @Test

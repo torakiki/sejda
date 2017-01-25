@@ -21,6 +21,8 @@ package org.sejda.cli.command;
 import org.sejda.model.parameter.base.TaskParameters;
 
 /**
+ * Defines a command line command
+ * 
  * @author Andrea Vacondio
  *
  */
@@ -51,5 +53,8 @@ public interface CliCommand {
      */
     TaskParameters parseTaskParameters(String[] rawArguments);
 
+    /**
+     * @return the argument class for this command
+     */
     Class<?> getCliArgumentsClass();
 }

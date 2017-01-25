@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitDownTheMiddleParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -359,7 +358,7 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
-    public void lastFirstRepagination() throws TaskException, IOException {
+    public void lastFirstRepagination() throws IOException {
         setUpParameters("pdf/split_in_two_last_first_repagination_sample.pdf");
         parameters.setRepagination(Repagination.LAST_FIRST);
         execute(parameters);
@@ -379,7 +378,7 @@ public abstract class SplitDownTheMiddleTaskTest extends BaseTaskTest<SplitDownT
     }
 
     @Test
-    public void lastFirstRepaginationUnevenPagePairs() throws TaskException, IOException {
+    public void lastFirstRepaginationUnevenPagePairs() throws IOException {
         setUpParameters("pdf/split_in_two_last_first_repagination_uneven_sample.pdf");
         parameters.setRepagination(Repagination.LAST_FIRST);
         execute(parameters);

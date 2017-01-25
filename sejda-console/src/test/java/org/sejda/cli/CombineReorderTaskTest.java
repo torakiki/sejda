@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.rotation.Rotation;
@@ -28,7 +29,7 @@ import org.sejda.model.rotation.Rotation;
 public class CombineReorderTaskTest extends AbstractTaskTest {
 
     public CombineReorderTaskTest() {
-        super(TestableTask.COMBINE_REORDER);
+        super(StandardTestableTask.COMBINE_REORDER);
     }
 
     @Test

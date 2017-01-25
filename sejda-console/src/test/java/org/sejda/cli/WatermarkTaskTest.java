@@ -21,6 +21,7 @@ package org.sejda.cli;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.WatermarkParameters;
 import org.sejda.model.watermark.Location;
 
@@ -31,7 +32,7 @@ import org.sejda.model.watermark.Location;
 public class WatermarkTaskTest extends AbstractTaskTest {
 
     public WatermarkTaskTest() {
-        super(TestableTask.WATERMARK);
+        super(StandardTestableTask.WATERMARK);
     }
 
     @Test

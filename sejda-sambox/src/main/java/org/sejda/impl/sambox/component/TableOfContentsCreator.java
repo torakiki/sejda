@@ -26,7 +26,8 @@ import static org.sejda.util.RequireUtils.requireArg;
 import static org.sejda.util.RequireUtils.requireNotBlank;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Point;
 import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -200,7 +201,7 @@ public class TableOfContentsCreator {
     }
 
     private float stringLength(String text) throws TaskIOException {
-        return (float) writer.getStringWidth(text, font, fontSize);
+        return writer.getStringWidth(text, font, fontSize);
     }
 
     public boolean hasToc() {

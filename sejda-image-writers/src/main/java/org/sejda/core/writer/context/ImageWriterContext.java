@@ -19,7 +19,6 @@
  */
 package org.sejda.core.writer.context;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.lang.reflect.Constructor;
@@ -42,11 +41,6 @@ public final class ImageWriterContext {
     private static final Logger LOG = LoggerFactory.getLogger(ImageWriterContext.class);
 
     private static final String IMAGE_WRITER_FACTORY_CLASS = "sejda.image.writer.factory.class";
-    /**
-     * @deprecated use IMAGE_WRITER_FACTORY_CLASS
-     */
-    @Deprecated
-    private static final String OLD_IMAGE_WRITER_FACTORY_CLASS = "org.sejda.image.writer.factory.class";
 
     private final ImageWriterAbstractFactory factory;
     private final ImageWriterAbstractFactory defaultFactory;
@@ -85,8 +79,7 @@ public final class ImageWriterContext {
 
     private static ImageWriterAbstractFactory newNonDefaultFactory() {
         ImageWriterAbstractFactory retVal = null;
-        String factoryClassString = defaultString(System.getProperty(IMAGE_WRITER_FACTORY_CLASS),
-                System.getProperty(OLD_IMAGE_WRITER_FACTORY_CLASS));
+        String factoryClassString = System.getProperty(IMAGE_WRITER_FACTORY_CLASS);
 
         if (isNotBlank(factoryClassString)) {
             LOG.trace("Instantiating custom ImageWriterAbstractFactory: {}", factoryClassString);

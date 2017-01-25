@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 import org.sejda.core.service.AlternateMixTaskTest;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.parameter.AbstractAlternateMixParameters;
+import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.pdmodel.PDPage;
 
@@ -37,7 +37,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 public class AlternateMixSamboxTaskTest extends AlternateMixTaskTest {
 
     @Override
-    public Task<AbstractAlternateMixParameters> getTask() {
+    public Task<AlternateMixMultipleInputParameters> getTask() {
         return new AlternateMixTask();
     }
 

@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CombineReorderParameters;
@@ -57,7 +56,7 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
     }
 
     @Test
-    public void combineAndReorder() throws TaskException, IOException {
+    public void combineAndReorder() throws IOException {
         setUpParameters(basicInputs());
         parameters.addPage(0, 1);
         parameters.addPage(0, 2);
@@ -87,7 +86,7 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
     }
 
     @Test
-    public void addingBlankPages() throws TaskException, IOException {
+    public void addingBlankPages() throws IOException {
         setUpParameters(basicInputs());
         parameters.addPage(-1, -1);
         parameters.addPage(0, 1);
@@ -113,7 +112,7 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
     }
 
     @Test
-    public void combineAndReorderWithRotation() throws TaskException, IOException {
+    public void combineAndReorderWithRotation() throws IOException {
         setUpParameters(basicInputs());
         parameters.addPage(0, 1);
         parameters.addPage(1, 1, Rotation.DEGREES_90);

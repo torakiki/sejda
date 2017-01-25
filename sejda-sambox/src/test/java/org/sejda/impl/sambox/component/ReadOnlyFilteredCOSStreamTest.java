@@ -62,7 +62,7 @@ public class ReadOnlyFilteredCOSStreamTest {
     private ReadOnlyFilteredCOSStream victim;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         dictionary = new COSDictionary();
         stream = new ByteArrayInputStream(new byte[] { 1, 2 });
         victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 2);

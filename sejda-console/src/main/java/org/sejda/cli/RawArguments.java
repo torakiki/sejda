@@ -2,12 +2,14 @@ package org.sejda.cli;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.cli.command.CliCommand;
 import org.sejda.cli.command.CliCommands;
+import org.sejda.cli.command.StandardCliCommand;
 import org.sejda.cli.util.CommandLineUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +94,7 @@ class RawArguments {
         // Read args from file to overcome https://support.microsoft.com/en-us/kb/830473
         if(this.arguments.length == 1 && this.arguments[0].endsWith("args.txt")) {
             try {
-                String argsAsString = FileUtils.readFileToString(new File(this.arguments[0]));
+                String argsAsString = FileUtils.readFileToString(new File(this.arguments[0]), Charset.defaultCharset());
                 this.arguments = CommandLineUtils.translateCommandline(argsAsString);
                 LOG.info("Read arguments from file");
             } catch (IOException e) {

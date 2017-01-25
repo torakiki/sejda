@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
@@ -37,7 +38,7 @@ import org.sejda.model.rotation.Rotation;
 public class RotateTaskTest extends AbstractTaskTest {
 
     public RotateTaskTest() {
-        super(TestableTask.ROTATE);
+        super(StandardTestableTask.ROTATE);
     }
 
     @Test

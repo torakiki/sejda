@@ -20,11 +20,16 @@
 package org.sejda.cli;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.sejda.StandardConsoleOnly;
 import org.sejda.cli.command.CliCommand;
 import org.sejda.cli.command.CliCommands;
 import org.sejda.core.Sejda;
@@ -35,6 +40,7 @@ import org.sejda.core.Sejda;
  * @author Eduard Weissmann
  * 
  */
+@Category(StandardConsoleOnly.class)
 public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
@@ -67,13 +73,20 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
 
     @Test
     public void testExecuteVersion() {
-        assertConsoleOutputContains("--version", "Sejda Console (Version " + Sejda.VERSION + ")");
+        Map<CustomizableProps, String> customs = new HashMap<>();
+        customs.put(CustomizableProps.APP_NAME, "Sejda Console");
+        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/LICENSE.txt");
+        new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--version",
+                "Sejda Console (Version " + Sejda.VERSION + ")");
     }
 
     @Test
     public void testExecuteLicense() throws IOException {
-        assertConsoleOutputContains("--license",
-                IOUtils.toString(getClass().getResourceAsStream("/sejda-console/LICENSE.txt")));
+        Map<CustomizableProps, String> customs = new HashMap<>();
+        customs.put(CustomizableProps.APP_NAME, "Sejda Console");
+        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/LICENSE.txt");
+        new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--license", IOUtils
+                .toString(getClass().getResourceAsStream("/sejda-console/LICENSE.txt"), StandardCharsets.UTF_8));
     }
 
     @Test

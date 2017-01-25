@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.pdf.page.PageRange;
 
@@ -33,7 +34,7 @@ import org.sejda.model.pdf.page.PageRange;
 public class AddBackPagesTaskTest extends AbstractTaskTest {
 
     public AddBackPagesTaskTest() {
-        super(TestableTask.ADD_BACK_PAGES);
+        super(StandardTestableTask.ADD_BACK_PAGES);
     }
 
     @Test

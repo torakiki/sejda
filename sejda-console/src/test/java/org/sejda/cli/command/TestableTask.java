@@ -1,5 +1,5 @@
 /*
- * Created on Sep 12, 2011
+ * Created on Aug 25, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
@@ -17,21 +17,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.cli.model;
+package org.sejda.cli.command;
 
-import com.lexicalscope.jewel.cli.CommandLineInterface;
-import com.lexicalscope.jewel.cli.Option;
+import org.sejda.cli.CommandLineTestBuilder;
+import org.sejda.cli.DefaultsProvider;
 
 /**
- * Specifications for command line options of the ExtractText task
+ * a Testable task
  * 
  * @author Eduard Weissmann
  * 
  */
-@CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " extracttext")
-public interface ExtractTextTaskCliArguments extends CliArgumentsWithTextAndDirectoryOutput,
-        CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
+public interface TestableTask {
 
-    @Option(shortName = "e", description = "text encoding, default is UTF-8 (optional)", defaultValue = "UTF-8")
-    String getTextEncoding();
+    DefaultsProvider getDefaultsProvider();
+
+    CliCommand getCommand();
+
+    default public CommandLineTestBuilder getCommandLineDefaults() {
+        return getDefaultsProvider().provideDefaults(getCommand().getDisplayName());
+    }
 }

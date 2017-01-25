@@ -58,10 +58,11 @@ public class PDDocumentHandlerTest {
     }
 
     @Test
-    public void testAddBlankPageIfOdd() throws Exception {
-        PDDocumentHandler handler = new PDDocumentHandler();
-        assertNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
-        handler.addBlankPage(new PDRectangle(10, 10));
-        assertNotNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
+    public void testAddBlankPageIfOdd() throws IOException {
+        try (PDDocumentHandler handler = new PDDocumentHandler()) {
+            assertNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
+            handler.addBlankPage(new PDRectangle(10, 10));
+            assertNotNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
+        }
     }
 }

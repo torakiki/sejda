@@ -24,7 +24,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.StandardConsoleOnly;
+import org.sejda.cli.command.StandardTestableTask;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.pdf.PdfVersion;
 
@@ -34,13 +39,14 @@ import org.sejda.model.pdf.PdfVersion;
  * @author Eduard Weissmann
  * 
  */
+@Category(StandardConsoleOnly.class)
 public class PdfFormatOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> testParameters() {
-        return asParameterizedTestData(TestableTask.allTasksExceptFor(TestableTask.UNPACK, TestableTask.EXTRACT_TEXT,
-                TestableTask.EXTRACT_TEXT_BY_PAGES, TestableTask.PDF_TO_SINGLE_TIFF, TestableTask.PDF_TO_MULTIPLE_TIFF,
-                TestableTask.PDF_TO_JPEG));
+        return asParameterizedTestData(
+                TestableTasks.allTasksExceptFor(StandardTestableTask.UNPACK, StandardTestableTask.PDF_TO_SINGLE_TIFF,
+                        StandardTestableTask.PDF_TO_MULTIPLE_TIFF, StandardTestableTask.PDF_TO_JPEG));
     }
 
     public PdfFormatOutputTraitTest(TestableTask testableTask) {

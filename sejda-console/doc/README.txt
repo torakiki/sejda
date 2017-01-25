@@ -1,7 +1,7 @@
 Sejda-console application.
 
 Documentation online
-* Available at http://www.sejda.org/shell-interface/
+* Available at http://www.sejda.org/
 
 Requirements
 * Java Runtime 1.8 (or newer)

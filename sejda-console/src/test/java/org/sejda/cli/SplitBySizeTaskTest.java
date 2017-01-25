@@ -24,6 +24,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 
@@ -36,7 +37,7 @@ import org.sejda.model.parameter.SplitBySizeParameters;
 public class SplitBySizeTaskTest extends AbstractTaskTest {
 
     public SplitBySizeTaskTest() {
-        super(TestableTask.SPLIT_BY_SIZE);
+        super(StandardTestableTask.SPLIT_BY_SIZE);
     }
 
     @Test

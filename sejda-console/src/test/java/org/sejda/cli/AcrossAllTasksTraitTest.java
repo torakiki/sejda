@@ -22,6 +22,8 @@ package org.sejda.cli;
 import java.util.Collection;
 
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 
 /**
  * 
@@ -38,7 +40,7 @@ public abstract class AcrossAllTasksTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public final static Collection<Object[]> testParameters() {
-        return asParameterizedTestData(TestableTask.allTasks());
+        return asParameterizedTestData(TestableTasks.allTasks());
     }
 
 }

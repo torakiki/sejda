@@ -29,6 +29,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.SingleTaskOutput;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.AtLeastTwo;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -38,7 +40,8 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * @author Andrea Vacondio
  */
 @SingleOutputAllowedExtensions
-public class AlternateMixMultipleInputParameters extends AbstractAlternateMixParameters {
+public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParameters
+        implements SingleOutputTaskParameters {
     @Valid
     @NotNull
     private SingleTaskOutput<?> output;
@@ -74,7 +77,6 @@ public class AlternateMixMultipleInputParameters extends AbstractAlternateMixPar
     /**
      * @return an unmodifiable view of the inputList
      */
-    @Override
     public List<PdfMixInput> getInputList() {
         return Collections.unmodifiableList(inputList);
     }

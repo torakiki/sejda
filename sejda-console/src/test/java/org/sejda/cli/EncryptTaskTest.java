@@ -19,14 +19,15 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.Collections;
 
 import org.junit.Test;
+import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.EncryptParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.pdf.encryption.PdfEncryption;
@@ -40,7 +41,7 @@ import org.sejda.model.pdf.encryption.PdfEncryption;
 public class EncryptTaskTest extends AbstractTaskTest {
 
     public EncryptTaskTest() {
-        super(TestableTask.ENCRYPT);
+        super(StandardTestableTask.ENCRYPT);
     }
 
     @Test

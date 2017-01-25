@@ -26,8 +26,9 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
+ * Available commands for the command line
+ * 
  * @author Andrea Vacondio
- *
  */
 public class CliCommands {
 

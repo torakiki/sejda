@@ -26,6 +26,8 @@ import java.util.Collection;
 
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
+import org.sejda.cli.command.TestableTask;
+import org.sejda.cli.command.TestableTasks;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -40,7 +42,7 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTask.getTasksWith(TestableTask::hasFolderOutput));
+        return asParameterizedTestData(TestableTasks.getTasksWith(TestableTasks::hasFolderOutput));
     }
 
     public FolderOutputTraitTest(TestableTask testableTask) {
