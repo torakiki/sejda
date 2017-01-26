@@ -1,23 +1,23 @@
-Sejda (http://www.sejda.org)
+Sejda SDK (http://www.sejda.org)
 =====
 [![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
 [![License](http://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
-An extendible and configurable PDF manipulation layer library written in Java. A ready to use java library to perform PDF document manipulation without having to deal with the low level API.
+Sejda SDK is an open source, task oriented PDF editor SDK library written in Java.
 
-Sejda offers a set of "ready to go" manipulations implemented using ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
+Sejda SDK offers a set of "ready to go" manipulations implemented using ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
 
-Quick start: http://www.sejda.org/development/quick-start/
+Quick start: https://github.com/torakiki/sejda/wiki/Getting-Started
 
-A full list of the available tasks: http://www.sejda.org/development/available-tasks/
+A full list of the available tasks: https://github.com/torakiki/sejda/wiki/Tasks
 
-CLI Interface
+Sejda console
 ----
-A platform independent CLI (command line interface) is available for download with every new release.
+`sejda-console` is a command line tool that can be used directly from the terminal or from your own code.
 
 Download latest from https://github.com/torakiki/sejda/releases
 
-Get started: http://www.sejda.org/shell-interface/tutorial/
+Get started: https://github.com/torakiki/sejda/wiki/Getting-Started
 
 Web Interface
 ----
@@ -43,9 +43,6 @@ A web interface is available at http://sejda.com where the most commonly used ta
 
 [PDF to JPG Images](http://sejda.com/pdf-to-jpg)
 
-Quality
-----
-We put a great effort trying to keep high quality standard for our code base, all the details on [SonarQube]
 
 License
 ----
