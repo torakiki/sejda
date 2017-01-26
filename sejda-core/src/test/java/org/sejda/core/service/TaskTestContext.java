@@ -456,4 +456,8 @@ public class TaskTestContext implements Closeable {
         }
         this.fileOutput = null;
     }
+
+    public File getFileOutput() {
+        return fileOutput;
+    }
 }
