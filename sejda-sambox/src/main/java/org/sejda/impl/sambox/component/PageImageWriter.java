@@ -105,7 +105,7 @@ public class PageImageWriter {
                 try {
                     return createFromFile(source.getSource().getPath());
                 } catch (IOException e) {
-                    throw new TaskIOException("An error occurred creating PDImageXObject from file source", e);
+                    throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + imageSource.getName(), e);
                 }
             }
 
@@ -119,7 +119,7 @@ public class PageImageWriter {
                     }
                     return createFromFile(tmp.getPath());
                 } catch (IOException e) {
-                    throw new TaskIOException("An error occurred creating PDImageXObject from file source", e);
+                    throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + imageSource.getName(), e);
                 }
             }
         });
