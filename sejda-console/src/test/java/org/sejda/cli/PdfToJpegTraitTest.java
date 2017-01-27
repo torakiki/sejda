@@ -51,14 +51,12 @@ public class PdfToJpegTraitTest extends AbstractTaskTraitTest {
     public void defaultParams() {
         PdfToJpegParameters result = defaultCommandLine().without("-r").invokeSejdaConsole();
         assertThat(result.getResolutionInDpi(), is(AbstractPdfToImageParameters.DEFAULT_DPI));
-        assertThat(result.getUserZoom(), is(1f));
     }
 
     @Test
     public void resolution() {
         PdfToJpegParameters result = defaultCommandLine().with("-r", "90").invokeSejdaConsole();
         assertThat(result.getResolutionInDpi(), is(90));
-        assertThat(result.getUserZoom(), is(1.25f));
     }
 
     @Test

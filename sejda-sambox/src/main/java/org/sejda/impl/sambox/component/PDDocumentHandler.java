@@ -38,6 +38,7 @@ import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.image.ImageColorType;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
@@ -57,7 +58,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
-import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -358,10 +358,10 @@ public class PDDocumentHandler implements Closeable {
         // TODO maybe we bring in the open action?
     }
 
-    public BufferedImage renderImage(int pageNumber, int dpi) throws TaskException {
+    public BufferedImage renderImage(int pageNumber, int dpi, ImageColorType type) throws TaskException {
         try {
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, ImageType.RGB);
+            return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, type.getBufferedImageType());
         } catch (IOException ex) {
             LOG.error("Failed to render page " + pageNumber, ex);
             throw new TaskException("Failed to render page " + pageNumber, ex);

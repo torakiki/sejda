@@ -155,7 +155,6 @@ public class BaseCliArgumentsTransformer {
             CliArgumentsWithImageOutput taskCliArguments) {
         if (taskCliArguments.isResolution()) {
             parameters.setResolutionInDpi(taskCliArguments.getResolution());
-            parameters.setUserZoom(taskCliArguments.getResolution() / 72.0f);
         }
     }
 

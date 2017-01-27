@@ -29,9 +29,6 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.ImageTestUtils;
-import org.sejda.core.TestListenerFactory;
-import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
@@ -80,18 +77,6 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setOutputPrefix("[BASENAME]-[PAGENUMBER]");
         doExecute(parameters, 2);
-    }
-
-
-    @Test
-    public void testWrongPageSelection() {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        parameters.addSource(shortInput());
-        parameters.addPageRange(new PageRange(10));
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
-        execute(parameters);
-        assertTrue(failListener.isFailed());
     }
 
     private void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {

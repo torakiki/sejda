@@ -1,5 +1,5 @@
 /*
- * Created on 26/set/2011
+ * Created on 16/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
@@ -17,20 +17,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.icepdf;
+package org.sejda.impl.sambox;
 
-import org.sejda.core.service.MultipleTiffConversionTaskTest;
-import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.core.service.SingleTiffConversionTaskTest;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 import org.sejda.model.task.Task;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class MultipleTiffConversionIcePdfTaskTest extends MultipleTiffConversionTaskTest {
+public class SingleTiffConversionSamboxTaskTest extends SingleTiffConversionTaskTest {
 
     @Override
-    public Task<PdfToMultipleTiffParameters> getTask() {
-        return new PdfToMultipleImageTask<PdfToMultipleTiffParameters>();
+    public Task<PdfToSingleTiffParameters> getTask() {
+        return new PdfToSingleImageTask<PdfToSingleTiffParameters>();
     }
+
 }

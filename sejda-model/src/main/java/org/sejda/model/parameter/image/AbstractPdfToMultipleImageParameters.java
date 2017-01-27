@@ -37,7 +37,6 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-import org.sejda.model.validation.constraint.Positive;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to multiple images of a specified type.
@@ -54,9 +53,6 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
     private int resolutionInDpi = DEFAULT_DPI;
     @NotNull
     private ImageColorType outputImageColorType;
-    @Valid
-    @Positive
-    private float userZoom = 1.0f;
 
     AbstractPdfToMultipleImageParameters(ImageColorType outputImageColorType) {
         this.outputImageColorType = outputImageColorType;
@@ -70,22 +66,6 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
     @Override
     public void setOutputImageColorType(ImageColorType outputImageColorType) {
         this.outputImageColorType = outputImageColorType;
-    }
-
-    @Override
-    public float getUserZoom() {
-        return userZoom;
-    }
-
-    /**
-     * Controls the resolution of the resulting images. Works well with vector pdf files, not with the ones that already have images embedded.
-     *
-     * @param userZoom
-     *            how much should the pdf page be zoomed in before it gets rendered as an image.
-     */
-    @Override
-    public void setUserZoom(float userZoom) {
-        this.userZoom = userZoom;
     }
 
     /**
@@ -154,7 +134,6 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
                 .append(resolutionInDpi, that.resolutionInDpi)
-                .append(userZoom, that.userZoom)
                 .append(outputImageColorType, that.outputImageColorType)
                 .append(pageSelection, that.pageSelection)
                 .isEquals();
@@ -166,7 +145,6 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
                 .appendSuper(super.hashCode())
                 .append(resolutionInDpi)
                 .append(outputImageColorType)
-                .append(userZoom)
                 .append(pageSelection)
                 .toHashCode();
     }

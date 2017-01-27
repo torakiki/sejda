@@ -42,10 +42,6 @@
 			"uploadPattern": "org/sejda/sejda-fonts/${project.version}/$1.$2"
 		},
 		{
-			"includePattern": "sejda-icepdf/target/(.*)\\.(jar|asc|md5|pom)",
-			"uploadPattern": "org/sejda/sejda-icepdf/${project.version}/$1.$2"
-		},
-		{
 			"includePattern": "sejda-image-writers/target/(.*)\\.(jar|asc|md5|pom)",
 			"uploadPattern": "org/sejda/sejda-image-writers/${project.version}/$1.$2"
 		},

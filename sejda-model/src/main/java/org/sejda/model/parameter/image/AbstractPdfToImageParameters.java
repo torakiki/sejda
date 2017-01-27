@@ -30,7 +30,6 @@ import org.sejda.model.image.ImageType;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
-import org.sejda.model.validation.constraint.Positive;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to an image of a specified type.
@@ -38,7 +37,8 @@ import org.sejda.model.validation.constraint.Positive;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractPdfToImageParameters extends AbstractParameters implements SinglePdfSourceTaskParameters, PdfToImageParameters {
+public abstract class AbstractPdfToImageParameters extends AbstractParameters
+        implements SinglePdfSourceTaskParameters, PdfToImageParameters {
 
     public static final int DEFAULT_DPI = 72;
 
@@ -49,8 +49,6 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Valid
     @NotNull
     private PdfSource<?> source;
-    @Positive
-    private float userZoom = 1.0f;
 
     @Override
     public PdfSource<?> getSource() {
@@ -76,22 +74,6 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         this.outputImageColorType = outputImageColorType;
     }
 
-    @Override
-    public float getUserZoom() {
-        return userZoom;
-    }
-
-    /**
-     * Controls the resolution of the resulting images. Works well with vector pdf files, not with the ones that already have images embedded.
-     * 
-     * @param userZoom
-     *            how much should the pdf page be zoomed in before it gets rendered as an image.
-     */
-    @Override
-    public void setUserZoom(float userZoom) {
-        this.userZoom = userZoom;
-    }
-
     /**
      * @return the type of image the task executing this parameter will convert the pdf source to.
      */
@@ -111,7 +93,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(resolutionInDpi).append(outputImageColorType)
-                .append(getOutputImageType()).append(source).append(userZoom).toHashCode();
+                .append(getOutputImageType()).append(source).toHashCode();
     }
 
     @Override
@@ -126,7 +108,7 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters im
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(resolutionInDpi, parameter.getResolutionInDpi())
                 .append(outputImageColorType, parameter.getOutputImageColorType())
-                .append(userZoom, parameter.getUserZoom()).append(getOutputImageType(), parameter.getOutputImageType())
-                .append(source, parameter.getSource()).isEquals();
+                .append(getOutputImageType(), parameter.getOutputImageType()).append(source, parameter.getSource())
+                .isEquals();
     }
 }

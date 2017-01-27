@@ -35,7 +35,6 @@ public abstract class MultipleJpegConversionTaskTest extends MultipleImageConver
         PdfToJpegParameters parameters = new PdfToJpegParameters();
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(300);
-        parameters.setUserZoom(1.5f);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }

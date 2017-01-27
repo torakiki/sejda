@@ -5,7 +5,7 @@ Sejda SDK (http://www.sejda.org)
 
 Sejda SDK is an open source, task oriented PDF editor SDK library written in Java.
 
-Sejda SDK offers a set of "ready to go" manipulations implemented using ICEpdf and [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
+Sejda SDK offers a set of "ready to go" manipulations implemented using [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
 
 Quick start: https://github.com/torakiki/sejda/wiki/Getting-Started
 

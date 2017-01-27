@@ -21,6 +21,7 @@ package org.sejda.impl.sambox;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -30,85 +31,86 @@ import java.io.File;
 import java.util.Set;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
-import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.writer.context.ImageWriterContext;
-import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.parameter.image.PdfToJpegParameters;
-import org.sejda.model.task.BaseTask;
+import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
+/**
+ * SAMBox implementation of a task which converts a pdf document to a collection of images, one image per page.
+ * 
+ * @param <T>
+ *            the type of parameters.
+ * @author Andrea Vacondio
+ * 
+ */
+public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParameters> extends BasePdfToImageTask<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToMultipleImageTask.class);
 
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> sourceOpener = new DefaultPdfSourceOpener();
-    private ImageWriter<PdfToJpegParameters> writer;
+    private PDDocumentHandler documentHandler = null;
 
     @Override
-    public void before(PdfToJpegParameters parameters, TaskExecutionContext executionContext) throws TaskException {
+    public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
-        writer = ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters);
-        if (writer == null) {
-            LOG.info("Unable to create an ImageWriter using the provided factory, falling back on default factory.");
-            writer = ImageWriterContext.getContext().getDefaultImageWriterFactory().createImageWriter(parameters);
-        }
-        if (writer == null) {
-            throw new TaskExecutionException(String.format("No suitable ImageWriter found for %s.", parameters));
-        }
-        LOG.trace("Found image writer {}", writer);
+        outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
-    public void execute(PdfToJpegParameters parameters) throws TaskException {
+    public void execute(T parameters) throws TaskException {
         int currentStep = 0;
         int currentFileNumber = 0;
         int totalSteps = parameters.getSourceList().size();
 
-        for(PdfSource<?> source: parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
+            currentStep++;
+            try {
+                LOG.debug("Opening {}", source);
+                documentHandler = source.open(sourceOpener);
 
-            PDDocumentHandler documentHandler = source.open(sourceOpener);
+                Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
+                if (!requestedPages.isEmpty()) {
+                    LOG.trace("Found {} pages to convert", totalSteps);
 
-            Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
-            if (requestedPages == null || requestedPages.isEmpty()) {
-                throw new TaskExecutionException("No page has been selected for conversion.");
+                    for (int currentPage : requestedPages) {
+
+                        File tmpFile = createTemporaryBuffer();
+                        LOG.debug("Created output temporary buffer {} ", tmpFile);
+
+                        try {
+                            LOG.trace("Converting page {}", currentPage);
+                            BufferedImage pageImage = documentHandler.renderImage(currentPage,
+                                    parameters.getResolutionInDpi(), parameters.getOutputImageColorType());
+
+                            getWriter().openWriteDestination(tmpFile, parameters);
+                            getWriter().write(pageImage, parameters);
+                            getWriter().closeDestination();
+
+                            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
+                                    nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
+                                            .originalName(source.getName()).fileNumber(currentFileNumber));
+                            outputWriter.addOutput(file(tmpFile).name(outName));
+                        } catch (TaskException e) {
+                            executionContext().assertTaskIsLenient(e);
+                            notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                                    String.format("Page %d was skipped, could not be converted", currentPage), e);
+                        }
+                    }
+                } else {
+                    LOG.warn("No page has been selected for conversion for {}.", source);
+                }
+            } finally {
+                nullSafeCloseQuietly(documentHandler);
             }
-
-            LOG.trace("Found {} pages to convert", totalSteps);
-
-            for (int currentPage : requestedPages) {
-                currentStep++;
-
-                File tmpFile = createTemporaryBuffer();
-                LOG.debug("Created output temporary buffer {} ", tmpFile);
-                LOG.trace("Writing page {}", currentPage);
-
-                BufferedImage pageImage = documentHandler.renderImage(currentPage, parameters.getResolutionInDpi());
-
-                writer.openWriteDestination(tmpFile, parameters);
-                LOG.trace("Writing page {}", currentPage);
-                writer.write(pageImage, parameters);
-                writer.closeDestination();
-
-                String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                        nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
-                                .originalName(source.getName()).fileNumber(currentFileNumber));
-                outputWriter.addOutput(file(tmpFile).name(outName));
-
-                notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
-            }
-
-            nullSafeCloseQuietly(documentHandler);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);
@@ -117,6 +119,7 @@ public class PdfToMultipleImageTask extends BaseTask<PdfToJpegParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(writer);
+        super.after();
+        nullSafeCloseQuietly(documentHandler);
     }
 }

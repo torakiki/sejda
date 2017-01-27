@@ -9,7 +9,6 @@
 
 	<logger name="org.sejda" level="INFO" />
 	<logger name="org.sejda.sambox" level="INFO" />
-	<logger name="org.icepdf" level="INFO" />
 	<logger name="org.hibernate" level="INFO" />
 
 	<!-- careful here. when the build is too verbose Travis-CI starts terminating it too early and deeming build failure.
