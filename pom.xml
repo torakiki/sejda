@@ -290,7 +290,7 @@
 		<hamcrest.version>1.3</hamcrest.version>
 		<sambox.version>1.0.40.RELEASE</sambox.version>
 		<xmlgraphics.version>2.1</xmlgraphics.version>
-		<bouncycastle.version>1.54</bouncycastle.version>
+		<bouncycastle.version>1.56</bouncycastle.version>
 		<twelvemonkeys.version>3.3.1</twelvemonkeys.version>
 		<apache.poi.version>3.15</apache.poi.version>
 		<tess4j.version>3.2.1</tess4j.version>
