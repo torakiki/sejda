@@ -98,8 +98,7 @@
 											<type>directory</type>
 											<mapper>
 												<type>perm</type>
-												<strip>1</strip>
-												<prefix>/usr/lib/${project.artifactId}/examples</prefix>
+												<prefix>/usr/share/doc/${project.artifactId}</prefix>
 												<filemode>644</filemode>
 												<dirmode>755</dirmode>
 											</mapper>
