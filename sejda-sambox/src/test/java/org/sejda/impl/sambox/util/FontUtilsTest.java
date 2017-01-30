@@ -116,6 +116,13 @@ public class FontUtilsTest {
     }
 
     @Test
+    public void canDisplayGeorgian() {
+        PDFont font = FontUtils.findFontFor(new PDDocument(), "ქართული ენა");
+        assertNotNull("No font available for Georgian", font);
+        assertThat(font.getName(), is("NotoSansGeorgian"));
+    }
+
+    @Test
     public void testCanDisplayType0FontsThatDontThrow() throws TaskIOException, IOException {
         PDDocument doc = getTestDoc("pdf/2-up-sample.pdf");
 
