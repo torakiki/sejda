@@ -39,7 +39,7 @@ public interface CliArgumentsWithFileOutput extends TaskCliArguments {
     @Option(description = "overwrite existing output file (optional)")
     boolean getOverwrite();
 
-    @Option(shortName = "j", hidden = true, description = "policy to use when an output file with the same name already exists. {overwrite, fail}. Default is 'fail' (optional)", defaultValue = "fail")
+    @Option(shortName = "j", hidden = true, description = "policy to use when an output file with the same name already exists. {overwrite, fail, rename}. Default is 'fail' (optional)", defaultValue = "fail")
     ExistingOutputPolicyAdapter getExistingOutput();
 
 }
