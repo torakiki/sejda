@@ -89,11 +89,19 @@ public class SejdaConsole {
                 printCommandHelp(command);
             } else {
                 validateNoDuplicateCommandArguments();
-                executeCommand(command);
+                try {
+                    executeCommand(command);
+                } finally {
+                    afterCommandExecuted();
+                }
             }
         }
 
         LOG.debug("Completed execution");
+    }
+
+    protected void afterCommandExecuted() {
+
     }
 
     /**
