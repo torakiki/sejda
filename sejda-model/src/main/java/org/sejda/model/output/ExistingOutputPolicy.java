@@ -28,6 +28,7 @@ import org.sejda.common.FriendlyNamed;
  */
 public enum ExistingOutputPolicy implements FriendlyNamed {
     OVERWRITE,
+    RENAME /* if output.pdf already exists, attempt to use output(1).pdf */,
     SKIP,
     FAIL;
 

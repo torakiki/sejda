@@ -38,6 +38,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -138,6 +139,12 @@ final class OutputWriterHelper {
                 Files.move(input.toPath(), output.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 executionContext.notifiableTaskMetadata().addTaskOutput(output);
                 break;
+            case RENAME:
+                File newNamedOutput = findNewNameThatDoesNotExist(output);
+                LOG.debug("Output exists {}, will use new name {}.", output, newNamedOutput);
+                doMoveFile(input, newNamedOutput);
+                executionContext.notifiableTaskMetadata().addTaskOutput(newNamedOutput);
+                break;
             case SKIP:
                 LOG.info("Skipping already existing output file {}", output);
                 break;
@@ -148,18 +155,44 @@ final class OutputWriterHelper {
             }
         } else {
             LOG.debug("Moving {} to {}.", input, output);
-            try {
-                FileUtils.moveFile(input, output);
-            } catch(IOException ex) {
-                if(ex.getMessage().contains("Failed to delete original file")) {
-                    // Don't crash the task because we have leftover temp files, just warn
-                    LOG.warn(ex.getMessage());
-                    input.deleteOnExit();
-                } else {
-                    throw ex;
-                }
-            }
+            doMoveFile(input, output);
             executionContext.notifiableTaskMetadata().addTaskOutput(output);
+        }
+    }
+
+    private static File findNewNameThatDoesNotExist(File output) throws IOException {
+        File newNamedOutput;
+        int count = 1;
+        int maxTries = 100;
+
+        do {
+            String basename = FilenameUtils.getBaseName(output.getName());
+            String extension = FilenameUtils.getExtension(output.getName());
+
+            String newName = String.format("%s(%d).%s", basename, count, extension);
+            newNamedOutput = new File(output.getParent(), newName);
+            count++;
+        } while(count < maxTries && newNamedOutput.exists());
+
+        if(newNamedOutput.exists()) {
+            LOG.warn("Unable to generate a new filename that does not exist, path was {}", output);
+            throw new IOException(String.format("Unable to generate a new filename that does not exist, path was %s", output));
+        }
+
+        return newNamedOutput;
+    }
+
+    private static void doMoveFile(File input, File output) throws IOException {
+        try {
+            FileUtils.moveFile(input, output);
+        } catch(IOException ex) {
+            if(ex.getMessage().contains("Failed to delete original file")) {
+                // Don't crash the task because we have leftover temp files, just warn
+                LOG.warn(ex.getMessage());
+                input.deleteOnExit();
+            } else {
+                throw ex;
+            }
         }
     }
 

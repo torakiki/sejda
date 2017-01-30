@@ -20,16 +20,16 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +51,8 @@ public class OutputWriterHelperTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder outputFolder = new TemporaryFolder();
 
     private TaskExecutionContext context;
 
@@ -212,6 +214,49 @@ public class OutputWriterHelperTest {
             fail("Exception expected");
         } catch (IOException e) {
             assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));
+        }
+    }
+
+    @Test
+    public void existingOutputPolicyRENAME_conflict() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("existing.pdf", folder.newFile());
+
+        File outFile = outputFolder.newFile("existing.pdf");
+        outputFolder.newFile("existing(1).pdf");
+        outputFolder.newFile("existing(2).pdf");
+
+        OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
+        assertThat(Arrays.asList(outputFolder.getRoot().list()), hasItem("existing(3).pdf"));
+
+    }
+
+    @Test
+    public void existingOutputPolicyRENAME_noConflict() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("ok.pdf", folder.newFile());
+
+        File outFile = new File(outputFolder.getRoot(), "ok.pdf");
+
+        OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
+        assertThat(Arrays.asList(outputFolder.getRoot().list()), hasItem("ok.pdf"));
+    }
+
+    @Test
+    public void existingOutputPolicyRENAME_exception() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("existing.pdf", folder.newFile());
+
+        File outFile = outputFolder.newFile("existing.pdf");
+        for(int i = 1; i <= 100; i++) {
+            outputFolder.newFile(String.format("existing(%d).pdf", i));
+        }
+
+        try {
+            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
+            fail("Exception expected, about the fact that a new filename that doesn't exist could not be generated");
+        } catch (IOException e) {
+            assertTrue("Different exception expected, got: " + e.getMessage(), e.getMessage().startsWith("Unable to generate a new filename that does not exist"));
         }
     }
 }
