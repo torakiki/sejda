@@ -28,11 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.PageLabelUtils;
@@ -55,6 +51,7 @@ import org.sejda.sambox.pdmodel.PDPageTree;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
@@ -415,5 +412,22 @@ public class PDDocumentHandler implements Closeable {
         PDPage result = new PDPage(target.getMediaBox());
         document.getPages().insertBefore(result, target);
         return result;
+    }
+
+    public PDFont findFont(String searchedName) {
+        for(PDPage page : document.getPages()){
+            for(COSName fontName: page.getResources().getFontNames()) {
+                try {
+                    PDFont font = page.getResources().getFont(fontName);
+                    if(font.getName().equalsIgnoreCase(searchedName)) {
+                        return font;
+                    }
+                } catch (IOException e) {
+                    LOG.warn("Failed to load font from resources: {}", fontName);
+                }
+            }
+        }
+
+        return null;
     }
 }

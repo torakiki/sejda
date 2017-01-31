@@ -43,8 +43,7 @@ public class PDDocumentHandlerTest {
 
     @Test
     public void discardBeads() throws IOException {
-        try (PDDocument document = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
+        try (PDDocument document = testDoc("pdf/one_page.pdf")) {
             PDPage page = document.getPage(0);
             page.setThreadBeads(Arrays.asList(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
@@ -64,5 +63,18 @@ public class PDDocumentHandlerTest {
             handler.addBlankPage(new PDRectangle(10, 10));
             assertNotNull(handler.addBlankPageIfOdd(new PDRectangle(10, 10)));
         }
+    }
+
+    @Test
+    public void testFindFont() throws IOException {
+        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("pdf/alphabet.pdf"))) {
+
+            assertNotNull(handler.findFont("EDJTWM+ArialMT"));
+        }
+    }
+
+    private PDDocument testDoc(String resourceName) throws IOException {
+        return PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(resourceName)));
     }
 }
