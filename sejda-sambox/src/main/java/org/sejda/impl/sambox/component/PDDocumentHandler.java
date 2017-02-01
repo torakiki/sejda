@@ -419,7 +419,7 @@ public class PDDocumentHandler implements Closeable {
             for(COSName fontName: page.getResources().getFontNames()) {
                 try {
                     PDFont font = page.getResources().getFont(fontName);
-                    if(font.getName().equalsIgnoreCase(searchedName)) {
+                    if(font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
                         return font;
                     }
                 } catch (IOException e) {
