@@ -14,12 +14,6 @@ A list of system properties that users can configure to alter Sejda behavior.
 *description:* if set to true Sejda will perform XSD validation of the supplied xml configuration file.  
 
 
-**sejda.image.writer.factory.class**  
-*values:* any class implementing org.sejda.core.writer.model.ImageWriterAbstractFactory  
-*default:* org.sejda.core.writer.xmlgraphics.ImageWriterFactory  
-*description:* lets the user specify a custom ImageWriter factory.  
-
-
 **sejda.unethical.read**  
 *values:* true|false  
 *default:* false  

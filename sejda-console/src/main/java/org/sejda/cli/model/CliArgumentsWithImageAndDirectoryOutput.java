@@ -30,8 +30,8 @@ import com.lexicalscope.jewel.cli.Option;
  * @author Eduard Weissmann
  * 
  */
-public interface CliArgumentsWithImageAndDirectoryOutput extends CliArgumentsWithImageOutput,
-        CliArgumentsWithDirectoryOutput {
+public interface CliArgumentsWithImageAndDirectoryOutput
+        extends CliArgumentsWithImageOutput, CliArgumentsWithDirectoryOutput {
 
     @Option(shortName = "s", description = "page selection script. You can set a subset of pages to convert. Accepted values: 'num1-num2' or"
             + " 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")

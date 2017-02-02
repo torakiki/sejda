@@ -19,99 +19,55 @@
  */
 package org.sejda.core.writer.context;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static java.util.Objects.isNull;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.sejda.core.writer.model.ImageWriterAbstractFactory;
-import org.sejda.core.writer.xmlgraphics.ImageWriterFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sejda.core.writer.imageio.JpegImageWriter;
+import org.sejda.core.writer.imageio.TiffMultiImageWriter;
+import org.sejda.core.writer.imageio.TiffSingleImageWriter;
+import org.sejda.core.writer.model.ImageWriter;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.parameter.image.PdfToImageParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
+import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
- * Image Writer Context used to get the proper {@link ImageWriterAbstractFactory}. A custom factory class can be supplied using the system property
- * "sejda.image.writer.factory.class". If a custom factory class is provided and an error occur during the creation, the default factory is used.
+ * Image Writer Context used to get the proper {@link ImageWriter}.
  * 
  * @author Andrea Vacondio
  * 
  */
 public final class ImageWriterContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ImageWriterContext.class);
+    private static final Map<Class<? extends PdfToImageParameters>, Class<? extends ImageWriter<?>>> BUILDERS_REGISTRY = new HashMap<>();
 
-    private static final String IMAGE_WRITER_FACTORY_CLASS = "sejda.image.writer.factory.class";
-
-    private final ImageWriterAbstractFactory factory;
-    private final ImageWriterAbstractFactory defaultFactory;
+    static {
+        BUILDERS_REGISTRY.put(PdfToMultipleTiffParameters.class, TiffSingleImageWriter.class);
+        BUILDERS_REGISTRY.put(PdfToSingleTiffParameters.class, TiffMultiImageWriter.class);
+        BUILDERS_REGISTRY.put(PdfToJpegParameters.class, JpegImageWriter.class);
+    }
 
     public static ImageWriterContext getContext() {
-        return DefaultImageWriterFactoryContextHolder.IMAGE_WRITER_CONTEXT;
+        return ImageContextHolder.IMAGE_WRITER_CONTEXT;
     }
 
-    private ImageWriterContext() {
-        factory = newImageWriterFactory();
-        defaultFactory = new ImageWriterFactory();
-    }
-
-    /**
-     * @return the shared instance of the {@link ImageWriterAbstractFactory}.
-     */
-    public ImageWriterAbstractFactory getImageWriterFactory() {
-        return factory;
-    }
-
-    /**
-     * @return the shared instance of the default {@link ImageWriterAbstractFactory}.
-     */
-    public ImageWriterAbstractFactory getDefaultImageWriterFactory() {
-        return defaultFactory;
-    }
-
-    private static ImageWriterAbstractFactory newImageWriterFactory() {
-        ImageWriterAbstractFactory retVal = newNonDefaultFactory();
-        if (retVal != null) {
-            return retVal;
+    @SuppressWarnings("unchecked")
+    public <T extends PdfToImageParameters> ImageWriter<T> createImageWriter(T params) throws TaskException {
+        Class<? extends ImageWriter<?>> writer = BUILDERS_REGISTRY.get(params.getClass());
+        if (isNull(writer)) {
+            throw new TaskExecutionException(String.format("No suitable ImageWriter found for %s", params));
         }
-        LOG.trace("Creating default ImageWriterAbstractFactory.");
-        return new ImageWriterFactory();
-    }
-
-    private static ImageWriterAbstractFactory newNonDefaultFactory() {
-        ImageWriterAbstractFactory retVal = null;
-        String factoryClassString = System.getProperty(IMAGE_WRITER_FACTORY_CLASS);
-
-        if (isNotBlank(factoryClassString)) {
-            LOG.trace("Instantiating custom ImageWriterAbstractFactory: {}", factoryClassString);
-            try {
-                Constructor<?> constructor = findConstructor(factoryClassString);
-                if (constructor != null) {
-                    retVal = ImageWriterAbstractFactory.class.cast(constructor.newInstance());
-                }
-            } catch (InvocationTargetException e) {
-                LOG.warn("An exception occured instantiating custom ImageWriterAbstractFactory.", e);
-            } catch (InstantiationException e) {
-                LOG.warn("Unable to instantiate custom ImageWriterAbstractFactory.", e);
-            } catch (IllegalAccessException e) {
-                LOG.warn("Unable to access the constructor for custom ImageWriterAbstractFactory.", e);
-            }
-        }
-        return retVal;
-    }
-
-    private static Constructor<?> findConstructor(String factoryClassString) {
         try {
-            Class<?> factoryClass = Class.forName(factoryClassString);
-            return factoryClass.getConstructor();
-        } catch (ClassNotFoundException e) {
-            LOG.warn("Custom ImageWriterAbstractFactory class not found.", e);
-        } catch (SecurityException e) {
-            LOG.warn("Error finding the constructor for custom ImageWriterAbstractFactory.", e);
-        } catch (NoSuchMethodException e) {
-            LOG.warn("Unable to find constructor for custom ImageWriterAbstractFactory.", e);
+            return ImageWriter.class.cast(writer.getConstructor().newInstance());
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            throw new TaskException("Unable to create ImageWriter", e);
         }
-
-        return null;
     }
 
     /**
@@ -120,9 +76,9 @@ public final class ImageWriterContext {
      * @author Andrea Vacondio
      * 
      */
-    private static final class DefaultImageWriterFactoryContextHolder {
+    private static final class ImageContextHolder {
 
-        private DefaultImageWriterFactoryContextHolder() {
+        private ImageContextHolder() {
             // hide constructor
         }
 

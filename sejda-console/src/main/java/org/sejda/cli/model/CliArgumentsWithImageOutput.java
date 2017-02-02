@@ -19,6 +19,8 @@
  */
 package org.sejda.cli.model;
 
+import org.sejda.conversion.ImageColorTypeAdapter;
+
 import com.lexicalscope.jewel.cli.Option;
 
 /**
@@ -33,4 +35,7 @@ public interface CliArgumentsWithImageOutput extends TaskCliArguments {
     int getResolution();
 
     boolean isResolution();
+
+    @Option(shortName = "c", description = "image color type: { black_and_white, gray_scale, color_rgb }. Default is 'color_rgb' (optional)", defaultValue = "color_rgb")
+    ImageColorTypeAdapter getColorType();
 }

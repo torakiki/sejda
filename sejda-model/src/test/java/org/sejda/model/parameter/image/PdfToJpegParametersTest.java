@@ -19,13 +19,14 @@
  */
 package org.sejda.model.parameter.image;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.model.pdf.page.PageRange;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.sejda.TestUtils;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
@@ -34,28 +35,28 @@ import static org.junit.Assert.assertTrue;
 public class PdfToJpegParametersTest {
     @Test
     public void testEquals() {
-        PdfToJpegParameters eq1 = new PdfToJpegParameters();
-        PdfToJpegParameters eq2 = new PdfToJpegParameters();
-        PdfToJpegParameters eq3 = new PdfToJpegParameters();
-        PdfToJpegParameters diff = new PdfToJpegParameters();
+        PdfToJpegParameters eq1 = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
+        PdfToJpegParameters eq2 = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
+        PdfToJpegParameters eq3 = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
+        PdfToJpegParameters diff = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
         diff.setResolutionInDpi(120);
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testGetPageSelection() {
-        PdfToJpegParameters victim = new PdfToJpegParameters();
+        PdfToJpegParameters victim = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
         assertTrue(victim.getPageSelection().isEmpty());
-        PdfToJpegParameters victim2 = new PdfToJpegParameters();
+        PdfToJpegParameters victim2 = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
         victim2.addPageRange(new PageRange(12));
         assertFalse(victim2.getPageSelection().isEmpty());
     }
 
     @Test
     public void getPages() {
-        PdfToJpegParameters victim = new PdfToJpegParameters();
+        PdfToJpegParameters victim = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
         assertEquals(10, victim.getPages(10).size());
-        PdfToJpegParameters victim2 = new PdfToJpegParameters();
+        PdfToJpegParameters victim2 = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
         victim2.addPageRange(new PageRange(12));
         assertEquals(4, victim2.getPages(15).size());
     }

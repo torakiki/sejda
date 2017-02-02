@@ -42,4 +42,15 @@ public class TaskIOException extends TaskException {
         super(cause);
     }
 
+    /**
+     * @param condition
+     * @param exceptionMessage
+     * @throws TaskIOException
+     *             with the given message if condition is false
+     */
+    public static void require(boolean condition, String exceptionMessage) throws TaskIOException {
+        if (!condition) {
+            throw new TaskIOException(exceptionMessage);
+        }
+    }
 }

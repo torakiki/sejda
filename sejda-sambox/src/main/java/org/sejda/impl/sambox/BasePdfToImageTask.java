@@ -18,14 +18,11 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Objects.isNull;
-import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 
 import org.sejda.core.writer.context.ImageWriterContext;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.image.PdfToImageParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -49,15 +46,7 @@ abstract class BasePdfToImageTask<T extends PdfToImageParameters> extends BaseTa
     @Override
     public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
-        writer = ofNullable(ImageWriterContext.getContext().getImageWriterFactory().createImageWriter(parameters))
-                .orElseGet(() -> {
-                    LOG.info(
-                            "Unable to create an ImageWriter using the provided factory, falling back on default factory.");
-                    return ImageWriterContext.getContext().getDefaultImageWriterFactory().createImageWriter(parameters);
-                });
-        if (isNull(writer)) {
-            throw new TaskExecutionException(String.format("No suitable ImageWriter found for %s.", parameters));
-        }
+        writer = ImageWriterContext.getContext().createImageWriter(parameters);
         LOG.trace("Found image writer {}", writer);
     }
 

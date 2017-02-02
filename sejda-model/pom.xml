@@ -48,10 +48,5 @@
 			<version>${hibernate-validator.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>xmlgraphics-commons</artifactId>
-			<scope>test</scope>
-		</dependency>
 	</dependencies>
 </project>

@@ -75,7 +75,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         int numberOfPages = documentHandler.getNumberOfPages();
         LOG.trace("Found {} pages", numberOfPages);
 
-        getWriter().openWriteDestination(tmpFile, parameters);
+        getWriter().openDestination(tmpFile, parameters);
         for (int page = 1; page <= numberOfPages; page++) {
             executionContext().assertTaskNotCancelled();
 

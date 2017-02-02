@@ -20,8 +20,13 @@
 package org.sejda.core.writer.context;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
  * @author Andrea Vacondio
@@ -30,8 +35,13 @@ import org.junit.Test;
 public class ImageWriterContextTest {
 
     @Test
-    public void getImageWriterFactory() {
-        assertNotNull(ImageWriterContext.getContext().getImageWriterFactory());
-        assertNotNull(ImageWriterContext.getContext().getDefaultImageWriterFactory());
+    public void validParams() throws TaskException {
+        assertNotNull(
+                ImageWriterContext.getContext().createImageWriter(new PdfToJpegParameters(ImageColorType.COLOR_RGB)));
+    }
+
+    @Test(expected = TaskException.class)
+    public void invalidParamsClass() throws Exception {
+        ImageWriterContext.getContext().createImageWriter(mock(AbstractPdfToSingleImageParameters.class));
     }
 }

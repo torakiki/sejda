@@ -19,28 +19,48 @@
  */
 package org.sejda.core.service;
 
+import java.io.IOException;
+
 import org.junit.Ignore;
+import org.junit.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
  * 
  */
 @Ignore
-public abstract class MultipleTiffConversionTaskTest extends
-        MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
+public abstract class MultipleTiffConversionTaskTest
+        extends MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
 
     @Override
-    PdfToMultipleTiffParameters getMultipleImageParametersWithoutSource() {
-        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
+    PdfToMultipleTiffParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
+        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(type);
         parameters.setCompressionType(TiffCompressionType.PACKBITS);
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(96);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
+    }
+
+    @Test
+    public void colorAndCompressionCombinations() throws IOException {
+        for (ImageColorType type : ImageColorType.values()) {
+            for (TiffCompressionType compression : TiffCompressionType.values()) {
+                PdfToMultipleTiffParameters parameters = getMultipleImageParametersWithoutSource(type);
+                parameters.addSource(shortInput());
+                parameters.addPageRange(new PageRange(1, 1));
+                parameters.setCompressionType(compression);
+                testContext.directoryOutputTo(parameters);
+                execute(parameters);
+                testContext.assertTaskCompleted();
+                testContext.assertOutputSize(1);
+            }
+        }
     }
 
 }

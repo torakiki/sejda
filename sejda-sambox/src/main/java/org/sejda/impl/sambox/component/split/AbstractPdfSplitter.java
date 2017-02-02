@@ -26,7 +26,6 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 
 import java.io.File;
 
-import org.apache.xmlgraphics.ps.dsc.tools.PageExtractor;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
@@ -145,7 +144,7 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
     }
 
     /**
-     * Creates the {@link PageExtractor} to be used by this {@link AbstractPdfSplitter}
+     * Creates the {@link PagesExtractor} to be used by this {@link AbstractPdfSplitter}
      */
     protected PagesExtractor supplyPagesExtractor(PDDocument document) {
         return new PagesExtractor(document);

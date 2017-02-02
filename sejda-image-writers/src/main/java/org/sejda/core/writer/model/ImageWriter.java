@@ -22,7 +22,6 @@ package org.sejda.core.writer.model;
 import java.awt.image.RenderedImage;
 import java.io.Closeable;
 import java.io.File;
-import java.io.OutputStream;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.image.PdfToImageParameters;
@@ -42,20 +41,8 @@ import org.sejda.model.parameter.image.PdfToImageParameters;
 public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
 
     /**
-     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, PdfToImageParameters)} in order to be
-     * able to write images.
-     * 
-     * @param destination
-     *            stream where the image/s will be written.
-     * @param params
-     *            task parameter instance.
-     * @throws TaskIOException
-     */
-    void openWriteDestination(OutputStream destination, T params) throws TaskIOException;
-
-    /**
-     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, PdfToImageParameters)} in order to be
-     * able to write images.
+     * Open the provided destination where image/s will be written to. This method must be called before {@link #write(RenderedImage, PdfToImageParameters)} in order to be able to
+     * write images.
      * 
      * @param destination
      *            file where the image/s will be written.
@@ -63,7 +50,14 @@ public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
      *            task parameter instance.
      * @throws TaskIOException
      */
-    void openWriteDestination(File destination, T params) throws TaskIOException;
+    void openDestination(File destination, T params) throws TaskIOException;
+
+    /**
+     * Close the previously opened destination.
+     * 
+     * @throws TaskIOException
+     */
+    void closeDestination() throws TaskIOException;
 
     /**
      * Writes the given image to the previously opened destination.
@@ -77,32 +71,9 @@ public interface ImageWriter<T extends PdfToImageParameters> extends Closeable {
     void write(RenderedImage image, T params) throws TaskIOException;
 
     /**
-     * Close the previously opened destination.
-     * 
-     * @throws TaskIOException
-     */
-    void closeDestination() throws TaskIOException;
-
-    /**
      * 
      * @return true if the writer can write multiple images into the same image file. If a writer supports multiple images the write method ca be called multiple times once the
      *         write destination is opened.
      */
     boolean supportMultiImage();
-
-    /**
-     * Builder interface for an {@link ImageWriter}.
-     * 
-     * @author Andrea Vacondio
-     * 
-     * @param <T>
-     *            type of the built {@link ImageWriter}
-     */
-    interface ImageWriterBuilder<T extends PdfToImageParameters> {
-
-        /**
-         * @return the newly built instance.
-         */
-        ImageWriter<T> build();
-    }
 }

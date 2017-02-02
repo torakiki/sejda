@@ -23,14 +23,13 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.ImageTestUtils;
-import org.sejda.core.support.io.IOUtils;
-import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.image.ImageColorType;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.slf4j.Logger;
@@ -45,25 +44,28 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         extends BaseTaskTest<T> implements TestableTask<T> {
     private static Logger LOG = LoggerFactory.getLogger(MultipleImageConversionTaskTest.class);
 
-    abstract T getMultipleImageParametersWithoutSource();
+    abstract T getMultipleImageParametersWithoutSource(ImageColorType type);
 
     @Test
     public void testExecuteEncryptedStreamToMultipleImage() throws IOException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
         parameters.addSource(encryptedInput());
         doExecute(parameters, 4);
     }
 
     @Test
     public void testExecuteStreamToMultipleImage() throws IOException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
         parameters.addSource(customInput("pdf/test_jpg.pdf"));
         doExecute(parameters, 1);
     }
 
     @Test
     public void testExecuteStreamToMultipleImageWithPageSelection() throws IOException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
         parameters.addSource(shortInput());
         parameters.addPageRange(new PageRange(2, 3));
         doExecute(parameters, 2);
@@ -71,7 +73,8 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
 
     @Test
     public void testMultipleInputs() throws IOException {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
         parameters.addSource(mediumInput());
         parameters.addSource(regularInput());
         parameters.addPageRange(new PageRange(1, 1));
@@ -79,13 +82,13 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         doExecute(parameters, 2);
     }
 
-    private void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {
+    void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(size).forEachRawOutput(p -> {
             try {
-                RenderedImage ri = ImageTestUtils.loadImage(p.toFile());
+                RenderedImage ri = ImageIO.read(p.toFile());
                 assertTrue(ri.getHeight() > 0);
                 assertTrue(ri.getWidth() > 0);
             } catch (Exception e) {
@@ -93,14 +96,5 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
                 fail(e.getMessage());
             }
         });
-    }
-
-    @Ignore("In place of a better way to check image quality with automated tests")
-    public void testImageConversion() {
-        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource();
-        File out = IOUtils.createTemporaryFolder();
-        parameters.setOutput(new DirectoryTaskOutput(out));
-        execute(parameters);
-        System.out.println("Images generated to: " + out.getAbsolutePath());
     }
 }

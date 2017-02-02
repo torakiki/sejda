@@ -19,9 +19,14 @@
  */
 package org.sejda.core.service;
 
+import java.io.IOException;
+
 import org.junit.Ignore;
+import org.junit.Test;
+import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
+import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
@@ -31,12 +36,22 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 public abstract class MultipleJpegConversionTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override
-    PdfToJpegParameters getMultipleImageParametersWithoutSource() {
-        PdfToJpegParameters parameters = new PdfToJpegParameters();
+    PdfToJpegParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
+        PdfToJpegParameters parameters = new PdfToJpegParameters(type);
         parameters.setOutputPrefix("[CURRENTPAGE]");
         parameters.setResolutionInDpi(300);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
 
+    @Test
+    public void colorAndCompressionCombinations() throws IOException {
+        for (ImageColorType type : ImageColorType.values()) {
+            PdfToJpegParameters parameters = getMultipleImageParametersWithoutSource(type);
+            parameters.addSource(shortInput());
+            parameters.addPageRange(new PageRange(1, 1));
+            parameters.setQuality(35);
+            doExecute(parameters, 1);
+        }
+    }
 }

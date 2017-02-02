@@ -25,9 +25,10 @@ import static org.junit.Assert.fail;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.ImageTestUtils;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -67,7 +68,7 @@ public abstract class SingleTiffConversionTaskTest extends BaseTaskTest<PdfToSin
         testContext.assertTaskCompleted();
         testContext.forRawOutput(p -> {
             try {
-                RenderedImage ri = ImageTestUtils.loadImage(p.toFile());
+                RenderedImage ri = ImageIO.read(p.toFile());
                 assertTrue(ri.getHeight() > 0);
                 assertTrue(ri.getWidth() > 0);
             } catch (Exception e) {

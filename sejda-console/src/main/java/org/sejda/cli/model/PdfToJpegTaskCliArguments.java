@@ -20,6 +20,7 @@
 package org.sejda.cli.model;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
+import com.lexicalscope.jewel.cli.Option;
 
 /**
  * CLI interface for the PdfToJpeg task
@@ -30,4 +31,7 @@ import com.lexicalscope.jewel.cli.CommandLineInterface;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " pdftojpeg")
 public interface PdfToJpegTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
+
+    @Option(shortName = "q", description = "image quality, between 0 (lowest quality, highest compression) and 100 (highest quality, lowest compression). Default is 100. (optional)", defaultValue = "100")
+    Integer getQuality();
 }

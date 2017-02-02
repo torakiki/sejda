@@ -90,7 +90,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                             BufferedImage pageImage = documentHandler.renderImage(currentPage,
                                     parameters.getResolutionInDpi(), parameters.getOutputImageColorType());
 
-                            getWriter().openWriteDestination(tmpFile, parameters);
+                            getWriter().openDestination(tmpFile, parameters);
                             getWriter().write(pageImage, parameters);
                             getWriter().closeDestination();
 

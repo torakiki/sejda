@@ -28,11 +28,12 @@ import org.sejda.common.FriendlyNamed;
  * 
  */
 public enum TiffCompressionType implements FriendlyNamed {
-    NONE("none"),
+    NONE("none"),   
     CCITT_GROUP_3_1D("ccitt_group_3_1d"),
     CCITT_GROUP_3_2D("ccitt_group_3_2d"),
     CCITT_GROUP_4("ccitt_group_4"),
     LZW("lzw"),
+    ZLIB("zlib"),
     JPEG_TTN2("jpeg_ttn2"),
     PACKBITS("packbits"),
     DEFLATE("deflate");
@@ -48,3 +49,4 @@ public enum TiffCompressionType implements FriendlyNamed {
         return displayName;
     }
 }
+

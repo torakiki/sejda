@@ -19,7 +19,6 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.ImageColorTypeAdapter;
 import org.sejda.conversion.TiffCompressionTypeAdapter;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
@@ -35,9 +34,6 @@ import com.lexicalscope.jewel.cli.Option;
 public interface PdfToMultipleTiffTaskCliArguments extends CliArgumentsWithImageAndDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
-    @Option(shortName = "x", description = "image compression type: { none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate. Default is 'none' } (optional)", defaultValue = "none")
+    @Option(shortName = "x", description = "image compression type: {none, ccitt_group_3_1d, ccitt_group_3_2d, ccitt_group_4, lzw, jpeg_ttn2, packbits, deflate, zlib}. Default is 'none' (optional)", defaultValue = "none")
     TiffCompressionTypeAdapter getCompressionType();
-
-    @Option(shortName = "c", description = "image color type: { black_and_white, gray_scale, color_rgb } (required)")
-    ImageColorTypeAdapter getColorType();
 }

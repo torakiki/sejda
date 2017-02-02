@@ -59,8 +59,10 @@ public class ImageFormatOutputTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
-    public void colorType_isMandatory() {
-        defaultCommandLine().without("--colorType").assertConsoleOutputContains("Option is mandatory: --colorType");
+    public void defaultColorType() {
+        AbstractPdfToImageParameters result = defaultCommandLine().without("--colorType").invokeSejdaConsole();
+
+        assertThat(describeExpectations(), result.getOutputImageColorType(), is(ImageColorType.COLOR_RGB));
     }
 
     @Test

@@ -19,6 +19,11 @@
  */
 package org.sejda.model.parameter.image;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.ImageType;
 
@@ -30,8 +35,12 @@ import org.sejda.model.image.ImageType;
  */
 public class PdfToJpegParameters extends AbstractPdfToMultipleImageParameters {
 
-    public PdfToJpegParameters() {
-        super(ImageColorType.COLOR_RGB);
+    @Min(0)
+    @Max(100)
+    private int quality = 100;
+
+    public PdfToJpegParameters(ImageColorType type) {
+        super(type);
     }
 
     @Override
@@ -39,4 +48,33 @@ public class PdfToJpegParameters extends AbstractPdfToMultipleImageParameters {
         return ImageType.JPEG;
     }
 
+    public int getQuality() {
+        return quality;
+    }
+
+    /**
+     * The quality of the generated images where 0 is lowest (high compression) and 100 is highest (low compression)
+     * 
+     * @param quality
+     */
+    public void setQuality(int quality) {
+        this.quality = quality;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(quality).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof PdfToJpegParameters)) {
+            return false;
+        }
+        PdfToJpegParameters parameter = (PdfToJpegParameters) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(quality, parameter.quality).isEquals();
+    }
 }

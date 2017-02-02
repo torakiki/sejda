@@ -60,9 +60,14 @@ public class PdfToJpegTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
+    public void quality() {
+        PdfToJpegParameters result = defaultCommandLine().with("-q", "50").invokeSejdaConsole();
+        assertThat(result.getQuality(), is(50));
+    }
+
+    @Test
     public void pageRanges() {
-        PdfToJpegParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
-                .invokeSejdaConsole();
+        PdfToJpegParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-").invokeSejdaConsole();
 
         assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
                 new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));

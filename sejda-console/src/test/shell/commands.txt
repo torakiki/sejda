@@ -72,8 +72,12 @@ target/assembled/bin/sejda-console settransitions -h
 target/assembled/bin/sejda-console setpagetransitions -h
 # TODO: folder contains encrypted files, maybe fix this by creating separate folders for encrypted and un-encrypted files
 # target/assembled/bin/sejda-console merge -d ../sejda-core/src/test/resources/pdf/ -o /tmp/sejda-smoketest/merged.pdf --overwrite -v 1.7 
-target/assembled/bin/sejda-console unpack -h
 target/assembled/bin/sejda-console pdftomultipletiff -h
+target/assembled/bin/sejda-console pdftomultipletiff -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite --lenient
+target/assembled/bin/sejda-console pdftomultipletiff -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite -x zlib -c black_and_white
+target/assembled/bin/sejda-console pdftosingletiff -h
+target/assembled/bin/sejda-console pdftosingletiff -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/test.tiff -r 90 -j overwrite --lenient
+target/assembled/bin/sejda-console pdftosingletiff -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/test.tiff -r 72 -j overwrite -x lzw
 #target/assembled/bin/sejda-console -Dsejda.config.file=./etc/sejda.xml
 target/assembled/bin/sejda-console decrypt -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -p dec -j fail
 target/assembled/bin/sejda-console setmetadata -h
@@ -90,6 +94,7 @@ target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/res
 target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s all -x right -y top -t Times-Bold -l "[PAGE_ROMAN]" -j overwrite -v 1.5
 target/assembled/bin/sejda-console pdftojpeg -h
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite --lenient
+target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite -q 50 -c black_and_white
 target/assembled/bin/sejda-console addbackpages -h
 target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite -o /tmp/sejda-smoketest/ 
 target/assembled/bin/sejda-console portfolio -h

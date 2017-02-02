@@ -24,11 +24,12 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the PdfToJpegTask task command line interface
+ * 
  * @author Andrea Vacondio
  * 
  */
-public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransformer implements
-        CommandCliArgumentsTransformer<PdfToJpegTaskCliArguments, PdfToJpegParameters> {
+public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransformer
+        implements CommandCliArgumentsTransformer<PdfToJpegTaskCliArguments, PdfToJpegParameters> {
 
     /**
      * Transforms {@link PdfToJpegTaskCliArguments} to {@link PdfToJpegParameters}
@@ -38,10 +39,11 @@ public class PdfToJpegCliArgumentsTransformer extends BaseCliArgumentsTransforme
      */
     @Override
     public PdfToJpegParameters toTaskParameters(PdfToJpegTaskCliArguments taskCliArguments) {
-        PdfToJpegParameters parameters = new PdfToJpegParameters();
+        PdfToJpegParameters parameters = new PdfToJpegParameters(taskCliArguments.getColorType().getEnumValue());
         populateSourceParameters(parameters, taskCliArguments);
         populateAbstractMultipleImageParameters(parameters, taskCliArguments);
         populateOutputPrefix(parameters, taskCliArguments);
+        parameters.setQuality(taskCliArguments.getQuality());
 
         if (taskCliArguments.isPageSelection()) {
             parameters.addAllPageRanges(taskCliArguments.getPageSelection().getPageRangeSet());
