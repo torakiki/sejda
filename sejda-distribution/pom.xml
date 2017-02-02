@@ -36,6 +36,8 @@
 									<goal>single</goal>
 								</goals>
 								<configuration>
+									<finalName>sejda-sdk-api</finalName>
+  									<appendAssemblyId>false</appendAssemblyId>
 									<descriptors>
 										<descriptor>src/assemble/bin-assembly.xml</descriptor>
 									</descriptors>
@@ -76,5 +78,21 @@
 			<artifactId>sejda-conversion</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-model</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-fonts</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-optional-fonts</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
+.
