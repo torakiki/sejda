@@ -27,6 +27,7 @@
 	[
 		{
 			"includePattern": "sejda-console/target/(.*)\\.(jar|asc|md5|pom)",
+			"excludePattern": "sejda-console/target/assembled/.*",
 			"uploadPattern": "org/sejda/sejda-console/${project.version}/$1.$2"
 		},
 		{
