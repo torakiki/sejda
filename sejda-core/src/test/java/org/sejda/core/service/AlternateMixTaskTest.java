@@ -27,6 +27,7 @@ import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDPage;
 
 /**
@@ -60,6 +61,29 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
             assertHeaderContains(d.getPage(5), "Pagina 3 di 4");
             assertHeaderContains(d.getPage(8), "Pagina 2 di 4");
             assertHeaderContains(d.getPage(10), "Pagina 1 di 4");
+        });
+    }
+
+    @Test
+    public void threeDocsMergeWithPageSelection() throws IOException {
+        AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
+        PdfMixInput first = new PdfMixInput(shortInput(), true, 1);
+        first.addPageRange(new PageRange(1, 2));
+        params.addInput(first);
+        PdfMixInput second = new PdfMixInput(stronglyEncryptedInput(), false, 2);
+        params.addInput(second);
+        PdfMixInput third = new PdfMixInput(largeInput(), false, 6);
+        third.addPageRange(new PageRange(5, 10));
+        third.addPageRange(new PageRange(22, 23));
+        params.addInput(third);
+        params.setOutputName("outName.pdf");
+        setUpParameters(params);
+        testContext.pdfOutputTo(params);
+        execute(params);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(14).assertVersion(PdfVersion.VERSION_1_5).forPdfOutput(d -> {
+            assertHeaderContains(d.getPage(0), "Pagina 2 di 4");
+            assertHeaderContains(d.getPage(9), "Pagina 1 di 4");
         });
     }
 

@@ -22,6 +22,7 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.sejda.common.LookupTable;
 import org.sejda.model.exception.TaskIOException;
@@ -45,23 +46,23 @@ class PdfMixFragment implements Closeable {
     private LookupTable<PDPage> lookups = new LookupTable<>();
     private PDDocumentHandler handler;
     private PdfMixInput input;
-    private int currentPage;
+    private LinkedList<Integer> pages;
 
     private PdfMixFragment(PdfMixInput input, PDDocumentHandler handler) {
-        this.currentPage = input.isReverse() ? handler.getNumberOfPages() : 1;
+        this.pages = new LinkedList<>(input.getPages(handler.getNumberOfPages()));
         this.handler = handler;
         this.input = input;
     }
 
     public PDPage nextPage() {
         if (input.isReverse()) {
-            return handler.getPage(currentPage--);
+            return handler.getPage(pages.removeLast());
         }
-        return handler.getPage(currentPage++);
+        return handler.getPage(pages.removeFirst());
     }
 
     public boolean hasNextPage() {
-        return currentPage > 0 && currentPage <= handler.getNumberOfPages();
+        return !pages.isEmpty();
     }
 
     public int getNumberOfPages() {

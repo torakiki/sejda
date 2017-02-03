@@ -50,10 +50,6 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<>();
 
-    PdfMergeInput() {
-        // default constructor for persistence
-    }
-
     public PdfMergeInput(PdfSource<?> source, Set<PageRange> pageSelection) {
         this.source = source;
         this.pageSelection.addAll(pageSelection);
@@ -113,7 +109,7 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("source", source).append("pageSelection", pageSelection).toString();
+        return new ToStringBuilder(this).append(source).append(pageSelection).toString();
     }
 
     @Override

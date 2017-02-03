@@ -19,11 +19,12 @@
  */
 package org.sejda.model.input;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.validation.constraint.NoIntersections;
 
 /**
  * Model representation of a input parameter for the Alternate Mix task. Contains a {@link PdfSource}, the mix step and a parameter indicating if the document should be processed
@@ -32,21 +33,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Andrea Vacondio
  * 
  */
-public class PdfMixInput {
+@NoIntersections
+public class PdfMixInput extends PdfMergeInput {
 
-    @NotNull
-    @Valid
-    private PdfSource<?> source;
     private boolean reverse = false;
     @Min(value = 1)
     private int step = 1;
 
-    PdfMixInput() {
-        // default constructor for persistence
-    }
-
     public PdfMixInput(PdfSource<?> source, boolean reverse, int step) {
-        this.source = source;
+        super(source);
         this.reverse = reverse;
         this.step = step;
     }
@@ -57,11 +52,7 @@ public class PdfMixInput {
      * @param source
      */
     public PdfMixInput(PdfSource<?> source) {
-        this.source = source;
-    }
-
-    public PdfSource<?> getSource() {
-        return source;
+        super(source);
     }
 
     public boolean isReverse() {
@@ -72,9 +63,27 @@ public class PdfMixInput {
         return step;
     }
 
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(source).append(reverse).append(step).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(reverse).append(step).toString();
     }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(reverse).append(step).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof PdfMixInput)) {
+            return false;
+        }
+        PdfMixInput input = (PdfMixInput) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(reverse, input.reverse)
+                .append(step, input.step).isEquals();
+    }
+
 }
