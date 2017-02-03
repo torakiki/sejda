@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sejda.core.writer.imageio.JpegImageWriter;
+import org.sejda.core.writer.imageio.PngImageWriter;
 import org.sejda.core.writer.imageio.TiffMultiImageWriter;
 import org.sejda.core.writer.imageio.TiffSingleImageWriter;
 import org.sejda.core.writer.model.ImageWriter;
@@ -34,6 +35,7 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.image.PdfToImageParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToPngParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
@@ -50,6 +52,7 @@ public final class ImageWriterContext {
         BUILDERS_REGISTRY.put(PdfToMultipleTiffParameters.class, TiffSingleImageWriter.class);
         BUILDERS_REGISTRY.put(PdfToSingleTiffParameters.class, TiffMultiImageWriter.class);
         BUILDERS_REGISTRY.put(PdfToJpegParameters.class, JpegImageWriter.class);
+        BUILDERS_REGISTRY.put(PdfToPngParameters.class, PngImageWriter.class);
     }
 
     public static ImageWriterContext getContext() {

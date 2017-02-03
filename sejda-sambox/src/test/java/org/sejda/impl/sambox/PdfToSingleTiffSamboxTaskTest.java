@@ -19,7 +19,7 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.core.service.SingleTiffConversionTaskTest;
+import org.sejda.core.service.PdfToSingleTiffTaskTest;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 import org.sejda.model.task.Task;
 
@@ -27,7 +27,7 @@ import org.sejda.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public class SingleTiffConversionSamboxTaskTest extends SingleTiffConversionTaskTest {
+public class PdfToSingleTiffSamboxTaskTest extends PdfToSingleTiffTaskTest {
 
     @Override
     public Task<PdfToSingleTiffParameters> getTask() {

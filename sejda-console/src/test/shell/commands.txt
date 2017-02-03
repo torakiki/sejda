@@ -95,6 +95,9 @@ target/assembled/bin/sejda-console setheaderfooter -f ../sejda-core/src/test/res
 target/assembled/bin/sejda-console pdftojpeg -h
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite --lenient
 target/assembled/bin/sejda-console pdftojpeg -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite -q 50 -c black_and_white
+target/assembled/bin/sejda-console pdftopng -h
+target/assembled/bin/sejda-console pdftopng -f ../sejda-core/src/test/resources/pdf/medium_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite --lenient
+target/assembled/bin/sejda-console pdftopng -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###20] -r 90 -j overwrite -c black_and_white
 target/assembled/bin/sejda-console addbackpages -h
 target/assembled/bin/sejda-console addbackpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -n 5 -s 2,3 -b ../sejda-core/src/test/resources/pdf/medium_test.pdf -j overwrite -o /tmp/sejda-smoketest/ 
 target/assembled/bin/sejda-console portfolio -h

@@ -30,6 +30,7 @@ import org.sejda.cli.model.ExtractPagesTaskCliArguments;
 import org.sejda.cli.model.MergeTaskCliArguments;
 import org.sejda.cli.model.PdfToJpegTaskCliArguments;
 import org.sejda.cli.model.PdfToMultipleTiffTaskCliArguments;
+import org.sejda.cli.model.PdfToPngTaskCliArguments;
 import org.sejda.cli.model.PdfToSingleTiffTaskCliArguments;
 import org.sejda.cli.model.RotateTaskCliArguments;
 import org.sejda.cli.model.ScaleTaskCliArguments;
@@ -58,6 +59,7 @@ import org.sejda.cli.transformer.ExtractPagesCliArgumentsTransformer;
 import org.sejda.cli.transformer.MergeCliArgumentsTransformer;
 import org.sejda.cli.transformer.PdfToJpegCliArgumentsTransformer;
 import org.sejda.cli.transformer.PdfToMultipleTiffCliArgumentsTransformer;
+import org.sejda.cli.transformer.PdfToPngCliArgumentsTransformer;
 import org.sejda.cli.transformer.PdfToSingleTiffCliArgumentsTransformer;
 import org.sejda.cli.transformer.RotateCliArgumentsTransformer;
 import org.sejda.cli.transformer.ScaleCliArgumentsTransformer;
@@ -99,6 +101,7 @@ import org.sejda.model.parameter.WatermarkParameters;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToPngParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
 /**
@@ -258,6 +261,13 @@ public enum StandardCliCommand implements CliCommand {
             return new PdfToJpegCliArgumentsTransformer();
         }
     }, "Converts a PDF document to multiple JPEG images (one image per page).", "pdftojpeg -f /tmp/file1.pdf -o /tmp"),
+    PDF_TO_PNG("pdftopng", new CliInterfacedTask<PdfToPngTaskCliArguments, PdfToPngParameters>() {
+
+        @Override
+        protected CommandCliArgumentsTransformer<PdfToPngTaskCliArguments, PdfToPngParameters> getArgumentsTransformer() {
+            return new PdfToPngCliArgumentsTransformer();
+        }
+    }, "Converts a PDF document to multiple PNG images (one image per page).", "pdftopng -f /tmp/file1.pdf -o /tmp"),
     COMBINE_REORDER("combinereorder", new CliInterfacedTask<CombineReorderTaskCliArguments, CombineReorderParameters>() {
 
         @Override

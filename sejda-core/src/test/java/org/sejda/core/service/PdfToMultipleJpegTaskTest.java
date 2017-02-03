@@ -1,5 +1,5 @@
 /*
- * Created on 26/set/2011
+ * Created on 08/mar/2013
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
@@ -24,25 +24,22 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
  * @author Andrea Vacondio
- * 
+ *
  */
 @Ignore
-public abstract class MultipleTiffConversionTaskTest
-        extends MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
+public abstract class PdfToMultipleJpegTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override
-    PdfToMultipleTiffParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
-        PdfToMultipleTiffParameters parameters = new PdfToMultipleTiffParameters(type);
-        parameters.setCompressionType(TiffCompressionType.PACKBITS);
+    PdfToJpegParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
+        PdfToJpegParameters parameters = new PdfToJpegParameters(type);
         parameters.setOutputPrefix("[CURRENTPAGE]");
-        parameters.setResolutionInDpi(96);
+        parameters.setResolutionInDpi(300);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
@@ -50,17 +47,11 @@ public abstract class MultipleTiffConversionTaskTest
     @Test
     public void colorAndCompressionCombinations() throws IOException {
         for (ImageColorType type : ImageColorType.values()) {
-            for (TiffCompressionType compression : TiffCompressionType.values()) {
-                PdfToMultipleTiffParameters parameters = getMultipleImageParametersWithoutSource(type);
-                parameters.addSource(shortInput());
-                parameters.addPageRange(new PageRange(1, 1));
-                parameters.setCompressionType(compression);
-                testContext.directoryOutputTo(parameters);
-                execute(parameters);
-                testContext.assertTaskCompleted();
-                testContext.assertOutputSize(1);
-            }
+            PdfToJpegParameters parameters = getMultipleImageParametersWithoutSource(type);
+            parameters.addSource(shortInput());
+            parameters.addPageRange(new PageRange(1, 1));
+            parameters.setQuality(35);
+            doExecute(parameters, 1);
         }
     }
-
 }

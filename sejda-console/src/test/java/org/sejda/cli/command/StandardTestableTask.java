@@ -48,6 +48,7 @@ public enum StandardTestableTask implements TestableTask {
     PDF_TO_SINGLE_TIFF(StandardCliCommand.PDF_TO_SINGLE_TIFF, new PdfToSingleTiffDefaultsProvider()),
     PDF_TO_MULTIPLE_TIFF(StandardCliCommand.PDF_TO_MULTIPLE_TIFF, new PdfToMultipleTiffDefaultsProvider()),
     PDF_TO_JPEG(StandardCliCommand.PDF_TO_JPEG, new MultipleInputsAndFolderOutputDefaultsProvider()),
+    PDF_TO_PNG(StandardCliCommand.PDF_TO_PNG, new MultipleInputsAndFolderOutputDefaultsProvider()),
     SET_HEADER_FOOTER(StandardCliCommand.SET_HEADER_FOOTER, new SetHeaderFooterDefaultsProvider()),
     COMBINE_REORDER(StandardCliCommand.COMBINE_REORDER, new CombineReorderDefaultsProvider()),
     ADD_BACK_PAGES(StandardCliCommand.ADD_BACK_PAGES, new AddBackPagesDefaultsProvider()),

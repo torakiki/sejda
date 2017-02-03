@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @Ignore
-public abstract class SingleTiffConversionTaskTest extends BaseTaskTest<PdfToSingleTiffParameters> {
+public abstract class PdfToSingleTiffTaskTest extends BaseTaskTest<PdfToSingleTiffParameters> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SingleTiffConversionTaskTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleTiffTaskTest.class);
 
     private AbstractPdfToSingleImageParameters getSingleTiffParams() {
         PdfToSingleTiffParameters parameters = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);

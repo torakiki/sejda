@@ -43,7 +43,8 @@ public class PageRangesTraitTest extends AbstractTaskTraitTest {
     @Parameters
     public static Collection<Object[]> data() {
         return asParameterizedTestData(
-                Arrays.asList(StandardTestableTask.PDF_TO_JPEG, StandardTestableTask.PDF_TO_MULTIPLE_TIFF,
+                Arrays.asList(StandardTestableTask.PDF_TO_JPEG, StandardTestableTask.PDF_TO_PNG,
+                        StandardTestableTask.PDF_TO_MULTIPLE_TIFF,
                         StandardTestableTask.EXTRACT_PAGES));
     }
 
