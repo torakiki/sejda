@@ -35,17 +35,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.AcroFormsMerger;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.FilenameFooterWriter;
-import org.sejda.impl.sambox.component.OutlineMerger;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.TableOfContentsCreator;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
@@ -178,6 +173,13 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Adding generated AcroForm");
             destinationDocument.setDocumentAcroForm(f);
         });
+
+        if(parameters.isNormalizePageSizes()) {
+            LOG.debug("Normalizing page widths to match width of first page");
+            // Do this before generating TOC, so the first page is from content.
+            PDRectangle targetSize = destinationDocument.getPage(1).getCropBox();
+            new PdfScaler(ScaleType.PAGE).normalizePageSizes(destinationDocument.getUnderlyingPDDocument(), targetSize);
+        }
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");

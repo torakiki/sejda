@@ -32,6 +32,8 @@ import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.util.Matrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component capable of scaling pages or pages content
@@ -40,12 +42,34 @@ import org.sejda.sambox.util.Matrix;
  *
  */
 public class PdfScaler {
+    private static final Logger LOG = LoggerFactory.getLogger(PdfScaler.class);
 
     private ScaleType type;
 
     public PdfScaler(ScaleType type) {
         requireNotNullArg(type, "Scale type cannot be null");
         this.type = type;
+    }
+
+    public void normalizePageSizes(PDDocument doc, PDRectangle targetCropBoxSize) throws TaskIOException {
+        for (PDPage page : doc.getPages()) {
+            double scale = targetCropBoxSize.getWidth() / page.getCropBox().getWidth();
+
+            LOG.debug("Scaling page from {} to {}, factor of {}", page.getCropBox().getWidth(), targetCropBoxSize.getWidth(), scale);
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
+                Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
+                contentStream.transform(matrix);
+                if (ScaleType.PAGE == type) {
+                    scalePageBoxes(scale, page);
+                } else {
+                    scaleContentBoxes(scale, page);
+                }
+
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred writing scaling the page.", e);
+            }
+        }
     }
 
     public void scale(PDDocument doc, double scale) throws TaskIOException {

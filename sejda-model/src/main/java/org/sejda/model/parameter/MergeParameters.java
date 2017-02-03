@@ -62,6 +62,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
     private boolean filenameFooter = false;
+    /* Makes all pages same width as the first page */
+    private boolean normalizePageSizes = false;
 
     @Override
     public SingleTaskOutput<?> getOutput() {
@@ -157,11 +159,20 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.filenameFooter = filenameFooter;
     }
 
+    public boolean isNormalizePageSizes() {
+        return normalizePageSizes;
+    }
+
+    public void setNormalizePageSizes(boolean normalizePageSizes) {
+        this.normalizePageSizes = normalizePageSizes;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
                 .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(outputName)
-                .append(filenameFooter).toHashCode();
+                .append(filenameFooter).append(normalizePageSizes)
+                .toHashCode();
     }
 
     @Override
@@ -178,6 +189,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
                 .append(blankPageIfOdd, params.isBlankPageIfOdd())
                 .append(outlinePolicy, params.getOutlinePolicy())
                 .append(tocPolicy, params.getTableOfContentsPolicy()).append(outputName, params.getOutputName())
-                .append(filenameFooter, params.isFilenameFooter()).isEquals();
+                .append(filenameFooter, params.isFilenameFooter())
+                .append(normalizePageSizes, params.isNormalizePageSizes())
+                .isEquals();
     }
 }

@@ -355,4 +355,28 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(3).assertVersion(PdfVersion.VERSION_1_6);
     }
+
+    @Test
+    public void normalizePageSizes() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.setNormalizePageSizes(true);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(widthOfCropBox(d.getPage(0)), 595, 1);
+            assertEquals(widthOfCropBox(d.getPage(1)), 595, 1);
+            assertEquals(widthOfCropBox(d.getPage(2)), 595, 1);
+        });
+    }
+
+    private float widthOfCropBox(PDPage page) {
+        return page.getCropBox().getWidth();
+    }
 }
