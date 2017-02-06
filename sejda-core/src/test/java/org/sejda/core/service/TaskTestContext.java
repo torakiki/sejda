@@ -269,10 +269,25 @@ public class TaskTestContext implements Closeable {
      * @return
      */
     public TaskTestContext assertOutputSize(int size) {
+        if (size == 0) {
+            return assertEmptyMultipleOutput();
+        }
         requireMultipleOutputs();
         String[] files = fileOutput.list();
-        assertEquals("An unexpected number of output files has been created: " + StringUtils.join(files, ","),
-                size, files.length);
+        assertEquals("An unexpected number of output files has been created: " + StringUtils.join(files, ","), size,
+                files.length);
+        return this;
+    }
+
+    /**
+     * asserts that a multiple output task has generated no output
+     * 
+     * @return
+     */
+    public TaskTestContext assertEmptyMultipleOutput() {
+        assertNotNull(fileOutput);
+        assertTrue("Expected an output directory", fileOutput.isDirectory());
+        assertEquals("Found output files while expecting none", 0, fileOutput.listFiles().length);
         return this;
     }
 
@@ -285,8 +300,9 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertOutputContainsFilenames(String... filenames) {
         requireMultipleOutputs();
         Set<String> outputFiles = Arrays.stream(fileOutput.listFiles()).map(File::getName).collect(Collectors.toSet());
-        Arrays.stream(filenames).forEach(f -> assertTrue(f + " missing but expected. Files were: " +
-                StringUtils.join(outputFiles), outputFiles.contains(f)));
+        Arrays.stream(filenames)
+                .forEach(f -> assertTrue(f + " missing but expected. Files were: " + StringUtils.join(outputFiles),
+                        outputFiles.contains(f)));
         return this;
     }
 
