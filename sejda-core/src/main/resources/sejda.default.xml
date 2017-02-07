@@ -36,5 +36,6 @@
 		<task parameters="org.sejda.model.parameter.NupParameters" task="org.sejda.impl.sambox.NupTask"/>
 		<task parameters="org.sejda.model.parameter.WatermarkParameters" task="org.sejda.impl.sambox.WatermarkTask"/>
 		<task parameters="org.sejda.model.parameter.ScaleParameters" task="org.sejda.impl.sambox.ScaleTask"/>		
+		<task parameters="org.sejda.model.parameter.RepairParameters" task="org.sejda.impl.sambox.RepairTask"/>								
 	</tasks>
 </sejda>
