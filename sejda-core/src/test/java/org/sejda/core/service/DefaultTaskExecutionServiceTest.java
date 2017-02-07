@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.sejda.TestUtils;
+import org.sejda.core.Sejda;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.context.DefaultSejdaContext;
@@ -68,6 +69,7 @@ public class DefaultTaskExecutionServiceTest {
 
     @Before
     public void setUp() throws TaskException {
+        System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         OutputStream stream = mock(OutputStream.class);
         parameters.setOutput(new StreamTaskOutput(stream));
         when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);

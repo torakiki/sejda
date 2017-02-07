@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sejda.core.Sejda;
 import org.sejda.core.TestListenerFactory.TestListenerAny;
 import org.sejda.core.TestListenerFactory.TestListenerPercentage;
 import org.sejda.core.TestListenerFactory.TestListenerStart;
@@ -53,6 +54,7 @@ public class NotificationContextTest {
 
     @Before
     public void setUp() {
+        System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         contexts.add(GlobalNotificationContext.getContext());
         contexts.add(ThreadLocalNotificationContext.getContext());
     }

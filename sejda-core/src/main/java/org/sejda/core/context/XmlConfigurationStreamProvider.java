@@ -82,9 +82,11 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     }
 
     private InputStream getDefaultConfigurationStream() {
-        LOG.debug("Loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME);
+        LOG.debug("Loading Sejda configuration form {}", USER_CONFIG_FILE_NAME);
         InputStream result = Thread.currentThread().getContextClassLoader().getResourceAsStream(USER_CONFIG_FILE_NAME);
         if(result == null) {
+            LOG.debug("Couldn't find {}, loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME,
+                    DEFAULT_CONFIG_FILE_NAME);
             result = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
         }
         return result;

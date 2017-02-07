@@ -60,7 +60,7 @@ public class XmlConfigurationStrategyTest {
 
     @Test
     public void testPositiveConstuctor() throws ConfigurationException, IOException {
-        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda.xml"));
+        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-test.xml"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
         verify(stream, atLeastOnce()).close();
