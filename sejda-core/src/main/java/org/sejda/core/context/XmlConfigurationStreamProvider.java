@@ -34,7 +34,8 @@ import org.slf4j.LoggerFactory;
  * Provides a stream where the xml configuration can be read.
  * <p>
  * <ul>
- * <li>An xml configuration file path can be provided using the system property <b>sejda.config.file</b>. If provided it searches for the in the classpath and in the filesystem.</li>
+ * <li>An xml configuration file path can be provided using the system property <b>sejda.config.file</b>. If provided it searches for the in the classpath and in the filesystem.
+ * </li>
  * <li>If the system property <b>sejda.config.file</b> is NOT provided it searches for the standard configuration file named<b> sejda.xml </b></li>
  * </ul>
  * </p>
@@ -67,25 +68,25 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     }
 
     private InputStream getCustomConfigurationStream(String userConfigFileName) throws ConfigurationException {
-        LOG.debug("Loading Sejda configuration form {}", userConfigFileName);
+        LOG.trace("Loading Sejda configuration form {}", userConfigFileName);
         InputStream retVal = ClassLoader.getSystemResourceAsStream(userConfigFileName);
         if (retVal == null) {
             try {
-                LOG.debug("Searching Sejda configuration on filesystem");
+                LOG.trace("Searching Sejda configuration on filesystem");
                 return new FileInputStream(userConfigFileName);
             } catch (FileNotFoundException e) {
-                throw new ConfigurationException(String.format("Unable to access the provided configuration file [%s]",
-                        userConfigFileName), e);
+                throw new ConfigurationException(
+                        String.format("Unable to access the provided configuration file [%s]", userConfigFileName), e);
             }
         }
         return retVal;
     }
 
     private InputStream getDefaultConfigurationStream() {
-        LOG.debug("Loading Sejda configuration form {}", USER_CONFIG_FILE_NAME);
+        LOG.trace("Loading Sejda configuration form {}", USER_CONFIG_FILE_NAME);
         InputStream result = Thread.currentThread().getContextClassLoader().getResourceAsStream(USER_CONFIG_FILE_NAME);
-        if(result == null) {
-            LOG.debug("Couldn't find {}, loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME,
+        if (result == null) {
+            LOG.trace("Couldn't find {}, loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME,
                     DEFAULT_CONFIG_FILE_NAME);
             result = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
         }
