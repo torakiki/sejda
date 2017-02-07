@@ -357,7 +357,7 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
-    public void normalizePageSizes() throws IOException {
+    public void normalizePageSizes_FirstPagePortrait() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
@@ -369,14 +369,46 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(d -> {
-            assertEquals(widthOfCropBox(d.getPage(0)), 595, 1);
-            assertEquals(widthOfCropBox(d.getPage(1)), 595, 1);
-            assertEquals(widthOfCropBox(d.getPage(2)), 595, 1);
+        testContext.assertPages(3).forEachPdfOutput(d -> {
+            assertEquals(595, widthOfCropBox(d.getPage(0)), 1);
+
+            // landscape should be handled in a special case
+            assertEquals(595, heightOfCropBox(d.getPage(1)), 1);
+            assertEquals(840, widthOfCropBox(d.getPage(1)), 1);
+
+            assertEquals(595, widthOfCropBox(d.getPage(2)), 1);
+        });
+    }
+
+    @Test
+    public void normalizePageSizes_FirstPageLandscape() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.setNormalizePageSizes(true);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(3).forEachPdfOutput(d -> {
+            assertEquals(1190, widthOfCropBox(d.getPage(0)), 1);
+
+            // landscape should be handled in a special case
+            assertEquals(1190, heightOfCropBox(d.getPage(1)), 1);
+            assertEquals(841, widthOfCropBox(d.getPage(1)), 1);
+
+            assertEquals(841, widthOfCropBox(d.getPage(2)), 1);
         });
     }
 
     private float widthOfCropBox(PDPage page) {
         return page.getCropBox().getWidth();
+    }
+
+    private float heightOfCropBox(PDPage page) {
+        return page.getCropBox().getHeight();
     }
 }

@@ -23,6 +23,7 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.ScaleType;
@@ -51,11 +52,23 @@ public class PdfScaler {
         this.type = type;
     }
 
-    public void normalizePageSizes(PDDocument doc, PDRectangle targetCropBoxSize) throws TaskIOException {
-        for (PDPage page : doc.getPages()) {
-            double scale = targetCropBoxSize.getWidth() / page.getCropBox().getWidth();
+    public void resizePages(PDDocument doc) throws TaskIOException {
+        PDPage firstPage = doc.getPage(0);
+        Iterator<PDPage> pagesIterator = doc.getPages().iterator();
+        PDRectangle sizeOfFirstPage = firstPage.getCropBox();
+        float targetWidth = Math.min(sizeOfFirstPage.getWidth(), sizeOfFirstPage.getHeight());
+        resizePages(doc, pagesIterator, targetWidth);
+    }
 
-            LOG.debug("Scaling page from {} to {}, factor of {}", page.getCropBox().getWidth(), targetCropBoxSize.getWidth(), scale);
+    public void resizePages(PDDocument doc, Iterator<PDPage> pagesIterator, float targetWidth) throws TaskIOException {
+        while(pagesIterator.hasNext()){
+            PDPage page = pagesIterator.next();
+            PDRectangle cropBox = page.getCropBox();
+
+            // handles landscape scenarios, where we'd like the scale to be calculated based on the width1/width2 ratio, not width1/height2
+            double scale = targetWidth / Math.min(cropBox.getWidth(), cropBox.getHeight());
+
+            LOG.debug("Scaling page from {} to {}, factor of {}", cropBox.getWidth(), targetWidth, scale);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
                 Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
