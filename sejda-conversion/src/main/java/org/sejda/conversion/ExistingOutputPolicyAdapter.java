@@ -29,6 +29,6 @@ import org.sejda.model.output.ExistingOutputPolicy;
 public class ExistingOutputPolicyAdapter extends EnumAdapter<ExistingOutputPolicy> {
 
     public ExistingOutputPolicyAdapter(String userFriendlyName) {
-        super(userFriendlyName, ExistingOutputPolicy.class, "pdf version");
+        super(userFriendlyName, ExistingOutputPolicy.class, "existing output policy");
     }
 }

@@ -36,6 +36,6 @@ public interface CliArgumentsWithDirectoryOutput extends TaskCliArguments {
     @Option(shortName = "o", description = "output directory (required)")
     DirectoryOutputAdapter getOutput();
 
-    @Option(shortName = "j", description = "policy to use when an output file with the same name already exists. {overwrite, skip, fail}. Default is 'fail' (optional)", defaultValue = "fail")
+    @Option(shortName = "j", description = "policy to use when an output file with the same name already exists. {overwrite, skip, fail, rename}. Default is 'fail' (optional)", defaultValue = "fail")
     ExistingOutputPolicyAdapter getExistingOutput();
 }

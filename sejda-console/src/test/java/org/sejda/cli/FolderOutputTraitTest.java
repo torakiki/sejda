@@ -74,6 +74,12 @@ public class FolderOutputTraitTest extends AbstractTaskTraitTest {
     }
 
     @Test
+    public void rename() {
+        TaskParameters result = defaultCommandLine().with("--existingOutput", "rename").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.RENAME, result.getExistingOutputPolicy());
+    }
+
+    @Test
     public void defaultPolicy() {
         TaskParameters result = defaultCommandLine().invokeSejdaConsole();
         assertEquals(ExistingOutputPolicy.FAIL, result.getExistingOutputPolicy());

@@ -81,5 +81,8 @@ public class FileOutputTraitTest extends AbstractTaskTraitTest {
 
         TaskParameters result3 = defaultCommandLine().with("--existingOutput", "fail").invokeSejdaConsole();
         assertEquals(ExistingOutputPolicy.FAIL, result3.getExistingOutputPolicy());
+
+        TaskParameters result4 = defaultCommandLine().with("--existingOutput", "rename").invokeSejdaConsole();
+        assertEquals(ExistingOutputPolicy.RENAME, result4.getExistingOutputPolicy());
     }
 }
