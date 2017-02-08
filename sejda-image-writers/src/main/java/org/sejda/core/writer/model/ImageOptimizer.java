@@ -21,7 +21,6 @@ package org.sejda.core.writer.model;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.imageio.IIOImage;
@@ -52,15 +51,16 @@ public class ImageOptimizer {
             throws IOException {
         File outputFile = File.createTempFile("pdfimage", ".jpeg");
         outputFile.deleteOnExit();
-        FileOutputStream fos = new FileOutputStream(outputFile);
 
         try {
             int relevantDelta = 20;
-            boolean isResizeRelevant = Math.abs(bufferedImage.getWidth() - width) > relevantDelta && Math.abs(bufferedImage.getHeight() - height) > relevantDelta;
+            boolean isResizeRelevant = Math.abs(bufferedImage.getWidth() - width) > relevantDelta
+                    && Math.abs(bufferedImage.getHeight() - height) > relevantDelta;
             boolean isShirinking = bufferedImage.getHeight() > height || bufferedImage.getWidth() > width;
 
             if (isResizeRelevant && isShirinking) {
-                LOG.debug("Resizing image from {}x{} to {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight(), width, height);
+                LOG.debug("Resizing image from {}x{} to {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight(),
+                        width, height);
                 bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, width, height);
             }
 
@@ -71,27 +71,30 @@ public class ImageOptimizer {
             imageRGB.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
 
             ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
-            ImageOutputStream ios = ImageIO.createImageOutputStream(fos);
+            ImageOutputStream ios = ImageIO.createImageOutputStream(outputFile);
             imageWriter.setOutput(ios);
 
-            IIOMetadata imageMetaData = null;
-            try {
-                // new metadata
-                imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(imageRGB), null);
-                Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
-                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
-                jfif.setAttribute("Xdensity", Integer.toString(dpi));
-                jfif.setAttribute("Ydensity", Integer.toString(dpi));
-            } catch (Exception e) {
-                LOG.warn("Failed to set DPI for image, metadata manipulation failed", e);
-            }
-
+            // compression
             JPEGImageWriteParam jpegParams = (JPEGImageWriteParam) imageWriter.getDefaultWriteParam();
             jpegParams.setCompressionMode(JPEGImageWriteParam.MODE_EXPLICIT);
             jpegParams.setCompressionQuality(quality);
 
+            IIOMetadata imageMetaData = null;
             try {
-                imageWriter.write(imageMetaData, new IIOImage(imageRGB, null, null), jpegParams);
+                // new metadata
+                imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(imageRGB), jpegParams);
+                Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
+                Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+                jfif.setAttribute("Xdensity", Integer.toString(dpi));
+                jfif.setAttribute("Ydensity", Integer.toString(dpi));
+                jfif.setAttribute("resUnits", "1");
+                imageMetaData.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+            } catch (Exception e) {
+                LOG.warn("Failed to set DPI for image, metadata manipulation failed", e);
+            }
+
+            try {
+                imageWriter.write(null, new IIOImage(imageRGB, null, imageMetaData), jpegParams);
             } finally {
                 IOUtils.closeQuietly(ios);
                 imageWriter.dispose();
@@ -99,7 +102,6 @@ public class ImageOptimizer {
 
             return outputFile;
         } finally {
-            IOUtils.closeQuietly(fos);
             bufferedImage.flush();
         }
     }
