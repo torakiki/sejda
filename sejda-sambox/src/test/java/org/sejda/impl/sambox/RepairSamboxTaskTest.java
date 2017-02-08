@@ -1,6 +1,6 @@
 /*
- * Created on 07 dic 2015
- * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 06 feb 2017
+ * Copyright 2017 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -16,19 +16,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.conversion;
+package org.sejda.impl.sambox;
 
-import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.core.service.RepairTaskTest;
+import org.sejda.model.parameter.RepairParameters;
+import org.sejda.model.task.Task;
 
 /**
- * Adapter class for enum {@link ExistingOutputPolicy}. Provides initialization from string
- * 
  * @author Andrea Vacondio
  *
  */
-public class ExistingOutputPolicyAdapter extends EnumAdapter<ExistingOutputPolicy> {
+public class RepairSamboxTaskTest extends RepairTaskTest {
 
-    public ExistingOutputPolicyAdapter(String userFriendlyName) {
-        super(userFriendlyName, ExistingOutputPolicy.class, "existing output policy");
+    @Override
+    public Task<RepairParameters> getTask() {
+        return new RepairTask();
     }
+
 }

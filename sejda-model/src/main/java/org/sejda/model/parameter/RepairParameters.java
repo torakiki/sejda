@@ -1,6 +1,6 @@
 /*
- * Created on 07 dic 2015
- * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 03 feb 2017
+ * Copyright 2017 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -16,19 +16,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.conversion;
+package org.sejda.model.parameter;
 
-import org.sejda.model.output.ExistingOutputPolicy;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 
 /**
- * Adapter class for enum {@link ExistingOutputPolicy}. Provides initialization from string
+ * Repair and recover data from PDF files
  * 
  * @author Andrea Vacondio
  *
  */
-public class ExistingOutputPolicyAdapter extends EnumAdapter<ExistingOutputPolicy> {
+public class RepairParameters extends MultiplePdfSourceMultipleOutputParameters {
 
-    public ExistingOutputPolicyAdapter(String userFriendlyName) {
-        super(userFriendlyName, ExistingOutputPolicy.class, "existing output policy");
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof RepairParameters)) {
+            return false;
+        }
+        return new EqualsBuilder().appendSuper(super.equals(other)).isEquals();
     }
 }

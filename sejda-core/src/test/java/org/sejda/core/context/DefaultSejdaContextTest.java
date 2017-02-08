@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskNotFoundException;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -41,6 +42,7 @@ public class DefaultSejdaContextTest {
 
     @Before
     public void setUp() {
+        System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         victim = new DefaultSejdaContext();
     }
 
