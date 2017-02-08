@@ -62,7 +62,8 @@ abstract class MultiImageWriter<T extends PdfToImageParameters> extends Abstract
                 writer.prepareWriteSequence(null);
                 prepared = true;
             }
-            writer.writeToSequence(new IIOImage(image, null, null), imageWriterParams);
+            writer.writeToSequence(new IIOImage(image, null, newImageMetadata(image, params, imageWriterParams)),
+                    imageWriterParams);
         } catch (IOException e) {
             throw new TaskIOException(e);
         }

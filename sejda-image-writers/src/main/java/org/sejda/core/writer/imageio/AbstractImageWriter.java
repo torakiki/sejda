@@ -22,6 +22,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.sejda.common.ComponentsUtility.nullSafeClose;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -31,6 +32,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.sejda.core.writer.model.ImageWriter;
@@ -79,6 +81,16 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
      * @return parameters for the {@link ImageWriter}. Each concrete class has to implement this to provide specific parameters for the adapted writer.
      */
     abstract ImageWriteParam newImageWriterParams(T params);
+
+    /**
+     * @param image
+     * @param params
+     * @param writerParams
+     * @return metadata for the {@link ImageWriter}
+     */
+    public IIOMetadata newImageMetadata(RenderedImage image, T params, ImageWriteParam writerParams) {
+        return null;
+    }
 
     @Override
     public void openDestination(File file, T params) throws TaskIOException {

@@ -46,7 +46,8 @@ abstract class SingleImageWriter<T extends PdfToImageParameters> extends Abstrac
         TaskIOException.require(nonNull(getOutput()), "Cannot call write before opening the write destination");
         ImageWriteParam imageWriterParams = newImageWriterParams(params);
         try {
-            writer.write(null, new IIOImage(image, null, null), imageWriterParams);
+            writer.write(null, new IIOImage(image, null, newImageMetadata(image, params, imageWriterParams)),
+                    imageWriterParams);
         } catch (IOException e) {
             throw new TaskIOException(e);
         }

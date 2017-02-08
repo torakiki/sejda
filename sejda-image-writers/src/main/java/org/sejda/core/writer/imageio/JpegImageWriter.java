@@ -18,10 +18,17 @@
  */
 package org.sejda.core.writer.imageio;
 
+import java.awt.image.RenderedImage;
+
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 import org.sejda.model.parameter.image.PdfToJpegParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 /**
  * JPEG image writer using ImageIO
@@ -29,6 +36,7 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
  * @author Andrea Vacondio
  */
 public class JpegImageWriter extends SingleImageWriter<PdfToJpegParameters> {
+    private static final Logger LOG = LoggerFactory.getLogger(JpegImageWriter.class);
 
     public JpegImageWriter() {
         super("jpeg");
@@ -41,4 +49,23 @@ public class JpegImageWriter extends SingleImageWriter<PdfToJpegParameters> {
         param.setCompressionQuality((float) params.getQuality() / 100);
         return param;
     }
+
+    @Override
+    public IIOMetadata newImageMetadata(RenderedImage image, PdfToJpegParameters params, ImageWriteParam writerParams) {
+        // new metadatad
+        IIOMetadata imageMetaData = null;
+        try {
+            imageMetaData = writer.getDefaultImageMetadata(new ImageTypeSpecifier(image), writerParams);
+            Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
+            Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
+            jfif.setAttribute("Xdensity", Integer.toString(params.getResolutionInDpi()));
+            jfif.setAttribute("Ydensity", Integer.toString(params.getResolutionInDpi()));
+            jfif.setAttribute("resUnits", "1");
+            imageMetaData.setFromTree("javax_imageio_jpeg_image_1.0", tree);
+        } catch (Exception e1) {
+            LOG.warn("Failed to set DPI for image, metadata manipulation failed", e1);
+        }
+        return imageMetaData;
+    }
+
 }
