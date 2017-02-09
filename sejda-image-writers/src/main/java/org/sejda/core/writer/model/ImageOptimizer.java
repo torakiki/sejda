@@ -59,6 +59,7 @@ public class ImageOptimizer {
             boolean isShirinking = bufferedImage.getHeight() > height || bufferedImage.getWidth() > width;
 
             if (isResizeRelevant && isShirinking) {
+                // we resize down, we don't resize up
                 LOG.debug("Resizing image from {}x{} to {}x{}", bufferedImage.getWidth(), bufferedImage.getHeight(),
                         width, height);
                 bufferedImage = Scalr.resize(bufferedImage, Scalr.Method.BALANCED, width, height);

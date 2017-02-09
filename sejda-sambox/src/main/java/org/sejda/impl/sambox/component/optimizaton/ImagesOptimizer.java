@@ -130,18 +130,21 @@ class ImagesOptimizer extends PDFStreamEngine implements Consumer<PDPage> {
                                     PDImageXObject image = (PDImageXObject) xobject;
 
                                     Matrix ctmNew = getGraphicsState().getCurrentTransformationMatrix();
-                                    float imageXScale = ctmNew.getScalingFactorX();
-                                    float imageYScale = ctmNew.getScalingFactorY();
+                                    float displayWidth = ctmNew.getScalingFactorX();
+                                    float displayHeight = ctmNew.getScalingFactorY();
 
-                                    int displayHeight = Math
-                                            .abs((int) (imageYScale / 72.0f * parameters.getImageDpi()));
-                                    int displayWidth = Math.abs((int) (imageXScale / 72.0f * parameters.getImageDpi()));
+                                    int newDisplayHeight = Math
+                                            .abs((int) (displayHeight / 72.0f * parameters.getImageDpi()));
+                                    int newDisplayWidth = Math
+                                            .abs((int) (displayWidth / 72.0f * parameters.getImageDpi()));
 
-                                    LOG.debug("Found image {} {}x{} (displayed as {}x{}, scaled as {}x{}) with size {}",
+                                    LOG.debug(
+                                            "Found image {} {}x{} (displayed as {}x{}, to be resized to {}x{}) with size {}",
                                             objectName.getName(), image.getHeight(), image.getWidth(), displayHeight,
-                                            displayWidth, imageYScale, imageXScale, HumanReadableSize.toString(unfilteredSize));
+                                            displayWidth, newDisplayHeight, newDisplayWidth,
+                                            HumanReadableSize.toString(unfilteredSize));
 
-                                    optimize(objectName, image, stream.id(), displayWidth, displayHeight);
+                                    optimize(objectName, image, stream.id(), newDisplayWidth, newDisplayHeight);
                                 }
                             }
                         } else if (COSName.FORM.getName().equals(subtype)) {
