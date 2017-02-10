@@ -1,6 +1,8 @@
 /*
  * Created on 15 nov 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
+ *
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -23,7 +25,7 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Collections;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.ScaleType;
@@ -40,6 +42,7 @@ import org.slf4j.LoggerFactory;
  * Component capable of scaling pages or pages content
  * 
  * @author Andrea Vacondio
+ * @author Eduard Weissmann
  *
  */
 public class PdfScaler {
@@ -54,15 +57,13 @@ public class PdfScaler {
 
     public void resizePages(PDDocument doc) throws TaskIOException {
         PDPage firstPage = doc.getPage(0);
-        Iterator<PDPage> pagesIterator = doc.getPages().iterator();
         PDRectangle sizeOfFirstPage = firstPage.getCropBox();
         float targetWidth = Math.min(sizeOfFirstPage.getWidth(), sizeOfFirstPage.getHeight());
-        resizePages(doc, pagesIterator, targetWidth);
+        resizePages(doc, doc.getPages(), targetWidth);
     }
 
-    public void resizePages(PDDocument doc, Iterator<PDPage> pagesIterator, float targetWidth) throws TaskIOException {
-        while(pagesIterator.hasNext()){
-            PDPage page = pagesIterator.next();
+    public void resizePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
+        for(PDPage page : pages){
             PDRectangle cropBox = page.getCropBox();
 
             // handles landscape scenarios, where we'd like the scale to be calculated based on the width1/width2 ratio, not width1/height2
@@ -86,8 +87,16 @@ public class PdfScaler {
     }
 
     public void scale(PDDocument doc, double scale) throws TaskIOException {
+        scale(doc, doc.getPages(), scale);
+    }
+
+    public void scale(PDDocument doc, PDPage page, double scale) throws TaskIOException {
+        scale(doc, Collections.singletonList(page), scale);
+    }
+
+    public void scale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
         if (scale != 1) {
-            for (PDPage page : doc.getPages()) {
+            for (PDPage page : pages) {
                 try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
                     Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
                     contentStream.transform(matrix);
