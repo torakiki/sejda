@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component.optimizaton;
+package org.sejda.impl.sambox.component.optimization;
 
 import static java.util.Objects.isNull;
 import static java.util.Optional.of;

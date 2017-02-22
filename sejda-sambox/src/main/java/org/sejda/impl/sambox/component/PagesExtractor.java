@@ -28,8 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
-import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
-import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
+import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
+import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;

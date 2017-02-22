@@ -23,8 +23,8 @@ import static java.util.Optional.ofNullable;
 
 import java.util.Objects;
 
-import org.sejda.impl.sambox.component.optimizaton.ResourceDictionaryCleaner;
-import org.sejda.impl.sambox.component.optimizaton.ResourcesHitter;
+import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
+import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;

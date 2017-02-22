@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<url>http://www.sejda.org</url>
 	<groupId>org.sejda</groupId>
@@ -8,6 +9,11 @@
 	<name>sejda</name>
 	<version>3.0.0.M13-SNAPSHOT</version>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
+
+	<organization>
+		<name>sejda</name>
+		<url>http://www.sejda.org</url>
+	</organization>
 
 	<issueManagement>
 		<system>GitHub</system>
@@ -282,7 +288,6 @@
 		<commons.io.version>2.5</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
 		<mockito.version>1.10.19</mockito.version>
-		<powermock.version>1.6.2</powermock.version>
 		<logback.version>1.1.8</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>

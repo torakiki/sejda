@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component.optimizaton;
+package org.sejda.impl.sambox.component.optimization;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,6 +25,7 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.sambox.input.PDFParser;

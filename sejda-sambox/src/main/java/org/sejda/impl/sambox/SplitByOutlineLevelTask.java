@@ -23,7 +23,7 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
-import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
+import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.impl.sambox.component.split.PageDestinationsLevelPdfSplitter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSourceOpener;

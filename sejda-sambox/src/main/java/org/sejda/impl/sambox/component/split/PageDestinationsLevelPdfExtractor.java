@@ -27,7 +27,7 @@ import java.io.File;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.PagesExtractor;
-import org.sejda.impl.sambox.component.optimizaton.OptimizationRuler;
+import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;

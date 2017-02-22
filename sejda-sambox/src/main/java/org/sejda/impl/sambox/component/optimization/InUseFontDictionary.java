@@ -1,5 +1,5 @@
 /*
- * Created on 12 dic 2015
+ * Created on 29 mag 2016
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
@@ -16,21 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox;
+package org.sejda.impl.sambox.component.optimization;
 
-import org.sejda.core.service.CropTaskTest;
-import org.sejda.model.parameter.CropParameters;
-import org.sejda.model.task.Task;
+import org.sejda.sambox.cos.COSDictionary;
 
 /**
+ * Simple {@link COSDictionary} wrapper used to identify a font dictionary that is used in the page content stream
+ * 
  * @author Andrea Vacondio
- *
  */
-public class CropBoxSamboxTaskTest extends CropTaskTest {
-
-    @Override
-    public Task<CropParameters> getTask() {
-        return new CropTask();
+public class InUseFontDictionary extends COSDictionary {
+    public InUseFontDictionary(COSDictionary wrapped) {
+        super(wrapped);
     }
-
 }
