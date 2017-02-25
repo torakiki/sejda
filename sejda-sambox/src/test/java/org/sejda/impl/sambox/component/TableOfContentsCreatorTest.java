@@ -97,7 +97,7 @@ public class TableOfContentsCreatorTest {
         assertEquals(0, doc.getNumberOfPages());
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.NONE, doc);
         victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(0, doc.getNumberOfPages());
     }
 
@@ -107,7 +107,7 @@ public class TableOfContentsCreatorTest {
         assertEquals(0, doc.getNumberOfPages());
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
         victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -119,9 +119,22 @@ public class TableOfContentsCreatorTest {
         assertEquals(3, doc.getNumberOfPages());
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, doc);
         victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(4, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(1).getCOSObject());
+    }
+
+    @Test
+    public void testAddToCWithBlankPageIfOdd() throws IOException {
+        PDDocument doc = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        PDPage firstPage = doc.getPage(0);
+        assertEquals(3, doc.getNumberOfPages());
+        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, doc);
+        victim.appendItem("text", 10, new PDAnnotationLink());
+        victim.addToC(true);
+        assertEquals(5, doc.getNumberOfPages());
+        assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
     }
 
     @Test
@@ -134,7 +147,7 @@ public class TableOfContentsCreatorTest {
         for (int i = 1; i < 40; i++) {
             victim.appendItem("text", i, new PDAnnotationLink());
         }
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(5, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
     }
@@ -147,7 +160,7 @@ public class TableOfContentsCreatorTest {
         victim.appendItem(
                 "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
                 100, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -158,7 +171,7 @@ public class TableOfContentsCreatorTest {
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
         victim.pageSizeIfNotSet(PDRectangle.LETTER);
         victim.appendItem("test.", 100, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(PDRectangle.LETTER, doc.getPage(0).getMediaBox());
     }
 
@@ -169,7 +182,7 @@ public class TableOfContentsCreatorTest {
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
         victim.pageSizeIfNotSet(PDRectangle.A1);
         victim.appendItem("test.", 100, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(39.64, victim.getFontSize(), 0.1);
     }
 
@@ -179,7 +192,7 @@ public class TableOfContentsCreatorTest {
         assertEquals(0, doc.getNumberOfPages());
         TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
         victim.appendItem("1-abc-עברית", 100, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -191,7 +204,7 @@ public class TableOfContentsCreatorTest {
         victim.appendItem(
                 "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
                 100, new PDAnnotationLink());
-        victim.addToC();
+        victim.addToC(false);
         assertThat(new PDFTextStripper().getText(doc), containsString("101"));
     }
 }

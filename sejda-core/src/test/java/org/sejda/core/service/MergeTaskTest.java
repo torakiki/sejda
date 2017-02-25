@@ -308,6 +308,20 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void testExecuteMergeRangesWithBlankPagesAndToc() throws IOException {
+        MergeParameters parameters = setUpParameters(getInputWithOutline());
+        testContext.pdfOutputTo(parameters);
+        for (PdfMergeInput input : parameters.getInputList()) {
+            input.addPageRange(new PageRange(2, 4));
+        }
+        parameters.setBlankPageIfOdd(true);
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertCreator().assertPages(10);
+    }
+
+    @Test
     public void testExecuteMergeRangesWithFlattenForms() throws IOException {
         List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
         inputs.add(new PdfMergeInput(customInput("pdf/forms/simple_form_with_values.pdf")));

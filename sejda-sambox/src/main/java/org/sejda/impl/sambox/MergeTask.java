@@ -182,7 +182,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
-            tocCreator.addToC();
+            tocCreator.addToC(parameters.isBlankPageIfOdd());
         }
 
         destinationDocument.savePDDocument(tmpFile);

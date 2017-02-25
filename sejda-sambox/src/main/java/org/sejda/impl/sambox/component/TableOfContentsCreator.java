@@ -96,11 +96,15 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and prepend it to the given document
+     *
+     * Set addBlankPageIfOdd to true if you'd like to add an extra blank page at the end of an odd-sized ToC (1, 3, 5, etc pages).
+     * (Makes it easier to do duplex printing.)
      */
-    public void addToC() {
+    public void addToC(boolean addBlankPageIfOdd) {
         try {
             PDPageTree pagesTree = document.getPages();
             ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {
+                int toCPagesCount = t.size();
                 t.descendingIterator().forEachRemaining(p -> {
                     if (pagesTree.getCount() > 0) {
                         pagesTree.insertBefore(p, pagesTree.get(0));
@@ -108,6 +112,11 @@ public class TableOfContentsCreator {
                         pagesTree.add(p);
                     }
                 });
+                if(addBlankPageIfOdd && toCPagesCount % 2 == 1) {
+                    PDPage lastTocPage = pagesTree.get(toCPagesCount - 1);
+                    PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
+                    pagesTree.insertBefore(blankPage, lastTocPage);
+                }
             });
         } catch (IOException | TaskIOException e ) {
             LOG.error("An error occurred while create the ToC. Skipping ToC creation.", e);
