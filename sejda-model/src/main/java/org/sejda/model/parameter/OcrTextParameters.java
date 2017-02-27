@@ -18,24 +18,43 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.parameter.base.AbstractParameters;
+import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
+import org.sejda.model.validation.constraint.NotEmpty;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * Parameter class to extract text from multiple documents performing OCR
  * 
  * @author Andrea Vacondio
  */
-public class OcrTextParameters extends ExtractTextParameters {
+public class OcrTextParameters extends AbstractParameters
+        implements MultiplePdfSourceTaskParameters, MultipleOutputTaskParameters {
+
+    private String outputPrefix = "";
+    @Valid
+    @NotNull
+    private MultipleTaskOutput<?> output;
+    @NotEmpty
+    @Valid
+    private List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
+    @NotEmpty
+    private String textEncoding = "UTF-8";
+
     private Set<Locale> languages = new LinkedHashSet<>();
 
     /**
      * Adds a language o the list of possible languages of the text found in the documents. This can help the OCR engine to return a more accurate result.
-     * 
+     *
      * @param language
      */
     public void addLanguage(Locale language) {
@@ -49,9 +68,57 @@ public class OcrTextParameters extends ExtractTextParameters {
         return languages;
     }
 
+
+    public String getTextEncoding() {
+        return textEncoding;
+    }
+
+    public void setTextEncoding(String textEncoding) {
+        this.textEncoding = textEncoding;
+    }
+
+    @Override
+    public MultipleTaskOutput<?> getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(MultipleTaskOutput<?> output) {
+        this.output = output;
+    }
+
+    @Override
+    public String getOutputPrefix() {
+        return outputPrefix;
+    }
+
+    @Override
+    public void setOutputPrefix(String outputPrefix) {
+        this.outputPrefix = outputPrefix;
+    }
+
+    /**
+     * adds the input source to the source list.
+     *
+     * @param input
+     */
+    @Override
+    public void addSource(PdfSource<?> input) {
+        sourceList.add(input);
+    }
+
+    /**
+     * @return an unmodifiable view of the source list
+     */
+    @Override
+    public List<PdfSource<?>> getSourceList() {
+        return Collections.unmodifiableList(sourceList);
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(languages).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(sourceList)
+                .append(textEncoding).append(outputPrefix).append(languages).toHashCode();
     }
 
     @Override
@@ -63,6 +130,10 @@ public class OcrTextParameters extends ExtractTextParameters {
             return false;
         }
         OcrTextParameters parameter = (OcrTextParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(languages, parameter.languages).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output)
+                .append(sourceList, parameter.sourceList).append(textEncoding, parameter.textEncoding)
+                .append(outputPrefix, parameter.outputPrefix)
+                .append(languages, parameter.languages)
+                .isEquals();
     }
 }

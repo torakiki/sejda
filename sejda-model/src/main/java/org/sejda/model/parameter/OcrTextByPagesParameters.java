@@ -18,12 +18,18 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.common.collection.NullSafeSet;
+import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PageRangeSelection;
+import org.sejda.model.pdf.page.PagesSelection;
+import org.sejda.model.validation.constraint.NotEmpty;
+
+import javax.validation.Valid;
 
 /**
  * Parameter class to extract text by pages performing OCR
@@ -31,13 +37,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author Andrea Vacondio
  *
  */
-public class OcrTextByPagesParameters extends ExtractTextByPagesParameters {
+public class OcrTextByPagesParameters extends SinglePdfSourceMultipleOutputParameters
+        implements PageRangeSelection, PagesSelection {
+
+    @Valid
+    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+    @NotEmpty
+    private String textEncoding = "UTF-8";
 
     public final Set<Locale> languages = new HashSet<>();
 
     /**
      * Adds a language o the list of possible languages of the text found in the document. This can help the OCR engine to return a more accurate result.
-     * 
+     *
      * @param language
      */
     public void addLanguage(Locale language) {
@@ -51,9 +63,52 @@ public class OcrTextByPagesParameters extends ExtractTextByPagesParameters {
         return languages;
     }
 
+    public String getTextEncoding() {
+        return textEncoding;
+    }
+
+    public void setTextEncoding(String textEncoding) {
+        this.textEncoding = textEncoding;
+    }
+
+    /**
+     * @return an unmodifiable view of the pageSelection
+     */
+    @Override
+    public Set<PageRange> getPageSelection() {
+        return Collections.unmodifiableSet(pageSelection);
+    }
+
+    public void addPageRange(PageRange range) {
+        pageSelection.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        pageSelection.addAll(ranges);
+    }
+
+    /**
+     * @param totalNumberOfPage
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set.
+     * @see PagesSelection#getPages(int)
+     */
+    @Override
+    public Set<Integer> getPages(int totalNumberOfPage) {
+        if (pageSelection.isEmpty()) {
+            return new PageRange(1).getPages(totalNumberOfPage);
+        }
+        Set<Integer> retSet = new NullSafeSet<Integer>();
+        for (PageRange range : getPageSelection()) {
+            retSet.addAll(range.getPages(totalNumberOfPage));
+        }
+        return retSet;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(languages).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(pageSelection).append(textEncoding)
+                .append(languages).toHashCode();
     }
 
     @Override
@@ -65,6 +120,9 @@ public class OcrTextByPagesParameters extends ExtractTextByPagesParameters {
             return false;
         }
         OcrTextByPagesParameters parameter = (OcrTextByPagesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(languages, parameter.languages).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(pageSelection, parameter.pageSelection)
+                .append(textEncoding, parameter.getTextEncoding())
+                .append(languages, parameter.getLanguages())
+                .isEquals();
     }
 }
