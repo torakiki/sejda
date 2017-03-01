@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Collection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.cli.command.TestableTask;
@@ -52,6 +53,10 @@ public class ExampleUsageIntegrationTest extends AbstractTaskTraitTest {
     public void executeExampleUsage() {
         String exampleUsage = testableTask.getCommand().getExampleUsage();
         System.out.println(testableTask.getCommand());
+
+        // change pattern to match outline test file we have
+        exampleUsage = StringUtils.replace(exampleUsage, "-l 2 -e \".+(Chapter)+.+\"", "-l 1 -e \".+(level)+.+\""); // to match outline test file we have
+
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
         assertTaskCompletes(exampleUsage + " --overwrite");
     }
