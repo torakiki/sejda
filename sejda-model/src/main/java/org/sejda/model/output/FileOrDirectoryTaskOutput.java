@@ -31,6 +31,9 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
     private File file;
 
     public FileOrDirectoryTaskOutput(File file) {
+        if (file == null) {
+            throw new IllegalArgumentException("A not null file or directory instance is expected. Path: " + file);
+        }
         this.file = file;
     }
 
@@ -50,12 +53,12 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getDestination()).toString();
+        return new ToStringBuilder(this).append(file).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getDestination()).toHashCode();
+        return new HashCodeBuilder().append(file).toHashCode();
     }
 
     @Override
@@ -63,11 +66,11 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FileTaskOutput)) {
+        if (!(other instanceof FileOrDirectoryTaskOutput)) {
             return false;
         }
-        FileTaskOutput output = (FileTaskOutput) other;
-        return new EqualsBuilder().append(file, output.getDestination()).isEquals();
+        FileOrDirectoryTaskOutput output = (FileOrDirectoryTaskOutput) other;
+        return new EqualsBuilder().append(file, output.file).isEquals();
     }
 
 }
