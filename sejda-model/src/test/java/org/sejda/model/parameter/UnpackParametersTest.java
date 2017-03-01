@@ -32,7 +32,7 @@ import org.sejda.model.output.MultipleTaskOutput;
  */
 public class UnpackParametersTest {
 
-    private MultipleTaskOutput<?> output;
+    private MultipleTaskOutput output;
 
     @Before
     public void setUp() {

@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.scale.ScaleType;
 
 /**
@@ -52,7 +52,7 @@ public class ScaleParametersTest {
         ScaleParameters victim = new ScaleParameters(10);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         victim.setScaleType(null);
         TestUtils.assertInvalidParameters(victim);

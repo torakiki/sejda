@@ -34,7 +34,7 @@ public class MultipleSourceMultipleOutputParameters extends MultipleSourceParame
     private String outputPrefix = "";
     @Valid
     @NotNull
-    private MultipleTaskOutput<?> output;
+    private MultipleTaskOutput output;
 
     @Override
     public String getOutputPrefix() {
@@ -47,12 +47,12 @@ public class MultipleSourceMultipleOutputParameters extends MultipleSourceParame
     }
 
     @Override
-    public MultipleTaskOutput<?> getOutput() {
+    public MultipleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(MultipleTaskOutput<?> output) {
+    public void setOutput(MultipleTaskOutput output) {
         this.output = output;
     }
 

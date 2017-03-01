@@ -29,12 +29,7 @@ import java.util.ServiceLoader;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.sejda.cli.model.CliArgumentsWithDirectoryOutput;
-import org.sejda.cli.model.CliArgumentsWithPrefixableOutput;
-import org.sejda.cli.model.MultipleOptionalPdfSourceTaskCliArguments;
-import org.sejda.cli.model.MultiplePdfSourceTaskCliArguments;
-import org.sejda.cli.model.MultipleSourceTaskCliArguments;
-import org.sejda.cli.model.SinglePdfSourceTaskCliArguments;
+import org.sejda.cli.model.*;
 
 /**
  * @author Andrea Vacondio
@@ -74,7 +69,7 @@ public class TestableTasks {
     }
 
     public static List<TestableTask> getTasksWithFolderOutputAndPdfInput() {
-        return getTasksWith(t -> !TestableTasks.hasMultipleSource(t) && TestableTasks.hasFolderOutput(t));
+        return getTasksWith(t -> !TestableTasks.hasMultipleSource(t) && (TestableTasks.hasFolderOutput(t) || TestableTasks.hasFileOrFolderOutput(t)));
     }
 
     public static List<TestableTask> getTasksWithPrefixableOutput() {
@@ -85,8 +80,16 @@ public class TestableTasks {
         return TASKS.stream().filter(p).collect(Collectors.toList());
     }
 
+    public static boolean hasFileOutput(TestableTask task) {
+        return !hasFolderOutput(task) && !hasFileOrFolderOutput(task);
+    }
+
     public static boolean hasFolderOutput(TestableTask task) {
         return isInheritingTraitsFrom(task, CliArgumentsWithDirectoryOutput.class);
+    }
+
+    public static boolean hasFileOrFolderOutput(TestableTask task) {
+        return isInheritingTraitsFrom(task, CliArgumentsWithFileOrDirectoryOutput.class);
     }
 
     public static boolean hasPrefixableOutput(TestableTask task) {

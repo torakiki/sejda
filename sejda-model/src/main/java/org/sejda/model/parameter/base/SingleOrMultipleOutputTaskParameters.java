@@ -1,6 +1,5 @@
 /*
- * Created on 14/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -19,20 +18,18 @@
  */
 package org.sejda.model.parameter.base;
 
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 /**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
- * 
- * @author Andrea Vacondio
- * 
+ * Task output that accepts both a file or a folder.
+ * The correctness of the output type chosen will be validated at runtime, when results are written out.
  */
-public interface MultipleOutputTaskParameters extends PrefixableTaskParameters {
+public interface SingleOrMultipleOutputTaskParameters extends PrefixableTaskParameters {
 
     /**
      * Sets the output destination
      * 
      * @param output
      */
-    void setOutput(MultipleTaskOutput output);
+    void setOutput(SingleOrMultipleTaskOutput output);
 }

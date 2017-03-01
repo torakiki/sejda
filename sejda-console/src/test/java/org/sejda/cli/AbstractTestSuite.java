@@ -43,11 +43,7 @@ import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.output.DirectoryTaskOutput;
-import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.output.StreamTaskOutput;
-import org.sejda.model.output.TaskOutput;
-import org.sejda.model.output.TaskOutputDispatcher;
+import org.sejda.model.output.*;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
@@ -81,7 +77,7 @@ public abstract class AbstractTestSuite {
     }
 
     protected File createTestEncryptedPdfFile(String path) {
-        return createTestFile(path, getClass().getResourceAsStream("/pdf/enc_test_test_file.pdf"));
+        return createTestFile(path, getClass().getResourceAsStream("/pdf/test_outline.pdf"));
     }
 
     protected File createTestTextFile(String path, String contents) {
@@ -176,11 +172,6 @@ public abstract class AbstractTestSuite {
         result.getOutput().accept(new TaskOutputDispatcher() {
 
             @Override
-            public void dispatch(StreamTaskOutput output) {
-                fail("wrong dispached method");
-            }
-
-            @Override
             public void dispatch(DirectoryTaskOutput output) {
                 assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
             }
@@ -189,16 +180,16 @@ public abstract class AbstractTestSuite {
             public void dispatch(FileTaskOutput output) {
                 fail("wrong dispached method");
             }
+
+            @Override
+            public void dispatch(FileOrDirectoryTaskOutput output) {
+                assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
+            }
         });
     }
 
-    protected void assertOutputFile(TaskOutput<?> output, final Path expected) throws TaskException {
+    protected void assertOutputFile(TaskOutput output, final Path expected) throws TaskException {
         output.accept(new TaskOutputDispatcher() {
-
-            @Override
-            public void dispatch(StreamTaskOutput output) {
-                fail("wrong dispached method");
-            }
 
             @Override
             public void dispatch(DirectoryTaskOutput output) {
@@ -207,6 +198,11 @@ public abstract class AbstractTestSuite {
 
             @Override
             public void dispatch(FileTaskOutput output) {
+                assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
+            }
+
+            @Override
+            public void dispatch(FileOrDirectoryTaskOutput output) {
                 assertEquals(expected.toAbsolutePath().normalize().toFile(), output.getDestination());
             }
         });

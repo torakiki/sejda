@@ -48,7 +48,7 @@ public class SimpleSplitParametersTest {
     @Test
     public void testInvalidParameters() {
         SimpleSplitParameters victim = new SimpleSplitParameters(null);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        MultipleTaskOutput output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

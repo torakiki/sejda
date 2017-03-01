@@ -36,7 +36,7 @@ import com.lexicalscope.jewel.cli.Option;
  * 
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " setviewerpreferences")
-public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+public interface ViewerPreferencesTaskCliArguments extends CliArgumentsWithPdfAndFileOrDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(description = "center of the screen (optional)")

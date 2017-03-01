@@ -36,10 +36,10 @@ import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 public class TestTaskParameter extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
 
     @Valid
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
 
     @Override
-    public TaskOutput<?> getOutput() {
+    public TaskOutput getOutput() {
         return output;
     }
 
@@ -49,7 +49,7 @@ public class TestTaskParameter extends AbstractPdfOutputParameters implements Si
     }
 
     @Override
-    public void setOutput(SingleTaskOutput<?> output) {
+    public void setOutput(SingleTaskOutput output) {
         this.output = output;
     }
 

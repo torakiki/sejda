@@ -34,7 +34,7 @@ import org.sejda.model.validation.constraint.Directory;
  * @author Andrea Vacondio
  * 
  */
-public class DirectoryTaskOutput implements MultipleTaskOutput<File> {
+public class DirectoryTaskOutput implements MultipleTaskOutput {
 
     @Directory
     private final File directory;

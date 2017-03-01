@@ -33,7 +33,7 @@ import org.sejda.model.input.FileSource;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.watermark.Location;
 
@@ -73,7 +73,7 @@ public class WatermarkParametersTest {
         WatermarkParameters victim = new WatermarkParameters(null);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         TestUtils.assertInvalidParameters(victim);
     }
@@ -83,7 +83,7 @@ public class WatermarkParametersTest {
         WatermarkParameters victim = new WatermarkParameters(StreamSource.newInstance(mock(InputStream.class), "name"));
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         victim.setOpacity(-1);
         TestUtils.assertInvalidParameters(victim);
@@ -95,7 +95,7 @@ public class WatermarkParametersTest {
         victim.setDimension(new Dimension(-300, 300));
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(mock(InputStream.class), "name");
         victim.addSource(input);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         TestUtils.assertInvalidParameters(victim);
     }

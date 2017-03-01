@@ -58,7 +58,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private String outputName;
     @Valid
     @NotNull
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
     private boolean filenameFooter = false;
@@ -66,12 +66,12 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private boolean normalizePageSizes = false;
 
     @Override
-    public SingleTaskOutput<?> getOutput() {
+    public SingleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(SingleTaskOutput<?> output) {
+    public void setOutput(SingleTaskOutput output) {
         this.output = output;
     }
 

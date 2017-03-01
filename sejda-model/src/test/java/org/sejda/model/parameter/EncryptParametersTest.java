@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.pdf.encryption.PdfEncryption;
@@ -80,7 +80,7 @@ public class EncryptParametersTest {
     @Test
     public void testInvalidParameters() {
         EncryptParameters victim = new EncryptParameters(null);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

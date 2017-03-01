@@ -30,7 +30,7 @@ import com.lexicalscope.jewel.cli.Option;
  *
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " scale")
-public interface ScaleTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput,
+public interface ScaleTaskCliArguments extends CliArgumentsWithPdfAndFileOrDirectoryOutput, CliArgumentsWithPrefixableOutput,
         MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "t", description = "type of scale to perform. { content, page }. Default is 'content' (optional)", defaultValue = "content")

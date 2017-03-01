@@ -44,17 +44,17 @@ public class UnpackParameters extends AbstractParameters implements MultiplePdfS
 
     @Valid
     @NotNull
-    private final MultipleTaskOutput<?> output;
+    private final MultipleTaskOutput output;
     @NotEmpty
     @Valid
     private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
 
-    public UnpackParameters(MultipleTaskOutput<?> output) {
+    public UnpackParameters(MultipleTaskOutput output) {
         this.output = output;
     }
 
     @Override
-    public MultipleTaskOutput<?> getOutput() {
+    public MultipleTaskOutput getOutput() {
         return output;
     }
 

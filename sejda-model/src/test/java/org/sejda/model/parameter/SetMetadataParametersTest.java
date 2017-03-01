@@ -69,7 +69,7 @@ public class SetMetadataParametersTest {
     @Test
     public void testInvalidParameters() {
         SetMetadataParameters victim = new SetMetadataParameters();
-        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
+        SingleTaskOutput output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

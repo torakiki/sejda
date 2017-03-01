@@ -33,7 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
  * @author Andrea Vacondio
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " watermark")
-public interface WatermarkTaskCliArguments extends CliArgumentsWithPdfAndDirectoryOutput,
+public interface WatermarkTaskCliArguments extends CliArgumentsWithPdfAndFileOrDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "s", description = "page selection. You can set a subset of pages where the watermark will be applied. Accepted values: 'num1-num2' or 'num-' or 'num1,num2-num3..' (EX. -s 4,12-14,8,20-) (optional)")

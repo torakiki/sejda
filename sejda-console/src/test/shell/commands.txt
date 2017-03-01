@@ -12,11 +12,14 @@ target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resour
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s 2-40 --existingOutput overwrite
 target/assembled/bin/sejda-console extractpages -h
 target/assembled/bin/sejda-console -h extractpages 
-target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p odd --existingOutput overwrite
+target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -m odd --existingOutput overwrite
+target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -m even --existingOutput overwrite
 target/assembled/bin/sejda-console extractpages --help
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s 20,100- --existingOutput overwrite
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -s 20,100-110 --existingOutput overwrite
 target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -s 20,100- --existingOutput overwrite --discardOutline
+target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -o /tmp/sejda-smoketest/ -s 10-20 --existingOutput overwrite
+target/assembled/bin/sejda-console extractpages -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/extracted.pdf -s 10-20 --existingOutput overwrite
 target/assembled/bin/sejda-console splitbysize --help
 target/assembled/bin/sejda-console encrypt -h
 target/assembled/bin/sejda-console encrypt -a "test a pwd" -o /tmp/sejda-smoketest/ -p [FILENUMBER]_ -f ../sejda-core/src/test/resources/pdf/large_test.pdf -v 1.5 -j overwrite
@@ -26,6 +29,7 @@ target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pd
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -m all -j skip
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -r 90 -s 4,12-14 -j overwrite
 target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/forms/*.pdf -o /tmp/sejda-smoketest/ -r 90 -m all -j overwrite
+target/assembled/bin/sejda-console rotate -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/rotated.pdf -r 90 -m all -j overwrite
 target/assembled/bin/sejda-console -h setmetadata
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a Torakiki -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.5
 target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/meta.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "some,keywords,here" --overwrite -v 1.5
@@ -105,5 +109,7 @@ target/assembled/bin/sejda-console portfolio -f ../sejda-core/src/test/resources
 target/assembled/bin/sejda-console watermark -h
 target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -c 30,50 -a 32 -w ../sejda-core/src/test/resources/image/draft.png -o /tmp/sejda-smoketest -j overwrite
 target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest -s 1,3-5 -p water -c 400,20 -d 200x40 -j overwrite -l over -w ../sejda-core/src/test/resources/image/draft.png
+target/assembled/bin/sejda-console watermark -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/watermarked.odf -s 1,3-5 -p water -c 400,20 -d 200x40 -j overwrite -l over -w ../sejda-core/src/test/resources/image/draft.png
 target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf ../sejda-core/src/test/resources/pdf/test_file.pdf -o /tmp/sejda-smoketest/ -t content -s 0.7 -j overwrite
 target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -t page -s 0.7 -p scaled_
+target/assembled/bin/sejda-console scale -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/scaled.pdf -t page -s 0.7

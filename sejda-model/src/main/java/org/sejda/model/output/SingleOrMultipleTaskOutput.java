@@ -1,6 +1,5 @@
 /*
- * Created on 14/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -17,22 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.parameter.base;
-
-import org.sejda.model.output.MultipleTaskOutput;
+package org.sejda.model.output;
 
 /**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
- * 
- * @author Andrea Vacondio
+ * For tasks that support batch processing multiple files at once,
+ * but can also take a single file as input and generate a single output file
+ *
+ * Eg: rotate can work on multiple files, so then a directory output is expected.
+ * But, when rotating a single file, a file output can be provided.
  * 
  */
-public interface MultipleOutputTaskParameters extends PrefixableTaskParameters {
-
-    /**
-     * Sets the output destination
-     * 
-     * @param output
-     */
-    void setOutput(MultipleTaskOutput output);
+public interface SingleOrMultipleTaskOutput extends TaskOutput {
+    // define further methods
 }

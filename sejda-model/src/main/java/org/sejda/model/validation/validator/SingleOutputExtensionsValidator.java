@@ -29,10 +29,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.output.DirectoryTaskOutput;
-import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.output.StreamTaskOutput;
-import org.sejda.model.output.TaskOutputDispatcher;
+import org.sejda.model.output.*;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -116,8 +113,12 @@ public class SingleOutputExtensionsValidator implements
         }
 
         @Override
-        public void dispatch(StreamTaskOutput output) {
-            // do nothing
+        public void dispatch(FileOrDirectoryTaskOutput output) {
+            if(output.getDestination().isDirectory()) {
+                // do nothing
+            } else {
+                this.outputName = output.getDestination().getName();
+            }
         }
 
         String getOutputName() {

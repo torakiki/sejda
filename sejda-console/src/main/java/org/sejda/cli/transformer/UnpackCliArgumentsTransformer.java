@@ -20,6 +20,7 @@
 package org.sejda.cli.transformer;
 
 import org.sejda.cli.model.UnpackTaskCliArguments;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
 
 /**
@@ -42,6 +43,9 @@ public class UnpackCliArgumentsTransformer extends BaseCliArgumentsTransformer i
         UnpackParameters parameters = new UnpackParameters(taskCliArguments.getOutput().getPdfDirectoryOutput());
         populateCommonParameters(parameters, taskCliArguments);
         parameters.setExistingOutputPolicy(taskCliArguments.getExistingOutput().getEnumValue());
+        if(taskCliArguments.getOverwrite()) {
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        }
         populateSourceParameters(parameters, taskCliArguments);
         return parameters;
     }

@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 
 /**
  * Adapter for {@link DirectoryTaskOutput}. Main role is to be a string-based constructor for the underlying model object
@@ -51,5 +52,9 @@ public class DirectoryOutputAdapter {
      */
     public DirectoryTaskOutput getPdfDirectoryOutput() {
         return pdfDirectoryOutput;
+    }
+
+    public FileOrDirectoryTaskOutput getPdfFileOrDirectoryOutput() {
+        return new FileOrDirectoryTaskOutput(pdfDirectoryOutput.getDestination());
     }
 }

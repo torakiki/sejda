@@ -55,7 +55,7 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
     private String outputName;
     @Valid
     @NotNull
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
 
     public void addSources(Collection<? extends Source<?>> inputs) {
         sourceList.addAll(inputs);
@@ -93,12 +93,12 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
     }
 
     @Override
-    public SingleTaskOutput<?> getOutput() {
+    public SingleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(SingleTaskOutput<?> output) {
+    public void setOutput(SingleTaskOutput output) {
         this.output = output;
     }
 

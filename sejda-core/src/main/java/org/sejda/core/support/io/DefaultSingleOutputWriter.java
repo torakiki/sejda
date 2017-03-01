@@ -24,7 +24,6 @@ import java.io.IOException;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.task.TaskExecutionContext;
 
 /**
@@ -37,11 +36,6 @@ class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutput
 
     DefaultSingleOutputWriter(ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) {
         super(existingOutputPolicy, executionContext);
-    }
-
-    @Override
-    public void dispatch(StreamTaskOutput output) throws IOException {
-        OutputWriterHelper.copyToStream(multipleFiles.values().iterator().next(), output.getDestination());
     }
 
     @Override

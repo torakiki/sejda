@@ -34,7 +34,7 @@ import org.sejda.model.validation.constraint.IsFile;
  * @author Andrea Vacondio
  * 
  */
-public class FileTaskOutput implements SingleTaskOutput<File> {
+public class FileTaskOutput implements SingleTaskOutput {
 
     @IsFile
     private final File file;

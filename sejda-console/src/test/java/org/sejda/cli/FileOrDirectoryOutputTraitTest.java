@@ -19,13 +19,6 @@
  */
 package org.sejda.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.io.File;
-import java.nio.file.Paths;
-import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.cli.command.TestableTask;
@@ -34,29 +27,45 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.TaskParameters;
 
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Collection;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
- * For tasks that support single file as output, test various scenarios related to this trait
+ * For tasks that support both single file or directory as output, depending on how many inputs were given
  * 
  * @author Eduard Weissmann
  * 
  */
-public class FileOutputTraitTest extends AbstractTaskTraitTest {
+public class FileOrDirectoryOutputTraitTest extends AbstractTaskTraitTest {
 
     @Parameters
     public static Collection<Object[]> data() {
-        return asParameterizedTestData(TestableTasks.getTasksWith(t -> TestableTasks.hasFileOutput(t)));
+        return asParameterizedTestData(TestableTasks.getTasksWith(t -> TestableTasks.hasFileOrFolderOutput(t)));
     }
 
-    public FileOutputTraitTest(TestableTask testableTask) {
+    public FileOrDirectoryOutputTraitTest(TestableTask testableTask) {
         super(testableTask);
     }
 
     @Test
-    public void positive() throws TaskException {
+    public void fileAsOutput() throws TaskException {
         assertFalse(new File("./outputs/fileOutput.pdf").exists());
 
         TaskParameters result = defaultCommandLine().with("-o", "./outputs/fileOutput.pdf").invokeSejdaConsole();
         assertOutputFile(result.getOutput(), Paths.get("./outputs/fileOutput.pdf"));
+    }
+
+    @Test
+    public void folderAsOutput() throws TaskException {
+        assertTrue(new File("./outputs/").exists());
+
+        TaskParameters result = defaultCommandLine().with("-o", "./outputs/").invokeSejdaConsole();
+        assertOutputFile(result.getOutput(), Paths.get("./outputs/"));
     }
 
     @Test

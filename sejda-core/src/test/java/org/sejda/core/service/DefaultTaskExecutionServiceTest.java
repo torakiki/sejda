@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.OutputStream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,11 +41,11 @@ import org.sejda.core.TestListenerFactory.TestListenerStart;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
@@ -70,8 +69,7 @@ public class DefaultTaskExecutionServiceTest {
     @Before
     public void setUp() throws TaskException {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
-        OutputStream stream = mock(OutputStream.class);
-        parameters.setOutput(new StreamTaskOutput(stream));
+        parameters.setOutput(new FileTaskOutput(IOUtils.createTemporaryBuffer()));
         when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
         when(context.isValidation()).thenReturn(Boolean.TRUE);
     }
@@ -96,7 +94,7 @@ public class DefaultTaskExecutionServiceTest {
     public void testNegativeBeforeExecution() throws TaskException {
         doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class),
                 Matchers.any(TaskExecutionContext.class));
-        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
+        SingleTaskOutput output = mock(SingleTaskOutput.class);
         parameters.setOutput(output);
         TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);

@@ -47,9 +47,10 @@ import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.output.StreamTaskOutput;
 import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.parameter.base.SingleOrMultipleOutputTaskParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.sambox.input.PDFParser;
@@ -69,30 +70,6 @@ public class TaskTestContext implements Closeable {
     private ByteArrayOutputStream streamOutput;
     private File fileOutput;
     private PDDocument outputDocument;
-
-    /**
-     * Initialize the given params with a {@link StreamTaskOutput}
-     * 
-     * @param params
-     * @return
-     */
-    public TaskTestContext streamOutputTo(MultipleOutputTaskParameters params) {
-        this.streamOutput = new ByteArrayOutputStream();
-        params.setOutput(new StreamTaskOutput(streamOutput));
-        return this;
-    }
-
-    /**
-     * Initialize the given params with a {@link StreamTaskOutput}
-     * 
-     * @param params
-     * @return
-     */
-    public TaskTestContext streamOutputTo(SingleOutputTaskParameters params) {
-        this.streamOutput = new ByteArrayOutputStream();
-        params.setOutput(new StreamTaskOutput(streamOutput));
-        return this;
-    }
 
     /**
      * Initialize the given params with a {@link FileTaskOutput}
@@ -133,6 +110,13 @@ public class TaskTestContext implements Closeable {
         this.fileOutput = Files.createTempDirectory("SejdaTest").toFile();
         this.fileOutput.deleteOnExit();
         params.setOutput(new DirectoryTaskOutput(fileOutput));
+        return this;
+    }
+
+    public TaskTestContext directoryOutputTo(SingleOrMultipleOutputTaskParameters params) throws IOException {
+        this.fileOutput = Files.createTempDirectory("SejdaTest").toFile();
+        this.fileOutput.deleteOnExit();
+        params.setOutput(new FileOrDirectoryTaskOutput(fileOutput));
         return this;
     }
 

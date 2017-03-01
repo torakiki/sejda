@@ -197,15 +197,6 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         doExecuteMergeAll(true, 310, parameters);
     }
 
-    @Test
-    public void executeMergeAllStreamOutput() throws IOException {
-        MergeParameters parameters = setUpParameters(getInput());
-        testContext.streamOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
-        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(14);
-    }
-
     void doExecuteMergeAll(boolean hasBookmarks, int pages, MergeParameters parameters) throws IOException {
         testContext.pdfOutputTo(parameters);
         execute(parameters);

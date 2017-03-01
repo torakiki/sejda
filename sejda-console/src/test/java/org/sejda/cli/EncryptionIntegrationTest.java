@@ -60,10 +60,11 @@ public class EncryptionIntegrationTest extends AbstractTaskTraitTest {
 
     @Test
     public void executeExampleUsageWithEncryptedFileAsInput() {
-        System.out.println("running " + testableTask);
         String exampleUsage = testableTask.getCommand().getExampleUsage();
         // use an encrypted file as input instead of the regular input file
-        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
+        exampleUsage = StringUtils.replace(exampleUsage, "/tmp/file1.pdf:secret123", "/tmp/file1encrypted.pdf:test"); // replace file1.pdf with encrypted one
+        // change pattern to match outline test file we have
+        exampleUsage = StringUtils.replace(exampleUsage, "-l 2 -e \".+(Chapter)+.+\"", "-l 1 -e \".+(level)+.+\""); // to match outline test file we have
 
         assertThat("Task " + getTaskName() + " doesnt provide example usage", exampleUsage, is(notNullValue()));
 

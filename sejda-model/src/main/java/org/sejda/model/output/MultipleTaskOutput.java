@@ -26,6 +26,6 @@ package org.sejda.model.output;
  * @param <T>
  *            generic type for the output destination
  */
-public interface MultipleTaskOutput<T> extends TaskOutput<T> {
+public interface MultipleTaskOutput extends TaskOutput {
     // define further methods
 }

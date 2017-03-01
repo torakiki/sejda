@@ -70,7 +70,7 @@ public class SetPagesLabelParametersTest {
     @Test
     public void testInvalidParameters() {
         SetPagesLabelParameters victim = new SetPagesLabelParameters();
-        SingleTaskOutput<?> output = mock(SingleTaskOutput.class);
+        SingleTaskOutput output = mock(SingleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

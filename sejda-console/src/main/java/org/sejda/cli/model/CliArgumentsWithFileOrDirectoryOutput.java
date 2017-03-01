@@ -1,6 +1,5 @@
 /*
- * Created on Aug 22, 2011
- * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2017 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -19,26 +18,18 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.DirectoryOutputAdapter;
-import org.sejda.conversion.ExistingOutputPolicyAdapter;
-
 import com.lexicalscope.jewel.cli.Option;
+import org.sejda.conversion.ExistingOutputPolicyAdapter;
+import org.sejda.conversion.FileOrDirectoryOutputAdapter;
 
-/**
- * 
- * Base interface for specifying of the command line interface for tasks that have output configured as a directory
- * 
- * @author Eduard Weissmann
- * 
- */
-public interface CliArgumentsWithDirectoryOutput extends TaskCliArguments {
+public interface CliArgumentsWithFileOrDirectoryOutput extends TaskCliArguments {
 
-    @Option(shortName = "o", description = "output directory (required)")
-    DirectoryOutputAdapter getOutput();
+    @Option(shortName = "o", description = "output file or directory (required)")
+    FileOrDirectoryOutputAdapter getOutput();
 
     @Option(shortName = "j", description = "policy to use when an output file with the same name already exists. {overwrite, skip, fail, rename}. Default is 'fail' (optional)", defaultValue = "fail")
     ExistingOutputPolicyAdapter getExistingOutput();
 
-    @Option(description = "overwrite existing output files. (shorthand for -j overwrite) (optional)")
+    @Option(description = "overwrite existing output files (shorthand for -j overwrite) (optional)")
     boolean getOverwrite();
 }

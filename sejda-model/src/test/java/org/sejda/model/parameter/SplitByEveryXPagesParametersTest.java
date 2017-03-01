@@ -58,7 +58,7 @@ public class SplitByEveryXPagesParametersTest {
     @Test
     public void testInvalidParameters() {
         SplitByEveryXPagesParameters victim = new SplitByEveryXPagesParameters(-5);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        MultipleTaskOutput output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

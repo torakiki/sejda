@@ -39,7 +39,7 @@ import org.sejda.model.pdf.page.PageRange;
  */
 public class MergeParametersTest {
 
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
 
     @Before
     public void setUp() {

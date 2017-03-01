@@ -43,7 +43,7 @@ public class OcrTextParameters extends AbstractParameters
     private String outputPrefix = "";
     @Valid
     @NotNull
-    private MultipleTaskOutput<?> output;
+    private MultipleTaskOutput output;
     @NotEmpty
     @Valid
     private List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
@@ -78,12 +78,12 @@ public class OcrTextParameters extends AbstractParameters
     }
 
     @Override
-    public MultipleTaskOutput<?> getOutput() {
+    public MultipleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(MultipleTaskOutput<?> output) {
+    public void setOutput(MultipleTaskOutput output) {
         this.output = output;
     }
 

@@ -1,6 +1,6 @@
 /*
- * Created on 14/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on Aug 22, 2011
+ * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -17,22 +17,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.parameter.base;
+package org.sejda.cli.model;
 
-import org.sejda.model.output.MultipleTaskOutput;
+public interface CliArgumentsWithPdfAndFileOrDirectoryOutput extends CliArgumentsWithPdfOutput,
+        CliArgumentsWithFileOrDirectoryOutput {
 
-/**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
- * 
- * @author Andrea Vacondio
- * 
- */
-public interface MultipleOutputTaskParameters extends PrefixableTaskParameters {
-
-    /**
-     * Sets the output destination
-     * 
-     * @param output
-     */
-    void setOutput(MultipleTaskOutput output);
 }

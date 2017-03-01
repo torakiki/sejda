@@ -1,6 +1,6 @@
 /*
- * Created on 14/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on Jul 1, 2011
+ * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -17,22 +17,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.parameter.base;
+package org.sejda.conversion;
 
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 
-/**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
- * 
- * @author Andrea Vacondio
- * 
- */
-public interface MultipleOutputTaskParameters extends PrefixableTaskParameters {
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-    /**
-     * Sets the output destination
-     * 
-     * @param output
-     */
-    void setOutput(MultipleTaskOutput output);
+public class FileOrDirectoryOutputAdapter {
+
+    private final FileOrDirectoryTaskOutput output;
+
+    public FileOrDirectoryOutputAdapter(String path) {
+        Path p = Paths.get(path).toAbsolutePath().normalize();
+        this.output = new FileOrDirectoryTaskOutput(p.toFile());
+    }
+
+    public FileOrDirectoryTaskOutput getOutput() {
+        return output;
+    }
 }

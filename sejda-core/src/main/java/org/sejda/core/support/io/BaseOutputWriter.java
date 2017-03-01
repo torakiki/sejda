@@ -27,10 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.sejda.core.support.io.model.PopulatedFileOutput;
-import org.sejda.model.output.DirectoryTaskOutput;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.output.TaskOutputDispatcher;
+import org.sejda.model.output.*;
 import org.sejda.model.task.TaskExecutionContext;
 
 /**
@@ -62,6 +59,16 @@ abstract class BaseOutputWriter implements TaskOutputDispatcher {
         OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy,
                 executionContext);
 
+    }
+
+    @Override
+    public void dispatch(FileOrDirectoryTaskOutput output) throws IOException {
+        if(multipleFiles.size() > 1 || output.getDestination().isDirectory()) {
+            OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy,
+                    executionContext);
+        } else {
+            OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), existingOutputPolicy, executionContext);
+        }
     }
 
     /**

@@ -46,7 +46,7 @@ public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToIm
     private String outputName;
     @Valid
     @NotNull
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
 
     @Override
     public String getOutputName() {
@@ -54,12 +54,12 @@ public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToIm
     }
 
     @Override
-    public SingleTaskOutput<?> getOutput() {
+    public SingleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(SingleTaskOutput<?> output) {
+    public void setOutput(SingleTaskOutput output) {
         this.output = output;
     }
 

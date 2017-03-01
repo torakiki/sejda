@@ -34,7 +34,7 @@ public interface TaskParameters {
     /**
      * @return output destination where the result of the manipulation is placed
      */
-    TaskOutput<?> getOutput();
+    TaskOutput getOutput();
 
     /**
      * @return the policy to use in case of an already existing output is found.

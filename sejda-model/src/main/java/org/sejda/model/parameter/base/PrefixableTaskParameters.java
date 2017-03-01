@@ -1,7 +1,6 @@
 /*
- * Created on 14/set/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,20 +18,16 @@
  */
 package org.sejda.model.parameter.base;
 
-import org.sejda.model.output.MultipleTaskOutput;
-
-/**
- * A {@link TaskParameters} parameter whose execution result in multiple output.
- * 
- * @author Andrea Vacondio
- * 
- */
-public interface MultipleOutputTaskParameters extends PrefixableTaskParameters {
+public interface PrefixableTaskParameters extends TaskParameters {
+    /**
+     * @return the prefix to be used to generate names of the multiple outputs.
+     */
+    String getOutputPrefix();
 
     /**
-     * Sets the output destination
-     * 
-     * @param output
+     * Set the prefix to be used to generate names of the multiple outputs for this parameter.
+     *
+     * @param outputPrefix
      */
-    void setOutput(MultipleTaskOutput output);
+    void setOutputPrefix(String outputPrefix);
 }

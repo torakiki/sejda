@@ -45,12 +45,5 @@ public interface TaskOutputDispatcher {
      */
     void dispatch(DirectoryTaskOutput output) throws IOException;
 
-    /**
-     * writes to a {@link StreamTaskOutput} destination.
-     * 
-     * @param output
-     * @throws IOException
-     */
-    void dispatch(StreamTaskOutput output) throws IOException;
-
+    void dispatch(FileOrDirectoryTaskOutput output) throws IOException;
 }

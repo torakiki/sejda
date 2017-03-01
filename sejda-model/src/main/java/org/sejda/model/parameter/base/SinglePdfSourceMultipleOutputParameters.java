@@ -38,7 +38,7 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
     private String outputPrefix = "";
     @Valid
     @NotNull
-    private MultipleTaskOutput<?> output;
+    private MultipleTaskOutput output;
 
     @Override
     public String getOutputPrefix() {
@@ -51,12 +51,12 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
     }
 
     @Override
-    public MultipleTaskOutput<?> getOutput() {
+    public MultipleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(MultipleTaskOutput<?> output) {
+    public void setOutput(MultipleTaskOutput output) {
         this.output = output;
     }
 

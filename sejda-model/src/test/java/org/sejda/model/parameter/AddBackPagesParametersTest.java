@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.pdf.page.PageRange;
 
 /**
@@ -53,7 +53,7 @@ public class AddBackPagesParametersTest {
         AddBackPagesParameters victim = new AddBackPagesParameters();
         victim.addPageRange(new PageRange(2));
         victim.setBackPagesSource(PdfFileSource.newInstanceNoPassword(folder.newFile("source.pdf")));
-        victim.setOutput(new DirectoryTaskOutput(folder.newFolder()));
+        victim.setOutput(new FileOrDirectoryTaskOutput(folder.newFolder()));
         TestUtils.assertInvalidParameters(victim);
     }
 

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.sejda.cli.command.TestableTask;
 import org.sejda.cli.command.TestableTasks;
-import org.sejda.model.parameter.base.MultipleOutputTaskParameters;
+import org.sejda.model.parameter.base.PrefixableTaskParameters;
 
 /**
  * For tasks that support a folder as output, test various scenarios related to this trait
@@ -48,13 +48,13 @@ public class PrefixableOutputTraitTest extends AbstractTaskTraitTest {
 
     @Test
     public void testOutputPrefix_Specified() {
-        MultipleOutputTaskParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
+        PrefixableTaskParameters parameters = defaultCommandLine().with("-p", "fooPrefix").invokeSejdaConsole();
         assertEquals("fooPrefix", parameters.getOutputPrefix());
     }
 
     @Test
     public void testOutputPrefix_Default() {
-        MultipleOutputTaskParameters parameters = defaultCommandLine().invokeSejdaConsole();
+        PrefixableTaskParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals("", parameters.getOutputPrefix());
     }
 }

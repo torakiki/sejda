@@ -47,7 +47,7 @@ public class SplitBySizeParametersTest {
     @Test
     public void testInvalidParameters() {
         SplitBySizeParameters victim = new SplitBySizeParameters(-10);
-        MultipleTaskOutput<?> output = mock(MultipleTaskOutput.class);
+        MultipleTaskOutput output = mock(MultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

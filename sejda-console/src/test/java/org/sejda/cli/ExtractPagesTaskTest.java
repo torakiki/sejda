@@ -45,19 +45,19 @@ public class ExtractPagesTaskTest extends AbstractTaskTest {
 
     @Test
     public void predefinedPages_ALL_PAGES() {
-        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "all").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-m", "all").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 2, 3, 4, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_ODD_PAGES() {
-        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "odd").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-m", "odd").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(1, 3, 5), parameters.getPages(5));
     }
 
     @Test
     public void predefinedPages_EVEN_PAGES() {
-        ExtractPagesParameters parameters = defaultCommandLine().with("-p", "even").invokeSejdaConsole();
+        ExtractPagesParameters parameters = defaultCommandLine().with("-m", "even").invokeSejdaConsole();
         assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
     }
 
@@ -72,7 +72,7 @@ public class ExtractPagesTaskTest extends AbstractTaskTest {
 
     @Test
     public void mandatoryParams() {
-        defaultCommandLine().without("-p").without("-s")
+        defaultCommandLine().without("-m").without("-s")
                 .assertConsoleOutputContains("Please specify at least one option that defines pages to be extracted");
     }
 

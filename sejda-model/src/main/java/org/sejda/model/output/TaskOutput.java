@@ -22,6 +22,8 @@ package org.sejda.model.output;
 
 import org.sejda.model.exception.TaskOutputVisitException;
 
+import java.io.File;
+
 /**
  * Represents task output destination where results of a manipulation will be written.
  * 
@@ -31,12 +33,12 @@ import org.sejda.model.exception.TaskOutputVisitException;
  * 
  * 
  */
-public interface TaskOutput<T> {
+public interface TaskOutput {
 
     /**
      * @return the output destination for the task
      */
-    T getDestination();
+    File getDestination();
 
     /**
      * Accept a dispatcher dispatching the correct method implementation

@@ -23,9 +23,7 @@ package org.sejda.model.output;
  * Represent the output for a task generating a single output.
  * 
  * @author Andrea Vacondio
- * @param <T>
- *            generic type for the output destination
  */
-public interface SingleTaskOutput<T> extends TaskOutput<T> {
+public interface SingleTaskOutput extends TaskOutput {
     // define further methods
 }

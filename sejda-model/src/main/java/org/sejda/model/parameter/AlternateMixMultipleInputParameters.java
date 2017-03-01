@@ -44,7 +44,7 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
         implements SingleOutputTaskParameters {
     @Valid
     @NotNull
-    private SingleTaskOutput<?> output;
+    private SingleTaskOutput output;
 
     @Valid
     @AtLeastTwo
@@ -52,12 +52,12 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
     private String outputName;
 
     @Override
-    public SingleTaskOutput<?> getOutput() {
+    public SingleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(SingleTaskOutput<?> output) {
+    public void setOutput(SingleTaskOutput output) {
         this.output = output;
     }
 

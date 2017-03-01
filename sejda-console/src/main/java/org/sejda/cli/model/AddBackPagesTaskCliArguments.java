@@ -34,7 +34,7 @@ import com.lexicalscope.jewel.cli.Option;
  */
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " addbackpages")
 public interface AddBackPagesTaskCliArguments
- extends CliArgumentsWithPdfAndDirectoryOutput,
+ extends CliArgumentsWithPdfAndFileOrDirectoryOutput,
         CliArgumentsWithPrefixableOutput, MultiplePdfSourceTaskCliArguments {
 
     @Option(shortName = "n", description = "back pages are added every 'n' pages (default is 1) (optional)", defaultValue = "1")

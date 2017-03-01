@@ -24,21 +24,22 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 /**
- * Provides a skeletal implementation for parameter classes having multiple pdf source as input and generating multiple output.
+ * Provides a skeletal implementation for parameter classes having multiple pdf source as input and generating multiple output files.
+ * The output can be a file for scenarios where a the task produces one output file (eg: rotate on a single input)
  * 
  * @author Andrea Vacondio
  * 
  */
 public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSourceParameters
-        implements MultipleOutputTaskParameters {
+        implements SingleOrMultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid
     @NotNull
-    private MultipleTaskOutput<?> output;
+    private SingleOrMultipleTaskOutput output;
 
     @Override
     public String getOutputPrefix() {
@@ -51,12 +52,12 @@ public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSource
     }
 
     @Override
-    public MultipleTaskOutput<?> getOutput() {
+    public SingleOrMultipleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(MultipleTaskOutput<?> output) {
+    public void setOutput(SingleOrMultipleTaskOutput output) {
         this.output = output;
     }
 
