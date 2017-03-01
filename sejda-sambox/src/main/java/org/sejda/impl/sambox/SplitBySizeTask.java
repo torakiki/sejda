@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SplitBySizeTask.class);
 
+    private int totalSteps;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
     private AbstractPdfSplitter<SplitBySizeParameters> splitter;
@@ -52,23 +54,31 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     @Override
     public void before(SplitBySizeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
+        totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
     @Override
     public void execute(SplitBySizeParameters parameters) throws TaskException {
-        PdfSource<?> source = parameters.getSource();
-        LOG.debug("Opening {}", source);
-        sourceDocumentHandler = source.open(documentLoader);
-        sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
-        PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
+        int currentStep = 0;
 
-        splitter = new SizePdfSplitter(sourceDocument, parameters,
-                new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
-        LOG.debug("Starting split by size {}", HumanReadableSize.toString(parameters.getSizeToSplitAt()));
-        splitter.split(executionContext(), parameters.getOutputPrefix(), parameters.getSource());
+        for (PdfSource<?> source : parameters.getSourceList()) {
+            executionContext().assertTaskNotCancelled();
+            currentStep++;
+            LOG.debug("Opening {}", source);
+            sourceDocumentHandler = source.open(documentLoader);
+            sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
+            PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
 
-        LOG.debug("Input documents split and written to {}", parameters.getOutput());
+            splitter = new SizePdfSplitter(sourceDocument, parameters,
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
+            LOG.debug("Starting split by size {}", HumanReadableSize.toString(parameters.getSizeToSplitAt()));
+            splitter.split(executionContext(), parameters.getOutputPrefix(), source);
+
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+        }
+
+        LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 
     @Override

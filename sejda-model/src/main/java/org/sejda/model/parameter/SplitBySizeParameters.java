@@ -26,8 +26,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
  * Parameter class for a split by size task.
@@ -35,7 +35,7 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * @author Andrea Vacondio
  * 
  */
-public class SplitBySizeParameters extends SinglePdfSourceMultipleOutputParameters
+public class SplitBySizeParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull

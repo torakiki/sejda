@@ -46,7 +46,7 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
         parameters = new SplitBySizeParameters(100000);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(mediumInput());
+        parameters.addSource(mediumInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -55,12 +55,28 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
     }
 
     @Test
+    public void batchMode() throws IOException {
+        parameters = new SplitBySizeParameters(100000);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addSource(mediumInput());
+        parameters.addSource(regularInput());
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setOutputPrefix("[FILENUMBER]-[BASENAME]");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(5);
+        testContext.assertOutputContainsFilenames("1-medium-test-file.pdf", "2-medium-test-file.pdf", "3-medium-test-file.pdf", "4-medium-test-file.pdf","5-test-file.pdf");
+    }
+
+    @Test
     public void testExecuteOptimized() throws IOException {
         parameters = new SplitBySizeParameters(60000);
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -80,7 +96,7 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.NO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
