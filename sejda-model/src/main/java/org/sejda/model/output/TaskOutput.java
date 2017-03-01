@@ -27,8 +27,6 @@ import java.io.File;
 /**
  * Represents task output destination where results of a manipulation will be written.
  * 
- * @param <T>
- *            the generic type for the output
  * @author Andrea Vacondio
  * 
  * 
