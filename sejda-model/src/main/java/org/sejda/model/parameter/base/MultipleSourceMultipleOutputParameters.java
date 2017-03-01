@@ -20,7 +20,7 @@ package org.sejda.model.parameter.base;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -29,12 +29,12 @@ import javax.validation.constraints.NotNull;
  * Provides a skeletal implementation for parameter classes having multiple source as input and generating multiple output.
  * 
  */
-public class MultipleSourceMultipleOutputParameters extends MultipleSourceParameters implements MultipleOutputTaskParameters {
+public class MultipleSourceMultipleOutputParameters extends MultipleSourceParameters implements SingleOrMultipleOutputTaskParameters {
 
     private String outputPrefix = "";
     @Valid
     @NotNull
-    private MultipleTaskOutput output;
+    private SingleOrMultipleTaskOutput output;
 
     @Override
     public String getOutputPrefix() {
@@ -47,12 +47,12 @@ public class MultipleSourceMultipleOutputParameters extends MultipleSourceParame
     }
 
     @Override
-    public MultipleTaskOutput getOutput() {
+    public SingleOrMultipleTaskOutput getOutput() {
         return output;
     }
 
     @Override
-    public void setOutput(MultipleTaskOutput output) {
+    public void setOutput(SingleOrMultipleTaskOutput output) {
         this.output = output;
     }
 
