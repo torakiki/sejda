@@ -40,4 +40,4 @@ deploy:
       tags: true
 notifications:
   email:
-    - hi@sejda.com
+    - info@sejda.org
