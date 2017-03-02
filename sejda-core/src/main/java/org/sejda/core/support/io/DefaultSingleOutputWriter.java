@@ -20,8 +20,6 @@
  */
 package org.sejda.core.support.io;
 
-import java.io.IOException;
-
 import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.task.TaskExecutionContext;
