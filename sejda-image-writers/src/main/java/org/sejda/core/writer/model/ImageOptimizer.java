@@ -19,6 +19,7 @@
 package org.sejda.core.writer.model;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +70,9 @@ public class ImageOptimizer {
             BufferedImage imageRGB = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
                     BufferedImage.TYPE_INT_RGB);
 
-            imageRGB.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+            Graphics2D g2d = imageRGB.createGraphics();
+            g2d.drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+            g2d.dispose();
 
             ImageWriter imageWriter = ImageIO.getImageWritersBySuffix("jpeg").next();
             ImageOutputStream ios = ImageIO.createImageOutputStream(outputFile);
