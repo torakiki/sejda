@@ -95,9 +95,9 @@ public class PdfWatermarker {
             gs.setNonStrokingAlphaConstant(alpha);
         }
         if (parameters.getLocation() == Location.BEHIND) {
-            imageWriter.prepend(page, form, parameters.getPosition(), 1, 1, gs);
+            imageWriter.prepend(page, form, parameters.getPosition(), 1, 1, gs, 0);
         } else {
-            imageWriter.append(page, form, parameters.getPosition(), 1, 1, gs);
+            imageWriter.append(page, form, parameters.getPosition(), 1, 1, gs, 0);
         }
     }
 

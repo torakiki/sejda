@@ -113,7 +113,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
                 int x = ((int) mediaBox.getWidth() - width) / 2;
                 int y = ((int) mediaBox.getHeight() - height) / 2;
 
-                imageWriter.append(page, image, new Point(x, y), width, height, null);
+                imageWriter.append(page, image, new Point(x, y), width, height, null, 0);
 
                 notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
             } catch (TaskIOException e) {

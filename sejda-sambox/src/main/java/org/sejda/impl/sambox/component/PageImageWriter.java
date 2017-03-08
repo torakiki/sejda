@@ -61,37 +61,38 @@ public class PageImageWriter {
     }
 
     public void append(PDPage page, PDImageXObject image, Point2D position, float width, float height,
-            PDExtendedGraphicsState gs) throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true);
+            PDExtendedGraphicsState gs, int rotation) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true, rotation);
     }
 
     public void append(PDPage page, PDFormXObject image, Point2D position, float width, float height,
-            PDExtendedGraphicsState gs) throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true);
+            PDExtendedGraphicsState gs, int rotation) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.APPEND, gs, true, rotation);
     }
 
     public void prepend(PDPage page, PDImageXObject image, Point2D position, float width, float height,
-            PDExtendedGraphicsState gs) throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false);
+            PDExtendedGraphicsState gs, int rotation) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false, rotation);
     }
 
     public void prepend(PDPage page, PDFormXObject image, Point2D position, float width, float height,
-            PDExtendedGraphicsState gs) throws TaskIOException {
-        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false);
+            PDExtendedGraphicsState gs, int rotation) throws TaskIOException {
+        write(page, image, position, width, height, PDPageContentStream.AppendMode.PREPEND, gs, false, rotation);
     }
 
     private void write(PDPage page, PDXObject image, Point2D position, float width, float height,
-            PDPageContentStream.AppendMode mode, PDExtendedGraphicsState gs, boolean resetContext)
+            PDPageContentStream.AppendMode mode, PDExtendedGraphicsState gs, boolean resetContext, int rotation)
             throws TaskIOException {
         try (PDPageContentStream contentStream = new PDPageContentStream(document, page, mode, true, resetContext)) {
+            AffineTransform at = new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY());
+            if(rotation != 0) {
+                at.rotate(Math.toRadians(rotation));
+            }
+
             if (image instanceof PDFormXObject) {
-                contentStream.drawImage((PDFormXObject) image, new Matrix(
-                        new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY())),
-                        gs);
+                contentStream.drawImage((PDFormXObject) image, new Matrix(at), gs);
             } else {
-                contentStream.drawImage((PDImageXObject) image, new Matrix(
-                        new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY())),
-                        gs);
+                contentStream.drawImage((PDImageXObject) image, new Matrix(at), gs);
             }
         } catch (IOException e) {
             throw new TaskIOException("An error occurred writing image to the page.", e);
