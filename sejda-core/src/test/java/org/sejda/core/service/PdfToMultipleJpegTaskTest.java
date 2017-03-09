@@ -54,4 +54,16 @@ public abstract class PdfToMultipleJpegTaskTest extends MultipleImageConversionT
             doExecute(parameters, 1);
         }
     }
+
+    @Test
+    public void noPages() throws IOException {
+        PdfToJpegParameters parameters = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
+        parameters.addSource(shortInput());
+        parameters.addPageRange(new PageRange(100, 200));
+        testContext.directoryOutputTo(parameters);
+
+        testContext.expectTaskWillFail();
+        execute(parameters);
+        testContext.assertTaskFailed("No pages converted");
+    }
 }

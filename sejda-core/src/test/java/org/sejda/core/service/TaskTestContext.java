@@ -20,6 +20,8 @@ package org.sejda.core.service;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -43,9 +45,12 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.Sejda;
+import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.SejdaFileExtensions;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
@@ -415,6 +420,21 @@ public class TaskTestContext implements Closeable {
             initOutputFromSource(SeekableSources.inMemorySeekableSourceFrom(streamOutput.toByteArray()), password);
         }
         return outputDocument;
+    }
+
+    Throwable taskFailureCause = null;
+    public void expectTaskWillFail() {
+        GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionFailedEvent>() {
+            @Override
+            public void onEvent(TaskExecutionFailedEvent event) {
+                taskFailureCause = event.getFailingCause();
+            }
+        });
+    }
+
+    public void assertTaskFailed(String message) {
+        assertNotNull(taskFailureCause);
+        assertThat(taskFailureCause.getMessage(), startsWith(message));
     }
 
     private void initOutputFromSource(File source, String password) throws IOException {

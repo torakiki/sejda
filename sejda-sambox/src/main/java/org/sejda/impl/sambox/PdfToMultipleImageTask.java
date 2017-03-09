@@ -105,7 +105,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                         }
                     }
                 } else {
-                    LOG.warn("No page has been selected for conversion for {}.", source);
+                    throw new TaskException("No pages converted");
                 }
             } finally {
                 nullSafeCloseQuietly(documentHandler);
