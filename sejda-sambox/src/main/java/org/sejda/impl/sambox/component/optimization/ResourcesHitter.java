@@ -78,7 +78,7 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
             if (operand instanceof COSName) {
 
                 COSName objectName = (COSName) operand;
-                Optional<COSDictionary> xobjects = ofNullable(context.getResources())
+                Optional<COSDictionary> xobjects = ofNullable(getContext().getResources())
                         .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                         .filter(Objects::nonNull);
 
@@ -95,11 +95,11 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                             // we wrap the existing so we can identify it later as "in use" and already processed
                             xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
                         } else if (COSName.FORM.getName().equals(subtype)) {
-                            PDXObject xobject = PDXObject.createXObject(imageStream, context.getResources());
+                            PDXObject xobject = PDXObject.createXObject(imageStream, getContext().getResources());
                             if (xobject instanceof PDTransparencyGroup) {
-                                context.showTransparencyGroup((PDTransparencyGroup) xobject);
+                                getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
                             } else if (xobject instanceof PDFormXObject) {
-                                context.showForm((PDFormXObject) xobject);
+                                getContext().showForm((PDFormXObject) xobject);
                             }
                         }
                     }
@@ -124,7 +124,7 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
             COSBase operand = operands.get(0);
             if (operand instanceof COSName) {
                 COSName fontName = (COSName) operand;
-                Optional<COSDictionary> fonts = ofNullable(context.getResources())
+                Optional<COSDictionary> fonts = ofNullable(getContext().getResources())
                         .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class))
                         .filter(Objects::nonNull);
 

@@ -93,7 +93,8 @@ public class OcrTextExtractor extends PDFStreamEngine implements Consumer<PDPage
 
                 COSName name = (COSName) operand;
                 COSBase existing = ofNullable(
-                        context.getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
+                        getContext().getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                                COSDictionary.class))
                                 .map(d -> d.getDictionaryObject(name))
                                 .orElseThrow(() -> new MissingResourceException("Missing XObject: " + name.getName()));
                 if (existing instanceof COSStream) {
@@ -101,7 +102,7 @@ public class OcrTextExtractor extends PDFStreamEngine implements Consumer<PDPage
                     String subtype = stream.getNameAsString(COSName.SUBTYPE);
                     if (COSName.IMAGE.getName().equals(subtype)) {
                         LOG.trace("Performing OCR on {}", name);
-                        PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(), context.getResources());
+                        PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(), getContext().getResources());
                         try {
                             OcrTextExtractor.this.writer
                                     .write(ocrEngine.ocrTextFrom(((PDImageXObject) xobject).getImage()));
@@ -110,11 +111,12 @@ public class OcrTextExtractor extends PDFStreamEngine implements Consumer<PDPage
                         }
                         xobject.getCOSObject().unDecode();
                     } else if (COSName.FORM.getName().equals(subtype)) {
-                        PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(), context.getResources());
+                        PDXObject xobject = PDXObject.createXObject(existing.getCOSObject(),
+                                getContext().getResources());
                         if (xobject instanceof PDTransparencyGroup) {
-                            context.showTransparencyGroup((PDTransparencyGroup) xobject);
+                            getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
                         } else if (xobject instanceof PDFormXObject) {
-                            context.showForm((PDFormXObject) xobject);
+                            getContext().showForm((PDFormXObject) xobject);
                         }
                     }
                 }
