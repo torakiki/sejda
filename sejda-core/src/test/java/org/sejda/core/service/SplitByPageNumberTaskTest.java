@@ -51,14 +51,14 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void burst() throws IOException {
         setUpParameters();
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         doTestBurst();
     }
 
     @Test
     public void burstOptimizeImages() throws IOException {
         setUpParameters();
-        parameters.setSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         execute(parameters);
@@ -69,7 +69,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void burstOptimizeFonts() throws IOException {
         setUpParameters();
-        parameters.setSource(customInput("pdf/shared_fonts.pdf"));
+        parameters.addSource(customInput("pdf/shared_fonts.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         parameters.addPage(2);
@@ -81,14 +81,14 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void burstEnc() throws IOException {
         setUpParameters();
-        parameters.setSource(stronglyEncryptedInput());
+        parameters.addSource(stronglyEncryptedInput());
         doTestBurst();
     }
 
     @Test
     public void splitWithOutline() throws IOException {
         setUpParameters();
-        parameters.setSource(largeOutlineInput());
+        parameters.addSource(largeOutlineInput());
         parameters.addPage(1);
         parameters.addPage(2);
         parameters.addPage(3);
@@ -102,7 +102,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void splitWithDiscardOutline() throws IOException {
         setUpParameters();
-        parameters.setSource(largeOutlineInput());
+        parameters.addSource(largeOutlineInput());
         parameters.discardOutline(true);
         parameters.addPage(1);
         parameters.addPage(2);
@@ -126,14 +126,14 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void even() throws IOException {
         setUpParameters();
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         doTestEven();
     }
 
     @Test
     public void evenEnc() throws IOException {
         setUpParameters();
-        parameters.setSource(encryptedInput());
+        parameters.addSource(encryptedInput());
         doTestEven();
     }
 
@@ -148,14 +148,14 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void odd() throws IOException {
         setUpParameters();
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         doTestOdd();
     }
 
     @Test
     public void oddEnc() throws IOException {
         setUpParameters();
-        parameters.setSource(encryptedInput());
+        parameters.addSource(encryptedInput());
         doTestOdd();
     }
 
@@ -165,5 +165,19 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
+    }
+
+    @Test
+    public void batchMode() throws IOException {
+        setUpParameters();
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+        parameters.addPage(2);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
+        testContext.assertOutputContainsFilenames("1_short-test-file.pdf", "3_short-test-file.pdf", "1_medium-test-file.pdf", "3_medium-test-file.pdf");
     }
 }

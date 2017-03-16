@@ -41,7 +41,7 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
         parameters = new SimpleSplitParameters(type);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
@@ -57,7 +57,8 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
     @Test
     public void testExecuteBurstEncrypted() throws IOException {
         setUpParameters(PredefinedSetOfPages.ALL_PAGES);
-        parameters.setSource(stronglyEncryptedInput());
+        parameters.removeAllSources();
+        parameters.addSource(stronglyEncryptedInput());
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -80,6 +81,25 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
+    }
+
+    @Test
+    public void batchMode() throws IOException {
+        setUpParameters(PredefinedSetOfPages.EVEN_PAGES);
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(19);
+        testContext.assertOutputContainsFilenames("1_short-test-file.pdf", "3_short-test-file.pdf",
+                "1_medium-test-file.pdf", "3_medium-test-file.pdf", "5_medium-test-file.pdf", "7_medium-test-file.pdf", "9_medium-test-file.pdf",
+                "11_medium-test-file.pdf", "13_medium-test-file.pdf", "15_medium-test-file.pdf", "17_medium-test-file.pdf", "19_medium-test-file.pdf",
+                "21_medium-test-file.pdf", "23_medium-test-file.pdf", "25_medium-test-file.pdf", "27_medium-test-file.pdf", "29_medium-test-file.pdf",
+                "31_medium-test-file.pdf", "33_medium-test-file.pdf"
+        );
     }
 
 }

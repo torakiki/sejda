@@ -33,7 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " simplesplit")
 public interface SimpleSplitTaskCliArguments
         extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput,
-        CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
+        CliArgumentsWithOptimizableOutput, MultiplePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
 
     // pdfsam-incompatibility no default, and this is part of a larger task: split
     @Option(shortName = "s", description = "predefined pages mode. Accepted values are 'all', 'odd' or 'even' (required)")

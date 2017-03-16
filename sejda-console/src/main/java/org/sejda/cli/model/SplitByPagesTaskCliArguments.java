@@ -33,7 +33,7 @@ import com.lexicalscope.jewel.cli.Option;
 @CommandLineInterface(application = TaskCliArguments.EXECUTABLE_NAME + " splitbypages")
 public interface SplitByPagesTaskCliArguments
         extends CliArgumentsWithPdfAndDirectoryOutput, CliArgumentsWithPrefixableOutput,
-        CliArgumentsWithOptimizableOutput, SinglePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
+        CliArgumentsWithOptimizableOutput, MultiplePdfSourceTaskCliArguments, CliArgumentWithDiscardableOutline {
 
     @Option(shortName = "n", description = "page number(s) to split at, the document will be splitted between 'n' and 'n+1' (required)")
     List<Integer> getPageNumbers();

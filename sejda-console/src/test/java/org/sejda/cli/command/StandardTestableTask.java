@@ -95,21 +95,21 @@ class SplitByBookmarksDefaultsProvider extends SingleInputAndFolderOutputDefault
     }
 }
 
-class SplitBySizeDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class SplitBySizeDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-s", "1234567890123456789");
     }
 }
 
-class SplitByPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class SplitByPagesDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-n", "1 2 3 9 23 78");
     }
 }
 
-class SplitByEveryXPagesDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class SplitByEveryXPagesDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-n", "5");
@@ -123,7 +123,7 @@ class ExtractByBookmarksDefaultsProvider extends MultipleInputsAndFolderOutputDe
     }
 }
 
-class SimpleSplitDefaultsProvider extends SingleInputAndFolderOutputDefaultsProvider {
+class SimpleSplitDefaultsProvider extends MultipleInputsAndFolderOutputDefaultsProvider {
     @Override
     public CommandLineTestBuilder provideDefaults(String taskName) {
         return super.provideDefaults(taskName).with("-s", "all");

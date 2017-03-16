@@ -25,8 +25,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PagesSelection;
 
 /**
@@ -35,7 +35,7 @@ import org.sejda.model.pdf.page.PagesSelection;
  * @author Andrea Vacondio
  * 
  */
-public abstract class AbstractSplitByPageParameters extends SinglePdfSourceMultipleOutputParameters
+public abstract class AbstractSplitByPageParameters extends MultiplePdfSourceMultipleOutputParameters
         implements PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;

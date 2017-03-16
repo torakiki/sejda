@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -61,11 +61,11 @@ public class SplitByPagesParametersTest {
     @Test
     public void testInvalidParameters() {
         SplitByPagesParameters victim = new SplitByPagesParameters();
-        MultipleTaskOutput output = mock(MultipleTaskOutput.class);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
-        victim.setSource(input);
+        victim.addSource(input);
         TestUtils.assertInvalidParameters(victim);
     }
 }

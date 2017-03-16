@@ -19,12 +19,14 @@
 package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.impl.sambox.component.split.PagesPdfSplitter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.AbstractSplitByPageParameters;
 import org.sejda.model.task.BaseTask;
@@ -44,32 +46,44 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitByPageNumbersTask.class);
 
-    private PDDocument document = null;
+    private int totalSteps;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PagesPdfSplitter<T> splitter;
 
     @Override
     public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
+        totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
     @Override
     public void execute(T parameters) throws TaskException {
-        LOG.debug("Opening {} ", parameters.getSource());
-        document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
+        int currentStep = 0;
 
-        splitter = new PagesPdfSplitter<>(document, parameters,
-                new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
-        LOG.debug("Starting split by page numbers for {} ", parameters);
-        splitter.split(executionContext(), parameters.getOutputPrefix(), parameters.getSource());
+        for (PdfSource<?> source : parameters.getSourceList()) {
+            executionContext().assertTaskNotCancelled();
+            currentStep++;
+
+            LOG.debug("Opening {}", source);
+            PDDocument document = source.open(documentLoader).getUnderlyingPDDocument();
+
+            splitter = new PagesPdfSplitter<>(document, parameters,
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
+
+            LOG.debug("Starting split by page numbers for {} ", parameters);
+            splitter.split(executionContext(), parameters.getOutputPrefix(), source);
+
+            nullSafeCloseQuietly(document);
+
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+        }
 
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(document);
         splitter = null;
     }
 
