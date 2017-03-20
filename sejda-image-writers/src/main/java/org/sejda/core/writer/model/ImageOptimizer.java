@@ -48,8 +48,9 @@ public class ImageOptimizer {
      * If the image is larger than maxWidthOrHeight pixels, it is downsized to fit the maxWidthOrHeight rectangle (keeping its aspect ratio). Image is saved as JPEG with specified
      * quality (1.0 is best/leave unchanged, 0.0 is worst). Image DPI is changed to dpi specified.
      */
-    public static File optimize(BufferedImage bufferedImage, float quality, int dpi, int width, int height)
-            throws IOException {
+    public static File optimize(BufferedImage bufferedImage, float quality, int dpi, int width, int height,
+            boolean gray) throws IOException {
+        long start = System.currentTimeMillis();
         File outputFile = File.createTempFile("pdfimage", ".jpeg");
         outputFile.deleteOnExit();
 
@@ -67,10 +68,10 @@ public class ImageOptimizer {
             }
 
             // PNG read fix when converting to JPEG
-            BufferedImage imageRGB = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_RGB);
+            BufferedImage newImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(),
+                    gray ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_INT_RGB);
 
-            Graphics2D g2d = imageRGB.createGraphics();
+            Graphics2D g2d = newImage.createGraphics();
             g2d.drawImage(bufferedImage, 0, 0, Color.WHITE, null);
             g2d.dispose();
 
@@ -86,7 +87,7 @@ public class ImageOptimizer {
             IIOMetadata imageMetaData = null;
             try {
                 // new metadata
-                imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(imageRGB), jpegParams);
+                imageMetaData = imageWriter.getDefaultImageMetadata(new ImageTypeSpecifier(newImage), jpegParams);
                 Element tree = (Element) imageMetaData.getAsTree("javax_imageio_jpeg_image_1.0");
                 Element jfif = (Element) tree.getElementsByTagName("app0JFIF").item(0);
                 jfif.setAttribute("Xdensity", Integer.toString(dpi));
@@ -98,7 +99,7 @@ public class ImageOptimizer {
             }
 
             try {
-                imageWriter.write(null, new IIOImage(imageRGB, null, imageMetaData), jpegParams);
+                imageWriter.write(null, new IIOImage(newImage, null, imageMetaData), jpegParams);
             } finally {
                 IOUtils.closeQuietly(ios);
                 imageWriter.dispose();
@@ -107,6 +108,9 @@ public class ImageOptimizer {
             return outputFile;
         } finally {
             bufferedImage.flush();
+            long elapsed = System.currentTimeMillis() - start;
+            if (elapsed > 500)
+                LOG.trace("Optimizing image took " + elapsed + "ms");
         }
     }
 }
