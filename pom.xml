@@ -282,12 +282,12 @@
 
 	<properties>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.24</slf4j.version>
+		<slf4j.version>1.7.25</slf4j.version>
 		<commons.lang.version>3.5</commons.lang.version>
 		<commons.io.version>2.5</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
 		<mockito.version>1.10.19</mockito.version>
-		<logback.version>1.2.1</logback.version>
+		<logback.version>1.2.2</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<hamcrest.version>1.3</hamcrest.version>
