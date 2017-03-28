@@ -27,7 +27,8 @@ public enum UnicodeType0Font implements FontResource {
     NOTO_SANS_DEVANAGARI_REGULAR("/fonts/sans/NotoSansDevanagari-Regular.ttf"),
     NOTO_SANS_HEBREW_REGULAR("/fonts/sans/NotoSansHebrew-Regular.ttf"),
     NOTO_SANS_THAI_REGULAR("/fonts/sans/NotoSansThai-Regular.ttf"),
-    NOTO_SANS_TELUGU_REGULAR("/fonts/sans/NotoSansTelugu-Regular.ttf");
+    NOTO_SANS_TELUGU_REGULAR("/fonts/sans/NotoSansTelugu-Regular.ttf"),
+    NOTO_SANS_BENGALI_REGULAR("/fonts/sans/NotoSansBengali-Regular.ttf");
 
     private String resource;
 
