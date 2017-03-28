@@ -21,13 +21,20 @@ package org.sejda.impl.sambox.util;
 
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.junit.Test;
-import org.sejda.fonts.UnicodeType0Font;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.io.SeekableSources;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.font.FontMappers;
 import org.sejda.sambox.pdmodel.font.FontMapping;
@@ -35,11 +42,14 @@ import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 import static org.sejda.impl.sambox.util.FontUtils.*;
 
@@ -67,6 +77,10 @@ public class FontUtilsTest {
         assertEquals(PDType1Font.ZAPF_DINGBATS, getStandardType1Font(StandardType1Font.ZAPFDINGBATS));
     }
 
+    private PDFont findFontFor(String s) {
+        return FontUtils.findFontFor(new PDDocument(), s);
+    }
+
     @Test
     public void testCanDisplay() {
         assertTrue(canDisplay("Chuck", getStandardType1Font(StandardType1Font.HELVETICA)));
@@ -76,9 +90,42 @@ public class FontUtilsTest {
 
     @Test
     public void testFindFontFor() {
-        assertEquals("NotoSansThai", findFontFor(new PDDocument(), "ทดสอบ").getName());
-        assertEquals("NotoSans", findFontFor(new PDDocument(), "αυτό είναι ένα τεστ").getName());
-        assertNull(findFontFor(new PDDocument(), "വീട്"));
+        assertNotNull(findFontFor("ทดสอบ")); // thai
+        assertNotNull(findFontFor("αυτό είναι ένα τεστ")); // greek
+        assertNotNull(findFontFor("വീട്")); // malayalam
+        assertNotNull(findFontFor("मानक")); // hindi
+        assertNotNull(findFontFor("జ")); // telugu
+        assertNotNull(findFontFor("উ")); // bengali
+        assertNotNull(findFontFor("עברית")); // hebrew
+        assertNotNull(findFontFor("简化字")); // simplified chinese
+        assertNotNull(findFontFor("한국어/조선말")); // korean
+        assertNotNull(findFontFor("日本語")); // japanese
+        assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
+    }
+
+    @Test
+    public void fontForMultipleLanguagesInOneString() {
+        assertNotNull(findFontFor("latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ עברית")); // all in one
+    }
+
+    @Test
+    public void roundTripWriteAndRead() throws TaskException, IOException {
+        String str = "latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ";
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
+        doc.addPage(page);
+        PDDocumentHandler handler = new PDDocumentHandler(doc);
+        File tmp = IOUtils.createTemporaryPdfBuffer();
+        handler.savePDDocument(tmp);
+
+        PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
+        String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0), new Rectangle(0,0, 1000, 1000));
+        assertEquals(noWhitespace(str), noWhitespace(text));
+    }
+
+    private String noWhitespace(String in) {
+        return in.replaceAll("\\s","");
     }
 
     @Test
@@ -104,22 +151,20 @@ public class FontUtilsTest {
     public void testCaching() {
         PDDocument doc = new PDDocument();
         PDFont expected = FontUtils.findFontFor(doc, "ทดสอบ");
+        assertNotNull(expected);
 
-        PDFont actual = findFontFor(doc, "ทด");
+        PDFont actual = FontUtils.findFontFor(doc, "ทด");
         assertTrue("Font is cached, same instance is returned", expected == actual);
     }
 
     @Test
     public void testCanDisplayThai() {
-        PDFont noto = FontUtils.loadFont(new PDDocument(), UnicodeType0Font.NOTO_SANS_THAI_REGULAR);
-        assertThat(FontUtils.canDisplay("นี่คือการทดสอบ", noto), is(true));
+        assertThat(findFontFor("นี่คือการทดสอบ"), is(notNullValue()));
     }
 
     @Test
     public void canDisplayGeorgian() {
-        PDFont font = FontUtils.findFontFor(new PDDocument(), "ქართული ენა");
-        assertNotNull("No font available for Georgian", font);
-        assertThat(font.getName(), is("NotoSansGeorgian"));
+        assertNotNull(findFontFor("ქართული ენა"));
     }
 
     @Test
