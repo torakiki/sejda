@@ -6,7 +6,7 @@
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>3.0.3</version>
+	<version>3.0.4-SNAPSHOT</version>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
@@ -32,7 +32,7 @@
 		<connection>scm:git:git@github.com:torakiki/sejda.git</connection>
 		<developerConnection>scm:git:git@github.com:torakiki/sejda.git</developerConnection>
 		<url>scm:git:git@github.com:torakiki/sejda.git</url>
-		<tag>3.0.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<developers>
