@@ -199,7 +199,7 @@ public final class FontUtils {
      * @return
      */
     public static String removeWhitespace(String text) {
-        return text.replaceAll("\\p{Zs}", "");
+        return text.replaceAll("\\p{Zs}", "").replaceAll("\\r\\n", "").replaceAll("\\n", "");
     }
 
     public static boolean canDisplaySpace(PDFont font) {

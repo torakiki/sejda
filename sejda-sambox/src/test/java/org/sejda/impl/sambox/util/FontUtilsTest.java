@@ -102,6 +102,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("日本語")); // japanese
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
+        assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
     }
 
     @Test
