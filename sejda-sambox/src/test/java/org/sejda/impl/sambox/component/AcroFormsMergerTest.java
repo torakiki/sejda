@@ -227,7 +227,8 @@ public class AcroFormsMergerTest {
         assertEquals(4, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field.isTerminal()) {
-                if (field instanceof PDRadioButton) {
+                System.out.println(field.getFullyQualifiedName() + " " + field.getWidgets().size() + " " + field.getClass().getSimpleName());
+                if (field.getFullyQualifiedName().startsWith("Choice_Caption_")) {
                     assertEquals(4, field.getWidgets().size());
                 } else {
                     assertEquals(2, field.getWidgets().size());
