@@ -21,6 +21,7 @@ files = [
     'NotoSansHebrew-Regular.ttf',
     'NotoSansTelugu-Regular.ttf',
     'NotoSansThai-Regular.ttf',
+    'NotoSansSymbols-Regular.ttf',
 ]
 ```
 
@@ -28,5 +29,5 @@ Execute the merge tool:
 
 ```
 cd nototools
-merge_fonts.py -d ~dev/sejda/sejda-fonts/src/main/resources/fonts/sans/ -o NotoSansMerged-Regular.ttf
+merge_fonts.py -d ~/dev/sejda/sejda-fonts/fonts/sans/ -o NotoSansMerged-Regular.ttf
 ```

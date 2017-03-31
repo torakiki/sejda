@@ -101,6 +101,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("한국어/조선말")); // korean
         assertNotNull(findFontFor("日本語")); // japanese
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
+        assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
     }
 
     @Test
