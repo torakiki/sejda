@@ -94,16 +94,11 @@ public final class FontUtils {
     }
 
     /**
-     * check the label can be written with the selected font, use the fallback otherwise
-     * 
-     * @param text
-     * @param font
-     * @param fallbackSupplier
-     * @return
+     * Checks the text can be written with the given font, find a fallback font otherwise
      */
-    public static PDFont fontOrFallback(String text, PDFont font, Supplier<PDFont> fallbackSupplier) {
-        if (nonNull(fallbackSupplier) && !canDisplay(text, font)) {
-            PDFont fallback = fallbackSupplier.get();
+    public static PDFont fontOrFallback(String text, PDFont font, PDDocument document) {
+        if (!canDisplay(text, font)) {
+            PDFont fallback = findFontFor(document, text);
             String fallbackName = fallback == null ? null : fallback.getName();
             LOG.info("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(), fallbackName);
             return fallback;

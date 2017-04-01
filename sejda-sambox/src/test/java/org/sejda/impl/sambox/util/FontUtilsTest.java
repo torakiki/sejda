@@ -103,7 +103,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
-        assertNotNull(findFontFor("\u2984 \u2583 \u2738")); // symbols
+        assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
     }
 
     @Test
@@ -113,7 +113,7 @@ public class FontUtilsTest {
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        String str = "latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ";
+        String str = "latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
@@ -134,20 +134,19 @@ public class FontUtilsTest {
     @Test
     public void testFontOrFallbackPositive() {
         PDType1Font expected = getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE);
-        assertEquals(expected, fontOrFallback("Chuck", expected, () -> getStandardType1Font(StandardType1Font.CURIER)));
+        assertEquals(expected, fontOrFallback("Chuck", expected, new PDDocument()));
     }
 
     @Test
     public void testFontOrFallbackNegative() {
-        PDType1Font expected = getStandardType1Font(StandardType1Font.CURIER);
-        assertEquals(expected, fontOrFallback("कसौटी", getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE),
-                () -> expected));
+        assertNotNull(fontOrFallback("कसौटी", getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE),
+                new PDDocument()));
     }
 
     @Test
-    public void testFontOrFallbackNullSipplier() {
-        PDType1Font expected = getStandardType1Font(StandardType1Font.CURIER);
-        assertEquals(expected, fontOrFallback("कसौटी", expected, null));
+    public void testFontOrFallbackNotFoundFallback() {
+        assertNull(fontOrFallback("\u1B2A\u1B35\u1B31\u1B29\u1B2E\u1B36, \u1B29\u1B32\u1B29\u1B2E\u1B36",
+                getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE), new PDDocument()));
     }
 
     @Test

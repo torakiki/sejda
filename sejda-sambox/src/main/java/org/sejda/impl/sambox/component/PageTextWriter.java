@@ -64,7 +64,6 @@ public class PageTextWriter {
     private PDDocument document;
     // TODO define as a params member
     private static final Float DEFAULT_MARGIN = 30F;
-    private PDFont latestSuitablefont;
 
     /**
      * @param document
@@ -227,18 +226,11 @@ public class PageTextWriter {
     }
 
     private PDFont resolveFont(String label, PDFont font) throws TaskIOException {
-        // check the label can be written with the selected font. Fallback to matching unicode font otherwise. Try Unicode Serif as last resort.
-        // Type 1 fonts only support 8-bit code points.
-        latestSuitablefont = fontOrFallback(label, font, () -> {
-            if (canDisplay(label, latestSuitablefont)) {
-                return latestSuitablefont;
-            }
-            return findFontFor(document, label);
-        });
-        if (isNull(latestSuitablefont)) {
+        PDFont result = fontOrFallback(label, font, document);
+        if (isNull(result)) {
             throw new TaskIOException("Unable to find suitable font for the given label \"" + StringUtils.asUnicodes(label) + "\"");
         }
-        return latestSuitablefont;
+        return result;
     }
 
     public static class TextWithFont {
