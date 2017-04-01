@@ -103,6 +103,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
+        assertNotNull(findFontFor("\u2984 \u2583 \u2738")); // symbols
     }
 
     @Test
