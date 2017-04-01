@@ -104,16 +104,17 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
         assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
+        assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
     }
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ עברית")); // all in one
+        assertNotNull(findFontFor("latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        String str = "latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
+        String str = "ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
