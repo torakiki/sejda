@@ -106,16 +106,17 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
         assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
         assertNotNull(findFontFor("ጩ")); //ethiopic
+        assertNotNull(findFontFor("Shri ਹਰਜੋਤ ਸਿੰਘ / Harjot Singh"));
     }
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
+        assertNotNull(findFontFor("ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        String str = "ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
+        String str = "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
