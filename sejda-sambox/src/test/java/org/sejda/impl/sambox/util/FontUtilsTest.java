@@ -105,11 +105,12 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
         assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
         assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
+        assertNotNull(findFontFor("ጩ")); //ethiopic
     }
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
+        assertNotNull(findFontFor("ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
