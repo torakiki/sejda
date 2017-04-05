@@ -45,6 +45,8 @@ import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -106,28 +108,34 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
         assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
         assertNotNull(findFontFor("ጩ")); //ethiopic
-        assertNotNull(findFontFor("Shri ਹਰਜੋਤ ਸਿੰਘ / Harjot Singh"));
+        assertNotNull(findFontFor("پنجابی, ਪੰਜਾਬੀ")); // punjabi
+        assertNotNull(findFontFor("தமிழ்")); // tamil
+        assertNotNull(findFontFor("ગુજરાતી")); // gujarati
     }
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
+        assertNotNull(findFontFor("ગુજરાતી தமிழ் پنجابی, ਪੰਜਾਬੀ ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        String str = "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ";
-        PDDocument doc = new PDDocument();
-        PDPage page = new PDPage();
-        new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
-        doc.addPage(page);
-        PDDocumentHandler handler = new PDDocumentHandler(doc);
-        File tmp = IOUtils.createTemporaryPdfBuffer();
-        handler.savePDDocument(tmp);
+        List<String> strings = Arrays.asList("ગુજરાતી ਪੰਜਾਬੀ தமிழ்",
+                "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ");
 
-        PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
-        String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0), new Rectangle(0,0, 1000, 1000));
-        assertEquals(noWhitespace(str), noWhitespace(text));
+        for(String str: strings) {
+            PDDocument doc = new PDDocument();
+            PDPage page = new PDPage();
+            new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
+            doc.addPage(page);
+            PDDocumentHandler handler = new PDDocumentHandler(doc);
+            File tmp = IOUtils.createTemporaryPdfBuffer();
+            handler.savePDDocument(tmp);
+
+            PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
+            String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0), new Rectangle(0, 0, 1000, 1000));
+            assertEquals(noWhitespace(str), noWhitespace(text));
+        }
     }
 
     private String noWhitespace(String in) {
