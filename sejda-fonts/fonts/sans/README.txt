@@ -25,7 +25,9 @@ files = [
     'NotoSansKhmer-Regular.ttf',
     'NotoSansEthiopic-Regular.ttf',
     'NotoSansGujarati-Regular.ttf',
-    'NotoSansTamil-Regular.ttf'
+    'NotoSansTamil-Regular.ttf',
+    'NotoSansMyanmar-Regular.ttf',
+    'NotoSansSinhala-Regular.ttf',
 ]
 ```
 

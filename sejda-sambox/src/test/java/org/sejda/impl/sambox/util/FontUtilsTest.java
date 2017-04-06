@@ -111,16 +111,19 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("پنجابی, ਪੰਜਾਬੀ")); // punjabi
         assertNotNull(findFontFor("தமிழ்")); // tamil
         assertNotNull(findFontFor("ગુજરાતી")); // gujarati
+        assertNotNull(findFontFor("န\u103Aမာဘာသာ")); // myanmar
+        assertNotNull(findFontFor("հայերէն")); // armenian
+        assertNotNull(findFontFor("සිංහල")); // sinhalese
     }
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("ગુજરાતી தமிழ் پنجابی, ਪੰਜਾਬੀ ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
+        assertNotNull(findFontFor("န\u103Aမာဘာသာ සිංහල ગુજરાતી தமிழ் پنجابی, ਪੰਜਾਬੀ ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        List<String> strings = Arrays.asList("ગુજરાતી ਪੰਜਾਬੀ தமிழ்",
+        List<String> strings = Arrays.asList("ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
                 "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ");
 
         for(String str: strings) {
