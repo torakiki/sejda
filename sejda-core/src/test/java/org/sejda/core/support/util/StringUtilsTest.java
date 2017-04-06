@@ -33,6 +33,6 @@ public class StringUtilsTest {
 
     @Test
     public void asUnicodes() {
-        assertEquals("\\u32\\u230\\u101\\u1514", StringUtils.asUnicodes(" æeת"));
+        assertEquals("\\U+20\\U+E6\\U+65\\U+5EA", StringUtils.asUnicodes(" æeת"));
     }
 }

@@ -40,7 +40,7 @@ public final class StringUtils {
         StringBuilder result = new StringBuilder();
         for (int offset = 0; offset < in.length(); ) {
             int codepoint = in.codePointAt(offset);
-            result.append("\\u").append(codepoint);
+            result.append("\\U+").append(Integer.toHexString(codepoint).toUpperCase());
             offset += Character.charCount(codepoint);
         }
         return result.toString();
