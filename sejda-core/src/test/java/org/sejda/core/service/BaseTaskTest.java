@@ -19,6 +19,8 @@
 package org.sejda.core.service;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -34,6 +36,7 @@ import org.junit.Ignore;
 import org.sejda.TestUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.support.util.StringUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
@@ -49,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Andrea Vacondio
@@ -144,7 +148,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
                 randomAlphanumeric(16) + "." + extension);
     }
 
-    public void assertPageText(PDPage page, String text) {
+    public void withPageText(PDPage page, Consumer<String> callback) {
         PDFTextStripperByArea textStripper;
         try {
             textStripper = new PDFTextStripperByArea();
@@ -156,10 +160,25 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
             textStripper.setSortByPosition(true);
             textStripper.addRegion("area1", cropBoxRectangle);
             textStripper.extractRegions(page);
-            assertEquals(text, textStripper.getTextForRegion("area1").replaceAll("[^A-Za-z0-9]", ""));
+            callback.accept(textStripper.getTextForRegion("area1"));
         } catch (IOException e) {
             fail(e.getMessage());
         }
+    }
+
+    public void assertPageText(PDPage page, String text) {
+        withPageText(page, pageText -> {
+            assertEquals(text, pageText.replaceAll("[^A-Za-z0-9]", ""));
+        });
+    }
+
+    public void assertPageTextContains(PDPage page, String text) {
+        withPageText(page, pageText -> {
+            // ignores whitespace
+            pageText = StringUtils.normalizeWhitespace(pageText);
+            pageText = pageText.replaceAll("\\s", "");
+            assertThat(pageText, containsString(text));
+        });
     }
 
     public void assertMediaBox(PDPage page, float width, float height) {

@@ -79,16 +79,14 @@ import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
 import org.sejda.impl.sambox.util.AcroFormUtils;
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
-import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
-import org.sejda.sambox.pdmodel.interactive.form.PDField;
-import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
-import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
-import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
+import org.sejda.sambox.pdmodel.interactive.form.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,7 +212,7 @@ public class AcroFormsMerger {
     /**
      * For each new widget annotation in the lookup table removes all the Field keys.
      * 
-     * @param annotationsLookup
+     * @param annotations
      */
     private void removeFieldKeysFromWidgets(Collection<PDAnnotationWidget> annotations) {
         annotations.stream().map(PDAnnotation::getCOSObject).forEach(a -> a.removeItems(FIELD_KEYS));
@@ -287,10 +285,26 @@ public class AcroFormsMerger {
             List<PDField> fields = new ArrayList<>();
             for (PDField field : form.getFieldTree()) {
                 fields.add(field);
+
+                if(field instanceof PDVariableText) {
+                    ensureValueCanBeDisplayed((PDVariableText) field);
+                }
             }
             form.flatten(fields, true);
         } catch (IOException | UnsupportedOperationException ex) {
             LOG.warn("Failed to flatten form", ex);
+        }
+    }
+
+    /**
+     * Makes sure the string can be displayed using appearances font
+     */
+    private void ensureValueCanBeDisplayed(PDVariableText field) {
+        String value = field.getValueAsString();
+        if(!FontUtils.canDisplay(value, field.getAppearanceFont())) {
+            PDFont fallbackFont = FontUtils.findFontFor(form.getDocument(), value);
+            field.setAppearanceOverrideFont(fallbackFont);
+            LOG.debug("Form field can't render (in appearances) it's value '%', will use font % for better support", value, fallbackFont);
         }
     }
 

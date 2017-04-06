@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -244,6 +245,21 @@ public abstract class MergeTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(312).assertVersion(PdfVersion.VERSION_1_6).assertHasOutline(false)
                 .assertHasAcroforms(false);
+    }
+
+    @Test
+    public void testExecuteMergeFlattenFormsWithUnicodeValues() throws IOException {
+        MergeParameters parameters = setUpParameters(Collections.singletonList(
+                new PdfMergeInput(customInput("pdf/forms/simple_form_unicode_values.pdf"))));
+
+        parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(1).assertHasAcroforms(false);
+        testContext.forEachPdfOutput(doc -> {
+            assertPageTextContains(doc.getPage(0), "ጩ");
+        });
     }
 
     @Test
