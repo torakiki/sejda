@@ -31,7 +31,6 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SplitBySizeParameters;
-import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -48,7 +47,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
 
     private int totalSteps;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
-    private PDDocumentHandler sourceDocumentHandler;
+    private PDDocument document = null;
     private AbstractPdfSplitter<SplitBySizeParameters> splitter;
 
     @Override
@@ -66,12 +65,10 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
             executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
-            sourceDocumentHandler = source.open(documentLoader);
-            sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
-            PDDocument sourceDocument = sourceDocumentHandler.getUnderlyingPDDocument();
+            document = source.open(documentLoader).getUnderlyingPDDocument();
 
-            splitter = new SizePdfSplitter(sourceDocument, parameters,
-                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(sourceDocument));
+            splitter = new SizePdfSplitter(document, parameters,
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
             LOG.debug("Starting split by size {}", HumanReadableSize.toString(parameters.getSizeToSplitAt()));
             splitter.split(executionContext(), parameters.getOutputPrefix(), source);
 
@@ -87,7 +84,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     }
 
     private void closeResource() {
-        nullSafeCloseQuietly(sourceDocumentHandler);
+        nullSafeCloseQuietly(document);
         splitter = null;
     }
 }

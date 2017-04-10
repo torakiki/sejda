@@ -47,6 +47,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
     private static final Logger LOG = LoggerFactory.getLogger(SplitByPageNumbersTask.class);
 
     private int totalSteps;
+    private PDDocument document = null;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PagesPdfSplitter<T> splitter;
 
@@ -66,7 +67,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
             currentStep++;
 
             LOG.debug("Opening {}", source);
-            PDDocument document = source.open(documentLoader).getUnderlyingPDDocument();
+            document = source.open(documentLoader).getUnderlyingPDDocument();
 
             splitter = new PagesPdfSplitter<>(document, parameters,
                     new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
@@ -84,6 +85,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
 
     @Override
     public void after() {
+        nullSafeCloseQuietly(document);
         splitter = null;
     }
 
