@@ -20,8 +20,6 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
-import static org.sejda.impl.sambox.util.FontUtils.findFontFor;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 
 import java.awt.Color;
