@@ -89,7 +89,7 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
     /**
      * Creates a {@link FileOrDirectoryTaskOutput} making sure the input file is a valid directory instance
      * 
-     * @param file
+     * @param directory
      * @return
      */
     public static FileOrDirectoryTaskOutput directory(File directory) {
