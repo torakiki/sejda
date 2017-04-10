@@ -18,13 +18,13 @@
  */
 package org.sejda.model.output;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
-
-import java.io.File;
-import java.io.IOException;
 
 public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
 
@@ -73,4 +73,29 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
         return new EqualsBuilder().append(file, output.file).isEquals();
     }
 
+    /**
+     * Creates a {@link FileOrDirectoryTaskOutput} making sure the input file is a valid file instance
+     * 
+     * @param file
+     * @return
+     */
+    public static FileOrDirectoryTaskOutput file(File file) {
+        if (file == null || (file.exists() && !file.isFile())) {
+            throw new IllegalArgumentException("A valid instance is expected (not null or existing file).");
+        }
+        return new FileOrDirectoryTaskOutput(file);
+    }
+
+    /**
+     * Creates a {@link FileOrDirectoryTaskOutput} making sure the input file is a valid directory instance
+     * 
+     * @param file
+     * @return
+     */
+    public static FileOrDirectoryTaskOutput directory(File directory) {
+        if (directory == null || !directory.isDirectory()) {
+            throw new IllegalArgumentException("A not null directory instance is expected. Path: " + directory);
+        }
+        return new FileOrDirectoryTaskOutput(directory);
+    }
 }

@@ -18,15 +18,15 @@
  */
 package org.sejda.model.output;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.TestUtils;
-
-import java.io.File;
-
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.io.File;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.sejda.TestUtils;
 
 public class FileOrDirectoryTaskOutputTest {
 
@@ -66,6 +66,44 @@ public class FileOrDirectoryTaskOutputTest {
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
         new FileOrDirectoryTaskOutput(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fileFactoryNullFile() {
+        FileOrDirectoryTaskOutput.file(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fileFactoryInvalidFile() {
+        when(file.isFile()).thenReturn(Boolean.FALSE);
+        FileOrDirectoryTaskOutput.file(file);
+    }
+
+    @Test
+    public void fileFactoryValidFile_doesntExist() {
+        when(file.isFile()).thenReturn(Boolean.FALSE);
+        when(file.exists()).thenReturn(Boolean.FALSE);
+
+        FileOrDirectoryTaskOutput instance = FileOrDirectoryTaskOutput.file(file);
+        assertNotNull(instance);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void dirFactoryNullFile() {
+        FileOrDirectoryTaskOutput.directory(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void dirFactoryInvalidDirectory() {
+        when(directory.isDirectory()).thenReturn(Boolean.FALSE);
+        FileOrDirectoryTaskOutput.directory(directory);
+    }
+
+    @Test
+    public void dirFactoryValidDirectory() {
+        when(directory.isDirectory()).thenReturn(Boolean.TRUE);
+        FileOrDirectoryTaskOutput instance = FileOrDirectoryTaskOutput.directory(directory);
+        assertNotNull(instance);
     }
 
     @Test
