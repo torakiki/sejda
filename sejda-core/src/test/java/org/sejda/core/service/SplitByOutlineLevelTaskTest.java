@@ -44,7 +44,7 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.setSource(customInput("pdf/bigger_outline_test.pdf"));
+        parameters.addSource(customInput("pdf/bigger_outline_test.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         return parameters;

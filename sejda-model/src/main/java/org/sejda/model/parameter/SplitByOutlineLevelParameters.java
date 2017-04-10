@@ -27,8 +27,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
 
 /**
  * Parameter class to split a PDF document at a given outline level.
@@ -36,7 +36,7 @@ import org.sejda.model.parameter.base.SinglePdfSourceMultipleOutputParameters;
  * @author Andrea Vacondio
  * 
  */
-public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutputParameters
+public class SplitByOutlineLevelParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @Min(1)
@@ -91,8 +91,7 @@ public class SplitByOutlineLevelParameters extends SinglePdfSourceMultipleOutput
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
-                .append(levelToSplitAt)
-                .append(matchingTitleRegEx).toHashCode();
+                .append(levelToSplitAt).append(matchingTitleRegEx).toHashCode();
     }
 
     @Override

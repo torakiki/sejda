@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -26,6 +27,7 @@ import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
 import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.impl.sambox.component.split.PageDestinationsLevelPdfSplitter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
@@ -45,6 +47,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitByOutlineLevelTask.class);
 
+    private int totalSteps;
     private PDDocument document = null;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PageDestinationsLevelPdfSplitter splitter;
@@ -53,22 +56,31 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
     public void before(SplitByOutlineLevelParameters parameters, TaskExecutionContext executionContext)
             throws TaskException {
         super.before(parameters, executionContext);
+        totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener();
     }
 
     @Override
     public void execute(SplitByOutlineLevelParameters parameters) throws TaskException {
-        LOG.debug("Opening {} ", parameters.getSource());
-        document = parameters.getSource().open(documentLoader).getUnderlyingPDDocument();
+        int currentStep = 0;
 
-        LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
-        OutlinePageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
-                parameters.getMatchingTitleRegEx()).getPageDestinationsForLevel(parameters.getLevelToSplitAt());
-        splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination,
-                new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
-        LOG.debug("Starting split by outline level for {} ", parameters);
-        splitter.split(executionContext(), parameters.getOutputPrefix(), parameters.getSource());
+        for (PdfSource<?> source : parameters.getSourceList()) {
+            executionContext().assertTaskNotCancelled();
+            currentStep++;
+            LOG.debug("Opening {} ", source);
+            document = source.open(documentLoader).getUnderlyingPDDocument();
 
+            LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
+            OutlinePageDestinations pagesDestination = new SamboxOutlineLevelsHandler(document,
+                    parameters.getMatchingTitleRegEx()).getPageDestinationsForLevel(parameters.getLevelToSplitAt());
+            splitter = new PageDestinationsLevelPdfSplitter(document, parameters, pagesDestination,
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
+            LOG.debug("Starting split by outline level for {} ", parameters);
+            splitter.split(executionContext(), parameters.getOutputPrefix(), source);
+            nullSafeCloseQuietly(document);
+
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+        }
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }
 
