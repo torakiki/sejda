@@ -20,13 +20,14 @@
  */
 package org.sejda.core.support.prefix;
 
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.core.support.prefix.processor.PrefixUtils.toSafeFilename;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
-import org.sejda.core.support.prefix.processor.PrefixUtils;
 
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
@@ -60,15 +61,15 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        String result = prefixTypesChain.process(prefix, preProcessRequest(request));
+        String result = toSafeFilename(prefixTypesChain.process(prefix, preProcessRequest(request)));
 
-        if(result.length() > 255) {
-            String baseName = FilenameUtils.getBaseName(result);
-            String ext = FilenameUtils.getExtension(result);
+        if (result.length() > 255) {
+            String baseName = getBaseName(result);
+            String ext = getExtension(result);
             return baseName.substring(0, 254 - ext.length()) + "." + ext;
         }
 
-        return PrefixUtils.toSafeFilename(result);
+        return result;
     }
 
     /**

@@ -20,13 +20,14 @@
  */
 package org.sejda.core.support.prefix;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 /**
@@ -79,9 +80,17 @@ public class NameGeneratorTest {
 
     @Test
     public void testMaxFilenameSize() {
-        String generatedFilename = nameGenerator("BLA_[TEXT]").generate(nameRequest("pdf").text(StringUtils.repeat('a', 300)));
+        String generatedFilename = nameGenerator("BLA_[TEXT]").generate(nameRequest("pdf").text(repeat('a', 300)));
         assertEquals(255, generatedFilename.length());
         assertThat(generatedFilename, endsWith("aaa.pdf"));
+    }
+
+    @Test
+    public void testMaxFilenameSizeSanitized() {
+        String generatedFilename = nameGenerator("B|LA_[TEXT]").generate(nameRequest("pdf").text(repeat('a', 300)));
+        assertEquals(255, generatedFilename.length());
+        assertThat(generatedFilename, endsWith("aaa.pdf"));
+        assertThat(generatedFilename, startsWith("BLA_aaa"));
     }
 
     @Test
@@ -92,7 +101,8 @@ public class NameGeneratorTest {
 
     @Test
     public void testDollarSignInFilename() {
-        String generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]").generate(nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
+        String generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]")
+                .generate(nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
         assertEquals(generatedFilename, "99-My file 6-04-2015 $1234-56.pdf");
     }
 }
