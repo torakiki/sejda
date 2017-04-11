@@ -20,6 +20,7 @@ package org.sejda.core.service;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -37,7 +38,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -51,6 +54,7 @@ import org.sejda.io.SeekableSources;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.notification.event.TaskExecutionWarningEvent;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
@@ -435,6 +439,20 @@ public class TaskTestContext implements Closeable {
     public void assertTaskFailed(String message) {
         assertNotNull(taskFailureCause);
         assertThat(taskFailureCause.getMessage(), startsWith(message));
+    }
+
+    List<String> taskWarnings = new ArrayList<>();
+    public void expectTaskWillProduceWarnings() {
+        GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionWarningEvent>() {
+            @Override
+            public void onEvent(TaskExecutionWarningEvent event) {
+                taskWarnings.add(event.getWarning());
+            }
+        });
+    }
+
+    public void assertTaskWarning(String message) {
+        assertThat(taskWarnings, hasItem(message));
     }
 
     private void initOutputFromSource(File source, String password) throws IOException {

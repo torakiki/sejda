@@ -24,16 +24,15 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.sejda.fonts.OptionalUnicodeType0Font;
 import org.sejda.fonts.UnicodeType0Font;
+import org.sejda.impl.sambox.component.TextWithFont;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.pdf.FontResource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSDictionary;
@@ -81,6 +80,8 @@ public final class FontUtils {
         fontsCache.put(StandardType1Font.TIMES_ROMAN, PDType1Font.TIMES_ROMAN);
         STANDARD_TYPE1_FONTS = Collections.unmodifiableMap(fontsCache);
     }
+
+    public static PDFont HELVETICA = PDType1Font.HELVETICA;
 
     /**
      * Mapping between Sejda and PDFBox standard type 1 fonts implementation
@@ -200,7 +201,7 @@ public final class FontUtils {
         try {
             font.encode(" ");
             return true;
-        } catch (IllegalArgumentException | IOException | UnsupportedOperationException e) {
+        } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
             // Nope
         }
         return false;
@@ -358,5 +359,76 @@ public final class FontUtils {
             return null;
         }
 
+    }
+
+    /**
+     * Supports writing labels which require multiple fonts (eg: mixing thai and english words)
+     * Returns a list of text with associated font.
+     */
+    public static List<TextWithFont> resolveFonts(String label, PDFont font, PDDocument document) throws TaskIOException {
+        PDFont currentFont = font;
+        StringBuilder currentString = new StringBuilder();
+
+        // we want to keep the insertion order
+        List<TextWithFont> result = new ArrayList<>();
+
+        Iterator<Integer> codePointIterator = label.codePoints().iterator();
+        while(codePointIterator.hasNext()) {
+            int codePoint = codePointIterator.next();
+
+            String s = new String(Character.toChars(codePoint));
+
+            PDFont f = fontOrFallback(s, font, document);
+            if(s.equals(" ")) {
+                // we want space to be a separate text item
+                // because some fonts are missing the space glyph
+                // so we'll handle it separate from the other chars
+
+                // some fonts don't have glyphs for space.
+                // figure out if that's the case and switch to a standard font as fallback
+                if(!FontUtils.canDisplaySpace(f)) {
+                    f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
+                }
+
+                // end current string, before space
+                if(currentString.length() > 0) {
+                    result.add(new TextWithFont(currentString.toString(), currentFont));
+                }
+
+                // add space
+                result.add(new TextWithFont(" ", f));
+                currentString = new StringBuilder();
+                currentFont = f;
+            } else if(currentFont == f) {
+                currentString.append(s);
+            } else {
+                if(currentString.length() > 0) {
+                    result.add(new TextWithFont(currentString.toString(), currentFont));
+                }
+
+                currentString = new StringBuilder(s);
+                currentFont = f;
+            }
+        }
+
+        for(TextWithFont each: result) {
+            LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
+        }
+
+        result.add(new TextWithFont(currentString.toString(), currentFont));
+
+        return result;
+    }
+
+    public static String removeUnsupportedCharacters(String text, PDDocument doc) throws TaskIOException {
+        List<TextWithFont> resolved = resolveFonts(text, HELVETICA, doc);
+        StringBuilder result = new StringBuilder();
+        resolved.forEach(tf -> {
+            if(tf.getFont() != null) {
+                result.append(tf.getText());
+            }
+        });
+
+        return result.toString();
     }
 }

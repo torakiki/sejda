@@ -19,52 +19,39 @@ package org.sejda.impl.sambox.component;
 import org.junit.Test;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
 
-import java.util.List;
+import java.awt.*;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
 
 public class PageTextWriterTest {
 
     private PDFont helvetica = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
 
+    private void write(String text) throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        doc.addPage(page);
+        PageTextWriter writer = new PageTextWriter(doc);
+        writer.write(page, new Point(10, 10), text, helvetica, 10d, Color.BLACK);
+    }
+
     @Test
     public void resolveTextAndFontsWhenTextRepeats() throws TaskIOException {
-        PageTextWriter writer = new PageTextWriter(new PDDocument());
-        List<PageTextWriter.TextWithFont> textAndFonts = writer.resolveFonts("123α456α789", helvetica);
-
-        assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(0).getText(), is("123"));
-
-        assertThat(textAndFonts.get(1).getFont().getName(), is(not("Helvetica")));
-        assertThat(textAndFonts.get(1).getText(), is("α"));
-
-        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(2).getText(), is("456"));
-
-        assertThat(textAndFonts.get(3).getFont().getName(), is(not("Helvetica")));
-        assertThat(textAndFonts.get(3).getText(), is("α"));
+        write("123α456α789");
     }
 
     @Test
     public void resolvedSpaceSeparately() throws TaskIOException {
-        PageTextWriter writer = new PageTextWriter(new PDDocument());
-        List<PageTextWriter.TextWithFont> textAndFonts = writer.resolveFonts("ab cd", helvetica);
-
-        assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(0).getText(), is("ab"));
-
-        assertThat(textAndFonts.get(1).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(1).getText(), is(" "));
-
-        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(2).getText(), is("cd"));
+        write("ab cd");
     }
 
-
+    @Test(expected = UnsupportedTextException.class)
+    public void throwsWhenCharacterUnsupported() throws TaskIOException {
+        write("\uFE0F");
+    }
 }

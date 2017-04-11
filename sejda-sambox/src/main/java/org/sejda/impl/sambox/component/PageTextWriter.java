@@ -18,17 +18,13 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.sejda.core.support.util.StringUtils;
@@ -36,7 +32,7 @@ import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
@@ -76,7 +72,7 @@ public class PageTextWriter {
 
         try {
             String label = StringUtils.normalizeWhitespace(rawLabel);
-            List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
+            List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
             float stringWidth = 0.0f;
             for(TextWithFont stringAndFont: resolvedStringsToFonts) {
                 String s = stringAndFont.getText();
@@ -112,7 +108,7 @@ public class PageTextWriter {
 
         String label = StringUtils.normalizeWhitespace(rawLabel);
 
-        List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
+        List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
         int offset = 0;
 
         PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
@@ -152,22 +148,21 @@ public class PageTextWriter {
                     String resolvedLabel = stringAndFont.getText();
                     double resolvedFontSize = fontSize;
 
-                    // some fonts don't have glyphs for space. figure out if that's the case and switch to a standard font as fallback
-                    if(resolvedLabel.equals(" ")) {
-                        if(!FontUtils.canDisplaySpace(resolvedFont)) {
-                            resolvedFont = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
-                        }
+                    if(resolvedFont == null) {
+                        throw new UnsupportedTextException(
+                                "Unable to find suitable font for string \"" + StringUtils.asUnicodes(resolvedLabel) + "\"",
+                                resolvedLabel
+                        );
                     }
 
                     // when switching from one font to the other (eg: some letters aren't supported by the original font)
                     // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
                     // the previous letter
                     if (resolvedFont != font) {
-                        if(nonNull(font.getFontDescriptor()) &&
-                                nonNull(resolvedFont) && nonNull(resolvedFont.getFontDescriptor())) {
+                        if(nonNull(font.getFontDescriptor()) && nonNull(resolvedFont.getFontDescriptor())) {
                             try {
-                                if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null &&
-                                        resolvedFont.getFontDescriptor() != null && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
+                                if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null
+                                        && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
                                     double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
                                     double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
 
@@ -223,85 +218,7 @@ public class PageTextWriter {
         }
     }
 
-    private PDFont resolveFont(String label, PDFont font) throws TaskIOException {
-        PDFont result = fontOrFallback(label, font, document);
-        if (isNull(result)) {
-            throw new TaskIOException("Unable to find suitable font for the given label \"" + StringUtils.asUnicodes(label) + "\"");
-        }
-        return result;
-    }
 
-    public static class TextWithFont {
-        private final PDFont font;
-        private final String text;
-
-        public TextWithFont(String text, PDFont font) {
-            this.font = font;
-            this.text = text;
-        }
-
-        public PDFont getFont() {
-            return font;
-        }
-
-        public String getText() {
-            return text;
-        }
-    }
-
-    /**
-     * Supports writing labels which require multiple fonts (eg: mixing thai and english words)
-     * Returns a list of text with associated font.
-     *
-     * @param label
-     * @param font
-     * @return
-     * @throws TaskIOException
-     */
-    List<TextWithFont> resolveFonts(String label, PDFont font) throws TaskIOException {
-        PDFont currentFont = font;
-        StringBuilder currentString = new StringBuilder();
-
-        // we want to keep the insertion order
-        List<TextWithFont> result = new ArrayList<>();
-
-        Iterator<Integer> codePointIterator = label.codePoints().iterator();
-        while(codePointIterator.hasNext()) {
-            int codePoint = codePointIterator.next();
-
-            String s = new String(Character.toChars(codePoint));
-
-            PDFont f = resolveFont(s, font);
-            if(s.equals(" ")) {
-                // we want space to be a separate text item
-                // because some fonts are missing the space glyph
-                // so we'll handle it separate from the other chars
-                if(currentString.length() > 0) {
-                    result.add(new TextWithFont(currentString.toString(), currentFont));
-                }
-                result.add(new TextWithFont(" ", currentFont));
-                currentString = new StringBuilder();
-                currentFont = f;
-            } else if(currentFont == f) {
-                currentString.append(s);
-            } else {
-                if(currentString.length() > 0) {
-                    result.add(new TextWithFont(currentString.toString(), currentFont));
-                }
-
-                currentString = new StringBuilder(s);
-                currentFont = f;
-            }
-        }
-
-        for(TextWithFont each: result) {
-            LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
-        }
-
-        result.add(new TextWithFont(currentString.toString(), currentFont));
-
-        return result;
-    }
 
     /**
      * Calculates the string's width, using the same algorithms to resolve fallback fonts as the write() method.
@@ -310,7 +227,7 @@ public class PageTextWriter {
     public int getStringWidth(String rawLabel, PDFont font, float fontSize) throws TaskIOException {
         String label = StringUtils.normalizeWhitespace(rawLabel);
 
-        List<TextWithFont> resolvedStringsToFonts = resolveFonts(label, font);
+        List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
         int offset = 0;
         for (TextWithFont stringAndFont : resolvedStringsToFonts) {
             try {
@@ -318,22 +235,19 @@ public class PageTextWriter {
                 String resolvedLabel = stringAndFont.getText();
                 double resolvedFontSize = fontSize;
 
-                // some fonts don't have glyphs for space. figure out if that's the case and switch to a standard font as fallback
-                if(resolvedLabel.equals(" ")) {
-                    if(!FontUtils.canDisplaySpace(resolvedFont)) {
-                        resolvedFont = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
-                    }
+                // skip parts that cannot be displayed
+                if(resolvedFont == null) {
+                    continue;
                 }
 
                 // when switching from one font to the other (eg: some letters aren't supported by the original font)
                 // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
                 // the previous letter
                 if (resolvedFont != font) {
-                    if(nonNull(font.getFontDescriptor()) &&
-                            nonNull(resolvedFont) && nonNull(resolvedFont.getFontDescriptor())) {
+                    if(nonNull(font.getFontDescriptor()) && nonNull(resolvedFont.getFontDescriptor())) {
                         try {
-                            if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null &&
-                                    resolvedFont.getFontDescriptor() != null && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
+                            if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null
+                                    && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
                                 double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
                                 double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
 

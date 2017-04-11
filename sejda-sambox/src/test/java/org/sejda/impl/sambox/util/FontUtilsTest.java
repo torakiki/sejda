@@ -20,12 +20,10 @@
 package org.sejda.impl.sambox.util;
 
 import org.apache.fontbox.ttf.TrueTypeFont;
+import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.support.io.IOUtils;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PageTextWriter;
-import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -49,7 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
@@ -60,6 +59,8 @@ import static org.sejda.impl.sambox.util.FontUtils.*;
  */
 public class FontUtilsTest {
 
+    private static PDFont HELVETICA = FontUtils.HELVETICA;
+
     @Test
     public void testGetStandardType1Fontg() {
         assertEquals(PDType1Font.COURIER, getStandardType1Font(StandardType1Font.CURIER));
@@ -68,8 +69,7 @@ public class FontUtilsTest {
         assertEquals(PDType1Font.COURIER_OBLIQUE, getStandardType1Font(StandardType1Font.CURIER_OBLIQUE));
         assertEquals(PDType1Font.HELVETICA, getStandardType1Font(StandardType1Font.HELVETICA));
         assertEquals(PDType1Font.HELVETICA_BOLD, getStandardType1Font(StandardType1Font.HELVETICA_BOLD));
-        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE,
-                getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE));
+        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE, getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE));
         assertEquals(PDType1Font.HELVETICA_OBLIQUE, getStandardType1Font(StandardType1Font.HELVETICA_OBLIQUE));
         assertEquals(PDType1Font.TIMES_BOLD, getStandardType1Font(StandardType1Font.TIMES_BOLD));
         assertEquals(PDType1Font.TIMES_BOLD_ITALIC, getStandardType1Font(StandardType1Font.TIMES_BOLD_ITALIC));
@@ -147,20 +147,18 @@ public class FontUtilsTest {
 
     @Test
     public void testFontOrFallbackPositive() {
-        PDType1Font expected = getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE);
-        assertEquals(expected, fontOrFallback("Chuck", expected, new PDDocument()));
+        assertEquals(HELVETICA, fontOrFallback("Chuck", HELVETICA, new PDDocument()));
     }
 
     @Test
     public void testFontOrFallbackNegative() {
-        assertNotNull(fontOrFallback("कसौटी", getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE),
-                new PDDocument()));
+        assertNotNull(fontOrFallback("कसौटी", HELVETICA, new PDDocument()));
     }
 
     @Test
     public void testFontOrFallbackNotFoundFallback() {
         assertNull(fontOrFallback("\u1B2A\u1B35\u1B31\u1B29\u1B2E\u1B36, \u1B29\u1B32\u1B29\u1B2E\u1B36",
-                getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE), new PDDocument()));
+                HELVETICA, new PDDocument()));
     }
 
     @Test
@@ -226,5 +224,49 @@ public class FontUtilsTest {
     private boolean isFontAvailableOnSystem(String name) {
         FontMapping<TrueTypeFont> result =  FontMappers.instance().getTrueTypeFont(name, null);
         return result != null && !result.isFallback();
+    }
+
+    @Test
+    public void resolveFontsWhenTextRepeats() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        List<TextWithFont> textAndFonts = FontUtils.resolveFonts("123α456α789", HELVETICA, doc);
+
+        assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(0).getText(), is("123"));
+
+        assertThat(textAndFonts.get(1).getFont().getName(), is(not("Helvetica")));
+        assertThat(textAndFonts.get(1).getText(), is("α"));
+
+        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(2).getText(), is("456"));
+
+        assertThat(textAndFonts.get(3).getFont().getName(), is(not("Helvetica")));
+        assertThat(textAndFonts.get(3).getText(), is("α"));
+    }
+
+    @Test
+    public void resolveFontsWhenSpaceSeparately() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        List<TextWithFont> textAndFonts = FontUtils.resolveFonts("ab cd", HELVETICA, doc);
+
+        assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(0).getText(), is("ab"));
+
+        assertThat(textAndFonts.get(1).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(1).getText(), is(" "));
+
+        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
+        assertThat(textAndFonts.get(2).getText(), is("cd"));
+    }
+
+    @Test
+    public void resolveFontsWhenUnsupportedCharacters() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        List<TextWithFont> textAndFonts = FontUtils.resolveFonts("ab\uFE0Fcd", HELVETICA, doc);
+
+        assertThat(textAndFonts.get(1).getFont(), is(nullValue()));
+        assertThat(textAndFonts.get(1).getText(), is("\uFE0F"));
+
+        assertThat(FontUtils.removeUnsupportedCharacters("ab \uFE0Fcd", doc), is("ab cd"));
     }
 }
