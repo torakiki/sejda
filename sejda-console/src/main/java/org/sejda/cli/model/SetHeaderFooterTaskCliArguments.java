@@ -76,7 +76,7 @@ public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPrefixa
 
     boolean isBatesIncrement();
 
-    @Option(shortName = "k", description = "page number counter start from. Defaults to 1, but can be overridden to start from another offset. Ex: -c 5 -s 5-10 (optional)")
+    @Option(shortName = "k", description = "page number counter start from. Defaults to 1, but can be overridden to start from another offset. Ex: -k 5 -s 5-10 (optional)")
     Integer getPageCountStartFrom();
 
     boolean isPageCountStartFrom();
