@@ -24,6 +24,8 @@ import java.util.Collection;
 
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.slf4j.Logger;
@@ -55,6 +57,12 @@ public final class SignatureClipper {
                     clipSignature(annotation.getCOSObject());
                 }
             }
+        }
+    }
+
+    public static void clipSignatures(PDDocument doc) {
+        for(PDPage page: doc.getPages()){
+            clipSignatures(page.getAnnotations());
         }
     }
 
