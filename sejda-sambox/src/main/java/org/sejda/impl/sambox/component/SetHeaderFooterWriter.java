@@ -63,7 +63,7 @@ public class SetHeaderFooterWriter implements Closeable {
         this.totalPages = documentHandler.getNumberOfPages();
     }
 
-    public void write(SetHeaderFooterParameters parameters, int currentFileCounter, String filename,
+    public void write(String pattern, SetHeaderFooterParameters parameters, int currentFileCounter, String filename,
             TaskExecutionContext executionContext) throws TaskIOException, TaskExecutionException {
         PDFont font = defaultIfNull(getStandardType1Font(parameters.getFont()), PDType1Font.HELVETICA);
         Double fontSize = defaultIfNull(parameters.getFontSize(), 10d);
@@ -88,7 +88,7 @@ public class SetHeaderFooterWriter implements Closeable {
 
             String label = new TextStampPattern().withPage(labelPageNumber, totalPages).withBatesSequence(batesSeq)
                     .withFileSequence(String.valueOf(currentFileCounter)).withFilename(filename)
-                    .build(parameters.getPattern());
+                    .build(pattern);
 
             LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
             try {

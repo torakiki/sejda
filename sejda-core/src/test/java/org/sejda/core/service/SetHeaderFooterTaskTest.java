@@ -109,6 +109,21 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
+    public void testUnsupportedUnicodeCharacters() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("Some unsupported unicode \uFE0F characters");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        testContext.expectTaskWillProduceWarnings();
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertFooterHasText(d.getPage(0),
+                    "Some unsupported unicode characters");
+        });
+        testContext.assertTaskWarning("Unsupported characters (\\U+FE0F) were removed: 'Some unsupported ...'");
+    }
+
+    @Test
     public void testPageRange() throws Exception {
         parameters = basicWithSources();
         parameters.setPageRange(new PageRange(2));

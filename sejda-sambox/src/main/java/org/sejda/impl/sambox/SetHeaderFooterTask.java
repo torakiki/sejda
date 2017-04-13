@@ -26,9 +26,12 @@ import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.util.StringUtils;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfScaler;
@@ -94,12 +97,31 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 new PdfScaler(ScaleType.CONTENT).scale(documentHandler.getUnderlyingPDDocument(), 0.9);
             }
 
+            // ensure the text can be displayed
+            // remove any unsupported characters and warn about it
+            String originalValue = parameters.getPattern();
+            String value = FontUtils.removeUnsupportedCharacters(parameters.getPattern(), documentHandler.getUnderlyingPDDocument());
+            if(!value.equals(originalValue)) {
+                // some characters are not supported
+                Set<Character> unsupportedChars = StringUtils.difference(originalValue, value);
+                String displayUnsupportedChars = org.apache.commons.lang3.StringUtils.join(
+                        unsupportedChars.stream()
+                                .map(c -> StringUtils.asUnicodes(c.toString()))
+                                .collect(Collectors.toList()),
+                        ","
+                );
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                        String.format("Unsupported characters (%s) were removed: '%s'",
+                                displayUnsupportedChars, org.apache.commons.lang3.StringUtils.abbreviate(originalValue, 20))
+                );
+            }
+
             try (SetHeaderFooterWriter footerWriter = new SetHeaderFooterWriter(documentHandler)) {
                 int currentFileCounter = currentStep + parameters.getFileCountStartFrom() - 1;
                 String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                         nameRequest().originalName(source.getName()).fileNumber(currentFileCounter));
 
-                footerWriter.write(parameters, currentFileCounter, outName, executionContext());
+                footerWriter.write(value, parameters, currentFileCounter, outName, executionContext());
                 documentHandler.savePDDocument(tmpFile);
                 outputWriter.addOutput(file(tmpFile).name(outName));
                 FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());

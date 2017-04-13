@@ -16,6 +16,8 @@
  */
 package org.sejda.core.support.util;
 
+import java.util.*;
+
 public final class StringUtils {
     private StringUtils() {
         // hide
@@ -46,4 +48,17 @@ public final class StringUtils {
         return result.toString();
     }
 
+    /**
+     * Returns a list of characters that exist in s1 but not in s2
+     */
+    public static Set<Character> difference(String s1, String s2) {
+        Set<Character> result = new LinkedHashSet<>();
+        for(Character c: s1.toCharArray()) {
+            if(!s2.contains(c.toString())) {
+                result.add(c);
+            }
+        }
+
+        return result;
+    }
 }
