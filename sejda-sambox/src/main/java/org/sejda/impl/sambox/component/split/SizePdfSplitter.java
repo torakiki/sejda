@@ -101,7 +101,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         private PDDocument document;
         private ExistingPagesSizePredictor predictor;
         private Supplier<ExistingPagesSizePredictor> predictorSupplier = () -> {
-            return new ExistingPagesSizePredictor();
+            return ExistingPagesSizePredictor.instance();
         };
         private PageCopier copier;
 
@@ -111,7 +111,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             this.copier = new PageCopier(optimize);
             if (parameters.isCompress()) {
                 predictorSupplier = () -> {
-                    return new ExistingPagesSizePredictor(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
+                    return ExistingPagesSizePredictor.instance(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
                 };
             }
 
