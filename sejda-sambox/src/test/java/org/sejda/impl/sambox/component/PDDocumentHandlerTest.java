@@ -29,9 +29,12 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageLayout;
+import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
@@ -71,6 +74,28 @@ public class PDDocumentHandlerTest {
 
             assertNotNull(handler.findFont("EDJTWM+ArialMT"));
         }
+    }
+
+    @Test
+    public void layoutAndMode() {
+        PDDocumentHandler victim = new PDDocumentHandler();
+        victim.initialiseBasedOn(new PDDocument());
+        assertFalse(
+                victim.getUnderlyingPDDocument().getDocumentCatalog().getCOSObject().containsKey(COSName.PAGE_LAYOUT));
+        assertFalse(
+                victim.getUnderlyingPDDocument().getDocumentCatalog().getCOSObject().containsKey(COSName.PAGE_MODE));
+    }
+
+    @Test
+    public void layoutAndModeSet() {
+        PDDocument doc = new PDDocument();
+        doc.getDocumentCatalog().setPageLayout(PageLayout.TWO_COLUMN_RIGHT);
+        doc.getDocumentCatalog().setPageMode(PageMode.USE_OUTLINES);
+        PDDocumentHandler victim = new PDDocumentHandler();
+        victim.initialiseBasedOn(doc);
+        assertEquals(PageLayout.TWO_COLUMN_RIGHT,
+                victim.getUnderlyingPDDocument().getDocumentCatalog().getPageLayout());
+        assertEquals(PageMode.USE_OUTLINES, victim.getUnderlyingPDDocument().getDocumentCatalog().getPageMode());
     }
 
     private PDDocument testDoc(String resourceName) throws IOException {

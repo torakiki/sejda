@@ -28,7 +28,11 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.PageLabelUtils;
@@ -345,8 +349,13 @@ public class PDDocumentHandler implements Closeable {
     public void initialiseBasedOn(PDDocument other) {
         setDocumentInformation(other.getDocumentInformation());
         setViewerPreferences(other.getDocumentCatalog().getViewerPreferences());
-        setPageLayout(other.getDocumentCatalog().getPageLayout());
-        setPageMode(other.getDocumentCatalog().getPageMode());
+        if (other.getDocumentCatalog().getCOSObject().containsKey(COSName.PAGE_LAYOUT)) {
+            setPageLayout(other.getDocumentCatalog().getPageLayout());
+        }
+        if (other.getDocumentCatalog().getCOSObject().containsKey(COSName.PAGE_MODE)) {
+            setPageMode(other.getDocumentCatalog().getPageMode());
+        }
+
         document.getDocumentCatalog().setLanguage(other.getDocumentCatalog().getLanguage());
         // TODO named resources?
         // TODO not sure about this, maybe an option to let the user decide if he wants to bring in metadata?
@@ -415,11 +424,11 @@ public class PDDocumentHandler implements Closeable {
     }
 
     public PDFont findFont(String searchedName) {
-        for(PDPage page : document.getPages()){
-            for(COSName fontName: page.getResources().getFontNames()) {
+        for (PDPage page : document.getPages()) {
+            for (COSName fontName : page.getResources().getFontNames()) {
                 try {
                     PDFont font = page.getResources().getFont(fontName);
-                    if(font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
+                    if (font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
                         return font;
                     }
                 } catch (IOException e) {
