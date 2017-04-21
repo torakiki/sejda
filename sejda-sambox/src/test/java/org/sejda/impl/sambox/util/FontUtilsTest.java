@@ -19,11 +19,37 @@
  */
 package org.sejda.impl.sambox.util;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
+import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
+import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.fontbox.ttf.TrueTypeFont;
-import org.junit.Assert;
 import org.junit.Test;
 import org.sejda.core.support.io.IOUtils;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PageTextWriter;
+import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -39,20 +65,6 @@ import org.sejda.sambox.pdmodel.font.FontMapping;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
-
-import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.*;
-import static org.sejda.impl.sambox.util.FontUtils.*;
 
 /**
  * @author Andrea Vacondio
