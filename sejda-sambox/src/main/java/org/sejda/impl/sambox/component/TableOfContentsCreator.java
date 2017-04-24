@@ -110,9 +110,6 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and prepend it to the given document
-     *
-     * @param addBlankPageIfOdd
-     *            set it true if you'd like to add an extra blank page at the end of an odd-sized ToC (1, 3, 5, etc pages). (Makes it easier to do duplex printing.)
      */
     public void addToC() {
         try {
