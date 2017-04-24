@@ -433,6 +433,20 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void pageFooter() throws IOException {
+        MergeParameters parameters = setUpParameters(getInput());
+        parameters.setTableOfContentsPolicy(ToCPolicy.NONE);
+        parameters.setFilenameFooter(true);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(14).forEachPdfOutput(d -> {
+            assertFooterHasText(d.getPage(0), "test-file 1");
+            assertFooterHasText(d.getPage(11), "attachments_as_annots 12");
+        });
+    }
+
+    @Test
     public void pageFooterAndToc() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
