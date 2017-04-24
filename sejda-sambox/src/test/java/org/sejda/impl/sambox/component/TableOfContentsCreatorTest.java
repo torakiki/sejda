@@ -229,6 +229,7 @@ public class TableOfContentsCreatorTest {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
+        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
         params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.appendItem(
