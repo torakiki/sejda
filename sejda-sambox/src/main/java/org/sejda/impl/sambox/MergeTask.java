@@ -35,7 +35,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.FilenameFooterWriter;
+import org.sejda.impl.sambox.component.OutlineMerger;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfScaler;
+import org.sejda.impl.sambox.component.TableOfContentsCreator;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSourceOpener;
@@ -44,14 +51,10 @@ import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
-import org.sejda.sambox.cos.COSArray;
-import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,8 +101,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.destinationDocument.setCompress(parameters.isCompress());
         this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
                 this.destinationDocument.getUnderlyingPDDocument());
-        this.tocCreator = new TableOfContentsCreator(parameters.getTableOfContentsPolicy(),
-                this.destinationDocument.getUnderlyingPDDocument());
+        this.tocCreator = new TableOfContentsCreator(parameters, this.destinationDocument.getUnderlyingPDDocument());
         this.footerWriter = new FilenameFooterWriter(parameters.isFilenameFooter(),
                 this.destinationDocument.getUnderlyingPDDocument());
 
@@ -134,10 +136,11 @@ public class MergeTask extends BaseTask<MergeParameters> {
                                             .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
                                             .orElse(sourceBaseName);
                         }
-                        tocCreator.appendItem(sourceBaseName, pagesCounter, linkAnnotationFor(importedPage));
+                        tocCreator.appendItem(sourceBaseName, pagesCounter, importedPage);
                     }
 
-                    this.footerWriter.addFooter(importedPage, sourceBaseName, pagesCounter);
+                    this.footerWriter.addFooter(importedPage, sourceBaseName,
+                            pagesCounter + tocCreator.tocNumberOfPages());
                     LOG.trace("Added imported page");
                 } catch (PageNotFoundException e) {
                     executionContext().assertTaskIsLenient(e);
@@ -174,7 +177,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             destinationDocument.setDocumentAcroForm(f);
         });
 
-        if(parameters.isNormalizePageSizes()) {
+        if (parameters.isNormalizePageSizes()) {
             LOG.debug("Normalizing page widths to match width of first page");
             // Do this before generating TOC, so the first page is from content.
             new PdfScaler(ScaleType.PAGE).resizePages(destinationDocument.getUnderlyingPDDocument());
@@ -182,7 +185,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
-            tocCreator.addToC(parameters.isBlankPageIfOdd());
+            tocCreator.addToC();
         }
 
         destinationDocument.savePDDocument(tmpFile);
@@ -192,15 +195,6 @@ public class MergeTask extends BaseTask<MergeParameters> {
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
 
-    }
-
-    private PDAnnotationLink linkAnnotationFor(PDPage importedPage) {
-        PDPageFitWidthDestination pageDest = new PDPageFitWidthDestination();
-        pageDest.setPage(importedPage);
-        PDAnnotationLink link = new PDAnnotationLink();
-        link.setDestination(pageDest);
-        link.setBorder(new COSArray(COSInteger.ZERO, COSInteger.ZERO, COSInteger.ZERO));
-        return link;
     }
 
     private void closeResources() {

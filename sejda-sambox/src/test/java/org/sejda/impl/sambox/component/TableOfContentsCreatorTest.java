@@ -23,17 +23,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.text.PDFTextStripper;
 
 /**
@@ -43,71 +46,81 @@ import org.sejda.sambox.text.PDFTextStripper;
 public class TableOfContentsCreatorTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void testTableOfContentsCreator() {
-        new TableOfContentsCreator(ToCPolicy.DOC_TITLES, null);
+    public void nullDocument() {
+        new TableOfContentsCreator(new MergeParameters(), null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void nullParams() {
+        new TableOfContentsCreator(null, new PDDocument());
     }
 
     @Test
     public void testShouldGenerateToC() {
-        assertTrue(new TableOfContentsCreator(ToCPolicy.DOC_TITLES, new PDDocument()).shouldGenerateToC());
-        assertFalse(new TableOfContentsCreator(ToCPolicy.NONE, new PDDocument()).shouldGenerateToC());
-        assertFalse(new TableOfContentsCreator(null, new PDDocument()).shouldGenerateToC());
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        assertTrue(new TableOfContentsCreator(params, new PDDocument()).shouldGenerateToC());
+        assertFalse(new TableOfContentsCreator(new MergeParameters(), new PDDocument()).shouldGenerateToC());
+        params.setTableOfContentsPolicy(null);
+        assertFalse(new TableOfContentsCreator(new MergeParameters(), new PDDocument()).shouldGenerateToC());
     }
 
     @Test
     public void testHasToc() {
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, new PDDocument());
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
         assertFalse(victim.hasToc());
-        victim.appendItem("text", 10, new PDAnnotationLink());
+        victim.appendItem("text", 10, new PDPage());
         assertTrue(victim.hasToc());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAppendItemInvalidString() {
-        new TableOfContentsCreator(ToCPolicy.DOC_TITLES, new PDDocument()).appendItem(" ", 10, new PDAnnotationLink());
+        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem(" ", 10, new PDPage());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAppendItemInvalidPage() {
-        new TableOfContentsCreator(ToCPolicy.DOC_TITLES, new PDDocument()).appendItem("Text", -10,
-                new PDAnnotationLink());
+        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", -10, new PDPage());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAppendItemInvalidAnnotation() {
-        new TableOfContentsCreator(ToCPolicy.DOC_TITLES, new PDDocument()).appendItem("Text", 10, null);
+        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", 10, null);
     }
 
     @Test
     public void testAppendItem() {
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, new PDDocument());
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
         assertFalse(victim.hasToc());
-        victim.appendItem("text", 10, new PDAnnotationLink());
+        victim.appendItem("text", 10, new PDPage());
         assertTrue(victim.hasToc());
-
-        TableOfContentsCreator victim2 = new TableOfContentsCreator(ToCPolicy.NONE, new PDDocument());
-        assertFalse(victim2.hasToc());
-        victim.appendItem("text", 10, new PDAnnotationLink());
-        assertFalse(victim2.hasToc());
     }
 
     @Test
     public void testAddToCNone() {
         PDDocument doc = new PDDocument();
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.NONE);
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.NONE, doc);
-        victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC(false);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("text", 10, new PDPage());
+        victim.addToC();
         assertEquals(0, doc.getNumberOfPages());
     }
 
     @Test
     public void testAddToC() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
-        victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC(false);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("text", 10, new PDPage());
+        victim.addToC();
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -117,9 +130,11 @@ public class TableOfContentsCreatorTest {
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, doc);
-        victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC(false);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("text", 10, new PDPage());
+        victim.addToC();
         assertEquals(4, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(1).getCOSObject());
     }
@@ -130,9 +145,12 @@ public class TableOfContentsCreatorTest {
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, doc);
-        victim.appendItem("text", 10, new PDAnnotationLink());
-        victim.addToC(true);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        params.setBlankPageIfOdd(true);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("text", 10, new PDPage());
+        victim.addToC();
         assertEquals(5, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
     }
@@ -143,11 +161,13 @@ public class TableOfContentsCreatorTest {
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.FILE_NAMES, doc);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         for (int i = 1; i < 40; i++) {
-            victim.appendItem("text", i, new PDAnnotationLink());
+            victim.appendItem("text", i, new PDPage());
         }
-        victim.addToC(false);
+        victim.addToC();
         assertEquals(5, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
     }
@@ -156,11 +176,13 @@ public class TableOfContentsCreatorTest {
     public void testAddToCSuperLongText() {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.appendItem(
                 "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
-                100, new PDAnnotationLink());
-        victim.addToC(false);
+                100, new PDPage());
+        victim.addToC();
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -168,10 +190,12 @@ public class TableOfContentsCreatorTest {
     public void testToCPageSize() {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.pageSizeIfNotSet(PDRectangle.LETTER);
-        victim.appendItem("test.", 100, new PDAnnotationLink());
-        victim.addToC(false);
+        victim.appendItem("test.", 100, new PDPage());
+        victim.addToC();
         assertEquals(PDRectangle.LETTER, doc.getPage(0).getMediaBox());
     }
 
@@ -179,10 +203,12 @@ public class TableOfContentsCreatorTest {
     public void testToCForLargePageSize() {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.pageSizeIfNotSet(PDRectangle.A1);
-        victim.appendItem("test.", 100, new PDAnnotationLink());
-        victim.addToC(false);
+        victim.appendItem("test.", 100, new PDPage());
+        victim.addToC();
         assertEquals(39.64, victim.getFontSize(), 0.1);
     }
 
@@ -190,9 +216,11 @@ public class TableOfContentsCreatorTest {
     public void testStringsThatMixMultipleFontRequirements() {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
-        victim.appendItem("1-abc-עברית", 100, new PDAnnotationLink());
-        victim.addToC(false);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("1-abc-עברית", 100, new PDPage());
+        victim.addToC();
         assertEquals(1, doc.getNumberOfPages());
     }
 
@@ -200,11 +228,66 @@ public class TableOfContentsCreatorTest {
     public void indexPageIsConsideredInPageNumbers() throws IOException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(ToCPolicy.DOC_TITLES, doc);
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.appendItem(
                 "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
-                100, new PDAnnotationLink());
-        victim.addToC(false);
+                100, new PDPage());
+        victim.addToC();
         assertThat(new PDFTextStripper().getText(doc), containsString("101"));
+    }
+
+    @Test
+    public void testTocNumberOfPagesNoToc() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.NONE);
+        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        assertEquals(0, victim.tocNumberOfPages());
+    }
+
+    @Test
+    public void testTocNumberOfPages() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        assertEquals(1, victim.tocNumberOfPages());
+    }
+
+    @Test
+    public void testTocNumberOfPagesAddBlank() {
+        MergeParameters params = new MergeParameters();
+        params.setBlankPageIfOdd(true);
+        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        assertEquals(2, victim.tocNumberOfPages());
+    }
+
+    @Test
+    public void testTocNumberOfPagesMultiple() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        for (int i = 1; i < 40; i++) {
+            params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
+        }
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        assertEquals(2, victim.tocNumberOfPages());
+    }
+
+    @Test
+    public void testTocNumberOfPagesMultipleInA2() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        for (int i = 1; i < 40; i++) {
+            params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
+        }
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        victim.pageSizeIfNotSet(PDRectangle.A2);
+        // ToC font is scaled so we get 2 pages even if a2 is twice the a4 height
+        assertEquals(2, victim.tocNumberOfPages());
     }
 }

@@ -34,7 +34,10 @@ import java.util.LinkedList;
 import java.util.Optional;
 
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
@@ -43,6 +46,8 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,19 +67,21 @@ public class TableOfContentsCreator {
 
     private final Deque<ToCItem> items = new LinkedList<>();
     private PDDocument document;
-    private ToCPolicy policy;
     private PDRectangle pageSize = null;
     private float fontSize;
     private PDFont font = PDType1Font.HELVETICA;
     private float lineHeight;
-
+    private int maxRowsPerPage;
+    private int tocNumberOfPages;
+    private MergeParameters params;
     private PageTextWriter writer;
 
-    public TableOfContentsCreator(ToCPolicy policy, PDDocument document) {
+    public TableOfContentsCreator(MergeParameters params, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
+        requireNotNullArg(params, "Parameters cannot be null");
         this.document = document;
+        this.params = params;
         this.writer = new PageTextWriter(document);
-        this.policy = ofNullable(policy).orElse(ToCPolicy.NONE);
         recalculateFontSize();
     }
 
@@ -82,25 +89,34 @@ public class TableOfContentsCreator {
      * Adds to the ToC the given text with the given annotation associated
      * 
      * @param text
+     * @param pageNumber
      * @param page
-     * @param annotation
      */
-    public void appendItem(String text, long page, PDAnnotation annotation) {
+    public void appendItem(String text, long pageNumber, PDPage page) {
         requireNotBlank(text, "ToC item cannot be blank");
-        requireArg(page > 0, "ToC item cannot point to a negative page");
-        requireNotNullArg(annotation, "ToC annotation cannot be null");
+        requireArg(pageNumber > 0, "ToC item cannot point to a negative page");
+        requireNotNullArg(page, "ToC page cannot be null");
         if (shouldGenerateToC()) {
-            items.add(new ToCItem(text, page, annotation));
+            items.add(new ToCItem(text, pageNumber, linkAnnotationFor(page)));
         }
+    }
+
+    private PDAnnotationLink linkAnnotationFor(PDPage importedPage) {
+        PDPageFitWidthDestination pageDest = new PDPageFitWidthDestination();
+        pageDest.setPage(importedPage);
+        PDAnnotationLink link = new PDAnnotationLink();
+        link.setDestination(pageDest);
+        link.setBorder(new COSArray(COSInteger.ZERO, COSInteger.ZERO, COSInteger.ZERO));
+        return link;
     }
 
     /**
      * Generates a ToC and prepend it to the given document
      *
-     * Set addBlankPageIfOdd to true if you'd like to add an extra blank page at the end of an odd-sized ToC (1, 3, 5, etc pages).
-     * (Makes it easier to do duplex printing.)
+     * @param addBlankPageIfOdd
+     *            set it true if you'd like to add an extra blank page at the end of an odd-sized ToC (1, 3, 5, etc pages). (Makes it easier to do duplex printing.)
      */
-    public void addToC(boolean addBlankPageIfOdd) {
+    public void addToC() {
         try {
             PDPageTree pagesTree = document.getPages();
             ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {
@@ -112,13 +128,13 @@ public class TableOfContentsCreator {
                         pagesTree.add(p);
                     }
                 });
-                if(addBlankPageIfOdd && toCPagesCount % 2 == 1) {
+                if (params.isBlankPageIfOdd() && toCPagesCount % 2 == 1) {
                     PDPage lastTocPage = pagesTree.get(toCPagesCount - 1);
                     PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
                     pagesTree.insertBefore(blankPage, lastTocPage);
                 }
             });
-        } catch (IOException | TaskIOException e ) {
+        } catch (IOException | TaskIOException e) {
             LOG.error("An error occurred while create the ToC. Skipping ToC creation.", e);
         }
     }
@@ -126,8 +142,7 @@ public class TableOfContentsCreator {
     private LinkedList<PDPage> generateToC() throws TaskIOException, IOException {
         LinkedList<PDPage> pages = new LinkedList<>();
         if (shouldGenerateToC()) {
-            int maxRows = (int) ((pageSize().getHeight() - (DEFAULT_MARGIN * 2)) / lineHeight);
-            long indexPages = round(ceil((double) items.size() / maxRows));
+            long indexPages = round(ceil((double) items.size() / maxRowsPerPage));
 
             while (!items.isEmpty()) {
                 int row = 0;
@@ -137,7 +152,7 @@ public class TableOfContentsCreator {
 
                 PDPage page = createPage(pages);
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
-                    while (!items.isEmpty() && row < maxRows) {
+                    while (!items.isEmpty() && row < maxRowsPerPage) {
                         ToCItem i = items.poll();
                         if (nonNull(i)) {
                             row++;
@@ -150,8 +165,8 @@ public class TableOfContentsCreator {
                             float x2 = getPageNumberX(separatorWidth, i.page + indexPages);
                             writeText(page, pageString, x2, y);
 
-                            i.annotation.setRectangle(
-                                    new PDRectangle(DEFAULT_MARGIN, y, pageSize().getWidth() - (2 * DEFAULT_MARGIN), fontSize));
+                            i.annotation.setRectangle(new PDRectangle(DEFAULT_MARGIN, y,
+                                    pageSize().getWidth() - (2 * DEFAULT_MARGIN), fontSize));
                             page.getAnnotations().add(i.annotation);
 
                             // we didn't sanitize the text so it's shorter then the available space and needs a separator line
@@ -218,7 +233,7 @@ public class TableOfContentsCreator {
     }
 
     public boolean shouldGenerateToC() {
-        return policy != ToCPolicy.NONE;
+        return params.getTableOfContentsPolicy() != ToCPolicy.NONE;
     }
 
     public void pageSizeIfNotSet(PDRectangle pageSize) {
@@ -233,6 +248,14 @@ public class TableOfContentsCreator {
 
         this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
         this.lineHeight = scalingFactor * DEFAULT_LINE_HEIGHT;
+        this.maxRowsPerPage = (int) ((pageSize().getHeight() - (DEFAULT_MARGIN * 2)) / lineHeight);
+        if (shouldGenerateToC()) {
+            tocNumberOfPages = params.getInputList().size() / maxRowsPerPage
+                    + (params.getInputList().size() % maxRowsPerPage == 0 ? 0 : 1);
+            if (params.isBlankPageIfOdd() && tocNumberOfPages % 2 == 1) {
+                tocNumberOfPages++;
+            }
+        }
     }
 
     private PDRectangle pageSize() {
@@ -241,6 +264,13 @@ public class TableOfContentsCreator {
 
     public float getFontSize() {
         return fontSize;
+    }
+
+    /**
+     * @return the number of pages this toc will consist of
+     */
+    public long tocNumberOfPages() {
+        return tocNumberOfPages;
     }
 
     private static class ToCItem {
@@ -254,4 +284,5 @@ public class TableOfContentsCreator {
             this.annotation = annotation;
         }
     }
+
 }

@@ -19,6 +19,8 @@
  */
 package org.sejda.model.parameter;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -144,7 +146,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     }
 
     public ToCPolicy getTableOfContentsPolicy() {
-        return tocPolicy;
+        return ofNullable(tocPolicy).orElse(ToCPolicy.NONE);
     }
 
     public void setTableOfContentsPolicy(ToCPolicy tocPolicy) {
