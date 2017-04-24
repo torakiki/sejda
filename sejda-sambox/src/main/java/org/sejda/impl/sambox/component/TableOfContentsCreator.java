@@ -131,7 +131,7 @@ public class TableOfContentsCreator {
                 if (params.isBlankPageIfOdd() && toCPagesCount % 2 == 1) {
                     PDPage lastTocPage = pagesTree.get(toCPagesCount - 1);
                     PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
-                    pagesTree.insertBefore(blankPage, lastTocPage);
+                    pagesTree.insertAfter(blankPage, lastTocPage);
                 }
             });
         } catch (IOException | TaskIOException e) {
