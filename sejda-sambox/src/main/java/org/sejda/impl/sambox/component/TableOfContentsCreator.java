@@ -18,8 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.lang.Math.ceil;
-import static java.lang.Math.round;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.util.RequireUtils.requireArg;
@@ -142,13 +140,12 @@ public class TableOfContentsCreator {
     private LinkedList<PDPage> generateToC() throws TaskIOException, IOException {
         LinkedList<PDPage> pages = new LinkedList<>();
         if (shouldGenerateToC()) {
-            long indexPages = round(ceil((double) items.size() / maxRowsPerPage));
 
             while (!items.isEmpty()) {
                 int row = 0;
 
                 float separatorWidth = stringLength(SEPARATOR);
-                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, indexPages);
+                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, tocNumberOfPages);
 
                 PDPage page = createPage(pages);
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
@@ -161,8 +158,8 @@ public class TableOfContentsCreator {
                             String itemText = sanitize(i.text, separatingLineEndingX, separatorWidth);
                             writeText(page, itemText, x, y);
 
-                            String pageString = SEPARATOR + Long.toString(i.page + indexPages);
-                            float x2 = getPageNumberX(separatorWidth, i.page + indexPages);
+                            String pageString = SEPARATOR + Long.toString(i.page + tocNumberOfPages);
+                            float x2 = getPageNumberX(separatorWidth, i.page + tocNumberOfPages);
                             writeText(page, pageString, x2, y);
 
                             i.annotation.setRectangle(new PDRectangle(DEFAULT_MARGIN, y,
