@@ -59,14 +59,14 @@ public class TableOfContentsCreator {
     private static final Logger LOG = LoggerFactory.getLogger(TableOfContentsCreator.class);
 
     private static final int DEFAULT_FONT_SIZE = 14;
-    private static final int DEFAULT_LINE_HEIGHT = DEFAULT_FONT_SIZE + 9;
-    private static final int DEFAULT_MARGIN = 40;
+    private static final int DEFAULT_MARGIN = 72;
     private static final String SEPARATOR = "  ";
 
     private final Deque<ToCItem> items = new LinkedList<>();
     private PDDocument document;
     private PDRectangle pageSize = null;
-    private float fontSize;
+    private float fontSize = DEFAULT_FONT_SIZE;
+    private float margin = DEFAULT_MARGIN;
     private PDFont font = PDType1Font.HELVETICA;
     private float lineHeight;
     private int maxRowsPerPage;
@@ -149,9 +149,8 @@ public class TableOfContentsCreator {
                     while (!items.isEmpty() && row < maxRowsPerPage) {
                         ToCItem i = items.poll();
                         if (nonNull(i)) {
-                            row++;
-                            float y = pageSize().getHeight() - DEFAULT_MARGIN - (row * lineHeight);
-                            float x = DEFAULT_MARGIN;
+                            float y = pageSize().getHeight() - margin - (row * lineHeight);
+                            float x = margin;
                             String itemText = sanitize(i.text, separatingLineEndingX, separatorWidth);
                             writeText(page, itemText, x, y);
 
@@ -159,18 +158,19 @@ public class TableOfContentsCreator {
                             float x2 = getPageNumberX(separatorWidth, i.page + tocNumberOfPages);
                             writeText(page, pageString, x2, y);
 
-                            i.annotation.setRectangle(new PDRectangle(DEFAULT_MARGIN, y,
-                                    pageSize().getWidth() - (2 * DEFAULT_MARGIN), fontSize));
+                            i.annotation.setRectangle(
+                                    new PDRectangle(margin, y, pageSize().getWidth() - (2 * margin), fontSize));
                             page.getAnnotations().add(i.annotation);
 
                             // we didn't sanitize the text so it's shorter then the available space and needs a separator line
                             if (itemText.equals(i.text)) {
-                                stream.moveTo(DEFAULT_MARGIN + separatorWidth + stringLength(i.text), y);
+                                stream.moveTo(margin + separatorWidth + stringLength(i.text), y);
                                 stream.lineTo(separatingLineEndingX, y);
                                 stream.setLineWidth(0.5f);
                                 stream.stroke();
                             }
                         }
+                        row++;
                     }
                 }
             }
@@ -183,7 +183,7 @@ public class TableOfContentsCreator {
     }
 
     private String sanitize(String text, float separatingLineEndingX, float separatorWidth) throws TaskIOException {
-        float maxLen = pageSize().getWidth() - DEFAULT_MARGIN - (pageSize().getWidth() - separatingLineEndingX)
+        float maxLen = pageSize().getWidth() - margin - (pageSize().getWidth() - separatingLineEndingX)
                 - separatorWidth;
         if (stringLength(text) > maxLen) {
             LOG.debug("Truncating ToC text to fit available space");
@@ -215,7 +215,7 @@ public class TableOfContentsCreator {
     }
 
     private float getPageNumberX(float separatorWidth, long pageNumber) throws TaskIOException {
-        return pageSize().getWidth() - DEFAULT_MARGIN - separatorWidth - stringLength(Long.toString(pageNumber));
+        return pageSize().getWidth() - margin - separatorWidth - stringLength(Long.toString(pageNumber));
     }
 
     private float stringLength(String text) throws TaskIOException {
@@ -241,8 +241,9 @@ public class TableOfContentsCreator {
         float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
 
         this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
-        this.lineHeight = scalingFactor * DEFAULT_LINE_HEIGHT;
-        this.maxRowsPerPage = (int) ((pageSize().getHeight() - (DEFAULT_MARGIN * 2)) / lineHeight);
+        this.margin = scalingFactor * DEFAULT_MARGIN;
+        this.lineHeight = (float) (fontSize + (fontSize * 0.7));
+        this.maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
         if (shouldGenerateToC()) {
             tocNumberOfPages = params.getInputList().size() / maxRowsPerPage
                     + (params.getInputList().size() % maxRowsPerPage == 0 ? 0 : 1);
