@@ -166,7 +166,7 @@ public class PageTextWriter {
                                     double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
                                     double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
 
-                                    resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
+                                    resolvedFontSize = fontSize * actualLetterHeight / desiredLetterHeight;
                                     LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
                                 }
                             } catch (Exception e) {
