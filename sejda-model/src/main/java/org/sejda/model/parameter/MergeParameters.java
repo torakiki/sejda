@@ -57,7 +57,6 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
     @NotNull
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
-    private String outputName;
     @Valid
     @NotNull
     private SingleTaskOutput output;
@@ -82,19 +81,6 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
      */
     public List<PdfMergeInput> getInputList() {
         return Collections.unmodifiableList(inputList);
-    }
-
-    @Override
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
-     * @param outputName
-     *            the outputName to be used when the output is not a file destination
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
     }
 
     /**
@@ -172,9 +158,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
-                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(outputName)
-                .append(filenameFooter).append(normalizePageSizes)
-                .toHashCode();
+                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(output).append(filenameFooter)
+                .append(normalizePageSizes).toHashCode();
     }
 
     @Override
@@ -187,12 +172,9 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         }
         MergeParameters params = (MergeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.inputList)
-                .append(acroFormPolicy, params.getAcroFormPolicy())
-                .append(blankPageIfOdd, params.isBlankPageIfOdd())
-                .append(outlinePolicy, params.getOutlinePolicy())
-                .append(tocPolicy, params.getTableOfContentsPolicy()).append(outputName, params.getOutputName())
-                .append(filenameFooter, params.isFilenameFooter())
-                .append(normalizePageSizes, params.isNormalizePageSizes())
-                .isEquals();
+                .append(acroFormPolicy, params.getAcroFormPolicy()).append(blankPageIfOdd, params.isBlankPageIfOdd())
+                .append(outlinePolicy, params.getOutlinePolicy()).append(tocPolicy, params.getTableOfContentsPolicy())
+                .append(output, params.getOutput()).append(filenameFooter, params.isFilenameFooter())
+                .append(normalizePageSizes, params.isNormalizePageSizes()).isEquals();
     }
 }

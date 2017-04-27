@@ -20,10 +20,17 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.sejda.core.support.io.model.PopulatedFileOutput;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.task.TaskExecutionContext;
 
@@ -33,19 +40,47 @@ import org.sejda.model.task.TaskExecutionContext;
  * @author Andrea Vacondio
  * 
  */
-class DefaultMultipleOutputWriter extends BaseOutputWriter implements MultipleOutputWriter {
+class DefaultMultipleOutputWriter implements MultipleOutputWriter {
+
+    private Map<String, File> multipleFiles = new HashMap<>();
+    private final ExistingOutputPolicy existingOutputPolicy;
+    private final TaskExecutionContext executionContext;
 
     DefaultMultipleOutputWriter(ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) {
-        super(existingOutputPolicy, executionContext);
-    }
-
-    @Override
-    public void addOutput(PopulatedFileOutput fileOutput) {
-        add(fileOutput);
+        this.existingOutputPolicy = defaultIfNull(existingOutputPolicy, ExistingOutputPolicy.FAIL);
+        this.executionContext = executionContext;
     }
 
     @Override
     public void dispatch(FileTaskOutput output) throws IOException {
-        throw new IOException("Unsupported file ouput for a multiple output task.");
+        throw new IOException("Unsupported FileTaskOutput for a multiple output task.");
     }
+
+    @Override
+    public void dispatch(DirectoryTaskOutput output) throws IOException {
+        OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy,
+                executionContext);
+    }
+
+    @Override
+    public void dispatch(FileOrDirectoryTaskOutput output) throws IOException {
+        if (multipleFiles.size() > 1 || output.getDestination().isDirectory()) {
+            OutputWriterHelper.moveToDirectory(multipleFiles, output.getDestination(), existingOutputPolicy,
+                    executionContext);
+        } else {
+            OutputWriterHelper.moveToFile(multipleFiles, output.getDestination(), existingOutputPolicy,
+                    executionContext);
+        }
+    }
+
+    /**
+     * adds the input {@link PopulatedFileOutput} to the collection of files awaiting to be flushed.
+     * 
+     * @param fileOutput
+     */
+    @Override
+    public void addOutput(PopulatedFileOutput fileOutput) {
+        multipleFiles.put(fileOutput.getName(), fileOutput.getFile());
+    }
+
 }

@@ -24,7 +24,6 @@ import javax.validation.Valid;
 
 import org.junit.Ignore;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.output.TaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 
@@ -39,13 +38,8 @@ public class TestTaskParameter extends AbstractPdfOutputParameters implements Si
     private SingleTaskOutput output;
 
     @Override
-    public TaskOutput getOutput() {
+    public SingleTaskOutput getOutput() {
         return output;
-    }
-
-    @Override
-    public String getOutputName() {
-        return "test";
     }
 
     @Override

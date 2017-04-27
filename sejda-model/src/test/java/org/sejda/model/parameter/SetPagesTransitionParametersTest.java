@@ -2,18 +2,25 @@ package org.sejda.model.parameter;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 
 public class SetPagesTransitionParametersTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testEquals() {
@@ -38,10 +45,9 @@ public class SetPagesTransitionParametersTest {
     }
 
     @Test
-    public void testInvalidParameters() {
+    public void testInvalidParameters() throws IOException {
         SetPagesTransitionParameters victim = new SetPagesTransitionParameters(null);
-        victim.setOutputName("test.pdf");
-        SingleTaskOutput output = mock(SingleTaskOutput.class);
+        SingleTaskOutput output = new FileTaskOutput(folder.newFile());
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

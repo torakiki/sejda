@@ -20,8 +20,6 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.io.File;
 
@@ -68,8 +66,8 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
 
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {}", tmpFile);
+        File tmpFile = outputWriter.taskOutput(parameters.getOutput().getDestination());
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Applying {} labels ", parameters.getLabels().size());
         documentHandler.setPageLabelsOnDocument(parameters.getLabels());
@@ -80,7 +78,6 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         documentHandler.savePDDocument(tmpFile);
         nullSafeCloseQuietly(documentHandler);
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }

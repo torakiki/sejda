@@ -19,13 +19,16 @@
  */
 package org.sejda.core.support.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collections;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.model.SejdaFileExtensions;
 import org.sejda.model.exception.TaskIOException;
 
@@ -34,6 +37,8 @@ import org.sejda.model.exception.TaskIOException;
  * 
  */
 public class IOUtilsTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testCreateBuffer() throws TaskIOException {
@@ -50,5 +55,13 @@ public class IOUtilsTest {
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
         assertTrue(FilenameUtils.isExtension(tmp.getName(), Collections.singleton(SejdaFileExtensions.PDF_EXTENSION)));
+    }
+
+    @Test
+    public void testFindNewNameThatDoesNotExist() throws Exception {
+        File file = folder.newFile("chuck.norris");
+        assertEquals("chuck(1).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
+        folder.newFile("chuck(1).norris");
+        assertEquals("chuck(2).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
     }
 }

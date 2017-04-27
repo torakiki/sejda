@@ -46,7 +46,6 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
 
     private void setUpParams(PdfSource<?> source) {
         parameters.setCompress(true);
-        parameters.setOutputName("outName.pdf");
         parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.put(PdfMetadataKey.AUTHOR, "test_author");
         parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");

@@ -19,6 +19,7 @@
  */
 package org.sejda.model.validation.validator;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.indexOfExtension;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -27,9 +28,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.sejda.model.exception.SejdaRuntimeException;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.output.*;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -52,8 +51,8 @@ public class SingleOutputExtensionsValidator implements
 
     @Override
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
-        if (value != null && value.getOutput() != null && ArrayUtils.isNotEmpty(extensions)) {
-            String fileName = getOutputFileName(value);
+        if (nonNull(value) && nonNull(value.getOutput()) && ArrayUtils.isNotEmpty(extensions)) {
+            String fileName = value.getOutput().getDestination().getName();
 
             if (hasAllowedExtension(fileName)) {
                 return true;
@@ -75,55 +74,5 @@ public class SingleOutputExtensionsValidator implements
             }
         }
         return false;
-    }
-
-    private String getOutputFileName(SingleOutputTaskParameters value) {
-        NameRetriever retriever = new NameRetriever(value.getOutputName());
-        try {
-            value.getOutput().accept(retriever);
-        } catch (TaskException e) {
-            // should never happen
-            throw new SejdaRuntimeException(e);
-        }
-        return retriever.getOutputName();
-    }
-
-    /**
-     * Retrieves the name to validate depending on the runtime type of the task output.
-     * 
-     * @author Andrea Vacondio
-     * 
-     */
-    private static final class NameRetriever implements TaskOutputDispatcher {
-
-        private String outputName;
-
-        private NameRetriever(String outputName) {
-            this.outputName = outputName;
-        }
-
-        @Override
-        public void dispatch(FileTaskOutput output) {
-            this.outputName = output.getDestination().getName();
-        }
-
-        @Override
-        public void dispatch(DirectoryTaskOutput output) {
-            // do nothing
-        }
-
-        @Override
-        public void dispatch(FileOrDirectoryTaskOutput output) {
-            if(output.getDestination().isDirectory()) {
-                // do nothing
-            } else {
-                this.outputName = output.getDestination().getName();
-            }
-        }
-
-        String getOutputName() {
-            return outputName;
-        }
-
     }
 }

@@ -22,7 +22,10 @@ package org.sejda.core.support.io;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FilenameUtils;
 import org.sejda.model.exception.TaskIOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides IO utility methods.
@@ -31,6 +34,8 @@ import org.sejda.model.exception.TaskIOException;
  * 
  */
 public final class IOUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IOUtils.class);
 
     private IOUtils() {
         // hide
@@ -78,5 +83,27 @@ public final class IOUtils {
         }
         throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried "
                 + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
+    }
+
+    public static File findNewNameThatDoesNotExist(File output) throws IOException {
+        File newNamedOutput;
+        int count = 1;
+        int maxTries = 100;
+        String basename = FilenameUtils.getBaseName(output.getName());
+        String extension = FilenameUtils.getExtension(output.getName());
+
+        do {
+            String newName = String.format("%s(%d).%s", basename, count, extension);
+            newNamedOutput = new File(output.getParent(), newName);
+            count++;
+        } while (count < maxTries && newNamedOutput.exists());
+
+        if (newNamedOutput.exists()) {
+            LOG.warn("Unable to generate a new filename that does not exist, path was {}", output);
+            throw new IOException(
+                    String.format("Unable to generate a new filename that does not exist, path was %s", output));
+        }
+
+        return newNamedOutput;
     }
 }

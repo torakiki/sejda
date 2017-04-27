@@ -86,7 +86,6 @@ final class OutputWriterHelper {
                 return FAIL;
             }), executionContext);
         }
-
     }
 
     /**
@@ -130,7 +129,7 @@ final class OutputWriterHelper {
      * @param executionContext
      * @throws IOException
      */
-    private static void moveFile(File input, File output, ExistingOutputPolicy existingOutputPolicy,
+    static void moveFile(File input, File output, ExistingOutputPolicy existingOutputPolicy,
             TaskExecutionContext executionContext) throws IOException {
         if (output.exists()) {
             switch (existingOutputPolicy) {

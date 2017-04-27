@@ -24,7 +24,7 @@ import org.sejda.core.support.io.model.PopulatedFileOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
- * Statefull component responsible for writing multiple task generated files to a task output.
+ * Component responsible for writing multiple task generated files to a task output.
  * 
  * @author Andrea Vacondio
  * 

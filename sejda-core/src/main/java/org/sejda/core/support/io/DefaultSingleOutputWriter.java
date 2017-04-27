@@ -20,9 +20,24 @@
  */
 package org.sejda.core.support.io;
 
-import org.sejda.core.support.io.model.PopulatedFileOutput;
+import static java.util.Objects.isNull;
+import static java.util.Optional.of;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.sejda.core.support.io.OutputWriterHelper.moveFile;
+import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
+import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.task.TaskExecutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Single writer default implementation.
@@ -30,15 +45,58 @@ import org.sejda.model.task.TaskExecutionContext;
  * @author Andrea Vacondio
  * 
  */
-class DefaultSingleOutputWriter extends BaseOutputWriter implements SingleOutputWriter {
+class DefaultSingleOutputWriter implements SingleOutputWriter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSingleOutputWriter.class);
+
+    private File temporaryOutput;
+    private final ExistingOutputPolicy existingOutputPolicy;
+    private final TaskExecutionContext executionContext;
 
     DefaultSingleOutputWriter(ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) {
-        super(existingOutputPolicy, executionContext);
+        this.existingOutputPolicy = of(existingOutputPolicy).filter(p -> p != SKIP).orElseGet(() -> {
+            LOG.debug("Cannot use {} output policy for single output, replaced with {}", SKIP, FAIL);
+            return FAIL;
+        });
+        this.executionContext = executionContext;
     }
 
     @Override
-    public void setOutput(PopulatedFileOutput fileOutput) {
-        add(fileOutput);
+    public File taskOutput(File expectedDesintation) throws TaskIOException {
+        if (expectedDesintation.exists()) {
+            switch (existingOutputPolicy) {
+            case OVERWRITE:
+            case RENAME:
+                this.temporaryOutput = IOUtils.createTemporaryBuffer("." + getExtension(expectedDesintation.getName()));
+                break;
+            default:
+                throw new TaskIOException(
+                        String.format("Unable to write to the already existing file destination %s. (policy is %s)",
+                                expectedDesintation, existingOutputPolicy));
+            }
+        } else {
+            this.temporaryOutput = expectedDesintation;
+        }
+        return temporaryOutput;
     }
 
+    @Override
+    public void dispatch(FileTaskOutput output) throws IOException {
+        if (isNull(temporaryOutput)) {
+            throw new IOException("No task output set");
+        }
+        if (!this.temporaryOutput.equals(output.getDestination())) {
+            moveFile(temporaryOutput, output.getDestination(), existingOutputPolicy, executionContext);
+        }
+    }
+
+    @Override
+    public void dispatch(DirectoryTaskOutput output) throws IOException {
+        throw new IOException("Unsupported DirectoryTaskOutput, expected a FileTaskOutput");
+    }
+
+    @Override
+    public void dispatch(FileOrDirectoryTaskOutput output) throws IOException {
+        throw new IOException("Unsupported FileOrDirectoryTaskOutput, expected a FileTaskOutput");
+    }
 }

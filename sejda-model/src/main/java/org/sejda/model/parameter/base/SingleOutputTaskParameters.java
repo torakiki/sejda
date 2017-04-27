@@ -29,11 +29,8 @@ import org.sejda.model.output.SingleTaskOutput;
  */
 public interface SingleOutputTaskParameters extends TaskParameters {
 
-    /**
-     * @return the output file name to be used when the TaskOutput is not a File output.
-     */
-    String getOutputName();
-
+    @Override
+    SingleTaskOutput getOutput();
     /**
      * Sets the output destination
      * 

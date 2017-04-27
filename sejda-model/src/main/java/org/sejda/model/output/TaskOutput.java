@@ -20,9 +20,9 @@
  */
 package org.sejda.model.output;
 
-import org.sejda.model.exception.TaskOutputVisitException;
-
 import java.io.File;
+
+import org.sejda.model.exception.TaskOutputVisitException;
 
 /**
  * Represents task output destination where results of a manipulation will be written.

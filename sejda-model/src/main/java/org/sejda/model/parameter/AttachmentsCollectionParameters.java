@@ -52,7 +52,6 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
     @NotEmpty
     @Valid
     private final List<Source<?>> sourceList = new ArrayList<>();
-    private String outputName;
     @Valid
     @NotNull
     private SingleTaskOutput output;
@@ -88,11 +87,6 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
     }
 
     @Override
-    public String getOutputName() {
-        return outputName;
-    }
-
-    @Override
     public SingleTaskOutput getOutput() {
         return output;
     }
@@ -102,18 +96,10 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
         this.output = output;
     }
 
-    /**
-     * @param outputName
-     *            the outputName to be used when the output is not a file destination
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(initialView).append(outputName).append(output)
-                .append(sourceList).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(initialView).append(output).append(sourceList)
+                .toHashCode();
     }
 
     @Override
@@ -126,7 +112,6 @@ public class AttachmentsCollectionParameters extends AbstractPdfOutputParameters
         }
         AttachmentsCollectionParameters parameter = (AttachmentsCollectionParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(initialView, parameter.getInitialView())
-                .append(outputName, parameter.outputName).append(output, parameter.output)
-                .append(sourceList, parameter.getSourceList()).isEquals();
+                .append(output, parameter.output).append(sourceList, parameter.getSourceList()).isEquals();
     }
 }
