@@ -68,13 +68,13 @@ public class PageTextWriter {
     }
 
     public void write(PDPage page, HorizontalAlign hAlign, VerticalAlign vAlign, String rawLabel, PDFont font,
-                      Double fontSize, Color color) throws TaskIOException {
+            Double fontSize, Color color) throws TaskIOException {
 
         try {
             String label = StringUtils.normalizeWhitespace(rawLabel);
             List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
             float stringWidth = 0.0f;
-            for(TextWithFont stringAndFont: resolvedStringsToFonts) {
+            for (TextWithFont stringAndFont : resolvedStringsToFonts) {
                 String s = stringAndFont.getText();
                 PDFont f = stringAndFont.getFont();
                 stringWidth += f.getStringWidth(s) * fontSize.floatValue() / 1000f;
@@ -82,7 +82,7 @@ public class PageTextWriter {
 
             PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
             Point2D position = new Point2D.Double(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
-                vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
+                    vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
 
             write(page, position, label, font, fontSize, color);
         } catch (IOException e) {
@@ -90,21 +90,20 @@ public class PageTextWriter {
         }
     }
 
-    public void write(PDPage page, Point2D position, String rawLabel, PDFont font,
-                      Double fontSize, Color color) throws TaskIOException {
-        float[] components = new float[] { color.getRed() / 255f, color.getGreen() / 255f,
-                color.getBlue() / 255f };
+    public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, Color color)
+            throws TaskIOException {
+        float[] components = new float[] { color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f };
         PDColor pdColor = new PDColor(components, PDDeviceRGB.INSTANCE);
         write(page, position, rawLabel, font, fontSize, pdColor);
     }
 
-    public void write(PDPage page, Point2D position, String rawLabel, PDFont font,
-                      Double fontSize, PDColor color) throws TaskIOException {
+    public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, PDColor color)
+            throws TaskIOException {
         write(page, position, rawLabel, font, fontSize, color, RenderingMode.FILL);
     }
 
-    public void write(PDPage page, Point2D position, String rawLabel, PDFont font,
-            Double fontSize, PDColor color, RenderingMode renderingMode) throws TaskIOException {
+    public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, PDColor color,
+            RenderingMode renderingMode) throws TaskIOException {
 
         String label = StringUtils.normalizeWhitespace(rawLabel);
 
@@ -120,13 +119,13 @@ public class PageTextWriter {
         double cropOffsetY = cropSize.getLowerLeftY();
 
         // adjust for rotation
-        if(page.getRotation() == 90) {
+        if (page.getRotation() == 90) {
             cropOffsetX = cropSize.getLowerLeftY();
             cropOffsetY = mediaSize.getUpperRightX() - cropSize.getUpperRightX();
-        } else if(page.getRotation() == 180) {
+        } else if (page.getRotation() == 180) {
             cropOffsetX = mediaSize.getUpperRightX() - cropSize.getUpperRightX();
             cropOffsetY = mediaSize.getUpperRightY() - cropSize.getUpperRightY();
-        } else if(page.getRotation() == 270) {
+        } else if (page.getRotation() == 270) {
             cropOffsetX = mediaSize.getUpperRightY() - cropSize.getUpperRightY();
             cropOffsetY = cropSize.getLowerLeftX();
         }
@@ -134,7 +133,7 @@ public class PageTextWriter {
         LOG.trace("media: {} crop: {}", mediaSize, cropSize);
         LOG.trace("offsets: {}, {} and rotation", cropOffsetX, cropOffsetY, page.getRotation());
 
-        position = new Point((int) position.getX() + (int)cropOffsetX, (int)position.getY() + (int)cropOffsetY);
+        position = new Point((int) position.getX() + (int) cropOffsetX, (int) position.getY() + (int) cropOffsetY);
 
         try (PDPageContentStream contentStream = new PDPageContentStream(document, page, AppendMode.APPEND, true,
                 true)) {
@@ -148,31 +147,16 @@ public class PageTextWriter {
                     String resolvedLabel = stringAndFont.getText();
                     double resolvedFontSize = fontSize;
 
-                    if(resolvedFont == null) {
-                        throw new UnsupportedTextException(
-                                "Unable to find suitable font for string \"" + StringUtils.asUnicodes(resolvedLabel) + "\"",
-                                resolvedLabel
-                        );
+                    if (resolvedFont == null) {
+                        throw new UnsupportedTextException("Unable to find suitable font for string \""
+                                + StringUtils.asUnicodes(resolvedLabel) + "\"", resolvedLabel);
                     }
 
                     // when switching from one font to the other (eg: some letters aren't supported by the original font)
                     // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
                     // the previous letter
                     if (resolvedFont != font) {
-                        if(nonNull(font.getFontDescriptor()) && nonNull(resolvedFont.getFontDescriptor())) {
-                            try {
-                                if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null
-                                        && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
-                                    double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-                                    double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-
-                                    resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
-                                    LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
-                                }
-                            } catch (Exception e) {
-                                LOG.warn("Could not calculate fallback font size", e);
-                            }
-                        }
+                        // resolvedFontSize = resolvedFontSize(font, fontSize, stringAndFont);
                     }
 
                     Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());
@@ -181,12 +165,14 @@ public class PageTextWriter {
 
                     if (page.getRotation() > 0) {
                         LOG.trace("Unrotated position {}", resolvedPosition);
-                        Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize, resolvedPosition);
+                        Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize,
+                                resolvedPosition);
 
                         LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
                                 resolvedFont.getName(), rotatedPosition);
 
-                        AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(), rotatedPosition.getY());
+                        AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(),
+                                rotatedPosition.getY());
                         tx.rotate(Math.toRadians(page.getRotation()));
                         contentStream.setTextMatrix(new Matrix(tx));
 
@@ -194,8 +180,8 @@ public class PageTextWriter {
                         LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
                                 resolvedFont.getName(), resolvedPosition);
 
-                        contentStream.setTextMatrix(
-                                new Matrix(AffineTransform.getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY())));
+                        contentStream.setTextMatrix(new Matrix(AffineTransform
+                                .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY())));
                     }
 
                     LOG.trace("Text position {}", resolvedPosition);
@@ -203,7 +189,8 @@ public class PageTextWriter {
 
                     // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
                     // use the largest value between font average width and text string width
-                    double textWidth = Math.max(resolvedFont.getAverageFontWidth(), resolvedFont.getStringWidth(resolvedLabel)) / 1000 * fontSize;
+                    double textWidth = Math.max(resolvedFont.getAverageFontWidth(),
+                            resolvedFont.getStringWidth(resolvedLabel)) / 1000 * fontSize;
                     offset += textWidth;
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred writing text to the page.", e);
@@ -218,10 +205,31 @@ public class PageTextWriter {
         }
     }
 
-
+//    private double resolvedFontSize(PDFont font, Double fontSize, TextWithFont stringAndFont) {
+//        if (nonNull(font.getFontDescriptor()) && nonNull(stringAndFont.getFont().getFontDescriptor())) {
+//            try {
+//                if (font.getFontDescriptor().getFontBoundingBox() != null
+//                        && stringAndFont.getFont().getFontDescriptor().getFontBoundingBox() != null) {
+//                    double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000
+//                            * fontSize;
+//                    double actualLetterHeight = FontUtils.calculateBBoxHeight(stringAndFont.getText(),
+//                            stringAndFont.getFont()) / 1000 * fontSize;
+//                    double resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
+//                    LOG.debug(
+//                            "Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}",
+//                            desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
+//                    return resolvedFontSize;
+//                }
+//            } catch (Exception e) {
+//                LOG.warn("Could not calculate fallback font size", e);
+//            }
+//        }
+//        return fontSize;
+//    }
 
     /**
-     * Calculates the string's width, using the same algorithms to resolve fallback fonts as the write() method.
+     * Calculates the string's width.
+     * 
      * @throws TaskIOException
      */
     public int getStringWidth(String rawLabel, PDFont font, float fontSize) throws TaskIOException {
@@ -232,38 +240,14 @@ public class PageTextWriter {
         for (TextWithFont stringAndFont : resolvedStringsToFonts) {
             try {
                 PDFont resolvedFont = stringAndFont.getFont();
-                String resolvedLabel = stringAndFont.getText();
-                double resolvedFontSize = fontSize;
 
-                // skip parts that cannot be displayed
-                if(resolvedFont == null) {
-                    continue;
+                if (nonNull(resolvedFont)) {
+                    // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
+                    // use the largest value between font average width and text string width
+                    double textWidth = Math.max(resolvedFont.getAverageFontWidth(),
+                            resolvedFont.getStringWidth(stringAndFont.getText())) / 1000 * fontSize;
+                    offset += textWidth;
                 }
-
-                // when switching from one font to the other (eg: some letters aren't supported by the original font)
-                // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
-                // the previous letter
-                if (resolvedFont != font) {
-                    if(nonNull(font.getFontDescriptor()) && nonNull(resolvedFont.getFontDescriptor())) {
-                        try {
-                            if(font.getFontDescriptor() != null && font.getFontDescriptor().getFontBoundingBox() != null
-                                    && resolvedFont.getFontDescriptor().getFontBoundingBox() != null) {
-                                double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-                                double actualLetterHeight = resolvedFont.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * fontSize;
-
-                                resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
-                                LOG.debug("Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}", desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
-                            }
-                        } catch (Exception e) {
-                            LOG.warn("Could not calculate fallback font size", e);
-                        }
-                    }
-                }
-
-                // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
-                // use the largest value between font average width and text string width
-                double textWidth = Math.max(resolvedFont.getAverageFontWidth(), resolvedFont.getStringWidth(resolvedLabel)) / 1000 * fontSize;
-                offset += textWidth;
             } catch (IOException e) {
                 throw new TaskIOException("An error occurred writing text to the page.", e);
             }

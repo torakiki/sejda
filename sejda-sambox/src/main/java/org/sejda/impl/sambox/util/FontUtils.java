@@ -19,12 +19,20 @@
 package org.sejda.impl.sambox.util;
 
 import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,12 +45,17 @@ import org.sejda.model.pdf.FontResource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.FontMappers;
 import org.sejda.sambox.pdmodel.font.FontMapping;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
+import org.sejda.sambox.pdmodel.font.PDSimpleFont;
 import org.sejda.sambox.pdmodel.font.PDType0Font;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.font.PDType3CharProc;
+import org.sejda.sambox.pdmodel.font.PDType3Font;
+import org.sejda.sambox.pdmodel.font.PDVectorFont;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -246,6 +259,34 @@ public final class FontUtils {
         return false;
     }
 
+    public static double calculateBBoxHeight(String text, PDFont font) {
+        requireNotNullArg(font, "Font cannot be null");
+        double maxHeight = 0;
+        try {
+            InputStream in = new ByteArrayInputStream(font.encode(text));
+            while (in.available() > 0) {
+                int code = font.readCode(in);
+                if (font instanceof PDType3Font) {
+                    maxHeight = Math.max(maxHeight,
+                            ofNullable(((PDType3Font) font).getCharProc(code)).map(PDType3CharProc::getGlyphBBox)
+                                    .map(PDRectangle::toGeneralPath).map(p -> p.getBounds2D().getHeight()).orElse(0d));
+                } else if (font instanceof PDVectorFont) {
+                    maxHeight = Math.max(maxHeight, ofNullable(((PDVectorFont) font).getPath(code))
+                            .map(p -> p.getBounds2D().getHeight()).orElse(0d));
+                } else if (font instanceof PDSimpleFont) {
+                    PDSimpleFont simpleFont = (PDSimpleFont) font;
+                    String name = ofNullable(simpleFont.getEncoding()).map(e -> e.getName(code)).orElse(null);
+                    if (nonNull(name)) {
+                        maxHeight = Math.max(maxHeight, simpleFont.getPath(name).getBounds2D().getHeight());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOG.warn("An error occured while calculating the highest glyph bbox", e);
+        }
+        return maxHeight;
+    }
+
     public static boolean isBold(PDFont font) {
         String lowercasedName = font.getName().toLowerCase();
         return lowercasedName.contains("bold");
@@ -362,10 +403,10 @@ public final class FontUtils {
     }
 
     /**
-     * Supports writing labels which require multiple fonts (eg: mixing thai and english words)
-     * Returns a list of text with associated font.
+     * Supports writing labels which require multiple fonts (eg: mixing thai and english words) Returns a list of text with associated font.
      */
-    public static List<TextWithFont> resolveFonts(String label, PDFont font, PDDocument document) throws TaskIOException {
+    public static List<TextWithFont> resolveFonts(String label, PDFont font, PDDocument document)
+            throws TaskIOException {
         PDFont currentFont = font;
         StringBuilder currentString = new StringBuilder();
 
@@ -373,25 +414,25 @@ public final class FontUtils {
         List<TextWithFont> result = new ArrayList<>();
 
         Iterator<Integer> codePointIterator = label.codePoints().iterator();
-        while(codePointIterator.hasNext()) {
+        while (codePointIterator.hasNext()) {
             int codePoint = codePointIterator.next();
 
             String s = new String(Character.toChars(codePoint));
 
             PDFont f = fontOrFallback(s, font, document);
-            if(s.equals(" ")) {
+            if (s.equals(" ")) {
                 // we want space to be a separate text item
                 // because some fonts are missing the space glyph
                 // so we'll handle it separate from the other chars
 
                 // some fonts don't have glyphs for space.
                 // figure out if that's the case and switch to a standard font as fallback
-                if(!FontUtils.canDisplaySpace(f)) {
+                if (!FontUtils.canDisplaySpace(f)) {
                     f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
                 }
 
                 // end current string, before space
-                if(currentString.length() > 0) {
+                if (currentString.length() > 0) {
                     result.add(new TextWithFont(currentString.toString(), currentFont));
                 }
 
@@ -399,10 +440,10 @@ public final class FontUtils {
                 result.add(new TextWithFont(" ", f));
                 currentString = new StringBuilder();
                 currentFont = f;
-            } else if(currentFont == f) {
+            } else if (currentFont == f) {
                 currentString.append(s);
             } else {
-                if(currentString.length() > 0) {
+                if (currentString.length() > 0) {
                     result.add(new TextWithFont(currentString.toString(), currentFont));
                 }
 
@@ -411,7 +452,7 @@ public final class FontUtils {
             }
         }
 
-        for(TextWithFont each: result) {
+        for (TextWithFont each : result) {
             LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
         }
 
@@ -424,7 +465,7 @@ public final class FontUtils {
         List<TextWithFont> resolved = resolveFonts(text, HELVETICA, doc);
         StringBuilder result = new StringBuilder();
         resolved.forEach(tf -> {
-            if(tf.getFont() != null) {
+            if (tf.getFont() != null) {
                 result.append(tf.getText());
             }
         });
