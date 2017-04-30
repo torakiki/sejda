@@ -78,7 +78,7 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
             assertFooterHasText(d.getPage(0),
-                    "Does UTF-8 partially work? Mirëdita grüß Gott dobrý več er góðan dag Καλώς Ορίσατε");
+                    "Does UTF-8 partially work? Mirëdita grüß Gott dobrý večer góðan dag Καλώς Ορίσατε");
         });
     }
 
