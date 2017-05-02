@@ -276,9 +276,11 @@ public class PDDocumentHandler implements Closeable {
      */
     public PDPage importPage(PDPage page) {
         PDPage imported = new PDPage(page.getCOSObject().duplicate());
-        imported.setCropBox(page.getCropBox());
-        imported.setMediaBox(page.getMediaBox());
-        imported.setBleedBox(page.getBleedBox());
+        imported.setMediaBox(page.getMediaBoxRaw());
+        imported.setCropBox(page.getCropBoxRaw());
+        imported.setTrimBox(page.getTrimBoxRaw());
+        imported.setBleedBox(page.getBleedBoxRaw());
+        imported.setArtBox(page.getArtBoxRaw());
 
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
