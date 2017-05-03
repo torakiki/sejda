@@ -27,6 +27,7 @@ import org.junit.Test;
 
 /**
  * Test unit for {@link BookmarkPrefixProcessor}
+ * 
  * @author Andrea Vacondio
  * 
  */
@@ -37,6 +38,12 @@ public class BookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
     @Override
     public PrefixProcessor getProcessor() {
         return victim;
+    }
+
+    @Test
+    public void nullBookmarks() {
+        String prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        assertEquals(prefix, victim.process(prefix, nameRequest()));
     }
 
     @Test

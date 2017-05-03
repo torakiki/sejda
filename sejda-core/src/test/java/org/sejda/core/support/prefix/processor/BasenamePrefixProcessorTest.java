@@ -36,6 +36,12 @@ public class BasenamePrefixProcessorTest extends BasePrefixProcessorTest {
     private BasenamePrefixProcessor victim = new BasenamePrefixProcessor();
 
     @Test
+    public void nullName() {
+        String prefix = "prefix_[BASENAME]";
+        assertEquals(prefix, victim.process(prefix, nameRequest()));
+    }
+
+    @Test
     public void testComplexProcess() {
         String prefix = "prefix_[BASENAME]";
         String originalName = "name";

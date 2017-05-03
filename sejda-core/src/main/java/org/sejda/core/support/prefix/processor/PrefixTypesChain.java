@@ -20,10 +20,11 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,23 +40,21 @@ public class PrefixTypesChain {
 
     private static final Logger LOG = LoggerFactory.getLogger(PrefixTypesChain.class);
 
-    // prefix types ensuring unique output names
-    private Set<PrefixType> firstLevelPrefixChain = new HashSet<>();
-    // prefix types processed only if the first level processors performed some changed (ensuring unique name)
-    private Set<PrefixType> secondLevelPrefixChain = new HashSet<>();
-    // processor used in case the processors chain did not perform any change
-    private PrefixProcessor fallBackProcessor = new LoggingPrefixProcessorDecorator(new PrependPrefixProcessor());
+    private Set<PrefixType> prefixesChanin = new HashSet<>();
+    private boolean ensureUniqueness = false;
+    private PrefixProcessor prefixPrepend = new LoggingPrefixProcessorDecorator(new PrependPrefixProcessor());
+    private PrefixProcessor pageNumberPrepend = new LoggingPrefixProcessorDecorator(
+            new PrependPageNumberPrefixProcessor());
     private PrefixProcessor extensionProcessor = new LoggingPrefixProcessorDecorator(
             new AppendExtensionPrefixProcessor());
 
     public PrefixTypesChain(String prefix) {
-        if (StringUtils.isNotBlank(prefix)) {
+        if (isNotBlank(prefix)) {
             for (PrefixType type : PrefixType.values()) {
                 if (type.isFoundIn(prefix)) {
-                    if (type.isEnsureUniqueNames()) {
-                        firstLevelPrefixChain.add(type);
-                    } else {
-                        secondLevelPrefixChain.add(type);
+                    prefixesChanin.add(type);
+                    if (!ensureUniqueness && type.isEnsureUniqueNames()) {
+                        ensureUniqueness = true;
                     }
                 }
             }
@@ -73,13 +72,12 @@ public class PrefixTypesChain {
      */
     public String process(String prefix, NameGenerationRequest request) {
         LOG.trace("Performing prefix processing with first level prefix chain");
-        String retVal = processChain(prefix, request, firstLevelPrefixChain);
-        // if the first level performed some change
-        if (!prefix.equals(retVal)) {
-            LOG.trace("Performing prefix processing with second level prefix chain");
-            retVal = processChain(retVal, request, secondLevelPrefixChain);
-        } else {
-            retVal = fallBackProcessor.process(retVal, request);
+        String retVal = processChain(prefix, request, prefixesChanin);
+        if (prefixesChanin.isEmpty()) {
+            retVal = prefixPrepend.process(retVal, request);
+        }
+        if (!ensureUniqueness) {
+            retVal = pageNumberPrepend.process(retVal, request);
         }
         return extensionProcessor.process(retVal, request);
     }

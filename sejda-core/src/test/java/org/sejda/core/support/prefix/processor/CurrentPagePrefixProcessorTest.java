@@ -40,6 +40,12 @@ public class CurrentPagePrefixProcessorTest extends BasePrefixProcessorTest {
     }
 
     @Test
+    public void nullPage() {
+        String prefix = "prefix_[CURRENTPAGE]_[BASENAME]";
+        assertEquals(prefix, victim.process(prefix, nameRequest()));
+    }
+
+    @Test
     public void testComplexProcess() {
         String prefix = "prefix_[CURRENTPAGE]_[BASENAME]";
         String expected = "prefix_5_[BASENAME]";

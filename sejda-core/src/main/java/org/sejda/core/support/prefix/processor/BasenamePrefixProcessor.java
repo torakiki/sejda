@@ -20,7 +20,9 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang3.StringUtils;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
@@ -33,11 +35,10 @@ class BasenamePrefixProcessor implements PrefixProcessor {
 
     @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = inputPrefix;
-        if (request != null && StringUtils.isNotBlank(request.getOriginalName())) {
-            return retVal.replace("[BASENAME]", request.getOriginalName());
+        if (nonNull(request) && isNotBlank(request.getOriginalName())) {
+            return inputPrefix.replace("[BASENAME]", request.getOriginalName());
         }
-        return retVal;
+        return inputPrefix;
     }
 
 }

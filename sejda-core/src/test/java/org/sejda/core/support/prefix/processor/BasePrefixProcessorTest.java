@@ -36,8 +36,12 @@ public abstract class BasePrefixProcessorTest {
      */
     @Test
     public void testEmptyRequestSimplePrefix() {
-        String prefix = "prefix";
-        assertEquals(prefix, getProcessor().process(prefix, nameRequest()));
+        assertEquals("prefix", getProcessor().process("prefix", nameRequest()));
+    }
+
+    @Test
+    public void nullRequest() {
+        assertEquals("prefix_", getProcessor().process("prefix_", null));
     }
 
     abstract PrefixProcessor getProcessor();

@@ -20,12 +20,13 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang3.StringUtils;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
- * Simple prefix processor that prepend the input prefix to the original name. If the request contains a page number, the number is prepended to the prefix and to the original
- * name.
+ * Simple prefix processor that prepend the input prefix to the original name.
  * 
  * @author Andrea Vacondio
  * 
@@ -34,14 +35,10 @@ class PrependPrefixProcessor implements PrefixProcessor {
 
     @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = inputPrefix;
-        if (request != null && StringUtils.isNotBlank(request.getOriginalName())) {
-            retVal += request.getOriginalName();
-            if (request.getPage() != null) {
-                retVal = String.format("%d_%s", request.getPage(), retVal);
-            }
+        if (nonNull(request) && isNotBlank(request.getOriginalName())) {
+            return inputPrefix + request.getOriginalName();
         }
-        return retVal;
+        return inputPrefix;
     }
 
 }

@@ -36,19 +36,17 @@ public class PrependPrefixProcessorTest {
     private PrependPrefixProcessor victim = new PrependPrefixProcessor();
 
     @Test
-    public void testComplexProcess() {
-        String prefix = "prefix_";
-        String originalName = "name";
-        String expected = "prefix_name";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+    public void positive() {
+        assertEquals("prefix_name", victim.process("prefix_", nameRequest().originalName("name")));
     }
 
     @Test
-    public void testComplexProcessWithPageNumber() {
-        String prefix = "prefix_";
-        String originalName = "name";
-        Integer page = Integer.valueOf("34");
-        String expected = "34_prefix_name";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName).page(page)));
+    public void nullRequest() {
+        assertEquals("prefix_", victim.process("prefix_", null));
+    }
+
+    @Test
+    public void noName() {
+        assertEquals("prefix_", victim.process("prefix_", nameRequest()));
     }
 }

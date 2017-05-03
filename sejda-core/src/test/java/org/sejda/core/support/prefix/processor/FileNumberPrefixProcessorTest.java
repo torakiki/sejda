@@ -42,6 +42,12 @@ public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
     }
 
     @Test
+    public void nullFileNumber() {
+        String prefix = "prefix_[FILENUMBER]_[BASENAME]";
+        assertEquals(prefix, victim.process(prefix, nameRequest()));
+    }
+
+    @Test
     public void testComplexProcess() {
         String prefix = "prefix_[FILENUMBER]_[BASENAME]";
         String expected = "prefix_5_[BASENAME]";

@@ -68,7 +68,7 @@ public class NameGeneratorTest {
     public void testComplexPrefixNoSubstitution() {
         String prefix = "BLA_[CURRENTPAGE###]_[BASENAME]";
         String originalName = "Original";
-        String expected = "BLA_[CURRENTPAGE###]_[BASENAME]Original.pdf";
+        String expected = "BLA_[CURRENTPAGE###]_Original.pdf";
         assertEquals(expected, nameGenerator(prefix).generate(nameRequest().originalName(originalName)));
     }
 
