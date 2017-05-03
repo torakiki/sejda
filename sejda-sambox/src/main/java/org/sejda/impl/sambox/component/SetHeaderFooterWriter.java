@@ -72,7 +72,7 @@ public class SetHeaderFooterWriter implements Closeable {
         VerticalAlign vAlign = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
         String what = vAlign == VerticalAlign.BOTTOM ? "footer" : "header";
 
-        SortedSet<Integer> pages = parameters.getPageRange().getPages(totalPages);
+        SortedSet<Integer> pages = parameters.getPages(totalPages);
         Integer labelPageNumber = parameters.getPageCountStartFrom();
 
         for (int pageNumber : pages) {

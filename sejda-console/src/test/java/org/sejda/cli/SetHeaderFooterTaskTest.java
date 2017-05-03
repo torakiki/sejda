@@ -19,7 +19,9 @@
  */
 package org.sejda.cli;
 
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.awt.Color;
 
@@ -29,6 +31,8 @@ import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * @author Andrea Vacondio
@@ -167,5 +171,34 @@ public class SetHeaderFooterTaskTest extends AbstractTaskTest {
     public void defaults() {
         SetHeaderFooterParameters parameters = defaultCommandLine().invokeSejdaConsole();
         assertEquals(1, parameters.getFileCountStartFrom().intValue());
+        assertEquals(PredefinedSetOfPages.ALL_PAGES, parameters.getPredefinedSetOfPages());
+    }
+
+    @Test
+    public void predefinedSetOfPages_All() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-s", "all")
+                .invokeSejdaConsole();
+        assertEquals(PredefinedSetOfPages.ALL_PAGES, parameters.getPredefinedSetOfPages());
+    }
+
+    @Test
+    public void predefinedSetOfPages_Even() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-s", "even")
+                .invokeSejdaConsole();
+        assertEquals(PredefinedSetOfPages.EVEN_PAGES, parameters.getPredefinedSetOfPages());
+    }
+
+    @Test
+    public void predefinedSetOfPages_Odd() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-s", "odd")
+                .invokeSejdaConsole();
+        assertEquals(PredefinedSetOfPages.ODD_PAGES, parameters.getPredefinedSetOfPages());
+    }
+
+    @Test
+    public void pageRanges() {
+        SetHeaderFooterParameters parameters = defaultCommandLine().with("-s", "1,2,8-10,19-")
+                .invokeSejdaConsole();
+        assertThat(parameters.getPageRanges(), hasItems(new PageRange(1, 1), new PageRange(8, 10), new PageRange(19)));
     }
 }

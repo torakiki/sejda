@@ -32,6 +32,7 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.sambox.pdmodel.PDPage;
 
 /**
@@ -46,7 +47,7 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     private SetHeaderFooterParameters basicNoSources() throws IOException {
         SetHeaderFooterParameters parameters = new SetHeaderFooterParameters();
         parameters.setBatesSequence(new BatesSequence());
-        parameters.setPageRange(new PageRange(1));
+        parameters.addPageRange(new PageRange(1));
         parameters.setPattern("[DATE] [PAGE_OF_TOTAL] - Exhibit [FILE_NUMBER] - Case ACME Inc - [BATES_NUMBER]");
 
         parameters.setCompress(true);
@@ -126,7 +127,8 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     @Test
     public void testPageRange() throws Exception {
         parameters = basicWithSources();
-        parameters.setPageRange(new PageRange(2));
+        parameters.getPageRanges().clear();
+        parameters.addPageRange(new PageRange(2));
         parameters.setPattern("Test footer");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         execute(parameters);
@@ -135,6 +137,49 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
             assertFooterHasText(d.getPage(0), "");
             assertFooterHasText(d.getPage(1), "Test footer");
             assertFooterHasText(d.getPage(2), "Test footer");
+        });
+    }
+
+    @Test
+    public void testOddPages() throws Exception {
+        parameters = new SetHeaderFooterParameters();
+        parameters.setPredefinedSetOfPages(PredefinedSetOfPages.EVEN_PAGES);
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.setPattern("Test footer");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "");
+            assertFooterHasText(d.getPage(1), "Test footer");
+            assertFooterHasText(d.getPage(2), "");
+            assertFooterHasText(d.getPage(3), "Test footer");
+        });
+    }
+
+    @Test
+    public void testMultiplePageRanges() throws Exception {
+        parameters = new SetHeaderFooterParameters();
+        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.addPageRange(new PageRange(1, 2));
+        parameters.addPageRange(new PageRange(4, 5));
+        parameters.setPattern("Test footer");
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+
+        parameters.setOutputPrefix("test_file[FILENUMBER]");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "Test footer");
+            assertFooterHasText(d.getPage(1), "Test footer");
+            assertFooterHasText(d.getPage(2), "");
+            assertFooterHasText(d.getPage(3), "Test footer");
         });
     }
 

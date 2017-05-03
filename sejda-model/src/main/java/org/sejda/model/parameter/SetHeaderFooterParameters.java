@@ -19,6 +19,7 @@
 package org.sejda.model.parameter;
 
 import java.awt.Color;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -31,6 +32,9 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.numbering.BatesSequence;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PageRangeSelection;
+import org.sejda.model.pdf.page.PagesSelection;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.Positive;
 
 /**
@@ -39,11 +43,14 @@ import org.sejda.model.validation.constraint.Positive;
  * @author Eduard Weissmann
  *
  */
-public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputParameters {
+public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection,
+        PagesSelection {
 
     @NotNull
     @Valid
-    private PageRange pageRange = new PageRange(1);
+    private Set<PageRange> pageRanges = new HashSet<>();
+    @NotNull
+    private PredefinedSetOfPages predefinedSetOfPages = PredefinedSetOfPages.NONE;
     private StandardType1Font font = StandardType1Font.HELVETICA;
     private HorizontalAlign horizontalAlign = HorizontalAlign.CENTER;
     private VerticalAlign verticalAlign = VerticalAlign.BOTTOM;
@@ -57,19 +64,6 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
     private Color color = Color.black;
     private int fileCountStartFrom = 1;
     private boolean addMargins = false;
-
-    public PageRange getPageRange() {
-        return pageRange;
-    }
-
-    /**
-     * Set the page range where the header/footer will be applied
-     *
-     * @param pageRange
-     */
-    public void setPageRange(PageRange pageRange) {
-        this.pageRange = pageRange;
-    }
 
     public StandardType1Font getFont() {
         return font;
@@ -156,11 +150,58 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
         this.addMargins = addMargins;
     }
 
+    public PredefinedSetOfPages getPredefinedSetOfPages() {
+        return predefinedSetOfPages;
+    }
+
+    public void setPredefinedSetOfPages(PredefinedSetOfPages predefinedSetOfPages) {
+        this.predefinedSetOfPages = predefinedSetOfPages;
+    }
+
+    public void addPageRange(PageRange range) {
+        pageRanges.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        ranges.forEach(this::addPageRange);
+    }
+
+    /**
+     * @return an unmodifiable view of the pageSelection
+     */
+    @Override
+    public Set<PageRange> getPageSelection() {
+        return Collections.unmodifiableSet(pageRanges);
+    }
+
+    public Set<PageRange> getPageRanges() {
+        return pageRanges;
+    }
+
+    /**
+     * @param upperLimit
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
+     *         case of {@link PredefinedSetOfPages}.
+     * @see PagesSelection#getPages(int)
+     */
+    @Override
+    public SortedSet<Integer> getPages(int upperLimit) {
+        if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
+            return predefinedSetOfPages.getPages(upperLimit);
+        }
+        SortedSet<Integer> retSet = new TreeSet<>();
+        for (PageRange range : getPageSelection()) {
+            retSet.addAll(range.getPages(upperLimit));
+        }
+        return retSet;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(font).append(horizontalAlign)
-                .append(verticalAlign).append(fontSize).append(pageRange).append(pattern).append(batesSequence)
-                .append(pageCountStartFrom).append(color).append(fileCountStartFrom).append(addMargins)
+                .append(verticalAlign).append(fontSize).append(pageRanges).append(pattern).append(batesSequence)
+                .append(pageCountStartFrom).append(color).append(fileCountStartFrom).append(addMargins).append(predefinedSetOfPages)
                 .toHashCode();
     }
 
@@ -178,11 +219,12 @@ public class SetHeaderFooterParameters extends MultiplePdfSourceMultipleOutputPa
                 .append(getVerticalAlign(), parameter.getVerticalAlign())
                 .append(getBatesSequence(), parameter.getBatesSequence())
                 .append(getPageCountStartFrom(), parameter.getPageCountStartFrom())
-                .append(getFontSize(), parameter.getFontSize()).append(getPageRange(), parameter.getPageRange())
+                .append(getFontSize(), parameter.getFontSize()).append(getPageRanges(), parameter.getPageRanges())
                 .append(getPattern(), parameter.getPattern())
                 .append(getColor(), parameter.getColor())
                 .append(getFileCountStartFrom(), parameter.getFileCountStartFrom())
                 .append(isAddMargins(), parameter.isAddMargins())
+                .append(getPredefinedSetOfPages(), parameter.getPredefinedSetOfPages())
                 .isEquals();
     }
 

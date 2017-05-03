@@ -19,10 +19,7 @@
  */
 package org.sejda.cli.model;
 
-import org.sejda.conversion.BasePageRangeAdapter.PageRangeWithAllAdapter;
-import org.sejda.conversion.HorizontalAlignAdapter;
-import org.sejda.conversion.StandardType1FontAdapter;
-import org.sejda.conversion.VerticalAlignAdapter;
+import org.sejda.conversion.*;
 
 import com.lexicalscope.jewel.cli.CommandLineInterface;
 import com.lexicalscope.jewel.cli.Option;
@@ -37,9 +34,9 @@ import com.lexicalscope.jewel.cli.Option;
 public interface SetHeaderFooterTaskCliArguments extends CliArgumentsWithPrefixableOutput,
         CliArgumentsWithPdfAndFileOrDirectoryOutput, MultiplePdfSourceTaskCliArguments {
 
-    @Option(shortName = "s", description = "page range selection. You can set the pages where the header/footer will be applied. Accepted values: 'all' or 'num1-num2' or"
-            + " 'num-' (EX. -s 12-14) (optional)", defaultValue = "all")
-    PageRangeWithAllAdapter getPageRange();
+    @Option(shortName = "s", description = "page range selection. You can set the pages where the header/footer will be applied. Accepted values: 'all', 'odd', 'even' or 'num1-num2' or"
+            + " 'num1-num2,num3,num4-num5' (EX. -s 2- or -s 2,4-8,12-14) (optional)", defaultValue = "all")
+    PageRangeSetOrPredefinedSetOfPagesAdapter getPageRange();
 
     @Option(shortName = "x", description = "horizontal align { center, right, left }. Default is 'center' (optional)", defaultValue = "center")
     HorizontalAlignAdapter getHorizontalAlign();

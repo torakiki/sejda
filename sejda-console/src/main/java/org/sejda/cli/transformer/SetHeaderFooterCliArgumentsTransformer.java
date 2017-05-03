@@ -20,11 +20,14 @@
 package org.sejda.cli.transformer;
 
 import java.awt.Color;
+import java.util.Set;
 
 import org.sejda.cli.model.SetHeaderFooterTaskCliArguments;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.parameter.SetHeaderFooterParameters;
 import org.sejda.model.pdf.numbering.BatesSequence;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
 /**
  * {@link CommandCliArgumentsTransformer} for the SetHeaderFooter task command line interface
@@ -41,7 +44,15 @@ public class SetHeaderFooterCliArgumentsTransformer extends BaseCliArgumentsTran
             throw new SejdaRuntimeException("Please specify the text label to apply");
         }
         SetHeaderFooterParameters parameters = new SetHeaderFooterParameters();
-        parameters.setPageRange(taskCliArguments.getPageRange().getPageRange());
+
+        PredefinedSetOfPages predefinedSetOfPages = taskCliArguments.getPageRange().getPredefinedSetOfPages();
+        if(predefinedSetOfPages != null) {
+            parameters.setPredefinedSetOfPages(predefinedSetOfPages);
+        } else {
+            Set<PageRange> pageRanges = taskCliArguments.getPageRange().getPageRanges();
+            parameters.addAllPageRanges(pageRanges);
+        }
+
         parameters.setPattern(taskCliArguments.getLabel());
         populateAlignment(taskCliArguments, parameters);
         populateFont(taskCliArguments, parameters);
