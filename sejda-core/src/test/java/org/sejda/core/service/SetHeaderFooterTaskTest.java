@@ -141,11 +141,11 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
-    public void testOddPages() throws Exception {
+    public void testEvenPages() throws Exception {
         parameters = new SetHeaderFooterParameters();
         parameters.setPredefinedSetOfPages(PredefinedSetOfPages.EVEN_PAGES);
         parameters.addSource(customInput("pdf/test_file.pdf"));
-        parameters.setPattern("Test footer");
+        parameters.setPattern("Page [PAGE_ARABIC]");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
 
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -155,9 +155,9 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
             assertFooterHasText(d.getPage(0), "");
-            assertFooterHasText(d.getPage(1), "Test footer");
+            assertFooterHasText(d.getPage(1), "Page 2");
             assertFooterHasText(d.getPage(2), "");
-            assertFooterHasText(d.getPage(3), "Test footer");
+            assertFooterHasText(d.getPage(3), "Page 4");
         });
     }
 
@@ -167,7 +167,7 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         parameters.addSource(customInput("pdf/test_file.pdf"));
         parameters.addPageRange(new PageRange(1, 2));
         parameters.addPageRange(new PageRange(4, 5));
-        parameters.setPattern("Test footer");
+        parameters.setPattern("Page [PAGE_ARABIC]");
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
 
         parameters.setOutputPrefix("test_file[FILENUMBER]");
@@ -176,10 +176,10 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
 
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertFooterHasText(d.getPage(0), "Test footer");
-            assertFooterHasText(d.getPage(1), "Test footer");
+            assertFooterHasText(d.getPage(0), "Page 1");
+            assertFooterHasText(d.getPage(1), "Page 2");
             assertFooterHasText(d.getPage(2), "");
-            assertFooterHasText(d.getPage(3), "Test footer");
+            assertFooterHasText(d.getPage(3), "Page 4");
         });
     }
 
@@ -205,14 +205,34 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     public void testLogicalPage() throws Exception {
         parameters = basicWithSources();
         parameters.setPattern("Page [PAGE_ARABIC]");
-        parameters.setPageCountStartFrom(5);
+        parameters.setPageCountStartFrom(12);
+        parameters.getPageRanges().clear();
+        parameters.addPageRange(new PageRange(2));
         parameters.setVerticalAlign(VerticalAlign.BOTTOM);
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.forPdfOutput("test_file1.pdf", d -> {
-            assertFooterHasText(d.getPage(0), "Page 5");
+            assertFooterHasText(d.getPage(0), "");
+            assertFooterHasText(d.getPage(1), "Page 12");
+            assertFooterHasText(d.getPage(2), "Page 13");
+            assertFooterHasText(d.getPage(3), "Page 14");
+        });
+    }
+
+    @Test
+    public void testLogicalPageOddPagesOnly() throws Exception {
+        parameters = basicWithSources();
+        parameters.setPattern("Page [PAGE_ARABIC]");
+        parameters.setPageCountStartFrom(6);
+        parameters.setPredefinedSetOfPages(PredefinedSetOfPages.EVEN_PAGES);
+        parameters.setVerticalAlign(VerticalAlign.BOTTOM);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput("test_file1.pdf", d -> {
+            assertFooterHasText(d.getPage(0), "");
             assertFooterHasText(d.getPage(1), "Page 6");
-            assertFooterHasText(d.getPage(2), "Page 7");
+            assertFooterHasText(d.getPage(2), "");
+            assertFooterHasText(d.getPage(3), "Page 8");
         });
     }
 

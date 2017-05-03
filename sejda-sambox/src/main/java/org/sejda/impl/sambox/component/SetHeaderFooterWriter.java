@@ -73,20 +73,25 @@ public class SetHeaderFooterWriter implements Closeable {
         String what = vAlign == VerticalAlign.BOTTOM ? "footer" : "header";
 
         SortedSet<Integer> pages = parameters.getPages(totalPages);
-        Integer labelPageNumber = parameters.getPageCountStartFrom();
+        int userDefinedPageOffset = 0;
+        if(parameters.getPageCountStartFrom() != null && !pages.isEmpty()) {
+            // use the first page number and the provided pageCountStartFrom to determine the offset
+            // Eg: first page is 10 and user's supplied page count start from is 12 => offset is 2
+            // This is useful when we want to skip numbering the intro and start with 1,2,3 when the chapters start.
+            userDefinedPageOffset = parameters.getPageCountStartFrom() - pages.first();
+        }
 
         for (int pageNumber : pages) {
             // if user didn't override it, use document actual page numbering
-            if (labelPageNumber == null) {
-                labelPageNumber = pageNumber;
-            }
+            // otherwise shift by the user provided page numbering offset
+            int toLabelPageNumber = pageNumber + userDefinedPageOffset;
 
             String batesSeq = null;
             if (parameters.getBatesSequence() != null) {
                 batesSeq = parameters.getBatesSequence().next();
             }
 
-            String label = new TextStampPattern().withPage(labelPageNumber, totalPages).withBatesSequence(batesSeq)
+            String label = new TextStampPattern().withPage(toLabelPageNumber, totalPages).withBatesSequence(batesSeq)
                     .withFileSequence(String.valueOf(currentFileCounter)).withFilename(filename)
                     .build(pattern);
 
@@ -94,7 +99,6 @@ public class SetHeaderFooterWriter implements Closeable {
             try {
                 headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
                         parameters.getColor());
-                labelPageNumber++;
             } catch (PageNotFoundException e) {
                 executionContext.assertTaskIsLenient(e);
                 notifyEvent(executionContext.notifiableTaskMetadata())
