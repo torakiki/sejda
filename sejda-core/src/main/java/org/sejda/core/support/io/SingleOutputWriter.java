@@ -22,7 +22,6 @@ package org.sejda.core.support.io;
 
 import java.io.File;
 
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.TaskOutputDispatcher;
 
 /**
@@ -34,10 +33,9 @@ import org.sejda.model.output.TaskOutputDispatcher;
 public interface SingleOutputWriter extends TaskOutputDispatcher {
 
     /**
-     * Tells the writer the expected task output file
+     * Sets the given file output (typically a temporary file) as the task output ready to be written.
      * 
-     * @param expectedDesintation
-     * @return the buffer where the task will have to write the output
+     * @param taskOutput
      */
-    File taskOutput(File expectedDesintation) throws TaskIOException;
+    void taskOutput(File taskOutput);
 }

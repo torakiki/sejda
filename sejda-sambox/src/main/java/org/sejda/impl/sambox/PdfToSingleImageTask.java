@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
 
 import java.awt.image.BufferedImage;
@@ -64,7 +65,8 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     @Override
     public void execute(T parameters) throws TaskException {
 
-        File tmpFile = outputWriter.taskOutput(parameters.getOutput().getDestination());
+        File tmpFile = createTemporaryPdfBuffer();
+        outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Opening {}", parameters.getSource());

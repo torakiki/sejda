@@ -21,6 +21,7 @@ package org.sejda.impl.sambox;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
@@ -78,7 +79,8 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     @Override
     public void execute(CombineReorderParameters parameters) throws TaskException {
 
-        File tmpFile = outputWriter.taskOutput(parameters.getOutput().getDestination());
+        File tmpFile = createTemporaryPdfBuffer();
+        outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
 
         this.destinationDocument = new PDDocumentHandler();

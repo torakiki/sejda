@@ -21,6 +21,7 @@ package org.sejda.impl.sambox;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 import static org.sejda.impl.sambox.util.TransitionUtils.getTransition;
 import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDimension;
 import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDirection;
@@ -76,7 +77,8 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         LOG.debug("Opening {}", source);
         documentHandler = source.open(documentLoader);
 
-        File tmpFile = outputWriter.taskOutput(parameters.getOutput().getDestination());
+        File tmpFile = createTemporaryPdfBuffer();
+        outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Applying transitions");

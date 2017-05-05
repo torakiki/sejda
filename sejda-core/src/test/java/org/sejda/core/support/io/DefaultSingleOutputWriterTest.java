@@ -20,6 +20,7 @@ package org.sejda.core.support.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +75,8 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File out = new File(folder.newFolder(), "not-existing.tmp");
         out.deleteOnExit();
-        File outFile = victim.taskOutput(out);
+        File outFile = createTemporaryPdfBuffer();
+        victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
         assertEquals(4, out.length());
@@ -85,7 +87,8 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File out = folder.newFile();
         out.deleteOnExit();
-        File outFile = victim.taskOutput(out);
+        File outFile = createTemporaryPdfBuffer();
+        victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
         assertEquals(4, out.length());
@@ -97,25 +100,34 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.RENAME, context);
         File out = folder.newFile();
         out.deleteOnExit();
-        File outFile = victim.taskOutput(out);
+        File outFile = createTemporaryPdfBuffer();
+        victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
         assertEquals(2, out.getParentFile().list().length);
     }
 
-    @Test(expected = TaskIOException.class)
-    public void failOnExisting() throws TaskIOException, IOException {
+    @Test(expected = IOException.class)
+    public void failOnExisting() throws IOException, TaskIOException {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.FAIL, context);
         File out = folder.newFile();
         out.deleteOnExit();
         victim.taskOutput(out);
+        File outFile = createTemporaryPdfBuffer();
+        victim.taskOutput(outFile);
+        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
+        victim.dispatch(new FileTaskOutput(out));
     }
 
-    @Test(expected = TaskIOException.class)
+    @Test(expected = IOException.class)
     public void skipBehavesLikeFails() throws IOException, TaskIOException {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.SKIP, context);
         File out = folder.newFile();
         out.deleteOnExit();
         victim.taskOutput(out);
+        File outFile = createTemporaryPdfBuffer();
+        victim.taskOutput(outFile);
+        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
+        victim.dispatch(new FileTaskOutput(out));
     }
 }

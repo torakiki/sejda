@@ -22,7 +22,6 @@ package org.sejda.core.support.io;
 
 import static java.util.Objects.isNull;
 import static java.util.Optional.of;
-import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.core.support.io.OutputWriterHelper.moveFile;
 import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
 import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
@@ -30,7 +29,6 @@ import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
 import java.io.File;
 import java.io.IOException;
 
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileOrDirectoryTaskOutput;
@@ -49,7 +47,7 @@ class DefaultSingleOutputWriter implements SingleOutputWriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSingleOutputWriter.class);
 
-    private File temporaryOutput;
+    private File taskOutput;
     private final ExistingOutputPolicy existingOutputPolicy;
     private final TaskExecutionContext executionContext;
 
@@ -62,32 +60,16 @@ class DefaultSingleOutputWriter implements SingleOutputWriter {
     }
 
     @Override
-    public File taskOutput(File expectedDesintation) throws TaskIOException {
-        if (expectedDesintation.exists()) {
-            switch (existingOutputPolicy) {
-            case OVERWRITE:
-            case RENAME:
-                this.temporaryOutput = IOUtils.createTemporaryBuffer("." + getExtension(expectedDesintation.getName()));
-                break;
-            default:
-                throw new TaskIOException(
-                        String.format("Unable to write to the already existing file destination %s. (policy is %s)",
-                                expectedDesintation, existingOutputPolicy));
-            }
-        } else {
-            this.temporaryOutput = expectedDesintation;
-        }
-        return temporaryOutput;
+    public void taskOutput(File taskOutput) {
+        this.taskOutput = taskOutput;
     }
 
     @Override
     public void dispatch(FileTaskOutput output) throws IOException {
-        if (isNull(temporaryOutput)) {
+        if (isNull(taskOutput)) {
             throw new IOException("No task output set");
         }
-        if (!this.temporaryOutput.equals(output.getDestination())) {
-            moveFile(temporaryOutput, output.getDestination(), existingOutputPolicy, executionContext);
-        }
+        moveFile(taskOutput, output.getDestination(), existingOutputPolicy, executionContext);
     }
 
     @Override

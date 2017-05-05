@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
 
 import java.io.File;
 
@@ -60,7 +61,8 @@ public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParamete
         mixer.setVersionOnPDDocument(parameters.getVersion());
         mixer.setCompress(parameters.isCompress());
 
-        File tmpFile = outputWriter.taskOutput(parameters.getOutput().getDestination());
+        File tmpFile = createTemporaryPdfBuffer();
+        outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
         mixer.savePDDocument(tmpFile);
         nullSafeCloseQuietly(mixer);
