@@ -19,11 +19,13 @@
  */
 package org.sejda.model.validation.validator;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.ValidSingleOutput;
 
@@ -43,7 +45,21 @@ public class SingleOutputValidator implements ConstraintValidator<ValidSingleOut
 
     @Override
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
-        return nonNull(value) && nonNull(value.getOutput());
+        if (nonNull(value)) {
+            if (isNull(value.getOutput())) {
+                return false;
+            }
+            if (value.getOutput().getDestination().exists()
+                    && (value.getExistingOutputPolicy() == ExistingOutputPolicy.FAIL
+                            || value.getExistingOutputPolicy() == ExistingOutputPolicy.SKIP)) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(
+                        String.format("File destination already exists: %s.", value.getOutput().getDestination()))
+                        .addConstraintViolation();
+                return false;
+            }
+        }
+        return true;
     }
 
 }

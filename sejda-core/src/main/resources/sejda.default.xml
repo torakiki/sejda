@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<sejda validation="false">
+<sejda validation="true">
 	<notification async="false" />
 	<tasks>
 		<task parameters="org.sejda.model.parameter.DecryptParameters" task="org.sejda.impl.sambox.DecryptTask"/>
