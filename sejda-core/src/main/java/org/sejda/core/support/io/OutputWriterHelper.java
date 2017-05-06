@@ -101,11 +101,11 @@ final class OutputWriterHelper {
      */
     static void moveToDirectory(Map<String, File> files, File outputDirectory,
             ExistingOutputPolicy existingOutputPolicy, TaskExecutionContext executionContext) throws IOException {
-        if (!outputDirectory.isDirectory()) {
-            throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
-        }
         if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
             throw new IOException(String.format("Unable to make destination directory tree %s.", outputDirectory));
+        }
+        if (!outputDirectory.isDirectory()) {
+            throw new IOException(String.format("Wrong output destination %s, must be a directory.", outputDirectory));
         }
         for (Entry<String, File> entry : files.entrySet()) {
             if (isBlank(entry.getKey())) {

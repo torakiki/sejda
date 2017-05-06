@@ -32,6 +32,9 @@ import static org.mockito.Mockito.when;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -251,7 +254,7 @@ public class OutputWriterHelperTest {
         files.put("existing.pdf", folder.newFile());
 
         File outFile = outputFolder.newFile("existing.pdf");
-        for(int i = 1; i <= 100; i++) {
+        for (int i = 1; i <= 100; i++) {
             outputFolder.newFile(String.format("existing(%d).pdf", i));
         }
 
@@ -259,7 +262,20 @@ public class OutputWriterHelperTest {
             OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
             fail("Exception expected, about the fact that a new filename that doesn't exist could not be generated");
         } catch (IOException e) {
-            assertTrue("Different exception expected, got: " + e.getMessage(), e.getMessage().startsWith("Unable to generate a new filename that does not exist"));
+            assertTrue("Different exception expected, got: " + e.getMessage(),
+                    e.getMessage().startsWith("Unable to generate a new filename that does not exist"));
         }
+    }
+
+    @Test
+    public void moveCreatesDirectoryTree() throws IOException {
+        Map<String, File> files = new HashMap<String, File>();
+        files.put("file.pdf", folder.newFile());
+
+        Path out = Paths.get(outputFolder.newFolder().getAbsolutePath(), "this", "does", "not", "exist");
+        assertFalse(Files.isDirectory(out));
+
+        OutputWriterHelper.moveToDirectory(files, out.toFile(), ExistingOutputPolicy.OVERWRITE, context);
+        assertTrue(Files.isDirectory(out));
     }
 }
