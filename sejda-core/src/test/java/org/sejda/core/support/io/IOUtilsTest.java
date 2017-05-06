@@ -62,11 +62,21 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferFileOutNonExisting() throws TaskIOException {
-        FileTaskOutput out = new FileTaskOutput(new File("I dont exist"));
+        FileTaskOutput out = new FileTaskOutput(new File("I dont", "exist"));
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
         assertEquals(SystemUtils.getJavaIoTmpDir().getAbsolutePath(), tmp.getParent());
+    }
+
+    @Test
+    public void testCreateBufferFileOutNonExistingParentExists() throws TaskIOException, IOException {
+        File dir = folder.newFolder("chuck.norris");
+        FileTaskOutput out = new FileTaskOutput(new File(dir.getAbsolutePath(), "I dont exist"));
+        File tmp = IOUtils.createTemporaryBuffer(out);
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isFile());
+        assertEquals(dir.getAbsolutePath(), tmp.getParent());
     }
 
     @Test
@@ -96,6 +106,7 @@ public class IOUtilsTest {
         assertTrue(tmp.isFile());
         assertEquals(SystemUtils.getJavaIoTmpDir().getAbsolutePath(), tmp.getParent());
     }
+
     @Test
     public void testCreateBufferFileOrDirectoryOutFile() throws TaskIOException, IOException {
         File file = folder.newFile("chuck.norris");

@@ -157,9 +157,9 @@ public final class IOUtils {
 
         @Override
         public void dispatch(FileTaskOutput output) {
-            Path dest = output.getDestination().toPath();
+            Path dest = output.getDestination().toPath().getParent();
             if (Files.exists(dest)) {
-                bufferLocation = dest.getParent();
+                bufferLocation = dest;
             }
         }
 
