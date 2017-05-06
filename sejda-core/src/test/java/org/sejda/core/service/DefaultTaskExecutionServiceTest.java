@@ -29,8 +29,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
@@ -88,6 +86,8 @@ public class DefaultTaskExecutionServiceTest {
         parameters.setCompress(true);
         victim.execute(parameters);
         verify(task, never()).before(eq(parameters), any());
+        verify(task, never()).after();
+        verify(task, never()).execute(parameters);
     }
 
     @Test
@@ -103,18 +103,4 @@ public class DefaultTaskExecutionServiceTest {
         verify(task, never()).execute(parameters);
     }
 
-    @Test
-    public void testNegativeValidationExecution() throws TaskException {
-        TestUtils.setProperty(victim, "context", context);
-        File file = mock(File.class);
-        when(file.isFile()).thenReturn(Boolean.TRUE);
-        when(file.getName()).thenReturn("name.pdf");
-        when(file.exists()).thenReturn(Boolean.TRUE);
-        parameters.setOutput(new FileTaskOutput(file));
-        when(file.isFile()).thenReturn(Boolean.FALSE);
-        victim.execute(parameters);
-        verify(task, never()).before(eq(parameters), any());
-        verify(task, never()).after();
-        verify(task, never()).execute(parameters);
-    }
 }

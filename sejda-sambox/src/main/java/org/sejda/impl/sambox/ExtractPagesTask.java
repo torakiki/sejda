@@ -20,7 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -92,7 +92,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             LOG.debug("Extracting pages {}", pages);
             extractor.retain(pages, executionContext());
 
-            File tmpFile = createTemporaryPdfBuffer();
+            File tmpFile = createTemporaryBuffer(parameters.getOutput());
             LOG.debug("Created output temporary buffer {}", tmpFile);
             if (new OptimizationRuler(parameters.getOptimizationPolicy())
                     .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {

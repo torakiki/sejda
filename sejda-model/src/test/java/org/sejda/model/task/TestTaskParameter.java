@@ -21,6 +21,7 @@
 package org.sejda.model.task;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.junit.Ignore;
 import org.sejda.model.output.SingleTaskOutput;
@@ -35,6 +36,7 @@ import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 public class TestTaskParameter extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
 
     @Valid
+    @NotNull
     private SingleTaskOutput output;
 
     @Override

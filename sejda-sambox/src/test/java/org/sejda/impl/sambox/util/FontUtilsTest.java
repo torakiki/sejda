@@ -144,7 +144,7 @@ public class FontUtilsTest {
             new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
             doc.addPage(page);
             PDDocumentHandler handler = new PDDocumentHandler(doc);
-            File tmp = IOUtils.createTemporaryPdfBuffer();
+            File tmp = IOUtils.createTemporaryBuffer();
             handler.savePDDocument(tmp);
 
             PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));

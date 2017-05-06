@@ -21,13 +21,13 @@ package org.sejda.model.validation.validator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Andrea Vacondio
@@ -35,14 +35,11 @@ import org.junit.Test;
  */
 public class DirectoryValidatorTest {
 
-    private File mockDir;
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
     private DirectoryValidator victim = new DirectoryValidator();
 
-    @Before
-    public void setUp() {
-        mockDir = mock(File.class);
-        when(mockDir.isDirectory()).thenReturn(Boolean.TRUE);
-    }
+
 
     @Test
     public void testNull() {
@@ -50,13 +47,17 @@ public class DirectoryValidatorTest {
     }
 
     @Test
-    public void testPositive() {
-        assertTrue(victim.isValid(mockDir, null));
+    public void testPositiveExisting() throws IOException {
+        assertTrue(victim.isValid(folder.newFolder(), null));
     }
 
     @Test
-    public void testNegative() {
-        when(mockDir.isDirectory()).thenReturn(Boolean.FALSE);
-        assertFalse(victim.isValid(mockDir, null));
+    public void testPositiveNonExisting() {
+        assertTrue(victim.isValid(new File("I will be created"), null));
+    }
+
+    @Test
+    public void testNegative() throws IOException {
+        assertFalse(victim.isValid(folder.newFile(), null));
     }
 }

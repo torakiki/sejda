@@ -19,7 +19,7 @@
 package org.sejda.impl.sambox.component.split;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -78,7 +78,7 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                 if (nextOutputStrategy().isOpening(page)) {
                     LOG.debug("Starting split at page {} of the original document", page);
                     onOpen(page);
-                    tmpFile = createTemporaryPdfBuffer();
+                    tmpFile = createTemporaryBuffer(parameters.getOutput());
                     LOG.debug("Created output temporary buffer {}", tmpFile);
                     String outName = nameGenerator(outputPrefix).generate(enrichNameGenerationRequest(
                             nameRequest().page(page).originalName(source.getName())

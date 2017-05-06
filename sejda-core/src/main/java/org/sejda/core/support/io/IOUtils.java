@@ -19,11 +19,25 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskOutputVisitException;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.TaskOutput;
+import org.sejda.model.output.TaskOutputDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +55,39 @@ public final class IOUtils {
         // hide
     }
 
-    private static final String BUFFER_NAME = "SejdaTmpBuffer";
+    private static final String BUFFER_NAME = "sejdaTmp";
 
     /**
-     * @return a temporary pdf file
+     * Creates a temp file trying to find the best location based on the task output.
+     * 
+     * @param taskOut
+     * @return
      * @throws TaskIOException
      */
-    public static File createTemporaryPdfBuffer() throws TaskIOException {
-        return createTemporaryBuffer(".pdf");
+    public static File createTemporaryBuffer(TaskOutput taskOut) throws TaskIOException {
+        TmpBufferLocationFinder bufferLocationFinder = new TmpBufferLocationFinder();
+        try {
+            taskOut.accept(bufferLocationFinder);
+            File buffer = tmpFile(bufferLocationFinder.bufferLocation).toFile();
+            buffer.deleteOnExit();
+            return buffer;
+        } catch (TaskOutputVisitException | IOException e) {
+            throw new TaskIOException("Unable to create temporary buffer", e);
+        }
+    }
+
+    private static Path tmpFile(Path location) throws IOException {
+        if (IS_OS_UNIX) {
+            return Files.createTempFile(location, "." + BUFFER_NAME, null);
+        }
+        return hide(Files.createTempFile(location, BUFFER_NAME, null));
+    }
+
+    private static Path hide(Path path) throws IOException {
+        if (IS_OS_WINDOWS) {
+            Files.setAttribute(path, "dos:hidden", Boolean.TRUE);
+        }
+        return path;
     }
 
     /**
@@ -72,8 +111,8 @@ public final class IOUtils {
     private static final int TEMP_DIR_ATTEMPTS = 1000;
 
     public static File createTemporaryFolder() {
-        File baseDir = new File(System.getProperty("java.io.tmpdir"));
-        String baseName = new StringBuilder("sejdaTmp").append(System.currentTimeMillis()).append("-").toString();
+        File baseDir = SystemUtils.getJavaIoTmpDir();
+        String baseName = new StringBuilder(BUFFER_NAME).append(System.currentTimeMillis()).append("-").toString();
 
         for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
             File tempDir = new File(baseDir, baseName + counter);
@@ -105,5 +144,43 @@ public final class IOUtils {
         }
 
         return newNamedOutput;
+    }
+
+    /**
+     * Component trying to find the best location for the temporary buffer based on the task output location
+     * 
+     * @author Andrea Vacondio
+     */
+    private static class TmpBufferLocationFinder implements TaskOutputDispatcher {
+
+        private Path bufferLocation = Paths.get(JAVA_IO_TMPDIR);
+
+        @Override
+        public void dispatch(FileTaskOutput output) {
+            Path dest = output.getDestination().toPath();
+            if (Files.exists(dest)) {
+                bufferLocation = dest.getParent();
+            }
+        }
+
+        @Override
+        public void dispatch(DirectoryTaskOutput output) {
+            Path dest = output.getDestination().toPath();
+            if (Files.exists(dest)) {
+                bufferLocation = dest;
+            }
+        }
+
+        @Override
+        public void dispatch(FileOrDirectoryTaskOutput output) {
+            Path dest = output.getDestination().toPath();
+            if (Files.exists(dest)) {
+                if (Files.isDirectory(dest)) {
+                    bufferLocation = dest;
+                } else {
+                    bufferLocation = dest.getParent();
+                }
+            }
+        }
     }
 }

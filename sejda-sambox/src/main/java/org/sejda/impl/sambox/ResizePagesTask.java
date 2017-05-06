@@ -17,6 +17,17 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -33,17 +44,6 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * SAMBox implementation of a task that can resize pages or add page margins
@@ -82,7 +82,7 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                 documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
                 documentHandler.setCreatorOnPDDocument();
 
-                File tmpFile = createTemporaryPdfBuffer();
+                File tmpFile = createTemporaryBuffer(parameters.getOutput());
                 LOG.debug("Created output on temporary buffer {}", tmpFile);
 
                 Collection<PDPage> pages = new ArrayList<>();

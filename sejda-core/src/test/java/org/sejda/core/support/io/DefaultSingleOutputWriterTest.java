@@ -20,7 +20,7 @@ package org.sejda.core.support.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,7 +75,7 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File out = new File(folder.newFolder(), "not-existing.tmp");
         out.deleteOnExit();
-        File outFile = createTemporaryPdfBuffer();
+        File outFile = createTemporaryBuffer();
         victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
@@ -87,7 +87,7 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         File out = folder.newFile();
         out.deleteOnExit();
-        File outFile = createTemporaryPdfBuffer();
+        File outFile = createTemporaryBuffer();
         victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
@@ -100,7 +100,7 @@ public class DefaultSingleOutputWriterTest {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.RENAME, context);
         File out = folder.newFile();
         out.deleteOnExit();
-        File outFile = createTemporaryPdfBuffer();
+        File outFile = createTemporaryBuffer();
         victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
@@ -113,7 +113,7 @@ public class DefaultSingleOutputWriterTest {
         File out = folder.newFile();
         out.deleteOnExit();
         victim.taskOutput(out);
-        File outFile = createTemporaryPdfBuffer();
+        File outFile = createTemporaryBuffer();
         victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
@@ -125,7 +125,7 @@ public class DefaultSingleOutputWriterTest {
         File out = folder.newFile();
         out.deleteOnExit();
         victim.taskOutput(out);
-        File outFile = createTemporaryPdfBuffer();
+        File outFile = createTemporaryBuffer();
         victim.taskOutput(outFile);
         Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
         victim.dispatch(new FileTaskOutput(out));
