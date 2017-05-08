@@ -45,19 +45,14 @@ public class AlternateMixMultipleInputParametersTest {
         AlternateMixMultipleInputParameters eq1 = new AlternateMixMultipleInputParameters();
         eq1.addInput(firstInput);
         eq1.addInput(secondInput);
-        eq1.setOutputName("name.pdf");
         AlternateMixMultipleInputParameters eq2 = new AlternateMixMultipleInputParameters();
         eq2.addInput(firstInput);
         eq2.addInput(secondInput);
-        eq2.setOutputName("name.pdf");
         AlternateMixMultipleInputParameters eq3 = new AlternateMixMultipleInputParameters();
         eq3.addInput(firstInput);
         eq3.addInput(secondInput);
-        eq3.setOutputName("name.pdf");
         AlternateMixMultipleInputParameters diff = new AlternateMixMultipleInputParameters();
         diff.addInput(firstInput);
-        diff.addInput(secondInput);
-        diff.setOutputName("diff.pdf");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
@@ -65,7 +60,6 @@ public class AlternateMixMultipleInputParametersTest {
     public void invalidMinInputSize() throws IOException {
         AlternateMixMultipleInputParameters victim = new AlternateMixMultipleInputParameters();
         victim.addInput(new PdfMixInput(PdfFileSource.newInstanceNoPassword(tmpFolder.newFile("test.pdf")), false, 1));
-        victim.setOutputName("name.pdf");
         victim.setOutput(new FileTaskOutput(tmpFolder.newFile("out.pdf")));
         TestUtils.assertInvalidParameters(victim);
     }
@@ -75,7 +69,6 @@ public class AlternateMixMultipleInputParametersTest {
         AlternateMixMultipleInputParameters victim = new AlternateMixMultipleInputParameters();
         victim.addInput(new PdfMixInput(PdfFileSource.newInstanceNoPassword(tmpFolder.newFile("test.pdf")), false, 1));
         victim.addInput(new PdfMixInput(null, false, 1));
-        victim.setOutputName("name.pdf");
         victim.setOutput(new FileTaskOutput(tmpFolder.newFile("out.pdf")));
         TestUtils.assertInvalidParameters(victim);
     }

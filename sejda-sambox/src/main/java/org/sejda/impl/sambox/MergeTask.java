@@ -21,8 +21,6 @@ package org.sejda.impl.sambox;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
@@ -33,6 +31,7 @@ import java.util.Queue;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.common.LookupTable;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
@@ -92,8 +91,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
     @Override
     public void execute(MergeParameters parameters) throws TaskException {
         int currentStep = 0;
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ", tmpFile);
+        File tmpFile = IOUtils.createTemporaryBuffer(parameters.getOutput());
+        outputWriter.taskOutput(tmpFile);
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         this.destinationDocument = new PDDocumentHandler();
         this.destinationDocument.setCreatorOnPDDocument();
@@ -191,7 +191,6 @@ public class MergeTask extends BaseTask<MergeParameters> {
         destinationDocument.savePDDocument(tmpFile);
         closeResources();
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
 

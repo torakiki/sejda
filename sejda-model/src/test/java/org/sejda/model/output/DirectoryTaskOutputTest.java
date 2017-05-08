@@ -20,13 +20,13 @@
 package org.sejda.model.output;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 
 /**
@@ -35,13 +35,8 @@ import org.sejda.TestUtils;
  */
 public class DirectoryTaskOutputTest {
 
-    private File directory;
-
-    @Before
-    public void setUp() {
-        directory = mock(File.class);
-        when(directory.isDirectory()).thenReturn(Boolean.TRUE);
-    }
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test(expected = IllegalArgumentException.class)
     public void testNullFile() {
@@ -49,21 +44,26 @@ public class DirectoryTaskOutputTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidDirectory() {
-        when(directory.isDirectory()).thenReturn(Boolean.FALSE);
-        new DirectoryTaskOutput(directory);
+    public void testInvalidDirectory() throws IOException {
+        new DirectoryTaskOutput(folder.newFile());
     }
 
     @Test
-    public void testValidDirectory() {
-        DirectoryTaskOutput instance = new DirectoryTaskOutput(directory);
+    public void testValidDirectory() throws IOException {
+        DirectoryTaskOutput instance = new DirectoryTaskOutput(folder.newFolder());
         assertNotNull(instance);
     }
 
     @Test
-    public void testEquals() {
-        File diffDirectory = mock(File.class);
-        when(diffDirectory.isDirectory()).thenReturn(Boolean.TRUE);
+    public void testValidNonExistingDirectory() throws IOException {
+        DirectoryTaskOutput instance = new DirectoryTaskOutput(new File("I dont exist"));
+        assertNotNull(instance);
+    }
+
+    @Test
+    public void testEquals() throws IOException {
+        File directory = folder.newFolder();
+        File diffDirectory = folder.newFolder();
         DirectoryTaskOutput eq1 = new DirectoryTaskOutput(directory);
         DirectoryTaskOutput eq2 = new DirectoryTaskOutput(directory);
         DirectoryTaskOutput eq3 = new DirectoryTaskOutput(directory);

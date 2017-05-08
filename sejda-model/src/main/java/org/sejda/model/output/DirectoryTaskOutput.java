@@ -20,13 +20,14 @@
  */
 package org.sejda.model.output;
 
+import static java.util.Objects.isNull;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
-import org.sejda.model.validation.constraint.Directory;
 
 /**
  * Directory output destination.
@@ -36,7 +37,6 @@ import org.sejda.model.validation.constraint.Directory;
  */
 public class DirectoryTaskOutput implements MultipleTaskOutput {
 
-    @Directory
     private final File directory;
 
     /**
@@ -47,7 +47,7 @@ public class DirectoryTaskOutput implements MultipleTaskOutput {
      *             if the input directory is null or not a directory
      */
     public DirectoryTaskOutput(File directory) {
-        if (directory == null || !directory.isDirectory()) {
+        if (isNull(directory) || (directory.exists() && !directory.isDirectory())) {
             throw new IllegalArgumentException("A not null directory instance is expected. Path: " + directory);
         }
         this.directory = directory;

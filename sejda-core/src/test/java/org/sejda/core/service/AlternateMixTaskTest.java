@@ -51,7 +51,6 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         params.addInput(new PdfMixInput(shortInput(), true, 1));
         params.addInput(new PdfMixInput(stronglyEncryptedInput(), true, 3));
         params.addInput(new PdfMixInput(largeOutlineInput()));
-        params.setOutputName("outName.pdf");
         setUpParameters(params);
         testContext.pdfOutputTo(params);
         execute(params);
@@ -76,7 +75,6 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         third.addPageRange(new PageRange(5, 10));
         third.addPageRange(new PageRange(22, 23));
         params.addInput(third);
-        params.setOutputName("outName.pdf");
         setUpParameters(params);
         testContext.pdfOutputTo(params);
         execute(params);
@@ -92,7 +90,6 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         AlternateMixMultipleInputParameters parameters = new AlternateMixMultipleInputParameters();
         parameters.addInput(new PdfMixInput(shortInput()));
         parameters.addInput(new PdfMixInput(shortInput(), true, 3));
-        parameters.setOutputName("outName.pdf");
         setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -105,7 +102,6 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         AlternateMixMultipleInputParameters parameters = new AlternateMixMultipleInputParameters();
         parameters.addInput(new PdfMixInput(encryptedInput()));
         parameters.addInput(new PdfMixInput(stronglyEncryptedInput(), true, 3));
-        parameters.setOutputName("outName.pdf");
         setUpParameters(parameters);
         testContext.pdfOutputTo(parameters);
         execute(parameters);

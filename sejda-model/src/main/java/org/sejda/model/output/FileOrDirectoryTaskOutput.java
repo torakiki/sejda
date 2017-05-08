@@ -47,7 +47,7 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
         try {
             writer.dispatch(this);
         } catch (IOException e) {
-            throw new TaskOutputVisitException("Exception dispatching the file task output.", e);
+            throw new TaskOutputVisitException("Exception dispatching the file or directory task output.", e);
         }
     }
 

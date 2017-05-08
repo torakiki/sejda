@@ -22,7 +22,6 @@ import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
-import static org.sejda.core.support.io.model.FileOutput.file;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -66,8 +65,9 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     @Override
     public void execute(T parameters) throws TaskException {
 
-        File tmpFile = createTemporaryBuffer();
-        LOG.debug("Created output temporary buffer {} ", tmpFile);
+        File tmpFile = createTemporaryBuffer(parameters.getOutput());
+        outputWriter.taskOutput(tmpFile);
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Opening {}", parameters.getSource());
         documentHandler = parameters.getSource().open(sourceOpener);
@@ -94,7 +94,6 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         }
         getWriter().closeDestination();
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());
     }

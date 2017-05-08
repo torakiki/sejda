@@ -49,7 +49,6 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
     @Valid
     @AtLeastTwo
     private List<PdfMixInput> inputList = new ArrayList<PdfMixInput>();
-    private String outputName;
 
     @Override
     public SingleTaskOutput getOutput() {
@@ -59,19 +58,6 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
     @Override
     public void setOutput(SingleTaskOutput output) {
         this.output = output;
-    }
-
-    /**
-     * @param outputName
-     *            the outputName to be used when the output is not a file destination
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
-    @Override
-    public String getOutputName() {
-        return outputName;
     }
 
     /**
@@ -87,7 +73,7 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(outputName).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(output).toHashCode();
     }
 
     @Override
@@ -100,6 +86,6 @@ public class AlternateMixMultipleInputParameters extends AbstractPdfOutputParame
         }
         AlternateMixMultipleInputParameters parameter = (AlternateMixMultipleInputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, parameter.inputList)
-                .append(outputName, parameter.getOutputName()).isEquals();
+                .append(output, parameter.getOutput()).isEquals();
     }
 }

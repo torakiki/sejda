@@ -41,7 +41,7 @@ public class DirectoryValidator implements ConstraintValidator<Directory, File> 
 
     @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
-        if (value != null) {
+        if (value != null && value.exists()) {
             return value.isDirectory();
         }
         return true;

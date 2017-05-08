@@ -26,7 +26,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
-import org.sejda.model.validation.constraint.IsFile;
 
 /**
  * {@link File} output destination.
@@ -36,7 +35,6 @@ import org.sejda.model.validation.constraint.IsFile;
  */
 public class FileTaskOutput implements SingleTaskOutput {
 
-    @IsFile
     private final File file;
 
     /**

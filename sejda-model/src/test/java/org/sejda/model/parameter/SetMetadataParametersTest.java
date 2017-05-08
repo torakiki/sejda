@@ -24,13 +24,17 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.PdfMetadataKey;
 
@@ -39,6 +43,9 @@ import org.sejda.model.pdf.PdfMetadataKey;
  * 
  */
 public class SetMetadataParametersTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testEquals() {
@@ -67,9 +74,9 @@ public class SetMetadataParametersTest {
     }
 
     @Test
-    public void testInvalidParameters() {
+    public void testInvalidParameters() throws IOException {
         SetMetadataParameters victim = new SetMetadataParameters();
-        SingleTaskOutput output = mock(SingleTaskOutput.class);
+        SingleTaskOutput output = new FileTaskOutput(folder.newFile());
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

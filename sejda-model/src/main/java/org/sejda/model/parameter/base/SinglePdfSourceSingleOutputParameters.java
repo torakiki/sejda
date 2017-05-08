@@ -37,15 +37,9 @@ import org.sejda.model.validation.constraint.ValidSingleOutput;
 public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSourceParameters implements
         SingleOutputTaskParameters {
 
-    private String outputName;
     @Valid
     @NotNull
     private SingleTaskOutput output;
-
-    @Override
-    public String getOutputName() {
-        return outputName;
-    }
 
     @Override
     public SingleTaskOutput getOutput() {
@@ -57,17 +51,10 @@ public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSou
         this.output = output;
     }
 
-    /**
-     * @param outputName
-     *            the outputName to be used when the output is not a file destination
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputName).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(getOutput()).toHashCode();
     }
 
     @Override
@@ -79,7 +66,7 @@ public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSou
             return false;
         }
         SinglePdfSourceSingleOutputParameters parameter = (SinglePdfSourceSingleOutputParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputName, parameter.getOutputName())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
                 .isEquals();
     }
 }

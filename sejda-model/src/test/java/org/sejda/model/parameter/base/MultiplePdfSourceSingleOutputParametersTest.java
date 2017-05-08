@@ -19,8 +19,11 @@
  */
 package org.sejda.model.parameter.base;
 
+import static org.mockito.Mockito.mock;
+
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.output.SingleTaskOutput;
 
 /**
  * @author Andrea Vacondio
@@ -30,11 +33,15 @@ public class MultiplePdfSourceSingleOutputParametersTest {
 
     @Test
     public void testEquals() {
+        SingleTaskOutput output = mock(SingleTaskOutput.class);
         MockMultiplePdfSourceSingleOutputParameters eq1 = new MockMultiplePdfSourceSingleOutputParameters();
+        eq1.setOutput(output);
         MockMultiplePdfSourceSingleOutputParameters eq2 = new MockMultiplePdfSourceSingleOutputParameters();
+        eq2.setOutput(output);
         MockMultiplePdfSourceSingleOutputParameters eq3 = new MockMultiplePdfSourceSingleOutputParameters();
+        eq3.setOutput(output);
         MockMultiplePdfSourceSingleOutputParameters diff = new MockMultiplePdfSourceSingleOutputParameters();
-        diff.setOutputName("ChuckNorris");
+        diff.setOutput(mock(SingleTaskOutput.class));
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 

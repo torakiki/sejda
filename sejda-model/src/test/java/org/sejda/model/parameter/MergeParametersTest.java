@@ -21,14 +21,18 @@ package org.sejda.model.parameter;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
@@ -39,11 +43,13 @@ import org.sejda.model.pdf.page.PageRange;
  */
 public class MergeParametersTest {
 
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
     private SingleTaskOutput output;
 
     @Before
-    public void setUp() {
-        output = mock(SingleTaskOutput.class);
+    public void setUp() throws IOException {
+        output = new FileTaskOutput(folder.newFile());
     }
 
     @Test
@@ -70,7 +76,6 @@ public class MergeParametersTest {
     public void testInvalidParametersInvalidRange() {
         MergeParameters victim = new MergeParameters();
         victim.setOutput(output);
-        victim.setOutputName("name");
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         PdfMergeInput mergeInput = new PdfMergeInput(input);

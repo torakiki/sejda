@@ -20,8 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyEmbeddedFile;
 
 import java.io.File;
@@ -81,8 +80,9 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
     @Override
     public void execute(AttachmentsCollectionParameters parameters) throws TaskException {
         int currentStep = 0;
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {} ", tmpFile);
+        File tmpFile = createTemporaryBuffer(parameters.getOutput());
+        outputWriter.taskOutput(tmpFile);
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         destinationDocument = new PDDocumentHandler();
         destinationDocument.setCreatorOnPDDocument();
@@ -133,7 +133,6 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         destinationDocument.savePDDocument(tmpFile);
         nullSafeCloseQuietly(destinationDocument);
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Created portfolio with {} files and written to {}", parameters.getSourceList().size(),
                 parameters.getOutput());

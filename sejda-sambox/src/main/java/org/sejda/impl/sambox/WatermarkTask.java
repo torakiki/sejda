@@ -20,7 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -79,7 +79,7 @@ public class WatermarkTask extends BaseTask<WatermarkParameters> {
                 documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
                 documentHandler.setCreatorOnPDDocument();
 
-                File tmpFile = createTemporaryPdfBuffer();
+                File tmpFile = createTemporaryBuffer(parameters.getOutput());
                 LOG.debug("Created output on temporary buffer {}", tmpFile);
 
                 PdfWatermarker watermarker = new PdfWatermarker(parameters, documentHandler.getUnderlyingPDDocument());

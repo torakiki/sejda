@@ -17,7 +17,7 @@
 package org.sejda.impl.sambox.component.split;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -81,7 +81,7 @@ public class PageDestinationsLevelPdfExtractor {
                 LOG.debug("Starting extracting {} pages {} {}", section.title, section.startPage, section.endPage);
 
                 outputDocumentsCounter++;
-                File tmpFile = createTemporaryPdfBuffer();
+                File tmpFile = createTemporaryBuffer(parameters.getOutput());
                 LOG.debug("Created output temporary buffer {}", tmpFile);
 
                 String outName = nameGenerator(parameters.getOutputPrefix())

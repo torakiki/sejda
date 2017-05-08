@@ -48,7 +48,7 @@ import org.sejda.model.validation.validator.SingleOutputValidator;
 @Constraint(validatedBy = SingleOutputValidator.class)
 @Documented
 public @interface ValidSingleOutput {
-    String message() default "Output name cannot be blank for non file output destinations.";
+    String message() default "Output not set.";
 
     Class<?>[] groups() default {};
 

@@ -20,8 +20,7 @@ package org.sejda.impl.sambox;
 
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryPdfBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
 import java.io.File;
 import java.util.Map.Entry;
@@ -72,8 +71,9 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         documentHandler = source.open(documentLoader);
         documentHandler.setCreatorOnPDDocument();
 
-        File tmpFile = createTemporaryPdfBuffer();
-        LOG.debug("Created output temporary buffer {}", tmpFile);
+        File tmpFile = createTemporaryBuffer(parameters.getOutput());
+        outputWriter.taskOutput(tmpFile);
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
@@ -87,7 +87,6 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         documentHandler.savePDDocument(tmpFile);
         nullSafeCloseQuietly(documentHandler);
 
-        outputWriter.setOutput(file(tmpFile).name(parameters.getOutputName()));
         parameters.getOutput().accept(outputWriter);
 
         LOG.debug("Metadata set on {}", parameters.getOutput());
