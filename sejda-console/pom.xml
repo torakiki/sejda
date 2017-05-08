@@ -287,12 +287,6 @@
 			<version>${sambox.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- sejda-core needs an implementation of javax.validation -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate-validator.version}</version>
-		</dependency>
 		<!-- test dependencies -->
 		<dependency>
 			<groupId>org.sejda</groupId>
