@@ -49,9 +49,9 @@ public class SingleOutputValidator implements ConstraintValidator<ValidSingleOut
             if (isNull(value.getOutput())) {
                 return false;
             }
-            if (value.getOutput().getDestination().exists()
+            if (isNull(value.getOutput().getDestination()) || (value.getOutput().getDestination().exists()
                     && (value.getExistingOutputPolicy() == ExistingOutputPolicy.FAIL
-                            || value.getExistingOutputPolicy() == ExistingOutputPolicy.SKIP)) {
+                            || value.getExistingOutputPolicy() == ExistingOutputPolicy.SKIP))) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(
                         String.format("File destination already exists: %s.", value.getOutput().getDestination()))
