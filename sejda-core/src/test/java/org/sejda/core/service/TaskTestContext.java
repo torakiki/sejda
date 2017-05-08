@@ -280,7 +280,8 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertEmptyMultipleOutput() {
         assertNotNull(fileOutput);
         assertTrue("Expected an output directory", fileOutput.isDirectory());
-        assertEquals("Found output files while expecting none", 0, fileOutput.listFiles().length);
+        assertEquals("Found output files while expecting none", 0,
+                fileOutput.listFiles((d, n) -> !n.endsWith(".tmp")).length);
         return this;
     }
 
