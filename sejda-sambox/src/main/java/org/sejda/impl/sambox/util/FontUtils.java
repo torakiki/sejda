@@ -113,7 +113,7 @@ public final class FontUtils {
         if (!canDisplay(text, font)) {
             PDFont fallback = findFontFor(document, text);
             String fallbackName = fallback == null ? null : fallback.getName();
-            LOG.info("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(), fallbackName);
+            LOG.debug("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(), fallbackName);
             return fallback;
         }
         return font;
