@@ -30,7 +30,8 @@ files = [
     'NotoSansMyanmar-Regular.ttf',
     'NotoSansSinhala-Regular.ttf',
     'NotoSansMongolian-Regular.ttf',
-    'NotoSansKannada-Regular.ttf'
+    'NotoSansKannada-Regular.ttf',
+    'NotoSansOriya-Regular.ttf'
 ]
 ```
 

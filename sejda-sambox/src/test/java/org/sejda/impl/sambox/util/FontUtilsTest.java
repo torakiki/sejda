@@ -129,6 +129,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("ᠮᠣᠩᠭᠣᠯ")); // mongolian
         assertNotNull(findFontFor("ಕನ್ನಡ")); // kannada
         assertNotNull(findFontFor("한국어 조선말")); // korean
+        assertNotNull(findFontFor("ଓଡ଼ିଆ ଭାଷା")); // oryia
     }
 
     @Test
@@ -138,7 +139,7 @@ public class FontUtilsTest {
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        List<String> strings = Arrays.asList("한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
+        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା","한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
                 "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ");
 
         for(String str: strings) {
