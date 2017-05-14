@@ -456,6 +456,10 @@ public class TaskTestContext implements Closeable {
         assertThat(taskWarnings, hasItem(message));
     }
 
+    public void assertNoTaskWarnings() {
+        assertEquals(taskWarnings.size(), 0);
+    }
+
     private void initOutputFromSource(File source, String password) throws IOException {
         if (source.getName().toLowerCase().endsWith(SejdaFileExtensions.PDF_EXTENSION)) {
             this.outputDocument = PDFParser.parse(SeekableSources.seekableSourceFrom(source), password);
