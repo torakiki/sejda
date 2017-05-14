@@ -80,7 +80,7 @@ public final class IOUtils {
         if (IS_OS_UNIX) {
             return Files.createTempFile(location, "." + BUFFER_NAME, null);
         }
-        return hide(Files.createTempFile(location, BUFFER_NAME, null));
+        return Files.createTempFile(location, BUFFER_NAME, null);
     }
 
     private static Path hide(Path path) throws IOException {
