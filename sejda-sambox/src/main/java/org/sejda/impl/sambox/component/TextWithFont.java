@@ -36,4 +36,8 @@ public class TextWithFont {
     public String getText() {
         return text;
     }
+
+    public String toString() {
+        return "[" + this.font.getName() + "] '" + getText() + "'";
+    }
 }
