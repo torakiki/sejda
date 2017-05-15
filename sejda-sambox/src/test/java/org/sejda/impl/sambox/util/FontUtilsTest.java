@@ -146,7 +146,9 @@ public class FontUtilsTest {
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
         List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
-                "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ");
+                "هذا هو كل الحق إلى اليسار", "123 יתימאה ןחבמ", "032 ציר הורמון הגדילה",
+                "This is الحق  Mixed יתימאה ןחבמ",
+                "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ", "ציר הורמון הגדילה");
 
         for (String str : strings) {
             PDDocument doc = new PDDocument();

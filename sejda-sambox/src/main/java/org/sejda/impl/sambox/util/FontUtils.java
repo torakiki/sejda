@@ -20,6 +20,7 @@ package org.sejda.impl.sambox.util;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.sambox.util.BidiUtils.visualToLogical;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.GeneralPath;
@@ -403,8 +404,7 @@ public final class FontUtils {
 
         // we want to keep the insertion order
         List<TextWithFont> result = new ArrayList<>();
-
-        Iterator<Integer> codePointIterator = label.codePoints().iterator();
+        Iterator<Integer> codePointIterator = visualToLogical(label).codePoints().iterator();
         while (codePointIterator.hasNext()) {
             int codePoint = codePointIterator.next();
 
