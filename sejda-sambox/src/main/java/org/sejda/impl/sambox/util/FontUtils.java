@@ -46,16 +46,7 @@ import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.font.FontMappers;
-import org.sejda.sambox.pdmodel.font.FontMapping;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
-import org.sejda.sambox.pdmodel.font.PDSimpleFont;
-import org.sejda.sambox.pdmodel.font.PDType0Font;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
-import org.sejda.sambox.pdmodel.font.PDType3CharProc;
-import org.sejda.sambox.pdmodel.font.PDType3Font;
-import org.sejda.sambox.pdmodel.font.PDVectorFont;
+import org.sejda.sambox.pdmodel.font.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,15 +224,15 @@ public final class FontUtils {
             // remove all whitespace characters and check only if those can be written using the font
             byte[] encoded = font.encode(removeWhitespace(text));
 
-            if (font instanceof PDType0Font) {
+            if (font instanceof PDVectorFont) {
                 InputStream in = new ByteArrayInputStream(encoded);
                 while (in.available() > 0) {
                     int code = font.readCode(in);
 
                     // LOG.debug("Read codePoint {}", code);
 
-                    PDType0Font type0Font = (PDType0Font) font;
-                    GeneralPath path = type0Font.getPath(code);
+                    PDVectorFont vectorFont = (PDVectorFont) font;
+                    GeneralPath path = vectorFont.getPath(code);
                     // if(path != null) {
                     // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
                     // }
