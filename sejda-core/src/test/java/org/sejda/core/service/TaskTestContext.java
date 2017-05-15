@@ -428,13 +428,26 @@ public class TaskTestContext implements Closeable {
     }
 
     Throwable taskFailureCause = null;
+    List<String> taskWarnings = new ArrayList<>();
+
+    private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<TaskExecutionWarningEvent>() {
+        @Override
+        public void onEvent(TaskExecutionWarningEvent event) {
+            taskWarnings.add(event.getWarning());
+        }
+    };
+
+    private EventListener<TaskExecutionFailedEvent> failureListener = new EventListener<TaskExecutionFailedEvent>() {
+        @Override
+        public void onEvent(TaskExecutionFailedEvent event) {
+            taskFailureCause = event.getFailingCause();
+        }
+    };
+
     public void expectTaskWillFail() {
-        GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionFailedEvent>() {
-            @Override
-            public void onEvent(TaskExecutionFailedEvent event) {
-                taskFailureCause = event.getFailingCause();
-            }
-        });
+        taskFailureCause = null;
+        GlobalNotificationContext.getContext().removeListener(failureListener);
+        GlobalNotificationContext.getContext().addListener(failureListener);
     }
 
     public void assertTaskFailed(String message) {
@@ -442,14 +455,10 @@ public class TaskTestContext implements Closeable {
         assertThat(taskFailureCause.getMessage(), startsWith(message));
     }
 
-    List<String> taskWarnings = new ArrayList<>();
     public void expectTaskWillProduceWarnings() {
-        GlobalNotificationContext.getContext().addListener(new EventListener<TaskExecutionWarningEvent>() {
-            @Override
-            public void onEvent(TaskExecutionWarningEvent event) {
-                taskWarnings.add(event.getWarning());
-            }
-        });
+        taskWarnings = new ArrayList<>();
+        GlobalNotificationContext.getContext().removeListener(warningsListener);
+        GlobalNotificationContext.getContext().addListener(warningsListener);
     }
 
     public void assertTaskWarning(String message) {
@@ -457,7 +466,7 @@ public class TaskTestContext implements Closeable {
     }
 
     public void assertNoTaskWarnings() {
-        assertEquals(taskWarnings.size(), 0);
+        assertEquals("Expected no warnings but got: " + StringUtils.join(taskWarnings, ","), taskWarnings.size(), 0);
     }
 
     private void initOutputFromSource(File source, String password) throws IOException {
