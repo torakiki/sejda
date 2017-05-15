@@ -81,7 +81,8 @@ public class FontUtilsTest {
         assertEquals(PDType1Font.COURIER_OBLIQUE, getStandardType1Font(StandardType1Font.CURIER_OBLIQUE));
         assertEquals(PDType1Font.HELVETICA, getStandardType1Font(StandardType1Font.HELVETICA));
         assertEquals(PDType1Font.HELVETICA_BOLD, getStandardType1Font(StandardType1Font.HELVETICA_BOLD));
-        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE, getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE));
+        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE,
+                getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE));
         assertEquals(PDType1Font.HELVETICA_OBLIQUE, getStandardType1Font(StandardType1Font.HELVETICA_OBLIQUE));
         assertEquals(PDType1Font.TIMES_BOLD, getStandardType1Font(StandardType1Font.TIMES_BOLD));
         assertEquals(PDType1Font.TIMES_BOLD_ITALIC, getStandardType1Font(StandardType1Font.TIMES_BOLD_ITALIC));
@@ -92,7 +93,11 @@ public class FontUtilsTest {
     }
 
     private PDFont findFontFor(String s) {
-        return FontUtils.findFontFor(new PDDocument(), s);
+        try {
+            return FontUtils.findFontFor(new PDDocument(), s);
+        } finally {
+            FontUtils.clearLoadedFontCache();
+        }
     }
 
     @Test
@@ -119,7 +124,7 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
         assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
         assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
-        assertNotNull(findFontFor("ጩ")); //ethiopic
+        assertNotNull(findFontFor("ጩ")); // ethiopic
         assertNotNull(findFontFor("پنجابی, ਪੰਜਾਬੀ")); // punjabi
         assertNotNull(findFontFor("தமிழ்")); // tamil
         assertNotNull(findFontFor("ગુજરાતી")); // gujarati
@@ -134,31 +139,34 @@ public class FontUtilsTest {
 
     @Test
     public void fontForMultipleLanguagesInOneString() {
-        assertNotNull(findFontFor("န\u103Aမာဘာသာ සිංහල ગુજરાતી தமிழ் پنجابی, ਪੰਜਾਬੀ ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
+        assertNotNull(findFontFor(
+                "န\u103Aမာဘာသာ සිංහල ગુજરાતી தமிழ் پنجابی, ਪੰਜਾਬੀ ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរጩ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ភាសាខ្មែរ  עברית")); // all in one
     }
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା","한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
+        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
                 "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ");
 
-        for(String str: strings) {
+        for (String str : strings) {
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
-            new PageTextWriter(doc).write(page, new Point(10, 10), str, getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
+            new PageTextWriter(doc).write(page, new Point(10, 10), str,
+                    getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
             doc.addPage(page);
             PDDocumentHandler handler = new PDDocumentHandler(doc);
             File tmp = IOUtils.createTemporaryBuffer();
             handler.savePDDocument(tmp);
 
             PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
-            String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0), new Rectangle(0, 0, 1000, 1000));
+            String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),
+                    new Rectangle(0, 0, 1000, 1000));
             assertEquals(noWhitespace(str), noWhitespace(text));
         }
     }
 
     private String noWhitespace(String in) {
-        return in.replaceAll("\\s","");
+        return in.replaceAll("\\s", "");
     }
 
     @Test
@@ -173,8 +181,8 @@ public class FontUtilsTest {
 
     @Test
     public void testFontOrFallbackNotFoundFallback() {
-        assertNull(fontOrFallback("\u1B2A\u1B35\u1B31\u1B29\u1B2E\u1B36, \u1B29\u1B32\u1B29\u1B2E\u1B36",
-                HELVETICA, new PDDocument()));
+        assertNull(fontOrFallback("\u1B2A\u1B35\u1B31\u1B29\u1B2E\u1B36, \u1B29\u1B32\u1B29\u1B2E\u1B36", HELVETICA,
+                new PDDocument()));
     }
 
     @Test
@@ -213,7 +221,7 @@ public class FontUtilsTest {
     @Test
     public void testLoadingFullFontFromSystemForSubsetFonts() throws TaskIOException, IOException {
         boolean isVerdanaAvailable = isFontAvailableOnSystem("Verdana");
-        if(!isVerdanaAvailable) {
+        if (!isVerdanaAvailable) {
             return;
         }
 
@@ -231,14 +239,14 @@ public class FontUtilsTest {
     }
 
     private PDDocument getTestDoc(String name) throws TaskIOException {
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader()
-                .getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
 
         return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
     }
 
     private boolean isFontAvailableOnSystem(String name) {
-        FontMapping<TrueTypeFont> result =  FontMappers.instance().getTrueTypeFont(name, null);
+        FontMapping<TrueTypeFont> result = FontMappers.instance().getTrueTypeFont(name, null);
         return result != null && !result.isFallback();
     }
 

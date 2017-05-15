@@ -35,6 +35,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.hamcrest.Matcher;
 import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
@@ -211,11 +212,12 @@ public class MergeTaskTest extends AbstractTaskTest {
         List<Matcher<Iterable<? super File>>> result = new ArrayList<Matcher<Iterable<? super File>>>();
         for (String current : filenames) {
             String filename = current.toString();
-            if (FilenameUtils.getPrefixLength(filename) > 0) {
+            if (SystemUtils.IS_OS_WINDOWS) {
                 result.add(CombinableMatcher.<Iterable<? super File>> either(hasItem(new File(filename)))
                         .or(hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
+            } else {
+                result.add(hasItem(new File(filename)));
             }
-            result.add(hasItem(new File(filename)));
         }
         return result;
     }
@@ -256,7 +258,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     @Test
     public void inputFiles_csv_empty() {
         defaultCommandLine().without("-f").with("-l", "./location/empty_filenames.csv")
-                .assertConsoleOutputContains("No input files specified in './location/empty_filenames.csv'");
+                .assertConsoleOutputContains("No input files specified in ");
     }
 
     @Test
