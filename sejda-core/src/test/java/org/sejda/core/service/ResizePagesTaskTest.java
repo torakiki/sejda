@@ -17,6 +17,11 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertEquals;
+
+import java.awt.Rectangle;
+import java.io.IOException;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.parameter.ResizePagesParameters;
@@ -24,11 +29,6 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
-
-import java.awt.*;
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Eduard Weissmann
@@ -61,9 +61,12 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
             // contents is scaled to create margins
             String content = extractText(page, new Rectangle(115, 165, 332, 35));
-            assertEquals("Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>" +
-                    " Everyone is permitted to copy and distribute verbatim copies" +
-                    " of this license document, but changing it is not allowed.", content);
+            assertEquals("Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>",
+                    extractText(page, new Rectangle(115, 170, 315, 9)));
+            assertEquals("Everyone is permitted to copy and distribute verbatim copies",
+                    extractText(page, new Rectangle(115, 179, 315, 9)));
+            assertEquals("of this license document, but changing it is not allowed.",
+                    extractText(page, new Rectangle(115, 188, 315, 9)));
 
             page = d.getPage(3);
 
