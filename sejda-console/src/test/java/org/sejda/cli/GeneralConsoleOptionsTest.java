@@ -19,14 +19,17 @@
  */
 package org.sejda.cli;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.sejda.StandardConsoleOnly;
@@ -85,8 +88,11 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
         Map<CustomizableProps, String> customs = new HashMap<>();
         customs.put(CustomizableProps.APP_NAME, "Sejda Console");
         customs.put(CustomizableProps.LICENSE_PATH, "/LICENSE.txt");
-        new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--license", IOUtils
-                .toString(getClass().getResourceAsStream("/LICENSE.txt"), StandardCharsets.UTF_8));
+        try (InputStream resource = getClass().getResourceAsStream("/LICENSE.txt")) {
+            new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--license",
+                    new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines()
+                            .map(StringUtils::trim).toArray(String[]::new));
+        }
     }
 
     @Test
