@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,6 +41,7 @@ import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -272,7 +274,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeRangesMergeForms() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
-        for (PdfMergeInput input : parameters.getInputList()) {
+        for (PdfMergeInput input : parameters.getPdfInputList()) {
             input.addPageRange(new PageRange(3, 10));
             input.addPageRange(new PageRange(20, 23));
             input.addPageRange(new PageRange(80, 90));
@@ -285,7 +287,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeRanges() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
-        for (PdfMergeInput input : parameters.getInputList()) {
+        for (PdfMergeInput input : parameters.getPdfInputList()) {
             input.addPageRange(new PageRange(3, 10));
             input.addPageRange(new PageRange(20, 23));
             input.addPageRange(new PageRange(80, 90));
@@ -307,7 +309,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void testExecuteMergeRangesWithBlankPage() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
         testContext.pdfOutputTo(parameters);
-        for (PdfMergeInput input : parameters.getInputList()) {
+        for (PdfMergeInput input : parameters.getPdfInputList()) {
             input.addPageRange(new PageRange(2, 4));
         }
         parameters.setBlankPageIfOdd(true);
@@ -325,7 +327,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void testExecuteMergeRangesWithBlankPagesAndToc() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
         testContext.pdfOutputTo(parameters);
-        for (PdfMergeInput input : parameters.getInputList()) {
+        for (PdfMergeInput input : parameters.getPdfInputList()) {
             input.addPageRange(new PageRange(2, 4));
         }
         parameters.setBlankPageIfOdd(true);
@@ -478,6 +480,27 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             } catch (TaskIOException e) {
                 fail(e.getMessage());
             }
+        });
+    }
+
+    @Test
+    public void mergeImagesAndPdfs() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/large.jpg")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.tiff")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(1 + 11 + 3 + 11 + 1).forEachPdfOutput(d -> {
+            assertEquals(Arrays.asList(1, 13, 14, 15, 27), getPagesContainingImages(d));
         });
     }
 

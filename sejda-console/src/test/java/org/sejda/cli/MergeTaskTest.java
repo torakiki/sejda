@@ -303,7 +303,7 @@ public class MergeTaskTest extends AbstractTaskTest {
         List<String> actualPasswords = new ArrayList<String>();
 
         for (int i = 0; i < parameters.getInputList().size(); i++) {
-            PdfMergeInput each = parameters.getInputList().get(i);
+            PdfMergeInput each = parameters.getPdfInputList().get(i);
             PdfFileSource pdfFileSource = (PdfFileSource) each.getSource();
             actualFileList.add(pdfFileSource.getSource().getAbsolutePath());
             actualPasswords.add(pdfFileSource.getPassword());
@@ -389,7 +389,7 @@ public class MergeTaskTest extends AbstractTaskTest {
             Collection<PageRange> expectedPageRanges) {
         boolean found = false;
         File file = new File(filename);
-        for (PdfMergeInput each : parameters.getInputList()) {
+        for (PdfMergeInput each : parameters.getPdfInputList()) {
             PdfFileSource pdfFileSource = (PdfFileSource) each.getSource();
             if (matchesPdfFileSource(file, password, pdfFileSource)) {
                 assertContainsAll("For file " + pdfFileSource.getName(), expectedPageRanges, each.getPageSelection());

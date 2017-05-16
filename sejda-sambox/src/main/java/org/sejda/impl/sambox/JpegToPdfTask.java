@@ -25,21 +25,19 @@ import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import java.awt.Point;
 import java.io.File;
 
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PageImageWriter;
+import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,63 +63,29 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
     @Override
     public void execute(JpegToPdfParameters parameters) throws TaskException {
-        int currentStep = 0;
+        final MutableInt currentStep = new MutableInt(0);
 
-        documentHandler = new PDDocumentHandler();
-        documentHandler.setCreatorOnPDDocument();
+        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter() {
+            @Override
+            public void beforeImage(Source<?> source) throws TaskException {
+                executionContext().assertTaskNotCancelled();
+                currentStep.increment();
+            }
 
-        PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
+            @Override
+            public void afterImage(PDImageXObject image) {
+                notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep.getValue()).outOf(totalSteps);
+            }
 
-        for (Source<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
-
-            currentStep++;
-
-            try {
-                PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-                PDRectangle mediaBox = PDRectangle.A4;
-
-                if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-                }
-
-                PDPage page = documentHandler.addBlankPage(mediaBox);
-
-                // full page (scaled down only)
-                int width = image.getWidth();
-                int height = image.getHeight();
-
-                if (width > mediaBox.getWidth()) {
-                    int targetWidth = (int) mediaBox.getWidth();
-                    LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
-
-                    float ratio = (float) width / targetWidth;
-                    width = targetWidth;
-                    height = Math.round(height / ratio);
-                }
-
-                if (height > mediaBox.getHeight()) {
-                    int targetHeight = (int) mediaBox.getHeight();
-                    LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
-
-                    float ratio = (float) height / targetHeight;
-                    height = targetHeight;
-                    width = Math.round(width / ratio);
-                }
-
-                // centered on page
-                int x = ((int) mediaBox.getWidth() - width) / 2;
-                int y = ((int) mediaBox.getHeight() - height) / 2;
-
-                imageWriter.append(page, image, new Point(x, y), width, height, null, 0);
-
-                notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
-            } catch (TaskIOException e) {
+            @Override
+            public void failedImage(Source<?> source, TaskIOException e) throws TaskException{
                 executionContext().assertTaskIsLenient(e);
                 notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
                         String.format("Image %s was skipped, could not be processed", source.getName()), e);
             }
-        }
+        };
+
+        documentHandler = converter.convert(parameters.getSourceList());
 
         File tmpFile = createTemporaryBuffer(parameters.getOutput());
         LOG.debug("Created output on temporary buffer {}", tmpFile);

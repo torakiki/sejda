@@ -21,12 +21,14 @@ package org.sejda.impl.sambox;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -42,9 +44,9 @@ import org.sejda.impl.sambox.component.OutlineMerger;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfScaler;
 import org.sejda.impl.sambox.component.TableOfContentsCreator;
+import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.PdfMergeInput;
-import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.input.*;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
@@ -105,7 +107,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.footerWriter = new FilenameFooterWriter(parameters.isFilenameFooter(),
                 this.destinationDocument.getUnderlyingPDDocument());
 
-        for (PdfMergeInput input : parameters.getInputList()) {
+        convertImageMergeInputToPdf(parameters);
+
+        for (PdfMergeInput input : parameters.getPdfInputList()) {
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
@@ -194,6 +198,47 @@ public class MergeTask extends BaseTask<MergeParameters> {
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents merged correctly and written to {}", parameters.getOutput());
 
+    }
+
+    private void convertImageMergeInputToPdf(MergeParameters parameters) throws TaskException {
+        // if images were supplied, convert them to PDF
+        List<ImageMergeInput> images = new ArrayList<>();
+        List<MergeInput> newInputList = new ArrayList<>();
+        Iterator<MergeInput> iterator = parameters.getInputList().iterator();
+        while(iterator.hasNext()) {
+            MergeInput input = iterator.next();
+
+            if(input instanceof ImageMergeInput) {
+                // collect all consecutive images and convert them to a PDF document
+                images.add(((ImageMergeInput)input));
+            } else {
+                // found a merge input that's not an image
+
+                // convert all "up-to-here" images to a PDF doc
+                if(images.size() > 0) {
+                    newInputList.add(convertImagesToPdfMergeInput(images));
+                    images = new ArrayList<>();
+                }
+
+                newInputList.add(input);
+            }
+        }
+
+        // convert leftover "up-to-here" images to a PDF doc
+        if(images.size() > 0) {
+            newInputList.add(convertImagesToPdfMergeInput(images));
+            images = new ArrayList<>();
+        }
+
+        parameters.setInputList(newInputList);
+    }
+
+    private PdfMergeInput convertImagesToPdfMergeInput(List<ImageMergeInput> images) throws TaskException {
+        List<Source<?>> sources = images.stream().map(ImageMergeInput::getSource).collect(Collectors.toList());
+        PDDocumentHandler converted = new ImagesToPdfDocumentConverter().convert(sources);
+        File convertedTmpFile = createTemporaryBuffer();
+        converted.savePDDocument(convertedTmpFile);
+        return new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
     }
 
     private void closeResources() {

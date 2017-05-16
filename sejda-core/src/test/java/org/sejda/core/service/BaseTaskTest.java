@@ -43,8 +43,11 @@ import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.*;
@@ -191,6 +194,28 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
                 .filter(a -> clazz.isInstance(a))
                 .map(a -> (T) a)
                 .iterator());
+    }
+
+    // returns 1-based page numbers
+    public List<Integer> getPagesContainingImages(PDDocument doc) {
+        List<Integer> result = new ArrayList<>();
+        for(int i = 0; i < doc.getNumberOfPages(); i++) {
+            PDPage page = doc.getPage(i);
+            boolean hasImages = false;
+            for(COSName name: page.getResources().getXObjectNames()) {
+                try {
+                    if(page.getResources().getXObject(name) instanceof PDImageXObject) {
+                        hasImages = true;
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if(hasImages) {
+                result.add(i + 1);
+            }
+        }
+        return result;
     }
 
     public <T> List<T> iteratorToList(Iterator<T> iterator) {

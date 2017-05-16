@@ -24,12 +24,14 @@ import static java.util.Optional.ofNullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.input.MergeInput;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.SingleTaskOutput;
@@ -51,7 +53,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
 
     @NotEmpty
     @Valid
-    private List<PdfMergeInput> inputList = new ArrayList<PdfMergeInput>();
+    private List<MergeInput> inputList = new ArrayList<>();
     private boolean blankPageIfOdd = false;
     @NotNull
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
@@ -79,8 +81,19 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     /**
      * @return an unmodifiable view of the inputList
      */
-    public List<PdfMergeInput> getInputList() {
+    public List<MergeInput> getInputList() {
         return Collections.unmodifiableList(inputList);
+    }
+
+    public void setInputList(List<MergeInput> inputList) {
+        this.inputList = inputList;
+    }
+
+    public List<PdfMergeInput> getPdfInputList() {
+        return Collections.unmodifiableList(
+                inputList.stream().filter(input -> input instanceof PdfMergeInput)
+                        .map(input -> (PdfMergeInput) input).collect(Collectors.toList())
+        );
     }
 
     /**
@@ -88,7 +101,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
      * 
      * @param input
      */
-    public void addInput(PdfMergeInput input) {
+    public void addInput(MergeInput input) {
         this.inputList.add(input);
     }
 

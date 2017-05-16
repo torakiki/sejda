@@ -42,7 +42,7 @@ import org.sejda.model.validation.constraint.NoIntersections;
  * 
  */
 @NoIntersections
-public class PdfMergeInput implements PageRangeSelection, PagesSelection {
+public class PdfMergeInput implements PageRangeSelection, PagesSelection, MergeInput {
 
     @NotNull
     @Valid

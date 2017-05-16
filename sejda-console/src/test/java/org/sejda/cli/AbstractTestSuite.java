@@ -134,7 +134,7 @@ public abstract class AbstractTestSuite {
 
     protected void assertHasFileSource(MergeParameters parameters, File file, String password) {
         List<PdfSource<?>> sourcesList = new ArrayList<PdfSource<?>>();
-        for (PdfMergeInput eachInput : parameters.getInputList()) {
+        for (PdfMergeInput eachInput : parameters.getPdfInputList()) {
             sourcesList.add(eachInput.getSource());
         }
 
