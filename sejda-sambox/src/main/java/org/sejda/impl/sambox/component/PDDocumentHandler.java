@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sejda.core.Sejda;
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -222,6 +223,7 @@ public class PDDocumentHandler implements Closeable {
     @Override
     public void close() throws IOException {
         document.close();
+        FontUtils.clearLoadedFontCache(document);
     }
 
     /**

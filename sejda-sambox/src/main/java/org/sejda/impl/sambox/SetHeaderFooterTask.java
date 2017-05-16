@@ -124,7 +124,6 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 footerWriter.write(value, parameters, currentFileCounter, outName, executionContext());
                 documentHandler.savePDDocument(tmpFile);
                 outputWriter.addOutput(file(tmpFile).name(outName));
-                FontUtils.clearLoadedFontCache(documentHandler.getUnderlyingPDDocument());
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);

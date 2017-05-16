@@ -47,7 +47,16 @@ import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.font.*;
+import org.sejda.sambox.pdmodel.font.FontMappers;
+import org.sejda.sambox.pdmodel.font.FontMapping;
+import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
+import org.sejda.sambox.pdmodel.font.PDSimpleFont;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.font.PDType3CharProc;
+import org.sejda.sambox.pdmodel.font.PDType3Font;
+import org.sejda.sambox.pdmodel.font.PDVectorFont;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +123,7 @@ public final class FontUtils {
     // caches fonts, PER DOCUMENT
     // has no auto-magical way to clear the cache when doc processing is done
     // if you use this in a long lived process, call the cache clear method to avoid leaking memory
+    // if we get some issue we could consider something like com.twelvemonkeys.util.WeakWeakMap<K, V>
     private static Map<PDDocument, Map<String, PDFont>> loadedFontCache = new HashMap<>();
 
     public static void clearLoadedFontCache() {
