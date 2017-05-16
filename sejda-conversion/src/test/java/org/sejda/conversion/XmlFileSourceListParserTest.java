@@ -19,13 +19,13 @@
  */
 package org.sejda.conversion;
 
+import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
-import org.hamcrest.core.CombinableMatcher;
 import org.junit.Test;
 import org.sejda.conversion.exception.ConversionException;
 
@@ -44,18 +44,13 @@ public class XmlFileSourceListParserTest extends BaseFileSourceListParserTest {
         List<String> result = victim.parseFileNames(xmlFile);
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
-        assertThat(result,
-                org.hamcrest.core.CombinableMatcher.<Iterable<? super String>> either(hasItem("/tmp/inputFile1.pdf"))
-                        .or(hasItem("C:\\tmp\\inputFile1.pdf")));
-        assertThat(
-                result,
-                CombinableMatcher.<Iterable<? super String>> either(hasItem("/tmp/inputFile2.pdf")).or(
-                        hasItem("C:\\tmp\\inputFile2.pdf")));
-        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir/inputFile1.pdf")));
-        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir3/inputFile2.pdf"))); // its defined in absolute path mode in the file
-        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile1.pdf")));
-        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile2.pdf:secret2")));
-        assertThat(result, hasItem(FilenameUtils.separatorsToSystem("/tmp/subdir2/inputFile3.pdf")));
+        assertThat(result, hasItem(new File(xmlFile.getParent(), "inputFile1.pdf").getAbsolutePath()));
+        assertThat(result, hasItem(new File(xmlFile.getParent(), "inputFile2.pdf").getAbsolutePath()));
+        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir/inputFile1.pdf")));
+        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir3/inputFile2.pdf"))); // its defined in absolute path mode in the file
+        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile1.pdf")));
+        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile2.pdf:secret2")));
+        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile3.pdf")));
     }
 
     @Test(expected = ConversionException.class)

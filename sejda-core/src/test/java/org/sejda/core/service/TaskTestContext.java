@@ -20,6 +20,7 @@ package org.sejda.core.service;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -260,8 +261,9 @@ public class TaskTestContext implements Closeable {
      * asserts that a multiple output task has generated the given number of output files
      * 
      * @return
+     * @throws IOException
      */
-    public TaskTestContext assertOutputSize(int size) {
+    public TaskTestContext assertOutputSize(int size) throws IOException {
         if (size == 0) {
             return assertEmptyMultipleOutput();
         }
@@ -269,6 +271,17 @@ public class TaskTestContext implements Closeable {
         String[] files = fileOutput.list();
         assertEquals("An unexpected number of output files has been created: " + StringUtils.join(files, ","), size,
                 files.length);
+        assertEquals("Some output file is hidden", size, Files.list(fileOutput.toPath()).filter(p -> {
+            if (IS_OS_WINDOWS) {
+                try {
+                    return !(Boolean) Files.getAttribute(p, "dos:hidden");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+            return true;
+        }).count());
         return this;
     }
 

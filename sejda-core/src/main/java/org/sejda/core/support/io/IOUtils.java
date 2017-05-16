@@ -80,12 +80,33 @@ public final class IOUtils {
         if (IS_OS_UNIX) {
             return Files.createTempFile(location, "." + BUFFER_NAME, null);
         }
-        return Files.createTempFile(location, BUFFER_NAME, null);
+        return hide(Files.createTempFile(location, BUFFER_NAME, null));
     }
 
-    private static Path hide(Path path) throws IOException {
+    /**
+     * Sets the hidden attribute to true on Win platform
+     * 
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static Path hide(Path path) throws IOException {
         if (IS_OS_WINDOWS) {
             Files.setAttribute(path, "dos:hidden", Boolean.TRUE);
+        }
+        return path;
+    }
+
+    /**
+     * Sets the hidden attribute to false on Win platform
+     * 
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    public static Path unhide(Path path) throws IOException {
+        if (IS_OS_WINDOWS) {
+            Files.setAttribute(path, "dos:hidden", Boolean.FALSE);
         }
         return path;
     }

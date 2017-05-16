@@ -20,6 +20,7 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -43,6 +44,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.task.Task;
 import org.sejda.model.task.TaskExecutionContext;
@@ -176,6 +178,18 @@ public class OutputWriterHelperTest {
         OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
         assertEquals(2, dest.list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
+    }
+
+    @Test
+    public void moveUnhide() throws IOException, TaskIOException {
+        if (IS_OS_WINDOWS) {
+            File dest = new File(folder.newFolder().getAbsolutePath(), "dest.tmp");
+            File tmp = IOUtils.createTemporaryBuffer();
+            IOUtils.hide(tmp.toPath());
+            assertEquals(Boolean.TRUE, (Boolean) Files.getAttribute(tmp.toPath(), "dos:hidden"));
+            OutputWriterHelper.moveFile(tmp, dest, ExistingOutputPolicy.FAIL, context);
+            assertEquals(Boolean.FALSE, (Boolean) Files.getAttribute(dest.toPath(), "dos:hidden"));
+        }
     }
 
     @Test

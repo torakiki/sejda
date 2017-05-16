@@ -19,7 +19,10 @@
  */
 package org.sejda.cli;
 
+import static org.apache.commons.io.FilenameUtils.separatorsToWindows;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.core.CombinableMatcher.either;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -33,11 +36,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.CombinableMatcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.cli.command.StandardTestableTask;
@@ -208,16 +208,11 @@ public class MergeTaskTest extends AbstractTaskTest {
         defaultCommandLine().with("-d", "/tmp/emptyFolder").assertConsoleOutputContains("No input files specified in");
     }
 
-    private static List<Matcher<Iterable<? super File>>> filesList(String... filenames) {
-        List<Matcher<Iterable<? super File>>> result = new ArrayList<Matcher<Iterable<? super File>>>();
+    private static List<Matcher<Iterable<? super String>>> filesList(String... filenames) {
+        List<Matcher<Iterable<? super String>>> result = new ArrayList<Matcher<Iterable<? super String>>>();
         for (String current : filenames) {
             String filename = current.toString();
-            if (SystemUtils.IS_OS_WINDOWS) {
-                result.add(CombinableMatcher.<Iterable<? super File>> either(hasItem(new File(filename)))
-                        .or(hasItem(new File(FilenameUtils.separatorsToWindows("C:" + filename)))));
-            } else {
-                result.add(hasItem(new File(filename)));
-            }
+            result.add(either(hasItem(filename)).or(hasItem(endsWith(separatorsToWindows(filename)))));
         }
         return result;
     }
@@ -288,7 +283,7 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,
-            Collection<Matcher<Iterable<? super File>>> expectedFilesMatchers) {
+            Collection<Matcher<Iterable<? super String>>> expectedFilesMatchers) {
         assertPdfMergeInputsFilesList(parameters, expectedFilesMatchers,
                 nullsFilledList(parameters.getInputList().size()));
     }
@@ -303,18 +298,18 @@ public class MergeTaskTest extends AbstractTaskTest {
     }
 
     private void assertPdfMergeInputsFilesList(MergeParameters parameters,
-            Collection<Matcher<Iterable<? super File>>> expectedFilesMatchers, List<String> expectedFilesPasswords) {
-        List<File> actualFileList = new ArrayList<File>();
+            Collection<Matcher<Iterable<? super String>>> expectedFilesMatchers, List<String> expectedFilesPasswords) {
+        List<String> actualFileList = new ArrayList<String>();
         List<String> actualPasswords = new ArrayList<String>();
 
         for (int i = 0; i < parameters.getInputList().size(); i++) {
             PdfMergeInput each = parameters.getInputList().get(i);
             PdfFileSource pdfFileSource = (PdfFileSource) each.getSource();
-            actualFileList.add(pdfFileSource.getSource());
+            actualFileList.add(pdfFileSource.getSource().getAbsolutePath());
             actualPasswords.add(pdfFileSource.getPassword());
         }
 
-        for (Matcher<Iterable<? super File>> expectedFileMatcher : expectedFilesMatchers) {
+        for (Matcher<Iterable<? super String>> expectedFileMatcher : expectedFilesMatchers) {
             assertThat(actualFileList, expectedFileMatcher);
         }
         assertEquals(expectedFilesPasswords, actualPasswords);

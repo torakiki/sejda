@@ -23,10 +23,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.sejda.model.exception.SejdaRuntimeException;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Andrea Vacondio
@@ -34,37 +34,20 @@ import org.sejda.model.exception.SejdaRuntimeException;
  */
 @Ignore
 public class BaseFileSourceListParserTest {
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     File xmlFile;
     File csvFile;
     File emptyFile;
 
     @Before
     public void setUp() throws IOException {
-        xmlFile = new File("/tmp/merge-filelist-config.xml");
-        xmlFile.deleteOnExit();
-        csvFile = new File("/tmp/merge-list.csv");
-        csvFile.deleteOnExit();
-        emptyFile = File.createTempFile("test", "txt");
-        emptyFile.deleteOnExit();
-        try {
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-filelist-config.xml"), xmlFile);
-            FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-list.csv"), csvFile);
-        } catch (IOException e) {
-            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
-        }
+        xmlFile = folder.newFile("merge-filelist-config.xml");
+        csvFile = folder.newFile("merge-list.csv");
+        emptyFile = folder.newFile("test.txt");
+        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-filelist-config.xml"), xmlFile);
+        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-list.csv"), csvFile);
     }
 
-    @After
-    public void tearDown() {
-        if (xmlFile != null) {
-            xmlFile.delete();
-        }
-        if (csvFile != null) {
-            csvFile.delete();
-        }
-        if (emptyFile != null) {
-            emptyFile.delete();
-        }
-
-    }
 }
