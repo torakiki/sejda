@@ -51,6 +51,15 @@ public class IOUtilsTest {
     }
 
     @Test
+    public void testCreateBufferWithName() throws TaskIOException {
+        File tmp = IOUtils.createTemporaryBufferWithName("chuck.norris");
+        tmp.deleteOnExit();
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isFile());
+        assertEquals("chuck.norris", tmp.getName());
+    }
+
+    @Test
     public void testCreateBufferFileOut() throws TaskIOException, IOException {
         File file = folder.newFile("chuck.norris");
         FileTaskOutput out = new FileTaskOutput(file);

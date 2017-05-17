@@ -129,6 +129,19 @@ public final class IOUtils {
         }
     }
 
+    public static File createTemporaryBufferWithName(String filename) throws TaskIOException {
+        try {
+            File tmpDir = createTemporaryFolder();
+            File buffer = new File(tmpDir, filename);
+            boolean created = buffer.createNewFile();
+            if(!created) throw new IOException("Could not create new file: " + buffer.getAbsolutePath());
+            buffer.deleteOnExit();
+            return buffer;
+        } catch (IllegalStateException | IOException e) {
+            throw new TaskIOException("Unable to create temporary buffer", e);
+        }
+    }
+
     private static final int TEMP_DIR_ATTEMPTS = 1000;
 
     public static File createTemporaryFolder() {

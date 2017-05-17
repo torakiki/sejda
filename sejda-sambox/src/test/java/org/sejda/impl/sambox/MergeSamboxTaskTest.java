@@ -504,6 +504,30 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         });
     }
 
+    @Test
+    public void mergeImagesWithTocAndFooter() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/large.jpg", "large.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.tiff", "draft.tiff")));
+
+        parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        parameters.setFilenameFooter(true);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(1 + 3).forEachPdfOutput(d -> {
+            assertPageText(d.getPage(0), "draft2large3draft4");
+
+            assertFooterHasText(d.getPage(1), "draft 2");
+            assertFooterHasText(d.getPage(2), "large 3");
+            assertFooterHasText(d.getPage(3), "draft 4");
+        });
+    }
+
     private float widthOfCropBox(PDPage page) {
         return page.getCropBox().getWidth();
     }

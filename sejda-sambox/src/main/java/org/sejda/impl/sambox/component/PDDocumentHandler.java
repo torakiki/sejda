@@ -123,6 +123,12 @@ public class PDDocumentHandler implements Closeable {
         document.setDocumentInformation(info);
     }
 
+    public void setDocumentTitle(String title) {
+        PDDocumentInformation info = document.getDocumentInformation();
+        info.setTitle(title);
+        document.setDocumentInformation(info);
+    }
+
     /**
      * @return access permissions granted to this document.
      */

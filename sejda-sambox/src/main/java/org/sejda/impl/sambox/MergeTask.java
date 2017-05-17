@@ -21,14 +21,12 @@ package org.sejda.impl.sambox;
 import static java.util.Optional.ofNullable;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -202,41 +200,26 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
     private void convertImageMergeInputToPdf(MergeParameters parameters) throws TaskException {
         // if images were supplied, convert them to PDF
-        List<ImageMergeInput> images = new ArrayList<>();
         List<MergeInput> newInputList = new ArrayList<>();
-        Iterator<MergeInput> iterator = parameters.getInputList().iterator();
-        while(iterator.hasNext()) {
-            MergeInput input = iterator.next();
-
-            if(input instanceof ImageMergeInput) {
+        for (MergeInput input : parameters.getInputList()) {
+            if (input instanceof ImageMergeInput) {
                 // collect all consecutive images and convert them to a PDF document
-                images.add(((ImageMergeInput)input));
+                newInputList.add(convertImagesToPdfMergeInput((ImageMergeInput) input));
             } else {
-                // found a merge input that's not an image
-
-                // convert all "up-to-here" images to a PDF doc
-                if(images.size() > 0) {
-                    newInputList.add(convertImagesToPdfMergeInput(images));
-                    images = new ArrayList<>();
-                }
-
                 newInputList.add(input);
             }
-        }
-
-        // convert leftover "up-to-here" images to a PDF doc
-        if(images.size() > 0) {
-            newInputList.add(convertImagesToPdfMergeInput(images));
-            images = new ArrayList<>();
         }
 
         parameters.setInputList(newInputList);
     }
 
-    private PdfMergeInput convertImagesToPdfMergeInput(List<ImageMergeInput> images) throws TaskException {
-        List<Source<?>> sources = images.stream().map(ImageMergeInput::getSource).collect(Collectors.toList());
+    private PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image) throws TaskException {
+        List<Source<?>> sources = Collections.singletonList(image.getSource());
         PDDocumentHandler converted = new ImagesToPdfDocumentConverter().convert(sources);
-        File convertedTmpFile = createTemporaryBuffer();
+        String basename = FilenameUtils.getBaseName(image.getSource().getName());
+        String filename = String.format("%s.pdf", basename);
+        File convertedTmpFile = createTemporaryBufferWithName(filename);
+        converted.setDocumentTitle(basename);
         converted.savePDDocument(convertedTmpFile);
         return new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
     }

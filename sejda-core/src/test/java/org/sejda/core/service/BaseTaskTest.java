@@ -147,8 +147,12 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public StreamSource customNonPdfInput(String path) {
         String extension = FilenameUtils.getExtension(path);
-        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path),
-                randomAlphanumeric(16) + "." + extension);
+        String filename = randomAlphanumeric(16) + "." + extension;
+        return customNonPdfInput(path, filename);
+    }
+
+    public StreamSource customNonPdfInput(String path, String filename) {
+        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), filename);
     }
 
     public void withPageText(PDPage page, Consumer<String> callback) {
