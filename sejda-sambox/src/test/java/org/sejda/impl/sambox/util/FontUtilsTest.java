@@ -295,4 +295,11 @@ public class FontUtilsTest {
 
         assertThat(FontUtils.removeUnsupportedCharacters("ab \uFE0Fcd", doc), is("ab cd"));
     }
+
+    @Test
+    public void removeUnsupportedCharsDoesNotChangeStringForRTLLanguages() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        String text = "עברית";
+        assertEquals(text, FontUtils.removeUnsupportedCharacters(text, doc));
+    }
 }

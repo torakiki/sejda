@@ -27,13 +27,8 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -464,13 +459,18 @@ public final class FontUtils {
 
     public static String removeUnsupportedCharacters(String text, PDDocument doc) throws TaskIOException {
         List<TextWithFont> resolved = resolveFonts(text, HELVETICA, doc);
-        StringBuilder result = new StringBuilder();
+        Set<String> unsupported = new HashSet<>();
         resolved.forEach(tf -> {
-            if (tf.getFont() != null) {
-                result.append(tf.getText());
+            if (tf.getFont() == null) {
+                unsupported.add(tf.getText());
             }
         });
 
-        return result.toString();
+        String result = text;
+        for(String s: unsupported) {
+            result = result.replaceAll(Pattern.quote(s), "");
+        }
+
+        return result;
     }
 }
