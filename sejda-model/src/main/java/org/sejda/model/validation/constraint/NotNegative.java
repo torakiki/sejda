@@ -1,6 +1,7 @@
 /*
- * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
- *
+ * Created on 26/mar/2013
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * 
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,24 +19,22 @@
  */
 package org.sejda.model.validation.constraint;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import org.sejda.model.validation.validator.PositiveNumberValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import org.sejda.model.validation.validator.PositiveNumberValidator;
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Constraint on a Number that must be zero or positive
+ * Constraint on a Number that must be positive
+ * 
+ * @author Andrea Vacondio
  * 
  */
 @NotNull
@@ -43,7 +42,7 @@ import org.sejda.model.validation.validator.PositiveNumberValidator;
 @Retention(RUNTIME)
 @Constraint(validatedBy = PositiveNumberValidator.class)
 @Documented
-public @interface Positive {
+public @interface NotNegative {
     String message() default "The given number must be positive.";
 
     Class<?>[] groups() default {};
