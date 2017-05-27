@@ -24,7 +24,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
-import org.sejda.model.validation.constraint.Positive;
+import org.sejda.model.validation.constraint.NotNegative;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -38,10 +38,10 @@ import java.util.Set;
  *
  */
 public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection, PagesSelection {
-    @Positive
+    @NotNegative
     public double margin;
 
-    @Positive
+    @NotNegative
     public double pageSizeWidth;
 
     @Valid
