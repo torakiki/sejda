@@ -1,6 +1,5 @@
 /*
- * Created on 26/mar/2013
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -19,7 +18,7 @@
  */
 package org.sejda.model.validation.constraint;
 
-import org.sejda.model.validation.validator.PositiveNumberValidator;
+import org.sejda.model.validation.validator.NotNegativeNumberValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -32,18 +31,16 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Constraint on a Number that must be positive
- * 
- * @author Andrea Vacondio
+ * Constraint on a Number that must be positive or zero
  * 
  */
 @NotNull
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, PARAMETER })
 @Retention(RUNTIME)
-@Constraint(validatedBy = PositiveNumberValidator.class)
+@Constraint(validatedBy = NotNegativeNumberValidator.class)
 @Documented
 public @interface NotNegative {
-    String message() default "The given number must be positive.";
+    String message() default "The given number must be positive or zero.";
 
     Class<?>[] groups() default {};
 

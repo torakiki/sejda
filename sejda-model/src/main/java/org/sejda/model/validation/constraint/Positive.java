@@ -1,5 +1,6 @@
 /*
- * Copyright 2017 by Edi Weissmann (edi.weissmann@gmail.com).
+ * Created on 26/mar/2013
+ * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
  *
  * This file is part of the Sejda source code
  *
@@ -35,7 +36,7 @@ import javax.validation.constraints.NotNull;
 import org.sejda.model.validation.validator.PositiveNumberValidator;
 
 /**
- * Constraint on a Number that must be zero or positive
+ * Constraint on a Number that must be positive
  * 
  */
 @NotNull
