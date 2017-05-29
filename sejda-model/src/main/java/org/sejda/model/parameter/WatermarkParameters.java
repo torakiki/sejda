@@ -47,7 +47,6 @@ import org.sejda.model.watermark.Location;
  * 
  * @author Andrea Vacondio
  */
-@NoIntersections
 public class WatermarkParameters extends MultiplePdfSourceMultipleOutputParameters
         implements PageRangeSelection, PagesSelection {
 

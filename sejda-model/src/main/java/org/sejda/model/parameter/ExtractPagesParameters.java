@@ -48,7 +48,6 @@ import org.sejda.model.validation.constraint.NotAllowed;
  * @author Andrea Vacondio
  * 
  */
-@NoIntersections
 @HasSelectedPages
 public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection,
         PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
