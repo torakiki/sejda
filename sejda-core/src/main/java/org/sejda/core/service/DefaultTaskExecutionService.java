@@ -63,7 +63,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
         TaskExecutionContext executionContext = null;
         LOG.trace("Starting execution for {}", parameters);
         try {
-            validate(parameters);
+            validateIfRequired(parameters);
             executionContext = new TaskExecutionContext(context.getTask(parameters), parameters.isLenient());
             cancellationOption.setExecutionContext(executionContext);
             LOG.info("Starting task ({}) execution.", executionContext.task());
@@ -91,25 +91,29 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
         }
     }
 
-    private void validate(TaskParameters parameters) throws InvalidTaskParametersException {
+    private void validateIfRequired(TaskParameters parameters) throws InvalidTaskParametersException {
         if (context.isValidation()) {
             LOG.debug("Validating parameters.");
-            Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
-                    .validate(parameters);
-            if (!violations.isEmpty()) {
-                StringBuilder sb = new StringBuilder(
-                        String.format("Input parameters (%s) are not valid: ", parameters));
-
-                List<String> reasons = new ArrayList<>();
-                for (ConstraintViolation<TaskParameters> violation : violations) {
-                    sb.append(String.format("\"(%s=%s) %s\" ", violation.getPropertyPath(), violation.getInvalidValue(),
-                            violation.getMessage()));
-                    reasons.add(violation.getMessage());
-                }
-                throw new InvalidTaskParametersException(sb.toString(), reasons);
-            }
+            validate(parameters);
         } else {
             LOG.info("Validation skipped.");
+        }
+    }
+
+    void validate(TaskParameters parameters) throws InvalidTaskParametersException {
+        Set<ConstraintViolation<TaskParameters>> violations = DefaultValidationContext.getContext().getValidator()
+                .validate(parameters);
+        if (!violations.isEmpty()) {
+            StringBuilder sb = new StringBuilder(
+                    String.format("Input parameters (%s) are not valid: ", parameters));
+
+            List<String> reasons = new ArrayList<>();
+            for (ConstraintViolation<TaskParameters> violation : violations) {
+                sb.append(String.format("\"(%s=%s) %s\" ", violation.getPropertyPath(), violation.getInvalidValue(),
+                        violation.getMessage()));
+                reasons.add(violation.getMessage());
+            }
+            throw new InvalidTaskParametersException(sb.toString(), reasons);
         }
     }
 
