@@ -38,7 +38,6 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
-import org.sejda.model.validation.constraint.NoIntersections;
 import org.sejda.model.validation.constraint.PositiveDimensions;
 import org.sejda.model.watermark.Location;
 
