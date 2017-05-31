@@ -38,28 +38,32 @@ import java.io.IOException;
  * Based on https://stackoverflow.com/questions/5905868/how-to-rotate-jpeg-images-based-on-the-orientation-metadata
  */
 public class ExifHelper {
-    public static int getRotationBasedOnExifOrientation(Source<?> imageSource) throws TaskIOException {
-        return imageSource.dispatch(new SourceDispatcher<Integer>() {
-            @Override
-            public Integer dispatch(FileSource source) throws TaskIOException {
-                try {
-                    int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
-                    return getRotation(orientation);
-                } catch (IOException | MetadataException | ImageProcessingException e) {
-                    return 0;
+    public static int getRotationBasedOnExifOrientation(Source<?> imageSource) {
+        try {
+            return imageSource.dispatch(new SourceDispatcher<Integer>() {
+                @Override
+                public Integer dispatch(FileSource source) throws TaskIOException {
+                    try {
+                        int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
+                        return getRotation(orientation);
+                    } catch (IOException | MetadataException | ImageProcessingException e) {
+                        return 0;
+                    }
                 }
-            }
 
-            @Override
-            public Integer dispatch(StreamSource source) throws TaskIOException {
-                try {
-                    int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
-                    return getRotation(orientation);
-                } catch (IOException | MetadataException | ImageProcessingException e) {
-                    return 0;
+                @Override
+                public Integer dispatch(StreamSource source) throws TaskIOException {
+                    try {
+                        int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
+                        return getRotation(orientation);
+                    } catch (IOException | MetadataException | ImageProcessingException e) {
+                        return 0;
+                    }
                 }
-            }
-        });
+            });
+        } catch(Exception e) {
+            return 0;
+        }
     }
 
     private static int readExifOrientation(Metadata metadata) throws MetadataException {
