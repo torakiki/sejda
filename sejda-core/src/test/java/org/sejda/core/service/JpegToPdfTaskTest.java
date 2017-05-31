@@ -19,6 +19,7 @@
 package org.sejda.core.service;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import java.awt.Point;
@@ -50,6 +51,22 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.setOutputPrefix("test_file");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
+    }
+
+    @Test
+    public void imageWithExifOrientation() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.addSource(customNonPdfInputAsFileSource("image/with_exif_orientation.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setOutputPrefix("test_file");
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+           assertEquals(d.getPage(0).getRotation(), 90);
+        });
     }
 
     @Test

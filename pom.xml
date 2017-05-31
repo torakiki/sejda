@@ -320,6 +320,11 @@
 				<version>${commons.lang.version}</version>
 			</dependency>
 			<dependency>
+				<groupId>com.drewnoakes</groupId>
+				<artifactId>metadata-extractor</artifactId>
+				<version>2.10.1</version>
+			</dependency>
+			<dependency>
 				<groupId>com.twelvemonkeys.imageio</groupId>
 				<artifactId>imageio-core</artifactId>
 				<version>${twelvemonkeys.version}</version>

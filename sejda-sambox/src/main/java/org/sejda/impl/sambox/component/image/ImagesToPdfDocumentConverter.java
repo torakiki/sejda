@@ -49,6 +49,7 @@ public class ImagesToPdfDocumentConverter {
                 PDRectangle mediaBox = PDRectangle.A4;
 
                 if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+                    LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
                     mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
                 }
 
@@ -81,6 +82,10 @@ public class ImagesToPdfDocumentConverter {
                 int y = ((int) mediaBox.getHeight() - height) / 2;
 
                 imageWriter.append(page, image, new Point(x, y), width, height, null, 0);
+
+                // TODO: fix for stream source. it's the second time the source is read, will not work
+                int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
+                page.setRotation(rotation);
 
                 afterImage(image);
             } catch (TaskIOException e) {

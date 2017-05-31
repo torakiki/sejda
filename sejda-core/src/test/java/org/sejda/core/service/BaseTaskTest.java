@@ -38,6 +38,8 @@ import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.support.util.StringUtils;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.FileSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -51,7 +53,7 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -153,6 +155,24 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public StreamSource customNonPdfInput(String path, String filename) {
         return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path), filename);
+    }
+
+    public FileSource customNonPdfInputAsFileSource(String path) {
+        String filename = new File(path).getName();
+        InputStream in = getClass().getClassLoader().getResourceAsStream(path);
+        return FileSource.newInstance(streamToTmpFile(in, filename));
+    }
+
+    private File streamToTmpFile(InputStream in, String filename) {
+        try {
+            File tmp = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(filename);
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
+            IOUtils.copy(in, out);
+            return tmp;
+        } catch (IOException | TaskIOException ex) {
+            throw new RuntimeException(ex);
+        }
+
     }
 
     public void withPageText(PDPage page, Consumer<String> callback) {
