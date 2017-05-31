@@ -26,9 +26,9 @@ function run_tests {
   local exit_code=0
 
   while read cmd; do 
-    echo "RUNNING: $cmd"
+    # echo "RUNNING: $cmd"
     if eval "$cmd"; then
-      echo "PASSED: $cmd"
+      # echo "PASSED: $cmd"
     else
       echo "FAILED: $cmd"
       return 1
