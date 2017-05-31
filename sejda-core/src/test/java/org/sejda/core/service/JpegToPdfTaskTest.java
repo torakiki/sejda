@@ -59,7 +59,6 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.addSource(customNonPdfInputAsFileSource("image/with_exif_orientation.JPG"));
 
         testContext.directoryOutputTo(parameters);
-        parameters.setOutputPrefix("test_file");
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
@@ -67,6 +66,18 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         testContext.forEachPdfOutput(d -> {
            assertEquals(d.getPage(0).getRotation(), 90);
         });
+    }
+
+    @Test
+    public void imageWithoutExifMetadata() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
     }
 
     @Test
