@@ -40,6 +40,7 @@ import org.sejda.core.support.util.StringUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.FileSource;
+import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -77,6 +78,8 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public void execute(TaskParameters parameters) {
+        testContext.listenForTaskFailure();
+        testContext.listenForTaskWarnings();
         service.execute(parameters);
     }
 
@@ -137,6 +140,12 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
                 randomAlphanumeric(16) + ".pdf");
     }
 
+    public PdfFileSource customInputAsFileSource(String path) {
+        String filename = new File(path).getName();
+        InputStream in = getClass().getClassLoader().getResourceAsStream(path);
+        return PdfFileSource.newInstanceNoPassword(streamToTmpFile(in, filename));
+    }
+
     public PdfStreamSource customInput(String path, String name) {
         requireNotBlank(name, "Name cannot be blank");
         return PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader().getResourceAsStream(path), name);
@@ -168,6 +177,8 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
             File tmp = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(filename);
             OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
             IOUtils.copy(in, out);
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
             return tmp;
         } catch (IOException | TaskIOException ex) {
             throw new RuntimeException(ex);

@@ -423,6 +423,11 @@ public class TaskTestContext implements Closeable {
      * @throws IOException
      */
     public PDDocument assertTaskCompleted(String password) throws IOException {
+        // First and foremost, check if the task failed.
+        this.assertTaskDidNotFail();
+
+        // look at outputs
+        // TODO: ignore leftover tmp buffers while doing this
         if (nonNull(fileOutput)) {
             if (fileOutput.isDirectory()) {
                 File[] files = fileOutput.listFiles();
@@ -457,7 +462,12 @@ public class TaskTestContext implements Closeable {
         }
     };
 
+    @Deprecated
     public void expectTaskWillFail() {
+        listenForTaskFailure();
+    }
+
+    public void listenForTaskFailure() {
         taskFailureCause = null;
         GlobalNotificationContext.getContext().removeListener(failureListener);
         GlobalNotificationContext.getContext().addListener(failureListener);
@@ -468,11 +478,21 @@ public class TaskTestContext implements Closeable {
         assertThat(taskFailureCause.getMessage(), startsWith(message));
     }
 
+    public void assertTaskDidNotFail() {
+        assertNull("Task failed", taskFailureCause);
+    }
+
+    @Deprecated
     public void expectTaskWillProduceWarnings() {
+        listenForTaskWarnings();
+    }
+
+    public void listenForTaskWarnings() {
         taskWarnings = new ArrayList<>();
         GlobalNotificationContext.getContext().removeListener(warningsListener);
         GlobalNotificationContext.getContext().addListener(warningsListener);
     }
+
 
     public void assertTaskWarning(String message) {
         assertThat(taskWarnings, hasItem(message));
