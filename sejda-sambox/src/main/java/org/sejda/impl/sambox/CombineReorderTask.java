@@ -26,16 +26,14 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.AcroFormsMerger;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PdfRotator;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.FileIndexAndPage;
 import org.sejda.model.input.PdfSource;
@@ -64,8 +62,10 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     private PdfSourceOpener<PDDocumentHandler> sourceOpener;
     private PDDocumentHandler destinationDocument;
     private List<PDDocumentHandler> documents = new ArrayList<>();
+    private Map<PDDocumentHandler, String> documentNames = new HashMap<>();
     private AcroFormsMerger acroFormsMerger;
     private LookupTable<PDPage> pagesLookup = new LookupTable<>();
+    private OutlineMerger outlineMerger;
 
     @Override
     public void before(CombineReorderParameters parameters, TaskExecutionContext executionContext)
@@ -73,7 +73,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         super.before(parameters, executionContext);
         sourceOpener = new DefaultPdfSourceOpener();
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
-
+        outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }
 
     @Override
@@ -94,6 +94,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.open(sourceOpener);
             documents.add(sourceDocumentHandler);
+            documentNames.put(sourceDocumentHandler, input.getName());
         }
 
         int currentStep = 0;
@@ -132,6 +133,8 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         }
 
         for (PDDocumentHandler document : documents) {
+            outlineMerger.updateOutline(document.getUnderlyingPDDocument(), documentNames.get(document), pagesLookup);
+
             LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(document.getUnderlyingPDDocument())
                     .retainRelevantAnnotations(pagesLookup);
             clipSignatures(annotationsLookup.values());
@@ -139,6 +142,11 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             acroFormsMerger.mergeForm(document.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
                     annotationsLookup);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
+        }
+
+        if (outlineMerger.hasOutline()) {
+            LOG.debug("Adding generated outline");
+            destinationDocument.setDocumentOutline(outlineMerger.getOutline());
         }
 
         ofNullable(acroFormsMerger.getForm()).filter(f -> !f.getFields().isEmpty()).ifPresent(f -> {
@@ -158,6 +166,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         closeResources();
         outputWriter = null;
         documents.clear();
+        documentNames.clear();
         pagesLookup.clear();
     }
 

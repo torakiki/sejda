@@ -26,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.FileIndexAndPage;
+import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.rotation.Rotation;
@@ -44,6 +45,9 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
 
     @NotNull
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
+
+    @NotNull
+    private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
 
     public void addPage(int fileIndex, int page) {
         pages.add(new FileIndexAndPage(fileIndex, page));
@@ -70,10 +74,18 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
         this.acroFormPolicy = acroFormPolicy;
     }
 
+    public OutlinePolicy getOutlinePolicy() {
+        return outlinePolicy;
+    }
+
+    public void setOutlinePolicy(OutlinePolicy outlinePolicy) {
+        this.outlinePolicy = outlinePolicy;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.pages).append(this.acroFormPolicy)
-                .toHashCode();
+                .append(outlinePolicy).toHashCode();
     }
 
     @Override
@@ -86,6 +98,7 @@ public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParam
         }
         final CombineReorderParameters other = (CombineReorderParameters) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.pages, other.pages)
-                .append(this.acroFormPolicy, other.acroFormPolicy).isEquals();
+                .append(this.acroFormPolicy, other.acroFormPolicy)
+                .append(this.outlinePolicy, other.outlinePolicy).isEquals();
     }
 }

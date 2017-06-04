@@ -19,6 +19,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,12 +28,14 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.input.PdfSource;
+import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.text.PDFTextStripper;
 
 @Ignore
@@ -138,6 +141,66 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
             assertEquals(270, d.getPage(3).getRotation());
             assertEquals(90, d.getPage(5).getRotation());
         });
+    }
+
+    @Test
+    public void keepsOutline() throws IOException {
+        List<PdfSource<?>> inputs = new ArrayList<PdfSource<?>>();
+        inputs.add(customInput("pdf/large_outline.pdf"));
+        inputs.add(customInput("pdf/test_outline.pdf"));
+        setUpParameters(inputs);
+
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+
+        parameters.addPage(0, 3);
+        parameters.addPage(1, 3);
+
+        parameters.addPage(0, 2);
+        parameters.addPage(1, 2);
+
+        parameters.addPage(0, 1);
+        parameters.addPage(1, 1);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        PDDocument outDocument = testContext.assertTaskCompleted();
+        PDDocumentOutline outline = outDocument.getDocumentCatalog().getDocumentOutline();
+
+        assertNotNull("Has outline", outline);
+        for(int i = 1; i < 34; i++) {
+            testContext.assertOutlineContains("Bookmark" + i);
+        }
+        for(int i = 34; i <= 49; i++) {
+            testContext.assertOutlineDoesntContain("Bookmark" + i);
+        }
+        testContext.assertOutlineContains("Test first level.");
+        testContext.assertOutlineContains("Secondpage test first level.");
+    }
+
+    @Test
+    public void discardsOutline() throws IOException {
+        List<PdfSource<?>> inputs = new ArrayList<PdfSource<?>>();
+        inputs.add(customInput("pdf/large_outline.pdf"));
+        inputs.add(customInput("pdf/test_outline.pdf"));
+        setUpParameters(inputs);
+
+        parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
+
+        parameters.addPage(0, 3);
+        parameters.addPage(1, 3);
+
+        parameters.addPage(0, 2);
+        parameters.addPage(1, 2);
+
+        parameters.addPage(0, 1);
+        parameters.addPage(1, 1);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertHasOutline(false);
     }
 
     void assertPageHasText(PDDocument doc, int page, String expected) throws IOException {
