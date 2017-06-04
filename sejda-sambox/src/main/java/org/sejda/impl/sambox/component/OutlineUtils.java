@@ -144,7 +144,9 @@ public final class OutlineUtils {
     public static List<OutlineItem> getFlatOutline(PDDocument document) {
         return ofNullable(document.getDocumentCatalog().getDocumentOutline()).map(PDDocumentOutline::children)
                 .map(c -> recurseFlatOutline(document, c, 1)).orElseGet(ArrayList::new).stream()
-                .sorted(Comparator.comparingInt(i -> i.page)).collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(i -> i.page))
+                .filter(i -> i.page > 0)
+                .collect(Collectors.toList());
     }
 
     private static List<OutlineItem> recurseFlatOutline(PDDocument document, Iterable<PDOutlineItem> items, int level) {

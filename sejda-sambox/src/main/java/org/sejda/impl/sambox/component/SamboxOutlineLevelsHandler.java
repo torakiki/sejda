@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 import org.sejda.model.outline.OutlineExtractPageDestinations;
 import org.sejda.model.outline.OutlinePageDestinations;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SAMBox implementation of an {@link org.sejda.model.outline.OutlineLevelsHandler}
@@ -35,6 +37,8 @@ import org.sejda.sambox.pdmodel.PDDocument;
  *
  */
 public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.OutlineLevelsHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SamboxOutlineLevelsHandler.class);
 
     private Pattern titleMatchingPattern = Pattern.compile(".+");
     private PDDocument document;
