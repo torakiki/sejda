@@ -92,18 +92,21 @@ public class PageTextWriter {
 
     public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, Color color)
             throws TaskIOException {
+        write(page, position, rawLabel, font, fontSize, toPDColor(color));
+    }
+
+    public static PDColor toPDColor(Color color) {
         float[] components = new float[] { color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f };
-        PDColor pdColor = new PDColor(components, PDDeviceRGB.INSTANCE);
-        write(page, position, rawLabel, font, fontSize, pdColor);
+        return new PDColor(components, PDDeviceRGB.INSTANCE);
     }
 
     public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, PDColor color)
             throws TaskIOException {
-        write(page, position, rawLabel, font, fontSize, color, RenderingMode.FILL);
+        write(page, position, rawLabel, font, fontSize, color, RenderingMode.FILL, false);
     }
 
     public void write(PDPage page, Point2D position, String rawLabel, PDFont font, Double fontSize, PDColor color,
-            RenderingMode renderingMode) throws TaskIOException {
+            RenderingMode renderingMode, boolean fauxItalic) throws TaskIOException {
 
         String label = StringUtils.normalizeWhitespace(rawLabel);
 
@@ -163,6 +166,7 @@ public class PageTextWriter {
 
                     contentStream.setFont(resolvedFont, (float) resolvedFontSize);
 
+                    Matrix textMatrix;
                     if (page.getRotation() > 0) {
                         LOG.trace("Unrotated position {}", resolvedPosition);
                         Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize,
@@ -174,15 +178,22 @@ public class PageTextWriter {
                         AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(),
                                 rotatedPosition.getY());
                         tx.rotate(Math.toRadians(page.getRotation()));
-                        contentStream.setTextMatrix(new Matrix(tx));
+                        textMatrix = new Matrix(tx);
 
                     } else {
                         LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
                                 resolvedFont.getName(), resolvedPosition);
 
-                        contentStream.setTextMatrix(new Matrix(AffineTransform
-                                .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY())));
+                        textMatrix = new Matrix(AffineTransform
+                                .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY()));
                     }
+
+                    if(fauxItalic) {
+                        AffineTransform at = AffineTransform.getShearInstance(0.35, 0);
+                        textMatrix.concatenate(new Matrix(at));
+                    }
+
+                    contentStream.setTextMatrix(textMatrix);
 
                     LOG.trace("Text position {}", resolvedPosition);
                     contentStream.showText(resolvedLabel);

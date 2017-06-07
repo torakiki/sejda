@@ -18,12 +18,13 @@ package org.sejda.impl.sambox.component;
 
 import org.junit.Test;
 import org.sejda.impl.sambox.util.FontUtils;
-import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 
 import java.awt.*;
 
@@ -32,26 +33,26 @@ public class PageTextWriterTest {
 
     private PDFont helvetica = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
 
-    private void write(String text) throws TaskIOException {
+    private void write(String text) throws TaskException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
         PageTextWriter writer = new PageTextWriter(doc);
-        writer.write(page, new Point(10, 10), text, helvetica, 10d, Color.BLACK);
+        writer.write(page, new Point(10, 10), text, helvetica, 10d, PageTextWriter.toPDColor(Color.RED), RenderingMode.FILL, true);
     }
 
     @Test
-    public void resolveTextAndFontsWhenTextRepeats() throws TaskIOException {
+    public void resolveTextAndFontsWhenTextRepeats() throws TaskException {
         write("123α456α789");
     }
 
     @Test
-    public void resolvedSpaceSeparately() throws TaskIOException {
+    public void resolvedSpaceSeparately() throws TaskException {
         write("ab cd");
     }
 
     @Test(expected = UnsupportedTextException.class)
-    public void throwsWhenCharacterUnsupported() throws TaskIOException {
+    public void throwsWhenCharacterUnsupported() throws TaskException {
         write("\uFE0F");
     }
 }
