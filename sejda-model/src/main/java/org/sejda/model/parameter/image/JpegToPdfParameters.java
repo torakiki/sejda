@@ -20,18 +20,25 @@ package org.sejda.model.parameter.image;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.base.MultipleSourceMultipleOutputParameters;
 
 public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters {
+
+    private PageSize pageSize = PageSize.A4;
+    private boolean pageSizeMatchImageSize = false;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
         if (o == null || getClass() != o.getClass()) return false;
+        JpegToPdfParameters other = (JpegToPdfParameters) o;
 
         return new EqualsBuilder()
                 .appendSuper(super.equals(o))
+                .append(pageSizeMatchImageSize, other.pageSizeMatchImageSize)
+                .append(pageSize, other.pageSize)
                 .isEquals();
     }
 
@@ -39,6 +46,24 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .appendSuper(super.hashCode())
+                .append(pageSize)
+                .append(pageSizeMatchImageSize)
                 .toHashCode();
+    }
+
+    public PageSize getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(PageSize pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public boolean isPageSizeMatchImageSize() {
+        return pageSizeMatchImageSize;
+    }
+
+    public void setPageSizeMatchImageSize(boolean pageSizeMatchImageSize) {
+        this.pageSizeMatchImageSize = pageSizeMatchImageSize;
     }
 }

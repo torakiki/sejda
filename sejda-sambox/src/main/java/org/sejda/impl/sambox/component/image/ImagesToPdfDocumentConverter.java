@@ -23,6 +23,7 @@ import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
+import org.sejda.model.parameter.PageSize;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
@@ -36,6 +37,9 @@ public class ImagesToPdfDocumentConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesToPdfDocumentConverter.class);
 
+    private PDRectangle pageSize = PDRectangle.A4;
+    private boolean shouldPageSizeMatchImageSize = false;
+
     public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
         PDDocumentHandler documentHandler = new PDDocumentHandler();
         documentHandler.setCreatorOnPDDocument();
@@ -46,7 +50,10 @@ public class ImagesToPdfDocumentConverter {
             beforeImage(source);
             try {
                 PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-                PDRectangle mediaBox = PDRectangle.A4;
+                PDRectangle mediaBox = pageSize;
+                if(shouldPageSizeMatchImageSize) {
+                    mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
+                }
 
                 if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
                     LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
@@ -106,5 +113,17 @@ public class ImagesToPdfDocumentConverter {
 
     public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
 
+    }
+
+    public void setPageSize(PageSize pageSize) {
+        this.pageSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+    }
+
+    public void setPageSize(PDRectangle pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
+        this.shouldPageSizeMatchImageSize = shouldPageSizeMatchImageSize;
     }
 }

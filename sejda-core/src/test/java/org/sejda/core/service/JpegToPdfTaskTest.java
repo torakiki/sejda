@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -114,6 +115,48 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
     public void testUnsupportedTiff() throws Exception {
         execute(basicParameters("draft_no_alpha.tif"));
         testContext.assertTaskCompleted();
+    }
+
+    @Test
+    public void specificPageSize() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.setPageSize(PageSize.A0);
+        parameters.addSource(customNonPdfInputAsFileSource("image/draft.tiff"));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            for(PDPage page: d.getPages()){
+                assertEquals(page.getMediaBox().getWidth(), parameters.getPageSize().getWidth(), 0.0);
+                assertEquals(page.getMediaBox().getHeight(), parameters.getPageSize().getHeight(), 0.0);
+            }
+        });
+    }
+
+    @Test
+    public void pageSizeShouldMatchImageSize() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.setPageSizeMatchImageSize(true);
+        parameters.addSource(customNonPdfInputAsFileSource("image/draft.tiff"));
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            PDPage p1 = d.getPage(0);
+            assertEquals(p1.getMediaBox().getWidth(), 248.0, 0.0);
+            assertEquals(p1.getMediaBox().getHeight(), 103.0, 0.0);
+
+            PDPage p2 = d.getPage(1);
+            assertEquals(p2.getMediaBox().getWidth(), 3264.0, 0.0);
+            assertEquals(p2.getMediaBox().getHeight(), 2448.0, 0.0);
+        });
     }
 
     protected abstract void assertImageAtLocation(PDDocument Doc, PDPage page, Point2D position, int width, int height);
