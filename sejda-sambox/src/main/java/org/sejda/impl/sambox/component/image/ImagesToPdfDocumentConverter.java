@@ -41,6 +41,7 @@ public class ImagesToPdfDocumentConverter {
     private PDRectangle pageSize = PDRectangle.A4;
     private boolean shouldPageSizeMatchImageSize = false;
     private PageOrientation pageOrientation = PageOrientation.AUTO;
+    private float marginInches = 0f;
 
     public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
         PDDocumentHandler documentHandler = new PDDocumentHandler();
@@ -69,14 +70,14 @@ public class ImagesToPdfDocumentConverter {
                 PDPage page = documentHandler.addBlankPage(mediaBox);
 
                 // full page (scaled down only)
-                int width = image.getWidth();
-                int height = image.getHeight();
+                float width = image.getWidth();
+                float height = image.getHeight();
 
                 if (width > mediaBox.getWidth()) {
                     int targetWidth = (int) mediaBox.getWidth();
                     LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
 
-                    float ratio = (float) width / targetWidth;
+                    float ratio = width / targetWidth;
                     width = targetWidth;
                     height = Math.round(height / ratio);
                 }
@@ -90,11 +91,18 @@ public class ImagesToPdfDocumentConverter {
                     width = Math.round(width / ratio);
                 }
 
-                // centered on page
-                int x = ((int) mediaBox.getWidth() - width) / 2;
-                int y = ((int) mediaBox.getHeight() - height) / 2;
+                if(marginInches > 0) {
+                    float newWidth = width - marginInches * 72;
+                    float newHeight = height * newWidth / width;
+                    width = newWidth;
+                    height = newHeight;
+                }
 
-                imageWriter.append(page, image, new Point(x, y), width, height, null, 0);
+                // centered on page
+                float x = (mediaBox.getWidth() - width) / 2;
+                float y = ((int) mediaBox.getHeight() - height) / 2;
+
+                imageWriter.append(page, image, new Point((int)x, (int)y), width, height, null, 0);
 
                 // TODO: fix for stream source. it's the second time the source is read, will not work
                 int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
@@ -135,5 +143,9 @@ public class ImagesToPdfDocumentConverter {
 
     public void setPageOrientation(PageOrientation pageOrientation) {
         this.pageOrientation = pageOrientation;
+    }
+
+    public void setMarginInches(float marginInches) {
+        this.marginInches = marginInches;
     }
 }

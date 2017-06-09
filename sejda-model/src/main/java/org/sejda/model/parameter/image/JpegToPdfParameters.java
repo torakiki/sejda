@@ -29,6 +29,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
     private PageSize pageSize = PageSize.A4;
     private boolean pageSizeMatchImageSize = false;
     private PageOrientation pageOrientation = PageOrientation.AUTO;
+    private float marginInches;
 
     @Override
     public boolean equals(Object o) {
@@ -42,6 +43,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
                 .append(pageSizeMatchImageSize, other.pageSizeMatchImageSize)
                 .append(pageSize, other.pageSize)
                 .append(pageOrientation, other.pageOrientation)
+                .append(marginInches, other.marginInches)
                 .isEquals();
     }
 
@@ -52,6 +54,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
                 .append(pageSize)
                 .append(pageSizeMatchImageSize)
                 .append(pageOrientation)
+                .append(marginInches)
                 .toHashCode();
     }
 
@@ -77,5 +80,13 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
 
     public void setPageOrientation(PageOrientation pageOrientation) {
         this.pageOrientation = pageOrientation;
+    }
+
+    public float getMarginInches() {
+        return marginInches;
+    }
+
+    public void setMarginInches(float marginInches) {
+        this.marginInches = marginInches;
     }
 }

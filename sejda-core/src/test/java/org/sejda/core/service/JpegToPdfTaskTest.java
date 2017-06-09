@@ -204,5 +204,20 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         });
     }
 
+    @Test
+    public void withMargin() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.setMarginInches(0.5f);
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Point(42, 13), 757, 567);
+        });
+    }
+
     protected abstract void assertImageAtLocation(PDDocument Doc, PDPage page, Point2D position, int width, int height);
 }
