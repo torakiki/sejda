@@ -23,6 +23,7 @@ import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
+import org.sejda.model.parameter.PageOrientation;
 import org.sejda.model.parameter.PageSize;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -39,6 +40,7 @@ public class ImagesToPdfDocumentConverter {
 
     private PDRectangle pageSize = PDRectangle.A4;
     private boolean shouldPageSizeMatchImageSize = false;
+    private PageOrientation pageOrientation = PageOrientation.AUTO;
 
     public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
         PDDocumentHandler documentHandler = new PDDocumentHandler();
@@ -55,9 +57,13 @@ public class ImagesToPdfDocumentConverter {
                     mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
                 }
 
-                if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                    LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
+                if(pageOrientation == PageOrientation.LANDSCAPE) {
                     mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                } else if(pageOrientation == PageOrientation.AUTO) {
+                    if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
+                        mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                    }
                 }
 
                 PDPage page = documentHandler.addBlankPage(mediaBox);
@@ -125,5 +131,9 @@ public class ImagesToPdfDocumentConverter {
 
     public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
         this.shouldPageSizeMatchImageSize = shouldPageSizeMatchImageSize;
+    }
+
+    public void setPageOrientation(PageOrientation pageOrientation) {
+        this.pageOrientation = pageOrientation;
     }
 }

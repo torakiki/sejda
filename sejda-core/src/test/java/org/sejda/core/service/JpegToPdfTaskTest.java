@@ -29,6 +29,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.PageOrientation;
 import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -156,6 +157,50 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
             PDPage p2 = d.getPage(1);
             assertEquals(p2.getMediaBox().getWidth(), 3264.0, 0.0);
             assertEquals(p2.getMediaBox().getHeight(), 2448.0, 0.0);
+        });
+    }
+
+    @Test
+    public void pageOrientationAuto() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox(), PDRectangle.A4.rotate());
+        });
+    }
+
+    @Test
+    public void pageOrientationPortrait() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.setPageOrientation(PageOrientation.PORTRAIT);
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox(), PDRectangle.A4);
+        });
+    }
+
+    @Test
+    public void pageOrientationLandscape() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+        parameters.setPageOrientation(PageOrientation.LANDSCAPE);
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox(), PDRectangle.A4.rotate());
         });
     }
 

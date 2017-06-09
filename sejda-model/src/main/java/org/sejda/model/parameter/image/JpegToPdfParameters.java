@@ -20,6 +20,7 @@ package org.sejda.model.parameter.image;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.parameter.PageOrientation;
 import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.base.MultipleSourceMultipleOutputParameters;
 
@@ -27,6 +28,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
 
     private PageSize pageSize = PageSize.A4;
     private boolean pageSizeMatchImageSize = false;
+    private PageOrientation pageOrientation = PageOrientation.AUTO;
 
     @Override
     public boolean equals(Object o) {
@@ -39,6 +41,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
                 .appendSuper(super.equals(o))
                 .append(pageSizeMatchImageSize, other.pageSizeMatchImageSize)
                 .append(pageSize, other.pageSize)
+                .append(pageOrientation, other.pageOrientation)
                 .isEquals();
     }
 
@@ -48,6 +51,7 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
                 .appendSuper(super.hashCode())
                 .append(pageSize)
                 .append(pageSizeMatchImageSize)
+                .append(pageOrientation)
                 .toHashCode();
     }
 
@@ -65,5 +69,13 @@ public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters 
 
     public void setPageSizeMatchImageSize(boolean pageSizeMatchImageSize) {
         this.pageSizeMatchImageSize = pageSizeMatchImageSize;
+    }
+
+    public PageOrientation getPageOrientation() {
+        return pageOrientation;
+    }
+
+    public void setPageOrientation(PageOrientation pageOrientation) {
+        this.pageOrientation = pageOrientation;
     }
 }
