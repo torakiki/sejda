@@ -55,14 +55,22 @@ public class PdfScaler {
         this.type = type;
     }
 
-    public void resizePages(PDDocument doc) throws TaskIOException {
+    /**
+     * Resizes all pages in the doc to match the size of the first page
+     * Eg: a doc with first 2 pages A4 and next ones A5 will be changed to all pages are A4
+     */
+    public void scalePages(PDDocument doc) throws TaskIOException {
         PDPage firstPage = doc.getPage(0);
         PDRectangle sizeOfFirstPage = firstPage.getCropBox();
         float targetWidth = Math.min(sizeOfFirstPage.getWidth(), sizeOfFirstPage.getHeight());
-        resizePages(doc, doc.getPages(), targetWidth);
+        scalePages(doc, doc.getPages(), targetWidth);
     }
 
-    public void resizePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
+    /**
+     * Changes the size of the given pages so they all match the target width
+     * The pages are scaled, so the aspect ratio is preserved.
+     */
+    public void scalePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
         for(PDPage page : pages){
             PDRectangle cropBox = page.getCropBox();
 
@@ -83,6 +91,16 @@ public class PdfScaler {
             } catch (IOException e) {
                 throw new TaskIOException("An error occurred writing scaling the page.", e);
             }
+        }
+    }
+
+    public void updateAspectRatio(PDDocument doc, Iterable<PDPage> pages, double aspectRatio) throws TaskIOException {
+        if(type == ScaleType.CONTENT) {
+            throw new RuntimeException("Updating aspect ratio of page content is not supported");
+        }
+
+        for(PDPage page : pages){
+            updatePageBoxesAspectRatio(aspectRatio, page);
         }
     }
 
@@ -159,4 +177,26 @@ public class PdfScaler {
                 page.getMediaBox().transform(getMatrix(scale, page.getMediaBox(), page.getMediaBox())).getBounds2D()));
     }
 
+    private void updatePageBoxesAspectRatio(double aspectRatio, PDPage page) {
+        PDRectangle cropBox = page.getCropBox();
+        PDRectangle mediaBox = page.getMediaBox();
+
+        float newCropBoxHeight = (float) (cropBox.getWidth() / aspectRatio);
+        PDRectangle newCropBox = changeHeight(newCropBoxHeight, cropBox);
+
+        // ensure media box extends to include the crop box
+        float diff = newCropBox.getHeight() + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY()) - mediaBox.getHeight();
+        PDRectangle newMediaBox = mediaBox;
+        if(diff > 0) {
+            float newMediaBoxHeight = mediaBox.getHeight() + diff;
+            newMediaBox = changeHeight(newMediaBoxHeight, mediaBox);
+        }
+
+        page.setMediaBox(newMediaBox);
+        page.setCropBox(newCropBox);
+    }
+
+    private PDRectangle changeHeight(float newHeight, PDRectangle box) {
+        return new PDRectangle(box.getLowerLeftX(), box.getLowerLeftY(), box.getWidth(), newHeight);
+    }
 }

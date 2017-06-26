@@ -44,6 +44,9 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
     @NotNegative
     public double pageSizeWidth;
 
+    @NotNegative
+    public double aspectRatio;
+
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
 
@@ -97,10 +100,18 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         this.pageSizeWidth = pageSizeWidth;
     }
 
+    public double getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(double aspectRatio) {
+        this.aspectRatio = aspectRatio;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(margin).append(pageSelection).append(pageSizeWidth)
+                .append(margin).append(pageSelection).append(pageSizeWidth).append(aspectRatio)
                 .toHashCode();
     }
 
@@ -115,6 +126,7 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         ResizePagesParameters parameter = (ResizePagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(margin, parameter.margin)
                 .append(pageSizeWidth, parameter.pageSizeWidth)
+                .append(aspectRatio, parameter.aspectRatio)
                 .append(pageSelection, parameter.pageSelection).isEquals();
     }
 }

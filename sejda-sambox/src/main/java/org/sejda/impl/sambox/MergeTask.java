@@ -182,7 +182,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         if (parameters.isNormalizePageSizes()) {
             LOG.debug("Normalizing page widths to match width of first page");
             // Do this before generating TOC, so the first page is from content.
-            new PdfScaler(ScaleType.PAGE).resizePages(destinationDocument.getUnderlyingPDDocument());
+            new PdfScaler(ScaleType.PAGE).scalePages(destinationDocument.getUnderlyingPDDocument());
         }
 
         if (tocCreator.hasToc()) {

@@ -115,9 +115,15 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
 
                 if(parameters.getPageSizeWidth() != 0) {
                     float targetWidth = (float) (parameters.getPageSizeWidth() * 72) /* to points */;
-                    LOG.debug("Resizing {} pages to match width of {} inch", pages.size(), targetWidth);
+                    LOG.debug("Resizing {} pages to match width of {} ({} inch)", pages.size(), targetWidth, parameters.getPageSizeWidth());
                     PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
-                    scaler.resizePages(documentHandler.getUnderlyingPDDocument(), pages, targetWidth);
+                    scaler.scalePages(documentHandler.getUnderlyingPDDocument(), pages, targetWidth);
+                }
+
+                if(parameters.getAspectRatio() != 0) {
+                    LOG.debug("Updating {} pages to match aspect ratio of {}", pages.size(), parameters.getAspectRatio());
+                    PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
+                    scaler.updateAspectRatio(documentHandler.getUnderlyingPDDocument(), pages, parameters.getAspectRatio());
                 }
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());

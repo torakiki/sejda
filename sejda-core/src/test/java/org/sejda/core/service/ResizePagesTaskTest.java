@@ -138,6 +138,65 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         });
     }
 
+    @Test
+    public void noChanges() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.setPageSizeWidth(8.27);
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getMediaBox());
+            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getCropBox());
+        });
+    }
+
+    @Test
+    public void changingAspectRatio_smallerHeight_docWithoutCropbox() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.setPageSizeWidth(8.27); // original is 8.27
+        parameters.setAspectRatio(0.75); // original 595x842 = 0.7066
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getMediaBox());
+            assertEqualsRect(new PDRectangle(0, 0, 595, 595 / 0.75f), page.getCropBox());
+        });
+    }
+
+    @Test
+    public void changingAspectRatio_largerHeight_docWithoutCropbox() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.setPageSizeWidth(8.27); // original is 8.27
+        parameters.setAspectRatio(0.65); // original 595x842 = 0.7066
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 595, 595 / 0.65f), page.getCropBox());
+            assertEqualsRect(new PDRectangle(0, 0, 595, 916), page.getMediaBox());
+        });
+    }
+
     private String extractText(PDPage page, Rectangle rect) {
         try {
             PDFTextStripperByArea stripper = new PDFTextStripperByArea();
@@ -151,5 +210,12 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     private void assertEqualsR(PDRectangle r1, PDRectangle r2) {
         assertEquals(r1.getLowerLeftX(), r2.getLowerLeftX(), 1.0f);
+    }
+
+    private void assertEqualsRect(PDRectangle r1, PDRectangle r2) {
+        assertEquals("lowerLeftX", r1.getLowerLeftX(), r2.getLowerLeftX(), 1.0f);
+        assertEquals("lowerLeftY", r1.getLowerLeftY(), r2.getLowerLeftY(), 1.0f);
+        assertEquals("height", r1.getHeight(), r2.getHeight(), 1.0f);
+        assertEquals("width", r1.getWidth(), r2.getWidth(), 1.0f);
     }
 }
