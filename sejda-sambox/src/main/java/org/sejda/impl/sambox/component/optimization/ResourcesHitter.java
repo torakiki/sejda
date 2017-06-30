@@ -48,6 +48,8 @@ import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDTransparencyGroup;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAppearanceEntry;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAppearanceStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,13 +90,10 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                 if (existing instanceof COSStream) {
                     if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
                         COSStream imageStream = (COSStream) existing;
-
-                        String subtype = imageStream.getNameAsString(COSName.SUBTYPE);
-                        if (COSName.IMAGE.getName().equals(subtype)) {
-                            LOG.trace("Hit image with name {}", objectName.getName());
-                            // we wrap the existing so we can identify it later as "in use" and already processed
-                            xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
-                        } else if (COSName.FORM.getName().equals(subtype)) {
+                        LOG.trace("Hit image with name {}", objectName.getName());
+                        // we wrap the existing so we can identify it later as "in use" and already processed
+                        xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
+                        if (COSName.FORM.getName().equals(imageStream.getNameAsString(COSName.SUBTYPE))) {
                             PDXObject xobject = PDXObject.createXObject(imageStream, getContext().getResources());
                             if (xobject instanceof PDTransparencyGroup) {
                                 getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
@@ -167,12 +166,28 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
         }
     }
 
+    private void processAnnotation(PDAnnotation annotation) throws IOException {
+        List<PDAppearanceEntry> appreaceEntries = ofNullable(annotation.getAppearance())
+                .map(d -> d.getCOSObject().getValues()).filter(Objects::nonNull).orElse(Collections.emptyList())
+                .stream().map(a -> a.getCOSObject()).map(PDAppearanceEntry::new).collect(Collectors.toList());
+        for (PDAppearanceEntry entry : appreaceEntries) {
+            if (entry.isStream()) {
+                processStream(entry.getAppearanceStream());
+            } else {
+                for (PDAppearanceStream stream : entry.getSubDictionary().values()) {
+                    // TODO investigate this case with named dictionary
+                    processStream(stream);
+                }
+            }
+        }
+    }
+
     @Override
     public void accept(PDPage page) {
         try {
             this.processPage(page);
             for (PDAnnotation annotation : page.getAnnotations()) {
-                this.showAnnotation(annotation);
+                processAnnotation(annotation);
             }
         } catch (IOException e) {
             LOG.warn("Failed parse page, skipping and continuing with next.", e);

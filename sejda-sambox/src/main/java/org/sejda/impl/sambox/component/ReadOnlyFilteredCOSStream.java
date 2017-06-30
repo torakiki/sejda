@@ -176,7 +176,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         requireNotNullArg(existing, "input stream cannot be null");
         // let's make sure we get the unencrypted and filtered
         existing.setEncryptor(null);
-        return new ReadOnlyFilteredCOSStream(existing, existing.getFilteredStream(), existing.getFilteredLength());
+        return new ReadOnlyFilteredCOSStream(existing, () -> existing.getFilteredStream(),
+                existing.getFilteredLength());
     }
 
     /**
@@ -192,7 +193,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * @throws FileNotFoundException
      */
     public static ReadOnlyFilteredCOSStream readOnlyJpegImage(File imageFile, int width, int height,
-            int bitsPerComponent, PDColorSpace colorSpace) throws FileNotFoundException {
+            int bitsPerComponent, PDColorSpace colorSpace) {
         requireNotNullArg(imageFile, "input file cannot be null");
         requireNotNullArg(colorSpace, "color space cannot be null");
         COSDictionary dictionary = new COSDictionary();
@@ -203,7 +204,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         dictionary.setInt(COSName.HEIGHT, height);
         dictionary.setInt(COSName.WIDTH, width);
         of(colorSpace).map(PDColorSpace::getCOSObject).ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
-        return new ReadOnlyFilteredCOSStream(dictionary, new FileInputStream(imageFile), imageFile.length());
+        return new ReadOnlyFilteredCOSStream(dictionary, () -> new FileInputStream(imageFile), imageFile.length());
     }
 
     /**

@@ -58,8 +58,22 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     }
 
     private void clean(Stream<COSDictionary> nodes) {
+        // clean all the resource dictionaries found at any level in the page tree
         Set<COSDictionary> resources = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
                 .filter(Objects::nonNull).collect(Collectors.toSet());
+        cleanResources(resources);
+        // clean all the resource dictionaries found in any xobject form
+        Set<COSDictionary> formsResources = resources.stream()
+                .map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
+                .flatMap(d -> d.getValues().stream()).filter(d -> d.getCOSObject() instanceof COSDictionary)
+                .map(d -> (COSDictionary) d.getCOSObject())
+                .filter(d -> COSName.FORM.equals(d.getCOSName(COSName.SUBTYPE)))
+                .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        cleanResources(formsResources);
+    }
+
+    private void cleanResources(Set<COSDictionary> resources) {
         cleanXObject(resources.stream().map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                 .filter(Objects::nonNull));
         cleanFonts(resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
@@ -70,9 +84,8 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
         xobjects.forEach(x -> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
-                    .filter(e -> e.getValue().getCOSObject() instanceof COSStream)
-                    .filter(e -> COSName.IMAGE.equals(((COSStream) e.getValue().getCOSObject()).getItem(COSName.SUBTYPE)))
-                    .map(e -> e.getKey()).collect(Collectors.toSet());
+                    .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(e -> e.getKey())
+                    .collect(Collectors.toSet());
             LOG.trace("Removing {} xobjects from {}", toRemove.size(), x);
             toRemove.stream().forEach(x::removeItem);
         });

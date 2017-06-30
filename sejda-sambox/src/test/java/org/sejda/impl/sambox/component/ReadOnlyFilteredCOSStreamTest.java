@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -204,6 +205,8 @@ public class ReadOnlyFilteredCOSStreamTest {
         victim = ReadOnlyFilteredCOSStream.readOnly(existing);
         assertEquals(COSInteger.THREE, victim.getItem(COSName.A));
         verify(existing).setEncryptor(null);
+        verify(existing, never()).getFilteredStream();
+        victim.getFilteredStream();
         verify(existing).getFilteredStream();
     }
 

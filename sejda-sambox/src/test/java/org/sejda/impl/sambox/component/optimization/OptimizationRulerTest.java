@@ -25,7 +25,6 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.sambox.input.PDFParser;

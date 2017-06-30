@@ -97,11 +97,7 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
         List<COSDictionary> xobjectsDictionaries = document.getPages().stream().map(PDPage::getCOSObject)
                 .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
                 .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
-                .filter(Objects::nonNull).filter(x -> {
-                    return x.getValues().stream().map(COSBase::getCOSObject).filter(v -> v instanceof COSDictionary)
-                            .map(v -> (COSDictionary) v).map(v -> v.getNameAsString(COSName.SUBTYPE))
-                            .filter(Objects::nonNull).filter(COSName.IMAGE.getName()::equals).count() > 0;
-                }).collect(Collectors.toList());
+                .filter(Objects::nonNull).filter(x -> x.size() > 0).collect(Collectors.toList());
         long distinctXobjectsDictionaries = xobjectsDictionaries.stream().distinct().count();
         if (xobjectsDictionaries.size() > distinctXobjectsDictionaries) {
             // if the distinct count is different it means one or more xobject name dictionary is shared among some pages so it likely contains images used by multiple pages so we
