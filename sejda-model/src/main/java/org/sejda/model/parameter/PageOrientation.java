@@ -32,6 +32,7 @@ public enum PageOrientation implements FriendlyNamed {
         return name;
     }
 
+    @Override
     public String getFriendlyName() {
         return getName();
     }
