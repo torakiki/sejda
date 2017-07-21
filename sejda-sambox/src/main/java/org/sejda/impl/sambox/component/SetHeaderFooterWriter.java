@@ -70,7 +70,6 @@ public class SetHeaderFooterWriter implements Closeable {
 
         HorizontalAlign hAlign = defaultIfNull(parameters.getHorizontalAlign(), HorizontalAlign.CENTER);
         VerticalAlign vAlign = defaultIfNull(parameters.getVerticalAlign(), VerticalAlign.BOTTOM);
-        String what = vAlign == VerticalAlign.BOTTOM ? "footer" : "header";
 
         SortedSet<Integer> pages = parameters.getPages(totalPages);
         int userDefinedPageOffset = 0;
@@ -95,7 +94,8 @@ public class SetHeaderFooterWriter implements Closeable {
                     .withFileSequence(String.valueOf(currentFileCounter)).withFilename(filename)
                     .build(pattern);
 
-            LOG.debug("Applying {} '{}' to document page {}", what, label, pageNumber);
+            LOG.debug("Applying {} '{}' to document page {}", vAlign == VerticalAlign.BOTTOM ? "footer" : "header",
+                    label, pageNumber);
             try {
                 headerFooterWriter.write(documentHandler.getPage(pageNumber), hAlign, vAlign, label, font, fontSize,
                         parameters.getColor());

@@ -55,7 +55,7 @@ public class DirectoryTaskOutputTest {
     }
 
     @Test
-    public void testValidNonExistingDirectory() throws IOException {
+    public void testValidNonExistingDirectory() {
         DirectoryTaskOutput instance = new DirectoryTaskOutput(new File("I dont exist"));
         assertNotNull(instance);
     }

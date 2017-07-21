@@ -90,7 +90,7 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void readOnlyJpegImageNullFile() throws FileNotFoundException {
+    public void readOnlyJpegImageNullFile() {
         ReadOnlyFilteredCOSStream.readOnlyJpegImage(null, 10, 10, 1, mock(PDColorSpace.class));
     }
 

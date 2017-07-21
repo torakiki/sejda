@@ -56,8 +56,7 @@ public class PdfScaler {
     }
 
     /**
-     * Resizes all pages in the doc to match the size of the first page
-     * Eg: a doc with first 2 pages A4 and next ones A5 will be changed to all pages are A4
+     * Resizes all pages in the doc to match the size of the first page Eg: a doc with first 2 pages A4 and next ones A5 will be changed to all pages are A4
      */
     public void scalePages(PDDocument doc) throws TaskIOException {
         PDPage firstPage = doc.getPage(0);
@@ -67,11 +66,10 @@ public class PdfScaler {
     }
 
     /**
-     * Changes the size of the given pages so they all match the target width
-     * The pages are scaled, so the aspect ratio is preserved.
+     * Changes the size of the given pages so they all match the target width The pages are scaled, so the aspect ratio is preserved.
      */
     public void scalePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
-        for(PDPage page : pages){
+        for (PDPage page : pages) {
             PDRectangle cropBox = page.getCropBox();
 
             // handles landscape scenarios, where we'd like the scale to be calculated based on the width1/width2 ratio, not width1/height2
@@ -94,12 +92,12 @@ public class PdfScaler {
         }
     }
 
-    public void updateAspectRatio(PDDocument doc, Iterable<PDPage> pages, double aspectRatio) throws TaskIOException {
-        if(type == ScaleType.CONTENT) {
+    public void updateAspectRatio(PDDocument doc, Iterable<PDPage> pages, double aspectRatio) {
+        if (type == ScaleType.CONTENT) {
             throw new RuntimeException("Updating aspect ratio of page content is not supported");
         }
 
-        for(PDPage page : pages){
+        for (PDPage page : pages) {
             updatePageBoxesAspectRatio(aspectRatio, page);
         }
     }
@@ -185,9 +183,10 @@ public class PdfScaler {
         PDRectangle newCropBox = changeHeight(newCropBoxHeight, cropBox);
 
         // ensure media box extends to include the crop box
-        float diff = newCropBox.getHeight() + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY()) - mediaBox.getHeight();
+        float diff = newCropBox.getHeight() + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY())
+                - mediaBox.getHeight();
         PDRectangle newMediaBox = mediaBox;
-        if(diff > 0) {
+        if (diff > 0) {
             float newMediaBoxHeight = mediaBox.getHeight() + diff;
             newMediaBox = changeHeight(newMediaBoxHeight, mediaBox);
         }
