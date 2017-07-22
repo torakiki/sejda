@@ -79,6 +79,42 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     }
 
     @Test
+    public void landscape() throws IOException {
+        // A4 to A3
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/landscape.pdf"));
+        parameters.addSource(customInput("pdf/landscape_by_rotation.pdf"));
+        parameters.setPageSizeWidth(16.5);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 1188, 840f), page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 1188, 840f), page.getMediaBox().rotate(page.getRotation()));
+        });
+    }
+
+    @Test
+    public void potrait() throws IOException {
+        // A4 to A3
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/potrait.pdf"));
+        parameters.addSource(customInput("pdf/potrait.pdf"));
+        parameters.setPageSizeWidth(11.7);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 842f, 1192), page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 842f, 1192), page.getMediaBox().rotate(page.getRotation()));
+        });
+    }
+
+    @Test
     public void resizePages() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/multiple-sized-pages.pdf"));

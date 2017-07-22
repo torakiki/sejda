@@ -17,6 +17,12 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.common.collection.NullSafeSet;
@@ -25,11 +31,6 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.validation.constraint.NotNegative;
-
-import javax.validation.Valid;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Parameters for a task to resize pages or add margins. All sizes expected in inches.
@@ -96,6 +97,11 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         return pageSizeWidth;
     }
 
+    /**
+     * Set the target page width in inches
+     * 
+     * @param pageSizeWidth
+     */
     public void setPageSizeWidth(double pageSizeWidth) {
         this.pageSizeWidth = pageSizeWidth;
     }

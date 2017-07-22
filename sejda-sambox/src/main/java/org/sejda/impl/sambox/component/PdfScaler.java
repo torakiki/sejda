@@ -70,10 +70,9 @@ public class PdfScaler {
      */
     public void scalePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
         for (PDPage page : pages) {
-            PDRectangle cropBox = page.getCropBox();
+            PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
 
-            // handles landscape scenarios, where we'd like the scale to be calculated based on the width1/width2 ratio, not width1/height2
-            double scale = targetWidth / Math.min(cropBox.getWidth(), cropBox.getHeight());
+            double scale = targetWidth / cropBox.getWidth();
 
             LOG.debug("Scaling page from {} to {}, factor of {}", cropBox.getWidth(), targetWidth, scale);
 

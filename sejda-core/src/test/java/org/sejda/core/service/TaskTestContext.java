@@ -123,8 +123,27 @@ public class TaskTestContext implements Closeable {
         return this;
     }
 
+    /**
+     * Initialize the given params with a directory as {@link FileOrDirectoryTaskOutput}
+     * 
+     * @param params
+     * @return
+     */
     public TaskTestContext directoryOutputTo(SingleOrMultipleOutputTaskParameters params) throws IOException {
         this.fileOutput = Files.createTempDirectory("SejdaTest").toFile();
+        this.fileOutput.deleteOnExit();
+        params.setOutput(new FileOrDirectoryTaskOutput(fileOutput));
+        return this;
+    }
+
+    /**
+     * Initialize the given params with a pdf file as {@link FileOrDirectoryTaskOutput}
+     * 
+     * @param params
+     * @return
+     */
+    public TaskTestContext pdfOutputTo(SingleOrMultipleOutputTaskParameters params) throws IOException {
+        this.fileOutput = Files.createTempFile("SejdaTest", ".pdf").toFile();
         this.fileOutput.deleteOnExit();
         params.setOutput(new FileOrDirectoryTaskOutput(fileOutput));
         return this;
@@ -492,7 +511,6 @@ public class TaskTestContext implements Closeable {
         GlobalNotificationContext.getContext().removeListener(warningsListener);
         GlobalNotificationContext.getContext().addListener(warningsListener);
     }
-
 
     public void assertTaskWarning(String message) {
         assertThat(taskWarnings, hasItem(message));
