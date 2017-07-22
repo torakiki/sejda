@@ -60,8 +60,7 @@ public class PdfScaler {
      */
     public void scalePages(PDDocument doc) throws TaskIOException {
         PDPage firstPage = doc.getPage(0);
-        PDRectangle sizeOfFirstPage = firstPage.getCropBox();
-        float targetWidth = Math.min(sizeOfFirstPage.getWidth(), sizeOfFirstPage.getHeight());
+        float targetWidth = firstPage.getCropBox().rotate(firstPage.getRotation()).getWidth();
         scalePages(doc, doc.getPages(), targetWidth);
     }
 

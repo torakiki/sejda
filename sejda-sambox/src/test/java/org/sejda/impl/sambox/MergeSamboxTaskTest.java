@@ -393,20 +393,18 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
         parameters.setNormalizePageSizes(true);
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.assertPages(3).forEachPdfOutput(d -> {
-            assertEquals(595, widthOfCropBox(d.getPage(0)), 1);
-
-            // landscape should be handled in a special case
-            assertEquals(595, heightOfCropBox(d.getPage(1)), 1);
-            assertEquals(840, widthOfCropBox(d.getPage(1)), 1);
-
-            assertEquals(595, widthOfCropBox(d.getPage(2)), 1);
+        testContext.assertPages(5).forPdfOutput(d -> {
+            for (PDPage current : d.getPages()) {
+                assertEquals(595, widthOfCropBox(current), 1);
+            }
         });
     }
 
@@ -417,20 +415,18 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
         parameters.setNormalizePageSizes(true);
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.assertPages(3).forEachPdfOutput(d -> {
-            assertEquals(1190, widthOfCropBox(d.getPage(0)), 1);
-
-            // landscape should be handled in a special case
-            assertEquals(1190, heightOfCropBox(d.getPage(1)), 1);
-            assertEquals(841, widthOfCropBox(d.getPage(1)), 1);
-
-            assertEquals(841, widthOfCropBox(d.getPage(2)), 1);
+        testContext.assertPages(5).forPdfOutput(d -> {
+            for (PDPage current : d.getPages()) {
+                assertEquals(1190, widthOfCropBox(current), 1);
+            }
         });
     }
 
@@ -529,11 +525,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     private float widthOfCropBox(PDPage page) {
-        return page.getCropBox().getWidth();
-    }
-
-    private float heightOfCropBox(PDPage page) {
-        return page.getCropBox().getHeight();
+        return page.getCropBox().rotate(page.getRotation()).getWidth();
     }
 
     private void assertFooterHasText(PDPage page, String expectedText) {
