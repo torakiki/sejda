@@ -177,16 +177,19 @@ public class PdfScaler {
         PDRectangle cropBox = page.getCropBox();
         PDRectangle mediaBox = page.getMediaBox();
 
-        float newCropBoxHeight = (float) (cropBox.getWidth() / aspectRatio);
-        PDRectangle newCropBox = changeHeight(newCropBoxHeight, cropBox);
+        float newCropBoxHeight = (float) (cropBox.rotate(page.getRotation()).getWidth() / aspectRatio);
+        PDRectangle newCropBox = changeHeight(newCropBoxHeight, cropBox.rotate(page.getRotation()))
+                .rotate(-page.getRotation());
 
         // ensure media box extends to include the crop box
-        float diff = newCropBox.getHeight() + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY())
-                - mediaBox.getHeight();
+        float diff = newCropBox.rotate(page.getRotation()).getHeight()
+                + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY())
+                - mediaBox.rotate(page.getRotation()).getHeight();
         PDRectangle newMediaBox = mediaBox;
         if (diff > 0) {
-            float newMediaBoxHeight = mediaBox.getHeight() + diff;
-            newMediaBox = changeHeight(newMediaBoxHeight, mediaBox);
+            float newMediaBoxHeight = mediaBox.rotate(page.getRotation()).getHeight() + diff;
+            newMediaBox = changeHeight(newMediaBoxHeight, mediaBox.rotate(page.getRotation()))
+                    .rotate(-page.getRotation());
         }
 
         page.setMediaBox(newMediaBox);

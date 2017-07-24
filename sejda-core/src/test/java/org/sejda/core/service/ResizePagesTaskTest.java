@@ -18,6 +18,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -91,8 +92,44 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 1188, 840f), page.getCropBox().rotate(page.getRotation()));
-            assertEqualsRect(new PDRectangle(0, 0, 1188, 840f), page.getMediaBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 1188, 840), page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 1188, 840), page.getMediaBox().rotate(page.getRotation()));
+        });
+    }
+
+    @Test
+    public void landscapeUpdateRatio() throws IOException {
+        // A4 to Tabloid
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/landscape.pdf"));
+        parameters.addSource(customInput("pdf/landscape_by_rotation.pdf"));
+        parameters.setPageSizeWidth(17);
+        parameters.setAspectRatio(17f / 11f);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 1224, 792), page.getCropBox().rotate(page.getRotation()));
+        });
+    }
+
+    @Test
+    public void potraitUpdateRatio() throws IOException {
+        // A4 to legal
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        // parameters.addSource(customInput("pdf/potrait.pdf"));
+        parameters.addSource(customInput("pdf/potrait_by_rotation.pdf"));
+        parameters.setPageSizeWidth(8.5f);
+        parameters.setAspectRatio(8.5f / 14f);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(new PDRectangle(0, 0, 612, 1008), page.getCropBox().rotate(page.getRotation()));
         });
     }
 
@@ -109,8 +146,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 842f, 1192), page.getCropBox().rotate(page.getRotation()));
-            assertEqualsRect(new PDRectangle(0, 0, 842f, 1192), page.getMediaBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getMediaBox().rotate(page.getRotation()));
         });
     }
 
@@ -136,6 +173,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             PDRectangle expected = new PDRectangle(0f, 0f, 2037.5743f, 1440f);
             assertEqualsR(expected, page.getMediaBox());
             assertEqualsR(expected, page.getCropBox());
+            assertEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
 
             page = d.getPage(1);
             // page has new size
@@ -143,12 +181,14 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             expected = new PDRectangle(0f, 0f, 1440.0f, 2038.788f);
             assertEqualsR(expected, page.getMediaBox());
             assertEqualsR(expected, page.getCropBox());
+            assertEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
 
             page = d.getPage(2);
             // page has old size
             expected = new PDRectangle(0f, 0f, 841f, 1190f);
             assertEqualsR(expected, page.getMediaBox());
             assertEqualsR(expected, page.getCropBox());
+            assertNotEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
         });
     }
 
