@@ -127,6 +127,45 @@ public class PdfScaler {
         }
     }
 
+    /**
+     * Adds the given margin all around the pages
+     * 
+     * @param doc
+     * @param pages
+     * @param margin
+     * @throws TaskIOException
+     */
+    public static void margin(PDDocument doc, Iterable<PDPage> pages, double margin) throws TaskIOException {
+        if (margin != 0) {
+            for (PDPage page : pages) {
+                try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
+                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margin)
+                            .rotate(-page.getRotation()));
+                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margin)
+                            .rotate(-page.getRotation()));
+                    page.setBleedBox(addMargins(page.getBleedBox().rotate(page.getRotation()), margin)
+                            .rotate(-page.getRotation()));
+                    page.setTrimBox(addMargins(page.getTrimBox().rotate(page.getRotation()), margin)
+                            .rotate(-page.getRotation()));
+                    page.setArtBox(addMargins(page.getArtBox().rotate(page.getRotation()), margin)
+                            .rotate(-page.getRotation()));
+
+                    Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(margin, margin));
+                    // center the content
+                    contentStream.transform(matrix);
+
+                } catch (IOException e) {
+                    throw new TaskIOException("An error occurred adding margins to the page.", e);
+                }
+            }
+        }
+    }
+
+    private static PDRectangle addMargins(PDRectangle rect, double margin) {
+        return new PDRectangle(rect.getLowerLeftX(), rect.getLowerLeftY(), (float) (rect.getWidth() + 2d * margin),
+                (float) (rect.getHeight() + 2f * margin));
+    }
+
     private Matrix getMatrix(double scale, PDRectangle crop, PDRectangle toScale) {
         if (ScaleType.CONTENT == type) {
             AffineTransform transform = AffineTransform.getTranslateInstance(
