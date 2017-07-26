@@ -20,20 +20,29 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D.Float;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.ScaleType;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSFloat;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,23 +79,9 @@ public class PdfScaler {
     public void scalePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
         for (PDPage page : pages) {
             PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
-
             double scale = targetWidth / cropBox.getWidth();
-
             LOG.debug("Scaling page from {} to {}, factor of {}", cropBox.getWidth(), targetWidth, scale);
-
-            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
-                Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
-                contentStream.transform(matrix);
-                if (ScaleType.PAGE == type) {
-                    scalePageBoxes(scale, page);
-                } else {
-                    scaleContentBoxes(scale, page);
-                }
-
-            } catch (IOException e) {
-                throw new TaskIOException("An error occurred writing scaling the page.", e);
-            }
+            scale(doc, page, scale);
         }
     }
 
@@ -110,21 +105,71 @@ public class PdfScaler {
 
     public void scale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
         if (scale != 1) {
-            for (PDPage page : pages) {
-                try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
-                    Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
-                    contentStream.transform(matrix);
-                    if (ScaleType.PAGE == type) {
-                        scalePageBoxes(scale, page);
-                    } else {
-                        scaleContentBoxes(scale, page);
-                    }
+            doScale(doc, pages, scale);
+        }
+    }
 
-                } catch (IOException e) {
-                    throw new TaskIOException("An error occurred writing scaling the page.", e);
+    private void doScale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
+        Set<COSDictionary> processedAnnots = new HashSet<>();
+        for (PDPage page : pages) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
+                Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
+                contentStream.transform(matrix);
+                if (ScaleType.PAGE == type) {
+                    scalePageBoxes(scale, page);
+                } else {
+                    scaleContentBoxes(scale, page);
                 }
+                transformAnnotations(page, matrix, processedAnnots);
+            } catch (IOException e) {
+                throw new TaskIOException("An error occurred writing scaling the page.", e);
             }
         }
+    }
+
+    private static void transformAnnotations(PDPage page, Matrix transform, Set<COSDictionary> processedAnnots) {
+        page.getAnnotations().stream().filter(a -> !processedAnnots.contains(a.getCOSObject())).forEach(a -> {
+
+            // set the new rectangle
+            ofNullable(a.getRectangle()).map(r -> r.transform(transform).getBounds2D()).map(PDRectangle::new)
+                    .ifPresent(a::setRectangle);
+
+            // Text Markup, Link and Redaction annotations can have quadpoints
+            ofNullable(a.getCOSObject().getDictionaryObject(COSName.QUADPOINTS, COSArray.class))
+                    .filter(p -> p.size() == 8).map(COSArray::toFloatArray).ifPresent(f -> {
+                        a.getCOSObject().setItem(COSName.QUADPOINTS, transformPoints(f, transform));
+                    });
+
+            // adjust line length
+            if (a instanceof PDAnnotationLine) {
+                ofNullable(((PDAnnotationLine) a).getLine()).filter(p -> p.length == 4).ifPresent(f -> {
+                    a.getCOSObject().setItem(COSName.L, transformPoints(f, transform));
+                });
+            }
+
+            // adjust Free Text CL
+            ofNullable(a.getCOSObject().getDictionaryObject(COSName.CL, COSArray.class)).filter(p -> p.size() % 2 == 0)
+                    .map(COSArray::toFloatArray).ifPresent(f -> {
+                        a.getCOSObject().setItem(COSName.CL, transformPoints(f, transform));
+                    });
+
+            // Polygon and Polyline vertices
+            ofNullable(a.getCOSObject().getDictionaryObject(COSName.VERTICES, COSArray.class))
+                    .filter(p -> p.size() % 2 == 0).map(COSArray::toFloatArray).ifPresent(f -> {
+                        a.getCOSObject().setItem(COSName.VERTICES, transformPoints(f, transform));
+                    });
+            processedAnnots.add(a.getCOSObject());
+        });
+    }
+
+    private static COSArray transformPoints(float[] points, Matrix transform) {
+        COSArray newPoints = new COSArray();
+        for (int i = 0; i < points.length; i++) {
+            Float newPoint = transform.transformPoint(points[i], points[++i]);
+            newPoints.add(new COSFloat(newPoint.x));
+            newPoints.add(new COSFloat(newPoint.y));
+        }
+        return newPoints;
     }
 
     private Matrix getMatrix(double scale, PDRectangle crop, PDRectangle toScale) {

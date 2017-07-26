@@ -17,6 +17,7 @@
  */
 package org.sejda.core.service;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -25,8 +26,11 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
@@ -148,6 +152,27 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             PDPage page = d.getPage(0);
             assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getCropBox().rotate(page.getRotation()));
             assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getMediaBox().rotate(page.getRotation()));
+        });
+    }
+
+    @Test
+    public void annotationsRectangleAndQuadPoints() throws IOException {
+
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/highlighted-potrait.pdf"));
+        parameters.setPageSizeWidth(17);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            d.getPage(0).getAnnotations().forEach(a -> {
+                assertEqualsRect(new PDRectangle(117, 1588, 110, 26), a.getRectangle());
+                assertArrayEquals(new float[] { 117, 1614, 226, 1614, 117, 1588, 226, 1588 },
+                        a.getCOSObject().getDictionaryObject(COSName.QUADPOINTS, COSArray.class).toFloatArray(), 1);
+            });
+
         });
     }
 
