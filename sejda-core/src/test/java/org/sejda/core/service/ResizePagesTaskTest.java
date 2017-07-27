@@ -222,6 +222,29 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     }
 
     @Test
+    public void annotationsLine() throws IOException {
+
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/line-potrait_by_rotation.pdf"));
+        parameters.setPageSizeWidth(17);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            d.getPage(0).getAnnotations().forEach(a -> {
+                if (a.getSubtype().equals("Line")) {
+                    assertEqualsRect(new PDRectangle(1584, 884, 49, 220), a.getRectangle());
+                    assertArrayEquals(new float[] { 1600, 1092, 1609, 897 },
+                            a.getCOSObject().getDictionaryObject(COSName.L, COSArray.class).toFloatArray(), 1);
+                }
+            });
+
+        });
+    }
+
+    @Test
     public void resizePages() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/multiple-sized-pages.pdf"));
