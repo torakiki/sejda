@@ -177,6 +177,51 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     }
 
     @Test
+    public void annotationsCallout() throws IOException {
+
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/callout-potrait.pdf"));
+        parameters.setPageSizeWidth(17);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            d.getPage(0).getAnnotations().forEach(a -> {
+                assertEqualsRect(new PDRectangle(259, 1496, 496, 104), a.getRectangle());
+                assertArrayEquals(new float[] { 259, 1596, 507, 1510, 533, 1511 },
+                        a.getCOSObject().getDictionaryObject(COSName.CL, COSArray.class).toFloatArray(), 1);
+            });
+
+        });
+    }
+
+    @Test
+    public void annotationsPolygon() throws IOException {
+
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/polygon-potrait.pdf"));
+        parameters.setPageSizeWidth(17);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            d.getPage(0).getAnnotations().forEach(a -> {
+                if (a.getSubtype().equals("Polygon")) {
+                    assertEqualsRect(new PDRectangle(431, 1218, 391, 351), a.getRectangle());
+                    assertArrayEquals(
+                            new float[] { 454, 1503, 607, 1567, 799, 1523, 820, 1339, 576, 1221, 433, 1294, 454, 1503 },
+                            a.getCOSObject().getDictionaryObject(COSName.VERTICES, COSArray.class).toFloatArray(), 1);
+                }
+            });
+
+        });
+    }
+
+    @Test
     public void resizePages() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/multiple-sized-pages.pdf"));
