@@ -21,15 +21,12 @@ package org.sejda.impl.sambox;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
@@ -52,18 +49,22 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
     private int totalSteps;
     private PDDocumentHandler documentHandler = null;
-    private MultipleOutputWriter outputWriter;
+    private SingleOutputWriter outputWriter;
 
     @Override
     public void before(JpegToPdfParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
+        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
     public void execute(JpegToPdfParameters parameters) throws TaskException {
         final MutableInt currentStep = new MutableInt(0);
+
+        File tmpFile = createTemporaryBuffer(parameters.getOutput());
+        outputWriter.taskOutput(tmpFile);
+        LOG.debug("Temporary output set to {}", tmpFile);
 
         ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter() {
             @Override
@@ -92,15 +93,9 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
         documentHandler = converter.convert(parameters.getSourceList());
 
-        File tmpFile = createTemporaryBuffer(parameters.getOutput());
-        LOG.debug("Created output on temporary buffer {}", tmpFile);
-
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
         documentHandler.savePDDocument(tmpFile);
-
-        String outName = nameGenerator(parameters.getOutputPrefix()).generate(nameRequest());
-        outputWriter.addOutput(file(tmpFile).name(outName));
 
         nullSafeCloseQuietly(documentHandler);
 
@@ -111,6 +106,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
     @Override
     public void after() {
         nullSafeCloseQuietly(documentHandler);
+        outputWriter = null;
     }
 
 }

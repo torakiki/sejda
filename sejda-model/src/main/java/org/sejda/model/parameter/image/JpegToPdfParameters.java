@@ -22,9 +22,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.PageOrientation;
 import org.sejda.model.parameter.PageSize;
-import org.sejda.model.parameter.base.MultipleSourceMultipleOutputParameters;
+import org.sejda.model.parameter.base.MultipleSourceSingleOutputParameters;
 
-public class JpegToPdfParameters extends MultipleSourceMultipleOutputParameters {
+public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
 
     private PageSize pageSize = PageSize.A4;
     private boolean pageSizeMatchImageSize = false;

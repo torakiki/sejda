@@ -49,8 +49,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
             parameters.addSource(customNonPdfInput("image/" + image));
         }
 
-        testContext.directoryOutputTo(parameters);
-        parameters.setOutputPrefix("test_file");
+        testContext.pdfOutputTo(parameters);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         return parameters;
     }
@@ -60,7 +59,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         JpegToPdfParameters parameters = new JpegToPdfParameters();
         parameters.addSource(customNonPdfInputAsFileSource("image/with_exif_orientation.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
@@ -75,7 +74,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         JpegToPdfParameters parameters = new JpegToPdfParameters();
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
@@ -85,7 +84,8 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
     @Test
     public void testAddingPngImage() throws Exception {
         execute(basicParameters());
-        testContext.forPdfOutput("test_file.pdf", d -> {
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
             assertThat(d.getNumberOfPages(), is(2));
 
             // unscaled, center aligned
@@ -103,7 +103,6 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
             assertImageAtLocation(d, d.getPage(1),
                     new Point(0, 17), (int) PDRectangle.A4.getHeight(), 561);
         });
-        testContext.assertTaskCompleted();
     }
 
     @Test
@@ -124,7 +123,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.setPageSize(PageSize.A0);
         parameters.addSource(customNonPdfInputAsFileSource("image/draft.tiff"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
@@ -144,7 +143,7 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.addSource(customNonPdfInputAsFileSource("image/draft.tiff"));
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
@@ -165,7 +164,8 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         JpegToPdfParameters parameters = new JpegToPdfParameters();
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -180,7 +180,8 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.setPageOrientation(PageOrientation.PORTRAIT);
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -195,7 +196,8 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.setPageOrientation(PageOrientation.LANDSCAPE);
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -210,7 +212,8 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         parameters.setMarginInches(0.5f);
         parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
 
-        testContext.directoryOutputTo(parameters);
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         execute(parameters);
         testContext.assertTaskCompleted();
