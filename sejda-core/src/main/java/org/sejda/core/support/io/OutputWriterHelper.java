@@ -23,7 +23,6 @@ package org.sejda.core.support.io;
 import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.core.support.io.IOUtils.findNewNameThatDoesNotExist;
-import static org.sejda.core.support.io.IOUtils.unhide;
 import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
 import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
 
@@ -137,7 +136,6 @@ final class OutputWriterHelper {
             case OVERWRITE:
                 LOG.debug("Moving {} to {}.", input, output);
                 Files.move(input.toPath(), output.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                unhide(output.toPath());
                 executionContext.notifiableTaskMetadata().addTaskOutput(output);
                 break;
             case RENAME:
@@ -164,7 +162,6 @@ final class OutputWriterHelper {
     private static void doMoveFile(File input, File output) throws IOException {
         try {
             FileUtils.moveFile(input, output);
-            unhide(output.toPath());
         } catch (IOException ex) {
             if (ex.getMessage().contains("Failed to delete original file")) {
                 // Don't crash the task because we have leftover temp files, just warn

@@ -181,18 +181,6 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void moveUnhide() throws IOException, TaskIOException {
-        if (IS_OS_WINDOWS) {
-            File dest = new File(folder.newFolder().getAbsolutePath(), "dest.tmp");
-            File tmp = IOUtils.createTemporaryBuffer();
-            IOUtils.hide(tmp.toPath());
-            assertEquals(Boolean.TRUE, (Boolean) Files.getAttribute(tmp.toPath(), "dos:hidden"));
-            OutputWriterHelper.moveFile(tmp, dest, ExistingOutputPolicy.FAIL, context);
-            assertEquals(Boolean.FALSE, (Boolean) Files.getAttribute(dest.toPath(), "dos:hidden"));
-        }
-    }
-
-    @Test
     public void copyDirectoryOverwrite() throws IOException {
         File dest = folder.newFolder();
         File tempFile = folder.newFile();
