@@ -19,8 +19,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.apache.commons.lang3.SystemUtils.IS_OS_UNIX;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 
 import java.io.File;

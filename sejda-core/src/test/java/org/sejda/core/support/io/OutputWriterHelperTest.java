@@ -20,7 +20,6 @@
  */
 package org.sejda.core.support.io;
 
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +43,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.task.Task;
 import org.sejda.model.task.TaskExecutionContext;
