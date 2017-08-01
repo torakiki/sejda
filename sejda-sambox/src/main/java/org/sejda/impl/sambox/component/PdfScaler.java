@@ -85,16 +85,6 @@ public class PdfScaler {
         }
     }
 
-    public void updateAspectRatio(PDDocument doc, Iterable<PDPage> pages, double aspectRatio) {
-        if (type == ScaleType.CONTENT) {
-            throw new RuntimeException("Updating aspect ratio of page content is not supported");
-        }
-
-        for (PDPage page : pages) {
-            updatePageBoxesAspectRatio(aspectRatio, page);
-        }
-    }
-
     public void scale(PDDocument doc, double scale) throws TaskIOException {
         scale(doc, doc.getPages(), scale);
     }
@@ -216,32 +206,5 @@ public class PdfScaler {
                 page.getCropBox().transform(getMatrix(scale, page.getCropBox(), page.getCropBox())).getBounds2D()));
         page.setMediaBox(new PDRectangle(
                 page.getMediaBox().transform(getMatrix(scale, page.getMediaBox(), page.getMediaBox())).getBounds2D()));
-    }
-
-    private void updatePageBoxesAspectRatio(double aspectRatio, PDPage page) {
-        PDRectangle cropBox = page.getCropBox();
-        PDRectangle mediaBox = page.getMediaBox();
-
-        float newCropBoxHeight = (float) (cropBox.rotate(page.getRotation()).getWidth() / aspectRatio);
-        PDRectangle newCropBox = changeHeight(newCropBoxHeight, cropBox.rotate(page.getRotation()))
-                .rotate(-page.getRotation());
-
-        // ensure media box extends to include the crop box
-        float diff = newCropBox.rotate(page.getRotation()).getHeight()
-                + (newCropBox.getLowerLeftY() - mediaBox.getLowerLeftY())
-                - mediaBox.rotate(page.getRotation()).getHeight();
-        PDRectangle newMediaBox = mediaBox;
-        if (diff > 0) {
-            float newMediaBoxHeight = mediaBox.rotate(page.getRotation()).getHeight() + diff;
-            newMediaBox = changeHeight(newMediaBoxHeight, mediaBox.rotate(page.getRotation()))
-                    .rotate(-page.getRotation());
-        }
-
-        page.setMediaBox(newMediaBox);
-        page.setCropBox(newCropBox);
-    }
-
-    private PDRectangle changeHeight(float newHeight, PDRectangle box) {
-        return new PDRectangle(box.getLowerLeftX(), box.getLowerLeftY(), box.getWidth(), newHeight);
     }
 }

@@ -102,42 +102,6 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     }
 
     @Test
-    public void landscapeUpdateRatio() throws IOException {
-        // A4 to Tabloid
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/landscape.pdf"));
-        parameters.addSource(customInput("pdf/landscape_by_rotation.pdf"));
-        parameters.setPageSizeWidth(17);
-        parameters.setAspectRatio(17f / 11f);
-        testContext.directoryOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
-
-        testContext.forEachPdfOutput(d -> {
-            PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 1224, 792), page.getCropBox().rotate(page.getRotation()));
-        });
-    }
-
-    @Test
-    public void potraitUpdateRatio() throws IOException {
-        // A4 to legal
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        // parameters.addSource(customInput("pdf/potrait.pdf"));
-        parameters.addSource(customInput("pdf/potrait_by_rotation.pdf"));
-        parameters.setPageSizeWidth(8.5f);
-        parameters.setAspectRatio(8.5f / 14f);
-        testContext.directoryOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
-
-        testContext.forEachPdfOutput(d -> {
-            PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 612, 1008), page.getCropBox().rotate(page.getRotation()));
-        });
-    }
-
-    @Test
     public void potrait() throws IOException {
         // A4 to A3
         ResizePagesParameters parameters = new ResizePagesParameters();
@@ -323,46 +287,6 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             PDPage page = d.getPage(0);
             assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getMediaBox());
             assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getCropBox());
-        });
-    }
-
-    @Test
-    public void changingAspectRatio_smallerHeight_docWithoutCropbox() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSizeWidth(8.27); // original is 8.27
-        parameters.setAspectRatio(0.75); // original 595x842 = 0.7066
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
-
-        testContext.forEachPdfOutput(d -> {
-            PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getMediaBox());
-            assertEqualsRect(new PDRectangle(0, 0, 595, 595 / 0.75f), page.getCropBox());
-        });
-    }
-
-    @Test
-    public void changingAspectRatio_largerHeight_docWithoutCropbox() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSizeWidth(8.27); // original is 8.27
-        parameters.setAspectRatio(0.65); // original 595x842 = 0.7066
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
-
-        testContext.forEachPdfOutput(d -> {
-            PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 595, 595 / 0.65f), page.getCropBox());
-            assertEqualsRect(new PDRectangle(0, 0, 595, 916), page.getMediaBox());
         });
     }
 

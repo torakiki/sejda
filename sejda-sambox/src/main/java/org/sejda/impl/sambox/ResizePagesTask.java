@@ -120,12 +120,6 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                     scaler.scalePages(documentHandler.getUnderlyingPDDocument(), pages, targetWidth);
                 }
 
-                if(parameters.getAspectRatio() != 0) {
-                    LOG.debug("Updating {} pages to match aspect ratio of {}", pages.size(), parameters.getAspectRatio());
-                    PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
-                    scaler.updateAspectRatio(documentHandler.getUnderlyingPDDocument(), pages, parameters.getAspectRatio());
-                }
-
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());
                 documentHandler.setCompress(parameters.isCompress());
                 documentHandler.savePDDocument(tmpFile);
