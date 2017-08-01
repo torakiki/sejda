@@ -30,6 +30,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
+import org.sejda.model.scale.Margins;
 import org.sejda.model.validation.constraint.NotNegative;
 
 /**
@@ -38,9 +39,10 @@ import org.sejda.model.validation.constraint.NotNegative;
  * @author Eduard Weissmann
  *
  */
-public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection, PagesSelection {
-    @NotNegative
-    public double margin;
+public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements PageRangeSelection, PagesSelection {
+    @Valid
+    public Margins margins;
 
     @NotNegative
     public double pageSizeWidth;
@@ -85,12 +87,17 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         return retSet;
     }
 
-    public double getMargin() {
-        return margin;
+    public Margins getMargins() {
+        return margins;
     }
 
-    public void setMargin(double margin) {
-        this.margin = margin;
+    /**
+     * sets the margins in inches
+     * 
+     * @param margins
+     */
+    public void setMargins(Margins margins) {
+        this.margins = margins;
     }
 
     public double getPageSizeWidth() {
@@ -116,9 +123,8 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(margin).append(pageSelection).append(pageSizeWidth).append(aspectRatio)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(margins).append(pageSelection)
+                .append(pageSizeWidth).append(aspectRatio).toHashCode();
     }
 
     @Override
@@ -130,9 +136,8 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
             return false;
         }
         ResizePagesParameters parameter = (ResizePagesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(margin, parameter.margin)
-                .append(pageSizeWidth, parameter.pageSizeWidth)
-                .append(aspectRatio, parameter.aspectRatio)
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(margins, parameter.margins)
+                .append(pageSizeWidth, parameter.pageSizeWidth).append(aspectRatio, parameter.aspectRatio)
                 .append(pageSelection, parameter.pageSelection).isEquals();
     }
 }

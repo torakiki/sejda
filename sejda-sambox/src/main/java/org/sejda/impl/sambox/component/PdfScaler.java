@@ -20,6 +20,9 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.sejda.model.scale.Margins.inchesToPoints;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.util.Collections;
 
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.scale.Margins;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -135,23 +139,24 @@ public class PdfScaler {
      * @param margin
      * @throws TaskIOException
      */
-    public static void margin(PDDocument doc, Iterable<PDPage> pages, double margin) throws TaskIOException {
-        if (margin != 0) {
+    public static void margin(PDDocument doc, Iterable<PDPage> pages, Margins margins) throws TaskIOException {
+        if (nonNull(margins)) {
             for (PDPage page : pages) {
                 try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
-                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margin)
+                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margins)
                             .rotate(-page.getRotation()));
-                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margin)
+                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margins)
                             .rotate(-page.getRotation()));
-                    page.setBleedBox(addMargins(page.getBleedBox().rotate(page.getRotation()), margin)
-                            .rotate(-page.getRotation()));
-                    page.setTrimBox(addMargins(page.getTrimBox().rotate(page.getRotation()), margin)
-                            .rotate(-page.getRotation()));
-                    page.setArtBox(addMargins(page.getArtBox().rotate(page.getRotation()), margin)
-                            .rotate(-page.getRotation()));
+                    ofNullable(page.getBleedBoxRaw()).ifPresent(r -> page.setBleedBox(
+                            addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getTrimBoxRaw()).ifPresent(r -> page
+                            .setTrimBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getArtBoxRaw()).ifPresent(r -> page
+                            .setArtBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
 
-                    Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(margin, margin));
-                    // center the content
+                    Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(inchesToPoints(margins.left),
+                            inchesToPoints(margins.top)));
+                    // realign the content
                     contentStream.transform(matrix);
 
                 } catch (IOException e) {
@@ -161,9 +166,10 @@ public class PdfScaler {
         }
     }
 
-    private static PDRectangle addMargins(PDRectangle rect, double margin) {
-        return new PDRectangle(rect.getLowerLeftX(), rect.getLowerLeftY(), (float) (rect.getWidth() + 2d * margin),
-                (float) (rect.getHeight() + 2f * margin));
+    private static PDRectangle addMargins(PDRectangle rect, Margins margins) {
+        return new PDRectangle(rect.getLowerLeftX(), rect.getLowerLeftY(),
+                (float) (rect.getWidth() + inchesToPoints(margins.left) + inchesToPoints(margins.right)),
+                (float) (rect.getHeight() + inchesToPoints(margins.top) + inchesToPoints(margins.bottom)));
     }
 
     private Matrix getMatrix(double scale, PDRectangle crop, PDRectangle toScale) {

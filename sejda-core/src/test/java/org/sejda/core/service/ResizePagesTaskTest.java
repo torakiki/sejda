@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.scale.Margins;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
@@ -43,7 +44,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     public void testAddMargins() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(regularInput());
-        parameters.setMargin(1);
+        parameters.setMargins(new Margins(1, 1, 1, 1));
         parameters.addPageRange(new PageRange(1, 3));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
