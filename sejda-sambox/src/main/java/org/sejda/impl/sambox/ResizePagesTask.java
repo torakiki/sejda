@@ -36,12 +36,14 @@ import org.sejda.impl.sambox.component.PdfScaler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,11 +115,14 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                     }
                 }
 
-                if(parameters.getPageSizeWidth() != 0) {
-                    float targetWidth = (float) (parameters.getPageSizeWidth() * 72) /* to points */;
-                    LOG.debug("Resizing {} pages to match width of {} ({} inch)", pages.size(), targetWidth, parameters.getPageSizeWidth());
+                PageSize pageSize = parameters.getPageSize();
+                if(pageSize != null) {
+                    PDRectangle targetBox = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+
+                    LOG.debug("Resizing {} pages to match {}", pages.size(), targetBox);
+
                     PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
-                    scaler.scalePages(documentHandler.getUnderlyingPDDocument(), pages, targetWidth);
+                    scaler.scalePages(documentHandler.getUnderlyingPDDocument(), pages, targetBox);
                 }
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());

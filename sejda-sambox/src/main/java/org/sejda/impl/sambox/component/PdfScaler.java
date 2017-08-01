@@ -69,18 +69,18 @@ public class PdfScaler {
      */
     public void scalePages(PDDocument doc) throws TaskIOException {
         PDPage firstPage = doc.getPage(0);
-        float targetWidth = firstPage.getCropBox().rotate(firstPage.getRotation()).getWidth();
-        scalePages(doc, doc.getPages(), targetWidth);
+        PDRectangle targetBox = firstPage.getCropBox().rotate(firstPage.getRotation());
+        scalePages(doc, doc.getPages(), targetBox);
     }
 
     /**
      * Changes the size of the given pages so they all match the target width The pages are scaled, so the aspect ratio is preserved.
      */
-    public void scalePages(PDDocument doc, Iterable<PDPage> pages, float targetWidth) throws TaskIOException {
+    public void scalePages(PDDocument doc, Iterable<PDPage> pages, PDRectangle targetBox) throws TaskIOException {
         for (PDPage page : pages) {
             PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
-            double scale = targetWidth / cropBox.getWidth();
-            LOG.debug("Scaling page from {} to {}, factor of {}", cropBox.getWidth(), targetWidth, scale);
+            double scale = getScalingFactor(targetBox, cropBox);
+            LOG.debug("Scaling page from {} to {}, factor of {}", cropBox, targetBox, scale);
             scale(doc, page, scale);
         }
     }
@@ -206,5 +206,21 @@ public class PdfScaler {
                 page.getCropBox().transform(getMatrix(scale, page.getCropBox(), page.getCropBox())).getBounds2D()));
         page.setMediaBox(new PDRectangle(
                 page.getMediaBox().transform(getMatrix(scale, page.getMediaBox(), page.getMediaBox())).getBounds2D()));
+    }
+
+    private double getScalingFactor(PDRectangle targetBox, PDRectangle pageBox) {
+        // if both target and page boxes have same orientation (landscape, portrait)
+        // the scaling factor is targetWidth / pageWidth
+        if(isLandscape(targetBox) == isLandscape(pageBox)) {
+            return targetBox.getWidth() / pageBox.getWidth();
+        } else {
+            // the boxes have different orientations
+            // the page should be scaled to match the target box height
+            return targetBox.getHeight() / pageBox.getWidth();
+        }
+    }
+
+    private boolean isLandscape(PDRectangle box) {
+        return box.getWidth() > box.getHeight();
     }
 }

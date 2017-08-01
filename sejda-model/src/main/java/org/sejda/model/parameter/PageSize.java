@@ -101,4 +101,12 @@ public class PageSize {
                 ", heightInches=" + height +
                 '}';
     }
+
+    public PageSize rotate() {
+        return new PageSize(height, width);
+    }
+
+    public static PageSize fromInches(float widthInch, float heightInch) {
+        return new PageSize(widthInch * POINTS_PER_INCH, heightInch * POINTS_PER_INCH);
+    }
 }

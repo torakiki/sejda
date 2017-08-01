@@ -19,14 +19,14 @@ package org.sejda.core.service;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.cos.COSArray;
@@ -61,8 +61,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
             // page size does not change
             PDRectangle expected = new PDRectangle(0f, 0f, 595f, 842f);
-            assertEqualsR(expected, page.getMediaBox());
-            assertEqualsR(expected, page.getCropBox());
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
 
             // contents is scaled to create margins
             String content = extractText(page, new Rectangle(115, 165, 332, 35));
@@ -75,8 +75,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
             page = d.getPage(3);
 
-            assertEqualsR(expected, page.getMediaBox());
-            assertEqualsR(expected, page.getCropBox());
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
 
             content = extractText(page, new Rectangle(65, 54, 91, 15));
             assertEquals("You may charge", content);
@@ -85,19 +85,18 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void landscape() throws IOException {
-        // A4 to A3
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/landscape.pdf"));
         parameters.addSource(customInput("pdf/landscape_by_rotation.pdf"));
-        parameters.setPageSizeWidth(16.5);
+        parameters.setPageSize(PageSize.A5);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 1188, 840), page.getCropBox().rotate(page.getRotation()));
-            assertEqualsRect(new PDRectangle(0, 0, 1188, 840), page.getMediaBox().rotate(page.getRotation()));
+            assertEqualsRect(PDRectangle.A5.rotate(), page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(PDRectangle.A5.rotate(), page.getMediaBox().rotate(page.getRotation()));
         });
     }
 
@@ -107,7 +106,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/potrait.pdf"));
         parameters.addSource(customInput("pdf/potrait.pdf"));
-        parameters.setPageSizeWidth(11.7);
+        parameters.setPageSize(PageSize.A3);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -119,12 +118,14 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         });
     }
 
+    private PageSize annotPageSize = PageSize.fromInches(17, 24);
+
     @Test
     public void annotationsRectangleAndQuadPoints() throws IOException {
 
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/highlighted-potrait.pdf"));
-        parameters.setPageSizeWidth(17);
+        parameters.setPageSize(annotPageSize);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -145,7 +146,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/callout-potrait.pdf"));
-        parameters.setPageSizeWidth(17);
+        parameters.setPageSize(annotPageSize);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -166,7 +167,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/polygon-potrait.pdf"));
-        parameters.setPageSizeWidth(17);
+        parameters.setPageSize(annotPageSize);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -190,7 +191,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/line-potrait_by_rotation.pdf"));
-        parameters.setPageSizeWidth(17);
+        parameters.setPageSize(annotPageSize);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -209,10 +210,10 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     }
 
     @Test
-    public void resizePages() throws IOException {
+    public void resize_MultipleSizedPages_MixingLandscapePortrait() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/multiple-sized-pages.pdf"));
-        parameters.setPageSizeWidth(20);
+        parameters.setPageSize(PageSize.A5);
         parameters.addPageRange(new PageRange(1, 2));
 
         testContext.directoryOutputTo(parameters);
@@ -226,26 +227,55 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             PDPage page = d.getPage(0);
 
             // page has new size
-            // landscape
-            PDRectangle expected = new PDRectangle(0f, 0f, 2037.5743f, 1440f);
-            assertEqualsR(expected, page.getMediaBox());
-            assertEqualsR(expected, page.getCropBox());
-            assertEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
+            // was A3 landscape, expect A5 landscape
+            PDRectangle expected = PDRectangle.A5.rotate(90);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
 
             page = d.getPage(1);
             // page has new size
-            // portrait
-            expected = new PDRectangle(0f, 0f, 1440.0f, 2038.788f);
-            assertEqualsR(expected, page.getMediaBox());
-            assertEqualsR(expected, page.getCropBox());
-            assertEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
+            // was A4 portrait, expect A5 portrait
+            expected = PDRectangle.A5;
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
 
             page = d.getPage(2);
-            // page has old size
+
+            // page has unchanged size
             expected = new PDRectangle(0f, 0f, 841f, 1190f);
-            assertEqualsR(expected, page.getMediaBox());
-            assertEqualsR(expected, page.getCropBox());
-            assertNotEquals(20 * 72, page.getCropBox().rotate(page.getRotation()).getWidth(), 0);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
+        });
+    }
+
+    @Test
+    public void resize_allLandscape() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/multiple-sized-pages-all-landscape.pdf"));
+        parameters.setPageSize(PageSize.A5);
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+
+        // number of pages does not change
+        testContext.assertPages(2).forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+
+            // page has new size
+            // was A4 landscape, expect A5 landscape
+            PDRectangle expected = PDRectangle.A5.rotate(90);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
+
+            page = d.getPage(1);
+            // page has new size
+            // was A3 landscape, expect A5 landscape
+            expected = PDRectangle.A5.rotate(90);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
         });
     }
 
@@ -253,7 +283,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     public void noPageSelection() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSizeWidth(20);
+        parameters.setPageSize(PageSize.A5);
 
         testContext.directoryOutputTo(parameters);
 
@@ -262,11 +292,11 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         testContext.assertTaskCompleted();
 
         testContext.forEachPdfOutput(d -> {
-            // all pages have new size
-            PDRectangle expected = new PDRectangle(0f, 0f, 2037.5743f, 1440f);
+            // all pages have new size of A5
+            PDRectangle expected = PDRectangle.A5;
             for (PDPage page : d.getPages()) {
-                assertEqualsR(expected.rotate(page.getRotation()), page.getMediaBox());
-                assertEqualsR(expected.rotate(page.getRotation()), page.getCropBox());
+                assertEqualsRect(expected.rotate(page.getRotation()), page.getMediaBox());
+                assertEqualsRect(expected.rotate(page.getRotation()), page.getCropBox());
             }
         });
     }
@@ -275,7 +305,6 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     public void noChanges() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSizeWidth(8.27);
 
         testContext.directoryOutputTo(parameters);
 
@@ -285,8 +314,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getMediaBox());
-            assertEqualsRect(new PDRectangle(0, 0, 595, 842), page.getCropBox());
+            assertEqualsRect(PDRectangle.A4, page.getMediaBox());
+            assertEqualsRect(PDRectangle.A4, page.getCropBox());
         });
     }
 
@@ -301,14 +330,11 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         }
     }
 
-    private void assertEqualsR(PDRectangle r1, PDRectangle r2) {
-        assertEquals(r1.getLowerLeftX(), r2.getLowerLeftX(), 1.0f);
-    }
-
     private void assertEqualsRect(PDRectangle r1, PDRectangle r2) {
-        assertEquals("lowerLeftX", r1.getLowerLeftX(), r2.getLowerLeftX(), 1.0f);
-        assertEquals("lowerLeftY", r1.getLowerLeftY(), r2.getLowerLeftY(), 1.0f);
-        assertEquals("height", r1.getHeight(), r2.getHeight(), 1.0f);
-        assertEquals("width", r1.getWidth(), r2.getWidth(), 1.0f);
+        float delta = 2.0f;
+        assertEquals("lowerLeftX", r1.getLowerLeftX(), r2.getLowerLeftX(), delta);
+        assertEquals("lowerLeftY", r1.getLowerLeftY(), r2.getLowerLeftY(), delta);
+        assertEquals("height", r1.getHeight(), r2.getHeight(), delta);
+        assertEquals("width", r1.getWidth(), r2.getWidth(), delta);
     }
 }

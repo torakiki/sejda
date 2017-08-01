@@ -42,8 +42,7 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
     @NotNegative
     public double margin;
 
-    @NotNegative
-    public double pageSizeWidth;
+    public PageSize pageSize;
 
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
@@ -90,23 +89,18 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         this.margin = margin;
     }
 
-    public double getPageSizeWidth() {
-        return pageSizeWidth;
+    public PageSize getPageSize() {
+        return pageSize;
     }
 
-    /**
-     * Set the target page width in inches
-     * 
-     * @param pageSizeWidth
-     */
-    public void setPageSizeWidth(double pageSizeWidth) {
-        this.pageSizeWidth = pageSizeWidth;
+    public void setPageSize(PageSize pageSize) {
+        this.pageSize = pageSize;
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(margin).append(pageSelection).append(pageSizeWidth)
+                .append(margin).append(pageSelection).append(pageSize)
                 .toHashCode();
     }
 
@@ -120,7 +114,7 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         }
         ResizePagesParameters parameter = (ResizePagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(margin, parameter.margin)
-                .append(pageSizeWidth, parameter.pageSizeWidth)
+                .append(pageSize, parameter.pageSize)
                 .append(pageSelection, parameter.pageSelection).isEquals();
     }
 }

@@ -9,7 +9,7 @@ public class ResizePagesParametersTest {
     public void testValidParameters() {
         ResizePagesParameters victim = new ResizePagesParameters();
         victim.setMargin(0.0);
-        victim.setPageSizeWidth(0.0);
+        victim.setPageSize(PageSize.A1);
         TestUtils.assertValidParameters(victim);
     }
 
@@ -17,7 +17,7 @@ public class ResizePagesParametersTest {
     public void testInvalidParameters() {
         ResizePagesParameters victim = new ResizePagesParameters();
         victim.setMargin(-1.0);
-        victim.setPageSizeWidth(-1.0);
+        victim.setPageSize(PageSize.A2);
         TestUtils.assertInvalidParameters(victim);
     }
 
