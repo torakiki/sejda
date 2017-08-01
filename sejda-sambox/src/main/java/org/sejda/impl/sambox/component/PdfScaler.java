@@ -20,7 +20,9 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.model.scale.Margins.inchesToPoints;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
@@ -32,6 +34,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.scale.Margins;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
@@ -160,6 +163,47 @@ public class PdfScaler {
             newPoints.add(new COSFloat(newPoint.y));
         }
         return newPoints;
+    }
+
+    /**
+     * Adds the given margin all around the pages
+     * 
+     * @param doc
+     * @param pages
+     * @param margin
+     * @throws TaskIOException
+     */
+    public static void margin(PDDocument doc, Iterable<PDPage> pages, Margins margins) throws TaskIOException {
+        if (nonNull(margins)) {
+            for (PDPage page : pages) {
+                try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
+                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margins)
+                            .rotate(-page.getRotation()));
+                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margins)
+                            .rotate(-page.getRotation()));
+                    ofNullable(page.getBleedBoxRaw()).ifPresent(r -> page.setBleedBox(
+                            addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getTrimBoxRaw()).ifPresent(r -> page
+                            .setTrimBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getArtBoxRaw()).ifPresent(r -> page
+                            .setArtBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+
+                    Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(inchesToPoints(margins.left),
+                            inchesToPoints(margins.top)));
+                    // realign the content
+                    contentStream.transform(matrix);
+
+                } catch (IOException e) {
+                    throw new TaskIOException("An error occurred adding margins to the page.", e);
+                }
+            }
+        }
+    }
+
+    private static PDRectangle addMargins(PDRectangle rect, Margins margins) {
+        return new PDRectangle(rect.getLowerLeftX(), rect.getLowerLeftY(),
+                (float) (rect.getWidth() + inchesToPoints(margins.left) + inchesToPoints(margins.right)),
+                (float) (rect.getHeight() + inchesToPoints(margins.top) + inchesToPoints(margins.bottom)));
     }
 
     private Matrix getMatrix(double scale, PDRectangle crop, PDRectangle toScale) {

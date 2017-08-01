@@ -30,7 +30,7 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
-import org.sejda.model.validation.constraint.NotNegative;
+import org.sejda.model.scale.Margins;
 
 /**
  * Parameters for a task to resize pages or add margins. All sizes expected in inches.
@@ -38,9 +38,10 @@ import org.sejda.model.validation.constraint.NotNegative;
  * @author Eduard Weissmann
  *
  */
-public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection, PagesSelection {
-    @NotNegative
-    public double margin;
+public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements PageRangeSelection, PagesSelection {
+    @Valid
+    public Margins margins;
 
     public PageSize pageSize;
 
@@ -81,12 +82,17 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         return retSet;
     }
 
-    public double getMargin() {
-        return margin;
+    public Margins getMargins() {
+        return margins;
     }
 
-    public void setMargin(double margin) {
-        this.margin = margin;
+    /**
+     * sets the margins in inches
+     * 
+     * @param margins
+     */
+    public void setMargins(Margins margins) {
+        this.margins = margins;
     }
 
     public PageSize getPageSize() {
@@ -100,7 +106,7 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(margin).append(pageSelection).append(pageSize)
+                .append(margins).append(pageSelection).append(pageSize)
                 .toHashCode();
     }
 
@@ -113,7 +119,7 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
             return false;
         }
         ResizePagesParameters parameter = (ResizePagesParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(margin, parameter.margin)
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(margins, parameter.margins)
                 .append(pageSize, parameter.pageSize)
                 .append(pageSelection, parameter.pageSelection).isEquals();
     }

@@ -17,6 +17,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Objects.nonNull;
 import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
@@ -101,18 +102,9 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                 }
 
 
-                if(parameters.getMargin() != 0){
-                    LOG.debug("Adding margins of {} inch to {} pages", parameters.getMargin(), pages.size());
-                    for(PDPage page: pages) {
-                        float currentWidth = page.getCropBox().getWidth();
-                        double marginWidth = parameters.getMargin() * 72 /* to points */;
-
-                        double targetWidth = currentWidth - marginWidth;
-                        double scale = targetWidth / currentWidth;
-
-                        PdfScaler scaler = new PdfScaler(ScaleType.CONTENT);
-                        scaler.scale(documentHandler.getUnderlyingPDDocument(), page, scale);
-                    }
+                if (nonNull(parameters.getMargins())) {
+                    LOG.debug("Adding margins of {} (inches) to {} pages", parameters.getMargins(), pages.size());
+                    PdfScaler.margin(documentHandler.getUnderlyingPDDocument(), pages, parameters.getMargins());
                 }
 
                 PageSize pageSize = parameters.getPageSize();

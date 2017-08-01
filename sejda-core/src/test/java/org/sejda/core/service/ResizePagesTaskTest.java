@@ -20,7 +20,7 @@ package org.sejda.core.service;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.junit.Ignore;
@@ -29,6 +29,7 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.scale.Margins;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -45,41 +46,38 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     @Test
     public void testAddMargins() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setMargin(2);
+        parameters.addSource(regularInput());
+        parameters.setMargins(new Margins(1, 1, 1, 1));
         parameters.addPageRange(new PageRange(1, 3));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
-        testContext.directoryOutputTo(parameters);
-
+        testContext.pdfOutputTo(parameters);
         execute(parameters);
-
         testContext.assertTaskCompleted();
 
         // number of pages does not change
         testContext.assertPages(11).forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
 
-            // page size does not change
-            PDRectangle expected = new PDRectangle(0f, 0f, 595f, 842f);
+            // page size is increased by 72 points in each direction
+            PDRectangle expected = new PDRectangle(0f, 0f, 595f + 144f, 842f + 144f);
             assertEqualsRect(expected, page.getMediaBox());
             assertEqualsRect(expected, page.getCropBox());
 
-            // contents is scaled to create margins
-            String content = extractText(page, new Rectangle(115, 165, 332, 35));
+            // contents is centered to create margins
             assertEquals("Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>",
-                    extractText(page, new Rectangle(115, 170, 315, 9)));
+                    extractText(page, new Rectangle(132, 164, 415, 10)));
             assertEquals("Everyone is permitted to copy and distribute verbatim copies",
-                    extractText(page, new Rectangle(115, 179, 315, 9)));
+                    extractText(page, new Rectangle(132, 174, 415, 10)));
             assertEquals("of this license document, but changing it is not allowed.",
-                    extractText(page, new Rectangle(115, 188, 315, 9)));
+                    extractText(page, new Rectangle(132, 184, 415, 10)));
 
             page = d.getPage(3);
 
+            expected = new PDRectangle(0f, 0f, 595f, 842f);
             assertEqualsRect(expected, page.getMediaBox());
             assertEqualsRect(expected, page.getCropBox());
-
-            content = extractText(page, new Rectangle(65, 54, 91, 15));
-            assertEquals("You may charge", content);
+            assertEquals("You may charge", extractText(page, new Rectangle(65, 60, 91, 15)));
         });
     }
 
