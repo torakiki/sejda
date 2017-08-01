@@ -105,9 +105,8 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode())
-                .append(margins).append(pageSelection).append(pageSize)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(margins).append(pageSelection)
+                .append(pageSize).toHashCode();
     }
 
     @Override
@@ -120,7 +119,6 @@ public class ResizePagesParameters extends MultiplePdfSourceMultipleOutputParame
         }
         ResizePagesParameters parameter = (ResizePagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(margins, parameter.margins)
-                .append(pageSize, parameter.pageSize)
-                .append(pageSelection, parameter.pageSelection).isEquals();
+                .append(pageSize, parameter.pageSize).append(pageSelection, parameter.pageSelection).isEquals();
     }
 }
