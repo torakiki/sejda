@@ -189,7 +189,7 @@ public class PdfScaler {
                             .setArtBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
 
                     Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(inchesToPoints(margins.left),
-                            inchesToPoints(margins.top)));
+                            inchesToPoints(margins.bottom)));
                     // realign the content
                     contentStream.transform(matrix);
 

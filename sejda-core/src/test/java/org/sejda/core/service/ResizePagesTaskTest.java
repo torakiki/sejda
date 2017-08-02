@@ -44,7 +44,7 @@ import org.sejda.sambox.text.PDFTextStripperByArea;
 public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParameters> {
 
     @Test
-    public void testAddMargins() throws IOException {
+    public void addUniformMargins() throws IOException {
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(regularInput());
         parameters.setMargins(new Margins(1, 1, 1, 1));
@@ -71,6 +71,43 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
                     extractText(page, new Rectangle(132, 174, 415, 10)));
             assertEquals("of this license document, but changing it is not allowed.",
                     extractText(page, new Rectangle(132, 184, 415, 10)));
+
+            page = d.getPage(3);
+
+            expected = new PDRectangle(0f, 0f, 595f, 842f);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
+            assertEquals("You may charge", extractText(page, new Rectangle(65, 60, 91, 15)));
+        });
+    }
+
+    @Test
+    public void addMargins() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(regularInput());
+        parameters.setMargins(new Margins(0, 0, 2, 5));
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        // number of pages does not change
+        testContext.assertPages(11).forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+
+            PDRectangle expected = new PDRectangle(0f, 0f, 595f + 360f, 842f + 144f);
+            assertEqualsRect(expected, page.getMediaBox());
+            assertEqualsRect(expected, page.getCropBox());
+
+            // contents is centered to create margins
+            assertEquals("Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>",
+                    extractText(page, new Rectangle(415, 90, 415, 10)));
+            assertEquals("Everyone is permitted to copy and distribute verbatim copies",
+                    extractText(page, new Rectangle(415, 102, 415, 10)));
+            assertEquals("of this license document, but changing it is not allowed.",
+                    extractText(page, new Rectangle(415, 114, 415, 10)));
 
             page = d.getPage(3);
 
