@@ -54,12 +54,14 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     private WatermarkParameters pngParams() throws IOException {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
         setUpParams(parameters);
+        parameters.setDimension(new Dimension(248, 103));
         return parameters;
     }
 
     private WatermarkParameters tiffParams() throws IOException {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tiff"));
         setUpParams(parameters);
+        parameters.setDimension(new Dimension(248, 103));
         return parameters;
     }
 
@@ -128,7 +130,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     }
 
     @Test
-    public void testRotation() throws Exception {
+    public void testImageRotation() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
         setUpParams(parameters);
         parameters.setDimension(new Dimension(200, 83));
@@ -137,6 +139,66 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
         testContext.assertTaskCompleted();
         testContext.forPdfOutput(d -> {
             assertImageAtLocation(d, d.getPage(0), new Rectangle(68, -8, 200, 83));
+        });
+    }
+
+    @Test
+    public void testPageRotation90() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters);
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/rotation_90_test_file.pdf"));
+        parameters.setDimension(new Dimension(200, 83));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(545, 10, 200, 83));
+        });
+    }
+
+    @Test
+    public void testPageRotation180() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters);
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/rotation_180_test_file.pdf"));
+        parameters.setDimension(new Dimension(200, 83));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(585, 792, -200, -83));
+        });
+    }
+
+    @Test
+    public void testPageRotation270() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters);
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/rotation_270_test_file.pdf"));
+        parameters.setDimension(new Dimension(200, 83));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(50, 832, 200, 83));
+        });
+    }
+
+    @Test
+    public void testCroppedPage() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters);
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/cropped_test_file.pdf"));
+        parameters.setDimension(new Dimension(200, 83));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(46, 90, 200, 83));
         });
     }
 

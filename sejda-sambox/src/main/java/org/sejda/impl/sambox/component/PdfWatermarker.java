@@ -20,7 +20,9 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
@@ -88,16 +90,52 @@ public class PdfWatermarker {
 
     public void mark(PDPage page) throws TaskIOException {
         PDExtendedGraphicsState gs = null;
+        PDRectangle mediaBox = page.getMediaBox().rotate(page.getRotation());
+        PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
+
+        Point2D pos = parameters.getPosition();
+        Dimension dim = parameters.getDimension();
+
+        double _x = pos.getX() + cropBox.getLowerLeftX();
+        double _y = pos.getY() + cropBox.getLowerLeftY();
+        double _w = dim.getWidth();
+        double _h = dim.getHeight();
+
+        float pageWidth = mediaBox.getWidth();
+        float pageHeight = mediaBox.getHeight();
+
+        // rotated?
+        double x = _x, y = _y, w = _w, h = _h;
+        if(page.getRotation() == 90) {
+            x = pageHeight - _y;
+            y = _x;
+            w = _h;
+            h = _w;
+        } else if(page.getRotation() == 180) {
+            x = pageWidth - _x;
+            y = pageHeight - _y;
+            w = _w;
+            h = _h;
+        } else if(page.getRotation() == 270) {
+            x = _y;
+            y = pageWidth - _x;
+            w = _h;
+            h = _w;
+        }
+
+        Point2D finalPosition = new Point((int)x, (int)y);
+
         if (parameters.getOpacity() != 100) {
             gs = new PDExtendedGraphicsState();
             float alpha = (float) parameters.getOpacity() / 100;
             gs.setStrokingAlphaConstant(alpha);
             gs.setNonStrokingAlphaConstant(alpha);
         }
+
         if (parameters.getLocation() == Location.BEHIND) {
-            imageWriter.prepend(page, form, parameters.getPosition(), 1, 1, gs, 0);
+            imageWriter.prepend(page, form, finalPosition, 1, 1, gs, page.getRotation());
         } else {
-            imageWriter.append(page, form, parameters.getPosition(), 1, 1, gs, 0);
+            imageWriter.append(page, form, finalPosition, 1, 1, gs, page.getRotation());
         }
     }
 
