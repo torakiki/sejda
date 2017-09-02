@@ -32,6 +32,7 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.WatermarkParameters;
 import org.sejda.model.pdf.page.PageRange;
@@ -51,33 +52,33 @@ import org.sejda.sambox.pdmodel.common.PDStream;
 @Ignore
 public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters> {
 
-    private WatermarkParameters pngParams() throws IOException {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
+    private WatermarkParameters pngParams(PdfSource<?> source) throws IOException {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/black-rect.png"));
+        setUpParams(parameters, source);
         parameters.setDimension(new Dimension(248, 103));
         return parameters;
     }
 
-    private WatermarkParameters tiffParams() throws IOException {
+    private WatermarkParameters tiffParams(PdfSource<?> source) throws IOException {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.tiff"));
-        setUpParams(parameters);
+        setUpParams(parameters, source);
         parameters.setDimension(new Dimension(248, 103));
         return parameters;
     }
 
-    private void setUpParams(WatermarkParameters parameters) throws IOException {
+    private void setUpParams(WatermarkParameters parameters, PdfSource<?> source) throws IOException {
         parameters.setCompress(true);
         parameters.setPosition(new Point(10, 50));
         parameters.setOpacity(40);
         testContext.directoryOutputTo(parameters);
         parameters.setOutputPrefix("test_file[FILENUMBER]");
-        parameters.addSource(customInput("pdf/test_file.pdf"));
+        parameters.addSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
     @Test
     public void testAddingPngImage() throws Exception {
-        WatermarkParameters parameters = pngParams();
+        WatermarkParameters parameters = pngParams(customInput("pdf/test_file.pdf"));
         parameters.addPageRange(new PageRange(2, 3));
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -95,7 +96,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
 
     @Test
     public void testAddingTiffImage() throws Exception {
-        WatermarkParameters parameters = tiffParams();
+        WatermarkParameters parameters = tiffParams(customInput("pdf/test_file.pdf"));
         parameters.addPageRange(new PageRange(2, 3));
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -113,8 +114,8 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
 
     @Test
     public void testAddingPngImageScaled() throws Exception {
-        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/black-rect.png"));
+        setUpParams(parameters, customInput("pdf/test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
         parameters.addPageRange(new PageRange(1, 1));
         execute(parameters);
@@ -132,7 +133,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     @Test
     public void testImageRotation() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
+        setUpParams(parameters, customInput("pdf/test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
         parameters.setRotationDegrees(45);
         execute(parameters);
@@ -143,11 +144,22 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     }
 
     @Test
+    public void testImageNegativeRotation() throws Exception {
+        WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
+        setUpParams(parameters, customInput("pdf/test_file.pdf"));
+        parameters.setDimension(new Dimension(200, 83));
+        parameters.setRotationDegrees(-315);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertImageAtLocation(d, d.getPage(0), new Rectangle(68, -8, 200, 83));
+        });
+    }
+
+    @Test
     public void testPageRotation90() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
-        parameters.removeAllSources();
-        parameters.addSource(customInput("pdf/rotation_90_test_file.pdf"));
+        setUpParams(parameters, customInput("pdf/rotation_90_test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
 
         execute(parameters);
@@ -160,9 +172,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     @Test
     public void testPageRotation180() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
-        parameters.removeAllSources();
-        parameters.addSource(customInput("pdf/rotation_180_test_file.pdf"));
+        setUpParams(parameters, customInput("pdf/rotation_180_test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
 
         execute(parameters);
@@ -175,9 +185,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     @Test
     public void testPageRotation270() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
-        parameters.removeAllSources();
-        parameters.addSource(customInput("pdf/rotation_270_test_file.pdf"));
+        setUpParams(parameters, customInput("pdf/rotation_270_test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
 
         execute(parameters);
@@ -190,9 +198,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     @Test
     public void testCroppedPage() throws Exception {
         WatermarkParameters parameters = new WatermarkParameters(customNonPdfInput("image/draft.png"));
-        setUpParams(parameters);
-        parameters.removeAllSources();
-        parameters.addSource(customInput("pdf/cropped_test_file.pdf"));
+        setUpParams(parameters, customInput("pdf/cropped_test_file.pdf"));
         parameters.setDimension(new Dimension(200, 83));
 
         execute(parameters);
@@ -203,8 +209,90 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
     }
 
     @Test
+    public void testRotated90CropOffset() throws Exception {
+        WatermarkParameters parameters = pngParams(customInput("pdf/rotation_90_cropped_test_file.pdf"));
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.setPosition(new Point(5, 10));
+        parameters.setDimension(new Dimension(194, 87));
+        parameters.setOpacity(100);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertNotNull(d.getPage(1).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertNotNull(d.getPage(2).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(424, 64, 194, 87));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(424, 64, 194, 87));
+            assertImageAtLocation(d, d.getPage(2), new Rectangle(424, 64, 194, 87));
+            assertNoImageAtLocation(d, d.getPage(3), new Rectangle(424, 64, 194, 87));
+        });
+    }
+
+    @Test
+    public void testRotated180CropOffset() throws Exception {
+        WatermarkParameters parameters = tiffParams(customInput("pdf/rotation_180_cropped_test_file.pdf"));
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.setPosition(new Point(5, 10));
+        parameters.setDimension(new Dimension(194, 87));
+        parameters.setOpacity(100);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertNotNull(d.getPage(1).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertNotNull(d.getPage(2).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(429, 780, -194, -87));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(429, 780, -194, -87));
+            assertImageAtLocation(d, d.getPage(2), new Rectangle(429, 780, -194, -87));
+            assertNoImageAtLocation(d, d.getPage(3), new Rectangle(429, 780, -194, -87));
+        });
+    }
+    @Test
+    public void testRotated270CropOffset() throws Exception {
+        WatermarkParameters parameters = pngParams(customInput("pdf/rotation_270_cropped_test_file.pdf"));
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.setPosition(new Point(5, 10));
+        parameters.setDimension(new Dimension(194, 87));
+        parameters.setOpacity(100);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertNotNull(d.getPage(1).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertNotNull(d.getPage(2).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(49, 785, 194, 87));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(49, 785, 194, 87));
+            assertImageAtLocation(d, d.getPage(2), new Rectangle(49, 785, 194, 87));
+            assertNoImageAtLocation(d, d.getPage(3), new Rectangle(49, 785, 194, 87));
+        });
+    }
+
+    @Test
+    public void testCropOffset() throws Exception {
+        WatermarkParameters parameters = pngParams(customInput("pdf/cropped_test_file.pdf"));
+        parameters.addPageRange(new PageRange(2, 3));
+        parameters.setPosition(new Point(0, 10));
+        parameters.setDimension(new Dimension(200, 90));
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forPdfOutput(d -> {
+            assertNotNull(d.getPage(1).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertNotNull(d.getPage(2).getResources().getCOSObject().getDictionaryObject(COSName.XOBJECT,
+                    COSDictionary.class));
+            assertNoImageAtLocation(d, d.getPage(0), new Rectangle(36, 50, 200, 90));
+            assertImageAtLocation(d, d.getPage(1), new Rectangle(36, 50, 200, 90));
+            assertImageAtLocation(d, d.getPage(2), new Rectangle(36, 50, 200, 90));
+            assertNoImageAtLocation(d, d.getPage(3), new Rectangle(36, 50, 200, 90));
+        });
+    }
+
+    @Test
     public void testLocation() throws IOException {
-        WatermarkParameters parameters = pngParams();
+        WatermarkParameters parameters = pngParams(customInput("pdf/test_file.pdf"));
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setLocation(Location.OVER);
         parameters.setOpacity(100);
@@ -231,7 +319,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
 
     @Test
     public void testOpacity() throws IOException {
-        WatermarkParameters parameters = pngParams();
+        WatermarkParameters parameters = pngParams(customInput("pdf/test_file.pdf"));
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setLocation(Location.BEHIND);
         parameters.setOpacity(30);
@@ -253,7 +341,7 @@ public abstract class WatermarkTaskTest extends BaseTaskTest<WatermarkParameters
 
     @Test
     public void testNoOpacity() throws IOException {
-        WatermarkParameters parameters = pngParams();
+        WatermarkParameters parameters = pngParams(regularInput());
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setLocation(Location.BEHIND);
         execute(parameters);
