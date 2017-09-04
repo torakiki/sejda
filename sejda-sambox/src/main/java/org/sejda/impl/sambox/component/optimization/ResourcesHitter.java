@@ -39,6 +39,7 @@ import org.sejda.sambox.contentstream.operator.OperatorProcessor;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSNull;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -169,7 +170,8 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
     private void processAnnotation(PDAnnotation annotation) throws IOException {
         List<PDAppearanceEntry> appreaceEntries = ofNullable(annotation.getAppearance())
                 .map(d -> d.getCOSObject().getValues()).filter(Objects::nonNull).orElse(Collections.emptyList())
-                .stream().map(a -> a.getCOSObject()).map(PDAppearanceEntry::new).collect(Collectors.toList());
+                .stream().map(a -> a.getCOSObject()).filter(a -> !(a instanceof COSNull)).map(PDAppearanceEntry::new)
+                .collect(Collectors.toList());
         for (PDAppearanceEntry entry : appreaceEntries) {
             if (entry.isStream()) {
                 processStream(entry.getAppearanceStream());
