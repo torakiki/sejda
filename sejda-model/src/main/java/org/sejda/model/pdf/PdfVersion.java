@@ -20,6 +20,10 @@
  */
 package org.sejda.model.pdf;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+
 import org.sejda.common.FriendlyNamed;
 
 /**
@@ -82,11 +86,11 @@ public enum PdfVersion implements FriendlyNamed {
     public static PdfVersion getMax(PdfVersion... pdfVersions) {
         PdfVersion max = null;
         for (PdfVersion current : pdfVersions) {
-            if (max == null || max.compareTo(current) < 0) {
+            if (nonNull(current) && (isNull(max) || max.compareTo(current) < 0)) {
                 max = current;
             }
         }
-        return max;
+        return ofNullable(max).orElse(PdfVersion.VERSION_1_0);
     }
 
     /**
@@ -96,10 +100,10 @@ public enum PdfVersion implements FriendlyNamed {
     public static PdfVersion getMax(MinRequiredVersion... items) {
         PdfVersion max = null;
         for (MinRequiredVersion current : items) {
-            if (current != null && (max == null || max.compareTo(current.getMinVersion()) < 0)) {
+            if (nonNull(current) && (isNull(max) || max.compareTo(current.getMinVersion()) < 0)) {
                 max = current.getMinVersion();
             }
         }
-        return max;
+        return ofNullable(max).orElse(PdfVersion.VERSION_1_0);
     }
 }
