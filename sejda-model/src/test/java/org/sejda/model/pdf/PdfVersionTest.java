@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.sejda.model.pdf.encryption.PdfEncryption;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
+import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 
 /**
@@ -41,5 +42,26 @@ public class PdfVersionTest {
     public void testGetMaxMinRequiredVersion() {
         assertEquals(PdfVersion.VERSION_1_6, PdfVersion.getMax(PdfBooleanPreference.DISPLAY_DOC_TITLE,
                 PdfPageMode.FULLSCREEN, PdfEncryption.AES_ENC_128));
+    }
+
+    @Test
+    public void oneNullPdfVersion() {
+        assertEquals(PdfVersion.VERSION_1_7, PdfVersion.getMax(PdfVersion.VERSION_1_7, PdfVersion.VERSION_1_2, null));
+    }
+
+    @Test
+    public void oneNullMinRequired() {
+        assertEquals(PdfVersion.VERSION_1_7,
+                PdfVersion.getMax(PdfPageMode.USE_ATTACHMENTS, PdfDuplex.DUPLEX_FLIP_LONG_EDGE, null));
+    }
+
+    @Test
+    public void nullSafePdfVersion() {
+        assertEquals(PdfVersion.VERSION_1_0, PdfVersion.getMax((PdfVersion) null, (PdfVersion) null));
+    }
+
+    @Test
+    public void nullSafeMinRequired() {
+        assertEquals(PdfVersion.VERSION_1_0, PdfVersion.getMax((PdfPageMode) null, null));
     }
 }
