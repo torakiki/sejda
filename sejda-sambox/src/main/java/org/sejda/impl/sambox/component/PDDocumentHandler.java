@@ -335,23 +335,6 @@ public class PDDocumentHandler implements Closeable {
         return document.getPage(pageNumber - 1);
     }
 
-    /**
-     * Returns the same PDPage object each time, given a page number This is required for things like text redacting, which updates the PDPage resources (getting a new PDPage
-     * object each time would overwrite any previous changes)
-     *
-     * @param pageNumber
-     * @return
-     */
-    private Map<Integer, PDPage> pagesCache = new HashMap<>();
-
-    public PDPage getPageCached(int pageNumber) {
-        if (!pagesCache.containsKey(pageNumber)) {
-            pagesCache.put(pageNumber, getPage(pageNumber));
-        }
-
-        return pagesCache.get(pageNumber);
-    }
-
     public PDPageTree getPages() {
         return document.getPages();
     }
