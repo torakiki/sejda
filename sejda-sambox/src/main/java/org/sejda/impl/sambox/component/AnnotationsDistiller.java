@@ -104,7 +104,8 @@ public final class AnnotationsDistiller {
                 // relevant page dest
                 PDAnnotationLink duplicate = (PDAnnotationLink) duplicate(annotation, relevantPages);
                 duplicate.getCOSObject().removeItem(COSName.A);
-                PDPageDestination newDestination = (PDPageDestination) PDDestination.create(destination.getCOSObject());
+                PDPageDestination newDestination = (PDPageDestination) PDDestination
+                        .create(((PDPageDestination) destination).getCOSObject().duplicate());
                 newDestination.setPage(destPage);
                 duplicate.setDestination(newDestination);
                 keptAnnotations.add(duplicate);
