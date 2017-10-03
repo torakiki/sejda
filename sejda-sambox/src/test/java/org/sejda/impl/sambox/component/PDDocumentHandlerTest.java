@@ -18,12 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -37,6 +31,8 @@ import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Andrea Vacondio
@@ -96,6 +92,19 @@ public class PDDocumentHandlerTest {
         assertEquals(PageLayout.TWO_COLUMN_RIGHT,
                 victim.getUnderlyingPDDocument().getDocumentCatalog().getPageLayout());
         assertEquals(PageMode.USE_OUTLINES, victim.getUnderlyingPDDocument().getDocumentCatalog().getPageMode());
+    }
+
+    @Test
+    public void inheritedMediaBox() throws IOException {
+        try (PDDocumentHandler handler1 = new PDDocumentHandler(testDoc("pdf/media_box_inherited.pdf"))) {
+            PDPage page = handler1.getPage(1);
+            assertEquals(PDRectangle.A4, page.getMediaBox());
+
+            PDDocumentHandler handler2 = new PDDocumentHandler();
+            PDPage imported = handler2.importPage(page);
+
+            assertEquals("Imported page has different media box than source", imported.getMediaBox(), page.getMediaBox());
+        }
     }
 
     private PDDocument testDoc(String resourceName) throws IOException {
