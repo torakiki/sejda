@@ -215,7 +215,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
             // ignores whitespace
             pageText = StringUtils.normalizeWhitespace(pageText);
             pageText = pageText.replaceAll("\\s", "");
-            assertThat(pageText, containsString(text));
+            assertThat(pageText, containsString(text.replaceAll("\\s", "")));
         });
     }
 
