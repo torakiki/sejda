@@ -123,6 +123,19 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void executeMergeAllRetainingOutlineTocNamesWhenNamesAreVeryLong() throws IOException {
+        MergeParameters parameters = setUpParameters(getInput());
+        String longFilename = "2017-11-12 This is a file that has a very long name and should not be truncated so that the version is visible at the end v7";
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", longFilename + ".pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        doExecuteMergeAll(false, 19, parameters);
+
+        testContext.forPdfOutput(d -> {
+            assertPageTextContains(d.getPage(0), longFilename);
+        });
+    }
+
+    @Test
     public void executeMergeRotatedTocPage() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

@@ -96,6 +96,7 @@ public class TableOfContentsCreator {
         requireNotNullArg(page, "ToC page cannot be null");
         if (shouldGenerateToC()) {
             items.add(new ToCItem(text, pageNumber, linkAnnotationFor(page)));
+            recalculateFontSize();
         }
     }
 
@@ -151,7 +152,7 @@ public class TableOfContentsCreator {
                         if (nonNull(i)) {
                             float y = pageSize().getHeight() - margin - (row * lineHeight);
                             float x = margin;
-                            String itemText = sanitize(i.text, separatingLineEndingX, separatorWidth);
+                            String itemText = truncateIfRequired(i.text, separatingLineEndingX, separatorWidth);
                             writeText(page, itemText, x, y);
 
                             String pageString = SEPARATOR + Long.toString(i.page + tocNumberOfPages);
@@ -162,7 +163,10 @@ public class TableOfContentsCreator {
                                     new PDRectangle(margin, y, pageSize().getWidth() - (2 * margin), fontSize));
                             page.getAnnotations().add(i.annotation);
 
-                            // we didn't sanitize the text so it's shorter then the available space and needs a separator line
+                            // we didn't truncate the item text?
+                            // must be shorter than available page width
+                            // and we need to draw a _______________ line
+                            // Eg: item text _________________________________________________ 12
                             if (itemText.equals(i.text)) {
                                 stream.moveTo(margin + separatorWidth + stringLength(i.text), y);
                                 stream.lineTo(separatingLineEndingX, y);
@@ -182,11 +186,11 @@ public class TableOfContentsCreator {
         writer.write(page, new Point.Float(x, y), s, font, (double) fontSize, Color.BLACK);
     }
 
-    private String sanitize(String text, float separatingLineEndingX, float separatorWidth) throws TaskIOException {
+    private String truncateIfRequired(String text, float separatingLineEndingX, float separatorWidth) throws TaskIOException {
         float maxLen = pageSize().getWidth() - margin - (pageSize().getWidth() - separatingLineEndingX)
                 - separatorWidth;
         if (stringLength(text) > maxLen) {
-            LOG.debug("Truncating ToC text to fit available space");
+            LOG.debug("ToC text needs truncating to fit available space");
             int currentLength = text.length() / 2;
             while (stringLength(text.substring(0, currentLength)) > maxLen) {
                 currentLength /= 2;
@@ -211,7 +215,11 @@ public class TableOfContentsCreator {
     }
 
     private float getSeparatingLineEndingX(float separatorWidth, long indexPages) throws TaskIOException {
-        return getPageNumberX(separatorWidth, items.peekLast().page + indexPages);
+        // this method gets called from recalculateFontSize()
+        // which in turn could be called from the constructor, when no items are yet available
+        ToCItem last = items.peekLast();
+        long lastItemPage = last == null ? 0 : last.page;
+        return getPageNumberX(separatorWidth, lastItemPage + indexPages);
     }
 
     private float getPageNumberX(float separatorWidth, long pageNumber) throws TaskIOException {
@@ -240,8 +248,59 @@ public class TableOfContentsCreator {
     private void recalculateFontSize() {
         float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
 
-        this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
+        float defaultFontSize = scalingFactor * DEFAULT_FONT_SIZE;
+        this.fontSize = defaultFontSize;
         this.margin = scalingFactor * DEFAULT_MARGIN;
+
+        try {
+            // We check here if there's any TOC item that doesn't fit the page width
+            // And will be truncated by default
+            // We would like to avoid truncating the items, so first we'll try to scale down the font size
+            // Hoping a little smaller font size will make all the items fit nicely
+
+            float fontSizeIncrement = scalingFactor * 0.1f;
+
+            for (ToCItem item : this.items) {
+                boolean keepGoing = true;
+                int triesCount = 0;
+
+                while(keepGoing) {
+                    triesCount++;
+
+                    float separatorWidth = stringLength(SEPARATOR);
+                    float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, tocNumberOfPages);
+
+                    String result = truncateIfRequired(item.text, separatingLineEndingX, separatorWidth);
+                    if (result.equals(item.text)) {
+                        // item fits on the TOC page
+                        keepGoing = false;
+                    } else {
+                        // item cannot fit without truncation on the TOC page
+                        // try to find a smaller font size so that it fits
+                        this.fontSize -= fontSizeIncrement;
+                    }
+
+                    if(keepGoing && triesCount > 100) {
+                        // prevents this from going on too many times
+                        keepGoing = false;
+                    }
+                }
+            }
+
+            // However, this could lead to a very small font size, in the case of an TOC item that's ridiculously long
+            // Let's cover this scenario and not let the font size decrease more than half of the original 'default' size.
+            if(this.fontSize < defaultFontSize / 2) {
+                this.fontSize = defaultFontSize / 2;
+            }
+
+            if(this.fontSize != defaultFontSize) {
+                LOG.debug("Scaled down TOC font size to fit as much as the TOC items as possible without truncating ({} -> {})", defaultFontSize, this.fontSize);
+            }
+
+        } catch(TaskIOException e) {
+            LOG.warn("Failed to determine TOCItem length");
+        }
+
         this.lineHeight = (float) (fontSize + (fontSize * 0.7));
         this.maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
         if (shouldGenerateToC()) {

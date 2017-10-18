@@ -291,4 +291,26 @@ public class TableOfContentsCreatorTest {
         // ToC font is scaled so we get 2 pages even if a2 is twice the a4 height
         assertEquals(2, victim.tocNumberOfPages());
     }
+
+    @Test
+    public void testTocFontSizeIsScaledDownIfTheFilenameDoesNotFitThePageWidth() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        victim.appendItem("2017-11-12 This is a file that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+        assertEquals(7.29, victim.getFontSize(), 0.01);
+    }
+
+    @Test
+    public void testTocFontSizeIsScaledDownIfTheFilenameDoesNotFitThePageWidthButNotMoreThanHalfTheOriginalFontSize() {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
+        victim.appendItem("2017-11-12 However if the filename is way to long the font becomes too small and cannot be read so we have to stop if font is scaled down more than 50% v7.pdf", 10, new PDPage());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+        assertEquals(7, victim.getFontSize(), 0.01);
+    }
 }
