@@ -216,28 +216,6 @@ public class PageTextWriter {
         }
     }
 
-//    private double resolvedFontSize(PDFont font, Double fontSize, TextWithFont stringAndFont) {
-//        if (nonNull(font.getFontDescriptor()) && nonNull(stringAndFont.getFont().getFontDescriptor())) {
-//            try {
-//                if (font.getFontDescriptor().getFontBoundingBox() != null
-//                        && stringAndFont.getFont().getFontDescriptor().getFontBoundingBox() != null) {
-//                    double desiredLetterHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() / 1000
-//                            * fontSize;
-//                    double actualLetterHeight = FontUtils.calculateBBoxHeight(stringAndFont.getText(),
-//                            stringAndFont.getFont()) / 1000 * fontSize;
-//                    double resolvedFontSize = fontSize / (actualLetterHeight / desiredLetterHeight);
-//                    LOG.debug(
-//                            "Fallback font size calculation: desired vs actual heights: {} vs {}, original vs calculated font size: {} vs {}",
-//                            desiredLetterHeight, actualLetterHeight, fontSize, resolvedFontSize);
-//                    return resolvedFontSize;
-//                }
-//            } catch (Exception e) {
-//                LOG.warn("Could not calculate fallback font size", e);
-//            }
-//        }
-//        return fontSize;
-//    }
-
     /**
      * Calculates the string's width.
      * 
