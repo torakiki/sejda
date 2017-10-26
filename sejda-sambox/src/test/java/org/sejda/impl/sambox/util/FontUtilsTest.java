@@ -135,6 +135,11 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("ಕನ್ನಡ")); // kannada
         assertNotNull(findFontFor("한국어 조선말")); // korean
         assertNotNull(findFontFor("ଓଡ଼ିଆ ଭାଷା")); // oryia
+        assertNotNull(findFontFor("ކުންފުނި")); // thaana
+
+        // TODO: find a way to merge the armenian font into the big merged font with all others
+        // so forms can be filled with latin/armenian mixed values
+        //assertNotNull(findFontFor("Latin mixed with հայերէն"));
     }
 
     @Test
