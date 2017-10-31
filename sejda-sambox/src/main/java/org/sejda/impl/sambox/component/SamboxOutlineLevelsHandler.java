@@ -90,6 +90,12 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                                 break;
                             }
                         }
+
+                        // handle first page quirk when includePageAfter is false
+                        if(startPage == 1 && endPage == 0) {
+                            endPage = 1;
+                        }
+
                         destinations.add(startPage, title, endPage);
                     }
                 }
