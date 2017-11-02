@@ -47,4 +47,9 @@ public class StringUtilsTest {
 
         assertEquals(StringUtils.difference("a\uFE0Fb\uEF0Fc", "abc"), expected);
     }
+
+    @Test
+    public void doesNotReplaceMultipleWhitespaceWithOne() {
+        assertEquals("T  H", StringUtils.normalizeWhitespace("T  H"));
+    }
 }

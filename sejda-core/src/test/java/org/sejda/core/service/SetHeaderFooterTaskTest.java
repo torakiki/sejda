@@ -119,7 +119,7 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
         testContext.assertTaskCompleted();
         testContext.forEachPdfOutput(d -> {
             assertFooterHasText(d.getPage(0),
-                    "Some unsupported unicode characters");
+                    "Some unsupported unicode  characters");
         });
         testContext.assertTaskWarning("Unsupported characters (\\U+FE0F) were removed: 'Some unsupported ...'");
     }

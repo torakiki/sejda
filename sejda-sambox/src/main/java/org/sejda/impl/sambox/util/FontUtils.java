@@ -427,15 +427,19 @@ public final class FontUtils {
                     f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
                 }
 
-                // end current string, before space
-                if (currentString.length() > 0) {
-                    result.add(new TextWithFont(currentString.toString(), currentFont));
-                }
+                if(f != currentFont) {
+                    // end current string, before space
+                    if (currentString.length() > 0) {
+                        result.add(new TextWithFont(currentString.toString(), currentFont));
+                    }
 
-                // add space
-                result.add(new TextWithFont(" ", f));
-                currentString = new StringBuilder();
-                currentFont = f;
+                    // add space
+                    result.add(new TextWithFont(" ", f));
+                    currentString = new StringBuilder();
+                    currentFont = f;
+                } else {
+                    currentString.append(s);
+                }
             } else if (currentFont == f) {
                 currentString.append(s);
             } else {

@@ -30,7 +30,7 @@ public final class StringUtils {
     public static String normalizeWhitespace(String in) {
         // removes control characters like \n, \r or \t
         // replaces all whitespace (eg: &nbsp;) with ' ' (space)
-        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}\\s", " ");
+        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}", " ").replaceAll("\\s", " ");
         result = result.replace((char) 160, ' ');
         return result;
     }

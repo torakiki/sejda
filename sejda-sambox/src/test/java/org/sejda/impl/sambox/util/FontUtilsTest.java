@@ -276,18 +276,12 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void resolveFontsWhenSpaceSeparately() throws TaskIOException {
+    public void resolveFontsWhenSpaceIsNotSeparately() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<TextWithFont> textAndFonts = FontUtils.resolveFonts("ab cd", HELVETICA, doc);
 
         assertThat(textAndFonts.get(0).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(0).getText(), is("ab"));
-
-        assertThat(textAndFonts.get(1).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(1).getText(), is(" "));
-
-        assertThat(textAndFonts.get(2).getFont().getName(), is("Helvetica"));
-        assertThat(textAndFonts.get(2).getText(), is("cd"));
+        assertThat(textAndFonts.get(0).getText(), is("ab cd"));
     }
 
     @Test

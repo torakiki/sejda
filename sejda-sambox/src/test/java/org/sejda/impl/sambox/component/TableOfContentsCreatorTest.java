@@ -300,7 +300,7 @@ public class TableOfContentsCreatorTest {
         victim.appendItem("2017-11-12 This is a file that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
-        assertEquals(7.29, victim.getFontSize(), 0.01);
+        assertEquals(7.79, victim.getFontSize(), 0.01);
     }
 
     @Test
