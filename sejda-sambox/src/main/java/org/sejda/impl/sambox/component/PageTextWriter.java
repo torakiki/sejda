@@ -155,13 +155,6 @@ public class PageTextWriter {
                                 + StringUtils.asUnicodes(resolvedLabel) + "\"", resolvedLabel);
                     }
 
-                    // when switching from one font to the other (eg: some letters aren't supported by the original font)
-                    // letter size might vary. try to find the best fontSize for the new font so that it matches the height of
-                    // the previous letter
-                    if (resolvedFont != font) {
-                        // resolvedFontSize = resolvedFontSize(font, fontSize, stringAndFont);
-                    }
-
                     Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());
 
                     contentStream.setFont(resolvedFont, (float) resolvedFontSize);
