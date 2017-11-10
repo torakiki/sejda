@@ -191,14 +191,7 @@ public class PageTextWriter {
                     LOG.trace("Text position {}", resolvedPosition);
                     contentStream.showText(resolvedLabel);
 
-                    double textWidth = resolvedFont.getStringWidth(resolvedLabel) / 1000 * fontSize;
-
-                    // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
-                    // use the largest value between font average width and text string width
-                    // TODO: replace zero with heuristic based "small value"
-                    if(textWidth == 0){
-                        textWidth = resolvedFont.getAverageFontWidth() / 1000 * fontSize;
-                    }
+                    double textWidth = FontUtils.getSimpleStringWidth(resolvedLabel, resolvedFont, fontSize);
 
                     offset += textWidth;
                 } catch (IOException e) {
@@ -227,12 +220,11 @@ public class PageTextWriter {
         for (TextWithFont stringAndFont : resolvedStringsToFonts) {
             try {
                 PDFont resolvedFont = stringAndFont.getFont();
+                String resolvedLabel = stringAndFont.getText();
 
                 if (nonNull(resolvedFont)) {
-                    // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
-                    // use the largest value between font average width and text string width
-                    double textWidth = Math.max(resolvedFont.getAverageFontWidth(),
-                            resolvedFont.getStringWidth(stringAndFont.getText())) / 1000 * fontSize;
+                    double textWidth = FontUtils.getSimpleStringWidth(resolvedLabel, resolvedFont, fontSize);
+
                     offset += textWidth;
                 }
             } catch (IOException e) {

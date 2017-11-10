@@ -186,37 +186,12 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     }
 
-    public void withPageText(PDPage page, Consumer<String> callback) {
-        PDFTextStripperByArea textStripper;
-        try {
-            textStripper = new PDFTextStripperByArea();
-            PDRectangle pageSize = page.getCropBox();
-            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
-            if(page.getRotation() == 90 || page.getRotation() == 270) {
-                cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
-            }
-            textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", cropBoxRectangle);
-            textStripper.extractRegions(page);
-            callback.accept(textStripper.getTextForRegion("area1"));
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-    }
-
     public void assertPageText(PDPage page, String text) {
-        withPageText(page, pageText -> {
-            assertEquals(text, pageText.replaceAll("[^A-Za-z0-9]", ""));
-        });
+        org.sejda.core.service.TestUtils.assertPageText(page, text);
     }
 
     public void assertPageTextContains(PDPage page, String text) {
-        withPageText(page, pageText -> {
-            // ignores whitespace
-            pageText = StringUtils.normalizeWhitespace(pageText);
-            pageText = pageText.replaceAll("\\s", "");
-            assertThat(pageText, containsString(text.replaceAll("\\s", "")));
-        });
+        org.sejda.core.service.TestUtils.assertPageTextContains(page, text);
     }
 
     public void assertMediaBox(PDPage page, float width, float height) {

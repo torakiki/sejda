@@ -57,9 +57,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utility to map from Sejda font definition to PDFBox.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public final class FontUtils {
 
@@ -94,7 +93,7 @@ public final class FontUtils {
 
     /**
      * Mapping between Sejda and PDFBox standard type 1 fonts implementation
-     * 
+     *
      * @param st1Font
      * @return the PDFBox font.
      */
@@ -154,7 +153,6 @@ public final class FontUtils {
     }
 
     /**
-     * 
      * @param document
      * @param text
      * @return a font capable of displaying the given string or null
@@ -329,7 +327,6 @@ public final class FontUtils {
 
         /**
          * Tries to load the original full font from the system
-         *
          */
         public PDFont loadOriginal(PDDocument document) {
             String lookupName = fontName.replace("-", " ");
@@ -396,7 +393,91 @@ public final class FontUtils {
 
             return null;
         }
+    }
 
+    /**
+     * Wraps the given text on multiple lines, if it does not fit within the given maxWidth
+     * It will try to determine if all text can be written with given font and find a fallback for parts that are not supported.
+     */
+    public static List<String> wrapLines(String rawLabel, PDFont font, float fontSize, double maxWidth, PDDocument document) throws TaskIOException {
+        List<String> lines = new ArrayList<>();
+
+        String label = org.sejda.core.support.util.StringUtils.normalizeWhitespace(rawLabel);
+
+        StringBuilder currentString = new StringBuilder();
+        double currentWidth = 0;
+
+        List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
+
+        for (TextWithFont stringAndFont : resolvedStringsToFonts) {
+            try {
+                PDFont resolvedFont = stringAndFont.getFont();
+                String resolvedLabel = stringAndFont.getText();
+
+                String[] words = visualToLogical(resolvedLabel).split("(?<=\\b)");
+                for(String word: words) {
+                    double textWidth = getSimpleStringWidth(word, resolvedFont, fontSize);
+
+                    if (textWidth > maxWidth || word.length() > 10) {
+                        // this is a giant word that has no breaks and exceeds max width
+
+                        // check for each char if it can be added to current line, wrap on new line if not
+                        Iterator<Integer> codePointIterator = word.codePoints().iterator();
+                        while (codePointIterator.hasNext()) {
+                            int codePoint = codePointIterator.next();
+
+                            String ch = new String(Character.toChars(codePoint));
+                            double chWidth = getSimpleStringWidth(ch, resolvedFont, fontSize);
+                            if (currentWidth + chWidth > maxWidth) {
+                                currentString.append("-");
+                                lines.add(currentString.toString().trim());
+                                currentString = new StringBuilder();
+                                currentWidth = 0;
+                            }
+
+                            currentWidth += chWidth;
+                            currentString.append(ch);
+                        }
+                    } else {
+                        // regular scenario: check if word can be added to current line, wrap on new line if not
+                        if (currentWidth + textWidth > maxWidth) {
+                            lines.add(currentString.toString().trim());
+                            currentString = new StringBuilder();
+                            currentWidth = 0;
+                        }
+
+                        currentWidth += textWidth;
+                        currentString.append(word);
+                    }
+                }
+
+            } catch (IOException e) {
+                throw new TaskIOException(e);
+            }
+        }
+
+        if(!currentString.toString().isEmpty()) {
+            lines.add(currentString.toString().trim());
+        }
+
+        return lines;
+    }
+
+    /**
+     * Calculates the width of the string using the given font.
+     * Does not try to find out if the text can actually be written with the given font and find fallback
+     */
+    public static double getSimpleStringWidth(String text, PDFont font, double fontSize) throws IOException {
+        double textWidth = font.getStringWidth(text) / 1000 * fontSize;
+
+        // sometimes the string width is reported incorrectly, too small. when writing ' ' (space) it leads to missing spaces.
+        // use the largest value between font average width and text string width
+        // TODO: replace zero with heuristic based "small value"
+        if (textWidth == 0) {
+            textWidth = font.getAverageFontWidth() / 1000 * fontSize;
+        }
+
+        return textWidth;
     }
 
     /**
@@ -471,7 +552,7 @@ public final class FontUtils {
         });
 
         String result = text;
-        for(String s: unsupported) {
+        for (String s : unsupported) {
             result = result.replaceAll(Pattern.quote(s), "");
         }
 

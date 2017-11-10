@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.sejda.core.service.TestUtils;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
@@ -293,24 +294,72 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testTocFontSizeIsScaledDownIfTheFilenameDoesNotFitThePageWidth() {
+    public void test_Toc_Long_Item_That_Wraps_On_Two_Lines() {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
-        victim.appendItem("2017-11-12 This is a file that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("This is item 1", 1, new PDPage());
+        victim.appendItem("This is item 2 that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
+        victim.appendItem("This is item 3", 14, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
-        assertEquals(7.79, victim.getFontSize(), 0.01);
+
+        TestUtils.assertPageTextExact(doc.getPage(0),
+                "This is item 1   1\n" +
+                "This is item 2 that has a very long name and should not be\n" +
+                "truncated so that the version is visible at the end v7.pdf   10\n" +
+                "This is item 3   14\n");
     }
 
     @Test
-    public void testTocFontSizeIsScaledDownIfTheFilenameDoesNotFitThePageWidthButNotMoreThanHalfTheOriginalFontSize() {
+    public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws IOException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, new PDDocument());
-        victim.appendItem("2017-11-12 However if the filename is way to long the font becomes too small and cannot be read so we have to stop if font is scaled down more than 50% v7.pdf", 10, new PDPage());
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        for(int i = 0; i < 30; i++) {
+            victim.appendItem("This is an item", 1, new PDPage());
+        }
+
+        victim.appendItem("This is a long item that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
+        victim.appendItem("This is an item", 14, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
-        assertEquals(7, victim.getFontSize(), 0.01);
+
+        TestUtils.assertPageTextDoesNotContain(doc.getPage(0),
+                "This is a long item that");
+
+        TestUtils.assertPageTextContains(doc.getPage(1),
+                "This is a long item that");
+    }
+
+    @Test
+    public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws IOException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("This_is_a_file_that_has_a_very_long_name_and_should_not_be_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf", 10, new PDPage());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+
+        TestUtils.assertPageTextExact(doc.getPage(0),
+                "This_is_a_file_that_has_a_very_long_name_and_should_not_be_tr-\n" +
+                        "uncated_so_that_the_version_is_visible_at_the_end_v7.pdf   10\n");
+    }
+
+    @Test
+    public void test_Toc_Item_Requiring_Multiple_Fonts() throws IOException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("Item multiple fonts հայերէն", 10, new PDPage());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+
+        // the junk letters are because of 'No Unicode mapping for CID+64 (64) in font NotoSansArmenian-Regular'
+        TestUtils.assertPageTextExact(doc.getPage(0), "Item multiple fonts @1E5P7F   10\n");
     }
 }
