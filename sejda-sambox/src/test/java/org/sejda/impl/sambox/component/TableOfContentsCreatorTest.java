@@ -30,6 +30,7 @@ import java.io.IOException;
 import org.junit.Test;
 import org.sejda.core.service.TestUtils;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.parameter.MergeParameters;
@@ -102,7 +103,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToCNone() {
+    public void testAddToCNone() throws TaskException {
         PDDocument doc = new PDDocument();
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.NONE);
@@ -114,7 +115,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToC() {
+    public void testAddToC() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         PDDocument doc = new PDDocument();
@@ -126,7 +127,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToCTop() throws IOException {
+    public void testAddToCTop() throws IOException, TaskException {
         PDDocument doc = PDFParser.parse(SeekableSources
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
@@ -141,7 +142,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToCWithBlankPageIfOdd() throws IOException {
+    public void testAddToCWithBlankPageIfOdd() throws IOException, TaskException {
         PDDocument doc = PDFParser.parse(SeekableSources
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
@@ -157,7 +158,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddTwoPagesToC() throws IOException {
+    public void testAddTwoPagesToC() throws IOException, TaskException {
         PDDocument doc = PDFParser.parse(SeekableSources
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
@@ -174,7 +175,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToCSuperLongText() {
+    public void testAddToCSuperLongText() throws TaskException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -188,7 +189,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testToCPageSize() {
+    public void testToCPageSize() throws TaskException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -201,7 +202,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testToCForLargePageSize() {
+    public void testToCForLargePageSize() throws TaskException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -214,7 +215,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testStringsThatMixMultipleFontRequirements() {
+    public void testStringsThatMixMultipleFontRequirements() throws TaskException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -226,7 +227,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void indexPageIsConsideredInPageNumbers() throws IOException {
+    public void indexPageIsConsideredInPageNumbers() throws IOException, TaskException {
         PDDocument doc = new PDDocument();
         assertEquals(0, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -294,7 +295,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Wraps_On_Two_Lines() {
+    public void test_Toc_Long_Item_That_Wraps_On_Two_Lines() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
@@ -313,7 +314,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws IOException {
+    public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws IOException, TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
@@ -335,7 +336,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws IOException {
+    public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws IOException, TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
@@ -350,7 +351,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Item_Requiring_Multiple_Fonts() throws IOException {
+    public void test_Toc_Item_Requiring_Multiple_Fonts() throws IOException, TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();

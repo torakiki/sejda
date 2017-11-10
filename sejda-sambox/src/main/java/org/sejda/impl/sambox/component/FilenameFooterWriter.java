@@ -24,6 +24,7 @@ import java.io.IOException;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -52,7 +53,7 @@ public class FilenameFooterWriter {
         this.addFooter = addFooter;
     }
 
-    public void addFooter(PDPage page, String fileName, long pageNumber) {
+    public void addFooter(PDPage page, String fileName, long pageNumber) throws TaskException {
         if (addFooter) {
             try {
                 String truncatedFilename = truncateIfRequired(fileName, maxWidth(page, pageNumber));
@@ -61,7 +62,7 @@ public class FilenameFooterWriter {
                 writer.write(page, HorizontalAlign.RIGHT, VerticalAlign.BOTTOM, Long.toString(pageNumber),
                         FONT, FONT_SIZE, Color.BLACK);
             } catch (TaskIOException | IOException e) {
-                LOG.warn("Unable to write the page footer", e);
+                throw new TaskException("Unable to write the page footer", e);
             }
         }
     }

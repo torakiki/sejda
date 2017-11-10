@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.sejda.impl.sambox.util.FontUtils;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.toc.ToCPolicy;
@@ -111,7 +112,7 @@ public class TableOfContentsCreator {
     /**
      * Generates a ToC and prepend it to the given document
      */
-    public void addToC() {
+    public void addToC() throws TaskException {
         try {
             PDPageTree pagesTree = document.getPages();
             ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {
@@ -130,7 +131,7 @@ public class TableOfContentsCreator {
                 }
             });
         } catch (IOException | TaskIOException e) {
-            LOG.error("An error occurred while create the ToC. Skipping ToC creation.", e);
+            throw new TaskException("An error occurred while create the ToC. Skipping ToC creation.", e);
         }
     }
 
@@ -257,8 +258,7 @@ public class TableOfContentsCreator {
     private void recalculateDimensions() {
         float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
 
-        float defaultFontSize = scalingFactor * DEFAULT_FONT_SIZE;
-        this.fontSize = defaultFontSize;
+        this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
         this.margin = scalingFactor * DEFAULT_MARGIN;
 
         this.lineHeight = (float) (fontSize + (fontSize * 0.7));

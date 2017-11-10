@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
@@ -36,7 +36,7 @@ import java.io.IOException;
 public class FilenameFooterWriterTest {
 
     @Test
-    public void write() throws TaskIOException {
+    public void write() throws TaskException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
@@ -45,7 +45,7 @@ public class FilenameFooterWriterTest {
     }
 
     @Test
-    public void write_long_filename_that_needs_truncation() throws TaskIOException, IOException {
+    public void write_long_filename_that_needs_truncation() throws TaskException, IOException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
@@ -54,7 +54,7 @@ public class FilenameFooterWriterTest {
     }
 
     @Test
-    public void dontWrite() throws TaskIOException {
+    public void dontWrite() throws TaskException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);
