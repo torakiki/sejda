@@ -27,6 +27,8 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
+import java.io.IOException;
+
 /**
  * @author Andrea Vacondio
  *
@@ -40,6 +42,15 @@ public class FilenameFooterWriterTest {
         doc.addPage(page);
         new FilenameFooterWriter(true, doc).addFooter(page, "My Footer", 20);
         assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is("My Footer 20"));
+    }
+
+    @Test
+    public void write_long_filename_that_needs_truncation() throws TaskIOException, IOException {
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        doc.addPage(page);
+        new FilenameFooterWriter(true, doc).addFooter(page, "My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page number and generally look not so nice", 20);
+        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is("My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page num 20"));
     }
 
     @Test

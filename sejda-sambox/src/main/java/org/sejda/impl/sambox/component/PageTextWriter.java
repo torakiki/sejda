@@ -57,7 +57,7 @@ public class PageTextWriter {
 
     private PDDocument document;
     // TODO define as a params member
-    private static final Float DEFAULT_MARGIN = 30F;
+    public static final Float DEFAULT_MARGIN = 30F;
 
     /**
      * @param document

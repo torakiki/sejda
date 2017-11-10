@@ -19,27 +19,33 @@
 package org.sejda.impl.sambox.component;
 
 import java.awt.Color;
+import java.io.IOException;
 
+import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Component that writes the given name as left footer of the given page
- * 
- * @author Andrea Vacondio
  *
+ * @author Andrea Vacondio
  */
 public class FilenameFooterWriter {
     private static final Logger LOG = LoggerFactory.getLogger(FilenameFooterWriter.class);
 
     private boolean addFooter = false;
     private PageTextWriter writer;
+
+    private static PDFont FONT = PDType1Font.HELVETICA;
+    private static double FONT_SIZE = 10;
 
     public FilenameFooterWriter(boolean addFooter, PDDocument document) {
         this.writer = new PageTextWriter(document);
@@ -49,13 +55,45 @@ public class FilenameFooterWriter {
     public void addFooter(PDPage page, String fileName, long pageNumber) {
         if (addFooter) {
             try {
-                writer.write(page, HorizontalAlign.LEFT, VerticalAlign.BOTTOM, fileName, PDType1Font.HELVETICA, 10d,
+                String truncatedFilename = truncateIfRequired(fileName, maxWidth(page, pageNumber));
+                writer.write(page, HorizontalAlign.LEFT, VerticalAlign.BOTTOM, truncatedFilename, FONT, FONT_SIZE,
                         Color.BLACK);
                 writer.write(page, HorizontalAlign.RIGHT, VerticalAlign.BOTTOM, Long.toString(pageNumber),
-                        PDType1Font.HELVETICA, 10d, Color.BLACK);
-            } catch (TaskIOException e) {
+                        FONT, FONT_SIZE, Color.BLACK);
+            } catch (TaskIOException | IOException e) {
                 LOG.warn("Unable to write the page footer", e);
             }
         }
+    }
+
+    private double maxWidth(PDPage page, long pageNumber) throws IOException {
+        PDRectangle pageSize = page.getMediaBox().rotate(page.getRotation());
+        return pageSize.getWidth() - 2 * PageTextWriter.DEFAULT_MARGIN - FontUtils.getSimpleStringWidth(Long.toString(pageNumber), FONT, FONT_SIZE);
+    }
+
+    private double stringWidth(String text) throws TaskIOException {
+        return writer.getStringWidth(text, FONT, (float) FONT_SIZE);
+    }
+
+    private String truncateIfRequired(String text, double maxWidth) throws TaskIOException {
+        if (stringWidth(text) <= maxWidth) {
+            return text;
+        }
+
+        LOG.debug("Page filename footer needs truncating to fit available space");
+
+        int currentLength = text.length() / 2;
+        while (stringWidth(text.substring(0, currentLength)) > maxWidth) {
+            currentLength /= 2;
+        }
+
+        int currentChunk = currentLength;
+        while (currentChunk > 1) {
+            currentChunk /= 2;
+            if (stringWidth(text.substring(0, currentLength + currentChunk)) < maxWidth) {
+                currentLength += currentChunk;
+            }
+        }
+        return text.substring(0, currentLength);
     }
 }

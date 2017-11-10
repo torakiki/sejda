@@ -42,7 +42,7 @@ import org.sejda.sambox.text.PDFTextStripperByArea;
  */
 public class PdfTextExtractorByArea {
 
-    private static final int GUESSTIMATE_HEADER_FOOTER_HEIGHT = 50;
+    private static final int GUESSTIMATE_HEADER_FOOTER_HEIGHT = 40;
 
     /**
      * @param page
