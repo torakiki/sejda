@@ -200,10 +200,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public <T> List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {
-        return iteratorToList(page.getAnnotations().stream()
-                .filter(a -> clazz.isInstance(a))
-                .map(a -> (T) a)
-                .iterator());
+        return org.sejda.core.service.TestUtils.getAnnotationsOf(page, clazz);
     }
 
     // returns 1-based page numbers
@@ -224,14 +221,6 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
             if(hasImages) {
                 result.add(i + 1);
             }
-        }
-        return result;
-    }
-
-    public <T> List<T> iteratorToList(Iterator<T> iterator) {
-        List<T> result = new ArrayList<>();
-        while(iterator.hasNext()) {
-            result.add(iterator.next());
         }
         return result;
     }

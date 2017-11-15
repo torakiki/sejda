@@ -186,8 +186,13 @@ public class TableOfContentsCreator {
                             writeText(page, pageString, x2, y);
 
                             // make the item clickable and link to the page number
+
+                            // we want a little spacing between link annotations, so they are not adjacent, to prevent mis-clicking
+                            // the spacing will be applied top and bottom and is the difference between line height and font height
+                            float spacing = (lineHeight - fontSize) / 2;
+                            float height = lineHeight * lines.size() - 2 * spacing;
                             i.annotation.setRectangle(
-                                    new PDRectangle(margin, startY, pageSize().getWidth() - (2 * margin), fontSize));
+                                    new PDRectangle(margin, y - spacing, pageSize().getWidth() - (2 * margin), height));
                             page.getAnnotations().add(i.annotation);
 
                             // draw line between item text and page number

@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
 import org.sejda.core.service.TestUtils;
@@ -39,6 +40,7 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.text.PDFTextStripper;
 
 /**
@@ -295,14 +297,15 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Wraps_On_Two_Lines() throws TaskException {
+    public void test_Toc_Long_Item_That_Wraps_On_Two_Lines() throws TaskException, IOException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
+        PDPage pageDest1 = new PDPage(), pageDest2 = new PDPage(), pageDest3 = new PDPage();
         TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("This is item 1", 1, new PDPage());
-        victim.appendItem("This is item 2 that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
-        victim.appendItem("This is item 3", 14, new PDPage());
+        victim.appendItem("This is item 1", 1, pageDest1);
+        victim.appendItem("This is item 2 that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, pageDest2);
+        victim.appendItem("This is item 3", 14, pageDest3);
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
@@ -311,6 +314,22 @@ public class TableOfContentsCreatorTest {
                 "This is item 2 that has a very long name and should not be\n" +
                 "truncated so that the version is visible at the end v7.pdf   10\n" +
                 "This is item 3   14\n");
+
+        // verify size of the clickable annotations on top of the TOC items
+        List<PDAnnotationLink> annotations = TestUtils.getAnnotationsOf(doc.getPage(0), PDAnnotationLink.class);
+
+        // lower left y always changes, height is only different for the middle one that wraps
+        PDAnnotationLink link1 = annotations.get(0);
+        TestUtils.assertPDRectanglesEqual(link1.getRectangle(), new PDRectangle(72.0f, 764.98f, 451.27f, 14f));
+        TestUtils.assertPageDestination(link1, pageDest1);
+
+        PDAnnotationLink link2 = annotations.get(1);
+        TestUtils.assertPDRectanglesEqual(link2.getRectangle(), new PDRectangle(72.0f, 717.38f, 451.27f, 37.79f));
+        TestUtils.assertPageDestination(link2, pageDest2);
+
+        PDAnnotationLink link3 = annotations.get(2);
+        TestUtils.assertPDRectanglesEqual(link3.getRectangle(), new PDRectangle(72.0f, 693.58f, 451.27f, 14f));
+        TestUtils.assertPageDestination(link3, pageDest3);
     }
 
     @Test

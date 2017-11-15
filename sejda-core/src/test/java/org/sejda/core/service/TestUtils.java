@@ -20,10 +20,14 @@ package org.sejda.core.service;
 import org.sejda.core.support.util.StringUtils;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -80,5 +84,32 @@ public class TestUtils {
             pageText = pageText.replaceAll("\\s", "");
             assertThat(pageText, not(containsString(text.replaceAll("\\s", ""))));
         });
+    }
+
+    public static <T> java.util.List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {
+        return iteratorToList(page.getAnnotations().stream()
+                .filter(a -> clazz.isInstance(a))
+                .map(a -> (T) a)
+                .iterator());
+    }
+
+    public static <T> List<T> iteratorToList(Iterator<T> iterator) {
+        List<T> result = new ArrayList<>();
+        while(iterator.hasNext()) {
+            result.add(iterator.next());
+        }
+        return result;
+    }
+
+    public static void assertPDRectanglesEqual(PDRectangle expected, PDRectangle actual) {
+        assertEquals("lower left x", expected.getLowerLeftX(), actual.getLowerLeftX(), 0.1);
+        assertEquals("lower left y", expected.getLowerLeftY(), actual.getLowerLeftY(), 0.1);
+        assertEquals("width", expected.getWidth(), actual.getWidth(), 0.1);
+        assertEquals("height", expected.getHeight(), actual.getHeight(), 0.1);
+    }
+
+    public static void assertPageDestination(PDAnnotationLink link, PDPage expectedPage) throws IOException {
+        PDPage actualPage = ((PDPageFitWidthDestination)link.getDestination()).getPage();
+        assertEquals(expectedPage, actualPage);
     }
 }
