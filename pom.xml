@@ -121,6 +121,59 @@
 		</profile>
 
 		<profile>
+			<id>private-release</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>sejda-pro-snapshot</id>
+					<url>http://mvn.sejda.com/artifactory/libs-snapshot</url>
+				</snapshotRepository>
+				<repository>
+					<id>sejda-pro</id>
+					<url>http://mvn.sejda.com/artifactory/libs-release</url>
+				</repository>
+			</distributionManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.2</version>
+						<configuration>
+							<tagNameFormat>v@{project.version}</tagNameFormat>
+							<preparationGoals>clean install</preparationGoals>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<localCheckout>true</localCheckout>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>perform</goal>
+								</goals>
+								<configuration>
+									<dryRun>true</dryRun>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
 			<id>travis</id>
 			<activation>
 				<property>
