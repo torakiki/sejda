@@ -140,7 +140,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
         // A4 to A3
         ResizePagesParameters parameters = new ResizePagesParameters();
         parameters.addSource(customInput("pdf/potrait.pdf"));
-        parameters.addSource(customInput("pdf/potrait.pdf"));
+        parameters.addSource(customInput("pdf/potrait_by_rotation.pdf"));
         parameters.setPageSize(PageSize.A3);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -148,8 +148,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getCropBox().rotate(page.getRotation()));
-            assertEqualsRect(new PDRectangle(0, 0, 842, 1192), page.getMediaBox().rotate(page.getRotation()));
+            assertEqualsRect(PDRectangle.A3, page.getCropBox().rotate(page.getRotation()));
+            assertEqualsRect(PDRectangle.A3, page.getMediaBox().rotate(page.getRotation()));
         });
     }
 
@@ -168,8 +168,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
-                assertEqualsRect(new PDRectangle(117, 1588, 110, 26), a.getRectangle());
-                assertArrayEquals(new float[] { 117, 1614, 226, 1614, 117, 1588, 226, 1588 },
+                assertEqualsRect(new PDRectangle(117, 1584, 110, 26), a.getRectangle());
+                assertArrayEquals(new float[]{118, 1611, 227, 1611, 118, 1584, 227, 1584},
                         a.getCOSObject().getDictionaryObject(COSName.QUADPOINTS, COSArray.class).toFloatArray(), 1);
             });
 
@@ -189,8 +189,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
-                assertEqualsRect(new PDRectangle(259, 1496, 496, 104), a.getRectangle());
-                assertArrayEquals(new float[] { 259, 1596, 507, 1510, 533, 1511 },
+                assertEqualsRect(new PDRectangle(259, 1492, 496, 104), a.getRectangle());
+                assertArrayEquals(new float[] { 260, 1592, 508, 1507, 533, 1507 },
                         a.getCOSObject().getDictionaryObject(COSName.CL, COSArray.class).toFloatArray(), 1);
             });
 
@@ -213,7 +213,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
                 if (a.getSubtype().equals("Polygon")) {
                     assertEqualsRect(new PDRectangle(431, 1218, 391, 351), a.getRectangle());
                     assertArrayEquals(
-                            new float[] { 454, 1503, 607, 1567, 799, 1523, 820, 1339, 576, 1221, 433, 1294, 454, 1503 },
+                            new float[]{454, 1499, 607, 1563, 798, 1519, 819, 1335, 575, 1218, 434, 1290, 454, 1499},
                             a.getCOSObject().getDictionaryObject(COSName.VERTICES, COSArray.class).toFloatArray(), 1);
                 }
             });
@@ -236,7 +236,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             d.getPage(0).getAnnotations().forEach(a -> {
                 if (a.getSubtype().equals("Line")) {
                     assertEqualsRect(new PDRectangle(1584, 884, 49, 220), a.getRectangle());
-                    assertArrayEquals(new float[] { 1600, 1092, 1609, 897 },
+                    assertArrayEquals(new float[]{1598, 1089, 1606, 895},
                             a.getCOSObject().getDictionaryObject(COSName.L, COSArray.class).toFloatArray(), 1);
                 }
             });
@@ -276,7 +276,8 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
             page = d.getPage(2);
 
-            // page has unchanged size
+            // page has unchanged size,
+            // because it was not included in the page selection
             expected = new PDRectangle(0f, 0f, 841f, 1190f);
             assertEqualsRect(expected, page.getMediaBox());
             assertEqualsRect(expected, page.getCropBox());
@@ -301,14 +302,13 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
             // page has new size
             // was A4 landscape, expect A5 landscape
-            PDRectangle expected = PDRectangle.A5.rotate(90);
+            PDRectangle expected = PDRectangle.A5.rotate();
             assertEqualsRect(expected, page.getMediaBox());
             assertEqualsRect(expected, page.getCropBox());
 
             page = d.getPage(1);
             // page has new size
             // was A3 landscape, expect A5 landscape
-            expected = PDRectangle.A5.rotate(90);
             assertEqualsRect(expected, page.getMediaBox());
             assertEqualsRect(expected, page.getCropBox());
         });
@@ -351,6 +351,25 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
             PDPage page = d.getPage(0);
             assertEqualsRect(PDRectangle.A4, page.getMediaBox());
             assertEqualsRect(PDRectangle.A4, page.getCropBox());
+        });
+    }
+
+    @Test
+    public void resizeChangingAspectRatio() throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.setPageSize(PageSize.LEGAL);
+
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            assertEqualsRect(PDRectangle.LEGAL, page.getMediaBox());
+            assertEqualsRect(PDRectangle.LEGAL, page.getCropBox());
         });
     }
 

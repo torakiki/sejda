@@ -54,6 +54,14 @@ public class Margins {
         return 72 * inches;
     }
 
+    public static double pointsToInches(double points) {
+        return points / 72;
+    }
+
+    public Margins rotate() {
+        return new Margins(left, top, right, bottom);
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("top", top).append("right", right)

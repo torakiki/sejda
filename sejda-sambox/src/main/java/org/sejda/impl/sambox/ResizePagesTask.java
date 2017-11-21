@@ -101,20 +101,21 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                     }
                 }
 
-
+                // we either apply margins or change the page size
                 if (nonNull(parameters.getMargins())) {
+
                     LOG.debug("Adding margins of {} (inches) to {} pages", parameters.getMargins(), pages.size());
                     PdfScaler.margin(documentHandler.getUnderlyingPDDocument(), pages, parameters.getMargins());
-                }
+                } else {
 
-                PageSize pageSize = parameters.getPageSize();
-                if(pageSize != null) {
-                    PDRectangle targetBox = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+                    PageSize pageSize = parameters.getPageSize();
+                    if (pageSize != null) {
+                        PDRectangle desiredPageSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+                        LOG.debug("Resizing {} pages to match {}", pages.size(), desiredPageSize);
 
-                    LOG.debug("Resizing {} pages to match {}", pages.size(), targetBox);
-
-                    PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
-                    scaler.scalePages(documentHandler.getUnderlyingPDDocument(), pages, targetBox);
+                        PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
+                        scaler.changePageSize(documentHandler.getUnderlyingPDDocument(), pages, desiredPageSize);
+                    }
                 }
 
                 documentHandler.setVersionOnPDDocument(parameters.getVersion());
