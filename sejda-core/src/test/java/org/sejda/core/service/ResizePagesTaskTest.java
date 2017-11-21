@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
@@ -45,15 +46,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void addUniformMargins() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(regularInput());
-        parameters.setMargins(new Margins(1, 1, 1, 1));
-        parameters.addPageRange(new PageRange(1, 3));
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeAddMargins(new Margins(1, 1, 1, 1), new PageRange(1, 3), regularInput());
 
         // number of pages does not change
         testContext.assertPages(11).forEachPdfOutput(d -> {
@@ -83,15 +76,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void addMargins() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(regularInput());
-        parameters.setMargins(new Margins(0, 0, 2, 5));
-        parameters.addPageRange(new PageRange(1, 3));
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeAddMargins(new Margins(0, 0, 2, 5), new PageRange(1, 3), regularInput());
 
         // number of pages does not change
         testContext.assertPages(11).forEachPdfOutput(d -> {
@@ -120,13 +105,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void landscape() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/landscape.pdf"));
-        parameters.addSource(customInput("pdf/landscape_by_rotation.pdf"));
-        parameters.setPageSize(PageSize.A5);
-        testContext.directoryOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.A5, customInput("pdf/landscape.pdf"), customInput("pdf/landscape_by_rotation.pdf"));
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
@@ -138,13 +117,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
     @Test
     public void potrait() throws IOException {
         // A4 to A3
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/potrait.pdf"));
-        parameters.addSource(customInput("pdf/potrait_by_rotation.pdf"));
-        parameters.setPageSize(PageSize.A3);
-        testContext.directoryOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.A3, customInput("pdf/potrait.pdf"), customInput("pdf/potrait_by_rotation.pdf"));
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
@@ -157,14 +130,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void annotationsRectangleAndQuadPoints() throws IOException {
-
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/highlighted-potrait.pdf"));
-        parameters.setPageSize(annotPageSize);
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(annotPageSize, customInput("pdf/highlighted-potrait.pdf"));
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
@@ -178,14 +144,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void annotationsCallout() throws IOException {
-
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/callout-potrait.pdf"));
-        parameters.setPageSize(annotPageSize);
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(annotPageSize, customInput("pdf/callout-potrait.pdf"));
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
@@ -199,14 +158,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void annotationsPolygon() throws IOException {
-
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/polygon-potrait.pdf"));
-        parameters.setPageSize(annotPageSize);
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(annotPageSize, customInput("pdf/polygon-potrait.pdf"));
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
@@ -223,14 +175,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void annotationsLine() throws IOException {
-
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/line-potrait_by_rotation.pdf"));
-        parameters.setPageSize(annotPageSize);
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
-        execute(parameters);
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(annotPageSize, customInput("pdf/line-potrait_by_rotation.pdf"));
 
         testContext.forPdfOutput(d -> {
             d.getPage(0).getAnnotations().forEach(a -> {
@@ -246,16 +191,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void resize_MultipleSizedPages_MixingLandscapePortrait() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/multiple-sized-pages.pdf"));
-        parameters.setPageSize(PageSize.A5);
-        parameters.addPageRange(new PageRange(1, 2));
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.A5, new PageRange(1, 2), customInput("pdf/multiple-sized-pages.pdf"));
 
         // number of pages does not change
         testContext.assertPages(3).forEachPdfOutput(d -> {
@@ -286,15 +222,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void resize_allLandscape() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/multiple-sized-pages-all-landscape.pdf"));
-        parameters.setPageSize(PageSize.A5);
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.A5, customInput("pdf/multiple-sized-pages-all-landscape.pdf"));
 
         // number of pages does not change
         testContext.assertPages(2).forEachPdfOutput(d -> {
@@ -316,15 +244,7 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void noPageSelection() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSize(PageSize.A5);
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.A5, customInput("pdf/test-pdf.pdf"));
 
         testContext.forEachPdfOutput(d -> {
             // all pages have new size of A5
@@ -356,21 +276,55 @@ public abstract class ResizePagesTaskTest extends BaseTaskTest<ResizePagesParame
 
     @Test
     public void resizeChangingAspectRatio() throws IOException {
-        ResizePagesParameters parameters = new ResizePagesParameters();
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.setPageSize(PageSize.LEGAL);
-
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-
-        testContext.assertTaskCompleted();
+        executeChangeOfPageSize(PageSize.LEGAL, customInput("pdf/test-pdf.pdf"));
 
         testContext.forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
             assertEqualsRect(PDRectangle.LEGAL, page.getMediaBox());
             assertEqualsRect(PDRectangle.LEGAL, page.getCropBox());
         });
+    }
+
+    private void executeChangeOfPageSize(PageSize desiredPageSize, PdfSource<?>... inputs) throws IOException {
+        executeChangeOfPageSize(desiredPageSize, null, inputs);
+    }
+
+    private void executeChangeOfPageSize(PageSize desiredPageSize, PageRange pageRange, PdfSource<?>... inputs) throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        for(PdfSource<?> input: inputs) {
+            parameters.addSource(input);
+        }
+
+        parameters.setPageSize(desiredPageSize);
+        if(pageRange != null) {
+            parameters.addPageRange(pageRange);
+        }
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+    }
+
+    private void executeAddMargins(Margins margins, PageRange pageRange, PdfSource<?>... inputs) throws IOException {
+        ResizePagesParameters parameters = new ResizePagesParameters();
+        for(PdfSource<?> input: inputs) {
+            parameters.addSource(input);
+        }
+
+        parameters.setMargins(margins);
+        if(pageRange != null) {
+            parameters.addPageRange(pageRange);
+        }
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
     }
 
     private String extractText(PDPage page, Rectangle rect) {
