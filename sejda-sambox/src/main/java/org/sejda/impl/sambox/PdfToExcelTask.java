@@ -130,9 +130,9 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                         dataTable.addRow(rowData);
                         rowData = new ArrayList<>();
                     }
-
-                    all.add(dataTable);
                 }
+
+                all.add(dataTable);
 
                 LOG.debug("Done extracting tables from page {}, took {} seconds", pageNumber,
                         (System.currentTimeMillis() - start) / 1000);
