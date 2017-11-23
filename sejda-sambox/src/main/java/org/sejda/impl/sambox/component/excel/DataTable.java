@@ -110,4 +110,8 @@ public class DataTable {
 
         return sb.toString();
     }
+
+    public boolean hasData() {
+        return this.data.size() > 0;
+    }
 }
