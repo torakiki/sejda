@@ -38,7 +38,7 @@ import org.sejda.sambox.pdmodel.encryption.InvalidPasswordException;
  */
 public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler> {
 
-    private static final String WRONG_PWD_MESSAGE = "Unable to open the document due to a wrong password.";
+    private static final String WRONG_PWD_MESSAGE = "Unable to open '%s' due to a wrong password.";
     private static final String ERROR_MESSAGE = "An error occurred opening the source: %s.";
 
     @Override
@@ -49,7 +49,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
                     source.getPassword());
             return new PDDocumentHandler(document);
         } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(WRONG_PWD_MESSAGE, ipe);
+            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
         } catch (IOException e) {
             throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
         }
@@ -62,7 +62,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
                     source.getPassword());
             return new PDDocumentHandler(document);
         } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(WRONG_PWD_MESSAGE, ipe);
+            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
         } catch (IOException e) {
             throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
         }
@@ -75,7 +75,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
                     source.getPassword());
             return new PDDocumentHandler(document);
         } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(WRONG_PWD_MESSAGE, ipe);
+            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
         } catch (IOException e) {
             throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
         }
