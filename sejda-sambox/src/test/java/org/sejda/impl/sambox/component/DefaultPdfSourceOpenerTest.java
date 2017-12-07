@@ -18,12 +18,18 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
+import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
+
+import java.io.*;
 
 /**
  * @author Andrea Vacondio
@@ -51,10 +57,25 @@ public class DefaultPdfSourceOpenerTest {
                 "test")));
     }
 
-    @Test(expected = TaskWrongPasswordException.class)
-    public void openDocumentWrongPassword() throws TaskIOException {
-        new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf"), "my source"));
+    @Test
+    public void openDocumentWrongPassword() throws TaskIOException, IOException {
+        try {
+            File tmp = IOUtils.createTemporaryBufferWithName("dumbo.pdf");
+            OutputStream out = new FileOutputStream(tmp);
+            InputStream in = getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf");
+
+            try {
+                org.apache.commons.io.IOUtils.copy(in, out);
+            } finally {
+                org.apache.commons.io.IOUtils.closeQuietly(out);
+                org.apache.commons.io.IOUtils.closeQuietly(in);
+            }
+
+            new DefaultPdfSourceOpener().open(PdfFileSource.newInstanceWithPassword(tmp, "my source"));
+            fail("Exception expected");
+        } catch (TaskWrongPasswordException e) {
+            assertEquals("Unable to open 'dumbo.pdf' due to a wrong password.", e.getMessage());
+        }
     }
 
     @Test(expected = TaskIOException.class)

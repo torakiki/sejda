@@ -62,7 +62,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
                     source.getPassword());
             return new PDDocumentHandler(document);
         } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
+            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource().getName()), ipe);
         } catch (IOException e) {
             throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
         }
