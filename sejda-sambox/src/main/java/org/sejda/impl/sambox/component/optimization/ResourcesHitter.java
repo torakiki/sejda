@@ -18,7 +18,6 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
@@ -127,13 +126,11 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                         .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class))
                         .filter(Objects::nonNull);
 
-                COSBase existing = fonts.map(d -> d.getDictionaryObject(fontName)).orElseThrow(
-                        () -> new MissingResourceException("Missing font resource: " + fontName.getName()));
+                COSDictionary fontDictionary = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
+                        .orElseThrow(() -> new MissingResourceException(
+                                "Font resource '" + fontName.getName() + "' missing or unexpected type"));
 
-                if (!(existing instanceof InUseFontDictionary)) {
-                    COSDictionary fontDictionary = of(existing).filter(e -> e instanceof COSDictionary)
-                            .map(e -> (COSDictionary) e)
-                            .orElseThrow(() -> new IllegalArgumentException("Font resource unexpected type"));
+                if (!(fontDictionary instanceof InUseFontDictionary)) {
 
                     LOG.trace("Hit font with name {}", fontName.getName());
                     // we wrap the existing so we can identify it later as "in use" and already processed
