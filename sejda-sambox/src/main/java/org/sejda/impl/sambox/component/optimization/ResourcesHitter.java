@@ -18,7 +18,6 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static java.util.Objects.isNull;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
@@ -140,10 +139,11 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                     // we wrap the existing so we can identify it later as "in use" and already processed
                     fonts.get().setItem(fontName, new InUseFontDictionary(fontDictionary));
 
-                    // type 3 fonts glyphs are content stream and they may refer to named resource. If the font resource dictionary is not present
-                    // the page resource dictionary is used instead so we have to make sure those resource are hit
-                    if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))
-                            && isNull(fontDictionary.getItem(COSName.RESOURCES))) {
+                    // type 3 fonts glyphs are content stream and they may refer to named resource.
+                    // If the font resource dictionary is not present the page resource dictionary is used instead AND
+                    // we cannot exclude the font resource is an indirect ref to the page resource dictionary
+                    // => so we have to make sure those resource are hit
+                    if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))) {
                         LOG.trace("Found type3 font with no resource dictionary {}", fontName.getName());
                         PDType3Font font = new PDType3Font(fontDictionary);
                         Collection<COSBase> glyphStreams = ofNullable(
