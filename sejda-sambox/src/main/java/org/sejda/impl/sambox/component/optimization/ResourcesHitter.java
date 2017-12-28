@@ -142,7 +142,6 @@ public class ResourcesHitter extends ContentStreamProcessor {
                     // we cannot exclude the font resource is an indirect ref to the page resource dictionary
                     // => so we have to make sure those resource are hit
                     if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))) {
-                        LOG.trace("Found type3 font with no resource dictionary {}", fontName.getName());
                         PDType3Font font = new PDType3Font(fontDictionary);
                         Collection<COSBase> glyphStreams = ofNullable(
                                 fontDictionary.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class))
@@ -151,6 +150,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
                         List<PDType3CharProc> pdStreams = glyphStreams.stream().map(COSBase::getCOSObject)
                                 .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
                                 .map(s -> new PDType3CharProc(font, s)).collect(Collectors.toList());
+                        LOG.trace("Found type3 font {} with {} streams to parse", fontName.getName(), pdStreams.size());
                         for (PDType3CharProc glyph : pdStreams) {
                             getContext().processStream(glyph);
                         }
