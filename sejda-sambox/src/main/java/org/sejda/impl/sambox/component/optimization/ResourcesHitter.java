@@ -26,29 +26,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.sejda.impl.sambox.component.ContentStreamProcessor;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
-import org.sejda.sambox.contentstream.PDFStreamEngine;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.cos.COSNull;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.MissingResourceException;
-import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDType3CharProc;
 import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDTransparencyGroup;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAppearanceEntry;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAppearanceStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,16 +54,16 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Vacondio
  *
  */
-public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage> {
+public class ResourcesHitter extends ContentStreamProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesHitter.class);
 
     public ResourcesHitter() {
-        addOperator(new XObjectOperator());
-        addOperator(new FontHitterOperator());
+        addOperator(new XObjectHitterOperator());
+        addOperator(new FontsHitterOperator());
     }
 
-    private class XObjectOperator extends OperatorProcessor {
+    public static class XObjectHitterOperator extends OperatorProcessor {
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
             if (operands.isEmpty()) {
@@ -113,7 +107,14 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
         }
     }
 
-    private class FontHitterOperator extends OperatorProcessor {
+    /**
+     * Tf operator that wraps a font dictionary with an {@link InUseFontDictionary} and puts it back to the resource dictionary so that we can later identify fonts that are
+     * actually used
+     * 
+     * @author Andrea Vacondio
+     *
+     */
+    public static class FontsHitterOperator extends OperatorProcessor {
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
             if (operands.size() < 2) {
@@ -151,7 +152,7 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
                                 .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
                                 .map(s -> new PDType3CharProc(font, s)).collect(Collectors.toList());
                         for (PDType3CharProc glyph : pdStreams) {
-                            processStream(glyph);
+                            getContext().processStream(glyph);
                         }
                     }
                 }
@@ -163,34 +164,4 @@ public class ResourcesHitter extends PDFStreamEngine implements Consumer<PDPage>
             return "Tf";
         }
     }
-
-    private void processAnnotation(PDAnnotation annotation) throws IOException {
-        List<PDAppearanceEntry> appreaceEntries = ofNullable(annotation.getAppearance())
-                .map(d -> d.getCOSObject().getValues()).filter(Objects::nonNull).orElse(Collections.emptyList())
-                .stream().map(a -> a.getCOSObject()).filter(a -> !(a instanceof COSNull)).map(PDAppearanceEntry::new)
-                .collect(Collectors.toList());
-        for (PDAppearanceEntry entry : appreaceEntries) {
-            if (entry.isStream()) {
-                processStream(entry.getAppearanceStream());
-            } else {
-                for (PDAppearanceStream stream : entry.getSubDictionary().values()) {
-                    // TODO investigate this case with named dictionary
-                    processStream(stream);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void accept(PDPage page) {
-        try {
-            this.processPage(page);
-            for (PDAnnotation annotation : page.getAnnotations()) {
-                processAnnotation(annotation);
-            }
-        } catch (IOException e) {
-            LOG.warn("Failed parse page, skipping and continuing with next.", e);
-        }
-    }
-
 }
