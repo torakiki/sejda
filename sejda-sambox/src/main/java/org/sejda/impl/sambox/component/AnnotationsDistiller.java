@@ -25,7 +25,7 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.sejda.common.LookupTable;
@@ -77,7 +77,7 @@ public final class AnnotationsDistiller {
         LOG.debug("Filtering annotations");
         for (PDPage page : relevantPages.keys()) {
             try {
-                Set<PDAnnotation> keptAnnotations = new HashSet<>();
+                Set<PDAnnotation> keptAnnotations = new LinkedHashSet<>();
                 for (PDAnnotation annotation : page.getAnnotations()) {
                     if (!annotationsLookup.hasLookupFor(annotation)) {
                         if (annotation instanceof PDAnnotationLink) {

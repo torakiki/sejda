@@ -21,10 +21,12 @@ package org.sejda.impl.sambox.component;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle.SUB_TYPE_SQUARE;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.common.LookupTable;
@@ -44,9 +47,11 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionJavaScript;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationText;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -73,6 +78,34 @@ public class AnnotationsDistillerTest {
     @Test(expected = IllegalArgumentException.class)
     public void fiterNullDocument() {
         new AnnotationsDistiller(null);
+    }
+
+    @Test
+    public void orderIsKept() {
+        PDAnnotationSquareCircle one = new PDAnnotationSquareCircle(SUB_TYPE_SQUARE);
+        one.setAnnotationName("one");
+        PDAnnotationText two = new PDAnnotationText();
+        two.setAnnotationName("two");
+        PDAnnotationLine three = new PDAnnotationLine();
+        three.setAnnotationName("three");
+        PDAnnotationSquareCircle four = new PDAnnotationSquareCircle(SUB_TYPE_SQUARE);
+        four.setAnnotationName("four");
+        PDAnnotationLine five = new PDAnnotationLine();
+        five.setAnnotationName("five");
+        PDAnnotationSquareCircle six = new PDAnnotationSquareCircle(SUB_TYPE_SQUARE);
+        six.setAnnotationName("six");
+
+        List<PDAnnotation> annotations = Arrays.asList(one, two, three, four, five, six);
+        oldPage.setAnnotations(annotations);
+        PDDocument doc = new PDDocument();
+        doc.addPage(oldPage);
+        new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+        List<PDAnnotation> annots = newPage.getAnnotations();
+        assertEquals(6, annots.size());
+        assertThat(annots.stream().map(PDAnnotation::getAnnotationName).collect(Collectors.toList()),
+                Matchers.contains(annotations.stream().map(PDAnnotation::getAnnotationName)
+                        .map(d -> Matchers.equalTo(d))
+                        .collect(Collectors.toList())));
     }
 
     @Test
