@@ -15,10 +15,13 @@ addons:
   apt:
     packages:
     - oracle-java8-installer
-#GPG_PASSPHRASE
 env:
   global:
-    secure: YqXA0mY5JW3EwtKQjWLMD7Q4dpHVoIpfgYjG2D1D2X67KfekN6h5NaQWCQsPV0AJvznbF/bWoNjUGscncukA2MW/Fz1kXmnnuFmsFQNQAYBCilO5L8/MPWd0UFmHNJQYq5NGw9ajduB46E8K3URMPzseZsZo6IPalJ9i1VKF/Cg=
+    #GPG_PASSPHRASE
+    - secure: "YqXA0mY5JW3EwtKQjWLMD7Q4dpHVoIpfgYjG2D1D2X67KfekN6h5NaQWCQsPV0AJvznbF/bWoNjUGscncukA2MW/Fz1kXmnnuFmsFQNQAYBCilO5L8/MPWd0UFmHNJQYq5NGw9ajduB46E8K3URMPzseZsZo6IPalJ9i1VKF/Cg="
+    #OSSRH credentials
+    - secure: "OQKwWq4cDk7jaVHAnjv9TC1ZuJ40k2q4rpN+do5zdu4506hvWZbv42J7adJlHQifAfGuu4dRnj7tZrG98RZLU4PZSA9hOdJOmzT4BE/8zJCYU06RAgOgry+KpR6TE+2cl+6h+MQslwBEylWaGj7GbrKGQWiBjfNZsPdhATZboNM="    
+    - secure: "Jh3PnqzzGjfboV8W++lYcp2zAyI7EhH+9nli/eLcKoS1whqcs6pdHAIkEwNpWQj3oAWLapFuL7/dR/dtlzXjggF9myVhl6io5W8+JDezGlow95QojIqlcQ8R0dmcN27wX8VSUtUuQlScHRBFvvNyxmp7pk1Q9fRykZWm2ui9ygo="
 deploy:
   - provider: releases
     skip_cleanup: true
@@ -31,11 +34,9 @@ deploy:
     - sejda-console/target/*.deb
     - sejda-console/target/*.zip
     - sejda-distribution/target/*.zip
-  - provider: bintray
-    file: "target/bintray/bintray-deploy.json"
-    user: "sejdapdf"
-    key: 
-      secure: dLhy8d+Dra+0tVMnm/JPkhQvvIYBq/6EMS3E8TNHmkoYJmF5bUvWJZdopLn7E+HEG9n4KGaELA37NHdJsxkYMQIV0A5kF0MvrMVKf9ls9MKNT4lNDtub+FP3GxCRdZJvJBPnX9ND1y1dcXj7/c+3BadXTT2r2yZeulERD+uMiGg=
+  - provider: script
+    script: "mvn deploy --settings .travis.settings.xml"
+    skip_cleanup: true
     on:
       tags: true
 notifications:
