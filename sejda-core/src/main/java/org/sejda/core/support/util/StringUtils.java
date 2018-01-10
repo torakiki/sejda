@@ -61,4 +61,8 @@ public final class StringUtils {
 
         return result;
     }
+
+    public static String normalizeLineEndings(String in) {
+        return in.replaceAll("\\r\\n", "\n");
+    }
 }

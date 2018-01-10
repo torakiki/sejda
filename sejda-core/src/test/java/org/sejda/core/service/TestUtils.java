@@ -35,6 +35,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.sejda.core.support.util.StringUtils.normalizeLineEndings;
 
 public class TestUtils {
 
@@ -65,6 +66,12 @@ public class TestUtils {
     public static void assertPageTextExact(PDPage page, String text) {
         withPageText(page, pageText -> {
             assertEquals(text, pageText);
+        });
+    }
+
+    public static void assertPageTextExactLines(PDPage page, String text) {
+        withPageText(page, pageText -> {
+            assertEquals(normalizeLineEndings(text), normalizeLineEndings(pageText));
         });
     }
 

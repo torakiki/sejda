@@ -45,6 +45,7 @@ import org.sejda.sambox.text.PDFTextStripper;
 
 /**
  * @author Andrea Vacondio
+ * @author Edi Weissmann
  *
  */
 public class TableOfContentsCreatorTest {
@@ -309,7 +310,7 @@ public class TableOfContentsCreatorTest {
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        TestUtils.assertPageTextExact(doc.getPage(0),
+        TestUtils.assertPageTextExactLines(doc.getPage(0),
                 "This is item 1   1\n" +
                 "This is item 2 that has a very long name and should not be\n" +
                 "truncated so that the version is visible at the end v7.pdf   10\n" +
@@ -364,7 +365,7 @@ public class TableOfContentsCreatorTest {
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        TestUtils.assertPageTextExact(doc.getPage(0),
+        TestUtils.assertPageTextExactLines(doc.getPage(0),
                 "This_is_a_file_that_has_a_very_long_name_and_should_not_be_tr-\n" +
                         "uncated_so_that_the_version_is_visible_at_the_end_v7.pdf   10\n");
     }
@@ -380,6 +381,6 @@ public class TableOfContentsCreatorTest {
         victim.addToC();
 
         // the junk letters are because of 'No Unicode mapping for CID+64 (64) in font NotoSansArmenian-Regular'
-        TestUtils.assertPageTextExact(doc.getPage(0), "Item multiple fonts @1E5P7F   10\n");
+        TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts @1E5P7F   10\n");
     }
 }
