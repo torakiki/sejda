@@ -116,8 +116,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     }
 
     @Override
-    public void addCompression() {
-        // do nothing, it's already supposed to be compressed
+    public boolean addCompression() {
+        return false;
     }
 
     @Override
