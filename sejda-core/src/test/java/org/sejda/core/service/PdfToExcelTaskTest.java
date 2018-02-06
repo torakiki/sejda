@@ -21,13 +21,13 @@ package org.sejda.core.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -43,8 +43,9 @@ import org.sejda.model.parameter.excel.Table;
 
 @Ignore
 public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParameters> {
+
     @Test
-    public void testConversion() throws IOException {
+    public void testExcelConversion() throws IOException {
         PdfToExcelParameters params = getParams();
         execute(params);
 
@@ -68,6 +69,47 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    @Test
+    public void testCsvConversion() throws IOException {
+        PdfToExcelParameters params = getParams();
+        params.setOutputPrefix("[BASENAME]_[FILENUMBER]");
+        params.setCsvFormat(true);
+        execute(params);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2)
+                .assertOutputContainsFilenames("tabular-data_1.csv", "tabular-data_2.csv")
+                .forRawOutput("tabular-data_1.csv", p -> {
+            try {
+                List<List<String>> contents = parseCsv(p.toFile());
+
+                assertThat(contents.size(), is(37));
+
+                assertThat(contents.get(0), is(Arrays.asList("OrderDate", "Region", "Rep", "Item", "Units", "Unit Cost", "Total")));
+                assertThat(contents.get(10), is(Arrays.asList("6/8/15", "East", "Jones", "Binder", "60", "8.99", "539.40")));
+                assertThat(contents.get(13), is(Arrays.asList("7/29/15", "East", "Parent", "Binder", "81", "19.99", "1,619.19")));
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private List<List<String>> parseCsv(File file) throws IOException {
+        List<List<String>> results = new ArrayList<>();
+        Reader in = new FileReader(file);
+        Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+        for (CSVRecord record : records) {
+            List<String> row = new ArrayList<>();
+            for(String s: record){
+                row.add(s);
+            };
+            results.add(row);
+        }
+
+        return results;
     }
 
     @Test
@@ -182,7 +224,7 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
         table.addRows(new TopLeftRectangularBox(42, 552, 336, 11));
 
         parameters.addTable(1, table);
-        
+
         table = new Table();
 
         table.addColumns(new TopLeftRectangularBox(42, 39, 54, 111));
@@ -201,7 +243,7 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
         table.addRows(new TopLeftRectangularBox(42, 110, 336, 11));
         table.addRows(new TopLeftRectangularBox(42, 124, 336, 11));
         table.addRows(new TopLeftRectangularBox(42, 139, 336, 11));
-        
+
         parameters.addTable(2, table);
 
         testContext.directoryOutputTo(parameters);

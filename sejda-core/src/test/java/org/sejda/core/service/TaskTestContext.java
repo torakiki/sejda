@@ -412,6 +412,14 @@ public class TaskTestContext implements Closeable {
         return this;
     }
 
+    public TaskTestContext forRawOutput(String filename, Consumer<Path> consumer) throws IOException {
+        requireMultipleOutputs();
+        File file = new File(fileOutput, filename);
+        assertTrue(file.exists());
+        consumer.accept(file.toPath());
+        return this;
+    }
+
     private void requireMultipleOutputs() {
         assertNotNull(fileOutput);
         assertTrue("Expected an output directory", fileOutput.isDirectory());

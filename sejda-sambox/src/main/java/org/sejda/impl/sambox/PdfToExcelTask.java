@@ -18,6 +18,8 @@
  */
 package org.sejda.impl.sambox;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -41,9 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +72,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
     @Override
     public void execute(PdfToExcelParameters parameters) throws TaskException {
         int currentStep = 0;
+        int fileOutputNumber = 0;
         int totalSteps = parameters.getSourceList().size();
         for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
@@ -80,9 +81,6 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
 
             LOG.debug("Opening {}", source);
             sourceDocumentHandler = source.open(documentLoader);
-
-            File tmpFile = createTemporaryBuffer(".xlsx");
-            LOG.debug("Created output temporary buffer {}", tmpFile);
 
             this.destinationDocument = new PDDocumentHandler();
             destinationDocument.setVersionOnPDDocument(parameters.getVersion());
@@ -132,7 +130,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
                     }
                 }
 
-                if(dataTable.hasData()) {
+                if (dataTable.hasData()) {
                     all.add(dataTable);
                 }
 
@@ -143,11 +141,25 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             if (parameters.isMergeTablesSpanningMultiplePages()) {
                 all = mergeTablesSpanningMultiplePages(all);
             }
-            writeExcelFile(all, tmpFile);
 
-            String outName = nameGenerator(parameters.getOutputPrefix())
-                    .generate(nameRequest("xlsx").originalName(source.getName()).fileNumber(currentStep));
-            outputWriter.addOutput(file(tmpFile).name(outName));
+            if (parameters.isCsvFormat()) {
+                List<File> tmpFiles = writeCsvFiles(all);
+                for (File tmpFile : tmpFiles) {
+                    fileOutputNumber++;
+                    String outName = nameGenerator(parameters.getOutputPrefix())
+                            .generate(nameRequest("csv").originalName(source.getName()).fileNumber(fileOutputNumber));
+
+                    outputWriter.addOutput(file(tmpFile).name(outName));
+                }
+
+            } else {
+                File tmpFile = writeExcelFile(all);
+                fileOutputNumber++;
+
+                String outName = nameGenerator(parameters.getOutputPrefix())
+                        .generate(nameRequest("xlsx").originalName(source.getName()).fileNumber(fileOutputNumber));
+                outputWriter.addOutput(file(tmpFile).name(outName));
+            }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
 
@@ -182,21 +194,59 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
         return results;
     }
 
-    private void writeExcelFile(List<DataTable> dataTables, File tmpFile) throws TaskException {
-        LOG.debug("Writing data to excel file");
+    private List<File> writeCsvFiles(List<DataTable> dataTables) throws TaskException {
+        List<File> results = new ArrayList<>();
+
+        for (int t = 0; t < dataTables.size(); t++) {
+//            LOG.debug("Writing data table " + t);
+            DataTable dataTable = dataTables.get(t);
+            results.add(writeCsvFile(dataTable));
+        }
+
+        return results;
+    }
+
+    private File writeCsvFile(DataTable dataTable) throws TaskException {
+        File tmpFile = createTemporaryBuffer(".csv");
+        LOG.debug("Created output temporary buffer {}, writing csv data", tmpFile);
+
+        long start = System.currentTimeMillis();
+
+        List<List<String>> data = dataTable.getData();
+        try (CSVPrinter csvPrinter = new CSVPrinter(new BufferedWriter(new FileWriter(tmpFile)), CSVFormat.DEFAULT)) {
+            for (int r = 0; r < data.size(); r++) {
+                List<String> dataRow = data.get(r);
+//                LOG.debug("Writing row " + r + " of " + dataRow.size() + " values");
+                csvPrinter.printRecord(dataRow);
+            }
+
+            csvPrinter.flush();
+
+            LOG.debug("Done writing data to csv file, took {} seconds", (System.currentTimeMillis() - start) / 1000);
+        } catch (IOException ioe) {
+            throw new TaskException("Could not save .csv file", ioe);
+        }
+
+        return tmpFile;
+    }
+
+    private File writeExcelFile(List<DataTable> dataTables) throws TaskException {
+        File tmpFile = createTemporaryBuffer(".xlsx");
+        LOG.debug("Created output temporary buffer {}, writing excel data", tmpFile);
+
         long start = System.currentTimeMillis();
 
         Workbook wb = new XSSFWorkbook();
         try (FileOutputStream fileOut = new FileOutputStream(tmpFile)) {
             for (int t = 0; t < dataTables.size(); t++) {
-                LOG.debug("Writing data table " + t);
+//                LOG.debug("Writing data table " + t);
                 DataTable dataTable = dataTables.get(t);
                 List<List<String>> data = dataTable.getData();
                 Sheet sheet = wb.createSheet(String.format("Table %d (%s)", t + 1, dataTable.getPagesAsString()));
 
                 for (int r = 0; r < data.size(); r++) {
                     List<String> dataRow = data.get(r);
-                    LOG.debug("Writing row " + r + " of " + dataRow.size() + " values");
+//                    LOG.debug("Writing row " + r + " of " + dataRow.size() + " values");
 
                     Row row = sheet.createRow(r);
 
@@ -212,6 +262,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             }
             wb.write(fileOut);
             LOG.debug("Done writing data to excel file, took {} seconds", (System.currentTimeMillis() - start) / 1000);
+            return tmpFile;
         } catch (IOException ioe) {
             throw new TaskException("Could not save .xlsx file", ioe);
         }
