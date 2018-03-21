@@ -90,7 +90,8 @@ target/assembled/bin/sejda-console setmetadata -f ../sejda-core/src/test/resourc
 target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" --overwrite -v 1.5
 target/assembled/bin/sejda-console setmetadata -f /tmp/sejda-smoketest/meta.pdf -o /tmp/sejda-smoketest/meta2.pdf -a "Torakiki" -t "Test the title" -s "What a subject" -k "" --overwrite -v 1.5
 target/assembled/bin/sejda-console setviewerpreferences -h
-target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle 
+target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle
+target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/short-test-file.pdf -o /tmp/sejda-smoketest/ -m outlines
 target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 1.6 -j overwrite
 target/assembled/bin/sejda-console setviewerpreferences -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p view_ --hideMenu --hideToolbar --displayDocTitle -v 1.7 -j overwrite
 target/assembled/bin/sejda-console setheaderfooter -h

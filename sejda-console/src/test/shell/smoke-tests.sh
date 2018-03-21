@@ -28,7 +28,7 @@ function run_tests {
   while read cmd; do 
     # echo "RUNNING: $cmd"
     if eval "$cmd"; then
-      # echo "PASSED: $cmd"
+      echo "PASSED: $cmd"
     else
       echo "FAILED: $cmd"
       return 1
