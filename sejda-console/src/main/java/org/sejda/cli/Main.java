@@ -46,7 +46,7 @@ public final class Main {
         SLF4JBridgeHandler.install();
         Map<CustomizableProps, String> customs = new HashMap<>();
         customs.put(CustomizableProps.APP_NAME, "Sejda Console");
-        customs.put(CustomizableProps.LICENSE_PATH, "/LICENSE.txt");
+        customs.put(CustomizableProps.LICENSE_PATH, "/SEJDA_LICENSE.txt");
         new SejdaConsole(args, getTaskExecutionAdapter(), customs).execute();
     }
 

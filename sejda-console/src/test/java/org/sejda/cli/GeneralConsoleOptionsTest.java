@@ -78,7 +78,7 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
     public void testExecuteVersion() {
         Map<CustomizableProps, String> customs = new HashMap<>();
         customs.put(CustomizableProps.APP_NAME, "Sejda Console");
-        customs.put(CustomizableProps.LICENSE_PATH, "/LICENSE.txt");
+        customs.put(CustomizableProps.LICENSE_PATH, "/SEJDA_LICENSE.txt");
         new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--version",
                 "Sejda Console (Version " + Sejda.VERSION + ")");
     }
@@ -87,8 +87,8 @@ public class GeneralConsoleOptionsTest extends AbstractTestSuite {
     public void testExecuteLicense() throws IOException {
         Map<CustomizableProps, String> customs = new HashMap<>();
         customs.put(CustomizableProps.APP_NAME, "Sejda Console");
-        customs.put(CustomizableProps.LICENSE_PATH, "/LICENSE.txt");
-        try (InputStream resource = getClass().getResourceAsStream("/LICENSE.txt")) {
+        customs.put(CustomizableProps.LICENSE_PATH, "/SEJDA_LICENSE.txt");
+        try (InputStream resource = getClass().getResourceAsStream("/SEJDA_LICENSE.txt")) {
             new CommandLineExecuteTestHelper(false, customs).assertConsoleOutputContains("--license",
                     new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines()
                             .map(StringUtils::trim).toArray(String[]::new));

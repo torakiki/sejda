@@ -210,7 +210,7 @@ class CommandLineExecuteTestHelper {
     CommandLineExecuteTestHelper(boolean useMockTaskExecutionService) {
         this(useMockTaskExecutionService, new HashMap<>());
         customs.put(CustomizableProps.APP_NAME, "Sejda Console");
-        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/LICENSE.txt");
+        customs.put(CustomizableProps.LICENSE_PATH, "/sejda-console/SEJDA_LICENSE.txt");
     }
 
     CommandLineExecuteTestHelper(boolean useMockTaskExecutionService, Map<CustomizableProps, String> customs) {

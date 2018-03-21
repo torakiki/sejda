@@ -22,7 +22,6 @@ package org.sejda.cli;
 import static java.util.Optional.ofNullable;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -150,7 +149,7 @@ public class SejdaConsole {
                 info.append(l);
                 info.append(System.lineSeparator());
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("An error occurred while reading license information, please refer to http://www.sejda.org", e);
         }
         LOG.info(info.toString());
