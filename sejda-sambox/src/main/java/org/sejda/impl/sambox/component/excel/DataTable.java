@@ -18,10 +18,7 @@
  */
 package org.sejda.impl.sambox.component.excel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +36,10 @@ public class DataTable {
 
     public DataTable(Collection<Integer> pageNumbers) {
         this.pageNumbers.addAll(pageNumbers);
+    }
+
+    public void addRow(String... dataRow) {
+        addRow(Arrays.asList(dataRow));
     }
 
     public void addRow(List<String> dataRow) {
@@ -113,5 +114,55 @@ public class DataTable {
 
     public boolean hasData() {
         return this.data.size() > 0;
+    }
+
+    public int getColumnsCount() {
+        int result = 0;
+        for(List<String> row: data) {
+            result = Math.max(row.size(), result);
+        }
+
+        return result;
+    }
+
+    public int getRowsCount() {
+        return data.size();
+    }
+
+    public List<String> getColumn(int c) {
+        List<String> result = new ArrayList<>(getRowsCount());
+        for(List<String> row: data) {
+            result.add(getOrEmpty(row, c));
+        }
+        return result;
+    }
+
+    public DataTable mergeColumns(int c1, int c2) {
+        DataTable result = new DataTable(getPageNumbers());
+        for(List<String> row: data) {
+            List<String> newRow = new ArrayList<>(row.size() - 1);
+            for(int c = 0; c < row.size(); c++) {
+                if(c == c2) {
+                    // noop, continue
+                } else if(c == c1) {
+                    String newValue = new StringBuilder().append(getOrEmpty(row, c1)).append(" ")
+                            .append(getOrEmpty(row, c2)).toString().trim();
+                    newRow.add(newValue);
+                } else {
+                    newRow.add(getOrEmpty(row, c));
+
+                }
+            }
+            result.addRow(newRow);
+        }
+        return result;
+    }
+
+    private static String getOrEmpty(List<String> list, int index) {
+        if(list.size() <= index) {
+            return "";
+        } else {
+            return list.get(index);
+        }
     }
 }

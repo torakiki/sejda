@@ -30,6 +30,7 @@ import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.impl.sambox.component.excel.DataTable;
+import org.sejda.impl.sambox.component.excel.DataTableUtils;
 import org.sejda.model.TopLeftRectangularBox;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
@@ -139,8 +140,10 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
             }
 
             if (parameters.isMergeTablesSpanningMultiplePages()) {
-                all = mergeTablesSpanningMultiplePages(all);
+                all = DataTableUtils.mergeTablesSpanningMultiplePages(all);
             }
+
+            all = DataTableUtils.mergeComplementaryColumns(all);
 
             if (parameters.isCsvFormat()) {
                 List<File> tmpFiles = writeCsvFiles(all);
@@ -170,29 +173,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
         LOG.debug("Input documents cropped and written to {}", parameters.getOutput());
     }
 
-    private List<DataTable> mergeTablesSpanningMultiplePages(List<DataTable> dataTables) {
-        List<DataTable> results = new ArrayList<>();
-        DataTable current = null;
 
-        for (DataTable dt : dataTables) {
-            if (current != null) {
-                if (current.hasSameColumnsAs(dt)) {
-                    current = current.mergeWith(dt);
-                } else {
-                    results.add(current);
-                    current = dt;
-                }
-            } else {
-                current = dt;
-            }
-        }
-
-        if (current != null) {
-            results.add(current);
-        }
-
-        return results;
-    }
 
     private List<File> writeCsvFiles(List<DataTable> dataTables) throws TaskException {
         List<File> results = new ArrayList<>();
