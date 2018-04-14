@@ -91,6 +91,18 @@ public abstract class EncryptTaskTest extends BaseTaskTest<EncryptParameters> {
     }
 
     @Test
+    public void aes256WithUserPassword() throws IOException {
+        setUpParameters(PdfEncryption.AES_ENC_256);
+        parameters.setUserPassword("1234");
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted("1234");
+        testContext.assertCreator().forEachPdfOutput(d -> {
+            assertTrue(d.isEncrypted());
+        });
+    }
+
+    @Test
     public void enablingPrintDegraded() throws IOException {
         setUpParameters(PdfEncryption.STANDARD_ENC_128);
         parameters.setOwnerPassword("test");
