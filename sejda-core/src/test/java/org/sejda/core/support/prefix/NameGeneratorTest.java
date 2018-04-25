@@ -22,13 +22,17 @@ package org.sejda.core.support.prefix;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * Test unit for the NameGenerator
@@ -86,6 +90,14 @@ public class NameGeneratorTest {
     }
 
     @Test
+    public void testMaxFilenameSizeUnicode() {
+        String generatedFilename = nameGenerator("compressed_").generate(nameRequest("pdf").originalName(repeat("aว", 300)));
+        assertThat(generatedFilename.length(), is(lessThan(256)));
+        assertThat(generatedFilename, endsWith(".pdf"));
+        assertThat(generatedFilename, startsWith("compressed_aวaว"));
+    }
+
+    @Test
     public void testMaxFilenameSizeSanitized() {
         String generatedFilename = nameGenerator("B|LA_[TEXT]").generate(nameRequest("pdf").text(repeat('a', 300)));
         assertEquals(255, generatedFilename.length());
@@ -104,5 +116,28 @@ public class NameGeneratorTest {
         String generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]")
                 .generate(nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
         assertEquals(generatedFilename, "99-My file 6-04-2015 $1234-56.pdf");
+    }
+
+    // convenience method, don't pass charset and len all the time
+    private String shortenFilenameBytesLength(String input) {
+        return NameGenerator.shortenFilenameBytesLength(input, 255, StandardCharsets.UTF_8);
+    }
+
+    private String largeFilename = repeat("aว", 300) + ".pdf";
+
+    @Test
+    public void shortenFilenameBytesLength() {
+        String shorter = shortenFilenameBytesLength(largeFilename);
+        assertThat(shorter, endsWith("aวaวa.pdf"));
+        assertThat(shorter, startsWith("aวaว"));
+        assertThat(shorter.getBytes(StandardCharsets.UTF_8).length, is(253));
+    }
+
+    @Test
+    public void shortenFilenameCharLength() {
+        String shorter = NameGenerator.shortenFilenameCharLength(largeFilename, 255);
+        assertThat(shorter, endsWith("aวaวa.pdf"));
+        assertThat(shorter, startsWith("aวaว"));
+        assertThat(shorter.length(), is(255));
     }
 }
