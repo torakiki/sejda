@@ -533,11 +533,11 @@ public final class FontUtils {
             }
         }
 
+        result.add(new TextWithFont(currentString.toString(), currentFont));
+
         for (TextWithFont each : result) {
             LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
         }
-
-        result.add(new TextWithFont(currentString.toString(), currentFont));
 
         return result;
     }
