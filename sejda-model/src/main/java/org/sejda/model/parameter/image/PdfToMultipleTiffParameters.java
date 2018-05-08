@@ -39,7 +39,12 @@ public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParam
     private TiffCompressionType compressionType = TiffCompressionType.NONE;
 
     public PdfToMultipleTiffParameters(ImageColorType outputImageColorType) {
+        this(outputImageColorType, TiffCompressionType.NONE);
+    }
+
+    public PdfToMultipleTiffParameters(ImageColorType outputImageColorType, TiffCompressionType compressionType) {
         super(outputImageColorType);
+        this.compressionType = compressionType;
     }
 
     @Override
