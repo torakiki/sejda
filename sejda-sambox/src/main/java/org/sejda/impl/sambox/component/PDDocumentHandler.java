@@ -39,6 +39,7 @@ import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.sambox.rendering.ImageType;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
@@ -357,11 +358,21 @@ public class PDDocumentHandler implements Closeable {
     public BufferedImage renderImage(int pageNumber, int dpi, ImageColorType type) throws TaskException {
         try {
             PDFRenderer pdfRenderer = new PDFRenderer(document);
-            return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, type.getBufferedImageType());
+            return pdfRenderer.renderImageWithDPI(pageNumber - 1, dpi, toSamboxImageType(type));
         } catch (IOException ex) {
             LOG.error("Failed to render page " + pageNumber, ex);
             throw new TaskException("Failed to render page " + pageNumber, ex);
         }
+    }
+
+    private ImageType toSamboxImageType(ImageColorType colorType) {
+        for(ImageType type: ImageType.values()) {
+            if(type.toBufferedImageType() == colorType.getBufferedImageType()) {
+                return type;
+            }
+        }
+
+        throw new RuntimeException("Could not find a suitable image type for color type:" + colorType);
     }
 
     public void setDocumentOutline(PDDocumentOutline outline) {
