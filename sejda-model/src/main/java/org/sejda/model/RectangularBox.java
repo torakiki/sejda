@@ -43,7 +43,18 @@ public final class RectangularBox {
     private int top;
     private int right;
 
-    private RectangularBox(int bottom, int left, int top, int right) {
+    public RectangularBox(int bottom, int left, int top, int right) {
+        assertNotNegative(bottom);
+        assertNotNegative(left);
+        assertNotNegative(top);
+        assertNotNegative(right);
+        if (top <= bottom) {
+            throw new IllegalArgumentException("Top must be greater then bottom.");
+        }
+        if (right <= left) {
+            throw new IllegalArgumentException("Right must be greater then left.");
+        }
+
         this.bottom = bottom;
         this.left = left;
         this.top = top;
@@ -130,16 +141,6 @@ public final class RectangularBox {
      *             if one of the arguments is negative, top is lower then bottom or right is lower then left.
      */
     public static RectangularBox newInstance(int bottom, int left, int top, int right) {
-        assertNotNegative(bottom);
-        assertNotNegative(left);
-        assertNotNegative(top);
-        assertNotNegative(right);
-        if (top <= bottom) {
-            throw new IllegalArgumentException("Top must be greter then bottom.");
-        }
-        if (right <= left) {
-            throw new IllegalArgumentException("Right must be greter then left.");
-        }
         return new RectangularBox(bottom, left, top, right);
     }
 
