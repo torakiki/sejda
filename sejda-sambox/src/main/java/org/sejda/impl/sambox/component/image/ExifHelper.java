@@ -61,7 +61,7 @@ public class ExifHelper {
                     }
                 }
             });
-        } catch(Exception e) {
+        } catch(Throwable e) {
             return 0;
         }
     }
