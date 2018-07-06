@@ -287,7 +287,7 @@ class CommandLineExecuteTestHelper {
         } catch (SejdaRuntimeException e) {
             // no-op
         } catch (Exception e) {
-            throw new SejdaRuntimeException("An unexpected exception occured while executing the console", e);
+            throw new SejdaRuntimeException("An unexpected exception occurred while executing the console", e);
         }
     }
 
