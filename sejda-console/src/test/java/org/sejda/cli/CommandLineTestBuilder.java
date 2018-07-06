@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.ArgumentCaptor;
 import org.sejda.cli.util.OnceWithMessage;
@@ -291,7 +292,8 @@ class CommandLineExecuteTestHelper {
     }
 
     private void prepareSystemOutCapture() {
-        newSystemOut = new SystemOutRecordingStream(System.out);
+        //newSystemOut = new SystemOutRecordingStream(System.out);
+        newSystemOut = new SystemOutRecordingStream(new NullOutputStream());
         System.setOut(new PrintStream(newSystemOut));
     }
 
