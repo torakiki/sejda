@@ -34,26 +34,6 @@ import org.sejda.model.rotation.Rotation;
 public class RectangularBoxTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void testNegativeTop() {
-        RectangularBox.newInstance(10, 0, -1, 10);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeBottom() {
-        RectangularBox.newInstance(-10, 0, 10, 10);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeLeft() {
-        RectangularBox.newInstance(0, -1, 10, 10);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegativeRight() {
-        RectangularBox.newInstance(0, 0, 10, -1);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testLeftGreaterRight() {
         RectangularBox.newInstance(0, 11, 10, 10);
     }

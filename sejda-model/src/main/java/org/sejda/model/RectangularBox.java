@@ -25,7 +25,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.model.validation.constraint.NotNegativeCoordinates;
 import org.sejda.model.validation.constraint.ValidCoordinates;
 
 /**
@@ -35,7 +34,6 @@ import org.sejda.model.validation.constraint.ValidCoordinates;
  * 
  */
 @ValidCoordinates
-@NotNegativeCoordinates
 public final class RectangularBox {
 
     private int bottom;
@@ -44,10 +42,6 @@ public final class RectangularBox {
     private int right;
 
     public RectangularBox(int bottom, int left, int top, int right) {
-        assertNotNegative(bottom);
-        assertNotNegative(left);
-        assertNotNegative(top);
-        assertNotNegative(right);
         if (top <= bottom) {
             throw new IllegalArgumentException("Top must be greater then bottom.");
         }
@@ -142,12 +136,6 @@ public final class RectangularBox {
      */
     public static RectangularBox newInstance(int bottom, int left, int top, int right) {
         return new RectangularBox(bottom, left, top, right);
-    }
-
-    private static void assertNotNegative(int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException(String.format("Found negative value %d", value));
-        }
     }
 
     /**
