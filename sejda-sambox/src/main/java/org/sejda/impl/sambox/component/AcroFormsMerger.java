@@ -86,7 +86,12 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
-import org.sejda.sambox.pdmodel.interactive.form.*;
+import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
+import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
+import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
+import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
+import org.sejda.sambox.pdmodel.interactive.form.PDVariableText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -304,7 +309,8 @@ public class AcroFormsMerger {
         if(!FontUtils.canDisplay(value, field.getAppearanceFont())) {
             PDFont fallbackFont = FontUtils.findFontFor(form.getDocument(), value);
             field.setAppearanceOverrideFont(fallbackFont);
-            LOG.debug("Form field can't render (in appearances) it's value '%', will use font % for better support", value, fallbackFont);
+            LOG.debug("Form field can't render (in appearances) it's value '{}', will use font {} for better support",
+                    value, fallbackFont);
         }
     }
 
