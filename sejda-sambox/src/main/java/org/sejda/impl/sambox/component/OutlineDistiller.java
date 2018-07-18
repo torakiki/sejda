@@ -75,9 +75,13 @@ public class OutlineDistiller {
         if (node.hasChildren()) {
             final PDOutlineItem clone = new PDOutlineItem();
             for (PDOutlineItem current : node.children()) {
-                cloneNode(current, pagesLookup).ifPresent(clonedChild -> {
-                    clone.addLast(clonedChild);
-                });
+                if(current.equals(node)) {
+                    LOG.warn("Outline item has a child pointing to the parent, skipping at cloning");
+                } else {
+                    cloneNode(current, pagesLookup).ifPresent(clonedChild -> {
+                        clone.addLast(clonedChild);
+                    });
+                }
             }
             Optional<PDPageDestination> pageDestination = toPageDestination(node, document.getDocumentCatalog());
             Optional<PDPage> destinationPage = pageDestination.map(PDPageDestination::getPage)
