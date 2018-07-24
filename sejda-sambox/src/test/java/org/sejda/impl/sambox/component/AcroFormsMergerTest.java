@@ -113,6 +113,8 @@ public class AcroFormsMergerTest {
         assertNotNull(document.getDocumentCatalog().getAcroForm());
         victim.mergeForm(document.getDocumentCatalog().getAcroForm(), annotationsLookup);
         assertFalse(victim.getForm().getFields().isEmpty());
+        assertTrue(victim.getForm().getCalculationOrder().isEmpty());
+        assertNull(victim.getForm().getCOSObject().getItem(COSName.CO));
     }
 
     @Test
@@ -315,5 +317,30 @@ public class AcroFormsMergerTest {
             assertEquals(2, victim.getForm().getFields().size());
             assertEquals(1, victim.getForm().getCalculationOrder().size());
         }
+    }
+
+    @Test
+    public void mergeRnamingSameCalculationOrderIsMerged() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS, destination);
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        mapping.clear();
+
+        PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")));
+        mapping.addLookupEntry(doc.getPage(0), new PDPage());
+        annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(mapping);
+        victim.mergeForm(doc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        mapping.clear();
+
+        PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")));
+        mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+        annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+        victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+        assertEquals(4, victim.getForm().getFields().size());
+        assertEquals(2, victim.getForm().getCalculationOrder().size());
     }
 }

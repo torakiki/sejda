@@ -77,7 +77,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
@@ -283,13 +282,20 @@ public class AcroFormsMerger {
                         }
                     }
                 });
-        COSArray co = originalForm.getCalculationOrder().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
-                .collect(Collector.of(COSArray::new, COSArray::add, (left, right) -> {
-                    left.addAll(right);
-                    return left;
-                }));
+
+        mergeCalculationOrder(originalForm, fieldsLookup);
+    }
+
+    private void mergeCalculationOrder(PDAcroForm originalForm, LookupTable<PDField> fieldsLookup) {
+        List<PDField> co = originalForm.getCalculationOrder().stream().map(fieldsLookup::lookup)
+                .filter(Objects::nonNull).collect(toList());
         if (nonNull(co) && co.size() > 0) {
-            this.form.setCalculationOrder(co);
+            COSArray formCo = ofNullable(this.form.getCOSObject().getDictionaryObject(COSName.CO, COSArray.class))
+                    .orElseGet(COSArray::new);
+            for (PDField field : co) {
+                formCo.add(field);
+            }
+            this.form.setCalculationOrder(formCo);
         }
     }
 
