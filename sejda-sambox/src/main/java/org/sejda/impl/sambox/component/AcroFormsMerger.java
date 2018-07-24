@@ -32,8 +32,9 @@ import static org.sejda.sambox.cos.COSName.BM;
 import static org.sejda.sambox.cos.COSName.BORDER;
 import static org.sejda.sambox.cos.COSName.BS;
 import static org.sejda.sambox.cos.COSName.C;
+import static org.sejda.sambox.cos.COSName.CA;
+import static org.sejda.sambox.cos.COSName.CA_NS;
 import static org.sejda.sambox.cos.COSName.CONTENTS;
-import static org.sejda.sambox.cos.COSName.DA;
 import static org.sejda.sambox.cos.COSName.DATAPREP;
 import static org.sejda.sambox.cos.COSName.DS;
 import static org.sejda.sambox.cos.COSName.DV;
@@ -43,6 +44,7 @@ import static org.sejda.sambox.cos.COSName.FT;
 import static org.sejda.sambox.cos.COSName.H;
 import static org.sejda.sambox.cos.COSName.I;
 import static org.sejda.sambox.cos.COSName.KIDS;
+import static org.sejda.sambox.cos.COSName.LANG;
 import static org.sejda.sambox.cos.COSName.LOCK;
 import static org.sejda.sambox.cos.COSName.M;
 import static org.sejda.sambox.cos.COSName.MAX_LEN;
@@ -103,11 +105,12 @@ import org.slf4j.LoggerFactory;
 public class AcroFormsMerger {
     private static final Logger LOG = LoggerFactory.getLogger(AcroFormsMerger.class);
 
-    private static final COSName[] FIELD_KEYS = { FT, PARENT, KIDS, T, TU, TM, FF, V, DV, DA, Q, DS, RV, OPT, MAX_LEN,
-            TI, I, LOCK, SV, DATAPREP };
+    // when we separate field and widget items, we keep /AA in both, Acrobat Reader seems to work correctly only if that's the case
+    private static final COSName[] FIELD_KEYS = { FT, PARENT, KIDS, T, TU, TM, FF, V, DV, Q, DS, RV, OPT, MAX_LEN, TI,
+            I, LOCK, SV, DATAPREP };
 
     private static final COSName[] WIDGET_KEYS = { TYPE, SUBTYPE, RECT, CONTENTS, P, NM, M, F, AP, AS, BORDER, C,
-            STRUCT_PARENT, OC, AF, BM, H, MK, A, BS, PMD };
+            STRUCT_PARENT, OC, AF, CA, CA_NS, LANG, BM, H, MK, A, BS, PMD };
 
     private AcroFormPolicy policy;
     private PDAcroForm form;
@@ -220,7 +223,14 @@ public class AcroFormsMerger {
      * @param annotations
      */
     private void removeFieldKeysFromWidgets(Collection<PDAnnotationWidget> annotations) {
-        annotations.stream().map(PDAnnotation::getCOSObject).forEach(a -> a.removeItems(FIELD_KEYS));
+        annotations.stream().map(PDAnnotation::getCOSObject).forEach(a -> {
+            a.removeItems(FIELD_KEYS);
+            // if multiple kids we preserve their /DA even if Widget shouldn't have DA according to specs because if there is one Acrobat honors it.
+            // if only one kid then /DA is in the field. see for a live example PDFBOX-3687
+            if (annotations.size() == 1) {
+                a.removeItem(COSName.DA);
+            }
+        });
         LOG.trace("Removed fields keys from widget annotations");
     }
 
