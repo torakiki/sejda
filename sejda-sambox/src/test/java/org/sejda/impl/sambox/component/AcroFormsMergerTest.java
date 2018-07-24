@@ -227,7 +227,7 @@ public class AcroFormsMergerTest {
         assertEquals(4, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field.isTerminal()) {
-                //System.out.println(field.getFullyQualifiedName() + " " + field.getWidgets().size() + " " + field.getClass().getSimpleName());
+                // System.out.println(field.getFullyQualifiedName() + " " + field.getWidgets().size() + " " + field.getClass().getSimpleName());
                 if (field.getFullyQualifiedName().startsWith("Choice_Caption_")) {
                     assertEquals(4, field.getWidgets().size());
                 } else {
@@ -299,4 +299,21 @@ public class AcroFormsMergerTest {
         assertTrue(form.isSignaturesExist());
     }
 
+    @Test
+    public void calculationOrderIsKept() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        assertNotNull(document.getDocumentCatalog().getAcroForm());
+        mapping.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")))) {
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertEquals(2, victim.getForm().getFields().size());
+            assertEquals(1, victim.getForm().getCalculationOrder().size());
+        }
+    }
 }

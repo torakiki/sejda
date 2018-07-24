@@ -77,12 +77,14 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.sejda.common.LookupTable;
 import org.sejda.impl.sambox.util.AcroFormUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
@@ -281,6 +283,14 @@ public class AcroFormsMerger {
                         }
                     }
                 });
+        COSArray co = originalForm.getCalculationOrder().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
+                .collect(Collector.of(COSArray::new, COSArray::add, (left, right) -> {
+                    left.addAll(right);
+                    return left;
+                }));
+        if (nonNull(co) && co.size() > 0) {
+            this.form.setCalculationOrder(co);
+        }
     }
 
     /**
@@ -301,7 +311,7 @@ public class AcroFormsMerger {
             for (PDField field : form.getFieldTree()) {
                 fields.add(field);
 
-                if(field instanceof PDVariableText) {
+                if (field instanceof PDVariableText) {
                     ensureValueCanBeDisplayed((PDVariableText) field);
                 }
             }
@@ -316,7 +326,7 @@ public class AcroFormsMerger {
      */
     private void ensureValueCanBeDisplayed(PDVariableText field) {
         String value = field.getValueAsString();
-        if(!FontUtils.canDisplay(value, field.getAppearanceFont())) {
+        if (!FontUtils.canDisplay(value, field.getAppearanceFont())) {
             PDFont fallbackFont = FontUtils.findFontFor(form.getDocument(), value);
             field.setAppearanceOverrideFont(fallbackFont);
             LOG.debug("Form field can't render (in appearances) it's value '{}', will use font {} for better support",
