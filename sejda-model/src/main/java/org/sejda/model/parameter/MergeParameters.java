@@ -33,6 +33,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.MergeInput;
 import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
@@ -59,6 +60,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
     @NotNull
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
+    @NotNull
+    private CatalogPageLabelsPolicy catalogPageLabelsPolicy = CatalogPageLabelsPolicy.DISCARD;
     @Valid
     @NotNull
     private SingleTaskOutput output;
@@ -168,11 +171,19 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.normalizePageSizes = normalizePageSizes;
     }
 
+    public CatalogPageLabelsPolicy getCatalogPageLabelsPolicy() {
+        return catalogPageLabelsPolicy;
+    }
+
+    public void setCatalogPageLabelsPolicy(CatalogPageLabelsPolicy catalogPageLabelsPolicy) {
+        this.catalogPageLabelsPolicy = catalogPageLabelsPolicy;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
                 .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(output).append(filenameFooter)
-                .append(normalizePageSizes).toHashCode();
+                .append(normalizePageSizes).append(catalogPageLabelsPolicy).toHashCode();
     }
 
     @Override
@@ -188,6 +199,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
                 .append(acroFormPolicy, params.getAcroFormPolicy()).append(blankPageIfOdd, params.isBlankPageIfOdd())
                 .append(outlinePolicy, params.getOutlinePolicy()).append(tocPolicy, params.getTableOfContentsPolicy())
                 .append(output, params.getOutput()).append(filenameFooter, params.isFilenameFooter())
-                .append(normalizePageSizes, params.isNormalizePageSizes()).isEquals();
+                .append(normalizePageSizes, params.isNormalizePageSizes())
+                .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
+                .isEquals();
     }
 }

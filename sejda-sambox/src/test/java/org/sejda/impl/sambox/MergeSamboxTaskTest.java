@@ -20,11 +20,9 @@ package org.sejda.impl.sambox;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
+import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
 
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -39,10 +37,12 @@ import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.service.BaseTaskTest;
+import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.MergeParameters;
@@ -53,6 +53,8 @@ import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
+import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
@@ -568,6 +570,65 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             assertFooterHasText(d.getPage(1), "draft 2");
             assertFooterHasText(d.getPage(2), "large 3");
             assertFooterHasText(d.getPage(3), "draft 4");
+        });
+    }
+
+    @Test
+    public void mergeKeepingPageLabels() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        PDDocument doc1 = new DocBuilder().withPages(2)
+                .withPageLabelRange(0, "r", "Intro:")
+                .get();
+        PDDocument doc2 = new DocBuilder().withPages(3)
+                .withPageLabelRange(0, "D")
+                .get();
+        parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
+        parameters.setCatalogPageLabelsPolicy(CatalogPageLabelsPolicy.RETAIN);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            try {
+                PDPageLabels mergedLabels = d.getDocumentCatalog().getPageLabels();
+                assertPageLabelIndexesAre(mergedLabels, 0, 2);
+                assertPageLabelRangeIs(mergedLabels, 0, new PDPageLabelRange("r", "Intro:", null));
+                assertPageLabelRangeIs(mergedLabels, 2, new PDPageLabelRange("D", null, null));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void mergeDiscardingPageLabels() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        PDDocument doc1 = new DocBuilder().withPages(2)
+                .withPageLabelRange(0, "r", "Intro:")
+                .get();
+        PDDocument doc2 = new DocBuilder().withPages(3)
+                .withPageLabelRange(0, "D")
+                .get();
+
+        parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
+
+        parameters.setCatalogPageLabelsPolicy(CatalogPageLabelsPolicy.DISCARD);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            try {
+                assertNull(d.getDocumentCatalog().getPageLabels());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 

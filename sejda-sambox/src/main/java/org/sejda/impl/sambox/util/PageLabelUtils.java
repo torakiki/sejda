@@ -18,9 +18,7 @@
  */
 package org.sejda.impl.sambox.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
@@ -80,5 +78,50 @@ public final class PageLabelUtils {
             }
         }
         return retLabels;
+    }
+
+    // TODO: understand how logicalPage should be affected
+    public static PDPageLabels removePages(PDPageLabels pageLabels, List<Integer> pagesToRemove, int totalPages) {
+        Map<Integer, PDPageLabelRange> labels = new TreeMap<>(pageLabels.getLabels());
+
+        List<Integer> pagesToRemoveSortedLastFirst = new ArrayList<>(pagesToRemove);
+        pagesToRemoveSortedLastFirst.sort(Collections.reverseOrder());
+
+        // go backwards from last to first
+        // why? otherwise pagesToRemove would need to be shifted -1 after each page removal
+        for(int pageToRemove : pagesToRemoveSortedLastFirst) {
+            // make a copy to avoid ConcurrentModificationException
+            Map<Integer, PDPageLabelRange> updatedLabels = new TreeMap<>();
+            // pagesToRemove are 1-based, indices 0-based
+            int pageIndex = pageToRemove - 1;
+
+            for(int key : labels.keySet()) {
+                if(key <= pageIndex) {
+                    // just copy over as is
+                    updatedLabels.put(key, labels.get(key));
+                } else if(key > pageIndex) {
+                    // shift index - 1
+                    int prevKey = key - 1;
+                    if (prevKey >= 0) {
+                        updatedLabels.put(prevKey, labels.get(key));
+                    }
+                }
+            }
+
+            // overwrite
+            labels = updatedLabels;
+        }
+
+        // calculate the new page total
+        int newTotalPages = totalPages - pagesToRemove.size();
+
+        PDPageLabels result = new PDPageLabels();
+        for(int index: labels.keySet()) {
+            // exclude the last label range, if index is larger that new total page num
+            if(index < newTotalPages) {
+                result.setLabelItem(index, labels.get(index));
+            }
+        }
+        return result;
     }
 }

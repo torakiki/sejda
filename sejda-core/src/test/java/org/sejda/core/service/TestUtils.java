@@ -19,6 +19,8 @@ package org.sejda.core.service;
 
 import org.sejda.core.support.util.StringUtils;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
+import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
@@ -30,10 +32,12 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.sejda.core.support.util.StringUtils.normalizeLineEndings;
 
@@ -118,5 +122,25 @@ public class TestUtils {
     public static void assertPageDestination(PDAnnotationLink link, PDPage expectedPage) throws IOException {
         PDPage actualPage = ((PDPageFitWidthDestination)link.getDestination()).getPage();
         assertEquals(expectedPage, actualPage);
+    }
+
+    public static void assertPageLabelIndexesAre(PDPageLabels labels, Integer... expected) {
+        assertThat(labels.getLabels().keySet(), is(new HashSet<>(Arrays.asList(expected))));
+    }
+
+    public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, PDPageLabelRange expected) {
+        PDPageLabelRange actual = labels.getPageLabelRange(startPage);
+        assertNotNull("No page label range found at index: " + startPage + ". "+ labels.getLabels().keySet(), actual);
+        assertThat("Difference at index: " + startPage, actual.getCOSObject().toString(), is(expected.getCOSObject().toString()));
+    }
+
+    public static void assertPageLabelRangeIsDefault(PDPageLabels labels, int startPage) {
+        PDPageLabelRange defaultLabel = new PDPageLabelRange();
+        defaultLabel.setStyle(PDPageLabelRange.STYLE_DECIMAL);
+        assertPageLabelRangeIs(labels, startPage, defaultLabel);
+    }
+
+    public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, String style) {
+        assertPageLabelRangeIs(labels, startPage, new PDPageLabelRange(style, null, null));
     }
 }

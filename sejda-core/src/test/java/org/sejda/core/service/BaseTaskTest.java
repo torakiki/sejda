@@ -147,6 +147,16 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         return PdfStreamSource.newInstanceNoPassword(getClass().getClassLoader().getResourceAsStream(path), name);
     }
 
+    public PdfFileSource customInput(PDDocument doc, String name) {
+        try {
+            File tmp = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(name);
+            doc.writeTo(tmp);
+            return PdfFileSource.newInstanceNoPassword(tmp);
+        } catch (TaskIOException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public PdfStreamSource customEncryptedInput(String path, String password) {
         return PdfStreamSource.newInstanceWithPassword(getClass().getClassLoader().getResourceAsStream(path),
                 randomAlphanumeric(16) + ".pdf", password);

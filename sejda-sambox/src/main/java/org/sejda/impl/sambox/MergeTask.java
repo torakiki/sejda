@@ -34,14 +34,7 @@ import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.AcroFormsMerger;
-import org.sejda.impl.sambox.component.AnnotationsDistiller;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
-import org.sejda.impl.sambox.component.FilenameFooterWriter;
-import org.sejda.impl.sambox.component.OutlineMerger;
-import org.sejda.impl.sambox.component.PDDocumentHandler;
-import org.sejda.impl.sambox.component.PdfScaler;
-import org.sejda.impl.sambox.component.TableOfContentsCreator;
+import org.sejda.impl.sambox.component.*;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.*;
@@ -73,6 +66,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private PDDocumentHandler destinationDocument;
     private Queue<Closeable> toClose = new LinkedList<>();
     private OutlineMerger outlineMerger;
+    private CatalogPageLabelsMerger catalogPageLabelsMerger;
     private AcroFormsMerger acroFormsMerger;
     private TableOfContentsCreator tocCreator;
     private FilenameFooterWriter footerWriter;
@@ -104,6 +98,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.tocCreator = new TableOfContentsCreator(parameters, this.destinationDocument.getUnderlyingPDDocument());
         this.footerWriter = new FilenameFooterWriter(parameters.isFilenameFooter(),
                 this.destinationDocument.getUnderlyingPDDocument());
+        this.catalogPageLabelsMerger = new CatalogPageLabelsMerger(parameters.getCatalogPageLabelsPolicy());
 
         convertImageMergeInputToPdf(parameters);
 
@@ -115,7 +110,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
             LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
             long relativeCounter = 0;
-            for (Integer currentPage : input.getPages(sourceDocumentHandler.getNumberOfPages())) {
+            Set<Integer> pagesToImport = input.getPages(sourceDocumentHandler.getNumberOfPages());
+            for (Integer currentPage : pagesToImport) {
                 executionContext().assertTaskNotCancelled();
                 pagesCounter++;
                 relativeCounter++;
@@ -166,6 +162,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
             if (parameters.isBlankPageIfOdd()) {
                 ofNullable(destinationDocument.addBlankPageIfOdd(currentPageSize)).ifPresent(p -> pagesCounter++);
             }
+
+            catalogPageLabelsMerger.add(sourceDocumentHandler.getUnderlyingPDDocument(), pagesToImport);
+
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
@@ -188,6 +187,11 @@ public class MergeTask extends BaseTask<MergeParameters> {
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
             tocCreator.addToC();
+        }
+
+        if(catalogPageLabelsMerger.hasPageLabels()) {
+            LOG.debug("Adding merged /Catalog /PageLabels");
+            destinationDocument.getUnderlyingPDDocument().getDocumentCatalog().setPageLabels(catalogPageLabelsMerger.getMergedPageLabels());
         }
 
         destinationDocument.savePDDocument(tmpFile);
