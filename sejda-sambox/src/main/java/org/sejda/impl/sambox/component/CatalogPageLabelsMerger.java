@@ -85,7 +85,7 @@ public class CatalogPageLabelsMerger {
                 mergedPageLabels.setLabelItem(newPageIndex, range);
             }
 
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOG.warn("An error occurred retrieving /PageLabels of document {}, will not be merged", doc);
         } finally {
             // always advance the total number of pages
