@@ -191,7 +191,7 @@ public class CommandLineTestBuilder {
     }
 
     public <T> T invokeSejdaConsole() {
-        return (T) new CommandLineExecuteTestHelper(true)
+        return new CommandLineExecuteTestHelper(true)
                 .invokeConsoleAndReturnTaskParameters(this.toCommandLineString());
     }
 }

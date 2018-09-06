@@ -21,7 +21,12 @@ package org.sejda.core.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -105,7 +110,7 @@ public abstract class PdfToExcelTaskTest extends BaseTaskTest<PdfToExcelParamete
             List<String> row = new ArrayList<>();
             for(String s: record){
                 row.add(s);
-            };
+            }
             results.add(row);
         }
 

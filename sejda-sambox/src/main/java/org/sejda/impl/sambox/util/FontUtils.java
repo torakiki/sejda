@@ -27,7 +27,15 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -108,7 +116,8 @@ public final class FontUtils {
         if (!canDisplay(text, font)) {
             PDFont fallback = findFontFor(document, text);
             String fallbackName = fallback == null ? null : fallback.getName();
-            LOG.debug("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(), fallbackName);
+            LOG.debug("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(),
+                    fallbackName);
             return fallback;
         }
         return font;
@@ -396,10 +405,11 @@ public final class FontUtils {
     }
 
     /**
-     * Wraps the given text on multiple lines, if it does not fit within the given maxWidth
-     * It will try to determine if all text can be written with given font and find a fallback for parts that are not supported.
+     * Wraps the given text on multiple lines, if it does not fit within the given maxWidth It will try to determine if all text can be written with given font and find a fallback
+     * for parts that are not supported.
      */
-    public static List<String> wrapLines(String rawLabel, PDFont font, float fontSize, double maxWidth, PDDocument document) throws TaskIOException {
+    public static List<String> wrapLines(String rawLabel, PDFont font, float fontSize, double maxWidth,
+            PDDocument document) throws TaskIOException {
         List<String> lines = new ArrayList<>();
 
         String label = org.sejda.core.support.util.StringUtils.normalizeWhitespace(rawLabel);
@@ -415,7 +425,7 @@ public final class FontUtils {
                 String resolvedLabel = stringAndFont.getText();
 
                 String[] words = visualToLogical(resolvedLabel).split("(?<=\\b)");
-                for(String word: words) {
+                for (String word : words) {
                     double textWidth = getSimpleStringWidth(word, resolvedFont, fontSize);
 
                     if (textWidth > maxWidth || word.length() > 10) {
@@ -456,7 +466,7 @@ public final class FontUtils {
             }
         }
 
-        if(!currentString.toString().isEmpty()) {
+        if (!currentString.toString().isEmpty()) {
             lines.add(currentString.toString().trim());
         }
 
@@ -464,8 +474,7 @@ public final class FontUtils {
     }
 
     /**
-     * Calculates the width of the string using the given font.
-     * Does not try to find out if the text can actually be written with the given font and find fallback
+     * Calculates the width of the string using the given font. Does not try to find out if the text can actually be written with the given font and find fallback
      */
     public static double getSimpleStringWidth(String text, PDFont font, double fontSize) throws IOException {
         double textWidth = font.getStringWidth(text) / 1000 * fontSize;
@@ -483,8 +492,7 @@ public final class FontUtils {
     /**
      * Supports writing labels which require multiple fonts (eg: mixing thai and english words) Returns a list of text with associated font.
      */
-    public static List<TextWithFont> resolveFonts(String label, PDFont font, PDDocument document)
-            throws TaskIOException {
+    public static List<TextWithFont> resolveFonts(String label, PDFont font, PDDocument document) {
         PDFont currentFont = font;
         StringBuilder currentString = new StringBuilder();
 
@@ -508,7 +516,7 @@ public final class FontUtils {
                     f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
                 }
 
-                if(f != currentFont) {
+                if (f != currentFont) {
                     // end current string, before space
                     if (currentString.length() > 0) {
                         result.add(new TextWithFont(currentString.toString(), currentFont));

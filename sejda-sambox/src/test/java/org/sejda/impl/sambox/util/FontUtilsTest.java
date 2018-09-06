@@ -303,7 +303,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void wrapping_Lines() throws TaskIOException, IOException {
+    public void wrapping_Lines() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<String> lines = FontUtils.wrapLines("This is a long line that cannot fit on a single line and could be wrapped", HELVETICA, 10, 191, doc);
         assertThat(lines, is(Arrays.asList(
@@ -313,7 +313,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void wrapping_Lines_Without_Word_Break() throws TaskIOException, IOException {
+    public void wrapping_Lines_Without_Word_Break() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<String> lines = FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped", HELVETICA, 10, 191, doc);
         assertThat(lines, is(Arrays.asList(
@@ -323,7 +323,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void wrapping_Lines_Without_Word_Break_Or_Other_Delimiters() throws TaskIOException, IOException {
+    public void wrapping_Lines_Without_Word_Break_Or_Other_Delimiters() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<String> lines = FontUtils.wrapLines("Thisisalonglinethatcannotfitonasinglelineandcouldbewrapped", HELVETICA, 10, 191, doc);
         assertThat(lines, is(Arrays.asList(
@@ -333,7 +333,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void wrapping_Lines_Words_Mixed_With_Super_Long_Words() throws TaskIOException, IOException {
+    public void wrapping_Lines_Words_Mixed_With_Super_Long_Words() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<String> lines = FontUtils.wrapLines("This is a long linethatcannotfitonasinglelineandcouldbe wrapped", HELVETICA, 10, 191, doc);
         assertThat(lines, is(Arrays.asList(
