@@ -183,6 +183,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Automatic-Module-Name>org.sejda.cli</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 			<!-- plugin that assembles an executable form for the application -->
 			<plugin>
