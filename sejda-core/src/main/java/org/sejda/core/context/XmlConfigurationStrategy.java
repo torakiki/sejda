@@ -95,6 +95,10 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             initializeSchemaValidation(factory);
+
+            factory.setValidating(true);
+            factory.setFeature("http://xml.org/sax/features/validation", true);
+
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(input);
 

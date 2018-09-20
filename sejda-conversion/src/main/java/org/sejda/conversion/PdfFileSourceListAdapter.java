@@ -247,6 +247,9 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             XPathException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);
+        domFactory.setValidating(true);
+        domFactory.setFeature("http://xml.org/sax/features/validation", true);
+
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document doc = builder.parse(file);
 
