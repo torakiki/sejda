@@ -64,7 +64,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
     private List<PDDocumentHandler> documents = new ArrayList<>();
     private Map<PDDocumentHandler, String> documentNames = new HashMap<>();
     private AcroFormsMerger acroFormsMerger;
-    private LookupTable<PDPage> pagesLookup = new LookupTable<>();
+    private Map<PDDocumentHandler, LookupTable<PDPage>> pagesLookup = new HashMap<>();
     private OutlineMerger outlineMerger;
 
     @Override
@@ -95,6 +95,7 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
             PDDocumentHandler sourceDocumentHandler = input.open(sourceOpener);
             documents.add(sourceDocumentHandler);
             documentNames.put(sourceDocumentHandler, input.getName());
+            pagesLookup.put(sourceDocumentHandler, new LookupTable<>());
         }
 
         int currentStep = 0;
@@ -117,10 +118,11 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
                 destinationDocument.addBlankPage(mediaBox);
             } else {
                 try {
-                    PDPage page = documents.get(filePage.getFileIndex()).getPage(pageNum);
+                    PDDocumentHandler documentHandler = documents.get(filePage.getFileIndex());
+                    PDPage page = documentHandler.getPage(pageNum);
                     PDPage newPage = destinationDocument.importPage(page);
                     lastPage = newPage;
-                    pagesLookup.addLookupEntry(page, newPage);
+                    pagesLookup.get(documentHandler).addLookupEntry(page, newPage);
                     rotator.rotate(i + 1, filePage.getRotation());
                 } catch (PageNotFoundException e) {
                     executionContext().assertTaskIsLenient(e);
@@ -133,10 +135,11 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         }
 
         for (PDDocumentHandler document : documents) {
-            outlineMerger.updateOutline(document.getUnderlyingPDDocument(), documentNames.get(document), pagesLookup);
+            LookupTable<PDPage> lookupTable = pagesLookup.get(document);
+            outlineMerger.updateOutline(document.getUnderlyingPDDocument(), documentNames.get(document), lookupTable);
 
             LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(document.getUnderlyingPDDocument())
-                    .retainRelevantAnnotations(pagesLookup);
+                    .retainRelevantAnnotations(lookupTable);
             clipSignatures(annotationsLookup.values());
 
             acroFormsMerger.mergeForm(document.getUnderlyingPDDocument().getDocumentCatalog().getAcroForm(),
