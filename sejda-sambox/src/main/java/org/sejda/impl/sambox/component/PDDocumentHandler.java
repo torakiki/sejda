@@ -432,7 +432,7 @@ public class PDDocumentHandler implements Closeable {
                     if (font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
                         return font;
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     LOG.warn("Failed to load font from resources: {}", fontName);
                 }
             }
