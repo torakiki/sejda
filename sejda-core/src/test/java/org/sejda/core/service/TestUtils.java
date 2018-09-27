@@ -23,7 +23,7 @@ import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.*;
@@ -120,7 +120,7 @@ public class TestUtils {
     }
 
     public static void assertPageDestination(PDAnnotationLink link, PDPage expectedPage) throws IOException {
-        PDPage actualPage = ((PDPageFitWidthDestination)link.getDestination()).getPage();
+        PDPage actualPage = ((PDPageDestination)link.getDestination()).getPage();
         assertEquals(expectedPage, actualPage);
     }
 

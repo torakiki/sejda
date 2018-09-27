@@ -45,7 +45,7 @@ import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitWidthDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +101,7 @@ public class TableOfContentsCreator {
     }
 
     private PDAnnotationLink linkAnnotationFor(PDPage importedPage) {
-        PDPageFitWidthDestination pageDest = new PDPageFitWidthDestination();
+        PDPageXYZDestination pageDest = new PDPageXYZDestination();
         pageDest.setPage(importedPage);
         PDAnnotationLink link = new PDAnnotationLink();
         link.setDestination(pageDest);
