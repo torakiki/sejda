@@ -12,7 +12,6 @@ files = [
     # list to maximize the amount of meta data retained in the final merged font.
     'NotoSans-Regular.ttf',
     'NotoSansBengali-Regular.ttf',
-    'NotoKufiArabic-Regular.ttf',
     'NotoNaskhArabic-Regular.ttf',
     'NotoSansBengali-Regular.ttf',
     'NotoSansDevanagari-Regular.ttf',
