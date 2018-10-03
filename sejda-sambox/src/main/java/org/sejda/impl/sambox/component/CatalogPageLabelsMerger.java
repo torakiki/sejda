@@ -19,6 +19,11 @@
 
 package org.sejda.impl.sambox.component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -26,9 +31,6 @@ import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Merges multiple /Catalog /PageLabels definitions, from multiple docs, into one.
@@ -44,30 +46,30 @@ public class CatalogPageLabelsMerger {
     public CatalogPageLabelsMerger(CatalogPageLabelsPolicy policy) {
         this.policy = policy;
 
-        if(policy == CatalogPageLabelsPolicy.DISCARD) {
+        if (policy == CatalogPageLabelsPolicy.DISCARD) {
             mergedPageLabels = null;
         }
     }
 
     public void add(PDDocument doc, Set<Integer> pagesToImport) {
-        if(policy == CatalogPageLabelsPolicy.DISCARD) {
+        if (policy == CatalogPageLabelsPolicy.DISCARD) {
             return;
         }
 
         try {
             PDPageLabels docLabels = doc.getDocumentCatalog().getPageLabels();
-            if(docLabels == null) {
+            if (docLabels == null) {
                 docLabels = new PDPageLabels();
             }
 
-            if(pagesToImport.size() < doc.getNumberOfPages()) {
+            if (pagesToImport.size() < doc.getNumberOfPages()) {
                 // not all pages are being imported
                 // first update doc's page labels and remove pages not being imported
                 List<Integer> pagesToRemove = computePagesToRemove(doc, pagesToImport);
                 docLabels = PageLabelUtils.removePages(docLabels, pagesToRemove, doc.getNumberOfPages());
             }
 
-            for(Map.Entry<Integer, PDPageLabelRange> entry: docLabels.getLabels().entrySet()){
+            for (Map.Entry<Integer, PDPageLabelRange> entry : docLabels.getLabels().entrySet()) {
                 PDPageLabelRange range = entry.getValue();
 
                 // the page index in the original doc
@@ -79,8 +81,8 @@ public class CatalogPageLabelsMerger {
                 // but might be right for Chapter 1 (arabic) + Chapter 2 (arabic)
                 // not sure what to do, defer for later
                 // if(range.hasStart()) {
-                //    range.setStart(range.getStart() + totalPages);
-                //}
+                // range.setStart(range.getStart() + totalPages);
+                // }
 
                 mergedPageLabels.setLabelItem(newPageIndex, range);
             }
@@ -94,13 +96,13 @@ public class CatalogPageLabelsMerger {
     }
 
     private static List<Integer> computePagesToRemove(PDDocument doc, Set<Integer> pagesToImport) {
-        if(doc.getNumberOfPages() == pagesToImport.size()) {
+        if (doc.getNumberOfPages() == pagesToImport.size()) {
             return new ArrayList<>();
         }
 
         List<Integer> pagesToRemove = new ArrayList<>();
-        for(int i = 1; i <= doc.getNumberOfPages(); i++) {
-            if(!pagesToImport.contains(i)) {
+        for (int i = 1; i <= doc.getNumberOfPages(); i++) {
+            if (!pagesToImport.contains(i)) {
                 pagesToRemove.add(i);
             }
         }
