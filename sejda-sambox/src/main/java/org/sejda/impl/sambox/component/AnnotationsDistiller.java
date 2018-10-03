@@ -79,7 +79,10 @@ public final class AnnotationsDistiller {
             try {
                 Set<PDAnnotation> keptAnnotations = new LinkedHashSet<>();
                 for (PDAnnotation annotation : page.getAnnotations()) {
-                    if (!annotationsLookup.hasLookupFor(annotation)) {
+                    PDAnnotation mapped = annotationsLookup.lookup(annotation);
+                    if (nonNull(mapped)) {
+                        keptAnnotations.add(mapped);
+                    } else {
                         if (annotation instanceof PDAnnotationLink) {
                             processLinkAnnotation(relevantPages, keptAnnotations, (PDAnnotationLink) annotation);
                         } else {

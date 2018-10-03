@@ -104,8 +104,7 @@ public class AnnotationsDistillerTest {
         assertEquals(6, annots.size());
         assertThat(annots.stream().map(PDAnnotation::getAnnotationName).collect(Collectors.toList()),
                 Matchers.contains(annotations.stream().map(PDAnnotation::getAnnotationName)
-                        .map(d -> Matchers.equalTo(d))
-                        .collect(Collectors.toList())));
+                        .map(d -> Matchers.equalTo(d)).collect(Collectors.toList())));
     }
 
     @Test
@@ -377,6 +376,26 @@ public class AnnotationsDistillerTest {
             assertEquals(1, parent.size());
             assertTrue(annotations.contains(parent.get(0)));
         }
+    }
 
+    @Test
+    public void pagesHaveTheSameAnnotations() {
+        PDAnnotationLink annotation = new PDAnnotationLink();
+        PDPageDestination dest = new PDPageFitDestination();
+        dest.setPage(oldPage);
+        annotation.setDestination(dest);
+
+        PDPage secondOld = new PDPage();
+        PDPage secondNew = new PDPage();
+        lookup.addLookupEntry(secondOld, secondNew);
+        List<PDAnnotation> annotations = Arrays.asList(annotation, new PDAnnotationText());
+        oldPage.setAnnotations(annotations);
+        secondOld.setAnnotations(annotations);
+        PDDocument doc = new PDDocument();
+        doc.addPage(oldPage);
+        doc.addPage(secondOld);
+        new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+        assertEquals(oldPage.getAnnotations().size(), newPage.getAnnotations().size());
+        assertEquals(secondOld.getAnnotations().size(), secondNew.getAnnotations().size());
     }
 }
