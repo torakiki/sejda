@@ -109,12 +109,12 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
-            long relativeCounter = 0;
+            long relativePagesCounter = 0;
             Set<Integer> pagesToImport = input.getPages(sourceDocumentHandler.getNumberOfPages());
             for (Integer currentPage : pagesToImport) {
                 executionContext().assertTaskNotCancelled();
                 pagesCounter++;
-                relativeCounter++;
+                relativePagesCounter++;
                 try {
                     PDPage page = sourceDocumentHandler.getPage(currentPage);
                     // we keep rotation into account
@@ -126,7 +126,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
                     String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
                     // processing the first page of the source
-                    if (tocCreator.shouldGenerateToC() && relativeCounter == 1) {
+                    if (tocCreator.shouldGenerateToC() && relativePagesCounter == 1) {
                         tocCreator.pageSizeIfNotSet(currentPageSize);
                         if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                             sourceBaseName = ofNullable(
@@ -146,7 +146,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                             .taskWarning(String.format("Page %d was skipped, could not be processed", currentPage), e);
                 }
             }
-            relativeCounter = 0;
+            relativePagesCounter = 0;
 
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
