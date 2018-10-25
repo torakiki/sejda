@@ -196,6 +196,11 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         org.sejda.core.service.TestUtils.assertPageText(page, text);
     }
 
+    public void assertPageTextExactLines(PDPage page, String text) {
+        org.sejda.core.service.TestUtils.assertPageTextExactLines(page, text);
+    }
+
+
     public void assertPageTextContains(PDPage page, String text) {
         org.sejda.core.service.TestUtils.assertPageTextContains(page, text);
     }

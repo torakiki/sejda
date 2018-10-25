@@ -656,6 +656,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
             // the TOC
             assertFooterHasText(d.getPage(4), "");
+            assertPageTextExactLines(d.getPage(4), "test-file   6\nattachments_as_annots   17\n");
 
             // next 11 pages are the regular input
             assertFooterHasText(d.getPage(5), "test-file 6");

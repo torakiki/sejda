@@ -386,24 +386,6 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Page_Count_Start_From() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        PDPage pageDest1 = new PDPage(), pageDest2 = new PDPage();
-        doc.addPage(pageDest1); doc.addPage(pageDest2);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.setPageCountStartFrom(5);
-        victim.appendItem("This is item 1", 2, pageDest1);
-        victim.appendItem("This is item 2", 3, pageDest2);
-        victim.pageSizeIfNotSet(PDRectangle.A4);
-        victim.addToC();
-
-        TestUtils.assertPageTextExactLines(doc.getPage(0),
-                "This is item 1   6\nThis is item 2   7\n");
-    }
-
-    @Test
     public void test_Toc_Add_At_Specific_Page() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);

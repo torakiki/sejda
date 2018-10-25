@@ -112,15 +112,6 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             if(inputsCounter == 1) {
                 firstInputNumberOfPages = sourceDocumentHandler.getNumberOfPages();
-
-                if(parameters.isFirstInputCoverTitle()) {
-                    // first input is a cover/title document
-                    // in this case we don't want to add this file to the TOC
-                    // and we want the TOC to start page numbering with an offset equal to the number of pages
-                    // of the cover document
-
-                    tocCreator.setPageCountStartFrom(firstInputNumberOfPages + 1);
-                }
             }
 
             LOG.debug("Adding pages");

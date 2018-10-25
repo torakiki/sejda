@@ -73,9 +73,6 @@ public class TableOfContentsCreator {
     private int tocNumberOfPages;
     private MergeParameters params;
     private PageTextWriter writer;
-    // by default the TOC is the first thing in the document, so page numbers always start at 1
-    // sometimes we want a cover/title before the TOC, so the page numbers will start with an offset
-    private int pageCountStartFrom = 1;
 
     public TableOfContentsCreator(MergeParameters params, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
@@ -191,7 +188,7 @@ public class TableOfContentsCreator {
                                 }
                             }
 
-                            long pageNumber = i.page + tocNumberOfPages + (pageCountStartFrom - 1);
+                            long pageNumber = i.page + tocNumberOfPages;
                             String pageString = SEPARATOR + Long.toString(pageNumber);
                             float x2 = getPageNumberX(separatorWidth, pageNumber);
                             writeText(page, pageString, x2, y);
@@ -301,14 +298,6 @@ public class TableOfContentsCreator {
      */
     public long tocNumberOfPages() {
         return tocNumberOfPages;
-    }
-
-    public int getPageCountStartFrom() {
-        return pageCountStartFrom;
-    }
-
-    public void setPageCountStartFrom(int pageCountStartFrom) {
-        this.pageCountStartFrom = pageCountStartFrom;
     }
 
     private static class ToCItem {
