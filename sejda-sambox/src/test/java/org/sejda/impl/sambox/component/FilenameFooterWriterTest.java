@@ -24,6 +24,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
@@ -50,7 +51,7 @@ public class FilenameFooterWriterTest {
         PDPage page = new PDPage();
         doc.addPage(page);
         new FilenameFooterWriter(true, doc).addFooter(page, "My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page number and generally look not so nice", 20);
-        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is("My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page num 20"));
+        assertPageFooterText(page,"My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page num 20");
     }
 
     @Test
@@ -60,5 +61,21 @@ public class FilenameFooterWriterTest {
         doc.addPage(page);
         new FilenameFooterWriter(false, doc).addFooter(page, "My Footer", 20);
         assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), isEmptyOrNullString());
+    }
+
+    @Test
+    public void write_filename_contains_bad_characters() throws TaskException {
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage();
+        doc.addPage(page);
+        String withBadCharacter = "This is a bad \uF021character";
+        FilenameFooterWriter writer = new FilenameFooterWriter(true, doc);
+        writer.addFooter(page, withBadCharacter, 1);
+
+        assertPageFooterText(page, "This is a bad #character 1");
+    }
+
+    private void assertPageFooterText(PDPage page, String expectedText) throws TaskIOException {
+        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), is(expectedText));
     }
 }

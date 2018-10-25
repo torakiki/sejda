@@ -44,12 +44,14 @@ public class FilenameFooterWriter {
 
     private boolean addFooter = false;
     private PageTextWriter writer;
+    private PDDocument document;
 
     private static PDFont FONT = PDType1Font.HELVETICA;
     private static double FONT_SIZE = 10;
 
     public FilenameFooterWriter(boolean addFooter, PDDocument document) {
         this.writer = new PageTextWriter(document);
+        this.document = document;
         this.addFooter = addFooter;
     }
 
@@ -76,7 +78,11 @@ public class FilenameFooterWriter {
         return writer.getStringWidth(text, FONT, (float) FONT_SIZE);
     }
 
-    private String truncateIfRequired(String text, double maxWidth) throws TaskIOException {
+    private String truncateIfRequired(String original, double maxWidth) throws TaskIOException {
+        // check if all characters are supported by the fonts available
+        // replace any bad characters with #
+        String text = FontUtils.replaceUnsupportedCharacters(original, document, "#");
+
         if (stringWidth(text) <= maxWidth) {
             return text;
         }

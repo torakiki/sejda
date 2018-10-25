@@ -550,7 +550,11 @@ public final class FontUtils {
         return result;
     }
 
-    public static String removeUnsupportedCharacters(String text, PDDocument doc) throws TaskIOException {
+    public static String removeUnsupportedCharacters(String text, PDDocument doc) {
+        return replaceUnsupportedCharacters(text, doc, "");
+    }
+
+    public static String replaceUnsupportedCharacters(String text, PDDocument doc, String replacement) {
         List<TextWithFont> resolved = resolveFonts(text, HELVETICA, doc);
         Set<String> unsupported = new HashSet<>();
         resolved.forEach(tf -> {
@@ -561,7 +565,7 @@ public final class FontUtils {
 
         String result = text;
         for (String s : unsupported) {
-            result = result.replaceAll(Pattern.quote(s), "");
+            result = result.replaceAll(Pattern.quote(s), replacement);
         }
 
         return result;
