@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -382,5 +383,54 @@ public class TableOfContentsCreatorTest {
 
         // the junk letters are because of 'No Unicode mapping for CID+64 (64) in font NotoSansArmenian-Regular'
         TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts @1E5P7F   10\n");
+    }
+
+    @Test
+    public void test_Toc_Page_Count_Start_From() throws TaskException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        PDDocument doc = new PDDocument();
+        PDPage pageDest1 = new PDPage(), pageDest2 = new PDPage();
+        doc.addPage(pageDest1); doc.addPage(pageDest2);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.setPageCountStartFrom(5);
+        victim.appendItem("This is item 1", 2, pageDest1);
+        victim.appendItem("This is item 2", 3, pageDest2);
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+
+        TestUtils.assertPageTextExactLines(doc.getPage(0),
+                "This is item 1   6\nThis is item 2   7\n");
+    }
+
+    @Test
+    public void test_Toc_Add_At_Specific_Page() throws TaskException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        params.setBlankPageIfOdd(true);
+
+        PDDocument doc = new PDDocument();
+        PDPage pageA = new PDPage(), pageB = new PDPage();
+        doc.addPage(pageA); doc.addPage(pageB);
+
+        PageTextWriter.writeHeader(doc, pageA, "PageA");
+        PageTextWriter.writeHeader(doc, pageB, "PageB");
+
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("This is an item", 2, pageB);
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+
+        victim.addToC(1);
+
+        assertThat(doc.getNumberOfPages(), is(4)); // one extra for blank page if odd
+
+        // blank page pageA
+        TestUtils.assertPageTextExactLines(doc.getPage(0), "PageA\n");
+        // toc
+        TestUtils.assertPageTextExactLines(doc.getPage(1), "This is an item   2\n");
+        // extra blank page if odd
+        TestUtils.assertPageTextExactLines(doc.getPage(2), "");
+        // blank page pageB
+        TestUtils.assertPageTextExactLines(doc.getPage(3), "PageB\n");
     }
 }

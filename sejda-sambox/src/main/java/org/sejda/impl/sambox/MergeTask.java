@@ -72,6 +72,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private FilenameFooterWriter footerWriter;
     private PDRectangle currentPageSize = PDRectangle.A4;
     private long pagesCounter = 0;
+    private long inputsCounter = 0;
+    private int firstInputNumberOfPages = 0;
 
     @Override
     public void before(MergeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
@@ -103,9 +105,23 @@ public class MergeTask extends BaseTask<MergeParameters> {
         convertImageMergeInputToPdf(parameters);
 
         for (PdfMergeInput input : parameters.getPdfInputList()) {
+            inputsCounter++;
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
+
+            if(inputsCounter == 1) {
+                firstInputNumberOfPages = sourceDocumentHandler.getNumberOfPages();
+
+                if(parameters.isFirstInputCoverTitle()) {
+                    // first input is a cover/title document
+                    // in this case we don't want to add this file to the TOC
+                    // and we want the TOC to start page numbering with an offset equal to the number of pages
+                    // of the cover document
+
+                    tocCreator.setPageCountStartFrom(firstInputNumberOfPages + 1);
+                }
+            }
 
             LOG.debug("Adding pages");
             LookupTable<PDPage> pagesLookup = new LookupTable<>();
@@ -125,20 +141,29 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     pagesLookup.addLookupEntry(page, importedPage);
 
                     String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
+
                     // processing the first page of the source
                     if (tocCreator.shouldGenerateToC() && relativePagesCounter == 1) {
-                        tocCreator.pageSizeIfNotSet(currentPageSize);
-                        if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
-                            sourceBaseName = ofNullable(
-                                    sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                            .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
-                                            .orElse(sourceBaseName);
+                        if(parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
+                            // skip the cover/title document, don't add it to the ToC
+                        } else {
+                            tocCreator.pageSizeIfNotSet(currentPageSize);
+                            if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
+                                sourceBaseName = ofNullable(
+                                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
+                                        .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
+                                        .orElse(sourceBaseName);
+                            }
+                            tocCreator.appendItem(sourceBaseName, pagesCounter, importedPage);
                         }
-                        tocCreator.appendItem(sourceBaseName, pagesCounter, importedPage);
                     }
 
-                    this.footerWriter.addFooter(importedPage, sourceBaseName,
-                            pagesCounter + tocCreator.tocNumberOfPages());
+                    long currentPageNumber = pagesCounter + tocCreator.tocNumberOfPages();
+                    if(parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
+                        // the toc will be added after the cover/title pages
+                        currentPageNumber = pagesCounter;
+                    }
+                    this.footerWriter.addFooter(importedPage, sourceBaseName, currentPageNumber);
                     LOG.trace("Added imported page");
                 } catch (PageNotFoundException e) {
                     executionContext().assertTaskIsLenient(e);
@@ -186,7 +211,12 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
-            tocCreator.addToC();
+            int beforePageNumber = 0;
+            if(parameters.isFirstInputCoverTitle()) {
+                // add ToC after the cover/title pages
+                beforePageNumber = firstInputNumberOfPages;
+            }
+            tocCreator.addToC(beforePageNumber);
         }
 
         if(catalogPageLabelsMerger.hasPageLabels()) {

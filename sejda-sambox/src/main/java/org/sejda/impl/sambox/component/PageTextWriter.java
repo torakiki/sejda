@@ -253,4 +253,9 @@ public class PageTextWriter {
         transform.scale(1, -1);
         return transform.transform(position, null);
     }
+
+    public static void writeHeader(PDDocument doc, PDPage page, String text) throws TaskIOException {
+        PageTextWriter writer = new PageTextWriter(doc);
+        writer.write(page, HorizontalAlign.CENTER, VerticalAlign.TOP, text, FontUtils.HELVETICA, 10d, Color.black);
+    }
 }

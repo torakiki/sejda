@@ -632,6 +632,41 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         });
     }
 
+    @Test
+    public void withCoverPage() throws IOException {
+        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
+        inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
+        inputs.add(new PdfMergeInput(regularInput())); // 11 pages
+        inputs.add(new PdfMergeInput(customInput("pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf"))); // 3 pages
+
+        MergeParameters parameters = setUpParameters(inputs);
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setFilenameFooter(true);
+        parameters.setFirstInputCoverTitle(true);
+
+        testContext.pdfOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(19).forEachPdfOutput(d -> {
+            // first 4 pages are the cover/title doc - short input
+            assertFooterHasText(d.getPage(0), "short-test-file 1");
+            assertFooterHasText(d.getPage(3), "short-test-file 4");
+
+            // the TOC
+            assertFooterHasText(d.getPage(4), "");
+
+            // next 11 pages are the regular input
+            assertFooterHasText(d.getPage(5), "test-file 6");
+            assertFooterHasText(d.getPage(15), "test-file 16");
+
+            // next 3 pages are attachments_as_annots doc
+            assertFooterHasText(d.getPage(16), "attachments_as_annots 17");
+            assertFooterHasText(d.getPage(18), "attachments_as_annots 19");
+        });
+    }
+
     private float widthOfCropBox(PDPage page) {
         return page.getCropBox().rotate(page.getRotation()).getWidth();
     }

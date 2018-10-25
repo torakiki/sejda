@@ -73,6 +73,9 @@ public class TableOfContentsCreator {
     private int tocNumberOfPages;
     private MergeParameters params;
     private PageTextWriter writer;
+    // by default the TOC is the first thing in the document, so page numbers always start at 1
+    // sometimes we want a cover/title before the TOC, so the page numbers will start with an offset
+    private int pageCountStartFrom = 1;
 
     public TableOfContentsCreator(MergeParameters params, PDDocument document) {
         requireNotNullArg(document, "Containing document cannot be null");
@@ -113,19 +116,26 @@ public class TableOfContentsCreator {
      * Generates a ToC and prepend it to the given document
      */
     public void addToC() throws TaskException {
+        addToC(0);
+    }
+
+    /**
+     * Generates a ToC and inserts it in the doc at before the given page number
+     */
+    public void addToC(int beforePageNumber) throws TaskException {
         try {
             PDPageTree pagesTree = document.getPages();
             ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {
                 int toCPagesCount = t.size();
                 t.descendingIterator().forEachRemaining(p -> {
                     if (pagesTree.getCount() > 0) {
-                        pagesTree.insertBefore(p, pagesTree.get(0));
+                        pagesTree.insertBefore(p, pagesTree.get(beforePageNumber));
                     } else {
                         pagesTree.add(p);
                     }
                 });
                 if (params.isBlankPageIfOdd() && toCPagesCount % 2 == 1) {
-                    PDPage lastTocPage = pagesTree.get(toCPagesCount - 1);
+                    PDPage lastTocPage = pagesTree.get(beforePageNumber + toCPagesCount - 1);
                     PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
                     pagesTree.insertAfter(blankPage, lastTocPage);
                 }
@@ -181,8 +191,9 @@ public class TableOfContentsCreator {
                                 }
                             }
 
-                            String pageString = SEPARATOR + Long.toString(i.page + tocNumberOfPages);
-                            float x2 = getPageNumberX(separatorWidth, i.page + tocNumberOfPages);
+                            long pageNumber = i.page + tocNumberOfPages + (pageCountStartFrom - 1);
+                            String pageString = SEPARATOR + Long.toString(pageNumber);
+                            float x2 = getPageNumberX(separatorWidth, pageNumber);
                             writeText(page, pageString, x2, y);
 
                             // make the item clickable and link to the page number
@@ -290,6 +301,14 @@ public class TableOfContentsCreator {
      */
     public long tocNumberOfPages() {
         return tocNumberOfPages;
+    }
+
+    public int getPageCountStartFrom() {
+        return pageCountStartFrom;
+    }
+
+    public void setPageCountStartFrom(int pageCountStartFrom) {
+        this.pageCountStartFrom = pageCountStartFrom;
     }
 
     private static class ToCItem {

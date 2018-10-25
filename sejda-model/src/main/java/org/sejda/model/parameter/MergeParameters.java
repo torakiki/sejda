@@ -70,6 +70,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private boolean filenameFooter = false;
     /* Makes all pages same width as the first page */
     private boolean normalizePageSizes = false;
+    private boolean firstInputCoverTitle = false;
 
     @Override
     public SingleTaskOutput getOutput() {
@@ -179,11 +180,20 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.catalogPageLabelsPolicy = catalogPageLabelsPolicy;
     }
 
+    public boolean isFirstInputCoverTitle() {
+        return firstInputCoverTitle;
+    }
+
+    public void setFirstInputCoverTitle(boolean firstInputCoverTitle) {
+        this.firstInputCoverTitle = firstInputCoverTitle;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
                 .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(output).append(filenameFooter)
-                .append(normalizePageSizes).append(catalogPageLabelsPolicy).toHashCode();
+                .append(normalizePageSizes).append(catalogPageLabelsPolicy).append(firstInputCoverTitle)
+                .toHashCode();
     }
 
     @Override
@@ -201,6 +211,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
                 .append(output, params.getOutput()).append(filenameFooter, params.isFilenameFooter())
                 .append(normalizePageSizes, params.isNormalizePageSizes())
                 .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
+                .append(firstInputCoverTitle, params.firstInputCoverTitle)
                 .isEquals();
     }
 }
