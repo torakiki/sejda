@@ -30,6 +30,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 import static org.junit.Assert.*;
@@ -105,6 +106,13 @@ public class PDDocumentHandlerTest {
 
             assertEquals("Imported page has different media box than source", imported.getMediaBox(), page.getMediaBox());
         }
+    }
+
+    @Test
+    public void findFont_xform_resources() throws IOException {
+        PDDocument doc = testDoc("pdf/2-up_fonts.pdf");
+        PDFont font = new PDDocumentHandler(doc).findFont("arialmt");
+        assertNotNull(font);
     }
 
     private PDDocument testDoc(String resourceName) throws IOException {

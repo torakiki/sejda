@@ -39,6 +39,9 @@ import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.sambox.contentstream.PDContentStream;
+import org.sejda.sambox.pdmodel.*;
+import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.rendering.ImageType;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
@@ -48,13 +51,6 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.PDDocumentCatalog;
-import org.sejda.sambox.pdmodel.PDDocumentInformation;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDPageTree;
-import org.sejda.sambox.pdmodel.PageLayout;
-import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -424,17 +420,41 @@ public class PDDocumentHandler implements Closeable {
         return result;
     }
 
-    public PDFont findFont(String searchedName) {
-        for (PDPage page : document.getPages()) {
-            for (COSName fontName : page.getResources().getFontNames()) {
-                try {
-                    PDFont font = page.getResources().getFont(fontName);
-                    if (font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
+    private PDFont findFont(PDResources resources, String searchedName) {
+        for (COSName fontName : resources.getFontNames()) {
+            try {
+                PDFont font = resources.getFont(fontName);
+                if (font != null && font.getName() != null && searchedName.equalsIgnoreCase(font.getName())) {
+                    return font;
+                }
+            } catch (Exception e) {
+                LOG.warn("Failure while searching font in resources", e);
+            }
+        }
+
+        for (COSName objectName: resources.getXObjectNames()) {
+            try {
+                PDXObject pdxObject = resources.getXObject(objectName);
+                if(pdxObject instanceof PDContentStream) {
+                    PDResources res = ((PDContentStream)pdxObject).getResources();
+                    PDFont font = findFont(res, searchedName);
+                    if(font != null) {
                         return font;
                     }
-                } catch (Exception e) {
-                    LOG.warn("Failed to load font from resources: {}", fontName);
                 }
+            } catch (Exception e) {
+                LOG.warn("Failure while searching font in XObject", e);
+            }
+        }
+
+        return null;
+    }
+
+    public PDFont findFont(String searchedName) {
+        for (PDPage page : document.getPages()) {
+            PDFont font = findFont(page.getResources(), searchedName);
+            if(font != null) {
+                return font;
             }
         }
 
