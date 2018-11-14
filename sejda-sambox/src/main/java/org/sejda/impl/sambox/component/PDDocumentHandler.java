@@ -420,7 +420,12 @@ public class PDDocumentHandler implements Closeable {
         return result;
     }
 
-    private PDFont findFont(PDResources resources, String searchedName) {
+    private PDFont findFont(PDResources resources, String searchedName, int level) {
+        // prevent stackoverflow by limiting how deep we go searching
+        if(level > 15) {
+            return null;
+        }
+
         for (COSName fontName : resources.getFontNames()) {
             try {
                 PDFont font = resources.getFont(fontName);
@@ -437,7 +442,7 @@ public class PDDocumentHandler implements Closeable {
                 PDXObject pdxObject = resources.getXObject(objectName);
                 if(pdxObject instanceof PDContentStream) {
                     PDResources res = ((PDContentStream)pdxObject).getResources();
-                    PDFont font = findFont(res, searchedName);
+                    PDFont font = findFont(res, searchedName, level + 1);
                     if(font != null) {
                         return font;
                     }
@@ -452,7 +457,7 @@ public class PDDocumentHandler implements Closeable {
 
     public PDFont findFont(String searchedName) {
         for (PDPage page : document.getPages()) {
-            PDFont font = findFont(page.getResources(), searchedName);
+            PDFont font = findFont(page.getResources(), searchedName, 1);
             if(font != null) {
                 return font;
             }
