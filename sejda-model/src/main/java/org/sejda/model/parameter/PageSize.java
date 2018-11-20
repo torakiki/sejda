@@ -34,11 +34,16 @@ public class PageSize {
     private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
 
     /** A rectangle the size of U.S. Letter, 8.5" x 11". */
-    public static final PageSize LETTER = new PageSize(8.5f * POINTS_PER_INCH,
-            11f * POINTS_PER_INCH, "Letter");
+    public static final PageSize LETTER = new PageSize(8.5f * POINTS_PER_INCH, 11f * POINTS_PER_INCH, "Letter");
     /** A rectangle the size of U.S. Legal, 8.5" x 14". */
-    public static final PageSize LEGAL = new PageSize(8.5f * POINTS_PER_INCH,
-            14f * POINTS_PER_INCH, "Legal");
+    public static final PageSize LEGAL = new PageSize(8.5f * POINTS_PER_INCH, 14f * POINTS_PER_INCH, "Legal");
+    /** A rectangle the size of U.S. Ledger, 11" x 17". */
+    public static final PageSize LEDGER = new PageSize(11f * POINTS_PER_INCH,17f * POINTS_PER_INCH, "Ledger");
+    /** A rectangle the size of U.S. Tabloid, 17" x 11". */
+    public static final PageSize TABLOID = new PageSize(17f * POINTS_PER_INCH,11f * POINTS_PER_INCH, "Tabloid");
+    /** A rectangle the size of U.S. Executive, 7.25" x 10.55". */
+    public static final PageSize EXECUTIVE = new PageSize(7.25f * POINTS_PER_INCH,10.55f * POINTS_PER_INCH, "Executive");
+
     /** A rectangle the size of A0 Paper. */
     public static final PageSize A0 = new PageSize(841 * POINTS_PER_MM, 1189 * POINTS_PER_MM, "A0");
 
