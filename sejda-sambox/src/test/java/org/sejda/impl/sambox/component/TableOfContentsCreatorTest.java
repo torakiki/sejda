@@ -381,8 +381,7 @@ public class TableOfContentsCreatorTest {
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        // the junk letters are because of 'No Unicode mapping for CID+64 (64) in font NotoSansArmenian-Regular'
-        TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts @1E5P7F   10\n");
+        TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts հայերէն   10\n");
     }
 
     @Test
