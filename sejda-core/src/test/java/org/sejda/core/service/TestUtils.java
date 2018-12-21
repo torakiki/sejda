@@ -143,4 +143,8 @@ public class TestUtils {
     public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, String style) {
         assertPageLabelRangeIs(labels, startPage, new PDPageLabelRange(style, null, null));
     }
+
+    public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, String style, String prefix, Integer start) {
+        assertPageLabelRangeIs(labels, startPage, new PDPageLabelRange(style, prefix, start));
+    }
 }

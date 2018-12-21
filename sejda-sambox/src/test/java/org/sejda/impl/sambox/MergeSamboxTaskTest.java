@@ -603,6 +603,36 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void mergeKeepingPageLabelsButDiscardingDecimalsStart() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        PDDocument doc1 = new DocBuilder().withPages(2)
+                .withPageLabelRange(0, "D", null, 2)
+                .get();
+        PDDocument doc2 = new DocBuilder().withPages(3)
+                .withPageLabelRange(0, "D", null, 7)
+                .get();
+
+        parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
+        parameters.setCatalogPageLabelsPolicy(CatalogPageLabelsPolicy.RETAIN);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            try {
+                PDPageLabels mergedLabels = d.getDocumentCatalog().getPageLabels();
+                assertPageLabelIndexesAre(mergedLabels, 0, 2);
+                assertPageLabelRangeIs(mergedLabels, 0, new PDPageLabelRange("D", null, null));
+                assertPageLabelRangeIs(mergedLabels, 2, new PDPageLabelRange("D", null, null));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
     public void mergeDiscardingPageLabels() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

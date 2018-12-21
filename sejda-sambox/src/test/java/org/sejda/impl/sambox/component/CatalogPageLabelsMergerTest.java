@@ -182,6 +182,28 @@ public class CatalogPageLabelsMergerTest {
         assertPageLabelRangeIs(mergedLabels, 3, "A");
     }
 
+    @Test
+    public void mergeDocsWithDecimalIgnoringStart() {
+        PDDocument doc1 = new DocBuilder().withPages(2)
+                .withPageLabelRange(0, "D", null, 1)
+                .get();
+        PDDocument doc2 = new DocBuilder().withPages(5)
+                .withPageLabelRange(0, "D", null, 1)
+                .withPageLabelRange(3, "A")
+                .get();
+
+        CatalogPageLabelsMerger merger = new CatalogPageLabelsMerger(CatalogPageLabelsPolicy.RETAIN);
+        merger.add(doc1, all(doc1));
+        merger.add(doc2, allBut(doc2));
+
+        PDPageLabels mergedLabels = merger.getMergedPageLabels();
+
+        assertPageLabelIndexesAre(mergedLabels, 0, 2, 5);
+        assertPageLabelRangeIs(mergedLabels, 0, "D", null, null);
+        assertPageLabelRangeIs(mergedLabels, 2, "D", null, null);
+        assertPageLabelRangeIs(mergedLabels, 5, "A");
+    }
+
     private static Set<Integer> all(PDDocument doc) {
         Set<Integer> pages = new TreeSet<>();
         for(int i = 1; i <= doc.getNumberOfPages(); i++){

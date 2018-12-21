@@ -77,12 +77,10 @@ public class CatalogPageLabelsMerger {
                 // new page index: old page index + number of pages we merged so far (from other docs)
                 int newPageIndex = pageIndex + totalPages;
 
-                // Hmm, handle start (logicalPage)? This would probably be wrong for Intro (romans) + Chapter 1 (arabic)
-                // but might be right for Chapter 1 (arabic) + Chapter 2 (arabic)
-                // not sure what to do, defer for later
-                // if(range.hasStart()) {
-                // range.setStart(range.getStart() + totalPages);
-                // }
+                // Since merge changes logical page numbers we ignore existing start from and don't copy over
+                if(range.hasStart()) {
+                    range = new PDPageLabelRange(range.getStyle(), range.getPrefix(), null);
+                }
 
                 mergedPageLabels.setLabelItem(newPageIndex, range);
             }
