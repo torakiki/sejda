@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
@@ -146,6 +147,7 @@ public class OutlineUtilsTest {
         assertTrue(to.isBold());
         assertTrue(to.isItalic());
         assertEquals("Chuck", to.getTitle());
+        assertNull(to.getCOSObject().getDictionaryObject(COSName.C));
     }
 
     @Test

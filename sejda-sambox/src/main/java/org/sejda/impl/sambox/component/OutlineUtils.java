@@ -17,6 +17,7 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
@@ -29,6 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -127,7 +130,9 @@ public final class OutlineUtils {
      */
     public static void copyOutlineDictionary(PDOutlineItem from, PDOutlineItem to) {
         to.setTitle(defaultString(from.getTitle()));
-        to.setTextColor(from.getTextColor());
+        if (nonNull(from.getCOSObject().getDictionaryObject(COSName.C, COSArray.class))) {
+            to.setTextColor(from.getTextColor());
+        }
         to.setBold(from.isBold());
         to.setItalic(from.isItalic());
         if (from.isNodeOpen()) {
