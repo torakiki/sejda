@@ -72,18 +72,18 @@ public final class NameGenerator {
             result = shortenFilenameCharLength(result, 255);
         } else {
             // bytes based max length
-            result = shortenFilenameBytesLength(result, 255, StandardCharsets.UTF_8);
+            result = shortenFilenameBytesLength(result, 254, StandardCharsets.UTF_8);
         }
 
         return result;
     }
 
     static String shortenFilenameCharLength(String input, int maxCharLength) {
-        if (input.length() > 255) {
+        if (input.length() > maxCharLength) {
             String baseName = getBaseName(input);
             String ext = getExtension(input);
 
-            baseName = baseName.substring(0, 254 - ext.length());
+            baseName = baseName.substring(0, maxCharLength - 1 - ext.length());
             return String.format("%s.%s", baseName, ext);
         } else {
             return input;
