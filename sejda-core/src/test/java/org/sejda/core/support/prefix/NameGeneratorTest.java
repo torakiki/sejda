@@ -118,6 +118,20 @@ public class NameGeneratorTest {
         assertEquals(generatedFilename, "99-My file 6-04-2015 $1234-56.pdf");
     }
 
+    @Test
+    public void testSuffix() {
+        String generatedFilename = nameGenerator("[BASENAME]_suffix")
+                .generate(nameRequest("pdf").originalName("My file"));
+        assertEquals(generatedFilename, "My file_suffix.pdf");
+    }
+
+    @Test
+    public void testPrefixSuffix() {
+        String generatedFilename = nameGenerator("prefix_[BASENAME]_suffix")
+                .generate(nameRequest("pdf").originalName("My file"));
+        assertEquals(generatedFilename, "prefix_My file_suffix.pdf");
+    }
+
     // convenience method, don't pass charset and len all the time
     private String shortenFilenameBytesLength(String input) {
         return NameGenerator.shortenFilenameBytesLength(input, 255, StandardCharsets.UTF_8);
