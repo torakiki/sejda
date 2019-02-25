@@ -420,7 +420,7 @@ public class PDDocumentHandler implements Closeable {
         return result;
     }
 
-    private PDFont findFont(PDResources resources, String searchedName) {
+    private PDFont findFont(PDResources resources, String searchedName, Set<PDResources> alreadyVisited) {
         for (COSName fontName : resources.getFontNames()) {
             try {
                 PDFont font = resources.getFont(fontName);
@@ -437,15 +437,19 @@ public class PDDocumentHandler implements Closeable {
                 PDXObject pdxObject = resources.getXObject(objectName);
                 if(pdxObject instanceof PDContentStream) {
                     PDResources res = ((PDContentStream)pdxObject).getResources();
-                    PDFont font = findFont(res, searchedName);
+                    if(alreadyVisited.contains(res)) {
+                        continue;
+                    } else {
+                        alreadyVisited.add(res);
+                    }
+
+                    PDFont font = findFont(res, searchedName, alreadyVisited);
                     if(font != null) {
                         return font;
                     }
                 }
             } catch (Exception e) {
                 LOG.warn("Failure while searching font in XObject", e);
-            } catch (StackOverflowError e) {
-                LOG.warn("StackOverflowError while searching font in XObject");
             }
         }
 
@@ -454,7 +458,7 @@ public class PDDocumentHandler implements Closeable {
 
     public PDFont findFont(String searchedName) {
         for (PDPage page : document.getPages()) {
-            PDFont font = findFont(page.getResources(), searchedName);
+            PDFont font = findFont(page.getResources(), searchedName, new HashSet<>());
             if(font != null) {
                 return font;
             }
