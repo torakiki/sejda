@@ -70,7 +70,13 @@ public final class IOUtils {
             buffer.deleteOnExit();
             return buffer;
         } catch (TaskOutputVisitException | IOException e) {
-            throw new TaskIOException("Unable to create temporary buffer", e);
+            // sometimes the above fails, eg: java.nio.file.AccessDeniedException: C:\\Users\\edi\\OneDrive\\Docs\\.sejdaTmp123124312312312.tmp
+            // so try again this time in the temp dir
+            try {
+                return createTemporaryBuffer();
+            } catch (TaskIOException ex) {
+                throw new TaskIOException("Unable to create temporary buffer", ex);
+            }
         }
     }
 
