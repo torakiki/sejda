@@ -85,7 +85,7 @@ public class NameGeneratorTest {
     @Test
     public void testMaxFilenameSize() {
         String generatedFilename = nameGenerator("BLA_[TEXT]").generate(nameRequest("pdf").text(repeat('a', 300)));
-        assertEquals(255, generatedFilename.length());
+        assertThat(generatedFilename.length(), is(lessThan(256)));
         assertThat(generatedFilename, endsWith("aaa.pdf"));
     }
 
@@ -100,7 +100,7 @@ public class NameGeneratorTest {
     @Test
     public void testMaxFilenameSizeSanitized() {
         String generatedFilename = nameGenerator("B|LA_[TEXT]").generate(nameRequest("pdf").text(repeat('a', 300)));
-        assertEquals(255, generatedFilename.length());
+        assertThat(generatedFilename.length(), is(lessThan(256)));
         assertThat(generatedFilename, endsWith("aaa.pdf"));
         assertThat(generatedFilename, startsWith("BLA_aaa"));
     }
