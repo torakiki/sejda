@@ -18,7 +18,11 @@
  */
 package org.sejda.impl.sambox.component.excel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.TreeSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +88,7 @@ public class DataTable {
         result.addRows(this.data);
 
         List<List<String>> otherData = other.data;
-        if(this.hasSameHeaderAs(other)) {
+        if (this.hasSameHeaderAs(other)) {
             otherData.remove(0);
         }
 
@@ -95,11 +99,11 @@ public class DataTable {
 
     public String getPagesAsString() {
         StringBuilder sb = new StringBuilder();
-        if(this.pageNumbers.size() > 1) {
+        if (this.pageNumbers.size() > 1) {
             sb.append("Pages ");
             int i = 0;
-            for(Integer pageNumber: pageNumbers) {
-                if(i != 0) {
+            for (Integer pageNumber : pageNumbers) {
+                if (i != 0) {
                     sb.append(", ");
                 }
                 sb.append(pageNumber);
@@ -118,7 +122,7 @@ public class DataTable {
 
     public int getColumnsCount() {
         int result = 0;
-        for(List<String> row: data) {
+        for (List<String> row : data) {
             result = Math.max(row.size(), result);
         }
 
@@ -131,7 +135,7 @@ public class DataTable {
 
     public List<String> getColumn(int c) {
         List<String> result = new ArrayList<>(getRowsCount());
-        for(List<String> row: data) {
+        for (List<String> row : data) {
             result.add(getOrEmpty(row, c));
         }
         return result;
@@ -139,12 +143,12 @@ public class DataTable {
 
     public DataTable mergeColumns(int c1, int c2) {
         DataTable result = new DataTable(getPageNumbers());
-        for(List<String> row: data) {
+        for (List<String> row : data) {
             List<String> newRow = new ArrayList<>(row.size() - 1);
-            for(int c = 0; c < row.size(); c++) {
-                if(c == c2) {
+            for (int c = 0; c < row.size(); c++) {
+                if (c == c2) {
                     // noop, continue
-                } else if(c == c1) {
+                } else if (c == c1) {
                     String newValue = new StringBuilder().append(getOrEmpty(row, c1)).append(" ")
                             .append(getOrEmpty(row, c2)).toString().trim();
                     newRow.add(newValue);
@@ -159,10 +163,9 @@ public class DataTable {
     }
 
     private static String getOrEmpty(List<String> list, int index) {
-        if(list.size() <= index) {
+        if (list.size() <= index) {
             return "";
-        } else {
-            return list.get(index);
         }
+        return list.get(index);
     }
 }

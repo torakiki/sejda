@@ -88,7 +88,8 @@ public class PdfScaler {
         }
     }
 
-    public void changePageSize(PDDocument doc, Iterable<PDPage> pages, PDRectangle desiredPageSize) throws TaskIOException {
+    public void changePageSize(PDDocument doc, Iterable<PDPage> pages, PDRectangle desiredPageSize)
+            throws TaskIOException {
         for (PDPage page : pages) {
             changePageSize(doc, page, desiredPageSize);
         }
@@ -121,39 +122,41 @@ public class PdfScaler {
         // otherwise, we need to add margins to reach the desired size
 
         PDRectangle scaledPageSize = page.getCropBox().rotate(page.getRotation());
-        //LOG.debug("Scaled by {}", scale);
+        // LOG.debug("Scaled by {}", scale);
 
         PDRectangle normalizedScaledPageSize = scaledPageSize;
         boolean mismatchingOrientation = isLandscape(scaledPageSize) != isLandscape(desiredPageSize);
-        if(mismatchingOrientation) {
+        if (mismatchingOrientation) {
             normalizedScaledPageSize = scaledPageSize.rotate();
         }
 
-        //LOG.debug("Scaled page size:  {}", normalizedScaledPageSize);
-        //LOG.debug("Desired page size: {}", desiredPageSize);
+        // LOG.debug("Scaled page size: {}", normalizedScaledPageSize);
+        // LOG.debug("Desired page size: {}", desiredPageSize);
 
         double widthDiff = desiredPageSize.getWidth() - normalizedScaledPageSize.getWidth();
         double heightDiff = desiredPageSize.getHeight() - normalizedScaledPageSize.getHeight();
 
-        //LOG.debug("Differences are widthDiff: {} heightDiff: {}", widthDiff, heightDiff);
+        // LOG.debug("Differences are widthDiff: {} heightDiff: {}", widthDiff, heightDiff);
 
-        if(widthDiff < 1) widthDiff = 0;
-        if(heightDiff < 1) heightDiff = 0;
+        if (widthDiff < 1)
+            widthDiff = 0;
+        if (heightDiff < 1)
+            heightDiff = 0;
 
-        if(widthDiff > 0 || heightDiff > 0) {
+        if (widthDiff > 0 || heightDiff > 0) {
             // Margins are in inches, not points
             double top = Margins.pointsToInches(heightDiff) / 2;
             double left = Margins.pointsToInches(widthDiff) / 2;
             Margins margins = new Margins(top, left, top, left);
-            if(mismatchingOrientation) {
+            if (mismatchingOrientation) {
                 margins = margins.rotate();
             }
             margin(doc, Collections.singleton(page), margins);
         }
 
         PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
-        //LOG.debug("Final page size:   {}", finalPageSize);
-        //LOG.debug("Desired page size: {}", desiredPageSize);
+        // LOG.debug("Final page size: {}", finalPageSize);
+        // LOG.debug("Desired page size: {}", desiredPageSize);
     }
 
     private void doScale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
@@ -305,31 +308,29 @@ public class PdfScaler {
     }
 
     /**
-     * Calculates the factor that pageBox can be scaled with to fit targetBox's **width** without overflow.
-     * For some pages this could mean that pageBox scaled will be taller than the targetBox.
+     * Calculates the factor that pageBox can be scaled with to fit targetBox's **width** without overflow. For some pages this could mean that pageBox scaled will be taller than
+     * the targetBox.
      */
     private double getScalingFactorMatchWidth(PDRectangle targetBox, PDRectangle pageBox) {
         // if both target and page boxes have same orientation (landscape, portrait)
         // the scaling factor is targetWidth / pageWidth
-        if(isLandscape(targetBox) == isLandscape(pageBox)) {
+        if (isLandscape(targetBox) == isLandscape(pageBox)) {
             return targetBox.getWidth() / pageBox.getWidth();
-        } else {
-            // the boxes have different orientations
-            // the page should be scaled to match the target box height
-            return targetBox.getHeight() / pageBox.getWidth();
         }
+        // the boxes have different orientations
+        // the page should be scaled to match the target box height
+        return targetBox.getHeight() / pageBox.getWidth();
     }
 
     /**
-     * Calculates the factor that pageBox can be scaled with to fit targetBox without overflow.
-     * Ensures both height and width will not overflow targetBox.
+     * Calculates the factor that pageBox can be scaled with to fit targetBox without overflow. Ensures both height and width will not overflow targetBox.
      */
     private double getScalingFactorMatchWidthOrHeight(PDRectangle targetBox, PDRectangle pageBox) {
         // if the boxes have different orientations
         // we want to normalize first rotating the target 90 and then calculate scaling factors
         // so landscape is scaled to a landscape
         PDRectangle normalizedOrientationTargetBox = targetBox;
-        if(isLandscape(targetBox) != isLandscape(pageBox)) {
+        if (isLandscape(targetBox) != isLandscape(pageBox)) {
             normalizedOrientationTargetBox = targetBox.rotate();
         }
 
@@ -337,7 +338,7 @@ public class PdfScaler {
         float heightFactor = normalizedOrientationTargetBox.getHeight() / pageBox.getHeight();
 
         float factor = Math.min(widthFactor, heightFactor);
-        //LOG.debug("Factor: {} for normalizedOrientationTargetBox: {} pageBox: {}", factor, normalizedOrientationTargetBox, pageBox);
+        // LOG.debug("Factor: {} for normalizedOrientationTargetBox: {} pageBox: {}", factor, normalizedOrientationTargetBox, pageBox);
         return factor;
     }
 

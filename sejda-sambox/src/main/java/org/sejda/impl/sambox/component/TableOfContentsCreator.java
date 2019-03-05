@@ -27,7 +27,10 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
@@ -165,22 +168,21 @@ public class TableOfContentsCreator {
                             float x = margin;
 
                             List<String> lines = multipleLinesIfRequired(i.text, separatingLineEndingX, separatorWidth);
-                            if(row + lines.size() > maxRowsPerPage) {
+                            if (row + lines.size() > maxRowsPerPage) {
                                 // does not fit on multiple lines, write on next page
                                 row = maxRowsPerPage;
                                 continue;
-                            } else {
-                                // fits even if on multiple lines, take out of the items thing
-                                items.poll();
                             }
+                            // fits even if on multiple lines, take out of the items thing
+                            items.poll();
 
                             // write item on multiple lines if it's too long to fit on just one
                             // regular scenario is a single line
-                            for(int j = 0; j < lines.size(); j++) {
+                            for (int j = 0; j < lines.size(); j++) {
                                 String line = lines.get(j);
                                 writeText(page, line, x, y);
 
-                                if(j < lines.size() - 1) {
+                                if (j < lines.size() - 1) {
                                     // if we've written the item last line, don't increment the row and y coordinate
                                     // we'll continue writing on the same row the ____________ <pagenum> part.
                                     row++;
@@ -225,8 +227,10 @@ public class TableOfContentsCreator {
         writer.write(page, new Point.Float(x, y), s, font, (double) fontSize, Color.BLACK);
     }
 
-    private List<String> multipleLinesIfRequired(String text, float separatingLineEndingX, float separatorWidth) throws TaskIOException {
-        float maxWidth = pageSize().getWidth() - margin - (pageSize().getWidth() - separatingLineEndingX) - separatorWidth;
+    private List<String> multipleLinesIfRequired(String text, float separatingLineEndingX, float separatorWidth)
+            throws TaskIOException {
+        float maxWidth = pageSize().getWidth() - margin - (pageSize().getWidth() - separatingLineEndingX)
+                - separatorWidth;
         return FontUtils.wrapLines(text, font, fontSize, maxWidth, document);
     }
 

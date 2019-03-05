@@ -39,23 +39,30 @@ import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.sambox.contentstream.PDContentStream;
-import org.sejda.sambox.pdmodel.*;
-import org.sejda.sambox.pdmodel.graphics.PDXObject;
-import org.sejda.sambox.rendering.ImageType;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+import org.sejda.sambox.contentstream.PDContentStream;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.encryption.StandardSecurity;
 import org.sejda.sambox.output.WriteOption;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
+import org.sejda.sambox.pdmodel.PDDocumentInformation;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDPageTree;
+import org.sejda.sambox.pdmodel.PDResources;
+import org.sejda.sambox.pdmodel.PageLayout;
+import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -362,8 +369,8 @@ public class PDDocumentHandler implements Closeable {
     }
 
     private ImageType toSamboxImageType(ImageColorType colorType) {
-        for(ImageType type: ImageType.values()) {
-            if(type.toBufferedImageType() == colorType.getBufferedImageType()) {
+        for (ImageType type : ImageType.values()) {
+            if (type.toBufferedImageType() == colorType.getBufferedImageType()) {
                 return type;
             }
         }
@@ -432,19 +439,18 @@ public class PDDocumentHandler implements Closeable {
             }
         }
 
-        for (COSName objectName: resources.getXObjectNames()) {
+        for (COSName objectName : resources.getXObjectNames()) {
             try {
                 PDXObject pdxObject = resources.getXObject(objectName);
-                if(pdxObject instanceof PDContentStream) {
-                    PDResources res = ((PDContentStream)pdxObject).getResources();
-                    if(alreadyVisited.contains(res)) {
+                if (pdxObject instanceof PDContentStream) {
+                    PDResources res = ((PDContentStream) pdxObject).getResources();
+                    if (alreadyVisited.contains(res)) {
                         continue;
-                    } else {
-                        alreadyVisited.add(res);
                     }
+                    alreadyVisited.add(res);
 
                     PDFont font = findFont(res, searchedName, alreadyVisited);
-                    if(font != null) {
+                    if (font != null) {
                         return font;
                     }
                 }
@@ -459,7 +465,7 @@ public class PDDocumentHandler implements Closeable {
     public PDFont findFont(String searchedName) {
         for (PDPage page : document.getPages()) {
             PDFont font = findFont(page.getResources(), searchedName, new HashSet<>());
-            if(font != null) {
+            if (font != null) {
                 return font;
             }
         }
