@@ -57,7 +57,7 @@ public class PageTextWriter {
 
     private PDDocument document;
     // TODO define as a params member
-    public static final Float DEFAULT_MARGIN = 30F;
+    public static final Float DEFAULT_MARGIN = 20F;
 
     /**
      * @param document
@@ -82,7 +82,7 @@ public class PageTextWriter {
 
             PDRectangle pageSize = page.getCropBox().rotate(page.getRotation());
             Point2D position = new Point2D.Double(hAlign.position(pageSize.getWidth(), stringWidth, DEFAULT_MARGIN),
-                    vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN - fontSize.floatValue()));
+                    vAlign.position(pageSize.getHeight(), DEFAULT_MARGIN, fontSize.floatValue()));
 
             write(page, position, label, font, fontSize, color);
         } catch (IOException e) {

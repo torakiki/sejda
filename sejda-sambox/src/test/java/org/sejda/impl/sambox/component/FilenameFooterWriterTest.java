@@ -51,7 +51,7 @@ public class FilenameFooterWriterTest {
         PDPage page = new PDPage();
         doc.addPage(page);
         new FilenameFooterWriter(true, doc).addFooter(page, "My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page number and generally look not so nice", 20);
-        assertPageFooterText(page,"My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page num 20");
+        assertPageFooterText(page,"My very long title that will not fit on the page and needs to be truncated so that it will not overflow and cover the page number a20");
     }
 
     @Test

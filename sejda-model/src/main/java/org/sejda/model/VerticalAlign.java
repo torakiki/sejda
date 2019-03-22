@@ -31,13 +31,13 @@ public enum VerticalAlign implements FriendlyNamed {
 
     TOP("top") {
         @Override
-        public float position(float pageHight, float margin) {
-            return pageHight - margin;
+        public float position(float pageHight, float margin, float fontSize) {
+            return pageHight - margin - fontSize / 2;
         }
     },
     BOTTOM("bottom") {
         @Override
-        public float position(float pageHight, float margin) {
+        public float position(float pageHight, float margin, float fontSize) {
             return margin;
         }
     };
@@ -57,5 +57,5 @@ public enum VerticalAlign implements FriendlyNamed {
      * @param margin
      * @return the vertical position of a text in a page of the given height
      */
-    public abstract float position(float pageHeight, float margin);
+    public abstract float position(float pageHeight, float margin, float fontSize);
 }

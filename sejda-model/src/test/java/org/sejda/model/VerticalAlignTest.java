@@ -31,7 +31,7 @@ public class VerticalAlignTest {
 
     @Test
     public void testPosition() {
-        assertEquals(95, VerticalAlign.TOP.position(100, 5), 0);
-        assertEquals(5, VerticalAlign.BOTTOM.position(100, 5), 0);
+        assertEquals(100 - 5 - 15/2f, VerticalAlign.TOP.position(100, 5, 15), 0.1);
+        assertEquals(5, VerticalAlign.BOTTOM.position(100, 5, 15), 0);
     }
 }

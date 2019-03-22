@@ -135,7 +135,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
         testContext.forPdfOutput(d -> {
             assertPageTextContains(d.getPage(0), longFilename);
-            assertFooterHasText(d.getPage(16), longFilename.substring(0, 120) + " 17");
+            assertFooterHasText(d.getPage(16), longFilename.substring(0, 124) + " 17");
         });
     }
 

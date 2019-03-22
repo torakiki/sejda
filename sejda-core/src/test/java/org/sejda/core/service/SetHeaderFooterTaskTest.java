@@ -110,6 +110,20 @@ public abstract class SetHeaderFooterTaskTest extends BaseTaskTest<SetHeaderFoot
     }
 
     @Test
+    public void testLargeFontSize() throws Exception {
+        parameters = basicWithSources();
+        parameters.setVerticalAlign(VerticalAlign.TOP);
+        parameters.setPattern("This is a large font");
+        parameters.setFontSize(35);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertHeaderHasText(d.getPage(0), "This is a large font");
+        });
+    }
+
+    @Test
     public void testUnsupportedUnicodeCharacters() throws Exception {
         parameters = basicWithSources();
         parameters.setPattern("Some unsupported unicode \uFE0F characters");
