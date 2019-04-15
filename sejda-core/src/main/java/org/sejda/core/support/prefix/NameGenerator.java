@@ -20,6 +20,7 @@
  */
 package org.sejda.core.support.prefix;
 
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -31,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
-
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
  * 
@@ -64,7 +64,8 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        String result = toSafeFilename(prefixTypesChain.process(prefix, preProcessRequest(request)));
+        String result = toSafeFilename(
+                prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest())));
 
         String osName = System.getProperty("os.name").toLowerCase();
         if (osName.contains("win") || osName.contains("mac")) {
@@ -107,19 +108,5 @@ public final class NameGenerator {
             return shorterFilename;
         }
         return input;
-    }
-
-    /**
-     * pre process the request ensuring a not null request is returned
-     * 
-     * @param request
-     * @return a not null request.
-     */
-    private NameGenerationRequest preProcessRequest(NameGenerationRequest request) {
-        NameGenerationRequest retVal = request;
-        if (request == null) {
-            retVal = nameRequest();
-        }
-        return retVal;
     }
 }
