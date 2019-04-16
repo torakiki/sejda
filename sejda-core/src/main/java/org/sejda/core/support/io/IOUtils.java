@@ -19,10 +19,16 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -107,7 +113,8 @@ public final class IOUtils {
             File tmpDir = createTemporaryFolder();
             File buffer = new File(tmpDir, filename);
             boolean created = buffer.createNewFile();
-            if(!created) throw new IOException("Could not create new file: " + buffer.getAbsolutePath());
+            if (!created)
+                throw new IOException("Could not create new file: " + buffer.getAbsolutePath());
             buffer.deleteOnExit();
             return buffer;
         } catch (IllegalStateException | IOException e) {
@@ -151,6 +158,46 @@ public final class IOUtils {
         }
 
         return newNamedOutput;
+    }
+
+    public static String shortenFilename(String name) {
+        if (IS_OS_WINDOWS || IS_OS_MAC) {
+            // char based max length
+            return shortenFilenameCharLength(name, 255);
+        }
+        // bytes based max length
+        return shortenFilenameBytesLength(name, 254, StandardCharsets.UTF_8);
+    }
+
+    static String shortenFilenameCharLength(String input, int maxCharLength) {
+        if (input.length() > maxCharLength) {
+            String baseName = getBaseName(input);
+            String ext = getExtension(input);
+
+            baseName = baseName.substring(0, maxCharLength - 1 - ext.length());
+            return String.format("%s.%s", baseName, ext);
+        }
+        return input;
+
+    }
+
+    static String shortenFilenameBytesLength(String input, int maxBytesLength, Charset charset) {
+        if (input.getBytes(charset).length > maxBytesLength) {
+            String baseName = getBaseName(input);
+            String ext = getExtension(input);
+
+            // drop last char from basename, try again
+            baseName = baseName.substring(0, baseName.length() - 1);
+            String shorterFilename = String.format("%s.%s", baseName, ext);
+
+            while (shorterFilename.getBytes(charset).length > maxBytesLength) {
+                baseName = baseName.substring(0, baseName.length() - 1);
+                shorterFilename = String.format("%s.%s", baseName, ext);
+            }
+
+            return shorterFilename;
+        }
+        return input;
     }
 
     /**

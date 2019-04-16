@@ -20,10 +20,15 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -37,6 +42,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Before;
@@ -202,6 +208,57 @@ public class OutputWriterHelperTest {
         File existing = File.createTempFile("Chuck", "Norris", dest);
         files.put(existing.getName(), folder.newFile());
         return files;
+    }
+
+    @Test
+    public void updateFilname() throws IOException {
+        Map<String, File> files = new LinkedHashMap<>();
+        File dest = folder.newFolder();
+        files.put("1_of_[TOTAL_FILESNUMBER].pdf", folder.newFile());
+        files.put("2_of_[TOTAL_FILESNUMBER].pdf", folder.newFile());
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
+        assertEquals(2, dest.list().length);
+        assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
+        assertEquals("1_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(0).getName());
+        assertEquals("2_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(1).getName());
+    }
+
+    @Test
+    public void namesAreUpdatedBeforeShorten() throws IOException {
+        Map<String, File> files = new LinkedHashMap<>();
+        File dest = folder.newFolder();
+        files.put("[TOTAL_FILESNUMBER]" + repeat("a", 248) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.list().length);
+        assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("1.pdf"));
+    }
+
+    @Test
+    public void namesAreShortened() throws IOException {
+        Map<String, File> files = new LinkedHashMap<>();
+        File dest = folder.newFolder();
+        files.put("[TOTAL_FILESNUMBER]" + repeat("a", 400) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.list().length);
+        assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("a.pdf"));
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName().length(), is(lessThan(256)));
+    }
+
+    @Test
+    public void namesAreShortenedUnicode() throws IOException {
+        Map<String, File> files = new LinkedHashMap<>();
+        File dest = folder.newFolder();
+        files.put("[TOTAL_FILESNUMBER]" + repeat("ว", 400) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
+        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.list().length);
+        assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("ว.pdf"));
+        assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName().length(), is(lessThan(256)));
     }
 
     @Test

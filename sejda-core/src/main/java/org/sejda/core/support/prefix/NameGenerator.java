@@ -21,17 +21,13 @@
 package org.sejda.core.support.prefix;
 
 import static java.util.Optional.ofNullable;
-import static org.apache.commons.io.FilenameUtils.getBaseName;
-import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 import static org.sejda.core.support.prefix.processor.PrefixUtils.toSafeFilename;
-
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
+
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
  * 
@@ -64,49 +60,7 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        String result = toSafeFilename(
-                prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest())));
-
-        String osName = System.getProperty("os.name").toLowerCase();
-        if (osName.contains("win") || osName.contains("mac")) {
-            // char based max length
-            result = shortenFilenameCharLength(result, 255);
-        } else {
-            // bytes based max length
-            result = shortenFilenameBytesLength(result, 254, StandardCharsets.UTF_8);
-        }
-
-        return result;
+        return toSafeFilename(prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest())));
     }
 
-    static String shortenFilenameCharLength(String input, int maxCharLength) {
-        if (input.length() > maxCharLength) {
-            String baseName = getBaseName(input);
-            String ext = getExtension(input);
-
-            baseName = baseName.substring(0, maxCharLength - 1 - ext.length());
-            return String.format("%s.%s", baseName, ext);
-        }
-        return input;
-
-    }
-
-    static String shortenFilenameBytesLength(String input, int maxBytesLength, Charset charset) {
-        if (input.getBytes(charset).length > maxBytesLength) {
-            String baseName = getBaseName(input);
-            String ext = getExtension(input);
-
-            // drop last char from basename, try again
-            baseName = baseName.substring(0, baseName.length() - 1);
-            String shorterFilename = String.format("%s.%s", baseName, ext);
-
-            while (shorterFilename.getBytes(charset).length > maxBytesLength) {
-                baseName = baseName.substring(0, baseName.length() - 1);
-                shorterFilename = String.format("%s.%s", baseName, ext);
-            }
-
-            return shorterFilename;
-        }
-        return input;
-    }
 }

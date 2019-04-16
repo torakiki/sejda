@@ -23,6 +23,7 @@ package org.sejda.core.support.io;
 import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.core.support.io.IOUtils.findNewNameThatDoesNotExist;
+import static org.sejda.core.support.io.IOUtils.shortenFilename;
 import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
 import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
 
@@ -112,7 +113,8 @@ final class OutputWriterHelper {
                 throw new IOException(String.format(
                         "Unable to move %s to the output directory, no output name specified.", entry.getValue()));
             }
-            moveFile(entry.getValue(), new File(outputDirectory, entry.getKey()), existingOutputPolicy,
+            moveFile(entry.getValue(), new File(outputDirectory, finalName(entry.getKey(), files.size())),
+                    existingOutputPolicy,
                     executionContext);
         }
     }
@@ -173,6 +175,10 @@ final class OutputWriterHelper {
         }
     }
 
+    private static String finalName(String filename, int totalFilesNumber) {
+        return shortenFilename(filename.replace("[TOTAL_FILESNUMBER]", Integer.toString(totalFilesNumber)));
+    }
+
     /**
      * Copy the populated file map to a zip output stream
      * 
@@ -181,24 +187,22 @@ final class OutputWriterHelper {
      * @throws IOException
      */
     static void copyToStreamZipped(Map<String, File> files, OutputStream out) throws IOException {
-        ZipOutputStream zipOut = new ZipOutputStream(out);
-        for (Entry<String, File> entry : files.entrySet()) {
-            FileInputStream input = null;
-            if (isBlank(entry.getKey())) {
-                throw new IOException(String.format("Unable to copy %s to the output stream, no output name specified.",
-                        entry.getValue()));
-            }
-            try {
-                input = new FileInputStream(entry.getValue());
-                zipOut.putNextEntry(new ZipEntry(entry.getKey()));
-                LOG.debug("Copying {} to zip stream {}.", entry.getValue(), entry.getKey());
-                IOUtils.copy(input, zipOut);
-            } finally {
-                IOUtils.closeQuietly(input);
-                delete(entry.getValue());
+        try (ZipOutputStream zipOut = new ZipOutputStream(out)) {
+            for (Entry<String, File> entry : files.entrySet()) {
+
+                if (isBlank(entry.getKey())) {
+                    throw new IOException(String.format(
+                            "Unable to copy %s to the output stream, no output name specified.", entry.getValue()));
+                }
+                try (FileInputStream input = new FileInputStream(entry.getValue())) {
+                    zipOut.putNextEntry(new ZipEntry(entry.getKey()));
+                    LOG.debug("Copying {} to zip stream {}.", entry.getValue(), entry.getKey());
+                    IOUtils.copy(input, zipOut);
+                } finally {
+                    delete(entry.getValue());
+                }
             }
         }
-        IOUtils.closeQuietly(zipOut);
     }
 
     /**
@@ -209,12 +213,9 @@ final class OutputWriterHelper {
      * @throws IOException
      */
     static void copyToStream(File file, OutputStream out) throws IOException {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(file);
+        try (InputStream in = new FileInputStream(file)) {
             IOUtils.copy(in, out);
         } finally {
-            IOUtils.closeQuietly(in);
             delete(file);
         }
     }

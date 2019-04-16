@@ -19,11 +19,17 @@
  */
 package org.sejda.core.support.io;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Rule;
@@ -142,5 +148,28 @@ public class IOUtilsTest {
         assertEquals("chuck(1).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
         folder.newFile("chuck(1).norris");
         assertEquals("chuck(2).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
+    }
+
+    // convenience method, don't pass charset and len all the time
+    private String shortenFilenameBytesLength(String input) {
+        return IOUtils.shortenFilenameBytesLength(input, 255, StandardCharsets.UTF_8);
+    }
+
+    private String largeFilename = repeat("aว", 300) + ".pdf";
+
+    @Test
+    public void shortenFilenameBytesLength() {
+        String shorter = shortenFilenameBytesLength(largeFilename);
+        assertThat(shorter, endsWith("aวaวa.pdf"));
+        assertThat(shorter, startsWith("aวaว"));
+        assertThat(shorter.getBytes(StandardCharsets.UTF_8).length, is(253));
+    }
+
+    @Test
+    public void shortenFilenameCharLength() {
+        String shorter = IOUtils.shortenFilenameCharLength(largeFilename, 255);
+        assertThat(shorter, endsWith("aวaวa.pdf"));
+        assertThat(shorter, startsWith("aวaว"));
+        assertThat(shorter.length(), is(255));
     }
 }
