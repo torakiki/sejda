@@ -50,7 +50,7 @@ target/assembled/bin/sejda-console splitbypages -f ../sejda-core/src/test/resour
 target/assembled/bin/sejda-console splitbypages -h
 target/assembled/bin/sejda-console splitbypages --help
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_enc_test.pdf:secret123 -p [PAGENUMBER#####] -o /tmp/sejda-smoketest/ -j overwrite -n 5
-target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite
+target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###1]_of_[TOTAL_FILESNUMBER] -n 10 -j overwrite
 target/assembled/bin/sejda-console splitbyevery -f ../sejda-core/src/test/resources/pdf/large_test.pdf -o /tmp/sejda-smoketest/ -p [FILENUMBER###-20] -n 10 -j overwrite --discardOutline --lenient
 target/assembled/bin/sejda-console splitbyevery -h
 target/assembled/bin/sejda-console splitbyevery --help
