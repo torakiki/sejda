@@ -28,6 +28,7 @@ import java.io.File;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
+import org.sejda.core.support.prefix.NameGenerator;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.PagesExtractor;
@@ -71,6 +72,7 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
 
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(),
                 executionContext);
+        NameGenerator nameGen = nameGenerator(outputPrefix);
         try (PagesExtractor extractor = supplyPagesExtractor(document)) {
             File tmpFile = null;
             for (int page = 1; page <= totalPages; page++) {
@@ -80,7 +82,8 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                     onOpen(page);
                     tmpFile = createTemporaryBuffer(parameters.getOutput());
                     LOG.debug("Created output temporary buffer {}", tmpFile);
-                    String outName = nameGenerator(outputPrefix).generate(enrichNameGenerationRequest(
+                    String outName = nameGen.generate(
+                            enrichNameGenerationRequest(
                             nameRequest().page(page).originalName(source.getName())
                                     .fileNumber(executionContext.incrementAndGetOutputDocumentsCounter())));
                     outputWriter.addOutput(file(tmpFile).name(outName));

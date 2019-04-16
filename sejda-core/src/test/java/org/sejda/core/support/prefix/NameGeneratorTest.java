@@ -22,17 +22,17 @@ package org.sejda.core.support.prefix;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
+
+import org.junit.Test;
 
 /**
  * Test unit for the NameGenerator
@@ -74,6 +74,15 @@ public class NameGeneratorTest {
         String originalName = "Original";
         String expected = "BLA_[CURRENTPAGE###]_Original.pdf";
         assertEquals(expected, nameGenerator(prefix).generate(nameRequest().originalName(originalName)));
+    }
+
+    @Test
+    public void reuseSameNameGenerator() {
+        NameGenerator generator = nameGenerator("BLA_[CURRENTPAGE###]_[BASENAME]");
+        String originalName = "Original";
+        assertEquals("BLA_001_Original.pdf", generator.generate(nameRequest().originalName(originalName).page(1)));
+        assertEquals("BLA_005_Original.pdf", generator.generate(nameRequest().originalName(originalName).page(5)));
+        assertEquals("BLA_010_Original.pdf", generator.generate(nameRequest().originalName(originalName).page(10)));
     }
 
     @Test(expected = IllegalArgumentException.class)

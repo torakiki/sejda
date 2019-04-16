@@ -36,20 +36,21 @@ import org.slf4j.LoggerFactory;
  * Ex: <b>[FILENUMBER]_BLA_[FILENUMBERE###]_LAB_[FILENUMBER####100]</b> and given file number <b>2</b> will produce <b>2_BLA_002_LAB_0102</b>
  * <p>
  * </p>
- * <b>[FILENUMBER-3]_BLA_LAB_[FILENUMBER####100]</b> and given file number <b>2</b> will produce <b>-1_BLA_002_LAB_0102</b> </p>
+ * <b>[FILENUMBER-3]_BLA_LAB_[FILENUMBER####100]</b> and given file number <b>2</b> will produce <b>-1_BLA_002_LAB_0102</b>
+ * </p>
  * 
  * @author Andrea Vacondio
  * 
  */
 abstract class NumberPrefixProcessor implements PrefixProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(NumberPrefixProcessor.class);
-    private final String findRegexp;
+    private final Pattern pattern;
 
     NumberPrefixProcessor(String prefix) {
         if (StringUtils.isBlank(prefix)) {
             throw new IllegalArgumentException("Prefix cannot be blank");
         }
-        findRegexp = String.format("\\[%s(#*)(-?[0-9]*)\\]", prefix);
+        pattern = Pattern.compile(String.format("\\[%s(#*)(-?[0-9]*)\\]", prefix));
     }
 
     /**
@@ -61,7 +62,7 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      */
     protected String findAndReplace(String inputString, Integer num) {
         StringBuffer sb = new StringBuffer();
-        Matcher m = Pattern.compile(findRegexp).matcher(inputString);
+        Matcher m = pattern.matcher(inputString);
         while (m.find()) {
             String replacement = getReplacement(m.group(1), m.group(2), num);
             m.appendReplacement(sb, replacement);
@@ -77,14 +78,11 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      * @return the string the processor will use to perform replacement
      */
     private String getReplacement(String numberPatter, String startingNumber, Integer num) {
-        String replacement = "";
         Integer number = getReplacementNumber(startingNumber, num);
         if (StringUtils.isNotBlank(numberPatter)) {
-            replacement = formatter(numberPatter).format(number);
-        } else {
-            replacement = number.toString();
+            return formatter(numberPatter).format(number);
         }
-        return replacement;
+        return number.toString();
     }
 
     /**
