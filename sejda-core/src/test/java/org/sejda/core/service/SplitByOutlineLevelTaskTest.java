@@ -88,6 +88,18 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
     }
 
     @Test
+    public void testSameBookmarkName() throws IOException {
+        SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
+        parameters.removeAllSources();
+        parameters.addSource(customInput("pdf/same_bookmarks_name.pdf"));
+        parameters.setOutputPrefix("[BOOKMARK_NAME]");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachRawOutput((p) -> p.toString().endsWith(".pdf"))
+                .assertOutputContainsFilenames("Summary.pdf", "Summary(1).pdf");
+    }
+
+    @Test
     public void testExecuteLevel1MatchingregEx() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, "(Second)+.+");
         execute(parameters);

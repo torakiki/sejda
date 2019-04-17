@@ -133,6 +133,17 @@ public class DefaultMultipleOutputWriterTest {
     }
 
     @Test
+    public void addFilesRenamesExisting() throws TaskOutputVisitException, IOException {
+        DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
+        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
+        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
+        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
+        File outFolder = folder.newFolder();
+        new DirectoryTaskOutput(outFolder).accept(victim);
+        assertEquals(3, outFolder.list().length);
+    }
+
+    @Test
     public void moveToFileOrDirExsistingRenamed() throws TaskOutputVisitException, IOException {
         File outFile = folder.newFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);

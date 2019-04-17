@@ -20,6 +20,10 @@
  */
 package org.sejda.core.support.io;
 
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.io.File;
@@ -80,7 +84,18 @@ class DefaultMultipleOutputWriter implements MultipleOutputWriter {
      */
     @Override
     public void addOutput(PopulatedFileOutput fileOutput) {
-        multipleFiles.put(fileOutput.getName(), fileOutput.getFile());
+        if (nonNull(multipleFiles.putIfAbsent(fileOutput.getName(), fileOutput.getFile()))) {
+            // we already have a file with the same name, this shouldn't happen but could happen in split by text or bookmarks
+            int count = 1;
+            String basename = getBaseName(fileOutput.getName());
+            String extension = getExtension(fileOutput.getName());
+
+            while (nonNull(
+                    multipleFiles.putIfAbsent(format("%s(%d).%s", basename, count, extension), fileOutput.getFile()))
+                    && count < 100) {
+                count++;
+            }
+        }
     }
 
 }
