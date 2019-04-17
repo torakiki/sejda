@@ -7,14 +7,10 @@ before_install:
 before_script: mvn javadoc:javadoc -DskipTests=true -B -V
 script: mvn clean install
 jdk:
-- oraclejdk8
+- openjdk8
 cache:                                                                          
   directories:                                                                  
     - $HOME/.m2 
-addons:
-  apt:
-    packages:
-    - oracle-java8-installer
 env:
   global:
     #GPG_PASSPHRASE
