@@ -299,6 +299,9 @@ public class TaskTestContext implements Closeable {
                 }
                 return false;
             }
+            if (p.getFileName().toString().startsWith(".")) {
+                return false;
+            }
             return true;
         }).count());
         return this;
