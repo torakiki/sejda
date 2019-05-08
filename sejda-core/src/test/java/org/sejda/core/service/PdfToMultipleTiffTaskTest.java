@@ -1,7 +1,7 @@
 /*
  * Created on 26/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,6 @@
  */
 package org.sejda.core.service;
 
-import java.io.IOException;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.image.ImageColorType;
@@ -28,14 +26,19 @@ import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 @Ignore
-public abstract class PdfToMltipleTiffTaskTest
+public abstract class PdfToMultipleTiffTaskTest
         extends MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PdfToMultipleTiffTaskTest.class);
 
     @Override
     PdfToMultipleTiffParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
@@ -51,6 +54,22 @@ public abstract class PdfToMltipleTiffTaskTest
     public void colorAndCompressionCombinations() throws IOException {
         for (ImageColorType type : ImageColorType.values()) {
             for (TiffCompressionType compression : TiffCompressionType.values()) {
+                LOG.debug("Testing compression: {} and color type: {}", compression, type);
+
+                boolean unsupportedCombo = false;
+                if (compression == TiffCompressionType.CCITT_GROUP_3_1D ||
+                        compression == TiffCompressionType.CCITT_GROUP_3_2D ||
+                        compression == TiffCompressionType.CCITT_GROUP_4) {
+                    if (type != ImageColorType.BLACK_AND_WHITE) {
+                        unsupportedCombo = true;
+                    }
+                }
+
+                if (unsupportedCombo) {
+                    LOG.debug("Unsupported combination: compression: {} and color type: {}", compression, type);
+                    continue;
+                }
+
                 PdfToMultipleTiffParameters parameters = getMultipleImageParametersWithoutSource(type);
                 parameters.addSource(shortInput());
                 parameters.addPageRange(new PageRange(1, 1));

@@ -19,7 +19,7 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.core.service.PdfToMltipleTiffTaskTest;
+import org.sejda.core.service.PdfToMultipleTiffTaskTest;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.task.Task;
 
@@ -27,7 +27,7 @@ import org.sejda.model.task.Task;
  * @author Andrea Vacondio
  * 
  */
-public class PdfToMultipleTiffSamboxTaskTest extends PdfToMltipleTiffTaskTest {
+public class PdfToMultipleTiffSamboxTaskTest extends PdfToMultipleTiffTaskTest {
 
     @Override
     public Task<PdfToMultipleTiffParameters> getTask() {
