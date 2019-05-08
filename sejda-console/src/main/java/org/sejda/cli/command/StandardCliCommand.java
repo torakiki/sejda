@@ -239,14 +239,14 @@ public enum StandardCliCommand implements CliCommand {
         protected CommandCliArgumentsTransformer<PdfToSingleTiffTaskCliArguments, PdfToSingleTiffParameters> getArgumentsTransformer() {
             return new PdfToSingleTiffCliArgumentsTransformer();
         }
-    }, "Converts a PDF document to a single TIFF image (TIFF format supports multiple images written to a single file).", "pdftosingletiff -f /tmp/file1.pdf -o /tmp/output.tiff --compressionType ccitt_group_3_2d --colorType gray_scale"),
+    }, "Converts a PDF document to a single TIFF image (TIFF format supports multiple images written to a single file).", "pdftosingletiff -f /tmp/file1.pdf -o /tmp/output.tiff --compressionType ccitt_group_3_2d --colorType black_and_white"),
     PDF_TO_MULTIPLE_TIFF("pdftomultipletiff", new CliInterfacedTask<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters>() {
 
         @Override
         protected CommandCliArgumentsTransformer<PdfToMultipleTiffTaskCliArguments, PdfToMultipleTiffParameters> getArgumentsTransformer() {
             return new PdfToMultipleTiffCliArgumentsTransformer();
         }
-    }, "Converts a PDF document to multiple TIFF images (one image per page).", "pdftomultipletiff -f /tmp/file1.pdf -o /tmp --compressionType ccitt_group_3_2d --colorType gray_scale"),
+    }, "Converts a PDF document to multiple TIFF images (one image per page).", "pdftomultipletiff -f /tmp/file1.pdf -o /tmp --compressionType ccitt_group_3_2d --colorType black_and_white"),
     SET_HEADER_FOOTER("setheaderfooter", new CliInterfacedTask<SetHeaderFooterTaskCliArguments, SetHeaderFooterParameters>() {
 
         @Override
