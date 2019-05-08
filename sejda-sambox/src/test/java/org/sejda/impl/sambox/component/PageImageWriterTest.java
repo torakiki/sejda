@@ -20,20 +20,48 @@ package org.sejda.impl.sambox.component;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.StreamSource;
+import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 
+import java.io.IOException;
+
 public class PageImageWriterTest {
+
+    @Test
+    public void testJpeg() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/large.jpg"));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(3840));
+        assertThat(result.getWidth(), is(5760));
+
+        assertTrue("Original bytes should be used",
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/large.jpg").getSource()));
+    }
 
     @Test
     public void testTiffWithAlphaToPDXImageObject() throws TaskIOException {
         PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/draft.tiff"));
         assertThat(result.getHeight(), is(103));
+    }
+
+    @Test
+    public void test_CMYK_jpeg() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/cmyk.jpg"));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(560));
+        assertThat(result.getWidth(), is(1400));
+
+        assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/cmyk.jpg").getSource()));
     }
 
     public StreamSource customNonPdfInput(String path) {

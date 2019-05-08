@@ -18,18 +18,19 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Optional;
 
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
@@ -126,7 +127,14 @@ public class PageImageWriter {
         });
     }
 
-    public static PDImageXObject createFromFile(String filePath) throws TaskIOException, IOException {
+    public static PDImageXObject createFromFile(String originalFilePath) throws TaskIOException, IOException {
+        String filePath = originalFilePath;
+        // we might need to pre-process the image and use a different file
+        Optional<File> maybeNewFile = convertCMYKJpegIf(originalFilePath);
+        if(maybeNewFile.isPresent()) {
+            filePath = maybeNewFile.get().getAbsolutePath();
+        }
+
         try {
             return PDImageXObject.createFromFile(filePath);
         } catch (UnsupportedTiffImageException e) {
@@ -171,5 +179,45 @@ public class PageImageWriter {
         }
 
         return tmpFile.getPath();
+    }
+
+    /**
+     * Checks if the input file is a JPEG using CMYK
+     * If that's the case, converts CMYK to RGB and returns the file path
+     */
+    private static Optional<File> convertCMYKJpegIf(String filePath) throws IOException, TaskIOException {
+        String extension = FilenameUtils.getExtension(filePath).toLowerCase();
+
+        if(extension.equals("jpg") || extension.equals("jpeg")) {
+            try(ImageInputStream iis = ImageIO.createImageInputStream(new File(filePath))){
+                ImageReader reader = ImageIO.getImageReadersByFormatName("jpg").next();
+                boolean isCmyk = false;
+                try {
+                    ImageIO.setUseCache(false);
+                    reader.setInput(iis);
+                    for (Iterator<ImageTypeSpecifier> it = reader.getImageTypes(0); it.hasNext(); ) {
+                        ImageTypeSpecifier typeSpecifier = it.next();
+                        if(typeSpecifier.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
+                            isCmyk = true;
+                        }
+                    }
+
+                    if(isCmyk) {
+                        LOG.debug("Detected a CMYK JPEG image, will convert to RGB and save to a new file");
+                        // convert to rgb
+                        // twelvemonkeys JPEG plugin already converts it to rgb when reading the image
+                        // just write it out
+                        BufferedImage image = reader.read(0);
+                        File tmpFile = IOUtils.createTemporaryBuffer(extension);
+                        ImageIO.write(image, "jpg", tmpFile);
+                        return Optional.of(tmpFile);
+                    }
+                } finally {
+                    reader.dispose();
+                }
+            }
+        }
+
+        return Optional.empty();
     }
 }
