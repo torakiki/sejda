@@ -54,7 +54,6 @@ public class PageImageWriterTest {
 
     @Test
     public void test_CMYK_jpeg() throws TaskIOException, IOException {
-
         PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/cmyk.jpg"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(560));
@@ -62,6 +61,15 @@ public class PageImageWriterTest {
 
         assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
                 IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/cmyk.jpg").getSource()));
+    }
+
+    @Test
+    public void test_Gray_ICC_png() throws TaskIOException, IOException {
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/icc_profile_gray.png"));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+
+        assertFalse("Original bytes should not be used; the image should be converted from ICC Gray to RGB",
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/icc_profile_gray.png").getSource()));
     }
 
     public StreamSource customNonPdfInput(String path) {
