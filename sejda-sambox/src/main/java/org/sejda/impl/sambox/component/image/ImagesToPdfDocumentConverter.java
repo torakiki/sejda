@@ -126,7 +126,7 @@ public class ImagesToPdfDocumentConverter {
     }
 
     public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
-
+        throw e;
     }
 
     public void setPageSize(PageSize pageSize) {

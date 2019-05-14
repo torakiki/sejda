@@ -37,6 +37,7 @@ import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.*;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.*;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.scale.ScaleType;
@@ -240,7 +241,15 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
     private PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image) throws TaskException {
         List<Source<?>> sources = Collections.singletonList(image.getSource());
-        PDDocumentHandler converted = new ImagesToPdfDocumentConverter().convert(sources);
+        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter(){
+            @Override
+            public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
+                executionContext().assertTaskIsLenient(e);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                        String.format("Image %s was skipped, could not be processed", source.getName()), e);
+            }
+        };
+        PDDocumentHandler converted = converter.convert(sources);
         String basename = FilenameUtils.getBaseName(image.getSource().getName());
         String filename = String.format("%s.pdf", basename);
         File convertedTmpFile = createTemporaryBufferWithName(filename);

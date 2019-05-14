@@ -574,6 +574,37 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void mergeWithUnreadableImageThows() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setLenient(false);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/corrupt.png", "corrupt.png")));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        // TODO: friendlier error message
+        testContext.assertTaskFailed("org.sejda.model.exception.TaskIOException: An error occurred creating PDImageXObject from file source: corrupt.png");
+    }
+
+    @Test
+    public void mergeWithUnreadableImageWarning() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setLenient(true);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/corrupt.png", "corrupt.png")));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(1);
+        testContext.assertTaskWarning("Image corrupt.png was skipped, could not be processed");
+    }
+
+    @Test
     public void mergeKeepingPageLabels() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
