@@ -321,7 +321,7 @@ public class AcroFormsMerger {
                     ensureValueCanBeDisplayed((PDVariableText) field);
                 }
             }
-            form.flatten(fields, true);
+            form.flatten(fields, form.isNeedAppearances());
         } catch (IOException | UnsupportedOperationException ex) {
             LOG.warn("Failed to flatten form", ex);
         }
@@ -329,12 +329,16 @@ public class AcroFormsMerger {
 
     /**
      * Makes sure the string can be displayed using appearances font
+     * 
+     * @throws IOException
      */
-    private void ensureValueCanBeDisplayed(PDVariableText field) {
+    private void ensureValueCanBeDisplayed(PDVariableText field) throws IOException {
         String value = field.getValueAsString();
         if (!FontUtils.canDisplay(value, field.getAppearanceFont())) {
             PDFont fallbackFont = FontUtils.findFontFor(form.getDocument(), value);
             field.setAppearanceOverrideFont(fallbackFont);
+            // we updated the field, let's generate a new appearance
+            field.applyChange();
             LOG.debug("Form field can't render (in appearances) it's value '{}', will use font {} for better support",
                     value, fallbackFont);
         }
