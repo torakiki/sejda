@@ -51,6 +51,8 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.graphics.image.UnsupportedTiffImageException;
 import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.sejda.sambox.util.Matrix;
+import org.sejda.sambox.util.filetypedetector.FileType;
+import org.sejda.sambox.util.filetypedetector.FileTypeDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,18 +132,20 @@ public class PageImageWriter {
     }
 
     public static PDImageXObject createFromFile(String originalFilePath) throws TaskIOException, IOException {
-        String filePath = originalFilePath;
+        File file = new File(originalFilePath);
         // we might need to pre-process the image and use a different file
 
-        Optional<File> maybeConvertedFile = convertCMYKJpegIf(filePath);
+        Optional<File> maybeConvertedFile = convertCMYKJpegIf(file);
         if(maybeConvertedFile.isPresent()) {
-            filePath = maybeConvertedFile.get().getAbsolutePath();
+            file = maybeConvertedFile.get();
         }
 
-        maybeConvertedFile = convertICCGrayPngIf(filePath);
+        maybeConvertedFile = convertICCGrayPngIf(file);
         if(maybeConvertedFile.isPresent()) {
-            filePath = maybeConvertedFile.get().getAbsolutePath();
+            file = maybeConvertedFile.get();
         }
+
+        String filePath = file.getAbsolutePath();
 
         try {
             return PDImageXObject.createFromFile(filePath);
@@ -166,6 +170,14 @@ public class PageImageWriter {
 
     public static String convertTiffToPng(String filePath) throws IOException, TaskIOException {
         return convertImageTo(filePath, "png");
+    }
+
+    private static FileType getFileType(File file) {
+        try {
+            return FileTypeDetector.detectFileType(file);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public static String convertImageTo(String filePath, String format) throws IOException, TaskIOException {
@@ -193,12 +205,10 @@ public class PageImageWriter {
      * Checks if the input file is a JPEG using CMYK
      * If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<File> convertCMYKJpegIf(String filePath) throws IOException, TaskIOException {
+    private static Optional<File> convertCMYKJpegIf(File file) throws IOException, TaskIOException {
         try {
-            String extension = FilenameUtils.getExtension(filePath).toLowerCase();
-
-            if (extension.equals("jpg") || extension.equals("jpeg")) {
-                try (ImageInputStream iis = ImageIO.createImageInputStream(new File(filePath))) {
+            if (FileType.JPEG.equals(getFileType(file))) {
+                try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                     ImageReader reader = ImageIO.getImageReadersByFormatName("jpg").next();
                     boolean isCmyk = false;
                     try {
@@ -217,7 +227,7 @@ public class PageImageWriter {
                             // twelvemonkeys JPEG plugin already converts it to rgb when reading the image
                             // just write it out
                             BufferedImage image = reader.read(0);
-                            File tmpFile = IOUtils.createTemporaryBuffer(extension);
+                            File tmpFile = IOUtils.createTemporaryBufferWithName(file.getName());
                             ImageIO.write(image, "jpg", tmpFile);
                             return Optional.of(tmpFile);
                         }
@@ -241,12 +251,10 @@ public class PageImageWriter {
      * Checks if the input file is a PNG using ICC Gray color model
      * If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<File> convertICCGrayPngIf(String filePath) throws IOException, TaskIOException {
+    private static Optional<File> convertICCGrayPngIf(File file) throws IOException, TaskIOException {
         try {
-            String extension = FilenameUtils.getExtension(filePath).toLowerCase();
-
-            if (extension.equals("png")) {
-                try (ImageInputStream iis = ImageIO.createImageInputStream(new File(filePath))) {
+            if (FileType.PNG.equals(getFileType(file))) {
+                try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
                     ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
                     boolean isICCGray = false;
                     try {
@@ -265,7 +273,7 @@ public class PageImageWriter {
                             // convert to rgb
                             BufferedImage original = reader.read(0);
                             BufferedImage rgb = toARGB(original);
-                            File tmpFile = IOUtils.createTemporaryBuffer(extension);
+                            File tmpFile = IOUtils.createTemporaryBufferWithName(file.getName());
                             ImageIO.write(rgb, "png", tmpFile);
                             return Optional.of(tmpFile);
                         }

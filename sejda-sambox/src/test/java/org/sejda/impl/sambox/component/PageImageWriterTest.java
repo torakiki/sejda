@@ -18,19 +18,17 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 
 import java.io.IOException;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
 
 public class PageImageWriterTest {
 
@@ -64,17 +62,22 @@ public class PageImageWriterTest {
     }
 
     @Test
+    public void test_CMYK_jpeg_wrong_extension() throws TaskIOException, IOException {
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/cmyk.jpg", "cmyk.png"));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(560));
+        assertThat(result.getWidth(), is(1400));
+
+        assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/cmyk.jpg").getSource()));
+    }
+
+    @Test
     public void test_Gray_ICC_png() throws TaskIOException, IOException {
         PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/icc_profile_gray.png"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
 
         assertFalse("Original bytes should not be used; the image should be converted from ICC Gray to RGB",
                 IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/icc_profile_gray.png").getSource()));
-    }
-
-    public StreamSource customNonPdfInput(String path) {
-        String extension = FilenameUtils.getExtension(path);
-        return StreamSource.newInstance(getClass().getClassLoader().getResourceAsStream(path),
-                randomAlphanumeric(16) + "." + extension);
     }
 }
