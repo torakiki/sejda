@@ -66,14 +66,6 @@ public class PDDocumentHandlerTest {
     }
 
     @Test
-    public void testFindFont() throws IOException {
-        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("pdf/alphabet.pdf"))) {
-
-            assertNotNull(handler.findFont("EDJTWM+ArialMT"));
-        }
-    }
-
-    @Test
     public void layoutAndMode() {
         PDDocumentHandler victim = new PDDocumentHandler();
         victim.initialiseBasedOn(new PDDocument());
@@ -106,13 +98,6 @@ public class PDDocumentHandlerTest {
 
             assertEquals("Imported page has different media box than source", imported.getMediaBox(), page.getMediaBox());
         }
-    }
-
-    @Test
-    public void findFont_xform_resources() throws IOException {
-        PDDocument doc = testDoc("pdf/2-up_fonts.pdf");
-        PDFont font = new PDDocumentHandler(doc).findFont("arialmt");
-        assertNotNull(font);
     }
 
     private PDDocument testDoc(String resourceName) throws IOException {
