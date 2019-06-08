@@ -37,7 +37,7 @@ import org.sejda.impl.sambox.component.PdfScaler;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.parameter.PageSize;
+import org.sejda.model.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.scale.ScaleType;

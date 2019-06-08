@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.parameter.PageSize;
+import org.sejda.model.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.scale.Margins;

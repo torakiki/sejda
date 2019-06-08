@@ -21,8 +21,8 @@ package org.sejda.model.input;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.model.parameter.PageOrientation;
-import org.sejda.model.parameter.PageSize;
+import org.sejda.model.PageOrientation;
+import org.sejda.model.PageSize;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

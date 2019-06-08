@@ -18,6 +18,7 @@ package org.sejda.model.parameter;
 
 import org.junit.Test;
 import org.sejda.TestUtils;
+import org.sejda.model.PageSize;
 import org.sejda.model.scale.Margins;
 
 public class ResizePagesParametersTest {

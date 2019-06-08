@@ -20,8 +20,8 @@ package org.sejda.model.parameter.image;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.parameter.PageOrientation;
-import org.sejda.model.parameter.PageSize;
+import org.sejda.model.PageOrientation;
+import org.sejda.model.PageSize;
 import org.sejda.model.parameter.base.MultipleSourceSingleOutputParameters;
 
 public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
