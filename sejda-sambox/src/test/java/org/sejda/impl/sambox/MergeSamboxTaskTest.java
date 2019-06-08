@@ -550,6 +550,26 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void mergeImagesAndPdfsWithSpecificPageSize() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        ImageMergeInput image = new ImageMergeInput(customNonPdfInput("image/draft.png"));
+        image.setShouldPageSizeMatchImageSize(true);
+
+        parameters.addInput(image);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox().getWidth(), 248, 0.0);
+        });
+    }
+
+    @Test
     public void mergeImagesWithTocAndFooter() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

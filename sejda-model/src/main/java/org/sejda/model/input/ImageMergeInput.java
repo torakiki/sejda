@@ -21,6 +21,8 @@ package org.sejda.model.input;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.model.parameter.PageOrientation;
+import org.sejda.model.parameter.PageSize;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,9 @@ public class ImageMergeInput implements MergeInput {
     @NotNull
     @Valid
     private Source<?> source;
+    private PageSize pageSize = PageSize.A4;
+    private boolean shouldPageSizeMatchImageSize = false;
+    private PageOrientation pageOrientation = PageOrientation.AUTO;
 
     public ImageMergeInput(Source<?> source) {
         this.source = source;
@@ -43,14 +48,40 @@ public class ImageMergeInput implements MergeInput {
         return source;
     }
 
+    public PageSize getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(PageSize pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public boolean isShouldPageSizeMatchImageSize() {
+        return shouldPageSizeMatchImageSize;
+    }
+
+    public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
+        this.shouldPageSizeMatchImageSize = shouldPageSizeMatchImageSize;
+    }
+
+    public PageOrientation getPageOrientation() {
+        return pageOrientation;
+    }
+
+    public void setPageOrientation(PageOrientation pageOrientation) {
+        this.pageOrientation = pageOrientation;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(source).toString();
+        return new ToStringBuilder(this).append(source).append(pageSize).append(shouldPageSizeMatchImageSize)
+                .append(pageOrientation).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(source).toHashCode();
+        return new HashCodeBuilder().append(source).append(pageSize).append(shouldPageSizeMatchImageSize)
+                .append(pageOrientation).toHashCode();
     }
 
     @Override
@@ -63,6 +94,9 @@ public class ImageMergeInput implements MergeInput {
         }
         ImageMergeInput input = (ImageMergeInput) other;
         return new EqualsBuilder().append(source, input.getSource())
+                .append(pageOrientation, input.pageOrientation)
+                .append(pageSize, input.pageSize)
+                .append(shouldPageSizeMatchImageSize, input.shouldPageSizeMatchImageSize)
                 .isEquals();
     }
 

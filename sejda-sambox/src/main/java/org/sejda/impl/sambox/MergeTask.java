@@ -249,6 +249,11 @@ public class MergeTask extends BaseTask<MergeParameters> {
                         String.format("Image %s was skipped, could not be processed", source.getName()), e);
             }
         };
+
+        converter.setPageSize(image.getPageSize());
+        converter.setShouldPageSizeMatchImageSize(image.isShouldPageSizeMatchImageSize());
+        converter.setPageOrientation(image.getPageOrientation());
+
         PDDocumentHandler converted = converter.convert(sources);
         String basename = FilenameUtils.getBaseName(image.getSource().getName());
         String filename = String.format("%s.pdf", basename);
