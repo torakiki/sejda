@@ -18,6 +18,12 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -30,10 +36,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Andrea Vacondio
