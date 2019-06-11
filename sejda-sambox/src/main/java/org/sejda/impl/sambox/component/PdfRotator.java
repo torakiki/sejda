@@ -46,6 +46,10 @@ public final class PdfRotator {
     public void rotate(int pageNumber, Rotation rotation) {
         LOG.debug("Applying rotation of {} degrees to page {}", rotation.getDegrees(), pageNumber);
         PDPage page = document.getPage(pageNumber - 1);
+        rotate(page, rotation);
+    }
+
+    public static void rotate(PDPage page, Rotation rotation) {
         page.setRotation(rotation.addRotation(getRotation(page.getRotation())).getDegrees());
     }
 }

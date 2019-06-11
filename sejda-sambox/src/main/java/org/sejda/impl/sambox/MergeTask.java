@@ -40,6 +40,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.*;
 import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -72,8 +73,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private TableOfContentsCreator tocCreator;
     private FilenameFooterWriter footerWriter;
     private PDRectangle currentPageSize = PDRectangle.A4;
-    private long pagesCounter = 0;
-    private long inputsCounter = 0;
+    private int pagesCounter = 0;
+    private int inputsCounter = 0;
     private int firstInputNumberOfPages = 0;
 
     @Override
@@ -131,6 +132,12 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     // so we use a page duplicate to explicitly assign inheritable resources
                     PDPage importedPage = destinationDocument.importPage(page);
                     pagesLookup.addLookupEntry(page, importedPage);
+
+                    // rotate
+                    Rotation rotation = parameters.getRotation(inputsCounter - 1);
+                    if(rotation != Rotation.DEGREES_0) {
+                        PdfRotator.rotate(importedPage, rotation);
+                    }
 
                     String sourceBaseName = FilenameUtils.getBaseName(input.getSource().getName());
 

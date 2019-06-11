@@ -41,6 +41,7 @@ import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
+import org.sejda.model.input.MergeInput;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
@@ -49,6 +50,7 @@ import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -68,12 +70,12 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         return new MergeTask();
     }
 
-    private MergeParameters setUpParameters(List<PdfMergeInput> input) {
+    private MergeParameters setUpParameters(List<? extends MergeInput> input) {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        for (PdfMergeInput current : input) {
+        for (MergeInput current : input) {
             parameters.addInput(current);
         }
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
@@ -760,6 +762,53 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             // next 3 pages are attachments_as_annots doc
             assertFooterHasText(d.getPage(16), "attachments_as_annots 17");
             assertFooterHasText(d.getPage(18), "attachments_as_annots 19");
+        });
+    }
+
+    @Test
+    public void withoutRotations() throws IOException {
+        List<MergeInput> inputs = new ArrayList<MergeInput>();
+        inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
+        inputs.add(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+
+        MergeParameters parameters = setUpParameters(inputs);
+
+        testContext.pdfOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getRotation(), 0);
+            assertEquals(d.getPage(1).getRotation(), 0);
+            assertEquals(d.getPage(2).getRotation(), 0);
+            assertEquals(d.getPage(3).getRotation(), 0);
+
+            assertEquals(d.getPage(4).getRotation(), 0);
+        });
+    }
+
+    @Test
+    public void withRotations() throws IOException {
+        List<MergeInput> inputs = new ArrayList<MergeInput>();
+        inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
+        inputs.add(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+
+        MergeParameters parameters = setUpParameters(inputs);
+        parameters.setRotations(Arrays.asList(Rotation.DEGREES_90, Rotation.DEGREES_180));
+
+        testContext.pdfOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getRotation(), 90);
+            assertEquals(d.getPage(1).getRotation(), 90);
+            assertEquals(d.getPage(2).getRotation(), 90);
+            assertEquals(d.getPage(3).getRotation(), 90);
+
+            assertEquals(d.getPage(4).getRotation(), 180);
         });
     }
 

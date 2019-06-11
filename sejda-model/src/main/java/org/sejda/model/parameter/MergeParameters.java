@@ -39,6 +39,7 @@ import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
@@ -71,6 +72,9 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     /* Makes all pages same width as the first page */
     private boolean normalizePageSizes = false;
     private boolean firstInputCoverTitle = false;
+
+    @Valid
+    private List<Rotation> rotations = new ArrayList<>();
 
     @Override
     public SingleTaskOutput getOutput() {
@@ -188,11 +192,28 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
         this.firstInputCoverTitle = firstInputCoverTitle;
     }
 
+    public List<Rotation> getRotations() {
+        return rotations;
+    }
+
+    public void setRotations(List<Rotation> rotations) {
+        this.rotations = rotations;
+    }
+
+    public Rotation getRotation(int index) {
+        if(index >= rotations.size()) {
+            return Rotation.DEGREES_0;
+        }
+
+        return rotations.get(index);
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
                 .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(output).append(filenameFooter)
                 .append(normalizePageSizes).append(catalogPageLabelsPolicy).append(firstInputCoverTitle)
+                .append(rotations)
                 .toHashCode();
     }
 
@@ -212,6 +233,7 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
                 .append(normalizePageSizes, params.isNormalizePageSizes())
                 .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
                 .append(firstInputCoverTitle, params.firstInputCoverTitle)
+                .append(rotations, params.rotations)
                 .isEquals();
     }
 }
