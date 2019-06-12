@@ -23,6 +23,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.PageOrientation;
 import org.sejda.model.PageSize;
 import org.sejda.model.parameter.base.MultipleSourceSingleOutputParameters;
+import org.sejda.model.rotation.Rotation;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
 
@@ -30,6 +35,9 @@ public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
     private boolean pageSizeMatchImageSize = false;
     private PageOrientation pageOrientation = PageOrientation.AUTO;
     private float marginInches;
+
+    @Valid
+    private List<Rotation> rotations = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
@@ -44,6 +52,7 @@ public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
                 .append(pageSize, other.pageSize)
                 .append(pageOrientation, other.pageOrientation)
                 .append(marginInches, other.marginInches)
+                .append(rotations, other.rotations)
                 .isEquals();
     }
 
@@ -55,6 +64,7 @@ public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
                 .append(pageSizeMatchImageSize)
                 .append(pageOrientation)
                 .append(marginInches)
+                .append(rotations)
                 .toHashCode();
     }
 
@@ -88,5 +98,13 @@ public class JpegToPdfParameters extends MultipleSourceSingleOutputParameters {
 
     public void setMarginInches(float marginInches) {
         this.marginInches = marginInches;
+    }
+
+    public List<Rotation> getRotations() {
+        return rotations;
+    }
+
+    public void setRotations(List<Rotation> rotations) {
+        this.rotations = rotations;
     }
 }

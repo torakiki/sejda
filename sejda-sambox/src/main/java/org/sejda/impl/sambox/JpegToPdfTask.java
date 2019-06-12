@@ -28,11 +28,13 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfRotator;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.Source;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
@@ -92,6 +94,14 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
         converter.setMarginInches(parameters.getMarginInches());
 
         documentHandler = converter.convert(parameters.getSourceList());
+
+        PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
+        for(int i = 0; i < parameters.getRotations().size(); i++) {
+            Rotation rotation = parameters.getRotations().get(i);
+            if(rotation != null && rotation != Rotation.DEGREES_0) {
+                rotator.rotate(i + 1, rotation);
+            }
+        }
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());

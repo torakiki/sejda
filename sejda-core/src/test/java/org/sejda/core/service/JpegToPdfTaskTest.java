@@ -25,6 +25,7 @@ import static org.junit.Assert.assertThat;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.PageOrientation;
 import org.sejda.model.PageSize;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -219,6 +221,44 @@ public abstract class JpegToPdfTaskTest extends BaseTaskTest<JpegToPdfParameters
         testContext.assertTaskCompleted();
         testContext.forEachPdfOutput(d -> {
             assertImageAtLocation(d, d.getPage(0), new Point(42, 13), 757, 567);
+        });
+    }
+
+    @Test
+    public void withoutRotations() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+
+        parameters.addSource(customNonPdfInputAsFileSource("image/draft.png"));
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getRotation(), 0);
+            assertEquals(d.getPage(1).getRotation(), 0);
+        });
+    }
+
+    @Test
+    public void withRotations() throws Exception {
+        JpegToPdfParameters parameters = new JpegToPdfParameters();
+
+        parameters.addSource(customNonPdfInputAsFileSource("image/draft.png"));
+        parameters.addSource(customNonPdfInputAsFileSource("image/no_exif.JPG"));
+
+        parameters.setRotations(Arrays.asList(Rotation.DEGREES_90, Rotation.DEGREES_180));
+
+        testContext.pdfOutputTo(parameters);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getRotation(), 90);
+            assertEquals(d.getPage(1).getRotation(), 180);
         });
     }
 
