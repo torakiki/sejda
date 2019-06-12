@@ -36,14 +36,14 @@ import org.sejda.sambox.pdmodel.PDDocument;
  */
 public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.OutlineLevelsHandler {
 
-    private Pattern titleMatchingPattern = Pattern.compile(".+");
+    private Pattern titleMatchingPattern = Pattern.compile(".+", Pattern.DOTALL);
     private PDDocument document;
 
     public SamboxOutlineLevelsHandler(PDDocument document, String matchingTitleRegEx) {
         requireNonNull(document, "Unable to retrieve bookmarks from a null document.");
         this.document = document;
         if (isNotBlank(matchingTitleRegEx)) {
-            this.titleMatchingPattern = Pattern.compile(matchingTitleRegEx);
+            this.titleMatchingPattern = Pattern.compile(matchingTitleRegEx, Pattern.DOTALL);
         }
     }
 
@@ -74,7 +74,8 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                         for (int j = i + 1; j < flatOutline.size(); j++) {
                             OutlineItem after = flatOutline.get(j);
                             if (after.level <= item.level) {
-                                // Looking at bookmark's xyzDestination flag is technically more accurate, but in practice outlines contain non xyzDestinations for sections that start half-page
+                                // Looking at bookmark's xyzDestination flag is technically more accurate, but in practice outlines contain non xyzDestinations for sections that
+                                // start half-page
                                 // resulting in the last half page missing from the extract.
 
                                 // Let's see. Maybe better to error on the safe side and include one extra page than have parts missing?
@@ -92,7 +93,7 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                         }
 
                         // handle first page quirk when includePageAfter is false
-                        if(startPage == 1 && endPage == 0) {
+                        if (startPage == 1 && endPage == 0) {
                             endPage = 1;
                         }
 

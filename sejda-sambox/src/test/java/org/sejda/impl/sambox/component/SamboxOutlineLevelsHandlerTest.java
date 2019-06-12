@@ -89,4 +89,12 @@ public class SamboxOutlineLevelsHandlerTest {
         assertEquals(0, victim.getPageDestinationsForLevel(2).getPages().size());
         assertEquals(1, victim.getPageDestinationsForLevel(3).getPages().size());
     }
+
+    @Test
+    public void newLinesInBookmarks() throws IOException {
+        try (PDDocument document = fromResource("pdf/new_line_in_bookmarks.pdf")) {
+            org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
+            assertEquals(3, victim.getPageDestinationsForLevel(1).getPages().size());
+        }
+    }
 }
