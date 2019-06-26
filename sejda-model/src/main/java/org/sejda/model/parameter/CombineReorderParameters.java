@@ -26,8 +26,8 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.FileIndexAndPage;
+import org.sejda.model.input.MergeInput;
 import org.sejda.model.outline.OutlinePolicy;
-import org.sejda.model.parameter.base.MultiplePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.validation.constraint.NotEmpty;
@@ -38,7 +38,7 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * Allows pages to appear in a different order in the output than in the original source.
  */
 @SingleOutputAllowedExtensions
-public class CombineReorderParameters extends MultiplePdfSourceSingleOutputParameters {
+public class CombineReorderParameters extends BaseMergeParameters<MergeInput> {
 
     @NotEmpty
     private List<FileIndexAndPage> pages = new ArrayList<FileIndexAndPage>();

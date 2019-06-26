@@ -18,13 +18,16 @@
  */
 package org.sejda.impl.sambox.component.image;
 
+import org.apache.commons.io.FilenameUtils;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.Source;
+import org.sejda.model.input.*;
 import org.sejda.model.PageOrientation;
 import org.sejda.model.PageSize;
+import org.sejda.model.parameter.BaseMergeParameters;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
@@ -32,7 +35,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 
 public class ImagesToPdfDocumentConverter {
 
@@ -147,5 +156,44 @@ public class ImagesToPdfDocumentConverter {
 
     public void setMarginInches(float marginInches) {
         this.marginInches = marginInches;
+    }
+
+    public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters, TaskExecutionContext context) throws TaskException {
+        // if images were supplied, convert them to PDF
+        List<MergeInput> newInputList = new ArrayList<>();
+        for (MergeInput input : parameters.getInputList()) {
+            if (input instanceof ImageMergeInput) {
+                // collect all consecutive images and convert them to a PDF document
+                newInputList.add(convertImagesToPdfMergeInput((ImageMergeInput) input, context));
+            } else {
+                newInputList.add(input);
+            }
+        }
+
+        parameters.setInputList(newInputList);
+    }
+
+    private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context) throws TaskException {
+        List<Source<?>> sources = Collections.singletonList(image.getSource());
+        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter(){
+            @Override
+            public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
+                context.assertTaskIsLenient(e);
+                notifyEvent(context.notifiableTaskMetadata()).taskWarning(
+                        String.format("Image %s was skipped, could not be processed", source.getName()), e);
+            }
+        };
+
+        converter.setPageSize(image.getPageSize());
+        converter.setShouldPageSizeMatchImageSize(image.isShouldPageSizeMatchImageSize());
+        converter.setPageOrientation(image.getPageOrientation());
+
+        PDDocumentHandler converted = converter.convert(sources);
+        String basename = FilenameUtils.getBaseName(image.getSource().getName());
+        String filename = String.format("%s.pdf", basename);
+        File convertedTmpFile = createTemporaryBufferWithName(filename);
+        converted.setDocumentTitle(basename);
+        converted.savePDDocument(convertedTmpFile);
+        return new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
     }
 }

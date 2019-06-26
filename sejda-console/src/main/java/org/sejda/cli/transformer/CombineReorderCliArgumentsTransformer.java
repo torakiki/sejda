@@ -16,10 +16,17 @@
  */
 package org.sejda.cli.transformer;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.sejda.cli.model.CombineReorderTaskCliArguments;
+import org.sejda.conversion.MultiplePdfMergeInputAdapter;
+import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.FileIndexAndPage;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.rotation.Rotation;
 
@@ -30,8 +37,13 @@ public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTrans
     public CombineReorderParameters toTaskParameters(CombineReorderTaskCliArguments taskCliArguments) {
         CombineReorderParameters parameters = new CombineReorderParameters();
         populateAbstractParameters(parameters, taskCliArguments);
-        populateSourceParameters(parameters, taskCliArguments);
         populateOutputTaskParameters(parameters, taskCliArguments);
+
+        MultiplePdfMergeInputAdapter mergeInputsAdapter = extractPdfMergeInputs(taskCliArguments);
+
+        for (PdfMergeInput eachMergeInput : mergeInputsAdapter.getPdfMergeInputs()) {
+            parameters.addInput(eachMergeInput);
+        }
 
         taskCliArguments.getPages().stream()
                 .map(in -> parseIndexAndPage(in))
@@ -40,6 +52,18 @@ public class CombineReorderCliArgumentsTransformer extends BaseCliArgumentsTrans
                 .forEach(item -> parameters.addPage(item.getFileIndex(), item.getPage(), item.getRotation()));
 
         return parameters;
+    }
+
+    private MultiplePdfMergeInputAdapter extractPdfMergeInputs(CombineReorderTaskCliArguments taskCliArguments) {
+        List<PdfFileSource> inputFiles = taskCliArguments.getFiles().stream().flatMap(a -> a.getPdfFileSources().stream())
+                .collect(Collectors.toList());
+
+        if (inputFiles.isEmpty()) {
+            throw new SejdaRuntimeException("No input files specified");
+        }
+
+        MultiplePdfMergeInputAdapter mergeInputsAdapter = new MultiplePdfMergeInputAdapter(inputFiles, Collections.emptyList());
+        return mergeInputsAdapter;
     }
 
     private Optional<FileIndexAndPage> parseIndexAndPage(String in) {

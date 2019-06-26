@@ -23,11 +23,15 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.ImageMergeInput;
+import org.sejda.model.input.MergeInput;
+import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.CombineReorderParameters;
@@ -43,18 +47,24 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
 
     private CombineReorderParameters parameters;
 
-    private void setUpParameters(List<PdfSource<?>> sources) {
+    private void setUpParameters() {
+        setUpParameters(Collections.emptyList());
+    }
+
+    private void setUpParameters(List<MergeInput> inputs) {
         parameters = new CombineReorderParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSources(sources);
+        inputs.forEach(source -> {
+           parameters.addInput(source);
+        });
     }
 
-    private List<PdfSource<?>> basicInputs() {
-        List<PdfSource<?>> input = new ArrayList<PdfSource<?>>();
-        input.add(customInput("pdf/multipage-test-a.pdf"));
-        input.add(customInput("pdf/multipage-test-b.pdf"));
+    private List<MergeInput> basicInputs() {
+        List<MergeInput> input = new ArrayList<>();
+        input.add(new PdfMergeInput(customInput("pdf/multipage-test-a.pdf")));
+        input.add(new PdfMergeInput(customInput("pdf/multipage-test-b.pdf")));
         return input;
     }
 
@@ -145,9 +155,9 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
 
     @Test
     public void keepsOutline() throws IOException {
-        List<PdfSource<?>> inputs = new ArrayList<PdfSource<?>>();
-        inputs.add(customInput("pdf/large_outline.pdf"));
-        inputs.add(customInput("pdf/test_outline.pdf"));
+        List<MergeInput> inputs = new ArrayList<>();
+        inputs.add(new PdfMergeInput(customInput("pdf/large_outline.pdf")));
+        inputs.add(new PdfMergeInput(customInput("pdf/test_outline.pdf")));
         setUpParameters(inputs);
 
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
@@ -180,9 +190,9 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
 
     @Test
     public void discardsOutline() throws IOException {
-        List<PdfSource<?>> inputs = new ArrayList<PdfSource<?>>();
-        inputs.add(customInput("pdf/large_outline.pdf"));
-        inputs.add(customInput("pdf/test_outline.pdf"));
+        List<MergeInput> inputs = new ArrayList<>();
+        inputs.add(new PdfMergeInput(customInput("pdf/large_outline.pdf")));
+        inputs.add(new PdfMergeInput(customInput("pdf/test_outline.pdf")));
         setUpParameters(inputs);
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
@@ -201,6 +211,55 @@ public abstract class CombineReorderTaskTest extends BaseTaskTest<CombineReorder
 
         testContext.assertTaskCompleted();
         testContext.assertHasOutline(false);
+    }
+
+    @Test
+    public void mergeImagesAndPdfs() throws IOException {
+        setUpParameters();
+
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+
+        parameters.addPage(1, 3);
+        // image here
+        parameters.addPage(0, 1);
+
+        parameters.addPage(1, 2);
+        parameters.addPage(1, 1);
+
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4);
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(Arrays.asList(2), getPagesContainingImages(d));
+        });
+    }
+
+    @Test
+    public void mergeImagesAndPdfsWithSpecificPageSize() throws IOException {
+        setUpParameters();
+
+        ImageMergeInput image = new ImageMergeInput(customNonPdfInput("image/draft.png"));
+        image.setShouldPageSizeMatchImageSize(true);
+        parameters.addInput(image);
+
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+
+        // image here
+        parameters.addPage(0, 1);
+        parameters.addPage(1, 3);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(2);
+        testContext.forEachPdfOutput(d -> {
+            assertEquals(d.getPage(0).getMediaBox().getWidth(), 248, 0.0);
+        });
     }
 
     void assertPageHasText(PDDocument doc, int page, String expected) throws IOException {

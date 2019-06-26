@@ -22,9 +22,7 @@ package org.sejda.model.parameter;
 import static java.util.Optional.ofNullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -32,16 +30,11 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.MergeInput;
-import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
-import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.toc.ToCPolicy;
-import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 /**
@@ -51,11 +44,8 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
  * 
  */
 @SingleOutputAllowedExtensions
-public class MergeParameters extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
+public class MergeParameters extends BaseMergeParameters<MergeInput> {
 
-    @NotEmpty
-    @Valid
-    private List<MergeInput> inputList = new ArrayList<>();
     private boolean blankPageIfOdd = false;
     @NotNull
     private OutlinePolicy outlinePolicy = OutlinePolicy.RETAIN;
@@ -63,9 +53,6 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
     private AcroFormPolicy acroFormPolicy = AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS;
     @NotNull
     private CatalogPageLabelsPolicy catalogPageLabelsPolicy = CatalogPageLabelsPolicy.DISCARD;
-    @Valid
-    @NotNull
-    private SingleTaskOutput output;
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
     private boolean filenameFooter = false;
@@ -75,43 +62,6 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
 
     @Valid
     private List<Rotation> rotations = new ArrayList<>();
-
-    @Override
-    public SingleTaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(SingleTaskOutput output) {
-        this.output = output;
-    }
-
-    /**
-     * @return an unmodifiable view of the inputList
-     */
-    public List<MergeInput> getInputList() {
-        return Collections.unmodifiableList(inputList);
-    }
-
-    public void setInputList(List<MergeInput> inputList) {
-        this.inputList = inputList;
-    }
-
-    public List<PdfMergeInput> getPdfInputList() {
-        return Collections.unmodifiableList(
-                inputList.stream().filter(input -> input instanceof PdfMergeInput)
-                        .map(input -> (PdfMergeInput) input).collect(Collectors.toList())
-        );
-    }
-
-    /**
-     * adds the given input to the list of inputs for the merge task.
-     * 
-     * @param input
-     */
-    public void addInput(MergeInput input) {
-        this.inputList.add(input);
-    }
 
     public boolean isBlankPageIfOdd() {
         return blankPageIfOdd;
@@ -210,8 +160,8 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(acroFormPolicy)
-                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(output).append(filenameFooter)
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(acroFormPolicy)
+                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(filenameFooter)
                 .append(normalizePageSizes).append(catalogPageLabelsPolicy).append(firstInputCoverTitle)
                 .append(rotations)
                 .toHashCode();
@@ -226,10 +176,10 @@ public class MergeParameters extends AbstractPdfOutputParameters implements Sing
             return false;
         }
         MergeParameters params = (MergeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.inputList)
+        return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(acroFormPolicy, params.getAcroFormPolicy()).append(blankPageIfOdd, params.isBlankPageIfOdd())
                 .append(outlinePolicy, params.getOutlinePolicy()).append(tocPolicy, params.getTableOfContentsPolicy())
-                .append(output, params.getOutput()).append(filenameFooter, params.isFilenameFooter())
+                .append(filenameFooter, params.isFilenameFooter())
                 .append(normalizePageSizes, params.isNormalizePageSizes())
                 .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
                 .append(firstInputCoverTitle, params.firstInputCoverTitle)

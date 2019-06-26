@@ -19,13 +19,13 @@
 package org.sejda.model.parameter;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.TestUtils;
 import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 
@@ -55,7 +55,7 @@ public class CombineReorderParametersTest {
     public void testInvalidParametersEmptyList() throws IOException {
         CombineReorderParameters victim = new CombineReorderParameters();
         victim.setOutput(new FileTaskOutput(folder.newFile("out.pdf")));
-        victim.addSources(Arrays.asList(PdfFileSource.newInstanceNoPassword(folder.newFile("chuck.pdf"))));
+        victim.addInput(new PdfMergeInput(PdfFileSource.newInstanceNoPassword(folder.newFile("chuck.pdf"))));
         TestUtils.assertInvalidParameters(victim);
     }
 }

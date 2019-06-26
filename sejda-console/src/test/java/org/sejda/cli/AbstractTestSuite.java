@@ -45,7 +45,7 @@ import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.*;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
-import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.parameter.BaseMergeParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -113,10 +113,8 @@ public abstract class AbstractTestSuite {
     }
 
     protected void assertHasFileSource(TaskParameters parameters, File file, String password) {
-        if (parameters instanceof AlternateMixMultipleInputParameters) {
-            assertHasFileSource((AlternateMixMultipleInputParameters) parameters, file, password);
-        } else if (parameters instanceof MergeParameters) {
-            assertHasFileSource((MergeParameters) parameters, file, password);
+        if (parameters instanceof BaseMergeParameters) {
+            assertHasFileSource((BaseMergeParameters) parameters, file, password);
         } else if (parameters instanceof SinglePdfSourceTaskParameters) {
             assertHasFileSource((SinglePdfSourceTaskParameters) parameters, file, password);
         } else if (parameters instanceof MultiplePdfSourceTaskParameters) {
@@ -132,7 +130,7 @@ public abstract class AbstractTestSuite {
                 matchesPdfFileSource(file, password, parameters.getSource()));
     }
 
-    protected void assertHasFileSource(MergeParameters parameters, File file, String password) {
+    protected void assertHasFileSource(BaseMergeParameters<?> parameters, File file, String password) {
         List<PdfSource<?>> sourcesList = new ArrayList<PdfSource<?>>();
         for (PdfMergeInput eachInput : parameters.getPdfInputList()) {
             sourcesList.add(eachInput.getSource());

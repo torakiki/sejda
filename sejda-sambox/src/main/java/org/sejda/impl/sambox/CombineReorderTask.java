@@ -25,19 +25,15 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.sejda.common.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.FileIndexAndPage;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.input.*;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -90,7 +86,11 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
         this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
                 this.destinationDocument.getUnderlyingPDDocument());
 
-        for (PdfSource<?> input : parameters.getSourceList()) {
+        ImagesToPdfDocumentConverter.convertImageMergeInputToPdf(parameters, executionContext());
+
+        for (PdfMergeInput mergeInput : parameters.getPdfInputList()) {
+            PdfSource<?> input = mergeInput.getSource();
+
             LOG.debug("Opening {}", input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.open(sourceOpener);
             documents.add(sourceDocumentHandler);
