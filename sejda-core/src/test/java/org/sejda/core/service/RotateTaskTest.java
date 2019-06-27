@@ -32,6 +32,7 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
+import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
  * Abstract test unit for the rotate task
@@ -145,5 +146,38 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
             assertEquals(180, d.getPage(3).getRotation());
         });
 
+    }
+
+    @Test
+    public void testDifferentRotationsPerSource() throws IOException {
+        parameters = new RotateParameters();
+
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+
+        parameters.addPageRangePerSource(0, PageRange.one(1), Rotation.DEGREES_90);
+        parameters.addPageRangePerSource(1, PageRange.one(1), Rotation.DEGREES_270);
+        // affects both sources
+        parameters.addPageRange(PageRange.one(2), Rotation.DEGREES_180);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput("short-test-file.pdf", d -> {
+            assertPageRotation(d, 0, 90);
+            assertPageRotation(d, 1, 180);
+        });
+
+        testContext.forPdfOutput("medium-test-file.pdf", d -> {
+            assertPageRotation(d, 0, 270);
+            assertPageRotation(d, 1, 180);
+        });
+    }
+
+    private void assertPageRotation(PDDocument doc, int pageIndex, int expectedDegrees) {
+        assertEquals(expectedDegrees, doc.getPage(pageIndex).getRotation());
     }
 }

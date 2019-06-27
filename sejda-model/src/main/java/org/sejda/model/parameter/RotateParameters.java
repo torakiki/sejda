@@ -20,43 +20,48 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.common.collection.NullSafeSet;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdf.page.PageRange;
-import org.sejda.model.pdf.page.PageRangeSelection;
-import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
 
 /**
- * Parameter class for the rotation manipulation. Accepts a list of {@link org.sejda.model.input.PdfSource} where the {@link Rotation} will be applied to the given
- * {@link PredefinedSetOfPages} or to the given {@link PageRange}s.
+ * Parameter class for the rotation manipulation.
+ *
+ * Accepts a list of {@link org.sejda.model.input.PdfSource}
+ *
+ * Can specify a rotation to be applied to a predefined set of pages (all, even, odd), all sources.
+ * Can specify a rotation to be applied per page range, all sources.
+ * Can specify a rotation to be applied pe page range, per source.
  * 
  * @author Andrea Vacondio
+ * @author Edi Weissmann
  * 
  */
-public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters
-        implements PagesSelection, PageRangeSelection {
+public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @Valid
     @NotNull
+    // same rotation all pages, all sources
     private Rotation rotation = null;
 
     @NotNull
+    // same rotation per page set, all sources
     private PredefinedSetOfPages predefinedSetOfPages;
+
     @Valid
+    // different rotations per page, all sources
     private final Map<PageRange, Rotation> pageSelection = new HashMap<>();
+
+    // different rotations per page, per source
+    private Map<Integer, Map<PageRange, Rotation>> pageSelectionPerSource = new HashMap<>();
 
     public RotateParameters(Rotation rotation, PredefinedSetOfPages predefinedSetOfPages) {
         this.rotation = rotation;
@@ -81,6 +86,20 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters
                 .orElse(rotation);
     }
 
+    public Rotation getRotation(int sourceIndex, int page) {
+        Map<PageRange, Rotation> pageSelection = pageSelectionPerSource.get(sourceIndex);
+        if(pageSelection != null) {
+            for(PageRange range: pageSelection.keySet()) {
+                if(range.contains(page)) {
+                    return pageSelection.get(range);
+                }
+            }
+        }
+
+        // no source specific rotation defined for page
+        return getRotation(page);
+    }
+
     public void addPageRange(PageRange range) {
         pageSelection.put(range, this.rotation);
     }
@@ -93,41 +112,27 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters
         ranges.forEach(this::addPageRange);
     }
 
+    public void addPageRangePerSource(int sourceIndex, PageRange range, Rotation rotation) {
+        if(!pageSelectionPerSource.containsKey(sourceIndex)) {
+            pageSelectionPerSource.put(sourceIndex, new HashMap<>());
+        }
+
+        Map<PageRange, Rotation> pageSelection = pageSelectionPerSource.get(sourceIndex);
+        pageSelection.put(range, rotation);
+    }
+
     public PredefinedSetOfPages getPredefinedSetOfPages() {
         return predefinedSetOfPages;
     }
 
-    /**
-     * @return an unmodifiable view of the pageSelection
-     */
-    @Override
-    public Set<PageRange> getPageSelection() {
-        return Collections.unmodifiableSet(pageSelection.keySet());
-    }
-
-    /**
-     * @param upperLimit
-     *            the number of pages of the document (upper limit).
-     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
-     *         case of {@link PredefinedSetOfPages}.
-     * @see PagesSelection#getPages(int)
-     */
-    @Override
-    public Set<Integer> getPages(int upperLimit) {
-        if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
-            return predefinedSetOfPages.getPages(upperLimit);
-        }
-        Set<Integer> retSet = new NullSafeSet<Integer>();
-        for (PageRange range : getPageSelection()) {
-            retSet.addAll(range.getPages(upperLimit));
-        }
-        return retSet;
+    public Map<PageRange, Rotation> getPageSelection() {
+        return pageSelection;
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(rotation).append(predefinedSetOfPages)
-                .append(pageSelection).toHashCode();
+                .append(pageSelection).append(pageSelectionPerSource).toHashCode();
     }
 
     @Override
@@ -141,6 +146,9 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters
         RotateParameters parameter = (RotateParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
-                .append(pageSelection, parameter.pageSelection).append(rotation, parameter.getRotation()).isEquals();
+                .append(pageSelection, parameter.pageSelection)
+                .append(rotation, parameter.rotation)
+                .append(pageSelectionPerSource, parameter.pageSelectionPerSource)
+                .isEquals();
     }
 }

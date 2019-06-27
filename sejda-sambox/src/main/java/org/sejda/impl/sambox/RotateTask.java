@@ -37,6 +37,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
@@ -70,7 +71,9 @@ public class RotateTask extends BaseTask<RotateParameters> {
     public void execute(RotateParameters parameters) throws TaskException {
         int currentStep = 0;
 
-        for (PdfSource<?> source : parameters.getSourceList()) {
+        for (int sourceIndex = 0; sourceIndex < parameters.getSourceList().size(); sourceIndex++) {
+            PdfSource<?> source = parameters.getSourceList().get(sourceIndex);
+
             executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
@@ -83,14 +86,18 @@ public class RotateTask extends BaseTask<RotateParameters> {
                 LOG.debug("Created output on temporary buffer {}", tmpFile);
 
                 PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
-                for (Integer page : parameters.getPages(documentHandler.getNumberOfPages())) {
+                for (int page = 1; page <= documentHandler.getNumberOfPages(); page++) {
                     executionContext().assertTaskNotCancelled();
-                    try {
-                        rotator.rotate(page, parameters.getRotation(page));
-                    } catch (PageNotFoundException e) {
-                        executionContext().assertTaskIsLenient(e);
-                        notifyEvent(executionContext().notifiableTaskMetadata())
-                                .taskWarning(String.format("Page %d was skipped, could not be rotated", page), e);
+                    Rotation rotation = parameters.getRotation(sourceIndex, page);
+
+                    if(rotation != Rotation.DEGREES_0) {
+                        try {
+                            rotator.rotate(page, rotation);
+                        } catch (PageNotFoundException e) {
+                            executionContext().assertTaskIsLenient(e);
+                            notifyEvent(executionContext().notifiableTaskMetadata())
+                                    .taskWarning(String.format("Page %d was skipped, could not be rotated", page), e);
+                        }
                     }
                 }
 

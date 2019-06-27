@@ -143,4 +143,8 @@ public class PageRange implements PagesSelection {
         return new EqualsBuilder().append(start, range.getStart()).append(end, range.getEnd()).isEquals();
     }
 
+    public static PageRange one(int page) {
+        return new PageRange(page, page);
+    }
+
 }

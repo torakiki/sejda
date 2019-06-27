@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.sejda.cli.command.StandardTestableTask;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
 
 /**
@@ -67,19 +68,19 @@ public class RotateTaskTest extends AbstractTaskTest {
     @Test
     public void predefinedPages_ALL_PAGES() {
         RotateParameters parameters = defaultCommandLine().with("-m", "all").invokeSejdaConsole();
-        assertContainsAll(Arrays.asList(1, 2, 3, 4, 5), parameters.getPages(5));
+        assertEquals(PredefinedSetOfPages.ALL_PAGES, parameters.getPredefinedSetOfPages());
     }
 
     @Test
     public void predefinedPages_ODD_PAGES() {
         RotateParameters parameters = defaultCommandLine().with("-m", "odd").invokeSejdaConsole();
-        assertContainsAll(Arrays.asList(1, 3, 5), parameters.getPages(5));
+        assertEquals(PredefinedSetOfPages.ODD_PAGES, parameters.getPredefinedSetOfPages());
     }
 
     @Test
     public void predefinedPages_EVEN_PAGES() {
         RotateParameters parameters = defaultCommandLine().with("-m", "even").invokeSejdaConsole();
-        assertContainsAll(Arrays.asList(2, 4), parameters.getPages(5));
+        assertEquals(PredefinedSetOfPages.EVEN_PAGES, parameters.getPredefinedSetOfPages());
     }
 
     @Test
@@ -87,7 +88,7 @@ public class RotateTaskTest extends AbstractTaskTest {
         RotateParameters parameters = defaultCommandLine().with("-s", "3,5,8-10,2,2,9-9,30-")
                 .invokeSejdaConsole();
 
-        assertContainsAll(parameters.getPageSelection(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
+        assertContainsAll(parameters.getPageSelection().keySet(), Arrays.asList(new PageRange(3, 3), new PageRange(5, 5),
                 new PageRange(8, 10), new PageRange(2, 2), new PageRange(9, 9), new PageRange(30)));
     }
 
