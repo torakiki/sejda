@@ -94,9 +94,10 @@ public class RotateTask extends BaseTask<RotateParameters> {
                         try {
                             rotator.rotate(page, rotation);
                         } catch (PageNotFoundException e) {
+                            String warningMessage = String.format("Page %d of %s was skipped, could not be rotated",
+                                    page, source.getName());
                             executionContext().assertTaskIsLenient(e);
-                            notifyEvent(executionContext().notifiableTaskMetadata())
-                                    .taskWarning(String.format("Page %d was skipped, could not be rotated", page), e);
+                            notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(warningMessage, e);
                         }
                     }
                 }
