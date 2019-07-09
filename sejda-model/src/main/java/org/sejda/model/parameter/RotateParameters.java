@@ -82,8 +82,13 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
     }
 
     public Rotation getRotation(int page) {
+        Rotation defaultRotation = Rotation.DEGREES_0;
+        if(predefinedSetOfPages.includes(page)) {
+            defaultRotation = rotation;
+        }
+
         return pageSelection.keySet().stream().filter(range -> range.contains(page)).findFirst().map(pageSelection::get)
-                .orElse(rotation);
+                .orElse(defaultRotation);
     }
 
     public Rotation getRotation(int sourceIndex, int page) {

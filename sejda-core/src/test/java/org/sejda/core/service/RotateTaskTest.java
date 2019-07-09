@@ -20,7 +20,9 @@
  */
 package org.sejda.core.service;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
@@ -146,6 +148,28 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
             assertEquals(180, d.getPage(3).getRotation());
         });
 
+    }
+
+    @Test
+    public void testPredefinedSetOfPages() throws IOException {
+        parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.EVEN_PAGES);
+
+        parameters.addSource(regularInput());
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        assertThat(parameters.getRotation(0), is(Rotation.DEGREES_180));
+        assertThat(parameters.getRotation(1), is(Rotation.DEGREES_0));
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forEachPdfOutput(d -> {
+            assertPageRotation(d, 0, 0);
+            assertPageRotation(d, 1, 180);
+            assertPageRotation(d, 2, 0);
+            assertPageRotation(d, 3, 180);
+        });
     }
 
     @Test

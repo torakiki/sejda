@@ -19,9 +19,9 @@
  */
 package org.sejda.model.pdf.page;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Andrea Vacondio
@@ -35,5 +35,16 @@ public class PredefinedSetOfPagesTest {
         assertEquals(5, PredefinedSetOfPages.EVEN_PAGES.getPages(10).size());
         assertEquals(5, PredefinedSetOfPages.ODD_PAGES.getPages(10).size());
         assertEquals(0, PredefinedSetOfPages.NONE.getPages(0).size());
+    }
+
+    @Test
+    public void includes() {
+        assertTrue(PredefinedSetOfPages.ALL_PAGES.includes(2));
+        assertTrue(PredefinedSetOfPages.EVEN_PAGES.includes(2));
+        assertTrue(PredefinedSetOfPages.ODD_PAGES.includes(3));
+
+        assertFalse(PredefinedSetOfPages.ODD_PAGES.includes(2));
+        assertFalse(PredefinedSetOfPages.NONE.includes(2));
+        assertFalse(PredefinedSetOfPages.EVEN_PAGES.includes(3));
     }
 }

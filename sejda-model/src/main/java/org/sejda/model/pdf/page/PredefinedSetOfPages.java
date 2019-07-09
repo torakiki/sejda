@@ -21,6 +21,11 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
             }
             return retSet;
         }
+
+        @Override
+        public boolean includes(int page) {
+            return true;
+        }
     },
     EVEN_PAGES("even") {
         @Override
@@ -30,6 +35,11 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
                 retSet.add(i);
             }
             return retSet;
+        }
+
+        @Override
+        public boolean includes(int page) {
+            return page % 2 == 0;
         }
     },
     ODD_PAGES("odd") {
@@ -42,11 +52,21 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
             return retSet;
         }
 
+        @Override
+        public boolean includes(int page) {
+            return page % 2 == 1;
+        }
+
     },
     NONE("none") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
             return new TreeSet<Integer>();
+        }
+
+        @Override
+        public boolean includes(int page) {
+            return false;
         }
     };
 
@@ -58,6 +78,8 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
      */
     @Override
     public abstract SortedSet<Integer> getPages(int totalNumberOfPage);
+
+    public abstract boolean includes(int page);
 
     private String displayName;
 
