@@ -87,7 +87,9 @@ public final class IOUtils {
     }
 
     private static Path tmpFile(Path location) throws IOException {
-        return Files.createTempFile(location, "." + BUFFER_NAME, null);
+        // don't add leading dot on Windows
+        String prefix = (IS_OS_WINDOWS ? "" : ".") + BUFFER_NAME;
+        return Files.createTempFile(location, prefix, null);
     }
 
     /**
