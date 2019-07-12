@@ -24,6 +24,7 @@ import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -277,7 +278,7 @@ public class TaskTestContext implements Closeable {
     }
 
     /**
-     * asserts that a multiple output task has generated the given number of output files
+     * asserts that a multiple output task has generated the given number of output files, hidden files don't count
      * 
      * @return
      * @throws IOException
@@ -287,23 +288,39 @@ public class TaskTestContext implements Closeable {
             return assertEmptyMultipleOutput();
         }
         requireMultipleOutputs();
+        assertEquals("An unexpected number of output files has been created: ", size,
+                Files.list(fileOutput.toPath()).filter(p -> {
+                    if (IS_OS_WINDOWS) {
+                        try {
+                            return !(Boolean) Files.getAttribute(p, "dos:hidden");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
+                    if (p.getFileName().toString().startsWith(".")) {
+                        return false;
+                    }
+                    return true;
+                }).count());
+        return this;
+    }
+
+    /**
+     * asserts that a multiple output task has generated the given number of output files, including hidden files (in case the task is expected to have some hidden leftover)
+     * 
+     * @param size
+     * @return
+     */
+    public TaskTestContext assertOutputSizeIncludingHidden(int size) {
+        if (size == 0) {
+            return assertEmptyMultipleOutput();
+        }
+        requireMultipleOutputs();
+
         String[] files = fileOutput.list();
         assertEquals("An unexpected number of output files has been created: " + StringUtils.join(files, ","), size,
                 files.length);
-        assertEquals("Some output file is hidden", size, Files.list(fileOutput.toPath()).filter(p -> {
-            if (IS_OS_WINDOWS) {
-                try {
-                    return !(Boolean) Files.getAttribute(p, "dos:hidden");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return false;
-            }
-            if (p.getFileName().toString().startsWith(".")) {
-                return false;
-            }
-            return true;
-        }).count());
         return this;
     }
 
@@ -524,7 +541,7 @@ public class TaskTestContext implements Closeable {
     }
 
     public void assertTaskWarning(String message) {
-        assertThat(taskWarnings, hasItem(message));
+        assertThat(taskWarnings, hasItem(containsString(message)));
     }
 
     public void assertNoTaskWarnings() {
