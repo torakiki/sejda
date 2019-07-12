@@ -88,6 +88,10 @@ public class TaskExecutionContext {
         return ++outputDocumentsCounter;
     }
 
+    public int outputDocumentsCounter() {
+        return outputDocumentsCounter;
+    }
+
     /**
      * 
      * @param e
