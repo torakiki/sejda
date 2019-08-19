@@ -621,7 +621,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         // TODO: friendlier error message
-        testContext.assertTaskFailed("org.sejda.model.exception.TaskIOException: An error occurred creating PDImageXObject from file source: corrupt.png");
+        testContext.assertTaskFailed("An error occurred creating PDImageXObject from file source: corrupt.png");
     }
 
     @Test

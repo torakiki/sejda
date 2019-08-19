@@ -30,7 +30,7 @@ public class TaskNonLenientExecutionException extends TaskExecutionException {
     private static final long serialVersionUID = -3283178318931486615L;
 
     public TaskNonLenientExecutionException(Throwable cause) {
-        super(cause);
+        super(cause.getMessage(), cause);
     }
 
 }
