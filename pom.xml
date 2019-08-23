@@ -313,7 +313,6 @@
 		<module>sejda-conversion</module>
 		<module>sejda-fonts</module>
 		<module>sejda-optional-fonts</module>
-		<module>sejda-ocr</module>
 	</modules>
 
 	<distributionManagement>
