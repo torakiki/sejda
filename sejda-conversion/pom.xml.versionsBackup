@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<url>http://www.sejda.org</url>
-	<artifactId>sejda-fonts</artifactId>
+	<artifactId>sejda-conversion</artifactId>
 	<packaging>jar</packaging>
-	<name>sejda fonts</name>
-	<description>sejda fonts package</description>
+	<name>sejda conversion</name>
+	<description>sejda core model conversion services</description>
 
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>4.0.0-SNAPSHOT</version>
+		<version>3.2.85-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
@@ -22,7 +22,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>org.sejda.fonts</Automatic-Module-Name>
+							<Automatic-Module-Name>org.sejda.conversion</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>

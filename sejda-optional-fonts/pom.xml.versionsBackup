@@ -2,18 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<url>http://www.sejda.org</url>
-	<artifactId>sejda-fonts</artifactId>
+	<artifactId>sejda-optional-fonts</artifactId>
 	<packaging>jar</packaging>
-	<name>sejda fonts</name>
-	<description>sejda fonts package</description>
+	<name>sejda optional fonts</name>
+	<description>sejda optional fonts package</description>
 
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>4.0.0-SNAPSHOT</version>
+		<version>3.2.85-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -22,14 +22,14 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Automatic-Module-Name>org.sejda.fonts</Automatic-Module-Name>
+							<Automatic-Module-Name>org.sejda.fonts.optional</Automatic-Module-Name>
 						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.sejda</groupId>
