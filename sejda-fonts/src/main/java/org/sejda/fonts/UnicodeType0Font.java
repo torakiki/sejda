@@ -18,7 +18,7 @@ package org.sejda.fonts;
 
 import java.io.InputStream;
 
-import org.sejda.model.pdf.FontResource;
+import org.sejda.model.pdf.font.FontResource;
 
 public enum UnicodeType0Font implements FontResource {
     NOTO_SANS_MERGED_REGULAR("/fonts/sans/NotoSansMerged-Regular.ttf");
@@ -38,4 +38,10 @@ public enum UnicodeType0Font implements FontResource {
     public InputStream getFontStream() {
         return this.getClass().getResourceAsStream(resource);
     }
+
+    @Override
+    public Integer priority() {
+        return Integer.MIN_VALUE;
+    }
+
 }

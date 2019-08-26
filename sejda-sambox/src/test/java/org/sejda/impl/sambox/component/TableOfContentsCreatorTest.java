@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.sejda.core.service.TestUtils;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.parameter.MergeParameters;
@@ -306,16 +307,17 @@ public class TableOfContentsCreatorTest {
         PDPage pageDest1 = new PDPage(), pageDest2 = new PDPage(), pageDest3 = new PDPage();
         TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
         victim.appendItem("This is item 1", 1, pageDest1);
-        victim.appendItem("This is item 2 that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, pageDest2);
+        victim.appendItem(
+                "This is item 2 that has a very long name and should not be truncated so that the version is visible at the end v7.pdf",
+                10, pageDest2);
         victim.appendItem("This is item 3", 14, pageDest3);
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
         TestUtils.assertPageTextExactLines(doc.getPage(0),
-                "This is item 1   1\n" +
-                "This is item 2 that has a very long name and should not be\n" +
-                "truncated so that the version is visible at the end v7.pdf   10\n" +
-                "This is item 3   14\n");
+                "This is item 1   1\n" + "This is item 2 that has a very long name and should not be\n"
+                        + "truncated so that the version is visible at the end v7.pdf   10\n"
+                        + "This is item 3   14\n");
 
         // verify size of the clickable annotations on top of the TOC items
         List<PDAnnotationLink> annotations = TestUtils.getAnnotationsOf(doc.getPage(0), PDAnnotationLink.class);
@@ -340,20 +342,20 @@ public class TableOfContentsCreatorTest {
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
         TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        for(int i = 0; i < 30; i++) {
+        for (int i = 0; i < 30; i++) {
             victim.appendItem("This is an item", 1, new PDPage());
         }
 
-        victim.appendItem("This is a long item that has a very long name and should not be truncated so that the version is visible at the end v7.pdf", 10, new PDPage());
+        victim.appendItem(
+                "This is a long item that has a very long name and should not be truncated so that the version is visible at the end v7.pdf",
+                10, new PDPage());
         victim.appendItem("This is an item", 14, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        TestUtils.assertPageTextDoesNotContain(doc.getPage(0),
-                "This is a long item that");
+        TestUtils.assertPageTextDoesNotContain(doc.getPage(0), "This is a long item that");
 
-        TestUtils.assertPageTextContains(doc.getPage(1),
-                "This is a long item that");
+        TestUtils.assertPageTextContains(doc.getPage(1), "This is a long item that");
     }
 
     @Test
@@ -362,17 +364,32 @@ public class TableOfContentsCreatorTest {
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
         TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("This_is_a_file_that_has_a_very_long_name_and_should_not_be_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf", 10, new PDPage());
+        victim.appendItem(
+                "This_is_a_file_that_has_a_very_long_name_and_should_not_be_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf",
+                10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
         TestUtils.assertPageTextExactLines(doc.getPage(0),
-                "This_is_a_file_that_has_a_very_long_name_and_should_not_be_tr-\n" +
-                        "uncated_so_that_the_version_is_visible_at_the_end_v7.pdf   10\n");
+                "This_is_a_file_that_has_a_very_long_name_and_should_not_be_tr-\n"
+                        + "uncated_so_that_the_version_is_visible_at_the_end_v7.pdf   10\n");
     }
 
     @Test
-    public void test_Toc_Item_Requiring_Multiple_Fonts() throws IOException, TaskException {
+    public void test_Toc_Item_Requiring_Multiple_Fonts() throws TaskException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("Item multiple fonts ทดสอบ", 10, new PDPage());
+        victim.pageSizeIfNotSet(PDRectangle.A4);
+        victim.addToC();
+
+        TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts ทดสอบ   10\n");
+    }
+
+    @Test(expected = UnsupportedTextException.class)
+    public void tocItemsMultipleFontsButNotFound() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
@@ -380,8 +397,6 @@ public class TableOfContentsCreatorTest {
         victim.appendItem("Item multiple fonts հայերէն", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
-
-        TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts հայերէն   10\n");
     }
 
     @Test
@@ -392,7 +407,8 @@ public class TableOfContentsCreatorTest {
 
         PDDocument doc = new PDDocument();
         PDPage pageA = new PDPage(), pageB = new PDPage();
-        doc.addPage(pageA); doc.addPage(pageB);
+        doc.addPage(pageA);
+        doc.addPage(pageB);
 
         PageTextWriter.writeHeader(doc, pageA, "PageA");
         PageTextWriter.writeHeader(doc, pageB, "PageB");

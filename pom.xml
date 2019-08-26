@@ -312,7 +312,6 @@
 		<module>sejda-distribution</module>
 		<module>sejda-conversion</module>
 		<module>sejda-fonts</module>
-		<module>sejda-optional-fonts</module>
 	</modules>
 
 	<distributionManagement>

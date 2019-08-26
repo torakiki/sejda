@@ -18,8 +18,10 @@
  */
 package org.sejda.impl.sambox.util;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static java.util.stream.StreamSupport.stream;
 import static org.sejda.sambox.util.BidiUtils.visualToLogical;
 import static org.sejda.util.RequireUtils.requireNotNullArg;
 
@@ -29,24 +31,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
-import org.sejda.fonts.OptionalUnicodeType0Font;
-import org.sejda.fonts.UnicodeType0Font;
 import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.pdf.FontResource;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.pdf.font.FontResource;
+import org.sejda.model.pdf.font.Type0FontsProvider;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -99,6 +102,14 @@ public final class FontUtils {
 
     public static PDFont HELVETICA = PDType1Font.HELVETICA;
 
+    public static final FontResource[] TYPE0FONTS;
+
+    static {
+        TYPE0FONTS = stream(ServiceLoader.load(Type0FontsProvider.class).spliterator(), false)
+                .flatMap(p -> p.getFonts().stream()).sorted(Comparator.comparingInt(FontResource::priority))
+                .toArray(FontResource[]::new);
+    }
+
     /**
      * Mapping between Sejda and PDFBox standard type 1 fonts implementation
      *
@@ -147,8 +158,7 @@ public final class FontUtils {
             return docCache.get(font.getResource());
         }
 
-        InputStream in = font.getFontStream();
-        try {
+        try (InputStream in = font.getFontStream()) {
             PDType0Font loaded = PDType0Font.load(document, in);
             LOG.trace("Loaded font {}", loaded.getName());
             docCache.put(font.getResource(), loaded);
@@ -156,8 +166,6 @@ public final class FontUtils {
         } catch (IOException e) {
             LOG.warn("Failed to load font " + font, e);
             return null;
-        } finally {
-            IOUtils.closeQuietly(in);
         }
     }
 
@@ -167,24 +175,7 @@ public final class FontUtils {
      * @return a font capable of displaying the given string or null
      */
     public static final PDFont findFontFor(PDDocument document, String text) {
-        try {
-            // lets make sure the jar is in the classpath
-            Class.forName("org.sejda.fonts.UnicodeType0Font");
-            PDFont found = findFontAmong(document, text, UnicodeType0Font.values());
-            if (nonNull(found)) {
-                return found;
-            }
-            Class.forName("org.sejda.fonts.OptionalUnicodeType0Font");
-            return findFontAmong(document, text, OptionalUnicodeType0Font.values());
-
-        } catch (ClassNotFoundException clf) {
-            LOG.warn("Fallback fonts not available");
-        }
-        return null;
-    }
-
-    private static PDFont findFontAmong(PDDocument document, String text, FontResource... fonts) {
-        for (FontResource font : fonts) {
+        for (FontResource font : TYPE0FONTS) {
             PDFont loaded = loadFont(document, font);
             if (canDisplay(text, loaded)) {
                 LOG.debug("Found suitable font {} to display '{}'", loaded, text);
@@ -195,7 +186,7 @@ public final class FontUtils {
     }
 
     /**
-     * Check is given text contains only unicode whitespace characters
+     * Check if given text contains only unicode whitespace characters
      *
      * @param text
      * @return
@@ -421,8 +412,15 @@ public final class FontUtils {
 
         for (TextWithFont stringAndFont : resolvedStringsToFonts) {
             try {
+
                 PDFont resolvedFont = stringAndFont.getFont();
                 String resolvedLabel = stringAndFont.getText();
+
+                if (isNull(resolvedFont)) {
+                    throw new UnsupportedTextException(
+                            "Unable to find suitable font for string \"" + resolvedLabel + "\"",
+                            resolvedLabel);
+                }
 
                 String[] words = visualToLogical(resolvedLabel).split("(?<=\\b)");
                 for (String word : words) {

@@ -53,6 +53,7 @@ import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSName;
@@ -116,9 +117,6 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("జ")); // telugu
         assertNotNull(findFontFor("উ")); // bengali
         assertNotNull(findFontFor("עברית")); // hebrew
-        assertNotNull(findFontFor("简化字")); // simplified chinese
-        assertNotNull(findFontFor("한국어/조선말")); // korean
-        assertNotNull(findFontFor("日本語")); // japanese
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
@@ -129,11 +127,9 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("தமிழ்")); // tamil
         assertNotNull(findFontFor("ગુજરાતી")); // gujarati
         assertNotNull(findFontFor("န\u103Aမာဘာသာ")); // myanmar
-        assertNotNull(findFontFor("հայերէն")); // armenian
         assertNotNull(findFontFor("සිංහල")); // sinhalese
         assertNotNull(findFontFor("ᠮᠣᠩᠭᠣᠯ")); // mongolian
         assertNotNull(findFontFor("ಕನ್ನಡ")); // kannada
-        assertNotNull(findFontFor("한국어 조선말")); // korean
         assertNotNull(findFontFor("ଓଡ଼ିଆ ଭାଷା")); // oryia
         assertNotNull(findFontFor("ކުންފުނި")); // thaana
 
@@ -150,7 +146,7 @@ public class FontUtilsTest {
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
+        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
                 "هذا هو كل الحق إلى اليسار", "123 יתימאה ןחבמ", "032 ציר הורמון הגדילה",
                 "This is الحق  Mixed יתימאה ןחבמ",
                 "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ", "ציר הורמון הגדילה");
@@ -340,5 +336,12 @@ public class FontUtilsTest {
                 "This is a long linethatcannotfitonasingleline-",
                 "andcouldbe wrapped"
         )));
+    }
+
+    @Test(expected = UnsupportedTextException.class)
+    public void wrappingLinesUnableToFindFont() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն",
+                HELVETICA, 10, 191, doc);
     }
 }

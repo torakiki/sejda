@@ -114,6 +114,9 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and prepend it to the given document
+     * 
+     * @throws TaskException
+     *             if there is an error generating the ToC
      */
     public void addToC() throws TaskException {
         addToC(0);
@@ -121,6 +124,9 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and inserts it in the doc at before the given page number
+     * 
+     * @throws TaskException
+     *             if there is an error generating the ToC
      */
     public void addToC(int beforePageNumber) throws TaskException {
         try {
@@ -140,8 +146,8 @@ public class TableOfContentsCreator {
                     pagesTree.insertAfter(blankPage, lastTocPage);
                 }
             });
-        } catch (IOException | TaskIOException e) {
-            throw new TaskException("An error occurred while create the ToC. Skipping ToC creation.", e);
+        } catch (IOException e) {
+            throw new TaskException("An error occurred while create the ToC", e);
         }
     }
 
