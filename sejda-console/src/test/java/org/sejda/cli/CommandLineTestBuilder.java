@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.PrintStream;
@@ -36,7 +37,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.mockito.ArgumentCaptor;
-import org.sejda.cli.util.OnceWithMessage;
+import org.mockito.verification.VerificationMode;
 import org.sejda.cli.util.SystemOutRecordingStream;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.service.DefaultTaskExecutionService;
@@ -315,7 +316,7 @@ class CommandLineExecuteTestHelper {
         return (T) taskPrametersCaptor.getValue();
     }
 
-    private static OnceWithMessage once(String failureDescribingMessage) {
-        return new OnceWithMessage(failureDescribingMessage);
+    private static VerificationMode once(String failureDescribingMessage) {
+        return times(1).description(failureDescribingMessage);
     }
 }

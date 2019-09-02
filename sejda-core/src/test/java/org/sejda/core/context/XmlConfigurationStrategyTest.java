@@ -36,7 +36,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.internal.matchers.Contains;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.exception.ConfigurationException;
@@ -73,8 +72,8 @@ public class XmlConfigurationStrategyTest {
     @Test
     public void testNegativeConstuctorWrongTask() throws ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-task-sejda-config.xml");
-        expected.expectMessage(new Contains(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.model.task.Task"));
+        expected.expectMessage(
+                "The configured class java.lang.String is not a subtype of interface org.sejda.model.task.Task");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
     }
@@ -82,8 +81,8 @@ public class XmlConfigurationStrategyTest {
     @Test
     public void testNegativeConstuctorWrongParam() throws ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-param-sejda-config.xml");
-        expected.expectMessage(new Contains(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.model.parameter.base.TaskParameters"));
+        expected.expectMessage(
+                "The configured class java.lang.String is not a subtype of interface org.sejda.model.parameter.base.TaskParameters");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
     }
@@ -91,7 +90,7 @@ public class XmlConfigurationStrategyTest {
     @Test
     public void testNegativeNotFoundClassParam() throws ConfigurationException {
         InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-no-param-class-sejda-config.xml");
-        expected.expectMessage(new Contains("Unable to find the configured bla.bla.not.existing.Class"));
+        expected.expectMessage("Unable to find the configured bla.bla.not.existing.Class");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy.newInstance(provider);
     }
