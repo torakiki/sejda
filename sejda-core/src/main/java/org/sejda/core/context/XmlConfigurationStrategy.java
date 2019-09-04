@@ -41,7 +41,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
-import org.sejda.common.XMLUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.NotificationStrategy;
@@ -93,12 +92,10 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     }
 
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilderFactory factory = XMLUtils.getDocumentBuilderFactory();
             initializeSchemaValidation(factory);
-
             DocumentBuilder builder = factory.newDocumentBuilder();
-            builder.setErrorHandler(XMLUtils.ERROR_HANDLER);
             Document document = builder.parse(input);
 
             notificationStrategy = getNotificationStrategy(document);

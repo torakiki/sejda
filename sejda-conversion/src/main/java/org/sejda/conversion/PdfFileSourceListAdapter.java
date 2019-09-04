@@ -43,7 +43,6 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.XMLUtils;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
@@ -246,11 +245,9 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
 
     protected List<String> doParseFileNames(File file) throws IOException, SAXException, ParserConfigurationException,
             XPathException {
-        DocumentBuilderFactory domFactory = XMLUtils.getDocumentBuilderFactory();
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);
-
         DocumentBuilder builder = domFactory.newDocumentBuilder();
-        builder.setErrorHandler(XMLUtils.ERROR_HANDLER);
         Document doc = builder.parse(file);
 
         List<String> result = new ArrayList<>();

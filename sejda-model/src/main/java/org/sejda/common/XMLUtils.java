@@ -20,15 +20,7 @@
 package org.sejda.common;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Provides some utility methods to deal with xml.
@@ -37,9 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
  * 
  */
 public final class XMLUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(XMLUtils.class);
-
     private XMLUtils() {
         // hide
     }
@@ -81,31 +70,4 @@ public final class XMLUtils {
         }
         return defaultValue;
     }
-
-    public static final DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-        factory.setValidating(true);
-        factory.setFeature("http://xml.org/sax/features/validation", true);
-
-        return factory;
-    }
-
-    public static final ErrorHandler ERROR_HANDLER = new ErrorHandler() {
-
-        @Override
-        public void warning(SAXParseException e) throws SAXException {
-            // noop
-        }
-
-        @Override
-        public void error(SAXParseException e) throws SAXException {
-            LOG.debug(e.getMessage());
-        }
-
-        @Override
-        public void fatalError(SAXParseException e) throws SAXException {
-            throw e;
-        }
-    };
 }
