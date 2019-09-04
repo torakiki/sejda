@@ -56,12 +56,12 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
     }
 
     @Override
-    NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
+    public NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request;
     }
 
     @Override
-    NextOutputStrategy nextOutputStrategy() {
+    public NextOutputStrategy nextOutputStrategy() {
         return nextOutputStrategy;
     }
 

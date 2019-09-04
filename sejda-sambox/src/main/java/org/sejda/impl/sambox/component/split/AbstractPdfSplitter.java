@@ -109,12 +109,12 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
         parameters.getOutput().accept(outputWriter);
     }
 
-    abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);
+    public abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);
 
     /**
      * @return the strategy to use to know if it's time to open a new document or close the current one.
      */
-    abstract NextOutputStrategy nextOutputStrategy();
+    public abstract NextOutputStrategy nextOutputStrategy();
 
     /**
      * Called when an output document is going to be opened. Extending classes can plug some logic here.

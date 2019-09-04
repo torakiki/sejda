@@ -51,12 +51,12 @@ public class PageDestinationsLevelPdfSplitter extends AbstractPdfSplitter<SplitB
     }
 
     @Override
-    NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
+    public NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request.bookmark(outlineDestinations.getTitle(request.getPage()));
     }
 
     @Override
-    NextOutputStrategy nextOutputStrategy() {
+    public NextOutputStrategy nextOutputStrategy() {
         return splitPages;
     }
 }
