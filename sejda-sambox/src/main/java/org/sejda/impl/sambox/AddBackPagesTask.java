@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -30,7 +30,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.AnnotationsDistiller;
@@ -123,12 +123,12 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
                     .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
-            nullSafeCloseQuietly(destinationDocument);
-            nullSafeCloseQuietly(sourceDocumentHandler);
+            closeQuietly(destinationDocument);
+            closeQuietly(sourceDocumentHandler);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
-        nullSafeCloseQuietly(backPagesSource);
+        closeQuietly(backPagesSource);
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Back pages added after every {} pages to {} input documents and written to {}", parameters.getStep(),
                 parameters.getSourceList().size(), parameters.getOutput());
@@ -136,8 +136,8 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(backPagesSource);
-        nullSafeCloseQuietly(destinationDocument);
-        nullSafeCloseQuietly(sourceDocumentHandler);
+        closeQuietly(backPagesSource);
+        closeQuietly(destinationDocument);
+        closeQuietly(sourceDocumentHandler);
     }
 }

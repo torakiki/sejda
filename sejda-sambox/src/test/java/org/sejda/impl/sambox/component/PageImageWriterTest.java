@@ -18,17 +18,19 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
+
+import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
-
-import java.io.IOException;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
 
 public class PageImageWriterTest {
 

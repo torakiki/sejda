@@ -18,7 +18,7 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
@@ -27,7 +27,7 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
@@ -154,7 +154,7 @@ public class PagesExtractor implements Closeable {
 
     @Override
     public void close() {
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
         pagesLookup.clear();
         outlineMerger = null;
     }

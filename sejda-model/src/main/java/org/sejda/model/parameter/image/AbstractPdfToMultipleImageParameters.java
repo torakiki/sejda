@@ -29,7 +29,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.ImageType;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;

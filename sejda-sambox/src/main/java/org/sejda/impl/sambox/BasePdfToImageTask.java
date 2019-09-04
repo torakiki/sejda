@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 
 import org.sejda.core.writer.context.ImageWriterContext;
 import org.sejda.core.writer.model.ImageWriter;
@@ -52,7 +52,7 @@ abstract class BasePdfToImageTask<T extends PdfToImageParameters> extends BaseTa
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(writer);
+        closeQuietly(writer);
     }
 
     ImageWriter<T> getWriter() {

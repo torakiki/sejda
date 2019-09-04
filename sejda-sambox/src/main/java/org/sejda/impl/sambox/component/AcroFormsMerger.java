@@ -79,7 +79,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.util.AcroFormUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.pdf.form.AcroFormPolicy;

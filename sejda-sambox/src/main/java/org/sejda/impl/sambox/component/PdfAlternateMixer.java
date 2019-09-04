@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sejda.common.ComponentsUtility;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.task.TaskExecutionContext;
@@ -73,7 +73,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     @Override
     public void close() throws IOException {
         super.close();
-        mixFragments.stream().forEach(ComponentsUtility::nullSafeCloseQuietly);
+        mixFragments.stream().forEach(IOUtils::closeQuietly);
         mixFragments.clear();
         currentStep = 0;
     }

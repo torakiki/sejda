@@ -22,7 +22,7 @@ package org.sejda.core.notification.context;
 
 import java.util.List;
 
-import org.sejda.common.collection.ListValueMap;
+import org.sejda.commons.collection.ListValueMap;
 import org.sejda.core.support.util.ReflectionUtils;
 import org.sejda.model.exception.NotificationContextException;
 import org.sejda.model.notification.EventListener;

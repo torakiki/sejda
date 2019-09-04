@@ -26,7 +26,7 @@ import javax.validation.constraints.Min;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.commons.collection.NullSafeSet;
 
 /**
  * Parameter class for a split by every X pages task. Used to perform split where an input pdf document is divided into documents of X pages.

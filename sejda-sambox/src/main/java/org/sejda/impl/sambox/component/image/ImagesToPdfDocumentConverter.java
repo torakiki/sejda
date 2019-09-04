@@ -18,14 +18,27 @@
  */
 package org.sejda.impl.sambox.component.image;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
+
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.*;
 import org.sejda.model.PageOrientation;
 import org.sejda.model.PageSize;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.ImageMergeInput;
+import org.sejda.model.input.MergeInput;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.input.Source;
 import org.sejda.model.parameter.BaseMergeParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -33,15 +46,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 
 public class ImagesToPdfDocumentConverter {
 

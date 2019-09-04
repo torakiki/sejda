@@ -403,7 +403,7 @@ public final class FontUtils {
             PDDocument document) throws TaskIOException {
         List<String> lines = new ArrayList<>();
 
-        String label = org.sejda.core.support.util.StringUtils.normalizeWhitespace(rawLabel);
+        String label = org.sejda.commons.util.StringUtils.normalizeWhitespace(rawLabel);
 
         StringBuilder currentString = new StringBuilder();
         double currentWidth = 0;

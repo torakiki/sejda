@@ -19,7 +19,7 @@
 package org.sejda.impl.sambox;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.util.TransitionUtils.getTransition;
@@ -106,7 +106,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
         documentHandler.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Transitions set on {}", parameters.getOutput());
@@ -114,7 +114,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 
 

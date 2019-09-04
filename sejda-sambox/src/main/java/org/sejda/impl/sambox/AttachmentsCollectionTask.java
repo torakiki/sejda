@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyEmbeddedFile;
@@ -131,7 +131,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
         LOG.debug("Adding generated ToC");
         tocCreator.addToC();
         destinationDocument.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Created portfolio with {} files and written to {}", parameters.getSourceList().size(),
@@ -191,7 +191,7 @@ public class AttachmentsCollectionTask extends BaseTask<AttachmentsCollectionPar
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
     }
 
 }

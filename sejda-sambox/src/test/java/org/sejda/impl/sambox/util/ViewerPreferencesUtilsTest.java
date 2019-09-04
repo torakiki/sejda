@@ -26,8 +26,6 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 import java.util.Set;
 
-import org.sejda.sambox.pdmodel.PageMode;
-import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
@@ -36,6 +34,8 @@ import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfNonFullScreenPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
+import org.sejda.sambox.pdmodel.PageMode;
+import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
 
 /**
  * @author Andrea Vacondio

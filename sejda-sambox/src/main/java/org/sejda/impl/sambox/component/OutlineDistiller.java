@@ -26,7 +26,7 @@ import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.util.Optional;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;

@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
@@ -107,7 +107,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
         documentHandler.setCompress(parameters.isCompress());
         documentHandler.savePDDocument(tmpFile);
 
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input images written to {}", parameters.getOutput());
@@ -115,7 +115,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
         outputWriter = null;
     }
 

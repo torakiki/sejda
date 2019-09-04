@@ -18,6 +18,22 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+
+import java.awt.Rectangle;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,18 +58,6 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(PdfToExcelTask.class);
@@ -166,7 +170,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
 
-            nullSafeCloseQuietly(sourceDocumentHandler);
+            closeQuietly(sourceDocumentHandler);
         }
 
         parameters.getOutput().accept(outputWriter);
@@ -251,7 +255,7 @@ public class PdfToExcelTask extends BaseTask<PdfToExcelParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(sourceDocumentHandler);
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(sourceDocumentHandler);
+        closeQuietly(destinationDocument);
     }
 }

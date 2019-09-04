@@ -18,7 +18,7 @@
 package org.sejda.impl.sambox;
 
 import static java.util.Objects.nonNull;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -34,10 +34,10 @@ import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfScaler;
+import org.sejda.model.PageSize;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.PageSize;
 import org.sejda.model.parameter.ResizePagesParameters;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.scale.ScaleType;
@@ -126,7 +126,7 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
                         .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
                 outputWriter.addOutput(file(tmpFile).name(outName));
             } finally {
-                nullSafeCloseQuietly(documentHandler);
+                closeQuietly(documentHandler);
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
@@ -138,6 +138,6 @@ public class ResizePagesTask extends BaseTask<ResizePagesParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 }

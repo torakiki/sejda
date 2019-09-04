@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
 import java.io.File;
@@ -65,7 +65,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParamete
         outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
         mixer.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(mixer);
+        closeQuietly(mixer);
 
         parameters.getOutput().accept(outputWriter);
 
@@ -74,7 +74,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParamete
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(mixer);
+        closeQuietly(mixer);
     }
 
 }

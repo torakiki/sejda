@@ -20,7 +20,6 @@ package org.sejda.core.writer.imageio;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.sejda.common.ComponentsUtility.nullSafeClose;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -35,6 +34,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.TiffCompressionType;
@@ -117,7 +117,7 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
     @Override
     public void closeDestination() throws TaskIOException {
         try {
-            nullSafeClose(getOutput());
+            IOUtils.close(getOutput());
         } catch (IOException e) {
             throw new TaskIOException("Unable to close destination", e);
         }

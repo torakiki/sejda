@@ -49,7 +49,7 @@
 	</developers>
 
 	<profiles>
-	<profile>
+		<profile>
 			<id>toolchain</id>
 			<activation>
 				<property>
@@ -348,6 +348,7 @@
 	</distributionManagement>
 
 	<properties>
+		<sejda.commons.version>1.1.2</sejda.commons.version>
 		<junit.version>4.12</junit.version>
 		<slf4j.version>1.7.28</slf4j.version>
 		<commons.lang.version>3.9</commons.lang.version>
@@ -425,6 +426,11 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-commons</artifactId>
+			<version>${sejda.commons.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

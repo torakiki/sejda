@@ -22,13 +22,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-
-import java.io.IOException;
 
 /**
  * @author Andrea Vacondio

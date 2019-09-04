@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -29,9 +29,9 @@ import java.io.File;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.sejda.commons.util.StringUtils;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.support.util.StringUtils;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PdfScaler;
@@ -106,7 +106,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
                 Set<Character> unsupportedChars = StringUtils.difference(originalValue, value);
                 String displayUnsupportedChars = org.apache.commons.lang3.StringUtils.join(
                         unsupportedChars.stream()
-                                .map(c -> StringUtils.asUnicodes(c.toString()))
+                                .map(c -> org.sejda.core.support.util.StringUtils.asUnicodes(c.toString()))
                                 .collect(Collectors.toList()),
                         ","
                 );
@@ -134,7 +134,7 @@ public class SetHeaderFooterTask extends BaseTask<SetHeaderFooterParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 
 }

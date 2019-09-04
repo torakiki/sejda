@@ -16,7 +16,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -66,7 +66,7 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
             new PageDestinationsLevelPdfExtractor(document, parameters, pagesDestination, source)
                     .extract(executionContext());
 
-            nullSafeCloseQuietly(document);
+            closeQuietly(document);
         }
 
         LOG.debug("Extraction completed and outputs written to {}", parameters.getOutput());
@@ -74,6 +74,6 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(document);
+        closeQuietly(document);
     }
 }

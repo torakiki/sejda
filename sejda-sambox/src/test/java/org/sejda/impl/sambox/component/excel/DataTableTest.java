@@ -18,12 +18,12 @@
  */
 package org.sejda.impl.sambox.component.excel;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import org.junit.Test;
 
 public class DataTableTest {
 

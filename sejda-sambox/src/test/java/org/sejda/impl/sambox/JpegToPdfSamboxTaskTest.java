@@ -16,20 +16,22 @@
  */
 package org.sejda.impl.sambox;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+
 import org.sejda.core.service.JpegToPdfTaskTest;
 import org.sejda.impl.sambox.component.ImageLocationsExtractor;
 import org.sejda.model.parameter.image.JpegToPdfParameters;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-
-import java.awt.*;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 public class JpegToPdfSamboxTaskTest extends JpegToPdfTaskTest {
 

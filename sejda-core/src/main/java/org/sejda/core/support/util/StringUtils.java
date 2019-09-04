@@ -16,24 +16,11 @@
  */
 package org.sejda.core.support.util;
 
-import java.util.*;
-
 public final class StringUtils {
     private StringUtils() {
         // hide
     }
 
-    /**
-     * Removes control characters like \n, \t or \r
-     * Replaces whitespace, including Unicode 'non-breaking-space', with plain regular 'space'
-     */
-    public static String normalizeWhitespace(String in) {
-        // removes control characters like \n, \r or \t
-        // replaces all whitespace (eg: &nbsp;) with ' ' (space)
-        String result = in.replaceAll("[\\n\\t\\r]", "").replaceAll("\\p{Z}", " ").replaceAll("\\s", " ");
-        result = result.replace((char) 160, ' ');
-        return result;
-    }
 
     // Useful to debug weird strings
     public static String asUnicodes(String in) {
@@ -48,19 +35,6 @@ public final class StringUtils {
         return result.toString();
     }
 
-    /**
-     * Returns a list of characters that exist in s1 but not in s2
-     */
-    public static Set<Character> difference(String s1, String s2) {
-        Set<Character> result = new LinkedHashSet<>();
-        for(Character c: s1.toCharArray()) {
-            if(!s2.contains(c.toString())) {
-                result.add(c);
-            }
-        }
-
-        return result;
-    }
 
     public static String normalizeLineEndings(String in) {
         return in.replaceAll("\\r\\n", "\n");

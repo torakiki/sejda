@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
@@ -108,7 +108,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                     throw new TaskException("No pages converted");
                 }
             } finally {
-                nullSafeCloseQuietly(documentHandler);
+                closeQuietly(documentHandler);
             }
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
@@ -120,6 +120,6 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     @Override
     public void after() {
         super.after();
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 }

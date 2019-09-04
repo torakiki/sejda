@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
@@ -78,7 +78,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
         documentHandler.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Labels applied to {}", parameters.getOutput());
@@ -86,7 +86,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 
 }

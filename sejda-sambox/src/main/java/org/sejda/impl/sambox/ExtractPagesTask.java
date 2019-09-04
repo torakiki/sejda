@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -100,7 +100,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             }
             extractor.save(tmpFile, parameters.discardOutline());
 
-            nullSafeCloseQuietly(sourceDocumentHandler);
+            closeQuietly(sourceDocumentHandler);
 
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
@@ -119,8 +119,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
     }
 
     private void closeResource() {
-        nullSafeCloseQuietly(sourceDocumentHandler);
-        nullSafeCloseQuietly(extractor);
+        closeQuietly(sourceDocumentHandler);
+        closeQuietly(extractor);
     }
 
 }

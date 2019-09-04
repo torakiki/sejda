@@ -22,13 +22,13 @@ package org.sejda.impl.sambox.component;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.encryption.AccessPermission;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.encryption.AccessPermission;
 
 /**
  * @author Andrea Vacondio

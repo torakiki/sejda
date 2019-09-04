@@ -19,21 +19,32 @@
 package org.sejda.impl.sambox;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.OutlineMerger;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfRotator;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.*;
+import org.sejda.model.input.FileIndexAndPage;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.CombineReorderParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
@@ -175,9 +186,9 @@ public class CombineReorderTask extends BaseTask<CombineReorderParameters> {
 
     private void closeResources() {
         for (PDDocumentHandler document : documents) {
-            nullSafeCloseQuietly(document);
+            closeQuietly(document);
         }
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
     }
 
 }

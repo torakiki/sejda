@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -91,7 +91,7 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
                         .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
                 outputWriter.addOutput(file(tmpFile).name(outName));
             } finally {
-                nullSafeCloseQuietly(documentHandler);
+                closeQuietly(documentHandler);
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
@@ -106,6 +106,6 @@ public class EncryptTask extends BaseTask<EncryptParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 }

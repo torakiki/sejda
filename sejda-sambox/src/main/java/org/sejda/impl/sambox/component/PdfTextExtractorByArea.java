@@ -105,7 +105,7 @@ public class PdfTextExtractorByArea {
             String result = stripper.getTextForRegion("area1");
             result = defaultIfBlank(result, "");
             result = StringUtils.strip(result);
-            result = org.sejda.core.support.util.StringUtils.normalizeWhitespace(result).trim();
+            result = org.sejda.commons.util.StringUtils.normalizeWhitespace(result).trim();
             return result;
         } catch (IOException e) {
             throw new TaskIOException("An error occurred extracting text from page.", e);
@@ -129,7 +129,7 @@ public class PdfTextExtractorByArea {
                 String text = stripper.getTextForRegion("area" + i);
                 String result = defaultIfBlank(text, "");
                 result = StringUtils.strip(result);
-                result = org.sejda.core.support.util.StringUtils.normalizeWhitespace(result).trim();
+                result = org.sejda.commons.util.StringUtils.normalizeWhitespace(result).trim();
                 results.add(result);
             }
 

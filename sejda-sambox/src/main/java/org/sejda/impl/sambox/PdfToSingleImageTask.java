@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
@@ -101,7 +101,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     @Override
     public void after() {
         super.after();
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 
 }

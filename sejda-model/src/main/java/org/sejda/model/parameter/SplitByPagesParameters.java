@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.validation.constraint.NotEmpty;
 
 /**

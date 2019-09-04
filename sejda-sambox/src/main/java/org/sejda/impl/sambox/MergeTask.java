@@ -19,7 +19,7 @@
 package org.sejda.impl.sambox;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
@@ -31,7 +31,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
@@ -247,9 +247,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private void closeResources() {
         Closeable current;
         while ((current = toClose.poll()) != null) {
-            nullSafeCloseQuietly(current);
+            closeQuietly(current);
         }
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
     }
 
     @Override

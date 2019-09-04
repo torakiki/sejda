@@ -22,14 +22,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.junit.Test;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
-
-import java.io.*;
 
 /**
  * @author Andrea Vacondio

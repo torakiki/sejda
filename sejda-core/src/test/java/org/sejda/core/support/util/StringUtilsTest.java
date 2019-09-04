@@ -20,36 +20,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 public class StringUtilsTest {
 
-    @Test
-    public void testNbsp() {
-        assertEquals("result", StringUtils.normalizeWhitespace((char) 160 + "result").trim());
-        assertEquals("result", StringUtils.normalizeWhitespace("result" + (char) 160).trim());
-        assertEquals("", StringUtils.normalizeWhitespace("" + (char) 160).trim());
-        assertEquals("", StringUtils.normalizeWhitespace((char) 160 + "" + (char) 160).trim());
-        assertEquals("Foo bar", StringUtils.normalizeWhitespace("Foo" + (char) 160 + "bar"));
-    }
 
     @Test
     public void asUnicodes() {
         assertEquals("\\U+20\\U+E6\\U+65\\U+5EA", StringUtils.asUnicodes(" æeת"));
     }
 
-    @Test
-    public void difference() {
-        Set<Character> expected = new LinkedHashSet<>();
-        expected.add('\uFE0F');
-        expected.add('\uEF0F');
-
-        assertEquals(StringUtils.difference("a\uFE0Fb\uEF0Fc", "abc"), expected);
-    }
-
-    @Test
-    public void doesNotReplaceMultipleWhitespaceWithOne() {
-        assertEquals("T  H", StringUtils.normalizeWhitespace("T  H"));
-    }
 }
