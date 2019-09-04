@@ -47,22 +47,31 @@ public class ImagesToPdfDocumentConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesToPdfDocumentConverter.class);
 
-    private PDRectangle pageSize = PDRectangle.A4;
+    private PDRectangle defaultPageSize = PDRectangle.A4;
     private boolean shouldPageSizeMatchImageSize = false;
     private PageOrientation pageOrientation = PageOrientation.AUTO;
     private float marginInches = 0f;
 
     public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
+        return convert(sourceList, new ArrayList<>());
+    }
+
+    public PDDocumentHandler convert(List<Source<?>> sourceList, List<PDRectangle> pageSizeList) throws TaskException {
         PDDocumentHandler documentHandler = new PDDocumentHandler();
         documentHandler.setCreatorOnPDDocument();
 
         PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
 
-        for (Source<?> source : sourceList) {
+        for (int i = 0; i < sourceList.size(); i++) {
+            Source<?> source = sourceList.get(i);
             beforeImage(source);
             try {
                 PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-                PDRectangle mediaBox = pageSize;
+                PDRectangle mediaBox = defaultPageSize;
+                if(!pageSizeList.isEmpty()) {
+                    mediaBox = pageSizeList.get(i);
+                }
+
                 if(shouldPageSizeMatchImageSize) {
                     mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
                 }
@@ -138,12 +147,12 @@ public class ImagesToPdfDocumentConverter {
         throw e;
     }
 
-    public void setPageSize(PageSize pageSize) {
-        this.pageSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+    public void setDefaultPageSize(PageSize defaultPageSize) {
+        this.defaultPageSize = new PDRectangle(defaultPageSize.getWidth(), defaultPageSize.getHeight());
     }
 
     public void setPageSize(PDRectangle pageSize) {
-        this.pageSize = pageSize;
+        this.defaultPageSize = pageSize;
     }
 
     public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
@@ -184,7 +193,7 @@ public class ImagesToPdfDocumentConverter {
             }
         };
 
-        converter.setPageSize(image.getPageSize());
+        converter.setDefaultPageSize(image.getPageSize());
         converter.setShouldPageSizeMatchImageSize(image.isShouldPageSizeMatchImageSize());
         converter.setPageOrientation(image.getPageOrientation());
 

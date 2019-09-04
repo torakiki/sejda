@@ -88,7 +88,7 @@ public class JpegToPdfTask extends BaseTask<JpegToPdfParameters> {
             }
         };
 
-        converter.setPageSize(parameters.getPageSize());
+        converter.setDefaultPageSize(parameters.getPageSize());
         converter.setShouldPageSizeMatchImageSize(parameters.isPageSizeMatchImageSize());
         converter.setPageOrientation(parameters.getPageOrientation());
         converter.setMarginInches(parameters.getMarginInches());
