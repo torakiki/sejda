@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>3.2.85</version>
+		<version>3.2.86-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
