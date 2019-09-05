@@ -329,7 +329,6 @@
 		<module>sejda-core</module>
 		<module>sejda-docs</module>
 		<module>sejda-sambox</module>
-		<module>sejda-console</module>
 		<module>sejda-image-writers</module>
 		<module>sejda-distribution</module>
 		<module>sejda-conversion</module>

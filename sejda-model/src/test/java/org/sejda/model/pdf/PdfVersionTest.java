@@ -22,7 +22,6 @@ package org.sejda.model.pdf;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.sejda.model.pdf.encryption.PdfEncryption;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
@@ -41,7 +40,7 @@ public class PdfVersionTest {
     @Test
     public void testGetMaxMinRequiredVersion() {
         assertEquals(PdfVersion.VERSION_1_6, PdfVersion.getMax(PdfBooleanPreference.DISPLAY_DOC_TITLE,
-                PdfPageMode.FULLSCREEN, PdfEncryption.AES_ENC_128));
+                PdfPageMode.FULLSCREEN, PdfPageMode.USE_ATTACHMENTS));
     }
 
     @Test

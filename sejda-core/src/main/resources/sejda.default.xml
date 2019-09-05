@@ -2,8 +2,6 @@
 <sejda validation="true">
 	<notification async="false" />
 	<tasks>
-		<task parameters="org.sejda.model.parameter.DecryptParameters" task="org.sejda.impl.sambox.DecryptTask"/>
-		<task parameters="org.sejda.model.parameter.EncryptParameters" task="org.sejda.impl.sambox.EncryptTask"/>
 		<task parameters="org.sejda.model.parameter.RotateParameters" task="org.sejda.impl.sambox.RotateTask"/>
 		<task parameters="org.sejda.model.parameter.ViewerPreferencesParameters" task="org.sejda.impl.sambox.ViewerPreferencesTask"/>
 		<task parameters="org.sejda.model.parameter.AlternateMixMultipleInputParameters" task="org.sejda.impl.sambox.AlternateMixTask"/>
@@ -25,7 +23,6 @@
 		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToPngParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
 		<task parameters="org.sejda.model.parameter.CombineReorderParameters" task="org.sejda.impl.sambox.CombineReorderTask"/>
-		<task parameters="org.sejda.model.parameter.AddBackPagesParameters" task="org.sejda.impl.sambox.AddBackPagesTask"/>
 		<task parameters="org.sejda.model.parameter.AttachmentsCollectionParameters" task="org.sejda.impl.sambox.AttachmentsCollectionTask"/>
 		<task parameters="org.sejda.model.parameter.WatermarkParameters" task="org.sejda.impl.sambox.WatermarkTask"/>
 		<task parameters="org.sejda.model.parameter.ScaleParameters" task="org.sejda.impl.sambox.ScaleTask"/>		
