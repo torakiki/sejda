@@ -251,10 +251,6 @@
 			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>poi-ooxml</artifactId>
-					<groupId>org.apache.poi</groupId>
-				</exclusion>
-				<exclusion>
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
 				</exclusion>
