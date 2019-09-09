@@ -19,11 +19,15 @@
  */
 package org.sejda.core.context;
 
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.ConfigurationException;
@@ -47,16 +51,12 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlConfigurationStreamProvider.class);
 
-    private static final String USER_CONFIG_FILE_NAME = "sejda.xml";
-    private static final String DEFAULT_CONFIG_FILE_NAME = "sejda.default.xml";
+    private static final List<String> CONFIG_FILES = Arrays.asList("sejda.xml", "sejda.pro.xml", "sejda.default.xml");
 
     @Override
     public InputStream getConfigurationStream() throws ConfigurationException {
-        InputStream configurationStream = getConfiguration();
-        if (configurationStream == null) {
-            throw new ConfigurationException("Unable to find xml configuration file.");
-        }
-        return configurationStream;
+        return ofNullable(getConfiguration())
+                .orElseThrow(() -> new ConfigurationException("Unable to find xml configuration file"));
     }
 
     private InputStream getConfiguration() throws ConfigurationException {
@@ -83,13 +83,14 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
     }
 
     private InputStream getDefaultConfigurationStream() {
-        LOG.trace("Loading Sejda configuration form {}", USER_CONFIG_FILE_NAME);
-        InputStream result = Thread.currentThread().getContextClassLoader().getResourceAsStream(USER_CONFIG_FILE_NAME);
-        if (result == null) {
-            LOG.trace("Couldn't find {}, loading Sejda configuration form default {}", USER_CONFIG_FILE_NAME,
-                    DEFAULT_CONFIG_FILE_NAME);
-            result = Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
+        for(String configFile: CONFIG_FILES) {
+            LOG.trace("Loading Sejda configuration form {}", configFile);
+            InputStream result = Thread.currentThread().getContextClassLoader().getResourceAsStream(configFile);
+            if(nonNull(result)) {
+                return result;
+            }
+            LOG.trace("Couldn't find configuration file {}", configFile);
         }
-        return result;
+        return null;
     }
 }
