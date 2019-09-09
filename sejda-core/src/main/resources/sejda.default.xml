@@ -19,12 +19,7 @@
 		<task parameters="org.sejda.model.parameter.SetPagesTransitionParameters" task="org.sejda.impl.sambox.SetPagesTransitionTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToSingleTiffParameters" task="org.sejda.impl.sambox.PdfToSingleImageTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToMultipleTiffParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
-		<task parameters="org.sejda.model.parameter.SetHeaderFooterParameters" task="org.sejda.impl.sambox.SetHeaderFooterTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToPngParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
-		<task parameters="org.sejda.model.parameter.CombineReorderParameters" task="org.sejda.impl.sambox.CombineReorderTask"/>
-		<task parameters="org.sejda.model.parameter.AttachmentsCollectionParameters" task="org.sejda.impl.sambox.AttachmentsCollectionTask"/>
-		<task parameters="org.sejda.model.parameter.WatermarkParameters" task="org.sejda.impl.sambox.WatermarkTask"/>
-		<task parameters="org.sejda.model.parameter.ScaleParameters" task="org.sejda.impl.sambox.ScaleTask"/>		
 	</tasks>
 </sejda>
