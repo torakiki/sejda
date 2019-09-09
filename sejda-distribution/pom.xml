@@ -19,7 +19,7 @@
 			<id>release</id>
 			<activation>
 				<property>
-					<name>env.TRAVIS</name>
+					<name>env.CI</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -86,11 +86,6 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-fonts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
-			<artifactId>sejda-optional-fonts</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
