@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.util.List;
 import java.util.Objects;

@@ -21,6 +21,7 @@ package org.sejda.impl.sambox.component.split;
 import java.io.IOException;
 import java.util.function.Supplier;
 
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskExecutionException;
@@ -30,7 +31,6 @@ import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.util.IOUtils;
 
 /**
  * Splitter implementation that tries to split a document at roughly a given size

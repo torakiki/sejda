@@ -20,9 +20,9 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static org.sejda.util.RequireUtils.requireArg;
-import static org.sejda.util.RequireUtils.requireNotBlank;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static org.sejda.commons.util.RequireUtils.requireArg;
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.awt.Color;
 import java.awt.Point;

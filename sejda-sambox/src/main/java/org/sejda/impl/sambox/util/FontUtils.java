@@ -22,8 +22,8 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.StreamSupport.stream;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.sambox.util.BidiUtils.visualToLogical;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;

@@ -19,10 +19,10 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.impl.sambox.component.OutlineUtils.clonePageDestination;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.util.Optional;
 

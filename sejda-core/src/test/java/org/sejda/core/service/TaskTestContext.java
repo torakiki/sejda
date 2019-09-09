@@ -486,7 +486,7 @@ public class TaskTestContext implements Closeable {
                 initOutputFromSource(fileOutput, password);
             }
         } else if (nonNull(streamOutput)) {
-            org.sejda.util.IOUtils.close(streamOutput);
+            org.sejda.commons.util.IOUtils.close(streamOutput);
             initOutputFromSource(SeekableSources.inMemorySeekableSourceFrom(streamOutput.toByteArray()), password);
         }
         return outputDocument;

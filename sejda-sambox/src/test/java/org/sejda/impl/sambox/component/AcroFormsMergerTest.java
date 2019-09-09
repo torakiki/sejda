@@ -30,6 +30,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.sejda.commons.LookupTable;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.sambox.cos.COSName;
@@ -41,7 +42,6 @@ import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.sejda.sambox.pdmodel.interactive.form.PDRadioButton;
 import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
-import org.sejda.util.IOUtils;
 
 /**
  * @author Andrea Vacondio
