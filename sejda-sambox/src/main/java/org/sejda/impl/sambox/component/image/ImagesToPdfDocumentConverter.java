@@ -51,31 +51,40 @@ public class ImagesToPdfDocumentConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesToPdfDocumentConverter.class);
 
-    private PDRectangle pageSize = PDRectangle.A4;
+    private PDRectangle defaultPageSize = PDRectangle.A4;
     private boolean shouldPageSizeMatchImageSize = false;
     private PageOrientation pageOrientation = PageOrientation.AUTO;
     private float marginInches = 0f;
 
     public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
+        return convert(sourceList, new ArrayList<>());
+    }
+
+    public PDDocumentHandler convert(List<Source<?>> sourceList, List<PDRectangle> pageSizeList) throws TaskException {
         PDDocumentHandler documentHandler = new PDDocumentHandler();
         documentHandler.setCreatorOnPDDocument();
 
         PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
 
-        for (Source<?> source : sourceList) {
+        for (int i = 0; i < sourceList.size(); i++) {
+            Source<?> source = sourceList.get(i);
             beforeImage(source);
             try {
                 PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-                PDRectangle mediaBox = pageSize;
-                if(shouldPageSizeMatchImageSize) {
+                PDRectangle mediaBox = defaultPageSize;
+                if (!pageSizeList.isEmpty()) {
+                    mediaBox = pageSizeList.get(i);
+                }
+                if (shouldPageSizeMatchImageSize) {
                     mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
                 }
 
-                if(pageOrientation == PageOrientation.LANDSCAPE) {
+                if (pageOrientation == PageOrientation.LANDSCAPE) {
                     mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-                } else if(pageOrientation == PageOrientation.AUTO) {
+                } else if (pageOrientation == PageOrientation.AUTO) {
                     if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
+                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
+                                image.getHeight());
                         mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
                     }
                 }
@@ -104,7 +113,7 @@ public class ImagesToPdfDocumentConverter {
                     width = Math.round(width / ratio);
                 }
 
-                if(marginInches > 0) {
+                if (marginInches > 0) {
                     float newWidth = width - marginInches * 72;
                     float newHeight = height * newWidth / width;
                     width = newWidth;
@@ -115,7 +124,7 @@ public class ImagesToPdfDocumentConverter {
                 float x = (mediaBox.getWidth() - width) / 2;
                 float y = ((int) mediaBox.getHeight() - height) / 2;
 
-                imageWriter.append(page, image, new Point((int)x, (int)y), width, height, null, 0);
+                imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
 
                 // TODO: fix for stream source. it's the second time the source is read, will not work
                 int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
@@ -142,12 +151,12 @@ public class ImagesToPdfDocumentConverter {
         throw e;
     }
 
-    public void setPageSize(PageSize pageSize) {
-        this.pageSize = new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+    public void setDefaultPageSize(PageSize defaultPageSize) {
+        this.defaultPageSize = new PDRectangle(defaultPageSize.getWidth(), defaultPageSize.getHeight());
     }
 
     public void setPageSize(PDRectangle pageSize) {
-        this.pageSize = pageSize;
+        this.defaultPageSize = pageSize;
     }
 
     public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
@@ -162,7 +171,8 @@ public class ImagesToPdfDocumentConverter {
         this.marginInches = marginInches;
     }
 
-    public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters, TaskExecutionContext context) throws TaskException {
+    public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters,
+            TaskExecutionContext context) throws TaskException {
         // if images were supplied, convert them to PDF
         List<MergeInput> newInputList = new ArrayList<>();
         for (MergeInput input : parameters.getInputList()) {
@@ -177,9 +187,10 @@ public class ImagesToPdfDocumentConverter {
         parameters.setInputList(newInputList);
     }
 
-    private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context) throws TaskException {
+    private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context)
+            throws TaskException {
         List<Source<?>> sources = Collections.singletonList(image.getSource());
-        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter(){
+        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter() {
             @Override
             public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
                 context.assertTaskIsLenient(e);
@@ -188,7 +199,7 @@ public class ImagesToPdfDocumentConverter {
             }
         };
 
-        converter.setPageSize(image.getPageSize());
+        converter.setDefaultPageSize(image.getPageSize());
         converter.setShouldPageSizeMatchImageSize(image.isShouldPageSizeMatchImageSize());
         converter.setPageOrientation(image.getPageOrientation());
 
