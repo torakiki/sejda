@@ -207,7 +207,7 @@
 			<id>travis</id>
 			<activation>
 				<property>
-					<name>env.CI</name>
+					<name>env.TRAVIS</name>
 					<value>true</value>
 				</property>
 			</activation>
