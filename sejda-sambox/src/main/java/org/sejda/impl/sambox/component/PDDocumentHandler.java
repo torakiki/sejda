@@ -25,9 +25,7 @@ import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,6 +37,7 @@ import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
@@ -62,6 +61,8 @@ import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.crypto.CipherOutputStream;
 
 /**
  * Wrapper over a {@link PDDocument}.
@@ -237,8 +238,8 @@ public class PDDocumentHandler implements Closeable {
      * @param file
      * @throws TaskException
      */
-    public void savePDDocument(File file) throws TaskException {
-        savePDDocument(file, null);
+    public void savePDDocument(File file, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
+        savePDDocument(file, null, encryptionAtRestSecurity);
     }
 
     /**
@@ -248,14 +249,16 @@ public class PDDocumentHandler implements Closeable {
      * @param security
      * @throws TaskException
      */
-    public void savePDDocument(File file, StandardSecurity security) throws TaskException {
+    public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
         try {
+            OutputStream out = encryptionAtRestSecurity.encrypt(new FileOutputStream(file));
+
             if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
                 LOG.trace("Saving document to {} using async writer", file);
-                document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
+                document.writeTo(out, security, writeOptions.stream().toArray(WriteOption[]::new));
             } else {
                 LOG.trace("Saving document to {}", file);
-                document.writeTo(file, security,
+                document.writeTo(out, security,
                         concat(of(WriteOption.SYNC_BODY_WRITE), writeOptions.stream()).toArray(WriteOption[]::new));
             }
         } catch (IOException e) {

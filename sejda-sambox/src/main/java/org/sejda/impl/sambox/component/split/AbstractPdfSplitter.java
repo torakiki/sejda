@@ -99,7 +99,7 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                     if (optimize) {
                         extractor.optimize();
                     }
-                    extractor.save(tmpFile, discardOutline);
+                    extractor.save(tmpFile, discardOutline, parameters.getOutput().getEncryptionAtRestPolicy());
                     extractor.reset();
                     LOG.debug("Ending split at page {} of the original document, generated document size is {}", page,
                             HumanReadableSize.toString(tmpFile.length()));

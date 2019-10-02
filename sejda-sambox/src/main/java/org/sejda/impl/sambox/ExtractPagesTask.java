@@ -98,7 +98,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                     .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
                 extractor.optimize();
             }
-            extractor.save(tmpFile, parameters.discardOutline());
+            extractor.save(tmpFile, parameters.discardOutline(), parameters.getOutput().getEncryptionAtRestPolicy());
 
             closeQuietly(sourceDocumentHandler);
 

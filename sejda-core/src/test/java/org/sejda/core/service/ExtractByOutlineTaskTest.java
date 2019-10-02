@@ -17,6 +17,7 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.sejda.TestUtils.encryptedAtRest;
 
 import java.io.IOException;
 
@@ -158,4 +159,15 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
         testContext.assertPages("1_Employee One.pdf", 2);
     }
 
+    @Test
+    public void atRestEncryptionTest() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(2);
+        parameters.addSource(encryptedAtRest(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf")));
+        parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertOutputContainsFilenames("file1_1_Invoking Maven.pdf", "file2_1_Invoking Maven.pdf");
+        testContext.assertOutputSize(36);
+    }
 }

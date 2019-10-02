@@ -64,7 +64,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParamete
         File tmpFile = createTemporaryBuffer(parameters.getOutput());
         outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
-        mixer.savePDDocument(tmpFile);
+        mixer.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(mixer);
 
         parameters.getOutput().accept(outputWriter);

@@ -19,13 +19,9 @@ package org.sejda.impl.sambox.component;
 
 import java.io.IOException;
 
-import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
-import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfSourceOpener;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.PdfURLSource;
+import org.sejda.model.input.*;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.encryption.InvalidPasswordException;
@@ -43,39 +39,25 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
 
     @Override
     public PDDocumentHandler open(PdfURLSource source) throws TaskIOException {
-        try {
-            PDDocument document = PDFParser.parse(
-                    SeekableSources.onTempFileSeekableSourceFrom(source.getSource().openStream()),
-                    source.getPassword());
-            return new PDDocumentHandler(document);
-        } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
-        }
+        return openGeneric(source);
     }
 
     @Override
     public PDDocumentHandler open(PdfFileSource source) throws TaskIOException {
-        try {
-            PDDocument document = PDFParser.parse(SeekableSources.seekableSourceFrom(source.getSource()),
-                    source.getPassword());
-            return new PDDocumentHandler(document);
-        } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource().getName()), ipe);
-        } catch (IOException e) {
-            throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
-        }
+        return openGeneric(source);
     }
 
     @Override
     public PDDocumentHandler open(PdfStreamSource source) throws TaskIOException {
+        return openGeneric(source);
+    }
+
+    private PDDocumentHandler openGeneric(PdfSource source) throws TaskIOException {
         try {
-            PDDocument document = PDFParser.parse(SeekableSources.onTempFileSeekableSourceFrom(source.getSource()),
-                    source.getPassword());
+            PDDocument document = PDFParser.parse(source.getSeekableSource(), source.getPassword());
             return new PDDocumentHandler(document);
         } catch (InvalidPasswordException ipe) {
-            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getSource()), ipe);
+            throw new TaskWrongPasswordException(String.format(WRONG_PWD_MESSAGE, source.getName()), ipe);
         } catch (IOException e) {
             throw new TaskIOException(String.format(ERROR_MESSAGE, source), e);
         }

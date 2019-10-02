@@ -84,7 +84,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
-        documentHandler.savePDDocument(tmpFile);
+        documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);

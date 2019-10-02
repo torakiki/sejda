@@ -29,17 +29,7 @@ import org.sejda.model.exception.TaskIOException;
  * @author Andrea Vacondio
  * 
  */
-public interface PdfSource<T> {
-
-    /**
-     * @return the source
-     */
-    T getSource();
-
-    /**
-     * @return the name of the source
-     */
-    String getName();
+public interface PdfSource<T> extends TaskSource<T> {
 
     /**
      * @return password needed to open the source. Can be null.

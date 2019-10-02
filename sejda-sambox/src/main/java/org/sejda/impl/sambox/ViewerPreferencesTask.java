@@ -94,7 +94,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
             setViewerPreferences(parameters);
 
-            documentHandler.savePDDocument(tmpFile);
+            documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
             String outName = nameGenerator(parameters.getOutputPrefix()).generate(
                     nameRequest().originalName(source.getName()).fileNumber(currentStep));
             outputWriter.addOutput(file(tmpFile).name(outName));

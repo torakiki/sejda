@@ -18,10 +18,15 @@
  */
 package org.sejda.model.input;
 
-import java.io.File;
-
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
+import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.IsFile;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * A {@link File} source
@@ -51,6 +56,16 @@ public class FileSource extends AbstractSource<File> {
     @Override
     public <R> R dispatch(SourceDispatcher<R> dispatcher) throws TaskIOException {
         return dispatcher.dispatch(this);
+    }
+
+    @Override
+    public SeekableSource initializeSeekableSource() throws IOException {
+        // optimization: don't stream to a temp file if there's no encryption
+        if(getEncryptionAtRestPolicy() instanceof NoEncryptionAtRest) {
+            return SeekableSources.seekableSourceFrom(file);
+        }
+
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)));
     }
 
     public static FileSource newInstance(File file) {

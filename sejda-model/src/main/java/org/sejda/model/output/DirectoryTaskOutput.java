@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
 
 /**
@@ -35,7 +36,7 @@ import org.sejda.model.exception.TaskOutputVisitException;
  * @author Andrea Vacondio
  * 
  */
-public class DirectoryTaskOutput implements MultipleTaskOutput {
+public class DirectoryTaskOutput extends AbstractTaskOutput implements MultipleTaskOutput {
 
     private final File directory;
 
@@ -69,12 +70,13 @@ public class DirectoryTaskOutput implements MultipleTaskOutput {
 
     @Override
     public String toString() {
-        return directory.toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(directory).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(directory).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode())
+                .append(directory).toHashCode();
     }
 
     @Override
@@ -86,6 +88,7 @@ public class DirectoryTaskOutput implements MultipleTaskOutput {
             return false;
         }
         DirectoryTaskOutput output = (DirectoryTaskOutput) other;
-        return new EqualsBuilder().append(directory, output.getDestination()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(directory, output.getDestination()).isEquals();
     }
 }

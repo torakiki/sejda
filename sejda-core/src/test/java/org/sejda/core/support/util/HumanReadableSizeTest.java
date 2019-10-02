@@ -35,16 +35,19 @@ public class HumanReadableSizeTest {
 
     @Test
     public void bytes() {
-        assertThat(HumanReadableSize.toString(123L), is("123.00 bytes"));
+        assertThat(HumanReadableSize.toString(123L), is("123 bytes"));
+        assertThat(HumanReadableSize.toString(123L, true), is("123 bytes"));
     }
 
     @Test
     public void kilo() {
         assertThat(HumanReadableSize.toString(12345L), is("12.35 KB"));
+        assertThat(HumanReadableSize.toString(12345L, true), is("12 KB"));
     }
 
     @Test
     public void mega() {
         assertThat(HumanReadableSize.toString(123456789L), is("123.46 MB"));
+        assertThat(HumanReadableSize.toString(123456789L, true), is("123 MB"));
     }
 }

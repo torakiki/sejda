@@ -51,6 +51,7 @@ import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
@@ -159,7 +160,7 @@ public class FontUtilsTest {
             doc.addPage(page);
             PDDocumentHandler handler = new PDDocumentHandler(doc);
             File tmp = IOUtils.createTemporaryBuffer();
-            handler.savePDDocument(tmp);
+            handler.savePDDocument(tmp, NoEncryptionAtRest.INSTANCE);
 
             PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
             String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),

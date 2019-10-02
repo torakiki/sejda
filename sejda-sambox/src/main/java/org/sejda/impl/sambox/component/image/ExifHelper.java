@@ -18,19 +18,14 @@
  */
 package org.sejda.impl.sambox.component.image;
 
-import java.io.IOException;
-
-import org.sejda.model.input.FileSource;
-import org.sejda.model.input.Source;
-import org.sejda.model.input.SourceDispatcher;
-import org.sejda.model.input.StreamSource;
-
 import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import org.sejda.model.input.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads exif orientation of an image and determines if the image should be rotated or not.
@@ -38,30 +33,15 @@ import com.drew.metadata.exif.ExifIFD0Directory;
  * Based on https://stackoverflow.com/questions/5905868/how-to-rotate-jpeg-images-based-on-the-orientation-metadata
  */
 public class ExifHelper {
-    public static int getRotationBasedOnExifOrientation(Source<?> imageSource) {
-        try {
-            return imageSource.dispatch(new SourceDispatcher<Integer>() {
-                @Override
-                public Integer dispatch(FileSource source) {
-                    try {
-                        int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
-                        return getRotation(orientation);
-                    } catch (IOException | MetadataException | ImageProcessingException e) {
-                        return 0;
-                    }
-                }
 
-                @Override
-                public Integer dispatch(StreamSource source) {
-                    try {
-                        int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSource()));
-                        return getRotation(orientation);
-                    } catch (IOException | MetadataException | ImageProcessingException e) {
-                        return 0;
-                    }
-                }
-            });
-        } catch(Throwable e) {
+    private static final Logger LOG = LoggerFactory.getLogger(ExifHelper.class);
+
+    public static int getRotationBasedOnExifOrientation(Source<?> source) {
+        try {
+            int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSeekableSource().asNewInputStream()));
+            return getRotation(orientation);
+        } catch (Throwable e) {
+            LOG.warn("Failed reading rotation based on exif orientation: {}", e.getMessage());
             return 0;
         }
     }

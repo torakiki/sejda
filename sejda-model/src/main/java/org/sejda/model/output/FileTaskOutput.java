@@ -33,7 +33,7 @@ import org.sejda.model.exception.TaskOutputVisitException;
  * @author Andrea Vacondio
  * 
  */
-public class FileTaskOutput implements SingleTaskOutput {
+public class FileTaskOutput extends AbstractTaskOutput implements SingleTaskOutput {
 
     private final File file;
 
@@ -67,12 +67,12 @@ public class FileTaskOutput implements SingleTaskOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(getDestination()).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(getDestination()).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(getDestination()).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(getDestination()).toHashCode();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FileTaskOutput implements SingleTaskOutput {
             return false;
         }
         FileTaskOutput output = (FileTaskOutput) other;
-        return new EqualsBuilder().append(file, output.getDestination()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(file, output.getDestination()).isEquals();
     }
 
 }

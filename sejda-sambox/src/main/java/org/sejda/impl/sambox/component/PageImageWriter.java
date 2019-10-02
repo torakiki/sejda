@@ -43,6 +43,8 @@ import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.support.io.IOUtils;
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.FileSource;
 import org.sejda.model.input.Source;
@@ -110,84 +112,61 @@ public class PageImageWriter {
         }
     }
 
-    public static PDImageXObject toPDXImageObject(Source<?> imageSource) throws TaskIOException {
-        return imageSource.dispatch(new SourceDispatcher<PDImageXObject>() {
-            @Override
-            public PDImageXObject dispatch(FileSource source) throws TaskIOException {
-                try {
-                    return createFromFile(source.getSource().getPath());
-                } catch (Exception e) {
-                    throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + imageSource.getName(), e);
-                }
-            }
-
-            @Override
-            public PDImageXObject dispatch(StreamSource source) throws TaskIOException {
-                try {
-                    String extension = FilenameUtils.getExtension(source.getName());
-                    File tmp = IOUtils.createTemporaryBuffer("." + extension);
-                    try (FileOutputStream fos = new FileOutputStream(tmp)) {
-                        org.apache.commons.io.IOUtils.copyLarge(source.getSource(), fos);
-                    }
-                    return createFromFile(tmp.getPath());
-                } catch (Exception e) {
-                    throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + imageSource.getName(), e);
-                }
-            }
-        });
+    public static PDImageXObject toPDXImageObject(Source<?> source) throws TaskIOException {
+        try {
+            return createFromSeekableSource(source.getSeekableSource(), source.getName());
+        } catch (Exception e) {
+            throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + source.getName(), e);
+        }
     }
 
-    public static PDImageXObject createFromFile(String originalFilePath) throws TaskIOException, IOException {
-        File file = new File(originalFilePath);
-        // we might need to pre-process the image and use a different file
-
-        Optional<File> maybeConvertedFile = convertCMYKJpegIf(file);
+    public static PDImageXObject createFromSeekableSource(SeekableSource original, String name) throws TaskIOException, IOException {
+        SeekableSource source = original;
+        Optional<SeekableSource> maybeConvertedFile = convertCMYKJpegIf(source);
         if(maybeConvertedFile.isPresent()) {
-            file = maybeConvertedFile.get();
+            source = maybeConvertedFile.get();
         }
 
-        maybeConvertedFile = convertICCGrayPngIf(file);
+        maybeConvertedFile = convertICCGrayPngIf(source);
         if(maybeConvertedFile.isPresent()) {
-            file = maybeConvertedFile.get();
+            source = maybeConvertedFile.get();
         }
-
-        String filePath = file.getAbsolutePath();
 
         try {
-            return PDImageXObject.createFromFile(filePath);
+            return PDImageXObject.createFromSeekableSource(source, name);
         } catch (UnsupportedTiffImageException e) {
             LOG.warn("Found unsupported TIFF compression, converting TIFF to JPEG: " + e.getMessage());
 
             try {
-                return PDImageXObject.createFromFile(convertTiffToJpg(filePath));
+                return PDImageXObject.createFromSeekableSource(convertTiffToJpg(source), name);
             } catch (UnsupportedOperationException ex) {
                 if (ex.getMessage().contains("alpha channel")) {
                     LOG.warn("Found alpha channel image, JPEG compression failed, converting TIFF to PNG");
-                    return PDImageXObject.createFromFile(convertTiffToPng(filePath));
+                    return PDImageXObject.createFromSeekableSource(convertTiffToPng(source), name);
                 }
                 throw ex;
             }
         }
     }
 
-    public static String convertTiffToJpg(String filePath) throws IOException, TaskIOException {
-        return convertImageTo(filePath, "jpeg");
+    public static SeekableSource convertTiffToJpg(SeekableSource source) throws IOException, TaskIOException {
+        return convertImageTo(source, "jpeg");
     }
 
-    public static String convertTiffToPng(String filePath) throws IOException, TaskIOException {
-        return convertImageTo(filePath, "png");
+    public static SeekableSource convertTiffToPng(SeekableSource source) throws IOException, TaskIOException {
+        return convertImageTo(source, "png");
     }
 
-    private static FileType getFileType(File file) {
+    private static FileType getFileType(SeekableSource source) {
         try {
-            return FileTypeDetector.detectFileType(file);
+            return FileTypeDetector.detectFileType(source);
         } catch (IOException e) {
             return null;
         }
     }
 
-    public static String convertImageTo(String filePath, String format) throws IOException, TaskIOException {
-        BufferedImage image = ImageIO.read(new File(filePath));
+    public static SeekableSource convertImageTo(SeekableSource source, String format) throws IOException, TaskIOException {
+        BufferedImage image = ImageIO.read(source.asNewInputStream());
         File tmpFile = IOUtils.createTemporaryBuffer("." + format);
         ImageOutputStream outputStream = new FileImageOutputStream(tmpFile);
 
@@ -204,17 +183,17 @@ public class PageImageWriter {
             org.apache.commons.io.IOUtils.closeQuietly(outputStream);
         }
 
-        return tmpFile.getPath();
+        return SeekableSources.seekableSourceFrom(tmpFile);
     }
 
     /**
      * Checks if the input file is a JPEG using CMYK
      * If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<File> convertCMYKJpegIf(File file) throws IOException, TaskIOException {
+    private static Optional<SeekableSource> convertCMYKJpegIf(SeekableSource source) throws IOException, TaskIOException {
         try {
-            if (FileType.JPEG.equals(getFileType(file))) {
-                try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            if (FileType.JPEG.equals(getFileType(source))) {
+                try (ImageInputStream iis = ImageIO.createImageInputStream(source.asNewInputStream())) {
                     ImageReader reader = ImageIO.getImageReadersByFormatName("jpg").next();
                     boolean isCmyk = false;
                     try {
@@ -233,9 +212,9 @@ public class PageImageWriter {
                             // twelvemonkeys JPEG plugin already converts it to rgb when reading the image
                             // just write it out
                             BufferedImage image = reader.read(0);
-                            File tmpFile = IOUtils.createTemporaryBufferWithName(file.getName());
+                            File tmpFile = IOUtils.createTemporaryBuffer();
                             ImageIO.write(image, "jpg", tmpFile);
-                            return Optional.of(tmpFile);
+                            return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
                         }
                     } finally {
                         reader.dispose();
@@ -257,10 +236,10 @@ public class PageImageWriter {
      * Checks if the input file is a PNG using ICC Gray color model
      * If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<File> convertICCGrayPngIf(File file) throws IOException, TaskIOException {
+    private static Optional<SeekableSource> convertICCGrayPngIf(SeekableSource source) throws IOException, TaskIOException {
         try {
-            if (FileType.PNG.equals(getFileType(file))) {
-                try (ImageInputStream iis = ImageIO.createImageInputStream(file)) {
+            if (FileType.PNG.equals(getFileType(source))) {
+                try (ImageInputStream iis = ImageIO.createImageInputStream(source.asNewInputStream())) {
                     ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
                     boolean isICCGray = false;
                     try {
@@ -271,6 +250,7 @@ public class PageImageWriter {
                             ColorSpace colorSpace = typeSpecifier.getColorModel().getColorSpace();
                             if (colorSpace instanceof ICC_ColorSpace && ((ICC_ColorSpace) colorSpace).getProfile() instanceof ICC_ProfileGray) {
                                 isICCGray = true;
+                                break;
                             }
                         }
 
@@ -279,9 +259,9 @@ public class PageImageWriter {
                             // convert to rgb
                             BufferedImage original = reader.read(0);
                             BufferedImage rgb = toARGB(original);
-                            File tmpFile = IOUtils.createTemporaryBufferWithName(file.getName());
+                            File tmpFile = IOUtils.createTemporaryBuffer();
                             ImageIO.write(rgb, "png", tmpFile);
-                            return Optional.of(tmpFile);
+                            return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
                         }
                     } finally {
                         reader.dispose();

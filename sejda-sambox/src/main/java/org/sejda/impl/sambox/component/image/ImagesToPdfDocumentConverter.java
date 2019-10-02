@@ -39,6 +39,7 @@ import org.sejda.model.input.MergeInput;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.Source;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.parameter.BaseMergeParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -125,8 +126,6 @@ public class ImagesToPdfDocumentConverter {
                 float y = ((int) mediaBox.getHeight() - height) / 2;
 
                 imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
-
-                // TODO: fix for stream source. it's the second time the source is read, will not work
                 int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
                 page.setRotation(rotation);
 
@@ -208,7 +207,12 @@ public class ImagesToPdfDocumentConverter {
         String filename = String.format("%s.pdf", basename);
         File convertedTmpFile = createTemporaryBufferWithName(filename);
         converted.setDocumentTitle(basename);
-        converted.savePDDocument(convertedTmpFile);
-        return new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
+
+        EncryptionAtRestPolicy encryptionAtRestPolicy = image.getSource().getEncryptionAtRestPolicy();
+        converted.savePDDocument(convertedTmpFile, encryptionAtRestPolicy);
+
+        PdfMergeInput input = new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
+        input.getSource().setEncryptionAtRestPolicy(encryptionAtRestPolicy);
+        return input;
     }
 }

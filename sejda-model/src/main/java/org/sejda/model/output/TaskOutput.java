@@ -22,6 +22,7 @@ package org.sejda.model.output;
 
 import java.io.File;
 
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.exception.TaskOutputVisitException;
 
 /**
@@ -46,5 +47,9 @@ public interface TaskOutput {
      *             in case of error
      */
     void accept(TaskOutputDispatcher dispatcher) throws TaskOutputVisitException;
+
+    EncryptionAtRestPolicy getEncryptionAtRestPolicy();
+
+    void setEncryptionAtRestPolicy(EncryptionAtRestPolicy encryptionAtRestSecurity);
 
 }

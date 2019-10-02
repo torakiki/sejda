@@ -26,15 +26,20 @@ public class HumanReadableSize {
     private HumanReadableSize() {}
 
     public static final String toString(long size) {
+        return toString(size, false);
+    }
+
+    public static final String toString(long size, boolean roundUp) {
+        String format = roundUp ? "%.0f" : "%.2f";
         String unit = "bytes";
-        String unitSize = String.format("%.2f", (float)size);
+        String unitSize = String.format("%.0f", (float)size);
 
         if(size > MB) {
             unit = "MB";
-            unitSize = String.format("%.2f", (float) size / MB);
+            unitSize = String.format(format, (float) size / MB);
         } else if(size > KB) {
             unit = "KB";
-            unitSize = String.format("%.2f", (float) size / KB);
+            unitSize = String.format(format, (float) size / KB);
         }
 
         return String.format("%s %s", unitSize, unit);

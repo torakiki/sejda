@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.exception.TaskOutputVisitException;
 
-public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
+public class FileOrDirectoryTaskOutput extends AbstractTaskOutput implements SingleOrMultipleTaskOutput {
 
     private File file;
 
@@ -53,12 +53,12 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(file).toString();
+        return new ToStringBuilder(this).appendSuper(super.toString()).append(file).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(file).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(file).toHashCode();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class FileOrDirectoryTaskOutput implements SingleOrMultipleTaskOutput {
             return false;
         }
         FileOrDirectoryTaskOutput output = (FileOrDirectoryTaskOutput) other;
-        return new EqualsBuilder().append(file, output.file).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(file, output.file).isEquals();
     }
 
     /**

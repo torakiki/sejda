@@ -28,6 +28,8 @@ import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
+import static org.sejda.TestUtils.encryptedAtRest;
+
 /**
  * @author Andrea Vacondio
  * 
@@ -49,6 +51,18 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
     public void testExecuteBurst() throws IOException {
         setUpParameters(PredefinedSetOfPages.ALL_PAGES);
         testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
+    }
+
+    @Test
+    public void testEncryptionAtRest() throws IOException {
+        parameters = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
+        parameters.addSource(encryptedAtRest(shortInput()));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(4);

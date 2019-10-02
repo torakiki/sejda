@@ -33,6 +33,7 @@ import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -126,7 +127,7 @@ public class PagesExtractor implements Closeable {
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void save(File file, boolean discardOutline) throws TaskException {
+    public void save(File file, boolean discardOutline, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
         if (!discardOutline) {
             createOutline();
         }
@@ -141,7 +142,7 @@ public class PagesExtractor implements Closeable {
             destinationDocument.setDocumentAcroForm(f);
         });
 
-        destinationDocument.savePDDocument(file);
+        destinationDocument.savePDDocument(file, encryptionAtRestSecurity);
     }
 
     private void createOutline() {

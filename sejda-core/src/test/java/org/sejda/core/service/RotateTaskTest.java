@@ -23,6 +23,7 @@ package org.sejda.core.service;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.sejda.TestUtils.encryptedAtRest;
 
 import java.io.IOException;
 
@@ -199,6 +200,19 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
             assertPageRotation(d, 0, 270);
             assertPageRotation(d, 1, 180);
         });
+    }
+
+    @Test
+    public void encryptionAtRestTest() throws IOException {
+        parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
+        parameters.addSource(encryptedAtRest(shortInput()));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(4)
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
     }
 
     private void assertPageRotation(PDDocument doc, int pageIndex, int expectedDegrees) {

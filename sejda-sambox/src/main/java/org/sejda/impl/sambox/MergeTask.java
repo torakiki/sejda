@@ -236,7 +236,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                     .setPageLabels(catalogPageLabelsMerger.getMergedPageLabels());
         }
 
-        destinationDocument.savePDDocument(tmpFile);
+        destinationDocument.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeResources();
 
         parameters.getOutput().accept(outputWriter);

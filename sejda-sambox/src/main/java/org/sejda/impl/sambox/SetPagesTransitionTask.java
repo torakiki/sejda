@@ -105,7 +105,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         documentHandler.setCreatorOnPDDocument();
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
-        documentHandler.savePDDocument(tmpFile);
+        documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);

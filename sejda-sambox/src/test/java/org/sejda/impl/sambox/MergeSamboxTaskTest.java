@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.sejda.TestUtils.encryptedAtRest;
 import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
 import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
 
@@ -811,6 +812,22 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
             assertEquals(d.getPage(4).getRotation(), 180);
         });
+    }
+
+    @Test
+    public void atRestEncryptionTest() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.png"))));
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.tiff"))));
+        parameters.addInput(new PdfMergeInput(encryptedAtRest(customInput("pdf/test-pdf.pdf"))));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertNoTaskWarnings();
+        testContext.assertPages(13);
     }
 
     private float widthOfCropBox(PDPage page) {
