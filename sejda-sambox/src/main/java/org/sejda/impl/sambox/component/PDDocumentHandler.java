@@ -25,7 +25,11 @@ import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,10 +38,10 @@ import java.util.Set;
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.impl.sambox.util.PageLabelUtils;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
@@ -61,8 +65,6 @@ import org.sejda.sambox.rendering.ImageType;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.crypto.CipherOutputStream;
 
 /**
  * Wrapper over a {@link PDDocument}.

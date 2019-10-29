@@ -22,8 +22,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -46,7 +44,7 @@ public class FilenameFooterWriterTest {
     }
 
     @Test
-    public void write_long_filename_that_needs_truncation() throws TaskException, IOException {
+    public void write_long_filename_that_needs_truncation() throws TaskException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);

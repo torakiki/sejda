@@ -18,6 +18,18 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
 import org.junit.Test;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.io.SeekableSources;
@@ -31,14 +43,6 @@ import org.sejda.sambox.pdmodel.PageLayout;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
-import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
 
 /**
  * @author Andrea Vacondio
@@ -98,10 +102,12 @@ public class PDDocumentHandlerTest {
             PDPage page = handler1.getPage(1);
             assertEquals(PDRectangle.A4, page.getMediaBox());
 
-            PDDocumentHandler handler2 = new PDDocumentHandler();
-            PDPage imported = handler2.importPage(page);
+            try (PDDocumentHandler handler2 = new PDDocumentHandler()) {
+                PDPage imported = handler2.importPage(page);
 
-            assertEquals("Imported page has different media box than source", imported.getMediaBox(), page.getMediaBox());
+                assertEquals("Imported page has different media box than source", imported.getMediaBox(),
+                        page.getMediaBox());
+            }
         }
     }
 

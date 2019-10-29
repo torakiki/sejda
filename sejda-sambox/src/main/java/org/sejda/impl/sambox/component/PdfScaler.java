@@ -154,7 +154,7 @@ public class PdfScaler {
             margin(doc, Collections.singleton(page), margins);
         }
 
-        PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
+        // PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
         // LOG.debug("Final page size: {}", finalPageSize);
         // LOG.debug("Desired page size: {}", desiredPageSize);
     }

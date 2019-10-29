@@ -72,8 +72,8 @@ public class DefaultPdfSourceOpenerTest {
             try {
                 org.apache.commons.io.IOUtils.copy(in, out);
             } finally {
-                org.apache.commons.io.IOUtils.closeQuietly(out);
-                org.apache.commons.io.IOUtils.closeQuietly(in);
+                org.sejda.commons.util.IOUtils.closeQuietly(out);
+                org.sejda.commons.util.IOUtils.closeQuietly(in);
             }
 
             new DefaultPdfSourceOpener().open(PdfFileSource.newInstanceWithPassword(tmp, "my source"));

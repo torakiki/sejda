@@ -47,8 +47,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.io.SeekableSource;
@@ -432,7 +432,7 @@ public class TaskTestContext implements Closeable {
         return this;
     }
 
-    public TaskTestContext forRawOutput(String filename, Consumer<Path> consumer) throws IOException {
+    public TaskTestContext forRawOutput(String filename, Consumer<Path> consumer) {
         requireMultipleOutputs();
         File file = new File(fileOutput, filename);
         assertTrue(file.exists());
@@ -508,11 +508,6 @@ public class TaskTestContext implements Closeable {
             taskFailureCause = event.getFailingCause();
         }
     };
-
-    @Deprecated
-    public void expectTaskWillFail() {
-        listenForTaskFailure();
-    }
 
     public void listenForTaskFailure() {
         taskFailureCause = null;

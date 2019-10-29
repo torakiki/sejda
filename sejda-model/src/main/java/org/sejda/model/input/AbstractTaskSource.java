@@ -18,17 +18,18 @@
  */
 package org.sejda.model.input;
 
+import java.io.IOException;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.io.SeekableSource;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.encryption.NoEncryptionAtRest;
 
-import java.io.IOException;
-
 public abstract class AbstractTaskSource<T> implements TaskSource<T> {
 
     private EncryptionAtRestPolicy encryptionAtRestPolicy = NoEncryptionAtRest.INSTANCE;
 
+    @Override
     public EncryptionAtRestPolicy getEncryptionAtRestPolicy() {
         return encryptionAtRestPolicy;
     }

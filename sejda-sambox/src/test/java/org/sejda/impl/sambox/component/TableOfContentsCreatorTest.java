@@ -337,7 +337,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws IOException, TaskException {
+    public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();
@@ -359,7 +359,7 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws IOException, TaskException {
+    public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws TaskException {
         MergeParameters params = new MergeParameters();
         params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         PDDocument doc = new PDDocument();

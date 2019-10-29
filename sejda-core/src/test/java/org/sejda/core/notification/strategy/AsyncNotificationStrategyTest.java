@@ -20,17 +20,16 @@
  */
 package org.sejda.core.notification.strategy;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
 import org.sejda.model.task.NotifiableTaskMetadata;
-
 /**
  * Test unit for {@link AsyncNotificationStrategy}
  * 
@@ -49,6 +48,6 @@ public class AsyncNotificationStrategyTest {
         // FIXME
         // ugly but needed to give time for the async notification
         Thread.sleep(1000);
-        verify(listener, times(1)).onEvent(Matchers.any(AbstractNotificationEvent.class));
+        verify(listener, times(1)).onEvent(any(AbstractNotificationEvent.class));
     }
 }

@@ -170,7 +170,6 @@ public class TableOfContentsCreator {
                         ToCItem i = items.peek();
                         if (nonNull(i)) {
                             float y = pageSize().getHeight() - margin - (row * lineHeight);
-                            float startY = y;
                             float x = margin;
 
                             List<String> lines = multipleLinesIfRequired(i.text, separatingLineEndingX, separatorWidth);

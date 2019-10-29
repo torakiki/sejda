@@ -21,7 +21,11 @@ import java.io.IOException;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
-import org.sejda.model.input.*;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.input.PdfSourceOpener;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.PdfURLSource;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.encryption.InvalidPasswordException;
@@ -52,7 +56,7 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
         return openGeneric(source);
     }
 
-    private PDDocumentHandler openGeneric(PdfSource source) throws TaskIOException {
+    private PDDocumentHandler openGeneric(PdfSource<?> source) throws TaskIOException {
         try {
             PDDocument document = PDFParser.parse(source.getSeekableSource(), source.getPassword());
             return new PDDocumentHandler(document);

@@ -18,6 +18,14 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.MergeInput;
@@ -27,14 +35,8 @@ import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-public abstract class BaseMergeParameters<T extends MergeInput> extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
+public abstract class BaseMergeParameters<T extends MergeInput> extends AbstractPdfOutputParameters
+        implements SingleOutputTaskParameters {
 
     @NotEmpty
     @Valid
@@ -66,9 +68,8 @@ public abstract class BaseMergeParameters<T extends MergeInput> extends Abstract
     }
 
     public List<PdfMergeInput> getPdfInputList() {
-        return Collections.unmodifiableList(
-                inputList.stream().map(input -> (PdfMergeInput) input).collect(Collectors.toList())
-        );
+        return Collections
+                .unmodifiableList(inputList.stream().map(input -> (PdfMergeInput) input).collect(Collectors.toList()));
     }
 
     /**
@@ -82,8 +83,7 @@ public abstract class BaseMergeParameters<T extends MergeInput> extends Abstract
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(output)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(inputList).append(output).toHashCode();
     }
 
     @Override
@@ -94,10 +94,8 @@ public abstract class BaseMergeParameters<T extends MergeInput> extends Abstract
         if (!(other instanceof BaseMergeParameters)) {
             return false;
         }
-        BaseMergeParameters params = (BaseMergeParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(inputList, params.inputList)
-                .append(output, params.getOutput())
-                .isEquals();
+        BaseMergeParameters<?> params = (BaseMergeParameters<?>) other;
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.inputList)
+                .append(output, params.getOutput()).isEquals();
     }
 }

@@ -25,7 +25,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
@@ -41,15 +40,11 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.apache.commons.io.FilenameUtils;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.FileSource;
 import org.sejda.model.input.Source;
-import org.sejda.model.input.SourceDispatcher;
-import org.sejda.model.input.StreamSource;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDPageContentStream;
@@ -180,7 +175,7 @@ public class PageImageWriter {
             }
             writer.write(null, new IIOImage(image, null, null), param);
         } finally {
-            org.apache.commons.io.IOUtils.closeQuietly(outputStream);
+            org.sejda.commons.util.IOUtils.closeQuietly(outputStream);
         }
 
         return SeekableSources.seekableSourceFrom(tmpFile);

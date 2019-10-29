@@ -3,7 +3,12 @@ package org.sejda;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Set;
 
@@ -14,14 +19,17 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.encryption.EncryptionHelpers;
 import org.sejda.model.encryption.CipherBasedEncryptionAtRest;
 import org.sejda.model.encryption.CipherSupplier;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
-import org.sejda.model.input.*;
+import org.sejda.model.input.FileSource;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,7 +198,8 @@ public final class TestUtils {
 
     public static PdfStreamSource encryptedAtRest(PdfStreamSource source) throws IOException {
         File file = encryptedAtRest(source.getSeekableSource().asNewInputStream());
-        PdfStreamSource result = PdfStreamSource.newInstanceWithPassword(new FileInputStream(file), source.getName(), source.getPassword());
+        PdfStreamSource result = PdfStreamSource.newInstanceWithPassword(new FileInputStream(file), source.getName(),
+                source.getPassword());
         result.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
         return result;
     }
