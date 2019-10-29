@@ -45,6 +45,7 @@ import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.MergeInput;
@@ -636,6 +637,20 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
         // TODO: friendlier error message
         testContext.assertTaskFailed("An error occurred creating PDImageXObject from file source: corrupt.png");
+    }
+
+    @Test
+    public void mergeImagesWithValidation() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setLenient(false);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        ImageMergeInput input1 = new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png"));
+        input1.setPageSize(null);
+        parameters.addInput(input1);
+
+        testContext.pdfOutputTo(parameters);
+        executeWithValidation(parameters);
+        testContext.assertTaskFailed(InvalidTaskParametersException.class);
     }
 
     @Test

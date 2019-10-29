@@ -65,12 +65,18 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public final TaskTestContext testContext = new TaskTestContext();
     private DefaultTaskExecutionService service = new DefaultTaskExecutionService();
+    private SejdaContext context;
 
     @Before
     public void setUp() throws TaskException {
-        SejdaContext context = mock(DefaultSejdaContext.class);
+        context = mock(DefaultSejdaContext.class);
         TestUtils.setProperty(service, "context", context);
         when(context.getTask(any())).thenReturn((Task) getTask());
+    }
+
+    public void executeWithValidation(TaskParameters parameters) {
+        when(context.isValidation()).thenReturn(Boolean.TRUE);
+        execute(parameters);
     }
 
     public void execute(TaskParameters parameters) {
@@ -87,10 +93,11 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     public void closeContext() {
         IOUtils.closeQuietly(testContext);
     }
-    
+
     public static PdfStreamSource shortInput() {
         return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/short-test-file.pdf"), "short-test-file.pdf");
+                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/short-test-file.pdf"),
+                "short-test-file.pdf");
     }
 
     public static PdfStreamSource regularInput() {
@@ -122,7 +129,8 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public static PdfStreamSource formInput() {
         return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf"), "test-form.pdf");
+                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf"),
+                "test-form.pdf");
     }
 
     public static PdfStreamSource stronglyEncryptedInput() {
@@ -148,7 +156,8 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public static PdfStreamSource customInput(String path, String name) {
         requireNotBlank(name, "Name cannot be blank");
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getClassLoader().getResourceAsStream(path), name);
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getClassLoader().getResourceAsStream(path),
+                name);
     }
 
     public static PdfFileSource customInput(PDDocument doc, String name) {
@@ -208,7 +217,6 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         org.sejda.core.service.TestUtils.assertPageTextExactLines(page, text);
     }
 
-
     public static void assertPageTextContains(PDPage page, String text) {
         org.sejda.core.service.TestUtils.assertPageTextContains(page, text);
     }
@@ -225,19 +233,19 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     // returns 1-based page numbers
     public static List<Integer> getPagesContainingImages(PDDocument doc) {
         List<Integer> result = new ArrayList<>();
-        for(int i = 0; i < doc.getNumberOfPages(); i++) {
+        for (int i = 0; i < doc.getNumberOfPages(); i++) {
             PDPage page = doc.getPage(i);
             boolean hasImages = false;
-            for(COSName name: page.getResources().getXObjectNames()) {
+            for (COSName name : page.getResources().getXObjectNames()) {
                 try {
-                    if(page.getResources().getXObject(name) instanceof PDImageXObject) {
+                    if (page.getResources().getXObject(name) instanceof PDImageXObject) {
                         hasImages = true;
                     }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
-            if(hasImages) {
+            if (hasImages) {
                 result.add(i + 1);
             }
         }

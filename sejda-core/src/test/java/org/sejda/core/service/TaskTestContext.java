@@ -22,6 +22,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -518,6 +519,12 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertTaskFailed(String message) {
         assertNotNull(taskFailureCause);
         assertThat(taskFailureCause.getMessage(), startsWith(message));
+        return this;
+    }
+
+    public TaskTestContext assertTaskFailed(Class<? extends Throwable> cause) {
+        assertNotNull(taskFailureCause);
+        assertThat(taskFailureCause, instanceOf(cause));
         return this;
     }
 
