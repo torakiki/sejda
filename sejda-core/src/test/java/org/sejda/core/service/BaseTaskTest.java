@@ -19,11 +19,11 @@
 package org.sejda.core.service;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.sejda.TestUtils;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.model.exception.TaskException;

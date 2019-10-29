@@ -520,13 +520,15 @@ public class TaskTestContext implements Closeable {
         GlobalNotificationContext.getContext().addListener(failureListener);
     }
 
-    public void assertTaskFailed(String message) {
+    public TaskTestContext assertTaskFailed(String message) {
         assertNotNull(taskFailureCause);
         assertThat(taskFailureCause.getMessage(), startsWith(message));
+        return this;
     }
 
-    public void assertTaskDidNotFail() {
+    public TaskTestContext assertTaskDidNotFail() {
         assertNull("Task failed", taskFailureCause);
+        return this;
     }
 
     @Deprecated
@@ -540,12 +542,14 @@ public class TaskTestContext implements Closeable {
         GlobalNotificationContext.getContext().addListener(warningsListener);
     }
 
-    public void assertTaskWarning(String message) {
+    public TaskTestContext assertTaskWarning(String message) {
         assertThat(taskWarnings, hasItem(containsString(message)));
+        return this;
     }
 
-    public void assertNoTaskWarnings() {
+    public TaskTestContext assertNoTaskWarnings() {
         assertEquals("Expected no warnings but got: " + StringUtils.join(taskWarnings, ","), taskWarnings.size(), 0);
+        return this;
     }
 
     private void initOutputFromSource(File source, String password) throws IOException {
