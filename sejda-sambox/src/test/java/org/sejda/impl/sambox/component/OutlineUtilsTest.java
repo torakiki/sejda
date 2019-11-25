@@ -36,6 +36,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -46,6 +48,7 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNam
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitHeightDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
@@ -248,5 +251,36 @@ public class OutlineUtilsTest {
         List<OutlineItem> flat = OutlineUtils.getFlatOutline(document);
         assertEquals(2, flat.size());
         assertEquals("child2", flat.get(0).title);
+    }
+
+    @Test
+    public void resolvePageDestination() throws IOException {
+        PDPage page1 = new PDPage();
+        PDPage page2 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        document.addPage(page2);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("title");
+        PDOutlineItem child = new PDOutlineItem();
+        child.setTitle("child");
+        child.setDestination(page2);
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page1);
+        child2.getCOSObject().getDictionaryObject(COSName.DEST, COSArray.class).set(0, COSInteger.ONE);
+        root.addFirst(child);
+        root.addLast(child2);
+        outlines.addFirst(root);
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        assertNotNull(OutlineUtils.resolvePageDestination((PDPageDestination) child2.getDestination(), document));
+        assertNotNull(OutlineUtils.resolvePageDestination((PDPageDestination) child.getDestination(), document));
+        PDPageDestination negative = new PDPageXYZDestination();
+        negative.setPageNumber(-1);
+        assertNull(OutlineUtils.resolvePageDestination(negative, document));
+        PDPageDestination notFound = new PDPageXYZDestination();
+        notFound.setPageNumber(10);
+        assertNull(OutlineUtils.resolvePageDestination(notFound, document));
     }
 }

@@ -137,4 +137,32 @@ public class OutlineDistillerTest {
         assertEquals(759, ((PDPageXYZDestination) clonedDest).getTop());
         assertEquals(56, ((PDPageXYZDestination) clonedDest).getLeft());
     }
+
+    @Test
+    public void fallbackHandlesBrokenDestinations() throws IOException {
+        // https://github.com/torakiki/pdfsam/issues/361
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/page_dests_with_number_insteadof_refs.pdf")))) {
+            for (PDPage current : document.getPages()) {
+                mapping.addLookupEntry(current, new PDPage());
+            }
+            PDDocumentOutline outline = new PDDocumentOutline();
+            new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+            assertTrue(outline.hasChildren());
+        }
+    }
+
+    @Test
+    public void fallbackHandlesBrokenDestinationsWithNonExistingPageNumber() throws IOException {
+        // https://github.com/torakiki/pdfsam/issues/361
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/page_dests_with_number_insteadof_refs_wrong_num.pdf")))) {
+            for (PDPage current : document.getPages()) {
+                mapping.addLookupEntry(current, new PDPage());
+            }
+            PDDocumentOutline outline = new PDDocumentOutline();
+            new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+            assertTrue(outline.hasChildren());
+        }
+    }
 }

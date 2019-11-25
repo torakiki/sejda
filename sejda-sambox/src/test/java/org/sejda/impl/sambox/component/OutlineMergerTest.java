@@ -23,7 +23,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,36 +45,25 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutline
  */
 public class OutlineMergerTest {
 
-    private PDDocument document;
-    private PDDocument document2;
-    private LookupTable<PDPage> mapping = new LookupTable<>();
-    private LookupTable<PDPage> mapping2 = new LookupTable<>();
+    private ImmutablePair<PDDocument, LookupTable<PDPage>> testData;
+    private ImmutablePair<PDDocument, LookupTable<PDPage>> testData2;
 
     @Before
     public void setUp() throws IOException {
-        document = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf")));
-        for (PDPage current : document.getPages()) {
-            mapping.addLookupEntry(current, new PDPage());
-        }
-
-        document2 = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
-        for (PDPage current : document2.getPages()) {
-            mapping2.addLookupEntry(current, new PDPage());
-        }
+        testData = getTestData("pdf/large_outline.pdf");
+        testData2 = getTestData("pdf/test_outline.pdf");
     }
 
     @After
     public void tearDown() {
-        IOUtils.closeQuietly(document);
-        IOUtils.closeQuietly(document2);
+        IOUtils.closeQuietly(testData.getKey());
+        IOUtils.closeQuietly(testData2.getKey());
     }
 
     @Test
     public void empty() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.DISCARD);
-        victim.updateOutline(document, "large_outline.pdf", mapping);
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", testData.getValue());
         assertFalse(victim.hasOutline());
         assertFalse(victim.getOutline().hasChildren());
     }
@@ -80,16 +71,16 @@ public class OutlineMergerTest {
     @Test
     public void retainAll() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        victim.updateOutline(document, "large_outline.pdf", mapping);
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", testData.getValue());
         assertTrue(victim.hasOutline());
-        assertEquals(count(document.getDocumentCatalog().getDocumentOutline()), count(victim.getOutline()));
+        assertEquals(count(testData.getKey().getDocumentCatalog().getDocumentOutline()), count(victim.getOutline()));
     }
 
     @Test
     public void onePerDoc() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        victim.updateOutline(document, "large_outline.pdf", mapping);
-        victim.updateOutline(document2, "test_outline.pdf", mapping2);
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", testData.getValue());
+        victim.updateOutline(testData2.getKey(), "test_outline.pdf", testData2.getValue());
         assertTrue(victim.hasOutline());
         assertEquals(2, count(victim.getOutline()));
         for (PDOutlineItem current : victim.getOutline().children()) {
@@ -100,8 +91,8 @@ public class OutlineMergerTest {
     @Test
     public void retainAsOneEntry() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN_AS_ONE_ENTRY);
-        victim.updateOutline(document, "large_outline.pdf", mapping);
-        victim.updateOutline(document2, "test_outline.pdf", mapping2);
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", testData.getValue());
+        victim.updateOutline(testData2.getKey(), "test_outline.pdf", testData2.getValue());
         assertTrue(victim.hasOutline());
         assertEquals(2, count(victim.getOutline()));
         for (PDOutlineItem current : victim.getOutline().children()) {
@@ -112,11 +103,11 @@ public class OutlineMergerTest {
     @Test
     public void retainSome() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        mapping.clear();
-        mapping.addLookupEntry(document.getPage(2), new PDPage());
-        mapping.addLookupEntry(document.getPage(3), new PDPage());
-        mapping.addLookupEntry(document.getPage(4), new PDPage());
-        victim.updateOutline(document, "large_outline.pdf", mapping);
+        testData.getValue().clear();
+        testData.getValue().addLookupEntry(testData.getKey().getPage(2), new PDPage());
+        testData.getValue().addLookupEntry(testData.getKey().getPage(3), new PDPage());
+        testData.getValue().addLookupEntry(testData.getKey().getPage(4), new PDPage());
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", testData.getValue());
         assertTrue(victim.hasOutline());
         assertEquals(28, count(victim.getOutline()));
     }
@@ -124,22 +115,40 @@ public class OutlineMergerTest {
     @Test
     public void onePerDocNoName() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.ONE_ENTRY_EACH_DOC);
-        victim.updateOutline(document, "", mapping);
+        victim.updateOutline(testData.getKey(), "", testData.getValue());
         assertFalse(victim.hasOutline());
     }
 
     @Test
     public void retainAllNoRelevantPage() {
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
-        victim.updateOutline(document, "large_outline.pdf", new LookupTable<>());
+        victim.updateOutline(testData.getKey(), "large_outline.pdf", new LookupTable<>());
         assertFalse(victim.hasOutline());
     }
 
-    private static int count(PDDocumentOutline outline) {
-        int count = 0;
-        for (PDOutlineItem item : outline.children()) {
-            count++;
+    @Test
+    public void handlePageNumsInsteadOfRefsInDestinations() throws IOException {
+        ImmutablePair<PDDocument, LookupTable<PDPage>> data = getTestData(
+                "pdf/page_dests_with_number_insteadof_refs.pdf");
+        OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
+        victim.updateOutline(data.getKey(), "page_dests_with_number_insteadof_refs.pdf", data.getValue());
+        assertTrue(victim.hasOutline());
+        assertEquals(1, count(victim.getOutline()));
+        assertEquals(2,
+                StreamSupport.stream(victim.getOutline().getFirstChild().children().spliterator(), false).count());
+    }
+
+    private ImmutablePair<PDDocument, LookupTable<PDPage>> getTestData(String path) throws IOException {
+        PDDocument document = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(path)));
+        LookupTable<PDPage> mapping = new LookupTable<>();
+        for (PDPage current : document.getPages()) {
+            mapping.addLookupEntry(current, new PDPage());
         }
-        return count;
+        return ImmutablePair.of(document, mapping);
+    }
+
+    private static long count(PDDocumentOutline outline) {
+        return StreamSupport.stream(outline.children().spliterator(), false).count();
     }
 }

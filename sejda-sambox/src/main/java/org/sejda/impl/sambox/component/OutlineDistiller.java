@@ -22,6 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.impl.sambox.component.OutlineUtils.clonePageDestination;
 import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary;
+import static org.sejda.impl.sambox.component.OutlineUtils.resolvePageDestination;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
 import java.util.Optional;
@@ -75,7 +76,7 @@ public class OutlineDistiller {
         if (node.hasChildren()) {
             final PDOutlineItem clone = new PDOutlineItem();
             for (PDOutlineItem current : node.children()) {
-                if(current.equals(node)) {
+                if (current.equals(node)) {
                     LOG.warn("Outline item has a child pointing to the parent, skipping at cloning");
                 } else {
                     cloneNode(current, pagesLookup).ifPresent(clonedChild -> {
@@ -84,7 +85,7 @@ public class OutlineDistiller {
                 }
             }
             Optional<PDPageDestination> pageDestination = toPageDestination(node, document.getDocumentCatalog());
-            Optional<PDPage> destinationPage = pageDestination.map(PDPageDestination::getPage)
+            Optional<PDPage> destinationPage = pageDestination.map(d -> resolvePageDestination(d, document))
                     .map(p -> pagesLookup.lookup(p));
             if (clone.hasChildren() || destinationPage.isPresent()) {
                 copyOutlineDictionary(node, clone);
@@ -98,11 +99,11 @@ public class OutlineDistiller {
 
     /**
      * @param origin
-     * @return a clone of the origin leaf if its page destination falls in the range of the needed pages. Cloned item destination is offset by the given offset.
+     * @return a clone of the origin leaf if its page destination falls in the range of the needed pages.
      */
     private Optional<PDOutlineItem> cloneLeafIfNeeded(PDOutlineItem origin, LookupTable<PDPage> pagesLookup) {
         return toPageDestination(origin, document.getDocumentCatalog()).flatMap(d -> {
-            PDPage mapped = pagesLookup.lookup(d.getPage());
+            PDPage mapped = pagesLookup.lookup(resolvePageDestination(d, document));
             if (mapped != null) {
                 PDOutlineItem retVal = new PDOutlineItem();
                 copyOutlineDictionary(origin, retVal);
