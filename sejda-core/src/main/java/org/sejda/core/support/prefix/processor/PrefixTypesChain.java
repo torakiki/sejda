@@ -21,6 +21,7 @@
 package org.sejda.core.support.prefix.processor;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.sejda.core.support.prefix.processor.PrefixUtils.toSafeFilename;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,7 +80,7 @@ public class PrefixTypesChain {
         if (!ensureUniqueness) {
             retVal = pageNumberPrepend.process(retVal, request);
         }
-        return extensionProcessor.process(retVal, request);
+        return extensionProcessor.process(toSafeFilename(retVal), request);
     }
 
     private String processChain(String prefix, NameGenerationRequest request, Set<PrefixType> chain) {

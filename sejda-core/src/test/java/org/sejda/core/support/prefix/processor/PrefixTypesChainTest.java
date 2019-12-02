@@ -77,4 +77,18 @@ public class PrefixTypesChainTest {
         assertEquals("prefix_3_name.txt", new PrefixTypesChain(prefix).process(prefix,
                 nameRequest("txt").originalName("name.pdf").fileNumber(3)));
     }
+
+    @Test
+    public void invalidCharsText() {
+        String prefix = "[TEXT] [BASENAME]";
+        assertEquals("This   has  some  name.txt", new PrefixTypesChain(prefix).process(prefix,
+                nameRequest("txt").originalName("name.pdf").text("  This \n \u00A0 has \t some $§°éç")));
+    }
+
+    @Test
+    public void invalidCharsBookmarks() {
+        String prefix = "[BOOKMARK_NAME] [BASENAME]";
+        assertEquals("This     has some $§°éç name.txt", new PrefixTypesChain(prefix).process(prefix,
+                nameRequest("txt").originalName("name.pdf").bookmark("  This \n \u00A0 has\tsome $§°éç ")));
+    }
 }
