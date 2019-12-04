@@ -29,17 +29,7 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -561,8 +551,13 @@ public final class FontUtils {
             }
         });
 
+        // replace unsupported groups of text longer ones first
+        // eg: first replace "ääç" and then "ä"
+        List<String> unsupportedSortedByLength = new ArrayList<>(unsupported);
+        unsupportedSortedByLength.sort((o1, o2) -> new Integer(o2.length()).compareTo(o1.length()));
+
         String result = text;
-        for (String s : unsupported) {
+        for (String s : unsupportedSortedByLength) {
             result = result.replaceAll(Pattern.quote(s), replacement);
         }
 

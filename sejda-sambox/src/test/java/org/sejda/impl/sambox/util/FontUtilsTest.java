@@ -310,6 +310,13 @@ public class FontUtilsTest {
     }
 
     @Test
+    public void removingUnsupportedCharacters() {
+        PDDocument doc = new PDDocument();
+        String str = FontUtils.removeUnsupportedCharacters("ͷ͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
+        assertThat(str, is("͵ Text here SǦͻǦʹͻ4 and here"));
+    }
+
+    @Test
     public void wrapping_Lines_Without_Word_Break() throws TaskIOException {
         PDDocument doc = new PDDocument();
         List<String> lines = FontUtils.wrapLines(
