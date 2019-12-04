@@ -39,6 +39,6 @@ public class TextWithFont {
 
     @Override
     public String toString() {
-        return "[" + this.font.getName() + "] '" + getText() + "'";
+        return "[" + (this.font == null ? "null" : this.font.getName()) + "] '" + getText() + "'";
     }
 }
