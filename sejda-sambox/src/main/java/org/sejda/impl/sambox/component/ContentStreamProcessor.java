@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component that parses the page content steam and the page annotations appearance streams
- * 
+ *
  * @author Andrea Vacondio
  *
  */
@@ -58,7 +58,9 @@ public class ContentStreamProcessor extends PDFStreamEngine implements Consumer<
             } else {
                 for (PDAppearanceStream stream : entry.getSubDictionary().values()) {
                     // TODO investigate this case with named dictionary
-                    processStream(stream);
+                    if(stream != null) {
+                        processStream(stream);
+                    }
                 }
             }
         }
