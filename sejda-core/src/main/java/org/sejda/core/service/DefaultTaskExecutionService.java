@@ -2,7 +2,7 @@
  * Created on 28/mag/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ import org.sejda.core.validation.DefaultValidationContext;
 import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.base.TaskParameters;
-import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
@@ -43,9 +42,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of the {@link TaskExecutionService}.
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public final class DefaultTaskExecutionService implements TaskExecutionService {
 
@@ -55,17 +54,11 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     @Override
     public void execute(TaskParameters parameters) {
-        execute(parameters, new CancellationOption());
-    }
-
-    @Override
-    public void execute(TaskParameters parameters, CancellationOption cancellationOption) {
         TaskExecutionContext executionContext = null;
         LOG.trace("Starting execution for {}", parameters);
         try {
             validateIfRequired(parameters);
             executionContext = new TaskExecutionContext(context.getTask(parameters), parameters.isLenient());
-            cancellationOption.setExecutionContext(executionContext);
             LOG.info("Starting task ({}) execution.", executionContext.task());
             preExecution(executionContext);
             actualExecution(parameters, executionContext);
@@ -135,7 +128,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     /**
      * actual execution of the task
-     * 
+     *
      * @param parameters
      * @param task
      * @throws TaskException

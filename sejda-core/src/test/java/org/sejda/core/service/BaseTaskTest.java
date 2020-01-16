@@ -49,7 +49,6 @@ import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
-import org.sejda.model.task.CancellationOption;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -83,10 +82,6 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         testContext.listenForTaskFailure();
         testContext.listenForTaskWarnings();
         service.execute(parameters);
-    }
-
-    public void execute(TaskParameters parameters, CancellationOption cancellationOption) {
-        service.execute(parameters, cancellationOption);
     }
 
     @After
