@@ -21,6 +21,7 @@ package org.sejda.impl.sambox.component.split;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
@@ -29,8 +30,12 @@ import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component providing copies of pages that can be fed to the ExistingPagesSizePredictor
@@ -38,6 +43,9 @@ import org.sejda.sambox.pdmodel.PDResources;
  * @author Andrea Vacondio
  */
 class PageCopier {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PageCopier.class);
+
     private boolean optimize;
     private ResourcesHitter hitter = new ResourcesHitter();
     private ResourceDictionaryCleaner cleaner = new ResourceDictionaryCleaner();
@@ -74,6 +82,7 @@ class PageCopier {
                     });
             copy.getCOSObject().setItem(COSName.ANNOTS, cleanedAnnotationsCopy);
         }
+
         if (optimize) {
             // each page must have it's own resource dic and it's own xobject and font name dic
             // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
@@ -88,6 +97,50 @@ class PageCopier {
             hitter.accept(copy);
             cleaner.clean(copy);
         }
+        duplicatePageStreams(page, copy);
+        copy.sanitizeDictionary();
         return copy;
+    }
+
+    private void duplicatePageStreams(PDPage page, PDPage copy) {
+        // we duplicate the streams so we can sanitize them, to replicate the task behavior
+        COSStream stream = page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class);
+        if (nonNull(stream)) {
+            copy.getCOSObject().setItem(COSName.CONTENTS, new MockPageStream(stream));
+        } else {
+            COSArray streams = page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class);
+            if (nonNull(streams)) {
+                COSArray streamsCopy = new COSArray();
+                streams.stream().filter(s -> s instanceof COSStream).map(COSStream.class::cast).map(MockPageStream::new)
+                        .forEach(streamsCopy::add);
+                copy.getCOSObject().setItem(COSName.CONTENTS, streams);
+            }
+        }
+    }
+
+    /**
+     * Mock stream that retains the dictionary and the stream length info to be consumed by the {@link ExistingPagesSizePredictor}
+     * 
+     * @author Andrea Vacondio
+     *
+     */
+    private class MockPageStream extends COSStream {
+
+        private long length = 0;
+
+        private MockPageStream(COSStream original) {
+            super(original.duplicate());
+            try {
+                length = original.getFilteredLength();
+            } catch (IOException e) {
+                LOG.error("An error occurred while calculating the COSStream length", e);
+            }
+        }
+
+        @Override
+        public long getFilteredLength() throws IOException {
+            return length;
+        }
+
     }
 }
