@@ -251,7 +251,8 @@ public class PDDocumentHandler implements Closeable {
      * @param security
      * @throws TaskException
      */
-    public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
+    public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity)
+            throws TaskException {
         try {
             OutputStream out = encryptionAtRestSecurity.encrypt(new FileOutputStream(file));
 
@@ -294,7 +295,9 @@ public class PDDocumentHandler implements Closeable {
 
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
+        // we don't retain the /Threads key in the Catalog so it doesn't make sense to keep /B
         imported.getCOSObject().removeItem(COSName.B);
+        imported.sanitizeDictionary();
         return addPage(imported);
     }
 
