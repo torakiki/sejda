@@ -3,7 +3,7 @@ Sejda SDK (http://www.sejda.org)
 [![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
 [![License](http://img.shields.io/badge/license-AGPLv3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 
-Sejda SDK is an open source, task oriented PDF editor SDK library written in Java.
+Sejda SDK is a task oriented PDF editor SDK library written in Java.
 
 Sejda SDK offers a set of "ready to go" manipulations implemented using [SAMBox](https://github.com/torakiki/sambox), a PDFBox fork that we maintain, but you can also provide your implementation using iText, iText 5.x, PDFBox or any other PDF engine and configure Sejda to use it.
 
@@ -11,11 +11,17 @@ Quick start: https://github.com/torakiki/sejda/wiki/Getting-Started
 
 A full list of the available tasks: https://github.com/torakiki/sejda/wiki/Tasks
 
-Sejda console
+Sejda SDK open source
 ----
-`sejda-console` is a command line tool that can be used directly from the terminal or from your own code.
+Is a open source Java library providing a set of PDF manipulation tasks
 
-Download latest from https://github.com/torakiki/sejda/releases
+Sejda SDK PRO
+----
+Is a commercial Java library built on top of the open source library and providing additional PDF manipulation tasks
+
+Sejda console PRO
+----
+`sejda-console-pro` is a commercial command line tool that can be used directly from the terminal or from your own code.
 
 Get started: https://github.com/torakiki/sejda/wiki/Getting-Started
 
@@ -49,5 +55,5 @@ License
 
 Sejda 1.x is licensed under Apache License, Version 2.0
 
-Sejda 2.x and 3.x are licensed under GNU Affero Public License 3.0 
+Sejda 2.x and higher are licensed under GNU Affero Public License 3.0 
 
