@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>3.2.86-SNAPSHOT</version>
+		<version>4.0.0.M6-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -44,6 +44,11 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-io</artifactId>
+			<version>${sejda.io.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>

@@ -30,6 +30,8 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDPage;
 
+import static org.sejda.TestUtils.encryptedAtRest;
+
 /**
  * Abstract test unit for the alternate mix task
  * 
@@ -107,6 +109,19 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8).assertVersion(PdfVersion.VERSION_1_5);
+    }
+
+    @Test
+    public void atRestEncryptionTest() throws IOException {
+        AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
+        params.addInput(new PdfMixInput(encryptedAtRest(shortInput())));
+        params.addInput(new PdfMixInput(encryptedAtRest(stronglyEncryptedInput())));
+        setUpParameters(params);
+        testContext.pdfOutputTo(params);
+        execute(params);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(8);
     }
 
     protected abstract void assertHeaderContains(PDPage page, String expectedText);

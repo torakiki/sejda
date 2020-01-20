@@ -20,7 +20,13 @@ package org.sejda.impl.sambox;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.sejda.TestUtils.encryptedAtRest;
 import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
 import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
 
@@ -39,6 +45,7 @@ import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
+import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.MergeInput;
@@ -182,6 +189,14 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         parameters.setFilenameFooter(true);
         doExecuteMergeAll(false, 23, parameters);
+    }
+
+    @Test
+    public void executeMergeAllTocNamesNoFont() throws IOException {
+        MergeParameters parameters = setUpParameters(getInput());
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "հայերէն.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        doExecuteMergeAll(false, 18, parameters);
     }
 
     @Test
@@ -625,6 +640,20 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void mergeImagesWithValidation() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setLenient(false);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        ImageMergeInput input1 = new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png"));
+        input1.setPageSize(null);
+        parameters.addInput(input1);
+
+        testContext.pdfOutputTo(parameters);
+        executeWithValidation(parameters);
+        testContext.assertTaskFailed(InvalidTaskParametersException.class);
+    }
+
+    @Test
     public void mergeWithUnreadableImageWarning() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(true);
@@ -644,12 +673,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void mergeKeepingPageLabels() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        PDDocument doc1 = new DocBuilder().withPages(2)
-                .withPageLabelRange(0, "r", "Intro:")
-                .get();
-        PDDocument doc2 = new DocBuilder().withPages(3)
-                .withPageLabelRange(0, "D")
-                .get();
+        PDDocument doc1 = new DocBuilder().withPages(2).withPageLabelRange(0, "r", "Intro:").get();
+        PDDocument doc2 = new DocBuilder().withPages(3).withPageLabelRange(0, "D").get();
         parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
         parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
         parameters.setCatalogPageLabelsPolicy(CatalogPageLabelsPolicy.RETAIN);
@@ -673,12 +698,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void mergeKeepingPageLabelsButDiscardingDecimalsStart() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        PDDocument doc1 = new DocBuilder().withPages(2)
-                .withPageLabelRange(0, "D", null, 2)
-                .get();
-        PDDocument doc2 = new DocBuilder().withPages(3)
-                .withPageLabelRange(0, "D", null, 7)
-                .get();
+        PDDocument doc1 = new DocBuilder().withPages(2).withPageLabelRange(0, "D", null, 2).get();
+        PDDocument doc2 = new DocBuilder().withPages(3).withPageLabelRange(0, "D", null, 7).get();
 
         parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
         parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
@@ -704,12 +725,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
-        PDDocument doc1 = new DocBuilder().withPages(2)
-                .withPageLabelRange(0, "r", "Intro:")
-                .get();
-        PDDocument doc2 = new DocBuilder().withPages(3)
-                .withPageLabelRange(0, "D")
-                .get();
+        PDDocument doc1 = new DocBuilder().withPages(2).withPageLabelRange(0, "r", "Intro:").get();
+        PDDocument doc2 = new DocBuilder().withPages(3).withPageLabelRange(0, "D").get();
 
         parameters.addInput(new PdfMergeInput(customInput(doc1, "doc1.pdf")));
         parameters.addInput(new PdfMergeInput(customInput(doc2, "doc2.pdf")));
@@ -810,6 +827,22 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
             assertEquals(d.getPage(4).getRotation(), 180);
         });
+    }
+
+    @Test
+    public void atRestEncryptionTest() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.png"))));
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.tiff"))));
+        parameters.addInput(new PdfMergeInput(encryptedAtRest(customInput("pdf/test-pdf.pdf"))));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertNoTaskWarnings();
+        testContext.assertPages(13);
     }
 
     private float widthOfCropBox(PDPage page) {

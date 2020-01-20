@@ -21,7 +21,7 @@ package org.sejda.conversion;
 
 import java.util.Set;
 
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.conversion.BasePageRangeAdapter.PageRangeAdapter;
 import org.sejda.model.pdf.page.PageRange;
 

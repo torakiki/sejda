@@ -28,17 +28,7 @@ import org.sejda.model.exception.TaskIOException;
  * @author Andrea Vacondio
  *
  */
-public interface Source<T> {
-
-    /**
-     * @return the source
-     */
-    T getSource();
-
-    /**
-     * @return the name of the source
-     */
-    String getName();
+public interface Source<T> extends TaskSource<T> {
 
     /**
      * @param <R>

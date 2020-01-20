@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -75,7 +75,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
             LOG.debug("Starting split by page numbers for {} ", parameters);
             splitter.split(executionContext(), parameters.getOutputPrefix(), source);
 
-            nullSafeCloseQuietly(document);
+            closeQuietly(document);
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
@@ -85,7 +85,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(document);
+        closeQuietly(document);
         splitter = null;
     }
 

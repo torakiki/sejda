@@ -18,11 +18,11 @@
  */
 package org.sejda.impl.sambox.util;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
 
 public class RectangleUtilsTest {
 

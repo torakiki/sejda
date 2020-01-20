@@ -26,22 +26,36 @@ import org.junit.Test;
 public class PrefixUtilsTest {
 
     @Test
+    public void nullSafe() {
+        assertEquals("", PrefixUtils.toSafeFilename(null));
+    }
+
+    @Test
     public void testSafeFilename() {
-        assertEquals("1_Invoice#0001.pdf", PrefixUtils.toSafeFilename("1_Invoice#0001:*<>/\\.pdf"));
-        assertEquals("..test.pdf", PrefixUtils.toSafeFilename("../test.pdf"));
-        assertEquals("..test.pdf", PrefixUtils.toSafeFilename("..\\test.pdf"));
-        assertEquals(".test.pdf", PrefixUtils.toSafeFilename("./test.pdf"));
-        assertEquals("rest.pdf", PrefixUtils.toSafeFilename("\r\n\t\f`rest.pdf"));
+        assertEquals("1_Invoice#0001", PrefixUtils.toSafeFilename("1_Invoice#0001:*<>/\\"));
+        assertEquals("..test", PrefixUtils.toSafeFilename("../test"));
+        assertEquals("..test", PrefixUtils.toSafeFilename("..\\test"));
+        assertEquals(".test", PrefixUtils.toSafeFilename("./test"));
+        assertEquals("rest", PrefixUtils.toSafeFilename("\r\n\t\f`rest"));
+    }
+
+    @Test
+    public void safeFilenameWhitespaces() {
+        assertEquals("Chuck Norris", PrefixUtils.toSafeFilename("Chuck\tNorris"));
+        assertEquals("Chuck Norris", PrefixUtils.toSafeFilename("\u00A0Chuck\u00A0Norris\u00A0"));
+        assertEquals("Chuck Norris", PrefixUtils.toSafeFilename("\u00A0\n\t\u000B\f\rChuck\nNorris\u202f"));
+        assertEquals("This is a Chuck Norris roundkick, will Steven Segal survive Nope!", PrefixUtils.toSafeFilename(
+                "This\u1680is\u180ea\u2000Chuck\u200aNorris\u202froundkick,\u205fwill\u3000Steven\fSegal\rsurvive?\u000BNope!"));
     }
 
     @Test
     public void testStrictFilename() {
-        assertEquals("1_Invoice0001.pdf", PrefixUtils.toStrictFilename("1_Invoice#0001:*<>/\\.pdf"));
+        assertEquals("1_Invoice0001", PrefixUtils.toStrictFilename("1_Invoice#0001:*<>/\\"));
         assertEquals(StringUtils.repeat('a', 255), PrefixUtils.toStrictFilename(StringUtils.repeat('a', 256)));
     }
 
     @Test
-    public void testNulls(){
+    public void testNulls() {
         assertEquals("", PrefixUtils.toSafeFilename(null));
         assertEquals("", PrefixUtils.toStrictFilename(null));
     }

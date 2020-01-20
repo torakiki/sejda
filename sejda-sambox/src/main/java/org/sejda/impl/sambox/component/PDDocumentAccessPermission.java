@@ -19,11 +19,11 @@
  */
 package org.sejda.impl.sambox.component;
 
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.encryption.AccessPermission;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.encryption.AccessPermission;
 
 /**
  * Wrapper around {@link AccessPermission} providing convenient methods to check permissions.

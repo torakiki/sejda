@@ -22,6 +22,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -47,8 +48,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.io.SeekableSource;
@@ -432,7 +433,7 @@ public class TaskTestContext implements Closeable {
         return this;
     }
 
-    public TaskTestContext forRawOutput(String filename, Consumer<Path> consumer) throws IOException {
+    public TaskTestContext forRawOutput(String filename, Consumer<Path> consumer) {
         requireMultipleOutputs();
         File file = new File(fileOutput, filename);
         assertTrue(file.exists());
@@ -486,7 +487,7 @@ public class TaskTestContext implements Closeable {
                 initOutputFromSource(fileOutput, password);
             }
         } else if (nonNull(streamOutput)) {
-            org.sejda.util.IOUtils.close(streamOutput);
+            org.sejda.commons.util.IOUtils.close(streamOutput);
             initOutputFromSource(SeekableSources.inMemorySeekableSourceFrom(streamOutput.toByteArray()), password);
         }
         return outputDocument;
@@ -509,24 +510,27 @@ public class TaskTestContext implements Closeable {
         }
     };
 
-    @Deprecated
-    public void expectTaskWillFail() {
-        listenForTaskFailure();
-    }
-
     public void listenForTaskFailure() {
         taskFailureCause = null;
         GlobalNotificationContext.getContext().removeListener(failureListener);
         GlobalNotificationContext.getContext().addListener(failureListener);
     }
 
-    public void assertTaskFailed(String message) {
+    public TaskTestContext assertTaskFailed(String message) {
         assertNotNull(taskFailureCause);
         assertThat(taskFailureCause.getMessage(), startsWith(message));
+        return this;
     }
 
-    public void assertTaskDidNotFail() {
+    public TaskTestContext assertTaskFailed(Class<? extends Throwable> cause) {
+        assertNotNull(taskFailureCause);
+        assertThat(taskFailureCause, instanceOf(cause));
+        return this;
+    }
+
+    public TaskTestContext assertTaskDidNotFail() {
         assertNull("Task failed", taskFailureCause);
+        return this;
     }
 
     @Deprecated
@@ -540,12 +544,14 @@ public class TaskTestContext implements Closeable {
         GlobalNotificationContext.getContext().addListener(warningsListener);
     }
 
-    public void assertTaskWarning(String message) {
+    public TaskTestContext assertTaskWarning(String message) {
         assertThat(taskWarnings, hasItem(containsString(message)));
+        return this;
     }
 
-    public void assertNoTaskWarnings() {
+    public TaskTestContext assertNoTaskWarnings() {
         assertEquals("Expected no warnings but got: " + StringUtils.join(taskWarnings, ","), taskWarnings.size(), 0);
+        return this;
     }
 
     private void initOutputFromSource(File source, String password) throws IOException {

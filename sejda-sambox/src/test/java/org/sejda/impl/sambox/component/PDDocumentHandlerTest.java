@@ -23,12 +23,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.input.PdfFileSource;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -96,15 +102,38 @@ public class PDDocumentHandlerTest {
             PDPage page = handler1.getPage(1);
             assertEquals(PDRectangle.A4, page.getMediaBox());
 
-            PDDocumentHandler handler2 = new PDDocumentHandler();
-            PDPage imported = handler2.importPage(page);
+            try (PDDocumentHandler handler2 = new PDDocumentHandler()) {
+                PDPage imported = handler2.importPage(page);
 
-            assertEquals("Imported page has different media box than source", imported.getMediaBox(), page.getMediaBox());
+                assertEquals("Imported page has different media box than source", imported.getMediaBox(),
+                        page.getMediaBox());
+            }
         }
     }
 
+    @Test
+    public void encryptionAtRestOutputRoundtrip() throws IOException, TaskException {
+        File tmpFile = IOUtils.createTemporaryBuffer();
+        int pageNum = 0;
+        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("pdf/test-pdf.pdf"))) {
+            pageNum = handler.getNumberOfPages();
+            handler.savePDDocument(tmpFile, getEncryptionAtRestPolicy());
+        }
+
+        // read it back
+        PdfFileSource encrypted = PdfFileSource.newInstanceNoPassword(tmpFile);
+        encrypted.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
+
+        try (PDDocumentHandler handler = new DefaultPdfSourceOpener().open(encrypted)) {
+            assertEquals(pageNum, handler.getNumberOfPages());
+        }
+    }
+
+    private InputStream resourceAsStream(String name) {
+        return getClass().getClassLoader().getResourceAsStream(name);
+    }
+
     private PDDocument testDoc(String resourceName) throws IOException {
-        return PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(resourceName)));
+        return PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(resourceAsStream(resourceName)));
     }
 }

@@ -45,7 +45,7 @@ public class SyncNotificationStrategyTest {
     public void testNotify() {
         SyncNotificationStrategy victim = new SyncNotificationStrategy();
         victim.notifyListener(null, event);
-        EventListener listener = mock(EventListener.class);
+        EventListener<AbstractNotificationEvent> listener = mock(EventListener.class);
         victim.notifyListener(listener, event);
         verify(listener).onEvent(event);
     }

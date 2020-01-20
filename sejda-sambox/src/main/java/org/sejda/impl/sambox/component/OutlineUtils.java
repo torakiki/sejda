@@ -17,10 +17,11 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
@@ -123,6 +125,31 @@ public final class OutlineUtils {
     }
 
     /**
+     * Tries to resolve the page pointed by a page destination. It's usually just a {@link PDPageDestination#getPage()} call but some tools out there wrongly put the page number
+     * instead of the page ref. With this method we try to handle that.
+     * 
+     * @see https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3275
+     * 
+     * @param destination
+     * @param document
+     * @return The page pointed by the destination or null
+     */
+    public static PDPage resolvePageDestination(PDPageDestination destination, PDDocument document) {
+        PDPage page = destination.getPage();
+        if (isNull(page) && destination.getPageNumber() >= 0) {
+            try {
+                LOG.debug("Found page number in page destination, expected a page reference");
+                return document.getPage(destination.getPageNumber());
+            } catch (PageNotFoundException e) {
+                LOG.warn(
+                        "Unable to resolve page destination pointing to page {} (a page reference was expected, a number was found)",
+                        destination.getPageNumber());
+            }
+        }
+        return page;
+    }
+
+    /**
      * Copies the dictionary from the given {@link PDOutlineItem} to the destination one
      * 
      * @param from
@@ -149,9 +176,7 @@ public final class OutlineUtils {
     public static List<OutlineItem> getFlatOutline(PDDocument document) {
         return ofNullable(document.getDocumentCatalog().getDocumentOutline()).map(PDDocumentOutline::children)
                 .map(c -> recurseFlatOutline(document, c, 1)).orElseGet(ArrayList::new).stream()
-                .sorted(Comparator.comparingInt(i -> i.page))
-                .filter(i -> i.page > 0)
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(i -> i.page)).filter(i -> i.page > 0).collect(Collectors.toList());
     }
 
     private static List<OutlineItem> recurseFlatOutline(PDDocument document, Iterable<PDOutlineItem> items, int level) {

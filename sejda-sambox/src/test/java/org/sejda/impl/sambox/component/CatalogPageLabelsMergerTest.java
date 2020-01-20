@@ -19,16 +19,21 @@
 
 package org.sejda.impl.sambox.component;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
+import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
+import static org.sejda.core.service.TestUtils.assertPageLabelRangeIsDefault;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.junit.Test;
 import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
-
-import java.util.*;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.sejda.core.service.TestUtils.*;
 
 public class CatalogPageLabelsMergerTest {
 

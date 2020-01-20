@@ -20,8 +20,8 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
-import static org.sejda.util.RequireUtils.requireIOCondition;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static org.sejda.commons.util.RequireUtils.requireIOCondition;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.zip.DeflaterInputStream;
 
+import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
@@ -45,7 +46,6 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
-import org.sejda.util.IOUtils;
 
 /**
  * A read only, filtered, encryptable, indirect reference length {@link COSStream} whose purpose is to be read by the PDF writer during the write process. This can allow to create

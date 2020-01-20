@@ -18,10 +18,13 @@
  */
 package org.sejda.model.input;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import javax.validation.constraints.NotNull;
 
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
 
 /**
@@ -47,6 +50,11 @@ public class StreamSource extends AbstractSource<InputStream> {
     @Override
     public <R> R dispatch(SourceDispatcher<R> dispatcher) throws TaskIOException {
         return dispatcher.dispatch(this);
+    }
+
+    @Override
+    public SeekableSource initializeSeekableSource() throws IOException {
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream));
     }
 
     public static StreamSource newInstance(InputStream stream, String name) {

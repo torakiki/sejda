@@ -20,7 +20,7 @@ package org.sejda.impl.sambox;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -96,7 +96,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
                         .forEach(f -> unpack(f));
 
             } finally {
-                nullSafeCloseQuietly(sourceDocumentHandler);
+                closeQuietly(sourceDocumentHandler);
             }
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
@@ -144,6 +144,6 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(sourceDocumentHandler);
+        closeQuietly(sourceDocumentHandler);
     }
 }

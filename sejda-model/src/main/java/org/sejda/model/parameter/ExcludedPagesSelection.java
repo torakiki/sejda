@@ -21,7 +21,7 @@ package org.sejda.model.parameter;
 import java.util.Collection;
 import java.util.Set;
 
-import org.sejda.common.collection.NullSafeSet;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.pdf.page.PageRange;
 
 public interface ExcludedPagesSelection {

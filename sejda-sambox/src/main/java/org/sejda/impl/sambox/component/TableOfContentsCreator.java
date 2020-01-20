@@ -20,9 +20,9 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-import static org.sejda.util.RequireUtils.requireArg;
-import static org.sejda.util.RequireUtils.requireNotBlank;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
+import static org.sejda.commons.util.RequireUtils.requireArg;
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -114,6 +114,9 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and prepend it to the given document
+     * 
+     * @throws TaskException
+     *             if there is an error generating the ToC
      */
     public void addToC() throws TaskException {
         addToC(0);
@@ -121,6 +124,9 @@ public class TableOfContentsCreator {
 
     /**
      * Generates a ToC and inserts it in the doc at before the given page number
+     * 
+     * @throws TaskException
+     *             if there is an error generating the ToC
      */
     public void addToC(int beforePageNumber) throws TaskException {
         try {
@@ -140,8 +146,8 @@ public class TableOfContentsCreator {
                     pagesTree.insertAfter(blankPage, lastTocPage);
                 }
             });
-        } catch (IOException | TaskIOException e) {
-            throw new TaskException("An error occurred while create the ToC. Skipping ToC creation.", e);
+        } catch (IOException e) {
+            throw new TaskException("An error occurred while create the ToC", e);
         }
     }
 
@@ -164,7 +170,6 @@ public class TableOfContentsCreator {
                         ToCItem i = items.peek();
                         if (nonNull(i)) {
                             float y = pageSize().getHeight() - margin - (row * lineHeight);
-                            float startY = y;
                             float x = margin;
 
                             List<String> lines = multipleLinesIfRequired(i.text, separatingLineEndingX, separatorWidth);

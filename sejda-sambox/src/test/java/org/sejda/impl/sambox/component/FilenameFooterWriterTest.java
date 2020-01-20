@@ -28,8 +28,6 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
-import java.io.IOException;
-
 /**
  * @author Andrea Vacondio
  *
@@ -46,7 +44,7 @@ public class FilenameFooterWriterTest {
     }
 
     @Test
-    public void write_long_filename_that_needs_truncation() throws TaskException, IOException {
+    public void write_long_filename_that_needs_truncation() throws TaskException {
         PDDocument doc = new PDDocument();
         PDPage page = new PDPage();
         doc.addPage(page);

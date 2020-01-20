@@ -18,14 +18,28 @@
  */
 package org.sejda.impl.sambox.component.image;
 
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
+
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
-import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.*;
 import org.sejda.model.PageOrientation;
 import org.sejda.model.PageSize;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.input.ImageMergeInput;
+import org.sejda.model.input.MergeInput;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.input.Source;
 import org.sejda.model.parameter.BaseMergeParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -33,15 +47,6 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 
 public class ImagesToPdfDocumentConverter {
 
@@ -68,19 +73,19 @@ public class ImagesToPdfDocumentConverter {
             try {
                 PDImageXObject image = PageImageWriter.toPDXImageObject(source);
                 PDRectangle mediaBox = defaultPageSize;
-                if(!pageSizeList.isEmpty()) {
+                if (!pageSizeList.isEmpty()) {
                     mediaBox = pageSizeList.get(i);
                 }
-
-                if(shouldPageSizeMatchImageSize) {
+                if (shouldPageSizeMatchImageSize) {
                     mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
                 }
 
-                if(pageOrientation == PageOrientation.LANDSCAPE) {
+                if (pageOrientation == PageOrientation.LANDSCAPE) {
                     mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-                } else if(pageOrientation == PageOrientation.AUTO) {
+                } else if (pageOrientation == PageOrientation.AUTO) {
                     if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(), image.getHeight());
+                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
+                                image.getHeight());
                         mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
                     }
                 }
@@ -104,12 +109,12 @@ public class ImagesToPdfDocumentConverter {
                     int targetHeight = (int) mediaBox.getHeight();
                     LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
 
-                    float ratio = (float) height / targetHeight;
+                    float ratio = height / targetHeight;
                     height = targetHeight;
                     width = Math.round(width / ratio);
                 }
 
-                if(marginInches > 0) {
+                if (marginInches > 0) {
                     float newWidth = width - marginInches * 72;
                     float newHeight = height * newWidth / width;
                     width = newWidth;
@@ -120,9 +125,7 @@ public class ImagesToPdfDocumentConverter {
                 float x = (mediaBox.getWidth() - width) / 2;
                 float y = ((int) mediaBox.getHeight() - height) / 2;
 
-                imageWriter.append(page, image, new Point((int)x, (int)y), width, height, null, 0);
-
-                // TODO: fix for stream source. it's the second time the source is read, will not work
+                imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
                 int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
                 page.setRotation(rotation);
 
@@ -167,7 +170,8 @@ public class ImagesToPdfDocumentConverter {
         this.marginInches = marginInches;
     }
 
-    public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters, TaskExecutionContext context) throws TaskException {
+    public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters,
+            TaskExecutionContext context) throws TaskException {
         // if images were supplied, convert them to PDF
         List<MergeInput> newInputList = new ArrayList<>();
         for (MergeInput input : parameters.getInputList()) {
@@ -182,9 +186,10 @@ public class ImagesToPdfDocumentConverter {
         parameters.setInputList(newInputList);
     }
 
-    private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context) throws TaskException {
+    private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context)
+            throws TaskException {
         List<Source<?>> sources = Collections.singletonList(image.getSource());
-        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter(){
+        ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter() {
             @Override
             public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
                 context.assertTaskIsLenient(e);
@@ -202,7 +207,12 @@ public class ImagesToPdfDocumentConverter {
         String filename = String.format("%s.pdf", basename);
         File convertedTmpFile = createTemporaryBufferWithName(filename);
         converted.setDocumentTitle(basename);
-        converted.savePDDocument(convertedTmpFile);
-        return new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
+
+        EncryptionAtRestPolicy encryptionAtRestPolicy = image.getSource().getEncryptionAtRestPolicy();
+        converted.savePDDocument(convertedTmpFile, encryptionAtRestPolicy);
+
+        PdfMergeInput input = new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
+        input.getSource().setEncryptionAtRestPolicy(encryptionAtRestPolicy);
+        return input;
     }
 }

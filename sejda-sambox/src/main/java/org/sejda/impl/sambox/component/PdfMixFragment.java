@@ -24,7 +24,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.input.PdfMixInput;

@@ -42,12 +42,12 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
     }
 
     @Override
-    NextOutputStrategy nextOutputStrategy() {
+    public NextOutputStrategy nextOutputStrategy() {
         return splitPages;
     }
 
     @Override
-    NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
+    public NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request;
     }
 

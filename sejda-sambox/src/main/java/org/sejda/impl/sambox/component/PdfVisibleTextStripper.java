@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 
-import org.apache.commons.io.IOUtils;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDStream;

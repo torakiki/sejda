@@ -27,7 +27,9 @@ import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,6 +38,7 @@ import java.util.Set;
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.impl.sambox.util.PageLabelUtils;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
@@ -237,8 +240,8 @@ public class PDDocumentHandler implements Closeable {
      * @param file
      * @throws TaskException
      */
-    public void savePDDocument(File file) throws TaskException {
-        savePDDocument(file, null);
+    public void savePDDocument(File file, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
+        savePDDocument(file, null, encryptionAtRestSecurity);
     }
 
     /**
@@ -248,14 +251,17 @@ public class PDDocumentHandler implements Closeable {
      * @param security
      * @throws TaskException
      */
-    public void savePDDocument(File file, StandardSecurity security) throws TaskException {
+    public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity)
+            throws TaskException {
         try {
+            OutputStream out = encryptionAtRestSecurity.encrypt(new FileOutputStream(file));
+
             if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
                 LOG.trace("Saving document to {} using async writer", file);
-                document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
+                document.writeTo(out, security, writeOptions.stream().toArray(WriteOption[]::new));
             } else {
                 LOG.trace("Saving document to {}", file);
-                document.writeTo(file, security,
+                document.writeTo(out, security,
                         concat(of(WriteOption.SYNC_BODY_WRITE), writeOptions.stream()).toArray(WriteOption[]::new));
             }
         } catch (IOException e) {
@@ -289,7 +295,9 @@ public class PDDocumentHandler implements Closeable {
 
         imported.setResources(page.getResources());
         imported.setRotation(page.getRotation());
+        // we don't retain the /Threads key in the Catalog so it doesn't make sense to keep /B
         imported.getCOSObject().removeItem(COSName.B);
+        imported.sanitizeDictionary();
         return addPage(imported);
     }
 

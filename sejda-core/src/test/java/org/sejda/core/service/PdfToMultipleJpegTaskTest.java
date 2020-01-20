@@ -62,7 +62,7 @@ public abstract class PdfToMultipleJpegTaskTest extends MultipleImageConversionT
         parameters.addPageRange(new PageRange(100, 200));
         testContext.directoryOutputTo(parameters);
 
-        testContext.expectTaskWillFail();
+        testContext.listenForTaskFailure();
         execute(parameters);
         testContext.assertTaskFailed("No pages converted");
     }

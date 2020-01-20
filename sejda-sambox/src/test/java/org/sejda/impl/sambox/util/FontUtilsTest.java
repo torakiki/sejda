@@ -51,8 +51,10 @@ import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSName;
@@ -116,9 +118,6 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("జ")); // telugu
         assertNotNull(findFontFor("উ")); // bengali
         assertNotNull(findFontFor("עברית")); // hebrew
-        assertNotNull(findFontFor("简化字")); // simplified chinese
-        assertNotNull(findFontFor("한국어/조선말")); // korean
-        assertNotNull(findFontFor("日本語")); // japanese
         assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
         assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
         assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
@@ -129,17 +128,15 @@ public class FontUtilsTest {
         assertNotNull(findFontFor("தமிழ்")); // tamil
         assertNotNull(findFontFor("ગુજરાતી")); // gujarati
         assertNotNull(findFontFor("န\u103Aမာဘာသာ")); // myanmar
-        assertNotNull(findFontFor("հայերէն")); // armenian
         assertNotNull(findFontFor("සිංහල")); // sinhalese
         assertNotNull(findFontFor("ᠮᠣᠩᠭᠣᠯ")); // mongolian
         assertNotNull(findFontFor("ಕನ್ನಡ")); // kannada
-        assertNotNull(findFontFor("한국어 조선말")); // korean
         assertNotNull(findFontFor("ଓଡ଼ିଆ ଭାଷା")); // oryia
         assertNotNull(findFontFor("ކުންފުނި")); // thaana
 
         // TODO: find a way to merge the armenian font into the big merged font with all others
         // so forms can be filled with latin/armenian mixed values
-        //assertNotNull(findFontFor("Latin mixed with հայերէն"));
+        // assertNotNull(findFontFor("Latin mixed with հայերէն"));
     }
 
     @Test
@@ -150,7 +147,7 @@ public class FontUtilsTest {
 
     @Test
     public void roundTripWriteAndRead() throws TaskException, IOException {
-        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "한국어", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
+        List<String> strings = Arrays.asList("ଓଡ଼ିଆଭାଷା", "ગુજરાતી ਪੰਜਾਬੀ தமிழ்", "සිංහල", "န\u103Aမာဘာသာ",
                 "هذا هو كل الحق إلى اليسار", "123 יתימאה ןחבמ", "032 ציר הורמון הגדילה",
                 "This is الحق  Mixed יתימאה ןחבמ",
                 "ਹਰਜੋਤ ਸਿੰਘ ភាសាខ្មែរ latin ąćęłńóśźż ทดสอบ വീട मानक हिन्दी ് జ উ ☗⦄✸▃ ", "ציר הורמון הגדילה");
@@ -161,14 +158,15 @@ public class FontUtilsTest {
             new PageTextWriter(doc).write(page, new Point(10, 10), str,
                     getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
             doc.addPage(page);
-            PDDocumentHandler handler = new PDDocumentHandler(doc);
-            File tmp = IOUtils.createTemporaryBuffer();
-            handler.savePDDocument(tmp);
+            try (PDDocumentHandler handler = new PDDocumentHandler(doc)) {
+                File tmp = IOUtils.createTemporaryBuffer();
+                handler.savePDDocument(tmp, NoEncryptionAtRest.INSTANCE);
 
-            PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
-            String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),
-                    new Rectangle(0, 0, 1000, 1000));
-            assertEquals(noWhitespace(str), noWhitespace(text));
+                PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
+                String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),
+                        new Rectangle(0, 0, 1000, 1000));
+                assertEquals(noWhitespace(str), noWhitespace(text));
+            }
         }
     }
 
@@ -258,7 +256,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void resolveFontsWhenTextRepeats() throws TaskIOException {
+    public void resolveFontsWhenTextRepeats() {
         PDDocument doc = new PDDocument();
         List<TextWithFont> textAndFonts = FontUtils.resolveFonts("123α456α789", HELVETICA, doc);
 
@@ -276,7 +274,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void resolveFontsWhenSpaceIsNotSeparately() throws TaskIOException {
+    public void resolveFontsWhenSpaceIsNotSeparately() {
         PDDocument doc = new PDDocument();
         List<TextWithFont> textAndFonts = FontUtils.resolveFonts("ab cd", HELVETICA, doc);
 
@@ -285,7 +283,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void resolveFontsWhenUnsupportedCharacters() throws TaskIOException {
+    public void resolveFontsWhenUnsupportedCharacters() {
         PDDocument doc = new PDDocument();
         List<TextWithFont> textAndFonts = FontUtils.resolveFonts("ab\uFE0Fcd", HELVETICA, doc);
 
@@ -296,7 +294,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void removeUnsupportedCharsDoesNotChangeStringForRTLLanguages() throws TaskIOException {
+    public void removeUnsupportedCharsDoesNotChangeStringForRTLLanguages() {
         PDDocument doc = new PDDocument();
         String text = "עברית";
         assertEquals(text, FontUtils.removeUnsupportedCharacters(text, doc));
@@ -305,40 +303,48 @@ public class FontUtilsTest {
     @Test
     public void wrapping_Lines() throws TaskIOException {
         PDDocument doc = new PDDocument();
-        List<String> lines = FontUtils.wrapLines("This is a long line that cannot fit on a single line and could be wrapped", HELVETICA, 10, 191, doc);
-        assertThat(lines, is(Arrays.asList(
-                "This is a long line that cannot fit on a",
-                "single line and could be wrapped"
-        )));
+        List<String> lines = FontUtils.wrapLines(
+                "This is a long line that cannot fit on a single line and could be wrapped", HELVETICA, 10, 191, doc);
+        assertThat(lines,
+                is(Arrays.asList("This is a long line that cannot fit on a", "single line and could be wrapped")));
+    }
+
+    @Test
+    public void removingUnsupportedCharacters() {
+        PDDocument doc = new PDDocument();
+        String str = FontUtils.removeUnsupportedCharacters("ͷ͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
+        assertThat(str, is("͵ Text here SǦͻǦʹͻ4 and here"));
     }
 
     @Test
     public void wrapping_Lines_Without_Word_Break() throws TaskIOException {
         PDDocument doc = new PDDocument();
-        List<String> lines = FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped", HELVETICA, 10, 191, doc);
-        assertThat(lines, is(Arrays.asList(
-                "This_is_a_long_line_that_cannot_fit_on_a-",
-                "_single_line_and_could_be_wrapped"
-        )));
+        List<String> lines = FontUtils.wrapLines(
+                "This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped", HELVETICA, 10, 191, doc);
+        assertThat(lines,
+                is(Arrays.asList("This_is_a_long_line_that_cannot_fit_on_a-", "_single_line_and_could_be_wrapped")));
     }
 
     @Test
     public void wrapping_Lines_Without_Word_Break_Or_Other_Delimiters() throws TaskIOException {
         PDDocument doc = new PDDocument();
-        List<String> lines = FontUtils.wrapLines("Thisisalonglinethatcannotfitonasinglelineandcouldbewrapped", HELVETICA, 10, 191, doc);
-        assertThat(lines, is(Arrays.asList(
-                "Thisisalonglinethatcannotfitonasinglelinean-",
-                "dcouldbewrapped"
-        )));
+        List<String> lines = FontUtils.wrapLines("Thisisalonglinethatcannotfitonasinglelineandcouldbewrapped",
+                HELVETICA, 10, 191, doc);
+        assertThat(lines, is(Arrays.asList("Thisisalonglinethatcannotfitonasinglelinean-", "dcouldbewrapped")));
     }
 
     @Test
     public void wrapping_Lines_Words_Mixed_With_Super_Long_Words() throws TaskIOException {
         PDDocument doc = new PDDocument();
-        List<String> lines = FontUtils.wrapLines("This is a long linethatcannotfitonasinglelineandcouldbe wrapped", HELVETICA, 10, 191, doc);
-        assertThat(lines, is(Arrays.asList(
-                "This is a long linethatcannotfitonasingleline-",
-                "andcouldbe wrapped"
-        )));
+        List<String> lines = FontUtils.wrapLines("This is a long linethatcannotfitonasinglelineandcouldbe wrapped",
+                HELVETICA, 10, 191, doc);
+        assertThat(lines, is(Arrays.asList("This is a long linethatcannotfitonasingleline-", "andcouldbe wrapped")));
+    }
+
+    @Test(expected = UnsupportedTextException.class)
+    public void wrappingLinesUnableToFindFont() throws TaskIOException {
+        PDDocument doc = new PDDocument();
+        FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն",
+                HELVETICA, 10, 191, doc);
     }
 }

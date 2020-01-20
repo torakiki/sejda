@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -77,7 +77,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
                     new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
             LOG.debug("Starting split by outline level for {} ", parameters);
             splitter.split(executionContext(), parameters.getOutputPrefix(), source);
-            nullSafeCloseQuietly(document);
+            closeQuietly(document);
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
@@ -86,7 +86,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(document);
+        closeQuietly(document);
         splitter = null;
     }
 }

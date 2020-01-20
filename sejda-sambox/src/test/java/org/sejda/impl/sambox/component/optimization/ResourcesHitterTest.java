@@ -23,7 +23,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -119,7 +118,7 @@ public class ResourcesHitterTest {
     public void exceptionDoesntBubble() {
         PDPage page = mock(PDPage.class);
         when(page.getCropBox()).thenReturn(new PDRectangle(2f, 2f));
-        doThrow(IOException.class).when(page).getResources();
+        doThrow(RuntimeException.class).when(page).getResources();
         victim.accept(page);
     }
 

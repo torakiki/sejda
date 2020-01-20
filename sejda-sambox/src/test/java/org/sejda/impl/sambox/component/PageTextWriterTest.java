@@ -16,6 +16,9 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.awt.Color;
+import java.awt.Point;
+
 import org.junit.Test;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
@@ -25,8 +28,6 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
-
-import java.awt.*;
 
 
 public class PageTextWriterTest {

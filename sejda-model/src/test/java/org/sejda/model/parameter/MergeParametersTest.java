@@ -32,6 +32,7 @@ import org.sejda.TestUtils;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.form.AcroFormPolicy;
@@ -82,6 +83,20 @@ public class MergeParametersTest {
         PageRange range = new PageRange(3, 2);
         mergeInput.addPageRange(range);
         victim.addInput(mergeInput);
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void testInvalidParametersExists() {
+        MergeParameters victim = new MergeParameters();
+        victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        PdfMergeInput mergeInput = new PdfMergeInput(input);
+        PageRange range = new PageRange(2, 3);
+        mergeInput.addPageRange(range);
+        victim.addInput(mergeInput);
+        victim.setExistingOutputPolicy(ExistingOutputPolicy.FAIL);
         TestUtils.assertInvalidParameters(victim);
     }
 

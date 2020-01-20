@@ -103,7 +103,7 @@ public class PageDestinationsLevelPdfExtractor {
                 if (optimize) {
                     extractor.optimize();
                 }
-                extractor.save(tmpFile, parameters.discardOutline());
+                extractor.save(tmpFile, parameters.discardOutline(), parameters.getOutput().getEncryptionAtRestPolicy());
                 extractor.reset();
                 LOG.debug("Ending extracting {}", section.title);
 

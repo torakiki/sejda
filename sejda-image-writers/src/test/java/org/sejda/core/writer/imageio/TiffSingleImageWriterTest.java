@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
 /**
@@ -65,6 +66,7 @@ public class TiffSingleImageWriterTest {
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
         PdfToMultipleTiffParameters params = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);
+        params.setOutput(new FileOrDirectoryTaskOutput(destination));
         RenderedImage image = ImageIO.read(stream);
         victim.openDestination(destination, params);
         victim.write(image, params);

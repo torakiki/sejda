@@ -2,7 +2,7 @@
  * Created on 28/mag/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@
 package org.sejda.core.service;
 
 import org.sejda.model.parameter.base.TaskParameters;
-import org.sejda.model.task.CancellationOption;
 
 /**
  * Service interface to perform the actual execution of a task.
@@ -35,11 +34,4 @@ public interface TaskExecutionService {
      * @param parameters task parameters
      */
     void execute(TaskParameters parameters);
-
-    /**
-     * Same as above, only also allows for cancelling a running task
-     * @param parameters
-     * @param cancellationOption
-     */
-    void execute(TaskParameters parameters, CancellationOption cancellationOption);
 }

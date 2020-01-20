@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 import org.sejda.core.support.util.HumanReadableSize;
@@ -84,7 +84,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     }
 
     private void closeResource() {
-        nullSafeCloseQuietly(document);
+        closeQuietly(document);
         splitter = null;
     }
 }

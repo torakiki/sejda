@@ -18,10 +18,10 @@
  */
 package org.sejda.model.input;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.validation.constraint.NotEmpty;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Skeletal implementation for an input source.
@@ -30,7 +30,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @param <T>
  *            the generic type of the source
  */
-public abstract class AbstractSource<T> implements Source<T> {
+public abstract class AbstractSource<T> extends AbstractTaskSource<T> implements Source<T> {
     @NotEmpty
     private final String name;
 

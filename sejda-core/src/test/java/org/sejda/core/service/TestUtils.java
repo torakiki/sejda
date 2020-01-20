@@ -17,21 +17,6 @@
  */
 package org.sejda.core.service;
 
-import org.sejda.core.support.util.StringUtils;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
-import org.sejda.sambox.pdmodel.common.PDPageLabels;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
-import org.sejda.sambox.text.PDFTextStripperByArea;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
-import java.util.function.Consumer;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,6 +26,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.sejda.core.support.util.StringUtils.normalizeLineEndings;
 
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.sejda.commons.util.StringUtils;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
+import org.sejda.sambox.pdmodel.common.PDPageLabels;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.text.PDFTextStripperByArea;
+
 public class TestUtils {
 
     public static void withPageText(PDPage page, Consumer<String> callback) {
@@ -49,7 +52,7 @@ public class TestUtils {
             textStripper = new PDFTextStripperByArea();
             PDRectangle pageSize = page.getCropBox();
             Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
-            if(page.getRotation() == 90 || page.getRotation() == 270) {
+            if (page.getRotation() == 90 || page.getRotation() == 270) {
                 cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
             }
             textStripper.setSortByPosition(true);
@@ -98,15 +101,13 @@ public class TestUtils {
     }
 
     public static <T> java.util.List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {
-        return iteratorToList(page.getAnnotations().stream()
-                .filter(a -> clazz.isInstance(a))
-                .map(a -> (T) a)
-                .iterator());
+        return iteratorToList(
+                page.getAnnotations().stream().filter(a -> clazz.isInstance(a)).map(a -> (T) a).iterator());
     }
 
     public static <T> List<T> iteratorToList(Iterator<T> iterator) {
         List<T> result = new ArrayList<>();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             result.add(iterator.next());
         }
         return result;
@@ -120,7 +121,7 @@ public class TestUtils {
     }
 
     public static void assertPageDestination(PDAnnotationLink link, PDPage expectedPage) throws IOException {
-        PDPage actualPage = ((PDPageDestination)link.getDestination()).getPage();
+        PDPage actualPage = ((PDPageDestination) link.getDestination()).getPage();
         assertEquals(expectedPage, actualPage);
     }
 
@@ -130,8 +131,9 @@ public class TestUtils {
 
     public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, PDPageLabelRange expected) {
         PDPageLabelRange actual = labels.getPageLabelRange(startPage);
-        assertNotNull("No page label range found at index: " + startPage + ". "+ labels.getLabels().keySet(), actual);
-        assertThat("Difference at index: " + startPage, actual.getCOSObject().toString(), is(expected.getCOSObject().toString()));
+        assertNotNull("No page label range found at index: " + startPage + ". " + labels.getLabels().keySet(), actual);
+        assertThat("Difference at index: " + startPage, actual.getCOSObject().toString(),
+                is(expected.getCOSObject().toString()));
     }
 
     public static void assertPageLabelRangeIsDefault(PDPageLabels labels, int startPage) {
@@ -144,7 +146,8 @@ public class TestUtils {
         assertPageLabelRangeIs(labels, startPage, new PDPageLabelRange(style, null, null));
     }
 
-    public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, String style, String prefix, Integer start) {
+    public static void assertPageLabelRangeIs(PDPageLabels labels, int startPage, String style, String prefix,
+            Integer start) {
         assertPageLabelRangeIs(labels, startPage, new PDPageLabelRange(style, prefix, start));
     }
 }

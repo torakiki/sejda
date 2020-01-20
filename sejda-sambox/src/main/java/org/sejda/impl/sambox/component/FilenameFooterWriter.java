@@ -81,6 +81,7 @@ public class FilenameFooterWriter {
     private String truncateIfRequired(String original, double maxWidth) throws TaskIOException {
         // check if all characters are supported by the fonts available
         // replace any bad characters with #
+        // TODO FIXME? it doesn't replace every single char with a #, it replaces every contiguous text with # i.e. "հայերէն" -> "#" and not "#######"
         String text = FontUtils.replaceUnsupportedCharacters(original, document, "#");
 
         if (stringWidth(text) <= maxWidth) {

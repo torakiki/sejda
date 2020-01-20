@@ -19,10 +19,12 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+import static org.sejda.TestUtils.*;
 
+import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -80,6 +82,45 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setOutputPrefix("[BASENAME]-[PAGENUMBER]");
         doExecute(parameters, 2);
+    }
+
+    @Test
+    public void encryptionAtRestTest() throws IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
+        parameters.addSource(encryptedAtRest(mediumInput()));
+        parameters.addSource(encryptedAtRest(regularInput()));
+        parameters.addPageRange(new PageRange(1, 1));
+        parameters.setOutputPrefix("[BASENAME]-[PAGENUMBER]");
+        doExecute(parameters, 2);
+    }
+
+    @Test
+    public void encryptionAtRestRoundTrip() throws IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+            ImageColorType.COLOR_RGB);
+        parameters.addSource(encryptedAtRest(shortInput()));
+        parameters.addSource(encryptedAtRest(mediumInput()));
+        parameters.addPageRange(new PageRange(1, 1));
+
+        testContext.directoryOutputTo(parameters);
+        parameters.getOutput().setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertNoTaskWarnings();
+        testContext.assertOutputSize(2).forEachRawOutput(path -> {
+            try {
+                BufferedImage image = ImageIO.read(getEncryptionAtRestPolicy().decrypt(new FileInputStream(path.toFile())));
+
+                assertNotNull(image);
+                assertTrue(image.getHeight() > 0);
+                assertTrue(image.getWidth() > 0);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {

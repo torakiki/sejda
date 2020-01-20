@@ -33,7 +33,7 @@ import org.sejda.model.validation.constraint.NotEmpty;
  * @param <T>
  *            the generic type of the source
  */
-public abstract class AbstractPdfSource<T> implements PdfSource<T> {
+public abstract class AbstractPdfSource<T> extends AbstractTaskSource<T> implements PdfSource<T> {
 
     private String password;
     @NotEmpty

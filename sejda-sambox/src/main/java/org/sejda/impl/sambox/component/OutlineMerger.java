@@ -22,7 +22,7 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;

@@ -21,10 +21,13 @@ package org.sejda.model;
 import org.sejda.common.FriendlyNamed;
 
 public enum PageOrientation implements FriendlyNamed {
-    PORTRAIT("portrait"), LANDSCAPE("landscape"), AUTO("auto");
+    PORTRAIT("portrait"),
+    LANDSCAPE("landscape"),
+    AUTO("auto");
 
     private String name;
-    private  PageOrientation(String name) {
+
+    private PageOrientation(String name) {
         this.name = name;
     }
 

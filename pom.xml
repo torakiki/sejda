@@ -6,7 +6,7 @@
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>3.2.86-SNAPSHOT</version>
+	<version>4.0.0.M6-SNAPSHOT</version>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
@@ -50,17 +50,45 @@
 
 	<profiles>
 		<profile>
+			<id>toolchain</id>
+			<activation>
+				<property>
+					<name>env.CI</name>
+					<value>!true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-toolchains-plugin</artifactId>
+						<version>3.0.0</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>toolchain</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<toolchains>
+								<jdk>
+									<version>8</version>
+								</jdk>
+							</toolchains>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.4</version>
-						<configuration>
-							<quiet>true</quiet>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
+						<version>3.0.1</version>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -69,11 +97,16 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<additionalOptions>
+								<additionalOption>-Xdoclint:none</additionalOption>
+							</additionalOptions>
+						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-release-plugin</artifactId>
-						<version>2.5.2</version>
+						<version>2.5.3</version>
 						<configuration>
 							<tagNameFormat>v@{project.version}</tagNameFormat>
 							<preparationGoals>clean install</preparationGoals>
@@ -183,11 +216,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.4</version>
-						<configuration>
-							<quiet>true</quiet>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
@@ -196,6 +224,11 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<additionalOptions>
+								<additionalOption>-Xdoclint:none</additionalOption>
+							</additionalOptions>
+						</configuration>
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -234,12 +267,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.1.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -257,6 +290,11 @@
 						<autoReleaseAfterClose>true</autoReleaseAfterClose>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.0.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 
@@ -264,23 +302,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
-					<debug>true</debug>
-					<debuglevel>lines,vars,source</debuglevel>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.4</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -292,12 +323,8 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.2</version>
-			</plugin>
-			<plugin>
-				<artifactId>maven-install-plugin</artifactId>
-				<version>2.5.2</version>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -307,13 +334,10 @@
 		<module>sejda-core</module>
 		<module>sejda-docs</module>
 		<module>sejda-sambox</module>
-		<module>sejda-console</module>
 		<module>sejda-image-writers</module>
 		<module>sejda-distribution</module>
 		<module>sejda-conversion</module>
 		<module>sejda-fonts</module>
-		<module>sejda-optional-fonts</module>
-		<module>sejda-ocr</module>
 	</modules>
 
 	<distributionManagement>
@@ -328,22 +352,21 @@
 	</distributionManagement>
 
 	<properties>
+		<sejda.commons.version>1.1.3</sejda.commons.version>
 		<junit.version>4.12</junit.version>
-		<slf4j.version>1.7.25</slf4j.version>
+		<slf4j.version>1.7.29</slf4j.version>
 		<commons.lang.version>3.9</commons.lang.version>
 		<commons.io.version>2.6</commons.io.version>
 		<validation.api.version>1.0.0.GA</validation.api.version>
-		<mockito.version>1.10.19</mockito.version>
+		<mockito.version>3.0.0</mockito.version>
 		<logback.version>1.2.3</logback.version>
 		<jdepend.version>2.9.1</jdepend.version>
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<hamcrest.version>1.3</hamcrest.version>
-		<sambox.version>1.1.55</sambox.version>
-		<bouncycastle.version>1.61</bouncycastle.version>
-		<twelvemonkeys.version>3.4.1</twelvemonkeys.version>
-		<apache.poi.version>3.15</apache.poi.version>
-		<tess4j.version>3.2.1</tess4j.version>
-		<apache.commons.csv.version>1.5</apache.commons.csv.version>
+		<sambox.version>2.1.9</sambox.version>
+		<sejda.io.version>2.1.1</sejda.io.version>
+		<bouncycastle.version>1.64</bouncycastle.version>
+		<twelvemonkeys.version>3.4.2</twelvemonkeys.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -392,20 +415,15 @@
 				<artifactId>imageio-jpeg</artifactId>
 				<version>${twelvemonkeys.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>poi-ooxml</artifactId>
-				<version>${apache.poi.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-csv</artifactId>
-				<version>${apache.commons.csv.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.sejda</groupId>
+			<artifactId>sejda-commons</artifactId>
+			<version>${sejda.commons.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -425,7 +443,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
+			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 public final class PrefixUtils {
     private PrefixUtils() {
@@ -26,17 +26,20 @@ public final class PrefixUtils {
     }
 
     /**
-     * Strips characters deemed usafe for a filename
+     * @return A string where all the variations of whitespace and horizontal whitespace are replace with a standard whitespace, all characters deemed unsafe for a filename are
+     *         stripped and the resulting filename is trimmed
      */
     public static String toSafeFilename(String input) {
-        return StringUtils.defaultIfBlank(input, "").replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "");
+        // TODO maybe we should do the trimming when we ensure a proper file name length to make sure we do it for every generated file? Or we shouldn't do it at all?
+        return defaultIfBlank(input, "").replaceAll("\\s|\\h", " ").replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "")
+                .trim();
     }
 
     /**
      * Strips all but characters that are known to be safe: alphanumerics for now.
      */
     public static String toStrictFilename(String input) {
-        String safe = StringUtils.defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
+        String safe = defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
         if (safe.length() > 255) {
             safe = safe.substring(0, 255);
         }

@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.List;
 
-import org.sejda.core.support.util.StringUtils;
+import org.sejda.commons.util.StringUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
 import org.sejda.model.VerticalAlign;
@@ -152,7 +152,8 @@ public class PageTextWriter {
 
                     if (resolvedFont == null) {
                         throw new UnsupportedTextException("Unable to find suitable font for string \""
-                                + StringUtils.asUnicodes(resolvedLabel) + "\"", resolvedLabel);
+                                + org.sejda.core.support.util.StringUtils.asUnicodes(resolvedLabel) + "\"",
+                                resolvedLabel);
                     }
 
                     Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());

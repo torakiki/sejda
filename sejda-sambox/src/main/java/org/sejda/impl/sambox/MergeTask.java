@@ -19,24 +19,36 @@
 package org.sejda.impl.sambox;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
-import org.sejda.impl.sambox.component.*;
+import org.sejda.impl.sambox.component.AcroFormsMerger;
+import org.sejda.impl.sambox.component.AnnotationsDistiller;
+import org.sejda.impl.sambox.component.CatalogPageLabelsMerger;
+import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
+import org.sejda.impl.sambox.component.FilenameFooterWriter;
+import org.sejda.impl.sambox.component.OutlineMerger;
+import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.PdfRotator;
+import org.sejda.impl.sambox.component.PdfScaler;
+import org.sejda.impl.sambox.component.TableOfContentsCreator;
 import org.sejda.impl.sambox.component.image.ImagesToPdfDocumentConverter;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.input.*;
+import org.sejda.model.input.PdfMergeInput;
+import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.scale.ScaleType;
@@ -110,7 +122,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
 
-            if(inputsCounter == 1) {
+            if (inputsCounter == 1) {
                 firstInputNumberOfPages = sourceDocumentHandler.getNumberOfPages();
             }
 
@@ -133,7 +145,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
                     // rotate
                     Rotation rotation = parameters.getRotation(inputsCounter - 1);
-                    if(rotation != Rotation.DEGREES_0) {
+                    if (rotation != Rotation.DEGREES_0) {
                         PdfRotator.rotate(importedPage, rotation);
                     }
 
@@ -141,22 +153,22 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
                     // processing the first page of the source
                     if (tocCreator.shouldGenerateToC() && relativePagesCounter == 1) {
-                        if(parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
+                        if (parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
                             // skip the cover/title document, don't add it to the ToC
                         } else {
                             tocCreator.pageSizeIfNotSet(currentPageSize);
                             if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                                 sourceBaseName = ofNullable(
                                         sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                        .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
-                                        .orElse(sourceBaseName);
+                                                .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
+                                                .orElse(sourceBaseName);
                             }
                             tocCreator.appendItem(sourceBaseName, pagesCounter, importedPage);
                         }
                     }
 
                     long currentPageNumber = pagesCounter + tocCreator.tocNumberOfPages();
-                    if(parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
+                    if (parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
                         // the toc will be added after the cover/title pages
                         currentPageNumber = pagesCounter;
                     }
@@ -208,20 +220,23 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
-            int beforePageNumber = 0;
-            if(parameters.isFirstInputCoverTitle()) {
-                // add ToC after the cover/title pages
-                beforePageNumber = firstInputNumberOfPages;
+            try {
+                // add ToC as first page or after the cover/title pages
+                int beforePageNumber = parameters.isFirstInputCoverTitle() ? firstInputNumberOfPages : 0;
+                tocCreator.addToC(beforePageNumber);
+            } catch (TaskException e) {
+                notifyEvent(executionContext().notifiableTaskMetadata())
+                        .taskWarning("Unable to create the Table of Contents", e);
             }
-            tocCreator.addToC(beforePageNumber);
         }
 
-        if(catalogPageLabelsMerger.hasPageLabels()) {
+        if (catalogPageLabelsMerger.hasPageLabels()) {
             LOG.debug("Adding merged /Catalog /PageLabels");
-            destinationDocument.getUnderlyingPDDocument().getDocumentCatalog().setPageLabels(catalogPageLabelsMerger.getMergedPageLabels());
+            destinationDocument.getUnderlyingPDDocument().getDocumentCatalog()
+                    .setPageLabels(catalogPageLabelsMerger.getMergedPageLabels());
         }
 
-        destinationDocument.savePDDocument(tmpFile);
+        destinationDocument.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeResources();
 
         parameters.getOutput().accept(outputWriter);
@@ -232,9 +247,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
     private void closeResources() {
         Closeable current;
         while ((current = toClose.poll()) != null) {
-            nullSafeCloseQuietly(current);
+            closeQuietly(current);
         }
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
     }
 
     @Override

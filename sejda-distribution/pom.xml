@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.sejda</groupId>
 		<artifactId>sejda-parent</artifactId>
-		<version>3.2.86-SNAPSHOT</version>
+		<version>4.0.0.M6-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -19,7 +19,7 @@
 			<id>release</id>
 			<activation>
 				<property>
-					<name>env.TRAVIS</name>
+					<name>env.CI</name>
 					<value>true</value>
 				</property>
 			</activation>
@@ -48,6 +48,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-deploy-plugin</artifactId>
+						<version>3.0.0-M1</version>
 						<configuration>
 							<skip>true</skip>
 						</configuration>
@@ -86,11 +87,6 @@
 		<dependency>
 			<groupId>org.sejda</groupId>
 			<artifactId>sejda-fonts</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
-			<artifactId>sejda-optional-fonts</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

@@ -18,17 +18,19 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+import static org.sejda.TestUtils.encryptedAtRest;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
+
+import java.io.*;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
-
-import java.io.IOException;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
 
 public class PageImageWriterTest {
 
@@ -42,6 +44,15 @@ public class PageImageWriterTest {
 
         assertTrue("Original bytes should be used",
                 IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/large.jpg").getSource()));
+    }
+
+    @Test
+    public void testPng() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/draft.png"));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(103));
+        assertThat(result.getWidth(), is(248));
     }
 
     @Test
@@ -79,5 +90,28 @@ public class PageImageWriterTest {
 
         assertFalse("Original bytes should not be used; the image should be converted from ICC Gray to RGB",
                 IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/icc_profile_gray.png").getSource()));
+    }
+
+    @Test
+    public void encryptedAtRestTest_stream() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(encryptedAtRest(customNonPdfInput("image/large.jpg")));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(3840));
+
+        assertTrue("Decrypted bytes should be used",
+                IOUtils.contentEquals(
+                        result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("image/large.jpg").getSource()
+                )
+        );
+    }
+
+    @Test
+    public void encryptedAtRestTest_file() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(encryptedAtRest(customNonPdfInputAsFileSource("image/draft.png")));
+        assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
+        assertThat(result.getHeight(), is(103));
     }
 }

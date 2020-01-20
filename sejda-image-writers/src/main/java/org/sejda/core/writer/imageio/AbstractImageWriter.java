@@ -20,11 +20,12 @@ package org.sejda.core.writer.imageio;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static org.sejda.common.ComponentsUtility.nullSafeClose;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.sejda.commons.util.IOUtils;
 import org.sejda.core.writer.model.ImageWriter;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.TiffCompressionType;
@@ -65,6 +67,7 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
     }
 
     private ImageOutputStream out;
+    private OutputStream wrappedOut;
     protected final javax.imageio.ImageWriter writer;
 
     AbstractImageWriter(String format) {
@@ -95,7 +98,9 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
     @Override
     public void openDestination(File file, T params) throws TaskIOException {
         try {
-            out = ImageIO.createImageOutputStream(file);
+            wrappedOut = params.getOutput().getEncryptionAtRestPolicy().encrypt(new FileOutputStream(file));
+
+            out = ImageIO.createImageOutputStream(wrappedOut);
             TaskIOException.require(nonNull(out), "Unable to create image output stream");
             writer.setOutput(getOutput());
         } catch (IOException e) {
@@ -117,7 +122,8 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
     @Override
     public void closeDestination() throws TaskIOException {
         try {
-            nullSafeClose(getOutput());
+            IOUtils.close(getOutput());
+            IOUtils.close(wrappedOut);
         } catch (IOException e) {
             throw new TaskIOException("Unable to close destination", e);
         }

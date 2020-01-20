@@ -22,7 +22,6 @@ package org.sejda.core.support.prefix;
 
 import static java.util.Optional.ofNullable;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.core.support.prefix.processor.PrefixUtils.toSafeFilename;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
@@ -60,7 +59,7 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        return toSafeFilename(prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest())));
+        return prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest()));
     }
 
 }

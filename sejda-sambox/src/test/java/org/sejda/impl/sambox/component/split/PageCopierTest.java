@@ -21,6 +21,8 @@ package org.sejda.impl.sambox.component.split;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -28,7 +30,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
+import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -143,6 +147,32 @@ public class PageCopierTest {
                 assertFalse(d.containsKey(COSName.DEST));
                 assertTrue(d.containsKey(COSName.A));
             });
+        }
+    }
+
+    @Test
+    public void copyStreamIsSanitized() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/annots_in_stream.pdf")))) {
+            PDPage page = document.getPage(0);
+            assertNotNull(
+                    page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class).getItem(COSName.ANNOTS));
+            PDPage copy = new PageCopier(false).copyOf(page);
+            assertNull(
+                    copy.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class).getItem(COSName.ANNOTS));
+        }
+    }
+
+    @Test
+    public void copyStreamInArrayIsSanitized() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/annots_in_contents_array_stream.pdf")))) {
+            PDPage page = document.getPage(0);
+            assertNotNull(page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class)
+                    .getObject(0, COSStream.class).getItem(COSName.ANNOTS));
+            PDPage copy = new PageCopier(false).copyOf(page);
+            assertNull(copy.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class)
+                    .getObject(0, COSStream.class).getItem(COSName.ANNOTS));
         }
     }
 

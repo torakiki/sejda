@@ -21,8 +21,8 @@
 package org.sejda.core.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -31,7 +31,6 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.sejda.TestUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.TestListenerFactory;
@@ -68,7 +67,7 @@ public class DefaultTaskExecutionServiceTest {
     public void setUp() throws TaskException {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         parameters.setOutput(new FileTaskOutput(IOUtils.createTemporaryBuffer()));
-        when(context.getTask(Matchers.any(TaskParameters.class))).thenReturn(task);
+        when(context.getTask(any(TaskParameters.class))).thenReturn(task);
         when(context.isValidation()).thenReturn(Boolean.TRUE);
     }
 
@@ -92,8 +91,8 @@ public class DefaultTaskExecutionServiceTest {
 
     @Test
     public void testNegativeBeforeExecution() throws TaskException {
-        doThrow(new TaskExecutionException("Mock exception")).when(task).before(Matchers.any(TaskParameters.class),
-                Matchers.any(TaskExecutionContext.class));
+        doThrow(new TaskExecutionException("Mock exception")).when(task).before(any(TaskParameters.class),
+                any(TaskExecutionContext.class));
         SingleTaskOutput output = mock(SingleTaskOutput.class);
         parameters.setOutput(output);
         TestUtils.setProperty(victim, "context", context);

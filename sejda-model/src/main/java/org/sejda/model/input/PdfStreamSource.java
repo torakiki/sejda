@@ -20,11 +20,13 @@
  */
 package org.sejda.model.input;
 
-import java.io.InputStream;
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
+import org.sejda.model.exception.TaskIOException;
 
 import javax.validation.constraints.NotNull;
-
-import org.sejda.model.exception.TaskIOException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * {@link AbstractPdfSource} from a {@link InputStream}
@@ -50,6 +52,11 @@ public final class PdfStreamSource extends AbstractPdfSource<InputStream> {
     @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
+    }
+
+    @Override
+    public SeekableSource initializeSeekableSource() throws IOException {
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream));
     }
 
     /**

@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
@@ -84,8 +84,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
-        documentHandler.savePDDocument(tmpFile);
-        nullSafeCloseQuietly(documentHandler);
+        documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
+        closeQuietly(documentHandler);
 
         parameters.getOutput().accept(outputWriter);
 
@@ -95,7 +95,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
     @Override
     public void after() {
-        nullSafeCloseQuietly(documentHandler);
+        closeQuietly(documentHandler);
     }
 
 }

@@ -18,12 +18,13 @@
  */
 package org.sejda.core.writer.imageio;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -33,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
 /**
@@ -65,12 +67,40 @@ public class JpegImageWriterTest {
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
         PdfToJpegParameters params = new PdfToJpegParameters(ImageColorType.GRAY_SCALE);
+        params.setOutput(new FileOrDirectoryTaskOutput(destination));
+
         RenderedImage image = ImageIO.read(stream);
+        assertNotNull(image);
+
         victim.openDestination(destination, params);
         victim.write(image, params);
         victim.closeDestination();
         victim.close();
+
         RenderedImage result = ImageIO.read(destination);
+        assertTrue(result.getHeight() > 0);
+        assertTrue(result.getWidth() > 0);
+    }
+
+    @Test
+    public void writeEncrypted() throws IOException, TaskIOException {
+        InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.jpg");
+        File destination = File.createTempFile("test", ".jpg");
+        destination.deleteOnExit();
+
+        PdfToJpegParameters params = new PdfToJpegParameters(ImageColorType.GRAY_SCALE);
+        params.setOutput(new FileOrDirectoryTaskOutput(destination));
+        params.getOutput().setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
+
+        RenderedImage image = ImageIO.read(stream);
+        assertNotNull(image);
+
+        victim.openDestination(destination, params);
+        victim.write(image, params);
+        victim.closeDestination();
+        victim.close();
+
+        RenderedImage result = ImageIO.read(getEncryptionAtRestPolicy().decrypt(new FileInputStream(destination)));
         assertTrue(result.getHeight() > 0);
         assertTrue(result.getWidth() > 0);
     }

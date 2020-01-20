@@ -21,7 +21,12 @@
 package org.sejda.model.input;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
+import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.validation.constraint.PdfFile;
 
@@ -49,6 +54,16 @@ public class PdfFileSource extends AbstractPdfSource<File> {
     @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
+    }
+
+    @Override
+    SeekableSource initializeSeekableSource() throws IOException {
+        if(getEncryptionAtRestPolicy() instanceof NoEncryptionAtRest) {
+            // optimization: avoid the temp file seekable source
+            return SeekableSources.seekableSourceFrom(file);
+        }
+
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)));
     }
 
     /**

@@ -20,11 +20,14 @@
  */
 package org.sejda.model.input;
 
+import java.io.IOException;
 import java.net.URL;
 
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.sejda.io.SeekableSource;
+import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
 
 /**
@@ -51,6 +54,11 @@ public final class PdfURLSource extends AbstractPdfSource<URL> {
     @Override
     public <T> T open(PdfSourceOpener<T> opener) throws TaskIOException {
         return opener.open(this);
+    }
+
+    @Override
+    public SeekableSource initializeSeekableSource() throws IOException {
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(url.openStream()));
     }
 
     @Override

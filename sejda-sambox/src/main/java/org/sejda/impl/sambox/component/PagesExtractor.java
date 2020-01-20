@@ -18,7 +18,7 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
-import static org.sejda.common.ComponentsUtility.nullSafeCloseQuietly;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
@@ -27,12 +27,13 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Set;
 
-import org.sejda.common.LookupTable;
+import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -126,7 +127,7 @@ public class PagesExtractor implements Closeable {
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void save(File file, boolean discardOutline) throws TaskException {
+    public void save(File file, boolean discardOutline, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
         if (!discardOutline) {
             createOutline();
         }
@@ -141,7 +142,7 @@ public class PagesExtractor implements Closeable {
             destinationDocument.setDocumentAcroForm(f);
         });
 
-        destinationDocument.savePDDocument(file);
+        destinationDocument.savePDDocument(file, encryptionAtRestSecurity);
     }
 
     private void createOutline() {
@@ -154,7 +155,7 @@ public class PagesExtractor implements Closeable {
 
     @Override
     public void close() {
-        nullSafeCloseQuietly(destinationDocument);
+        closeQuietly(destinationDocument);
         pagesLookup.clear();
         outlineMerger = null;
     }

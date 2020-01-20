@@ -22,8 +22,8 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.model.scale.Margins.inchesToPoints;
-import static org.sejda.util.RequireUtils.requireNotNullArg;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D.Float;
@@ -154,7 +154,7 @@ public class PdfScaler {
             margin(doc, Collections.singleton(page), margins);
         }
 
-        PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
+        // PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
         // LOG.debug("Final page size: {}", finalPageSize);
         // LOG.debug("Desired page size: {}", desiredPageSize);
     }

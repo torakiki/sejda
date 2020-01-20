@@ -22,14 +22,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.junit.Test;
+import org.sejda.core.service.BaseTaskTest;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
-
-import java.io.*;
 
 /**
  * @author Andrea Vacondio
@@ -67,8 +72,8 @@ public class DefaultPdfSourceOpenerTest {
             try {
                 org.apache.commons.io.IOUtils.copy(in, out);
             } finally {
-                org.apache.commons.io.IOUtils.closeQuietly(out);
-                org.apache.commons.io.IOUtils.closeQuietly(in);
+                org.sejda.commons.util.IOUtils.closeQuietly(out);
+                org.sejda.commons.util.IOUtils.closeQuietly(in);
             }
 
             new DefaultPdfSourceOpener().open(PdfFileSource.newInstanceWithPassword(tmp, "my source"));
@@ -83,5 +88,31 @@ public class DefaultPdfSourceOpenerTest {
         new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceNoPassword(
                 getClass().getClassLoader().getResourceAsStream("pdf/not_a_pdf.pdf"), "my source"));
 
+    }
+
+    @Test(expected = TaskIOException.class)
+    public void openDocumentTwice_streamSource_not_possible() throws TaskIOException, IOException {
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "my source");
+        try(PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
+            assertNotNull(handler.getUnderlyingPDDocument());
+        }
+
+        try(PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
+            // exception expected
+            fail("Exception was expected");
+        }
+    }
+
+    @Test
+    public void openDocumentTwice_fileSource() throws TaskIOException, IOException {
+        PdfFileSource source = BaseTaskTest.customInputAsFileSource("pdf/test_file.pdf");
+        try(PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
+            assertNotNull(handler.getUnderlyingPDDocument());
+        }
+
+        try(PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
+            assertNotNull(handler.getUnderlyingPDDocument());
+        }
     }
 }

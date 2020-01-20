@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.sejda.TestUtils.encryptedAtRest;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -259,6 +260,39 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.assertOutputSize(1);
         testContext.forEachPdfOutput(d -> {
             assertNotNull(d.getDocumentCatalog().getAcroForm());
+        });
+    }
+
+    @Test
+    public void encryptionAtRestTest() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(1, 2));
+        parameters.addSource(encryptedAtRest(customInput("pdf/test-pdf.pdf")));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(2);
+    }
+
+    @Test
+    public void deletePagesBatchLenient() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setInvertSelection(true);
+        parameters.setLenient(true);
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertTaskWarning("Document one_page.pdf had all pages removed");
+
+        testContext.forPdfOutput("one_page.pdf", doc -> {
+            assertEquals(0, doc.getNumberOfPages());
         });
     }
 }
