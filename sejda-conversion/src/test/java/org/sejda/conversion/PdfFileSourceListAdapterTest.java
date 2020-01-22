@@ -23,12 +23,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.conversion.exception.ConversionException;
+import org.sejda.model.input.PdfFileSource;
 
 /**
  * @author Andrea Vacondio
@@ -41,9 +43,11 @@ public class PdfFileSourceListAdapterTest {
 
     @Before
     public void setUp() throws IOException {
-        folder.newFile("test_file.pdf");
-        folder.newFile("test2_file.pdf");
-        folder.newFile("another_test_file.pdf");
+        folder.newFile("1 Hello world.pdf");
+        folder.newFile("10 Blablabla.pdf");
+        folder.newFile("11 test_file.pdf");
+        folder.newFile("2 test_file.pdf");
+        folder.newFile("3 test_file.pdf");
         folder.newFile("ignore_this.something");
         this.path = folder.getRoot();
     }
@@ -56,19 +60,26 @@ public class PdfFileSourceListAdapterTest {
     @Test
     public void testPositive() {
         PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath());
-        assertEquals(3, victim.getFileSourceList().size());
+        List<PdfFileSource> list = victim.getFileSourceList();
+        assertEquals(5, list.size());
+        assertEquals("1 Hello world.pdf", list.get(0).getName());
+        assertEquals("2 test_file.pdf", list.get(1).getName());
+        assertEquals("3 test_file.pdf", list.get(2).getName());
+        assertEquals("10 Blablabla.pdf", list.get(3).getName());
+        assertEquals("11 test_file.pdf", list.get(4).getName());
     }
 
     @Test
     public void testRegex() {
-        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath()).filter("test(.*).pdf");
-        assertEquals(2, victim.getFileSourceList().size());
+        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath())
+                .filter("^(\\d+) test(.*).pdf");
+        assertEquals(3, victim.getFileSourceList().size());
     }
 
     @Test
     public void testEmptyRegex() {
         PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath()).filter("");
-        assertEquals(3, victim.getFileSourceList().size());
+        assertEquals(5, victim.getFileSourceList().size());
     }
 
     @Test(expected = ConversionException.class)

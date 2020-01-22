@@ -19,6 +19,7 @@
  */
 package org.sejda.conversion;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
 
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -43,6 +43,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.commons.util.NumericalSortFilenameComparator;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
@@ -52,6 +53,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
 /**
  * Adapter for a list of {@link PdfFileSource}s. Provides a filePath based constructor. Will parse xml, csv config file formats, and list a directory contents
  * 
@@ -159,6 +161,7 @@ abstract class AbstractPdfInputFilesSource implements PdfInputFilesSource {
  * @author Eduard Weissmann
  * 
  */
+
 class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
 
     protected static final String PDF_EXTENSION = "pdf";
@@ -171,19 +174,11 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
 
     @Override
     protected List<String> parseFileNames(File file) {
-        List<File> files = Arrays.asList(file.listFiles((dir, filename) -> {
+
+        return Arrays.asList(file.listFiles((dir, filename) -> {
             return StringUtils.equalsIgnoreCase(getExtension(filename), PDF_EXTENSION)
                     && pattern.matcher(filename).matches();
-        }));
-
-        List<String> filenames = new ArrayList<>();
-        for (File current : files) {
-            filenames.add(current.getAbsolutePath());
-        }
-
-        Collections.sort(filenames);
-
-        return filenames;
+        })).stream().sorted(new NumericalSortFilenameComparator()).map(File::getAbsolutePath).collect(toList());
     }
 
 }
@@ -203,8 +198,8 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
             return doParseFileNames(file);
         } catch (Exception e) {
             LOG.error("Can't extract filesnames", e);
-            throw new ConversionException("Can't extract filenames from '" + file.getName() + "'. Reason:"
-                    + e.getMessage(), e);
+            throw new ConversionException(
+                    "Can't extract filenames from '" + file.getName() + "'. Reason:" + e.getMessage(), e);
         }
     }
 
@@ -238,13 +233,13 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
             return doParseFileNames(file);
         } catch (Exception e) {
             LOG.error("Can't extract filenames", e);
-            throw new ConversionException("Can't extract filenames from '" + file.getName() + "'. Reason:"
-                    + e.getMessage(), e);
+            throw new ConversionException(
+                    "Can't extract filenames from '" + file.getName() + "'. Reason:" + e.getMessage(), e);
         }
     }
 
-    protected List<String> doParseFileNames(File file) throws IOException, SAXException, ParserConfigurationException,
-            XPathException {
+    protected List<String> doParseFileNames(File file)
+            throws IOException, SAXException, ParserConfigurationException, XPathException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true);
         DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -282,9 +277,7 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
 
             // warn if file in fileset is using absolute path mode
             if (FilenameUtils.getPrefixLength(filePath) > 0) {
-                LOG.warn("File "
-                        + filePath
-                        + " in fileset "
+                LOG.warn("File " + filePath + " in fileset "
                         + StringUtils.defaultIfBlank(nullSafeGetStringAttribute(fileSet, "dir"), "")
                         + " seems to be an absolute path. Will _not_ be resolved relative to the <fileset>, but as an absolute path. Normally you would want to use relative paths in a //filelist/fileset/file, and absolute paths in a //filelist/file.");
             }
