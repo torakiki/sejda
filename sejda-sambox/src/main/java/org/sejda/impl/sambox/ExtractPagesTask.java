@@ -35,7 +35,6 @@ import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.ExtractPagesParameters;
@@ -72,7 +71,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         int currentStep = 0;
         int totalSteps = parameters.getSourceList().size();
 
-        for(PdfSource<?> source : parameters.getSourceList()) {
+        for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
 
             currentStep++;
@@ -83,34 +82,37 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
             Set<Integer> pages = parameters.getPages(sourceDocumentHandler.getNumberOfPages());
             if (pages == null || pages.isEmpty()) {
-                if(parameters.isLenient() && parameters.isInvertSelection()) {
-                    notifyEvent(executionContext().notifiableTaskMetadata())
-                            .taskWarning(String.format("Document %s had all pages removed", source.getName()));
-                } else {
-                    throw new TaskExecutionException("No page has been selected for extraction.");
+                executionContext().assertTaskIsLenient(noPagesErrorMessage(source, parameters));
+                notifyEvent(executionContext().notifiableTaskMetadata())
+                        .taskWarning(noPagesErrorMessage(source, parameters));
+            } else {
+                extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument());
+                extractor.setVersion(parameters.getVersion());
+                extractor.setCompress(parameters.isCompress());
+
+                LOG.debug("Extracting pages {}", pages);
+                extractor.retain(pages, executionContext());
+
+                File tmpFile = createTemporaryBuffer(parameters.getOutput());
+                LOG.debug("Created output temporary buffer {}", tmpFile);
+                if (new OptimizationRuler(parameters.getOptimizationPolicy())
+                        .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
+                    extractor.optimize();
                 }
-            }
-            extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument());
-            extractor.setVersion(parameters.getVersion());
-            extractor.setCompress(parameters.isCompress());
+                extractor.save(tmpFile, parameters.discardOutline(),
+                        parameters.getOutput().getEncryptionAtRestPolicy());
 
-            LOG.debug("Extracting pages {}", pages);
-            extractor.retain(pages, executionContext());
-
-            File tmpFile = createTemporaryBuffer(parameters.getOutput());
-            LOG.debug("Created output temporary buffer {}", tmpFile);
-            if (new OptimizationRuler(parameters.getOptimizationPolicy())
-                    .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
-                extractor.optimize();
+                String outName = nameGenerator(parameters.getOutputPrefix())
+                        .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
+                outputWriter.addOutput(file(tmpFile).name(outName));
+                executionContext().incrementAndGetOutputDocumentsCounter();
             }
-            extractor.save(tmpFile, parameters.discardOutline(), parameters.getOutput().getEncryptionAtRestPolicy());
+
+            if (executionContext().outputDocumentsCounter() == 0) {
+                throw new TaskException("The task didn't generate any output file");
+            }
 
             closeQuietly(sourceDocumentHandler);
-
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
-            outputWriter.addOutput(file(tmpFile).name(outName));
-
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
@@ -128,4 +130,10 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         closeQuietly(extractor);
     }
 
+    private String noPagesErrorMessage(PdfSource<?> source, ExtractPagesParameters parameters) {
+        if (parameters.isInvertSelection()) {
+            return String.format("Document %s had all pages removed", source.getName());
+        }
+        return String.format("No page has been selected for extraction from %s", source.getName());
+    }
 }

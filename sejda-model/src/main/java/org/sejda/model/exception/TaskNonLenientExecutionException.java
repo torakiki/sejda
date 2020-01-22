@@ -33,4 +33,7 @@ public class TaskNonLenientExecutionException extends TaskExecutionException {
         super(cause.getMessage(), cause);
     }
 
+    public TaskNonLenientExecutionException(String message) {
+        super(message);
+    }
 }

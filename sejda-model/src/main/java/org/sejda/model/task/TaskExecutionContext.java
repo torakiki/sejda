@@ -103,4 +103,16 @@ public class TaskExecutionContext {
             throw new TaskNonLenientExecutionException(e);
         }
     }
+
+    /**
+     * 
+     * @param message
+     *            the error the lenient task can recover from
+     * @throws TaskNonLenientExecutionException
+     */
+    public void assertTaskIsLenient(String message) throws TaskNonLenientExecutionException {
+        if (!lenient) {
+            throw new TaskNonLenientExecutionException(message);
+        }
+    }
 }

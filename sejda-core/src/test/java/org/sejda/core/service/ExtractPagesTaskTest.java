@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.sejda.core.TestListenerFactory;
 import org.sejda.core.TestListenerFactory.TestListenerFailed;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
@@ -225,7 +226,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     @Test
-    public void extractMultipleFiles() throws  IOException {
+    public void extractMultipleFiles() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 2));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -245,7 +246,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     @Test
-    public void extractWithForms() throws  IOException {
+    public void extractWithForms() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -289,10 +290,77 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertTaskWarning("Document one_page.pdf had all pages removed");
+        testContext.assertOutputSize(1).assertTaskWarning("Document one_page.pdf had all pages removed");
+    }
 
-        testContext.forPdfOutput("one_page.pdf", doc -> {
-            assertEquals(0, doc.getNumberOfPages());
-        });
+    @Test
+    public void extractPagesBatchLenient() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setLenient(true);
+        parameters.addPageRange(new PageRange(3, 3));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).assertTaskWarning("No page has been selected for extraction from one_page.pdf");
+    }
+
+    @Test
+    public void deletePagesBatchNonLenient() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setInvertSelection(true);
+        parameters.addPageRange(new PageRange(1, 3));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskFailed(TaskNonLenientExecutionException.class);
+    }
+
+    @Test
+    public void extractPagesBatchLenientNonLenient() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(3, 3));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskFailed(TaskNonLenientExecutionException.class);
+    }
+
+    @Test
+    public void deletePagesBatchLenientNoOutput() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setInvertSelection(true);
+        parameters.setLenient(true);
+        parameters.addPageRange(new PageRange(1));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskFailed("The task didn't generate any output file");
+    }
+
+    @Test
+    public void extractPagesBatchLenientNoOutput() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setLenient(true);
+        parameters.addPageRange(new PageRange(100));
+        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskFailed("The task didn't generate any output file");
     }
 }
