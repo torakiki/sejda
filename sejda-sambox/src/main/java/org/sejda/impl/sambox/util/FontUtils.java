@@ -1,6 +1,6 @@
 /*
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -197,8 +197,11 @@ public final class FontUtils {
 
     public static boolean canDisplaySpace(PDFont font) {
         try {
+            // try encode
             font.encode(" ");
-            return true;
+
+            // see if width is non zero
+            return font.getStringWidth(" ") > 0;
         } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
             // Nope
         }
