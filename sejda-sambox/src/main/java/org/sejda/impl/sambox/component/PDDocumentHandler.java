@@ -19,8 +19,6 @@
 package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Stream.concat;
-import static java.util.stream.Stream.of;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
 
@@ -29,7 +27,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
@@ -39,6 +36,7 @@ import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.impl.sambox.util.PageLabelUtils;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
+import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
@@ -254,15 +252,16 @@ public class PDDocumentHandler implements Closeable {
     public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity)
             throws TaskException {
         try {
-            OutputStream out = encryptionAtRestSecurity.encrypt(new FileOutputStream(file));
-
-            if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
-                LOG.trace("Saving document to {} using async writer", file);
-                document.writeTo(out, security, writeOptions.stream().toArray(WriteOption[]::new));
+            if (!Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
+                this.addWriteOption(WriteOption.SYNC_BODY_WRITE);
+            }
+            if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
+                LOG.trace("Saving document to {} using options {}", file, writeOptions);
+                document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
             } else {
-                LOG.trace("Saving document to {}", file);
-                document.writeTo(out, security,
-                        concat(of(WriteOption.SYNC_BODY_WRITE), writeOptions.stream()).toArray(WriteOption[]::new));
+                LOG.trace("Saving document to {} using options {}", file, writeOptions);
+                document.writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
+                        writeOptions.stream().toArray(WriteOption[]::new));
             }
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
