@@ -20,8 +20,11 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignature;
 import static org.sejda.sambox.cos.COSName.A;
@@ -67,23 +70,28 @@ import static org.sejda.sambox.cos.COSName.TM;
 import static org.sejda.sambox.cos.COSName.TU;
 import static org.sejda.sambox.cos.COSName.TYPE;
 import static org.sejda.sambox.cos.COSName.V;
+import static org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory.createField;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.util.AcroFormUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.font.PDFont;
@@ -240,50 +248,63 @@ public class AcroFormsMerger {
             BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField) {
         AcroFormUtils.mergeDefaults(originalForm, form);
         LookupTable<PDField> fieldsLookup = new LookupTable<>();
+        Set<PDAnnotationWidget> allRelevantWidgets = annotationsLookup.keys().stream()
+                .filter(a -> a instanceof PDAnnotationWidget).map(a -> (PDAnnotationWidget) a).collect(toSet());
+        Set<PDField> rootFields = new HashSet<>();
+
         // it must be a pre order visit because we have to process non terminal first otherwise terminal ones won't get a parent
-        originalForm.getFieldTree().stream().forEach(field -> {
-            if (!field.isTerminal()) {
-                createNonTerminalField.accept(field, fieldsLookup);
-            } else {
-                List<PDAnnotationWidget> relevantWidgets = findMappedWidgetsFor((PDTerminalField) field,
-                        annotationsLookup);
-                if (!relevantWidgets.isEmpty()) {
-                    PDTerminalField terminalField = getTerminalField.apply((PDTerminalField) field, fieldsLookup);
-                    if (nonNull(terminalField)) {
-                        removeFieldKeysFromWidgets(relevantWidgets);
-                        for (PDAnnotationWidget widget : relevantWidgets) {
-                            terminalField.addWidgetIfMissing(widget);
-                        }
-                        terminalField.getCOSObject().removeItems(WIDGET_KEYS);
-                    }
-                } else {
-                    LOG.debug("Discarded not relevant field {}", field.getFullyQualifiedName());
+        // every widget we meet is removed from the allRelevantWidgets so we can identify widgets not referenced by the originalForm
+        originalForm.getFieldTree().stream().forEach(f -> mergeField(f, annotationsLookup, getTerminalField,
+                createNonTerminalField, fieldsLookup, of(w -> allRelevantWidgets.remove(w))));
+        // keep track of the root fields
+        originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
+
+        if (!allRelevantWidgets.isEmpty()) {
+            LOG.info("Found relevant widget annotations ({}) not linked to the form", allRelevantWidgets.size());
+            // we process those widget annotations not referenced by the originalForm acroform (ex. empty fields array)
+            PDAcroForm dummy = new PDAcroForm(null);
+            allRelevantWidgets.forEach(w -> {
+                COSDictionary currentField = w.getCOSObject();
+                // if there's a hierarchy we walk up to find the root
+                while (nonNull(currentField.getDictionaryObject(COSName.PARENT, COSDictionary.class))) {
+                    currentField = currentField.getDictionaryObject(COSName.PARENT, COSDictionary.class);
                 }
-            }
-        });
+                // we add it as root to a dummy form so we can reuse its tree visit logic
+                dummy.addFields(Arrays.asList(createField(originalForm, currentField, null)));
+            });
 
-        this.form.addFields(originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull)
-                .collect(Collectors.toList()));
-        // let's process those annotations containing merged widget/fields dictionaries and somehow not referenced by originalForm acroform (ex. empty fields array)
-        annotationsLookup.values().stream().filter(a -> a instanceof PDAnnotationWidget)
-                .filter(a -> a.getCOSObject().containsKey(COSName.T)).map(a -> (PDAnnotationWidget) a).collect(toList())
-                .forEach(w -> {
-                    PDField orphanField = PDFieldFactory.createField(originalForm, w.getCOSObject(), null);
-                    if (orphanField instanceof PDTerminalField) {
-                        PDTerminalField newOrphanField = getTerminalField.apply((PDTerminalField) orphanField,
-                                fieldsLookup);
-                        if (nonNull(newOrphanField)) {
-                            w.getCOSObject().removeItems(FIELD_KEYS);
-                            newOrphanField.addWidgetIfMissing(w);
-                            newOrphanField.getCOSObject().removeItems(WIDGET_KEYS);
-                            if (isNull(getMergedField(newOrphanField.getFullyQualifiedName()))) {
-                                this.form.addFields(Arrays.asList(newOrphanField));
-                            }
-                        }
-                    }
-                });
+            dummy.getFieldTree().stream().forEach(f -> mergeField(f, annotationsLookup, getTerminalField,
+                    createNonTerminalField, fieldsLookup, empty()));
+            // keep track of the root fields
+            dummy.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
+        }
 
+        this.form.addFields(new ArrayList<>(rootFields));
         mergeCalculationOrder(originalForm, fieldsLookup);
+    }
+
+    private void mergeField(PDField field, LookupTable<PDAnnotation> annotationsLookup,
+            BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> getTerminalField,
+            BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField, LookupTable<PDField> fieldsLookup,
+            Optional<Consumer<PDAnnotationWidget>> onProcessedWidget) {
+        if (!field.isTerminal()) {
+            createNonTerminalField.accept(field, fieldsLookup);
+        } else {
+            List<PDAnnotationWidget> relevantWidgets = findMappedWidgetsFor((PDTerminalField) field, annotationsLookup);
+            if (!relevantWidgets.isEmpty()) {
+                PDTerminalField terminalField = getTerminalField.apply((PDTerminalField) field, fieldsLookup);
+                if (nonNull(terminalField)) {
+                    removeFieldKeysFromWidgets(relevantWidgets);
+                    for (PDAnnotationWidget widget : relevantWidgets) {
+                        terminalField.addWidgetIfMissing(widget);
+                        onProcessedWidget.ifPresent(c -> field.getWidgets().forEach(c));
+                    }
+                    terminalField.getCOSObject().removeItems(WIDGET_KEYS);
+                }
+            } else {
+                LOG.debug("Discarded not relevant field {}", field.getFullyQualifiedName());
+            }
+        }
     }
 
     private void mergeCalculationOrder(PDAcroForm originalForm, LookupTable<PDField> fieldsLookup) {

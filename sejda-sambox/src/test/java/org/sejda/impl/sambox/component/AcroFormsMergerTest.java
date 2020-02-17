@@ -40,6 +40,7 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
 import org.sejda.sambox.pdmodel.interactive.form.PDRadioButton;
 import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
 
@@ -187,23 +188,88 @@ public class AcroFormsMergerTest {
     }
 
     @Test
-    public void mergeOrphans() throws IOException {
+    // AcroForm fields array is empty. Widget and Field dictionaries are merged and there is no fields hierarchy
+    public void mergeOrphansFieldsMergedWidgetNoHierarchy() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_merged_dic_no_hierarchy.pdf")))) {
+            PDPage destPage = new PDPage();
+            mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertEquals(2, victim.getForm().getFields().size());
+            assertEquals(4, destPage.getAnnotations().size());
+        }
+    }
+
+    @Test
+    // AcroForm fields array is empty. Widget is a kid of the Field dictionaries and there is no fields hierarchy
+    public void mergeOrphansFieldsWithWidgetKidsNoHierarchy() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
         mapping.clear();
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_no_hierarchy.pdf")))) {
             PDPage destPage = new PDPage();
             mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
 
-            assertFalse(victim.getForm().getFields().isEmpty());
-            PDAcroForm form = victim.getForm();
-            assertEquals(2, form.getFields().size());
-            assertEquals(6, destPage.getAnnotations().size());
+            assertEquals(2, victim.getForm().getFields().size());
+            assertEquals(4, destPage.getAnnotations().size());
+        }
+    }
+
+    @Test
+    // AcroForm fields array is empty. Widget is a kid of the Field dictionaries and there is a fields hierarchy
+    public void mergeOrphansFieldsWithWidgetKidsWithHierarchy() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_with_hierarchy.pdf")))) {
+            PDPage destPage = new PDPage();
+            mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertEquals(1, victim.getForm().getFields().size());
+            PDField field = victim.getForm().getFields().get(0);
+            assertFalse(field.isTerminal());
+            assertEquals(2, ((PDNonTerminalField) field).getChildren().size());
+            assertEquals(4, destPage.getAnnotations().size());
+        }
+    }
+
+    @Test
+    // AcroForm fields array is empty. Widget and Field dictionaries are merged and there is a fields hierarchy
+    public void mergeOrphansFieldsMergedWidgetWithHierarchy() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_merged_dic_with_hierarchy.pdf")))) {
+            PDPage destPage = new PDPage();
+            mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+
+            assertEquals(1, victim.getForm().getFields().size());
+            PDField field = victim.getForm().getFields().get(0);
+            assertFalse(field.isTerminal());
+            assertEquals(2, ((PDNonTerminalField) field).getChildren().size());
+            assertEquals(4, destPage.getAnnotations().size());
         }
     }
 
