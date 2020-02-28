@@ -1,6 +1,6 @@
 /*
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper over a {@link PDDocument}.
- * 
+ *
  * @author Andrea Vacondio
  */
 public class PDDocumentHandler implements Closeable {
@@ -83,7 +83,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
-     * 
+     *
      * @param document
      */
     public PDDocumentHandler(PDDocument document) {
@@ -111,12 +111,14 @@ public class PDDocumentHandler implements Closeable {
      * set the creator on the underlying {@link PDDocument}
      */
     public void setCreatorOnPDDocument() {
-        document.getDocumentInformation().setCreator(Sejda.CREATOR);
+        if(!Sejda.CREATOR.isEmpty()) {
+            document.getDocumentInformation().setCreator(Sejda.CREATOR);
+        }
     }
 
     /**
      * Set the document information on the underlying {@link PDDocument}
-     * 
+     *
      * @param info
      */
     public void setDocumentInformation(PDDocumentInformation info) {
@@ -138,7 +140,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page layout on the underlying {@link PDDocument}.
-     * 
+     *
      * @param layout
      */
     public void setPageLayoutOnDocument(PdfPageLayout layout) {
@@ -148,7 +150,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page mode on the underlying {@link PDDocument}.
-     * 
+     *
      * @param mode
      */
     public void setPageModeOnDocument(PdfPageMode mode) {
@@ -158,7 +160,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the page labels on the underlying {@link PDDocument}.
-     * 
+     *
      * @param labels
      */
     public void setPageLabelsOnDocument(Map<Integer, PdfPageLabel> labels) {
@@ -168,7 +170,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the version on the underlying {@link PDDocument}.
-     * 
+     *
      * @param version
      */
     public void setVersionOnPDDocument(PdfVersion version) {
@@ -180,7 +182,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Adds the given {@link WriteOption}s to be used when the document is saved
-     * 
+     *
      * @param opts
      */
     public void addWriteOption(WriteOption... opts) {
@@ -191,7 +193,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Removes the given {@link WriteOption}s to be used when the document is saved
-     * 
+     *
      * @param opts
      */
     public void removeWriteOption(WriteOption... opts) {
@@ -234,7 +236,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} to the given file.
-     * 
+     *
      * @param file
      * @throws TaskException
      */
@@ -244,7 +246,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} to the given file and using the given standard security.
-     * 
+     *
      * @param file
      * @param security
      * @throws TaskException
@@ -282,7 +284,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a copy of the given page and adds it to the underlying {@link PDDocument}
-     * 
+     *
      * @param page
      * @return The newly created page
      */
@@ -302,7 +304,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Adds the given page to the underlying {@link PDDocument}
-     * 
+     *
      * @param page
      * @return the page
      */
@@ -399,7 +401,7 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Adds a blank page if the current total pages number is odd
-     * 
+     *
      * @param mediaBox
      *            media box size for the blank page
      * @return the added page or null if no page has been added
