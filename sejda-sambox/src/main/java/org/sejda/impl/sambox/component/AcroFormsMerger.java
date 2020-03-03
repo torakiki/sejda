@@ -159,15 +159,29 @@ public class AcroFormsMerger {
         return newField;
     };
 
-    private final BiConsumer<PDField, LookupTable<PDField>> createOrReuseNonTerminalField = (PDField field,
+    private final BiConsumer<PDField, LookupTable<PDField>> createOrReuseNonTerminalField = (PDField existing,
             LookupTable<PDField> fieldsLookup) -> {
-        if (getMergedField(field.getFullyQualifiedName()) == null && !fieldsLookup.hasLookupFor(field)) {
-            PDField newField = PDFieldFactory.createFieldAddingChildToParent(this.form,
-                    field.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(field.getParent()));
-            newField.getCOSObject().removeItem(COSName.KIDS);
-            fieldsLookup.addLookupEntry(field, newField);
+                // do we aready have a lookup for this?
+                if (!fieldsLookup.hasLookupFor(existing)) {
+            PDField mergedField = getMergedField(existing.getFullyQualifiedName());
+            // we don't have a lookup but do we have a merged field with the same name (from a previous document)?
+            if (isNull(mergedField)) {
+                mergedField = PDFieldFactory.createFieldAddingChildToParent(this.form,
+                        existing.getCOSObject().duplicate(),
+                        (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
+                mergedField.getCOSObject().removeItem(COSName.KIDS);
+            } else if (mergedField.isTerminal()) {
+                mergedField = PDFieldFactory.createFieldAddingChildToParent(this.form,
+                        existing.getCOSObject().duplicate(),
+                        (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
+                mergedField.getCOSObject().removeItem(COSName.KIDS);
+                mergedField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
+                LOG.warn("Cannot reuse merged terminal field {} as a non terminal field, renaming it to {}",
+                        existing.getPartialName(), mergedField.getPartialName());
+            }
+            fieldsLookup.addLookupEntry(existing, mergedField);
         }
-    };
+            };
 
     private PDField getMergedField(String fullyQualifiedName) {
         return ofNullable(fullyQualifiedName).map(form::getField).orElse(null);
@@ -278,8 +292,9 @@ public class AcroFormsMerger {
             // keep track of the root fields
             dummy.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
         }
-
-        this.form.addFields(new ArrayList<>(rootFields));
+        List<PDField> currentRoots = this.form.getFields();
+        // add only if not there already
+        this.form.addFields(rootFields.stream().filter(f -> !currentRoots.contains(f)).collect(toList()));
         mergeCalculationOrder(originalForm, fieldsLookup);
     }
 
