@@ -141,6 +141,37 @@ public class AcroFormsMergerTest {
     }
 
     @Test
+    public void mergeWithHierarchySameRootNodeName() throws IOException {
+        PDDocument destination = new PDDocument();
+        AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE, destination);
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        }
+        mapping.clear();
+        annotationsLookup.clear();
+
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy_same_root.pdf")))) {
+            mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
+            annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
+            victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
+        }
+
+        PDAcroForm form = victim.getForm();
+        assertFalse(form.getFields().isEmpty());
+        assertNotNull(form.getField("node.leaf"));
+        assertNotNull(form.getField("node.text"));
+        assertNotNull(form.getField("node.anothertext"));
+        assertEquals(1, form.getFields().size());
+    }
+
+    @Test
     public void mergeRenamingWithHierarchy() throws IOException {
         PDDocument destination = new PDDocument();
         AcroFormsMerger victim = new AcroFormsMerger(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS, destination);
