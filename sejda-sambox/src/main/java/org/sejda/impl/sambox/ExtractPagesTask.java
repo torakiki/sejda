@@ -1,6 +1,6 @@
 /*
  * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -46,9 +46,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SAMBox implementation of the task responsible for extracting pages from a given pdf document.
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
@@ -132,8 +132,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
     private String noPagesErrorMessage(PdfSource<?> source, ExtractPagesParameters parameters) {
         if (parameters.isInvertSelection()) {
-            return String.format("Document %s had all pages removed", source.getName());
+            return String.format("Document had all pages removed: %s", source.getName());
         }
-        return String.format("No page has been selected for extraction from %s", source.getName());
+        return String.format("No page has been selected for extraction from: %s", source.getName());
     }
 }

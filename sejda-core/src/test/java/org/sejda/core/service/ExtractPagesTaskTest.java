@@ -1,7 +1,7 @@
 /*
  * Created on 26/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -290,7 +290,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(1).assertTaskWarning("Document one_page.pdf had all pages removed");
+        testContext.assertOutputSize(1).assertTaskWarning("Document had all pages removed: one_page.pdf");
     }
 
     @Test
@@ -305,7 +305,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(1).assertTaskWarning("No page has been selected for extraction from one_page.pdf");
+        testContext.assertOutputSize(1).assertTaskWarning("No page has been selected for extraction from: one_page.pdf");
     }
 
     @Test
