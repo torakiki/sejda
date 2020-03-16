@@ -27,8 +27,6 @@ deploy:
     on:
       tags: true
     file:
-    - sejda-console/target/*.deb
-    - sejda-console/target/*.zip
     - sejda-distribution/target/*.zip
   - provider: script
     script: "mvn deploy --settings .travis.settings.xml"

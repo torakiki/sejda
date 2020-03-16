@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.sejda.model.pdf.page.PageRange.one;
 
 import java.io.InputStream;
 
@@ -32,7 +33,6 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-
 /**
  * @author Andrea Vacondio
  * 
@@ -73,5 +73,37 @@ public class ExtractPagesParametersTest {
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         victim.addSource(input);
         TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void getPagesRangesNoSeparateFileForEachRange() {
+        assertEquals(1, new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES).getPagesSets(10).size());
+        ExtractPagesParameters victim = new ExtractPagesParameters();
+        victim.addPageRange(new PageRange(2, 5));
+        victim.addPageRange(one(8));
+        assertEquals(1, victim.getPagesSets(10).size());
+        victim.setInvertSelection(true);
+        assertEquals(1, victim.getPagesSets(10).size());
+    }
+
+    @Test
+    public void getPagesRangesSeparateFileForEachRange() {
+        ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
+        victim.setSeparateFileForEachRange(true);
+        assertEquals(1, victim.getPagesSets(10).size());
+        victim = new ExtractPagesParameters();
+        victim.setSeparateFileForEachRange(true);
+        victim.addPageRange(new PageRange(2, 5));
+        victim.addPageRange(one(8));
+        assertEquals(2, victim.getPagesSets(10).size());
+        victim.setInvertSelection(true);
+        assertEquals(3, victim.getPagesSets(10).size());
+        victim.addPageRange(one(10));
+        assertEquals(3, victim.getPagesSets(10).size());
+        victim = new ExtractPagesParameters();
+        victim.setSeparateFileForEachRange(true);
+        victim.setInvertSelection(true);
+        victim.addPageRange(new PageRange(1, 5));
+        assertEquals(0, victim.getPagesSets(5).size());
     }
 }
