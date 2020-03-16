@@ -54,7 +54,6 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExtractPagesTask.class);
 
-    private PagesExtractor extractor = null;
     private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
     private PDDocumentHandler sourceDocumentHandler;
@@ -74,8 +73,6 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
 
-            currentStep++;
-
             LOG.debug("Opening {}", source);
             sourceDocumentHandler = source.open(documentLoader);
             sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
@@ -86,26 +83,32 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                 notifyEvent(executionContext().notifiableTaskMetadata())
                         .taskWarning(noPagesErrorMessage(source, parameters));
             } else {
-                extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument());
-                extractor.setVersion(parameters.getVersion());
-                extractor.setCompress(parameters.isCompress());
+                LOG.debug("Extracting pages from {}, one file per range is '{}' ", source,
+                        parameters.isSeparateFileForEachRange());
+                try (PagesExtractor extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument())) {
+                    for (Set<Integer> pageSets : parameters.getPagesSets(sourceDocumentHandler.getNumberOfPages())) {
+                        if (!pageSets.isEmpty()) {
+                            File tmpFile = createTemporaryBuffer(parameters.getOutput());
+                            LOG.debug("Created output temporary buffer {}", tmpFile);
+                            String outName = nameGenerator(parameters.getOutputPrefix())
+                                    .generate(nameRequest().originalName(source.getName())
+                                            .fileNumber(executionContext().incrementAndGetOutputDocumentsCounter()));
+                            outputWriter.addOutput(file(tmpFile).name(outName));
 
-                LOG.debug("Extracting pages {}", pages);
-                extractor.retain(pages, executionContext());
-
-                File tmpFile = createTemporaryBuffer(parameters.getOutput());
-                LOG.debug("Created output temporary buffer {}", tmpFile);
-                if (new OptimizationRuler(parameters.getOptimizationPolicy())
-                        .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
-                    extractor.optimize();
+                            LOG.trace("Extracting pages {}", pageSets);
+                            extractor.retain(pageSets, executionContext());
+                            if (new OptimizationRuler(parameters.getOptimizationPolicy())
+                                    .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
+                                extractor.optimize();
+                            }
+                            extractor.setVersion(parameters.getVersion());
+                            extractor.setCompress(parameters.isCompress());
+                            extractor.save(tmpFile, parameters.discardOutline(),
+                                    parameters.getOutput().getEncryptionAtRestPolicy());
+                            extractor.reset();
+                        }
+                    }
                 }
-                extractor.save(tmpFile, parameters.discardOutline(),
-                        parameters.getOutput().getEncryptionAtRestPolicy());
-
-                String outName = nameGenerator(parameters.getOutputPrefix())
-                        .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
-                outputWriter.addOutput(file(tmpFile).name(outName));
-                executionContext().incrementAndGetOutputDocumentsCounter();
             }
 
             if (executionContext().outputDocumentsCounter() == 0) {
@@ -113,7 +116,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             }
 
             closeQuietly(sourceDocumentHandler);
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);
@@ -127,7 +130,6 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
     private void closeResource() {
         closeQuietly(sourceDocumentHandler);
-        closeQuietly(extractor);
     }
 
     private String noPagesErrorMessage(PdfSource<?> source, ExtractPagesParameters parameters) {
@@ -136,4 +138,5 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         }
         return String.format("No page has been selected for extraction from: %s", source.getName());
     }
+
 }

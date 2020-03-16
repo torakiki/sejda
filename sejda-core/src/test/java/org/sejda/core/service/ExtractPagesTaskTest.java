@@ -31,7 +31,6 @@ import static org.sejda.TestUtils.encryptedAtRest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -104,17 +103,11 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     private void setUpParametersPageRangesMediumFile() {
-        PageRange firstRange = new PageRange(2, 3);
-        PageRange secondRange = new PageRange(5, 7);
-        PageRange thirdRange = new PageRange(12, 18);
-        PageRange fourthRange = new PageRange(20, 26);
-        Set<PageRange> ranges = new HashSet<PageRange>();
-        ranges.add(firstRange);
-        ranges.add(secondRange);
-        ranges.add(thirdRange);
-        ranges.add(fourthRange);
         parameters = new ExtractPagesParameters();
-        parameters.addAllPageRanges(ranges);
+        parameters.addPageRange(new PageRange(2, 3));
+        parameters.addPageRange(new PageRange(5, 7));
+        parameters.addPageRange(new PageRange(12, 18));
+        parameters.addPageRange(new PageRange(20, 26));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_7);
@@ -178,6 +171,19 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     }
 
     @Test
+    public void extractRangesMediumOneFilePerRange() throws IOException {
+        setUpParametersPageRangesMediumFile();
+        testContext.directoryOutputTo(parameters);
+        parameters.setSeparateFileForEachRange(true);
+        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertPages("1_medium-test-file.pdf", 2)
+                .assertPages("2_medium-test-file.pdf", 3).assertPages("3_medium-test-file.pdf", 7)
+                .assertPages("4_medium-test-file.pdf", 7);
+    }
+
+    @Test
     public void extractPagesInvertedSelection() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
@@ -191,6 +197,24 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(8);
+    }
+
+    @Test
+    public void extractPagesInvertedSelectionOneFilePerRange() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.setInvertSelection(true);
+        parameters.addPageRange(new PageRange(7, 9));
+        parameters.addSource(customInputAsFileSource("pdf/test-pdf.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+        parameters.setSeparateFileForEachRange(true);
+
+        assertThat(parameters.getPages(11), is(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 10, 11))));
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).assertPages("1_test-pdf.pdf", 6).assertPages("2_test-pdf.pdf", 2);
     }
 
     @Test
@@ -305,7 +329,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(1).assertTaskWarning("No page has been selected for extraction from: one_page.pdf");
+        testContext.assertOutputSize(1)
+                .assertTaskWarning("No page has been selected for extraction from: one_page.pdf");
     }
 
     @Test

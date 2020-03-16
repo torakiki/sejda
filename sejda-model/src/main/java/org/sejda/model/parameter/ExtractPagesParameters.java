@@ -19,8 +19,11 @@
  */
 package org.sejda.model.parameter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -60,6 +63,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
     @Valid
     private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
     private boolean invertSelection = false;
+    private boolean separateFileForEachRange = false;
 
     /**
      * Creates and empty instance where page selection can be set
@@ -110,23 +114,61 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
             pages = predefinedSetOfPages.getPages(upperLimit);
         } else {
-            for (PageRange range : getPageSelection()) {
+            for (PageRange range : pageSelection) {
                 pages.addAll(range.getPages(upperLimit));
             }
         }
 
-        if(!invertSelection) {
+        if (!invertSelection) {
             return pages;
         }
 
         Set<Integer> invertedPages = new NullSafeSet<Integer>();
-        for(int i = 1; i <= upperLimit; i++) {
-            if(!pages.contains(i)) {
+        for (int i = 1; i <= upperLimit; i++) {
+            if (!pages.contains(i)) {
                 invertedPages.add(i);
             }
         }
 
         return invertedPages;
+    }
+
+    /**
+     * 
+     * @param upperLimit
+     *            the number of pages of the document (upper limit).
+     * @return a list of sets of pages. Each set represents an extraction set that generates an output PDF file.
+     */
+    public List<Set<Integer>> getPagesSets(int upperLimit) {
+        ArrayList<Set<Integer>> pages = new ArrayList<>();
+        if (predefinedSetOfPages == PredefinedSetOfPages.NONE && isSeparateFileForEachRange()) {
+            if (invertSelection) {
+                Set<Integer> currentRange = new NullSafeSet<Integer>();
+                int previous = 0;
+                for (int current : getPages(upperLimit)) {
+                    if (currentRange.isEmpty() || (current == previous + 1)) {
+                        currentRange.add(current);
+                        previous = current;
+                    } else {
+                        pages.add(currentRange);
+                        currentRange = new NullSafeSet<Integer>();
+                        currentRange.add(current);
+                        previous = current;
+                    }
+                }
+                if (!currentRange.isEmpty()) {
+                    pages.add(currentRange);
+                }
+            } else {
+                for (PageRange range : pageSelection) {
+                    pages.add(range.getPages(upperLimit));
+                }
+            }
+
+            return pages;
+
+        }
+        return Arrays.asList(getPages(upperLimit));
     }
 
     @Override
@@ -157,10 +199,22 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         this.invertSelection = invertSelection;
     }
 
+    /**
+     * @return if true the task will generate a separate PDF file for each PageRange in the parameters
+     */
+    public boolean isSeparateFileForEachRange() {
+        return separateFileForEachRange;
+    }
+
+    public void setSeparateFileForEachRange(boolean separateFileForEachRange) {
+        this.separateFileForEachRange = separateFileForEachRange;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
-                .append(predefinedSetOfPages).append(invertSelection).append(pageSelection).toHashCode();
+                .append(predefinedSetOfPages).append(invertSelection).append(separateFileForEachRange)
+                .append(pageSelection).toHashCode();
     }
 
     @Override
@@ -175,9 +229,8 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
                 .append(optimizationPolicy, parameter.optimizationPolicy)
-                .append(discardOutline, parameter.discardOutline)
-                .append(pageSelection, parameter.pageSelection)
+                .append(discardOutline, parameter.discardOutline).append(pageSelection, parameter.pageSelection)
                 .append(invertSelection, parameter.invertSelection)
-                .isEquals();
+                .append(separateFileForEachRange, parameter.separateFileForEachRange).isEquals();
     }
 }
