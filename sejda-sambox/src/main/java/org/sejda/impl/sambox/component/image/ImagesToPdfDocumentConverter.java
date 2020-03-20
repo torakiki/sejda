@@ -52,90 +52,85 @@ public class ImagesToPdfDocumentConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImagesToPdfDocumentConverter.class);
 
-    private PDRectangle defaultPageSize = PDRectangle.A4;
-    private boolean shouldPageSizeMatchImageSize = false;
-    private PageOrientation pageOrientation = PageOrientation.AUTO;
-    private float marginInches = 0f;
-
-    public PDDocumentHandler convert(List<Source<?>> sourceList) throws TaskException {
-        return convert(sourceList, new ArrayList<>());
-    }
-
-    public PDDocumentHandler convert(List<Source<?>> sourceList, List<PDRectangle> pageSizeList) throws TaskException {
-        PDDocumentHandler documentHandler = new PDDocumentHandler();
+    private PDDocumentHandler documentHandler;
+    private PageImageWriter imageWriter;
+    
+    public ImagesToPdfDocumentConverter() {
+        this.documentHandler = new PDDocumentHandler();
         documentHandler.setCreatorOnPDDocument();
 
-        PageImageWriter imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
+        this.imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
+    }
 
-        for (int i = 0; i < sourceList.size(); i++) {
-            Source<?> source = sourceList.get(i);
-            beforeImage(source);
-            try {
-                PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-                PDRectangle mediaBox = defaultPageSize;
-                if (!pageSizeList.isEmpty()) {
-                    mediaBox = pageSizeList.get(i);
-                }
-                if (shouldPageSizeMatchImageSize) {
-                    mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
-                }
-
-                if (pageOrientation == PageOrientation.LANDSCAPE) {
-                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-                } else if (pageOrientation == PageOrientation.AUTO) {
-                    if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
-                                image.getHeight());
-                        mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-                    }
-                }
-
-                PDPage page = documentHandler.addBlankPage(mediaBox);
-
-                // full page (scaled down only)
-                float width = image.getWidth();
-                float height = image.getHeight();
-
-                if (width > mediaBox.getWidth()) {
-                    int targetWidth = (int) mediaBox.getWidth();
-                    LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
-
-                    float ratio = width / targetWidth;
-                    width = targetWidth;
-                    height = Math.round(height / ratio);
-                }
-
-                if (height > mediaBox.getHeight()) {
-                    int targetHeight = (int) mediaBox.getHeight();
-                    LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
-
-                    float ratio = height / targetHeight;
-                    height = targetHeight;
-                    width = Math.round(width / ratio);
-                }
-
-                if (marginInches > 0) {
-                    float newWidth = width - marginInches * 72;
-                    float newHeight = height * newWidth / width;
-                    width = newWidth;
-                    height = newHeight;
-                }
-
-                // centered on page
-                float x = (mediaBox.getWidth() - width) / 2;
-                float y = ((int) mediaBox.getHeight() - height) / 2;
-
-                imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
-                int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
-                page.setRotation(rotation);
-
-                afterImage(image);
-            } catch (TaskIOException e) {
-                failedImage(source, e);
+    public PDDocumentHandler addPage(Source<?> source) throws TaskException {
+        return addPage(source, null, PageOrientation.AUTO, 0);    
+    }
+    
+    public PDDocumentHandler addPage(Source<?> source, PDRectangle pageSize, PageOrientation pageOrientation, 
+                                     float marginInches) throws TaskException {
+        beforeImage(source);
+        try {
+            PDImageXObject image = PageImageWriter.toPDXImageObject(source);
+            PDRectangle mediaBox = pageSize;
+            if (mediaBox == null) {
+                mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
             }
-        }
 
-        return documentHandler;
+            if (pageOrientation == PageOrientation.LANDSCAPE) {
+                mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+            } else if (pageOrientation == PageOrientation.AUTO) {
+                if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+                    LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
+                            image.getHeight());
+                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                }
+            }
+
+            PDPage page = documentHandler.addBlankPage(mediaBox);
+
+            // full page (scaled down only)
+            float width = image.getWidth();
+            float height = image.getHeight();
+
+            if (width > mediaBox.getWidth()) {
+                int targetWidth = (int) mediaBox.getWidth();
+                LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
+
+                float ratio = width / targetWidth;
+                width = targetWidth;
+                height = Math.round(height / ratio);
+            }
+
+            if (height > mediaBox.getHeight()) {
+                int targetHeight = (int) mediaBox.getHeight();
+                LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
+
+                float ratio = height / targetHeight;
+                height = targetHeight;
+                width = Math.round(width / ratio);
+            }
+
+            if (marginInches > 0) {
+                float newWidth = width - marginInches * 72;
+                float newHeight = height * newWidth / width;
+                width = newWidth;
+                height = newHeight;
+            }
+
+            // centered on page
+            float x = (mediaBox.getWidth() - width) / 2;
+            float y = ((int) mediaBox.getHeight() - height) / 2;
+
+            imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
+            int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
+            page.setRotation(rotation);
+
+            afterImage(image);
+        } catch (TaskIOException e) {
+            failedImage(source, e);
+        }
+        
+        return this.documentHandler;
     }
 
     public void beforeImage(Source<?> source) throws TaskException {
@@ -148,26 +143,6 @@ public class ImagesToPdfDocumentConverter {
 
     public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
         throw e;
-    }
-
-    public void setDefaultPageSize(PageSize defaultPageSize) {
-        this.defaultPageSize = new PDRectangle(defaultPageSize.getWidth(), defaultPageSize.getHeight());
-    }
-
-    public void setPageSize(PDRectangle pageSize) {
-        this.defaultPageSize = pageSize;
-    }
-
-    public void setShouldPageSizeMatchImageSize(boolean shouldPageSizeMatchImageSize) {
-        this.shouldPageSizeMatchImageSize = shouldPageSizeMatchImageSize;
-    }
-
-    public void setPageOrientation(PageOrientation pageOrientation) {
-        this.pageOrientation = pageOrientation;
-    }
-
-    public void setMarginInches(float marginInches) {
-        this.marginInches = marginInches;
     }
 
     public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters,
@@ -185,10 +160,13 @@ public class ImagesToPdfDocumentConverter {
 
         parameters.setInputList(newInputList);
     }
+    
+    public static PDRectangle toPDRectangle(PageSize pageSize) {
+        return new PDRectangle(pageSize.getWidth(), pageSize.getHeight());
+    }
 
     private static PdfMergeInput convertImagesToPdfMergeInput(ImageMergeInput image, TaskExecutionContext context)
             throws TaskException {
-        List<Source<?>> sources = Collections.singletonList(image.getSource());
         ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter() {
             @Override
             public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
@@ -198,11 +176,15 @@ public class ImagesToPdfDocumentConverter {
             }
         };
 
-        converter.setDefaultPageSize(image.getPageSize());
-        converter.setShouldPageSizeMatchImageSize(image.isShouldPageSizeMatchImageSize());
-        converter.setPageOrientation(image.getPageOrientation());
-
-        PDDocumentHandler converted = converter.convert(sources);
+        PDRectangle pageSize = null;
+        if (image.getPageSize() != null) {
+            pageSize = toPDRectangle(image.getPageSize());    
+        }
+        if (image.isShouldPageSizeMatchImageSize()) {
+            pageSize = null;
+        }
+        
+        PDDocumentHandler converted = converter.addPage(image.getSource(), pageSize, image.getPageOrientation(), 0);
         String basename = FilenameUtils.getBaseName(image.getSource().getName());
         String filename = String.format("%s.pdf", basename);
         File convertedTmpFile = createTemporaryBufferWithName(filename);
@@ -214,5 +196,9 @@ public class ImagesToPdfDocumentConverter {
         PdfMergeInput input = new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
         input.getSource().setEncryptionAtRestPolicy(encryptionAtRestPolicy);
         return input;
+    }
+
+    public PDDocumentHandler getDocumentHandler() {
+        return documentHandler;
     }
 }
