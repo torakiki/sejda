@@ -24,7 +24,6 @@ import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
