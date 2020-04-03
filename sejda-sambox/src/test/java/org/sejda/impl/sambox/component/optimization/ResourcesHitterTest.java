@@ -18,11 +18,13 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,6 +122,23 @@ public class ResourcesHitterTest {
         when(page.getCropBox()).thenReturn(new PDRectangle(2f, 2f));
         doThrow(RuntimeException.class).when(page).getResources();
         victim.accept(page);
+    }
+
+    @Test
+    public void sameFontSameInUseFontInstance() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/multiple_res_dic_sharing_same_font.pdf")))) {
+            document.getPages().forEach(victim::accept);
+            PDPage page0 = document.getPage(0);
+            InUseFontDictionary page0Font = page0.getResources().getCOSObject()
+                    .getDictionaryObject(COSName.FONT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("F1"), InUseFontDictionary.class);
+            PDPage page1 = document.getPage(1);
+            InUseFontDictionary page1Font = page1.getResources().getCOSObject()
+                    .getDictionaryObject(COSName.FONT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("F1"), InUseFontDictionary.class);
+            assertEquals(page0Font, page1Font);
+        }
     }
 
 }

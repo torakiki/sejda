@@ -44,6 +44,10 @@ import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDPage;
 
 /**
  * Test for an extract pages task.
@@ -387,5 +391,32 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskFailed("The task didn't generate any output file");
+    }
+
+    /**
+     * This is to test that a document going through the optimization process doesn't end up duplicating fonts if they are the same object ref in the original document
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void optimizationReuseFontsDictionaries() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(1, 2));
+        parameters.addSource(customInput("pdf/multiple_res_dic_sharing_same_font.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.YES);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        PDDocument document = testContext.assertTaskCompleted();
+        PDPage page0 = document.getPage(0);
+        COSDictionary page0Font = page0.getResources().getCOSObject()
+                .getDictionaryObject(COSName.FONT, COSDictionary.class)
+                .getDictionaryObject(COSName.getPDFName("F1"), COSDictionary.class);
+        PDPage page1 = document.getPage(1);
+        COSDictionary page1Font = page1.getResources().getCOSObject()
+                .getDictionaryObject(COSName.FONT, COSDictionary.class)
+                .getDictionaryObject(COSName.getPDFName("F1"), COSDictionary.class);
+        assertEquals(page0Font, page1Font);
     }
 }

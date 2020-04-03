@@ -23,7 +23,9 @@ import static java.util.Optional.ofNullable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +39,7 @@ import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.font.PDType3CharProc;
 import org.sejda.sambox.pdmodel.font.PDType3Font;
@@ -115,6 +118,9 @@ public class ResourcesHitter extends ContentStreamProcessor {
      *
      */
     public static class FontsHitterOperator extends OperatorProcessor {
+
+        private final Map<IndirectCOSObjectIdentifier, InUseFontDictionary> hitFontsById = new HashMap<>();
+
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
             if (operands.size() < 2) {
@@ -133,9 +139,21 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
                 if (!(fontDictionary instanceof InUseFontDictionary)) {
 
-                    LOG.trace("Hit font with name {}", fontName.getName());
                     // we wrap the existing so we can identify it later as "in use" and already processed
-                    fonts.get().setItem(fontName, new InUseFontDictionary(fontDictionary));
+                    if (fontDictionary.hasId()) {
+                        LOG.trace("Hit font with name {} id {}", fontName.getName(), fontDictionary.id().toString());
+                        // we wrap reuse the InUseFont if we hit it before
+                        fonts.get().setItem(fontName,
+                                ofNullable(hitFontsById.get(fontDictionary.id())).orElseGet(() -> {
+                                    InUseFontDictionary font = new InUseFontDictionary(fontDictionary);
+                                    hitFontsById.put(fontDictionary.id(), font);
+                                    return font;
+                                }));
+                    } else {
+                        // not even sure we can have a font that's not an indirect ref (so without id), anyway better safe then sorry
+                        LOG.trace("Hit font with name {}", fontName.getName());
+                        fonts.get().setItem(fontName, new InUseFontDictionary(fontDictionary));
+                    }
 
                     // type 3 fonts glyphs are content stream and they may refer to named resource.
                     // If the font resource dictionary is not present the page resource dictionary is used instead AND
