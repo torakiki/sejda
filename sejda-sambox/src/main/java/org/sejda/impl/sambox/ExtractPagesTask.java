@@ -92,7 +92,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                             LOG.debug("Created output temporary buffer {}", tmpFile);
                             String outName = nameGenerator(parameters.getOutputPrefix())
                                     .generate(nameRequest().originalName(source.getName())
-                                            .fileNumber(executionContext().incrementAndGetOutputDocumentsCounter()));
+                                            .fileNumber(executionContext().incrementAndGetOutputDocumentsCounter())
+                                            .page(pageSets.iterator().next()));
                             outputWriter.addOutput(file(tmpFile).name(outName));
 
                             LOG.trace("Extracting pages {}", pageSets);

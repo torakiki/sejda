@@ -179,12 +179,12 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         setUpParametersPageRangesMediumFile();
         testContext.directoryOutputTo(parameters);
         parameters.setSeparateFileForEachRange(true);
-        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+        parameters.setOutputPrefix("[CURRENTPAGE]-[FILENUMBER]_[BASENAME]");
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(4).assertPages("1_medium-test-file.pdf", 2)
-                .assertPages("2_medium-test-file.pdf", 3).assertPages("3_medium-test-file.pdf", 7)
-                .assertPages("4_medium-test-file.pdf", 7);
+        testContext.assertOutputSize(4).assertPages("2-1_medium-test-file.pdf", 2)
+                .assertPages("5-2_medium-test-file.pdf", 3).assertPages("12-3_medium-test-file.pdf", 7)
+                .assertPages("20-4_medium-test-file.pdf", 7);
     }
 
     @Test
