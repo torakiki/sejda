@@ -77,7 +77,7 @@ public class FileOrDirectoryTaskOutput extends AbstractTaskOutput implements Sin
      * Creates a {@link FileOrDirectoryTaskOutput} making sure the input file is a valid file instance
      * 
      * @param file
-     * @return
+     * @return the created instance
      */
     public static FileOrDirectoryTaskOutput file(File file) {
         if (file == null || (file.exists() && !file.isFile())) {
@@ -90,7 +90,7 @@ public class FileOrDirectoryTaskOutput extends AbstractTaskOutput implements Sin
      * Creates a {@link FileOrDirectoryTaskOutput} making sure the input file is a valid directory instance
      * 
      * @param directory
-     * @return
+     * @return the created instance
      */
     public static FileOrDirectoryTaskOutput directory(File directory) {
         if (directory == null || !directory.isDirectory()) {
