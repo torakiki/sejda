@@ -29,7 +29,17 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -176,10 +186,8 @@ public final class FontUtils {
     }
 
     /**
-     * Check if given text contains only unicode whitespace characters
-     *
      * @param text
-     * @return
+     * @return true if given text contains only unicode whitespace characters
      */
     public static boolean isOnlyWhitespace(String text) {
         return text.replaceAll("\\p{Zs}", "").length() == 0;
@@ -189,7 +197,7 @@ public final class FontUtils {
      * Removes all unicode whitespace characters from the input string
      *
      * @param text
-     * @return
+     * @return the resulting string
      */
     public static String removeWhitespace(String text) {
         return text.replaceAll("\\p{Zs}", "").replaceAll("\\r\\n", "").replaceAll("\\n", "");

@@ -381,9 +381,8 @@ public class AcroFormsMerger {
     }
 
     /**
-     * Performs some cleanup task on the resulting {@link PDAcroForm} and then returns it.
      * 
-     * @return
+     * @return Performs some cleanup task on the resulting {@link PDAcroForm} and then returns it
      */
     public PDAcroForm getForm() {
         for (PDField current : form.getFieldTree()) {

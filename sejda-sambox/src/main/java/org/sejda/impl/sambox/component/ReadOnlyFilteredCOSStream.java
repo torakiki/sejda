@@ -169,7 +169,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * a {@link ReadOnlyFilteredCOSStream} from an existing {@link COSStream}
      * 
      * @param existing
-     * @return
+     * @return the created instance
      * @throws IOException
      */
     public static ReadOnlyFilteredCOSStream readOnly(COSStream existing) throws IOException {
@@ -189,7 +189,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * @param height
      * @param bitsPerComponent
      * @param colorSpace
-     * @return
+     * @return the created instance
      * @throws FileNotFoundException
      */
     public static ReadOnlyFilteredCOSStream readOnlyJpegImage(File imageFile, int width, int height,
@@ -211,7 +211,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
      * a {@link ReadOnlyFilteredCOSStream} representing an embedded file stream
      * 
      * @param source
-     * @return
+     * @return the created instance
      * @throws TaskIOException
      */
     public static final ReadOnlyFilteredCOSStream readOnlyEmbeddedFile(Source<?> source) throws TaskIOException {

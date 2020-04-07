@@ -105,7 +105,7 @@ public final class OutlineUtils {
      * @param dest
      * @param destPage
      *            the new pointed page
-     * @return
+     * @return the cloned page destination
      */
     public static PDPageDestination clonePageDestination(PDPageDestination dest, PDPage destPage) {
         requireNotNullArg(dest, "Cannot clone a null destination");
@@ -128,7 +128,7 @@ public final class OutlineUtils {
      * Tries to resolve the page pointed by a page destination. It's usually just a {@link PDPageDestination#getPage()} call but some tools out there wrongly put the page number
      * instead of the page ref. With this method we try to handle that.
      * 
-     * @see https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3275
+     * @see <a href="https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3275">wkhtmltopdf issue #3275</a>
      * 
      * @param destination
      * @param document

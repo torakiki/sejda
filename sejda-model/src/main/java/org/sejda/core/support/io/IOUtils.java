@@ -65,7 +65,7 @@ public final class IOUtils {
      * Creates a temp file trying to find the best location based on the task output.
      * 
      * @param taskOut
-     * @return
+     * @return the created temporary {@link File}
      * @throws TaskIOException
      */
     public static File createTemporaryBuffer(TaskOutput taskOut) throws TaskIOException {
