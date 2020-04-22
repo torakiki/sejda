@@ -18,6 +18,8 @@
  */
 package org.sejda.core.support.util;
 
+import java.util.Locale;
+
 public class HumanReadableSize {
 
     public static final long KB = 1000;
@@ -25,11 +27,11 @@ public class HumanReadableSize {
 
     private HumanReadableSize() {}
 
-    public static final String toString(long size) {
+    public static String toString(long size) {
         return toString(size, false);
     }
 
-    public static final String toString(long size, boolean roundUp) {
+    public static String toString(long size, boolean roundUp) {
         String format = roundUp ? "%.0f" : "%.2f";
         String unit = "bytes";
         String unitSize = String.format("%.0f", (float)size);
@@ -42,6 +44,6 @@ public class HumanReadableSize {
             unitSize = String.format(format, (float) size / KB);
         }
 
-        return String.format("%s %s", unitSize, unit);
+        return String.format(Locale.US, "%s %s", unitSize, unit);
     }
 }
