@@ -35,7 +35,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.sejda.common.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
