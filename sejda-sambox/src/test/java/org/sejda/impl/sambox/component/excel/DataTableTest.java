@@ -52,6 +52,31 @@ public class DataTableTest {
     }
 
     @Test
+    public void testToString() {
+        DataTable data = new DataTable(1);
+        data.addRow("Name", "Surname", "Age", "Sex");
+        data.addRow("John", "Doe", "14", "M");
+        data.addRow("Alexander", "Appleseed", "99", "M");
+        data.addRow("Alex", "Jones", "", "F");
+        data.addRow("Felix", "Fog");
+        
+        String expected = "\n" +
+                "+---------------------------+\n" +
+                "|Name     |Surname  |Age|Sex|\n" +
+                "+---------------------------+\n" +
+                "|John     |Doe      |14 |M  |\n" +
+                "+---------------------------+\n" +
+                "|Alexander|Appleseed|99 |M  |\n" +
+                "+---------------------------+\n" +
+                "|Alex     |Jones    |   |F  |\n" +
+                "+---------------------------+\n" +
+                "|Felix    |Fog      |   |   |\n" +
+                "+---------------------------+\n";
+        
+        assertThat(data.toString(), is(expected));
+    }
+    
+    @Test
     public void mergeColumns() {
         DataTable merged = dt.mergeColumns(1, 2);
         assertThat(merged.getRowsCount(), is(5));

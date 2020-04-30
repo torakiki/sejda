@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,6 +141,10 @@ public class DataTable {
         }
         return result;
     }
+    
+    public List<String> getRow(int r) {
+        return data.get(r);
+    }
 
     public DataTable mergeColumns(int c1, int c2) {
         DataTable result = new DataTable(getPageNumbers());
@@ -167,5 +172,48 @@ public class DataTable {
             return "";
         }
         return list.get(index);
+    }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        
+        int totalWidth = 0;
+        int colCount = getColumnsCount();
+        List<Integer> colWidths = new ArrayList<>();
+        
+        for (int i = 0; i < colCount; i++) {
+            List<String> col = getColumn(i);
+            int colWidth = 0;
+            for (int j = 0; j < col.size(); j++) {
+                colWidth = Math.max(colWidth, col.get(j).length());
+            }
+            colWidths.add(colWidth);
+            totalWidth += colWidth;
+        }
+        
+        String line = "+" + StringUtils.repeat("-", totalWidth + colCount - 1) + "+";
+        
+        for(int i = 0; i < getRowsCount(); i++) {
+            List<String> row = getRow(i);
+
+            sb.append("\n").append(line).append("\n");
+            for(int j = 0; j < colWidths.size(); j++) {
+                String cellPadded = StringUtils.rightPad("", colWidths.get(j));
+                
+                if(j < row.size()) {
+                    cellPadded = StringUtils.rightPad(row.get(j), colWidths.get(j));
+                }
+
+                sb.append("|").append(cellPadded);
+
+            }
+            
+            sb.append("|");
+        }
+
+        sb.append("\n").append(line).append("\n");
+        
+        return sb.toString();
     }
 }

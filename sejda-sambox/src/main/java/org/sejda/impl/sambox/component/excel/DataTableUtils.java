@@ -94,7 +94,7 @@ public class DataTableUtils {
      *   , B3
      * A4,
      */
-    static boolean areComplementary(List<String> column1, List<String> column2) {
+    public static boolean areComplementary(List<String> column1, List<String> column2) {
         if(column1.size() != column2.size()) {
             return false;
         }
