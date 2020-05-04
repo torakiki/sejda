@@ -28,6 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.Character.*;
+import static org.apache.commons.lang3.StringUtils.rightPad;
+
 public class DataTable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTable.class);
@@ -97,11 +100,32 @@ public class DataTable {
 
         return result;
     }
+    
+    private boolean hasConsecutivePages() {
+        Integer prev = null;
+        for(Integer current: pageNumbers) {
+            if(prev != null) {
+                if(prev != current - 1) {
+                    return false;
+                }
+            }
+            
+            prev = current;
+        }
+        
+        return true;
+    }
 
     public String getPagesAsString() {
         StringBuilder sb = new StringBuilder();
         if (this.pageNumbers.size() > 1) {
             sb.append("Pages ");
+            
+            if(pageNumbers.size() > 2 && hasConsecutivePages()) {
+                sb.append(pageNumbers.first()).append("-").append(pageNumbers.last());
+                return sb.toString();
+            }
+            
             int i = 0;
             for (Integer pageNumber : pageNumbers) {
                 if (i != 0) {
@@ -199,10 +223,12 @@ public class DataTable {
 
             sb.append("\n").append(line).append("\n");
             for(int j = 0; j < colWidths.size(); j++) {
-                String cellPadded = StringUtils.rightPad("", colWidths.get(j));
+                // TODO: fix padding for arabic when unprintable chars are present
+                // TODO: ensure unprintable characters are not counted when padding (all columns have same width)
+                String cellPadded = rightPad("", colWidths.get(j));
                 
                 if(j < row.size()) {
-                    cellPadded = StringUtils.rightPad(row.get(j), colWidths.get(j));
+                    cellPadded = ensureLtr(rightPad(row.get(j), colWidths.get(j)));
                 }
 
                 sb.append("|").append(cellPadded);
@@ -215,5 +241,39 @@ public class DataTable {
         sb.append("\n").append(line).append("\n");
         
         return sb.toString();
+    }
+
+    // TODO: ensure strings with mixed arabic and latin are displayed properly
+    private String ensureLtr(String s) {
+        if(isRtl(s)) {
+            return '\u200e' + s;
+        } else {
+            return s;
+        }
+    }
+
+    public static boolean isRtl(String string) {
+        if (string == null) {
+            return false;
+        }
+
+        for (int i = 0, n = string.length(); i < n; ++i) {
+            byte d = Character.getDirectionality(string.charAt(i));
+
+            switch (d) {
+                case DIRECTIONALITY_RIGHT_TO_LEFT:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
+                    return true;
+
+                case DIRECTIONALITY_LEFT_TO_RIGHT:
+                case DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING:
+                case DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE:
+                    return false;
+            }
+        }
+
+        return false;
     }
 }

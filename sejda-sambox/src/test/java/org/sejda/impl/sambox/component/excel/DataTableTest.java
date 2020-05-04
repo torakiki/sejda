@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -77,6 +78,28 @@ public class DataTableTest {
     }
     
     @Test
+    public void testToStringWithArabic() {
+        DataTable data = new DataTable(1);
+        data.addRow("Word one longer header", "Word two");
+        data.addRow("Hello", "Goodbye", "1");
+        // TODO: ensure strings with mixed arabic and latin are displayed properly
+        //data.addRow("مرحبا", "مرحبًا ABC 123", "وداعا");
+        data.addRow("مرحبا", "مرحبًا", "وداعا");
+        
+        System.out.println(data.toString());
+        
+        String expected = "+-------------------------------------+\n" +
+                "|Word one longer header|Word two|     |\n" +
+                "+-------------------------------------+\n" +
+                "|Hello                 |Goodbye |1    |\n" +
+                "+-------------------------------------+\n" +
+                "|\u200Eمرحبا                 |\u200Eمرحبًا  |\u200Eوداعا|\n" +
+                "+-------------------------------------+";
+
+        assertThat(data.toString().trim(), is(expected.trim()));
+    }
+    
+    @Test
     public void mergeColumns() {
         DataTable merged = dt.mergeColumns(1, 2);
         assertThat(merged.getRowsCount(), is(5));
@@ -108,5 +131,13 @@ public class DataTableTest {
 
         DataTable merged = dt.mergeColumns(1, 2);
         assertThat(merged.getColumn(1), is(Arrays.asList("HeadB HeadC", "B1 C1", "B2", "", "B4 C4")));
+    }
+
+    @Test
+    public void testPagesAsString() {
+        assertThat(new DataTable(1).getPagesAsString(), is("Page 1"));
+        assertThat(new DataTable(new TreeSet<>(Arrays.asList(2, 3))).getPagesAsString(), is("Pages 2, 3"));
+        assertThat(new DataTable(new TreeSet<>(Arrays.asList(1, 3, 5))).getPagesAsString(), is("Pages 1, 3, 5"));
+        assertThat(new DataTable(new TreeSet<>(Arrays.asList(2, 3, 4, 5))).getPagesAsString(), is("Pages 2-5"));
     }
 }
