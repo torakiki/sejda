@@ -54,6 +54,8 @@ public class ImagesToPdfDocumentConverter {
     private PDDocumentHandler documentHandler;
     private PageImageWriter imageWriter;
     
+    private boolean shouldReadRotationFromExif = true;
+    
     public ImagesToPdfDocumentConverter() {
         this.documentHandler = new PDDocumentHandler();
         documentHandler.setCreatorOnPDDocument();
@@ -121,8 +123,10 @@ public class ImagesToPdfDocumentConverter {
             float y = ((int) mediaBox.getHeight() - height) / 2;
 
             imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
-            int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
-            page.setRotation(rotation);
+            if(this.shouldReadRotationFromExif) {
+                int rotation = ExifHelper.getRotationBasedOnExifOrientation(source);
+                page.setRotation(rotation);    
+            }
 
             afterImage(image);
         } catch (TaskIOException e) {
@@ -199,5 +203,13 @@ public class ImagesToPdfDocumentConverter {
 
     public PDDocumentHandler getDocumentHandler() {
         return documentHandler;
+    }
+
+    public boolean isShouldReadRotationFromExif() {
+        return shouldReadRotationFromExif;
+    }
+
+    public void setShouldReadRotationFromExif(boolean shouldReadRotationFromExif) {
+        this.shouldReadRotationFromExif = shouldReadRotationFromExif;
     }
 }
