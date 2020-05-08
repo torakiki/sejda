@@ -19,6 +19,7 @@
  */
 package org.sejda.core.support.io;
 
+import static java.util.Objects.nonNull;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
@@ -214,7 +215,7 @@ public final class IOUtils {
         @Override
         public void dispatch(FileTaskOutput output) {
             Path dest = output.getDestination().toPath().getParent();
-            if (Files.exists(dest)) {
+            if (nonNull(dest) && Files.exists(dest)) {
                 bufferLocation = dest;
             }
         }

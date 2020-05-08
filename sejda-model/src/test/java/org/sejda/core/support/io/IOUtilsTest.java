@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -171,5 +172,10 @@ public class IOUtilsTest {
         assertThat(shorter, endsWith("aวaวa.pdf"));
         assertThat(shorter, startsWith("aวaว"));
         assertThat(shorter.length(), is(255));
+    }
+
+    @Test
+    public void noNPEIfParentIsMissing() throws TaskIOException {
+        assertNotNull(IOUtils.createTemporaryBuffer(new FileTaskOutput(new File("test.pdf"))));
     }
 }

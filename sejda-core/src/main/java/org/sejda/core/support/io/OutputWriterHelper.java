@@ -136,7 +136,7 @@ final class OutputWriterHelper {
         if (output.exists()) {
             switch (existingOutputPolicy) {
             case OVERWRITE:
-                LOG.debug("Moving {} to {}.", input, output);
+                LOG.debug("Moving {} to {}.", input.getAbsolutePath(), output.getAbsolutePath());
                 Files.move(input.toPath(), output.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 executionContext.notifiableTaskMetadata().addTaskOutput(output);
                 break;
