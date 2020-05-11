@@ -1,0 +1,32 @@
+version: 2 # use CircleCI 2.0
+jobs: # a collection of steps
+  build: # runs not using Workflows must have a `build` job as entry point
+    
+    working_directory: ~/circleci-sejda # directory where steps will run
+
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:8-jdk
+      - image: circleci/openjdk:11-jdk
+      - image: circleci/openjdk:14-jdk-buster
+      - image: circleci/openjdk:15-jdk-buster
+
+    steps: # a collection of executable commands
+
+      - checkout # check out source code to working directory
+
+      - restore_cache: # restore the saved cache after the first run or if `pom.xml` has changed
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: circleci-sejda-{{ checksum "pom.xml" }}
+      
+      - run: mvn dependency:go-offline # gets the project dependencies
+      
+      - save_cache: # saves the project dependencies
+          paths:
+            - ~/.m2
+          key: circleci-sejda-{{ checksum "pom.xml" }}
+      
+      # run tests!
+      - run: mvn clean package
+      
+      - store_test_results:
+          path: target/surefire-reports
