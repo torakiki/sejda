@@ -30,7 +30,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Set;
 
+import org.sejda.core.Sejda;
 import org.sejda.core.support.io.MultipleOutputWriter;
+import org.sejda.core.support.util.RuntimeUtils;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -81,6 +83,15 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                     LOG.trace("Found {} pages to convert", totalSteps);
 
                     for (int currentPage : requestedPages) {
+                        
+                        if(Boolean.getBoolean(Sejda.PERFORM_MEMORY_OPTIMIZATIONS_PROPERTY_NAME)) {
+                            int percentageMemoryUsed = RuntimeUtils.getPercentageMemoryUsed();
+                            if (percentageMemoryUsed > 60) {
+                                LOG.debug("Closing and reopening source doc, memory usage reached: {}%", percentageMemoryUsed);
+                                closeQuietly(documentHandler);
+                                documentHandler = source.open(sourceOpener);
+                            }
+                        }
 
                         File tmpFile = createTemporaryBuffer();
                         LOG.debug("Created output temporary buffer {} ", tmpFile);
