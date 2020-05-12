@@ -22,6 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -72,5 +73,54 @@ public class DataTableUtilsTest {
         assertThat(merged.getColumn(1), is(Arrays.asList("H2", "B1", "B2", "")));
         assertThat(merged.getColumn(2), is(Arrays.asList("H4", "D1", "E2", "")));
 
+    }
+
+    @Test
+    public void mergeWithAccountingBlankHeaders_scenario1() {
+        DataTable dt = new DataTable(1)
+                .addRow("H1", "H2", "H3")
+                .addRow("A1", "A2", "A3");
+
+        DataTable dt2 = new DataTable(3)
+                .addRow("H1", " ", "", "H2", "H3")
+                .addRow("C1", "CX", "CY", "C2", "C3");
+
+        List<DataTable> mergedList = DataTableUtils.mergeTablesSpanningMultiplePages(Arrays.asList(dt, dt2));
+        assertThat(mergedList.size(), is(1));
+        DataTable merged = mergedList.get(0);
+        
+        assertThat(merged.toString(), is("\n" +
+                "+--------------+\n" +
+                "|H1|  |  |H2|H3|\n" +
+                "+--------------+\n" +
+                "|A1|  |  |A2|A3|\n" +
+                "+--------------+\n" +
+                "|C1|CX|CY|C2|C3|\n" +
+                "+--------------+\n"));
+
+    }
+
+    @Test
+    public void mergeWithAccountingBlankHeaders_scenario2() {
+        DataTable dt = new DataTable(1)
+                .addRow("H1", "", "H2", "H3")
+                .addRow("A1", "AX", "A2", "A3");
+
+        DataTable dt2 = new DataTable(3)
+                .addRow("H1", "H2", "", "H3")
+                .addRow("C1", "C2", "CX", "C3");
+
+        List<DataTable> mergedList = DataTableUtils.mergeTablesSpanningMultiplePages(Arrays.asList(dt, dt2));
+        assertThat(mergedList.size(), is(1));
+        DataTable merged = mergedList.get(0);
+
+        assertThat(merged.toString(), is("\n" +
+                "+--------------+\n" +
+                "|H1|  |H2|  |H3|\n" +
+                "+--------------+\n" +
+                "|A1|AX|A2|  |A3|\n" +
+                "+--------------+\n" +
+                "|C1|  |C2|CX|C3|\n" +
+                "+--------------+\n"));
     }
 }

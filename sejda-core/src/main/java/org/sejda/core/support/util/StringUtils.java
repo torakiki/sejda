@@ -16,6 +16,8 @@
  */
 package org.sejda.core.support.util;
 
+import static java.lang.Character.*;
+
 public final class StringUtils {
     private StringUtils() {
         // hide
@@ -38,5 +40,38 @@ public final class StringUtils {
 
     public static String normalizeLineEndings(String in) {
         return in.replaceAll("\\r\\n", "\n");
+    }
+
+    public static String isolateRTLIfRequired(String s) {
+        if(isRtl(s)) {
+            return '\u2068' + s + '\u2069';
+        } else {
+            return s;
+        }
+    }
+
+    public static boolean isRtl(String string) {
+        if (string == null) {
+            return false;
+        }
+
+        for (int i = 0, n = string.length(); i < n; ++i) {
+            byte d = Character.getDirectionality(string.charAt(i));
+
+            switch (d) {
+                case DIRECTIONALITY_RIGHT_TO_LEFT:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
+                case DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
+                    return true;
+
+                case DIRECTIONALITY_LEFT_TO_RIGHT:
+                case DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING:
+                case DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE:
+                    return false;
+            }
+        }
+
+        return false;
     }
 }

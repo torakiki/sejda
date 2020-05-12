@@ -37,7 +37,11 @@ public class DataTableUtils {
 
         for (DataTable dt : dataTables) {
             if (current != null) {
-                if (current.hasSameColumnsAs(dt)) {
+                if (current.hasSameHeaderBlanksIgnoredAs(dt)) {
+                    addBlankColumnsToMatchHeaders(current, dt);
+                }
+                
+                if (current.hasSameColumnCountAs(dt)) {
                     current = current.mergeWith(dt);
                 } else {
                     results.add(current);
@@ -61,6 +65,31 @@ public class DataTableUtils {
             results.add(mergeComplementaryColumns(dt));
         }
         return results;
+    }
+    
+    public static void addBlankColumnsToMatchHeaders(DataTable a, DataTable b) {
+        if (!a.hasSameHeaderBlanksIgnoredAs(b)) {
+            throw new RuntimeException("Only works when tables have same headers (blanks ignored)");
+        }
+
+        List<String> aHeaderRow = a.headerRow();
+        List<String> bHeaderRow = b.headerRow();
+        int aa = 0, bb = 0;
+        while(aa < aHeaderRow.size() && bb < bHeaderRow.size()) {
+            String aCol = aHeaderRow.get(aa).trim();
+            String bCol = bHeaderRow.get(bb).trim();
+            
+            if (aCol.equals(bCol)) {
+                aa++;
+                bb++;
+            } else if(aCol.isEmpty()) {
+                b.addBlankColumn(bb);
+            } else if(bCol.isEmpty()) {
+                a.addBlankColumn(aa);
+            } else {
+                throw new RuntimeException("Should not happen");
+            }
+        }
     }
 
     static DataTable mergeComplementaryColumns(DataTable dataTable) {

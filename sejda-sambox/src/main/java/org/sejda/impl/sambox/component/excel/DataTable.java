@@ -19,17 +19,17 @@
 package org.sejda.impl.sambox.component.excel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.Character.*;
 import static org.apache.commons.lang3.StringUtils.rightPad;
+import static org.sejda.core.support.util.StringUtils.isolateRTLIfRequired;
 
 public class DataTable {
 
@@ -46,8 +46,14 @@ public class DataTable {
         this.pageNumbers.addAll(pageNumbers);
     }
 
-    public void addRow(String... dataRow) {
-        addRow(Arrays.asList(dataRow));
+    public DataTable addRow(String... dataRow) {
+        List<String> row = new ArrayList<>();
+        for (String item: dataRow) {
+            row.add(item);
+        }
+        addRow(row);
+        
+        return this;
     }
 
     public void addRow(List<String> dataRow) {
@@ -61,16 +67,24 @@ public class DataTable {
     public List<String> headerRow() {
         return data.get(0);
     }
+    
+    public List<String> headerRowIgnoreBlanks() {
+        return data.get(0).stream().filter(s -> !s.trim().isEmpty()).collect(Collectors.toList());
+    }
 
     public boolean hasSameHeaderAs(DataTable other) {
-        String thisHeader = String.join("", this.headerRow()).trim();
-        String otherHeader = String.join("", other.headerRow()).trim();
+        String thisHeader = String.join("", this.headerRowIgnoreBlanks()).trim();
+        String otherHeader = String.join("", other.headerRowIgnoreBlanks()).trim();
         LOG.debug("Comparing header columns: '{}' and '{}'", thisHeader, otherHeader);
 
         return thisHeader.equalsIgnoreCase(otherHeader);
     }
+    
+    public boolean hasSameHeaderBlanksIgnoredAs(DataTable other) {
+        return this.headerRowIgnoreBlanks().equals(other.headerRowIgnoreBlanks());
+    }
 
-    public boolean hasSameColumnsAs(DataTable other) {
+    public boolean hasSameColumnCountAs(DataTable other) {
         LOG.debug("Comparing header columns size: {} and {}", this.headerRow().size(), other.headerRow().size());
         return other.headerRow().size() == this.headerRow().size();
     }
@@ -82,7 +96,7 @@ public class DataTable {
     public TreeSet<Integer> getPageNumbers() {
         return pageNumbers;
     }
-
+    
     public DataTable mergeWith(DataTable other) {
         TreeSet<Integer> resultPageNumbers = new TreeSet<>();
         resultPageNumbers.addAll(this.pageNumbers);
@@ -190,6 +204,12 @@ public class DataTable {
         }
         return result;
     }
+    
+    public void addBlankColumn(int index) {
+        for(List<String> row : this.data) {
+            row.add(index, "");
+        }
+    }
 
     private static String getOrEmpty(List<String> list, int index) {
         if (list.size() <= index) {
@@ -228,7 +248,7 @@ public class DataTable {
                 String cellPadded = rightPad("", colWidths.get(j));
                 
                 if(j < row.size()) {
-                    cellPadded = ensureLtr(rightPad(row.get(j), colWidths.get(j)));
+                    cellPadded = isolateRTLIfRequired(rightPad(row.get(j), colWidths.get(j)));
                 }
 
                 sb.append("|").append(cellPadded);
@@ -241,39 +261,5 @@ public class DataTable {
         sb.append("\n").append(line).append("\n");
         
         return sb.toString();
-    }
-
-    // TODO: ensure strings with mixed arabic and latin are displayed properly
-    private String ensureLtr(String s) {
-        if(isRtl(s)) {
-            return '\u200e' + s;
-        } else {
-            return s;
-        }
-    }
-
-    public static boolean isRtl(String string) {
-        if (string == null) {
-            return false;
-        }
-
-        for (int i = 0, n = string.length(); i < n; ++i) {
-            byte d = Character.getDirectionality(string.charAt(i));
-
-            switch (d) {
-                case DIRECTIONALITY_RIGHT_TO_LEFT:
-                case DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
-                case DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
-                case DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
-                    return true;
-
-                case DIRECTIONALITY_LEFT_TO_RIGHT:
-                case DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING:
-                case DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE:
-                    return false;
-            }
-        }
-
-        return false;
     }
 }

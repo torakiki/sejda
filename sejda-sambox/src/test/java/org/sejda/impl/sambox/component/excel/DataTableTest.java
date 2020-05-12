@@ -82,19 +82,24 @@ public class DataTableTest {
         DataTable data = new DataTable(1);
         data.addRow("Word one longer header", "Word two");
         data.addRow("Hello", "Goodbye", "1");
-        // TODO: ensure strings with mixed arabic and latin are displayed properly
-        //data.addRow("مرحبا", "مرحبًا ABC 123", "وداعا");
+        data.addRow("مرحبا", "مرحبًا ABC 123", "وداعا");
         data.addRow("مرحبا", "مرحبًا", "وداعا");
+        data.addRow("مرحبا", "", "وداعا");
         
-        System.out.println(data.toString());
+//        System.out.println(data.toString());
         
-        String expected = "+-------------------------------------+\n" +
-                "|Word one longer header|Word two|     |\n" +
-                "+-------------------------------------+\n" +
-                "|Hello                 |Goodbye |1    |\n" +
-                "+-------------------------------------+\n" +
-                "|\u200Eمرحبا                 |\u200Eمرحبًا  |\u200Eوداعا|\n" +
-                "+-------------------------------------+";
+        String expected = 
+                "+-------------------------------------------+\n" +
+                "|Word one longer header|Word two      |     |\n" +
+                "+-------------------------------------------+\n" +
+                "|Hello                 |Goodbye       |1    |\n" +
+                "+-------------------------------------------+\n" +
+                "|\u2068مرحبا                 \u2069|\u2068مرحبًا ABC 123\u2069|\u2068وداعا\u2069|\n" +
+                "+-------------------------------------------+\n" +
+                "|\u2068مرحبا                 \u2069|\u2068مرحبًا        \u2069|\u2068وداعا\u2069|\n" +
+                "+-------------------------------------------+\n" +
+                "|\u2068مرحبا                 \u2069|              |\u2068وداعا\u2069|\n" +
+                "+-------------------------------------------+";
 
         assertThat(data.toString().trim(), is(expected.trim()));
     }
@@ -131,6 +136,18 @@ public class DataTableTest {
 
         DataTable merged = dt.mergeColumns(1, 2);
         assertThat(merged.getColumn(1), is(Arrays.asList("HeadB HeadC", "B1 C1", "B2", "", "B4 C4")));
+    }
+
+    @Test
+    public void addBlankColumn() {
+        DataTable dt = new DataTable(1);
+        dt.addRow("H1", "H2", "H3");
+        dt.addRow("A1", "A2", "A3");
+        
+        dt.addBlankColumn(1);
+
+        assertThat(dt.getRow(0), is(Arrays.asList("H1", "", "H2", "H3")));
+        assertThat(dt.getRow(1), is(Arrays.asList("A1", "", "A2", "A3")));
     }
 
     @Test
