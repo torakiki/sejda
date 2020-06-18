@@ -264,11 +264,7 @@ public class PageImageWriter {
                 }
             }
         } catch (IIOException e) {
-            if(e.getMessage().equals("I/O error reading PNG header!")) {
-                // this was a different image format with a PNG extension
-            } else {
-                throw e;
-            }
+            LOG.debug("Failed convertICCGrayPngIf()", e);
         }
 
         return Optional.empty();
