@@ -15,9 +15,6 @@ env:
   global:
   #GPG_PASSPHRASE
   - secure: YqXA0mY5JW3EwtKQjWLMD7Q4dpHVoIpfgYjG2D1D2X67KfekN6h5NaQWCQsPV0AJvznbF/bWoNjUGscncukA2MW/Fz1kXmnnuFmsFQNQAYBCilO5L8/MPWd0UFmHNJQYq5NGw9ajduB46E8K3URMPzseZsZo6IPalJ9i1VKF/Cg=
-  #OSSRH credentials
-  - secure: Qwz/KVNR2DDlWM2/8rM7H3o9x+HVzD3dC9X4yEysqrHg1yECf0gCNJ5YWZ13Djr5ZwsxU/99i1sKaBFcXyfPe2LFDMGoYITn4PNB0tYROkEqAevEsCWWujER8a/xGs7y6WuCBCPczqpl54Vi1sYTn5sKabquxLMc2X1Dzqv5qhw=
-  - secure: AcCTZzAG8oeOgtV91I5Jhm5Kro++gtKLeWEb8/JNSPQd+UlHLBY5w826WUsCKZ8eVJQ+/bwLOz/c2gIVIivIbQRTMd4a/eqqVOhLl4QERY2ml815ScHSog4GUMLsA1KWXZqBXRIdZ+ZI3qPJkpiJpis+XZgg0gmeIUTjCKDeDy0=
 deploy:
 - provider: releases
   skip_cleanup: true
