@@ -18,20 +18,20 @@
  */
 package org.sejda.model.parameter.base;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.output.SingleTaskOutput;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * Provides a skeletal implementation for parameter classes having multiple source as input and generating a single output.
  * 
  */
-public class MultipleSourceSingleOutputParameters extends MultipleSourceParameters implements SingleOutputTaskParameters {
+public class MultipleSourceSingleOutputParameters extends MultipleSourceParameters
+        implements SingleOutputTaskParameters {
 
-    private String outputPrefix = "";
     @Valid
     @NotNull
     private SingleTaskOutput output;
@@ -48,7 +48,7 @@ public class MultipleSourceSingleOutputParameters extends MultipleSourceParamete
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(outputPrefix).append(output).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).toHashCode();
     }
 
     @Override
@@ -60,8 +60,7 @@ public class MultipleSourceSingleOutputParameters extends MultipleSourceParamete
             return false;
         }
         MultipleSourceSingleOutputParameters parameter = (MultipleSourceSingleOutputParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.outputPrefix)
-                .append(output, parameter.output).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output).isEquals();
     }
 
 }
