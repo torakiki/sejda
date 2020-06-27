@@ -33,7 +33,6 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
-import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
@@ -77,9 +76,9 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
         LOG.debug("Setting metadata on temporary document.");
         PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
-        for (Entry<PdfMetadataKey, String> meta : parameters.entrySet()) {
-            LOG.trace("'{}' -> '{}'", meta.getKey().getKey(), meta.getValue());
-            actualMeta.setCustomMetadataValue(meta.getKey().getKey(), meta.getValue());
+        for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
+            LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
+            actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
         }
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());

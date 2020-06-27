@@ -20,19 +20,20 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetMetadataParameters;
-import org.sejda.model.pdf.PdfMetadataKey;
+import org.sejda.model.pdf.PdfMetadataFields;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
+import org.sejda.sambox.util.DateConverter;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test unit for the set metadata task
@@ -47,10 +48,12 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
     private void setUpParams(PdfSource<?> source) {
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_7);
-        parameters.put(PdfMetadataKey.AUTHOR, "test_author");
-        parameters.put(PdfMetadataKey.KEYWORDS, "test_keywords");
-        parameters.put(PdfMetadataKey.SUBJECT, "test_subject");
-        parameters.put(PdfMetadataKey.TITLE, "test_title");
+        parameters.put(PdfMetadataFields.AUTHOR, "test_author");
+        parameters.put(PdfMetadataFields.KEYWORDS, "test_keywords");
+        parameters.put(PdfMetadataFields.SUBJECT, "test_subject");
+        parameters.put(PdfMetadataFields.TITLE, "test_title");
+        parameters.put("CreationDate", "D:20150814090348+02'00'");
+        parameters.put("Custom field", "custom_field_value");
         parameters.setSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
@@ -77,6 +80,8 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         assertEquals("test_keywords", info.getKeywords());
         assertEquals("test_subject", info.getSubject());
         assertEquals("test_title", info.getTitle());
+        assertEquals(DateConverter.toCalendar("D:20150814090348+02'00'"), info.getCreationDate());
+        assertEquals("custom_field_value", info.getCustomMetadataValue("Custom field"));
     }
 
 }

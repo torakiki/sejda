@@ -20,18 +20,14 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
-import org.sejda.model.pdf.PdfMetadataKey;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parameter class for the set metadata manipulation.
@@ -43,40 +39,17 @@ import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 public final class SetMetadataParameters extends SinglePdfSourceSingleOutputParameters {
 
     @NotEmpty
-    private final Map<PdfMetadataKey, String> metadata = new HashMap<PdfMetadataKey, String>();
+    private final Map<String, String> metadata = new HashMap<String, String>();
 
-    /**
-     * @see Map#entrySet()
-     * @return an unmodifiable set view of map
-     */
-    public Set<Entry<PdfMetadataKey, String>> entrySet() {
-        return Collections.unmodifiableSet(metadata.entrySet());
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
-    /**
-     * @see Map#keySet()
-     * @return a unmodifiable set containing keys of the map
-     */
-    public Set<PdfMetadataKey> keySet() {
-        return Collections.unmodifiableSet(metadata.keySet());
-    }
-
-    /**
-     * @see Map#putAll(Map)
-     * @param m
-     */
-    public void putAll(Map<PdfMetadataKey, String> m) {
+    public void putAll(Map<String, String> m) {
         metadata.putAll(m);
     }
 
-    /**
-     * adds the key,value
-     * 
-     * @see Map#put(Object, Object)
-     * @param key
-     * @param metadata
-     */
-    public void put(PdfMetadataKey key, String metadata) {
+    public void put(String key, String metadata) {
         this.metadata.put(key, metadata);
     }
 
@@ -94,7 +67,7 @@ public final class SetMetadataParameters extends SinglePdfSourceSingleOutputPara
             return false;
         }
         SetMetadataParameters parameter = (SetMetadataParameters) other;
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata.entrySet(), parameter.entrySet())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata, parameter.metadata)
                 .isEquals();
     }
 }

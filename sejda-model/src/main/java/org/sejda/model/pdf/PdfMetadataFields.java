@@ -20,30 +20,10 @@
  */
 package org.sejda.model.pdf;
 
-/**
- * Possible metadata key used to set metadata values on a document.
- * 
- * @author Andrea Vacondio
- * 
- */
-public enum PdfMetadataKey {
-    TITLE("Title"),
-    AUTHOR("Author"),
-    SUBJECT("Subject"),
-    KEYWORDS("Keywords"),
-    CREATOR("Creator");
-
-    private PdfMetadataKey(String key) {
-        this.key = key;
-    }
-
-    private String key;
-
-    /**
-     * @return the metadata key
-     */
-    public String getKey() {
-        return key;
-    }
-
+public class PdfMetadataFields {
+    public static final String TITLE = "Title";
+    public static final String AUTHOR = "Author";
+    public static final String SUBJECT = "Subject";
+    public static final String KEYWORDS = "Keywords";
+    public static final String CREATOR = "Creator";
 }

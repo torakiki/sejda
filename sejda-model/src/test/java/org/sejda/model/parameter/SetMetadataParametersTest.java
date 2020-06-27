@@ -36,7 +36,7 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.pdf.PdfMetadataKey;
+import org.sejda.model.pdf.PdfMetadataFields;
 
 /**
  * @author Andrea Vacondio
@@ -50,27 +50,27 @@ public class SetMetadataParametersTest {
     @Test
     public void testEquals() {
         SetMetadataParameters eq1 = new SetMetadataParameters();
-        eq1.put(PdfMetadataKey.AUTHOR, "author");
+        eq1.put(PdfMetadataFields.AUTHOR, "author");
         SetMetadataParameters eq2 = new SetMetadataParameters();
-        eq2.put(PdfMetadataKey.AUTHOR, "author");
+        eq2.put(PdfMetadataFields.AUTHOR, "author");
         SetMetadataParameters eq3 = new SetMetadataParameters();
-        eq3.put(PdfMetadataKey.AUTHOR, "author");
+        eq3.put(PdfMetadataFields.AUTHOR, "author");
         SetMetadataParameters diff = new SetMetadataParameters();
-        diff.put(PdfMetadataKey.AUTHOR, "author");
-        diff.put(PdfMetadataKey.CREATOR, "creator");
+        diff.put(PdfMetadataFields.AUTHOR, "author");
+        diff.put(PdfMetadataFields.CREATOR, "creator");
         TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 
     @Test
     public void testPut() {
         SetMetadataParameters victim = new SetMetadataParameters();
-        victim.put(PdfMetadataKey.AUTHOR, "author");
-        victim.put(PdfMetadataKey.CREATOR, "creator");
-        Set<PdfMetadataKey> keys = victim.keySet();
+        victim.put(PdfMetadataFields.AUTHOR, "author");
+        victim.put(PdfMetadataFields.CREATOR, "creator");
+        Set<String> keys = victim.getMetadata().keySet();
         assertEquals(2, keys.size());
-        assertTrue(keys.contains(PdfMetadataKey.AUTHOR));
-        assertTrue(keys.contains(PdfMetadataKey.CREATOR));
-        assertFalse(keys.contains(PdfMetadataKey.KEYWORDS));
+        assertTrue(keys.contains(PdfMetadataFields.AUTHOR));
+        assertTrue(keys.contains(PdfMetadataFields.CREATOR));
+        assertFalse(keys.contains(PdfMetadataFields.KEYWORDS));
     }
 
     @Test
