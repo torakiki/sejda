@@ -525,6 +525,23 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void pageFooterAndTocwithDocTitles() throws IOException {
+        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        input.add(new PdfMergeInput(regularInput()));
+        input.add(new PdfMergeInput(customInput("pdf/test_file.pdf", "my_file.pdf")));
+        MergeParameters parameters = setUpParameters(input);
+        parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
+        parameters.setFilenameFooter(true);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(16).forEachPdfOutput(d -> {
+            assertFooterHasText(d.getPage(1), "test-file 2");
+            assertFooterHasText(d.getPage(12), "my_file 13");
+        });
+    }
+
+    @Test
     public void pageFooterAndTocAddBlank() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);

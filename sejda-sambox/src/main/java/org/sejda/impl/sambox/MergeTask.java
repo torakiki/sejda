@@ -157,13 +157,14 @@ public class MergeTask extends BaseTask<MergeParameters> {
                             // skip the cover/title document, don't add it to the ToC
                         } else {
                             tocCreator.pageSizeIfNotSet(currentPageSize);
+                            String tocText = sourceBaseName;
                             if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
-                                sourceBaseName = ofNullable(
+                                tocText = ofNullable(
                                         sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
                                                 .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
                                                 .orElse(sourceBaseName);
                             }
-                            tocCreator.appendItem(sourceBaseName, pagesCounter, importedPage);
+                            tocCreator.appendItem(tocText, pagesCounter, importedPage);
                         }
                     }
 
