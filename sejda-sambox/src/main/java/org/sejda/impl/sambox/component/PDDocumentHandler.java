@@ -254,8 +254,8 @@ public class PDDocumentHandler implements Closeable {
     public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity)
             throws TaskException {
         try {
-            if (!Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
-                this.addWriteOption(WriteOption.SYNC_BODY_WRITE);
+            if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
+                this.addWriteOption(WriteOption.ASYNC_BODY_WRITE);
             }
             if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
                 LOG.trace("Saving document to {} using options {}", file, writeOptions);
