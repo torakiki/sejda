@@ -66,18 +66,4 @@ public abstract class PdfToMultipleJpegTaskTest extends MultipleImageConversionT
         execute(parameters);
         testContext.assertTaskFailed("No pages converted");
     }
-
-    @Test
-    public void dpiExceedsJavaMaxBufferedImageSize() throws IOException {
-        PdfToJpegParameters parameters = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
-        parameters.setResolutionInDpi(6000);
-        parameters.addPageRange(PageRange.one(1));
-        parameters.setLenient(true);
-        parameters.addSource(shortInput());
-        testContext.directoryOutputTo(parameters);
-
-        execute(parameters);
-        testContext.assertTaskCompleted();
-        testContext.assertTaskWarning("Maximum image dimensions exceeded on page 1, decreased resolution to 116 dpi");
-    }
 }

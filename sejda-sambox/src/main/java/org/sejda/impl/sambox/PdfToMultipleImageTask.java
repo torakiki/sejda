@@ -40,8 +40,6 @@ import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.task.TaskExecutionContext;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,34 +98,8 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
 
                         try {
                             LOG.trace("Converting page {}", currentPage);
-                            int dpi = parameters.getResolutionInDpi();
-                            float scale = dpi / 72f;
-
-                            // check if the page at the specified dpi resolution does not exceed 
-                            // max java buffered image dimensions
-                            PDPage page = documentHandler.getPage(currentPage);
-
-                            PDRectangle cropbBox = page.getCropBox();
-                            float widthPt = cropbBox.getWidth();
-                            float heightPt = cropbBox.getHeight();
-
-                            int widthPx = (int) Math.max(Math.floor(widthPt * scale), 1);
-                            int heightPx = (int) Math.max(Math.floor(heightPt * scale), 1);
-
-                            // the maximum size (w*h) of a buffered image is limited to Integer.MAX_VALUE
-                            if ((long) widthPx * (long) heightPx > Integer.MAX_VALUE) {
-                                float decreaseRatio = widthPt * heightPt * scale / Integer.MAX_VALUE;
-                                dpi = (int) Math.round(Math.floor(dpi * decreaseRatio));
-                                Exception e = new RuntimeException(
-                                        String.format("Maximum image dimensions exceeded on page %d", currentPage));
-                                executionContext().assertTaskIsLenient(e);
-                                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
-                                        String.format("Maximum image dimensions exceeded on page %d, decreased resolution to %d dpi",
-                                                currentPage, dpi), e);
-                            }
-
                             BufferedImage pageImage = documentHandler.renderImage(currentPage,
-                                    dpi, parameters.getOutputImageColorType());
+                                    parameters.getResolutionInDpi(), parameters.getOutputImageColorType());
 
                             getWriter().openDestination(tmpFile, parameters);
                             getWriter().write(pageImage, parameters);
