@@ -156,11 +156,11 @@
 			<distributionManagement>
 				<snapshotRepository>
 					<id>sejda-pro-snapshot</id>
-					<url>http://mvn.sejda.com/artifactory/libs-snapshot</url>
+					<url>https://mvn.sejda.com/artifactory/libs-snapshot</url>
 				</snapshotRepository>
 				<repository>
 					<id>sejda-pro</id>
-					<url>http://mvn.sejda.com/artifactory/libs-release</url>
+					<url>https://mvn.sejda.com/artifactory/libs-release</url>
 				</repository>
 			</distributionManagement>
 			<build>
