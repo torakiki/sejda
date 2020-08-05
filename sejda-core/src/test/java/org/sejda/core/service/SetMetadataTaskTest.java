@@ -53,6 +53,8 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         parameters.put(PdfMetadataFields.SUBJECT, "test_subject");
         parameters.put(PdfMetadataFields.TITLE, "test_title");
         parameters.put("CreationDate", "D:20150814090348+02'00'");
+        parameters.put("ModDate", "D:20170814090348+02'00'");
+        parameters.put("Producer", "test_producer");
         parameters.put("Custom field", "custom_field_value");
         parameters.setSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -82,6 +84,9 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         assertEquals("test_title", info.getTitle());
         assertEquals(DateConverter.toCalendar("D:20150814090348+02'00'"), info.getCreationDate());
         assertEquals("custom_field_value", info.getCustomMetadataValue("Custom field"));
+
+        assertEquals("test_producer", info.getProducer());
+        assertEquals(DateConverter.toCalendar("D:20170814090348+02'00'"), info.getModificationDate());
     }
 
 }

@@ -23,6 +23,7 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map.Entry;
 
 import org.sejda.core.support.io.OutputWriters;
@@ -35,6 +36,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,12 +76,18 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         outputWriter.taskOutput(tmpFile);
         LOG.debug("Temporary output set to {}", tmpFile);
 
-        LOG.debug("Setting metadata on temporary document.");
-        PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
-        for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
-            LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
-            actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
-        }
+        PDDocument doc = documentHandler.getUnderlyingPDDocument();
+        doc.setOnBeforeWriteAction(new PDDocument.OnBeforeWrite() {
+            @Override
+            public void onBeforeWrite() throws IOException {
+                LOG.debug("Setting metadata on temporary document.");
+                PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
+                for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
+                    LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
+                    actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
+                }
+            }
+        });
 
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
         documentHandler.setCompress(parameters.isCompress());
