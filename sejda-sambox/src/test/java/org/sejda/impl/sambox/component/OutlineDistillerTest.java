@@ -25,6 +25,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
@@ -163,6 +165,27 @@ public class OutlineDistillerTest {
             PDDocumentOutline outline = new PDDocumentOutline();
             new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
             assertTrue(outline.hasChildren());
+        }
+    }
+
+    @Test
+    public void infiniteLoop() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/infinite_outline.pdf")))) {
+
+            for (PDPage current : document.getPages()) {
+                mapping.addLookupEntry(current, new PDPage());
+            }
+            PDDocumentOutline outline = new PDDocumentOutline();
+            new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+            assertTrue(outline.hasChildren());
+            
+            int outlineChildCount = 0;
+            for(PDOutlineItem child: outline.children()) {
+                outlineChildCount++;
+            }
+            
+            assertEquals(3, outlineChildCount);
         }
     }
 }

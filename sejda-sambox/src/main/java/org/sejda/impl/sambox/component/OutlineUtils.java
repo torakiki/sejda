@@ -24,11 +24,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.sejda.sambox.cos.COSArray;
@@ -202,5 +198,32 @@ public final class OutlineUtils {
             result.addAll(recurseFlatOutline(document, item.children(), level + 1));
         }
         return result;
+    }
+    
+    public static void printOutline(PDDocument document) {
+        ofNullable(document.getDocumentCatalog().getDocumentOutline()).ifPresent(outline -> {
+            int childCounter = 0;
+            for (PDOutlineItem child : outline.children()) {
+                childCounter++;
+                printNode(child, 0, childCounter);
+            }
+        });
+    }
+
+    private static void printNode(PDOutlineItem node, int level, int childCounter) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < level; i++) {
+            sb.append("-");
+        }
+        sb.append(" ").append(node.getTitle()).append(" (").append(childCounter).append(")");
+        System.out.println(sb.toString());
+
+        if (node.hasChildren()) {
+            int childrenCount = 0;
+            for (PDOutlineItem current : node.children()) {
+                childrenCount ++;
+                printNode(current, level + 1, childrenCount);
+            }
+        }
     }
 }
