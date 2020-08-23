@@ -25,7 +25,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.junit.After;
@@ -34,7 +33,6 @@ import org.junit.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
-import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
