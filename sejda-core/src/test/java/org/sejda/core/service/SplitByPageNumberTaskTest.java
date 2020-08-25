@@ -180,4 +180,40 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         testContext.assertOutputSize(4);
         testContext.assertOutputContainsFilenames("1_short-test-file.pdf", "3_short-test-file.pdf", "1_medium-test-file.pdf", "3_medium-test-file.pdf");
     }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        setUpParameters();
+        parameters.addSource(mediumInput());
+        parameters.addPage(2);
+        parameters.addPage(5);
+        parameters.addPage(7);
+        
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("three");
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4);
+        testContext.assertOutputContainsFilenames("one.pdf", "two.pdf", "three.pdf", "8_medium-test-file.pdf");
+    }
+
+    @Test
+    public void specificResultFilenames_invalidCharacters() throws IOException {
+        setUpParameters();
+        parameters.addSource(mediumInput());
+        parameters.addPage(1);
+        parameters.addPage(2);
+
+        parameters.addSpecificResultFilename("path/to/somewhere");
+        parameters.addSpecificResultFilename("\\/:*?\"<>|`&aaa");
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
+        testContext.assertOutputContainsFilenames("pathtosomewhere.pdf", "`&aaa.pdf", "3_medium-test-file.pdf");
+    }
 }

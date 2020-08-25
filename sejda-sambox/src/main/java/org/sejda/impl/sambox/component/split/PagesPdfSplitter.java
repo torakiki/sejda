@@ -25,6 +25,8 @@ import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.split.SplitPages;
 import org.sejda.sambox.pdmodel.PDDocument;
 
+import java.util.List;
+
 /**
  * Component providing split by pages functionalities.
  * 
@@ -35,10 +37,12 @@ import org.sejda.sambox.pdmodel.PDDocument;
 public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends AbstractPdfSplitter<T> {
 
     private NextOutputStrategy splitPages;
+    private List<String> specificResultFilenames;
 
-    public PagesPdfSplitter(PDDocument document, T parameters, boolean optimize) {
+    public PagesPdfSplitter(PDDocument document, T parameters, boolean optimize, List<String> specificResultFilenames) {
         super(document, parameters, optimize, parameters.discardOutline());
         this.splitPages = new SplitPages(parameters.getPages(document.getNumberOfPages()));
+        this.specificResultFilenames = specificResultFilenames;
     }
 
     @Override
@@ -49,6 +53,26 @@ public class PagesPdfSplitter<T extends AbstractSplitByPageParameters> extends A
     @Override
     public NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request) {
         return request;
+    }
+
+    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|]";
+
+    @Override
+    public String getSpecificResultFilename(int fileNumber) {
+        if(specificResultFilenames.size() >= fileNumber) {
+            String result = specificResultFilenames.get(fileNumber - 1);
+            if(result != null) {
+                if(!result.toLowerCase().endsWith(".pdf")) {
+                    result += ".pdf";
+                }
+
+                result = result.replaceAll(INVALID_WIN_FILENAME_CHARS_REGEXP, "");
+                
+                return result;
+            }
+        }
+        
+        return null;
     }
 
 }

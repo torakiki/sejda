@@ -29,6 +29,11 @@ import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.pdf.page.PagesSelection;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Skeletal implementation for a split by page parameter class.
  * 
@@ -40,6 +45,8 @@ public abstract class AbstractSplitByPageParameters extends MultiplePdfSourceMul
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     private boolean discardOutline = false;
+
+    private final List<String> specificResultFilenames = new ArrayList<>();
 
     @Override
     public OptimizationPolicy getOptimizationPolicy() {
@@ -61,10 +68,22 @@ public abstract class AbstractSplitByPageParameters extends MultiplePdfSourceMul
         this.discardOutline = discardOutline;
     }
 
+    public void addSpecificResultFilename(String filename) {
+        this.specificResultFilenames.add(filename);
+    }
+
+    public void addSpecificResultFilenames(Collection<String> filenames) {
+        this.specificResultFilenames.addAll(filenames);
+    }
+
+    public List<String> getSpecificResultFilenames() {
+        return Collections.unmodifiableList(specificResultFilenames);
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(optimizationPolicy).append(discardOutline)
-                .toHashCode();
+                .append(specificResultFilenames).toHashCode();
     }
 
     @Override
@@ -79,6 +98,7 @@ public abstract class AbstractSplitByPageParameters extends MultiplePdfSourceMul
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.optimizationPolicy)
                 .append(discardOutline, parameter.discardOutline)
+                .append(specificResultFilenames, parameter.specificResultFilenames)
                 .isEquals();
     }
 }

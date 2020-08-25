@@ -82,10 +82,16 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                     onOpen(page);
                     tmpFile = createTemporaryBuffer(parameters.getOutput());
                     LOG.debug("Created output temporary buffer {}", tmpFile);
-                    String outName = nameGen.generate(
-                            enrichNameGenerationRequest(
-                            nameRequest().page(page).originalName(source.getName())
-                                    .fileNumber(executionContext.incrementAndGetOutputDocumentsCounter())));
+                    
+                    int fileNumber = executionContext.incrementAndGetOutputDocumentsCounter();
+                    
+                    String outName = getSpecificResultFilename(fileNumber);
+                    if(outName == null || "".equals(outName.trim())) {
+                        outName = nameGen.generate(
+                                enrichNameGenerationRequest(
+                                        nameRequest().page(page).originalName(source.getName())
+                                                .fileNumber(fileNumber)));
+                    }
                     outputWriter.addOutput(file(tmpFile).name(outName));
                 }
                 LOG.trace("Retaining page {} of the original document", page);
@@ -107,6 +113,10 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
             }
         }
         parameters.getOutput().accept(outputWriter);
+    }
+    
+    public String getSpecificResultFilename(int fileNumber) {
+        return null;
     }
 
     public abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);

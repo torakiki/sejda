@@ -70,7 +70,8 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
             document = source.open(documentLoader).getUnderlyingPDDocument();
 
             splitter = new PagesPdfSplitter<>(document, parameters,
-                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document));
+                    new OptimizationRuler(parameters.getOptimizationPolicy()).apply(document), 
+                    parameters.getSpecificResultFilenames());
 
             LOG.debug("Starting split by page numbers for {} ", parameters);
             splitter.split(executionContext(), parameters.getOutputPrefix(), source);
