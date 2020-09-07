@@ -36,6 +36,7 @@ import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.MergeParameters;
+import org.sejda.model.rotation.Rotation;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSInteger;
@@ -104,12 +105,41 @@ public class TableOfContentsCreator {
     }
 
     private PDAnnotationLink linkAnnotationFor(PDPage importedPage) {
-        PDPageXYZDestination pageDest = new PDPageXYZDestination();
-        pageDest.setPage(importedPage);
+        PDPageXYZDestination pageDest = pageDestinationFor(importedPage);
         PDAnnotationLink link = new PDAnnotationLink();
         link.setDestination(pageDest);
         link.setBorder(new COSArray(COSInteger.ZERO, COSInteger.ZERO, COSInteger.ZERO));
         return link;
+    }
+
+    /**
+     * 
+     * @param page
+     * @return a page destination pointing to the top left corner and keeping rotation into account
+     */
+    private PDPageXYZDestination pageDestinationFor(PDPage page) {
+        PDPageXYZDestination pageDest = new PDPageXYZDestination();
+        pageDest.setPage(page);
+        PDRectangle cropBox = page.getCropBox();
+        switch (Rotation.getRotation(page.getRotation())) {
+        case DEGREES_180:
+            pageDest.setLeft((int) cropBox.getUpperRightX());
+            pageDest.setTop((int) cropBox.getLowerLeftY());
+            break;
+        case DEGREES_270:
+            pageDest.setLeft((int) cropBox.getUpperRightX());
+            pageDest.setTop((int) cropBox.getUpperRightY());
+            break;
+        case DEGREES_90:
+            pageDest.setLeft((int) cropBox.getLowerLeftX());
+            pageDest.setTop((int) cropBox.getLowerLeftY());
+            break;
+        default:
+            pageDest.setLeft((int) cropBox.getLowerLeftX());
+            pageDest.setTop((int) cropBox.getUpperRightY());
+            break;
+        }
+        return pageDest;
     }
 
     /**
