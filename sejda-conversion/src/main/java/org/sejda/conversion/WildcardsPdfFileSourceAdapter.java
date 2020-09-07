@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.sejda.commons.util.NumericalSortFilenameComparator;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.input.PdfFileSource;
 
@@ -59,7 +60,7 @@ public class WildcardsPdfFileSourceAdapter {
         } else {
             sources.add(new PdfFileSourceAdapter(path).getPdfFileSource());
         }
-        sources.sort(Comparator.comparing(s -> s.getName()));
+        sources.sort(Comparator.comparing(PdfFileSource::getSource, new NumericalSortFilenameComparator()));
 
     }
 

@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -36,15 +35,13 @@ import org.sejda.conversion.exception.ConversionException;
 public class WildcardsPdfFileSourceAdapterTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    private File path;
 
-    @Before
-    public void setUp() throws IOException {
+    private File setUpFiles() throws IOException {
         folder.newFile("test_file.pdf");
         folder.newFile("test2_file.pdf");
         folder.newFile("another_test_file.pdf");
         folder.newFile("ignore_this.something");
-        this.path = folder.getRoot();
+        return folder.getRoot();
     }
 
     @Test(expected = ConversionException.class)
@@ -58,21 +55,36 @@ public class WildcardsPdfFileSourceAdapterTest {
     }
 
     @Test
-    public void testPositive() {
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.getAbsolutePath() + "/*.pdf");
-        assertEquals(3, victim.getPdfFileSources().size());
-    }
-
-    @Test
-    public void testPositiveCaseInsensitive() {
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.getAbsolutePath() + "/*.PdF");
-        assertEquals(3, victim.getPdfFileSources().size());
-    }
-
-    @Test
-    public void testPositiveFilePath() {
+    public void testPositive() throws IOException {
         WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
-                path.getAbsolutePath() + "/test_file.pdf");
+                setUpFiles().getAbsolutePath() + "/*.pdf");
+        assertEquals(3, victim.getPdfFileSources().size());
+    }
+
+    @Test
+    public void testPositiveCaseInsensitive() throws IOException {
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
+                setUpFiles().getAbsolutePath() + "/*.PdF");
+        assertEquals(3, victim.getPdfFileSources().size());
+    }
+
+    @Test
+    public void testPositiveFilePath() throws IOException {
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
+                setUpFiles().getAbsolutePath() + "/test_file.pdf");
         assertEquals(1, victim.getPdfFileSources().size());
+    }
+
+    @Test
+    public void testOrder() throws IOException {
+        folder.newFile("7.pdf");
+        folder.newFile("44.pdf");
+        folder.newFile("14.pdf");
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
+                folder.getRoot().getAbsolutePath() + "/*.pdf");
+        assertEquals(3, victim.getPdfFileSources().size());
+        assertEquals("7.pdf", victim.getPdfFileSources().get(0).getName());
+        assertEquals("14.pdf", victim.getPdfFileSources().get(1).getName());
+        assertEquals("44.pdf", victim.getPdfFileSources().get(2).getName());
     }
 }
