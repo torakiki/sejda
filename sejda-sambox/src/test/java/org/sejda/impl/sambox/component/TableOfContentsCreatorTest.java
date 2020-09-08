@@ -19,9 +19,11 @@
 package org.sejda.impl.sambox.component;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -43,6 +45,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.text.PDFTextStripper;
 
 /**
@@ -429,5 +432,51 @@ public class TableOfContentsCreatorTest {
         TestUtils.assertPageTextExactLines(doc.getPage(2), "");
         // blank page pageB
         TestUtils.assertPageTextExactLines(doc.getPage(3), "PageB\n");
+    }
+
+    @Test
+    public void tocItemsLinkWithRotatedPages() throws TaskException, IOException {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        PDDocument doc = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        PDPage page90 = new PDPage(PDRectangle.A4);
+        page90.setRotation(90);
+        PDPage page180 = new PDPage(PDRectangle.A4);
+        page180.setRotation(180);
+        PDPage page270 = new PDPage(PDRectangle.A4);
+        page270.setRotation(270);
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        victim.appendItem("Item ", 1, page);
+        victim.appendItem("Item 90", 2, page90);
+        victim.appendItem("Item 180", 3, page180);
+        victim.appendItem("Item 270", 4, page270);
+        victim.addToC();
+
+        List<PDAnnotationLink> annotations = TestUtils.getAnnotationsOf(doc.getPage(0), PDAnnotationLink.class);
+        PDAnnotationLink link = annotations.get(0);
+        assertNotNull(link);
+        assertThat(link.getDestination(), instanceOf(PDPageXYZDestination.class));
+        assertEquals(0, ((PDPageXYZDestination) link.getDestination()).getLeft());
+        assertEquals((int) PDRectangle.A4.getHeight(), ((PDPageXYZDestination) link.getDestination()).getTop());
+
+        PDAnnotationLink link90 = annotations.get(1);
+        assertNotNull(link90);
+        assertThat(link90.getDestination(), instanceOf(PDPageXYZDestination.class));
+        assertEquals(0, ((PDPageXYZDestination) link90.getDestination()).getLeft());
+        assertEquals(0, ((PDPageXYZDestination) link90.getDestination()).getTop());
+
+        PDAnnotationLink link180 = annotations.get(2);
+        assertNotNull(link180);
+        assertThat(link180.getDestination(), instanceOf(PDPageXYZDestination.class));
+        assertEquals((int) PDRectangle.A4.getWidth(), ((PDPageXYZDestination) link180.getDestination()).getLeft());
+        assertEquals(0, ((PDPageXYZDestination) link180.getDestination()).getTop());
+
+        PDAnnotationLink link270 = annotations.get(3);
+        assertNotNull(link270);
+        assertThat(link270.getDestination(), instanceOf(PDPageXYZDestination.class));
+        assertEquals((int) PDRectangle.A4.getWidth(), ((PDPageXYZDestination) link270.getDestination()).getLeft());
+        assertEquals((int) PDRectangle.A4.getHeight(), ((PDPageXYZDestination) link270.getDestination()).getTop());
+
     }
 }
