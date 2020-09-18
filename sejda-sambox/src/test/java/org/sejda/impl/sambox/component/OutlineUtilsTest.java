@@ -43,6 +43,7 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -117,6 +118,34 @@ public class OutlineUtilsTest {
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
         when(catalog.findNamedDestinationPage(any())).thenReturn(dest);
         assertEquals(dest, OutlineUtils.toPageDestination(victim, catalog).get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void pageDestinationForNull() {
+        OutlineUtils.pageDestinationFor(null);
+    }
+
+    @Test
+    public void pageDestinationFor() {
+        PDPage page = new PDPage(PDRectangle.A4);
+        PDPageXYZDestination noRotation = OutlineUtils.pageDestinationFor(page);
+        assertEquals(0, noRotation.getLeft());
+        assertEquals((int) PDRectangle.A4.getHeight(), noRotation.getTop());
+
+        page.setRotation(90);
+        PDPageXYZDestination rotation90 = OutlineUtils.pageDestinationFor(page);
+        assertEquals(0, rotation90.getLeft());
+        assertEquals(0, rotation90.getTop());
+
+        page.setRotation(180);
+        PDPageXYZDestination rotation180 = OutlineUtils.pageDestinationFor(page);
+        assertEquals((int) PDRectangle.A4.getWidth(), rotation180.getLeft());
+        assertEquals(0, rotation180.getTop());
+
+        page.setRotation(270);
+        PDPageXYZDestination rotation270 = OutlineUtils.pageDestinationFor(page);
+        assertEquals((int) PDRectangle.A4.getWidth(), rotation270.getLeft());
+        assertEquals((int) PDRectangle.A4.getHeight(), rotation270.getTop());
     }
 
     @Test(expected = IllegalArgumentException.class)

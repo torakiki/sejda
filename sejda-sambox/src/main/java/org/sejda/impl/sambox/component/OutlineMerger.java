@@ -20,13 +20,14 @@ package org.sejda.impl.sambox.component;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
+import static org.sejda.impl.sambox.component.OutlineUtils.pageDestinationFor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.LookupTable;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.slf4j.Logger;
@@ -76,8 +77,7 @@ public class OutlineMerger {
             LOG.debug("Adding outline entry for {}", sourceName);
             PDOutlineItem item = new PDOutlineItem();
             item.setTitle(removeExtension(sourceName));
-            PDPageFitDestination destination = new PDPageFitDestination();
-            destination.setPage(pagesLookup.first());
+            PDPageXYZDestination destination = pageDestinationFor(pagesLookup.first());
             item.setDestination(destination);
             outline.addLast(item);
             return item;

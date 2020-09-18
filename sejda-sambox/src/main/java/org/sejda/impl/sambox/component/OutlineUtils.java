@@ -24,15 +24,21 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
+import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.action.PDAction;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
@@ -93,6 +99,36 @@ public final class OutlineUtils {
             LOG.warn("Unable to get outline item destination ", e);
         }
         return Optional.empty();
+    }
+
+    /**
+     * @param page
+     * @return a page destination pointing to the top left corner and keeping rotation into account
+     */
+    public static PDPageXYZDestination pageDestinationFor(PDPage page) {
+        requireNotNullArg(page, "Cannot create a destination to a null page");
+        PDPageXYZDestination pageDest = new PDPageXYZDestination();
+        pageDest.setPage(page);
+        PDRectangle cropBox = page.getCropBox();
+        switch (Rotation.getRotation(page.getRotation())) {
+        case DEGREES_180:
+            pageDest.setLeft((int) cropBox.getUpperRightX());
+            pageDest.setTop((int) cropBox.getLowerLeftY());
+            break;
+        case DEGREES_270:
+            pageDest.setLeft((int) cropBox.getUpperRightX());
+            pageDest.setTop((int) cropBox.getUpperRightY());
+            break;
+        case DEGREES_90:
+            pageDest.setLeft((int) cropBox.getLowerLeftX());
+            pageDest.setTop((int) cropBox.getLowerLeftY());
+            break;
+        default:
+            pageDest.setLeft((int) cropBox.getLowerLeftX());
+            pageDest.setTop((int) cropBox.getUpperRightY());
+            break;
+        }
+        return pageDest;
     }
 
     /**
@@ -199,7 +235,7 @@ public final class OutlineUtils {
         }
         return result;
     }
-    
+
     public static void printOutline(PDDocument document) {
         ofNullable(document.getDocumentCatalog().getDocumentOutline()).ifPresent(outline -> {
             int childCounter = 0;
@@ -212,7 +248,7 @@ public final class OutlineUtils {
 
     private static void printNode(PDOutlineItem node, int level, int childCounter) {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < level; i++) {
+        for (int i = 0; i < level; i++) {
             sb.append("-");
         }
         sb.append(" ").append(node.getTitle()).append(" (").append(childCounter).append(")");
@@ -221,7 +257,7 @@ public final class OutlineUtils {
         if (node.hasChildren()) {
             int childrenCount = 0;
             for (PDOutlineItem current : node.children()) {
-                childrenCount ++;
+                childrenCount++;
                 printNode(current, level + 1, childrenCount);
             }
         }
