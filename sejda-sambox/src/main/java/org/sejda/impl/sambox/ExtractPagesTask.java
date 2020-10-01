@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
@@ -90,10 +91,16 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                         if (!pageSets.isEmpty()) {
                             File tmpFile = createTemporaryBuffer(parameters.getOutput());
                             LOG.debug("Created output temporary buffer {}", tmpFile);
-                            String outName = nameGenerator(parameters.getOutputPrefix())
-                                    .generate(nameRequest().originalName(source.getName())
-                                            .fileNumber(executionContext().incrementAndGetOutputDocumentsCounter())
-                                            .page(pageSets.iterator().next()));
+
+                            int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
+
+                            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber))
+                                    .orElseGet(() -> {
+                                        return nameGenerator(parameters.getOutputPrefix())
+                                                .generate(nameRequest().originalName(source.getName())
+                                                        .fileNumber(fileNumber).page(pageSets.iterator().next()));
+                                    });
+
                             outputWriter.addOutput(file(tmpFile).name(outName));
 
                             LOG.trace("Extracting pages {}", pageSets);

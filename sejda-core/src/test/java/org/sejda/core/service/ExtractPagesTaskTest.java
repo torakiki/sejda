@@ -419,4 +419,21 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
                 .getDictionaryObject(COSName.getPDFName("F1"), COSDictionary.class);
         assertEquals(page0Font, page1Font);
     }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(2));
+        parameters.addPageRange(new PageRange(4, 5));
+        parameters.addPageRange(new PageRange(7, 9));
+        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+        parameters.addSource(customInputAsFileSource("pdf/test-pdf.pdf"));
+        parameters.setSeparateFileForEachRange(true);
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3).assertOutputContainsFilenames("one.pdf", "two.pdf", "3_test-pdf.pdf");
+    }
 }
