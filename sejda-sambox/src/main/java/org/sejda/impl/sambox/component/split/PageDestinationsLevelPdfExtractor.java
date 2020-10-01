@@ -16,6 +16,7 @@
  */
 package org.sejda.impl.sambox.component.split;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -84,9 +85,13 @@ public class PageDestinationsLevelPdfExtractor {
                 File tmpFile = createTemporaryBuffer(parameters.getOutput());
                 LOG.debug("Created output temporary buffer {}", tmpFile);
 
-                String outName = nameGenerator(parameters.getOutputPrefix())
-                        .generate(nameRequest().page(page).originalName(source.getName())
-                                .fileNumber(outputDocumentsCounter).bookmark(section.title));
+                String outName = parameters
+                        .getSpecificResultFilename(executionContext.incrementAndGetOutputDocumentsCounter());
+                if (isBlank(outName)) {
+                    outName = nameGenerator(parameters.getOutputPrefix()).generate(nameRequest().page(page)
+                            .originalName(source.getName()).fileNumber(outputDocumentsCounter).bookmark(section.title));
+                }
+
                 outputWriter.addOutput(file(tmpFile).name(outName));
 
                 for (; page <= section.endPage; page++) {

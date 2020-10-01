@@ -170,4 +170,16 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
         testContext.assertOutputContainsFilenames("file1_1_Invoking Maven.pdf", "file2_1_Invoking Maven.pdf");
         testContext.assertOutputSize(36);
     }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("some/*?Invalid<chars");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3).assertOutputContainsFilenames("one.pdf", "two.pdf", "someInvalidchars.pdf");
+    }
 }
