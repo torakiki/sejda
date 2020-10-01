@@ -92,7 +92,6 @@ public abstract class ViewerPreferencesTaskTest extends BaseTaskTest<ViewerPrefe
         parameters.addSource(regularInput());
         parameters.addSource(mediumInput());
         parameters.addSource(mediumInput());
-        testContext.directoryOutputTo(parameters);
         parameters.addSpecificResultFilename("one");
         parameters.addSpecificResultFilename("two");
         execute(parameters);
