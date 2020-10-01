@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -177,5 +178,40 @@ public class IOUtilsTest {
     @Test
     public void noNPEIfParentIsMissing() throws TaskIOException {
         assertNotNull(IOUtils.createTemporaryBuffer(new FileTaskOutput(new File("test.pdf"))));
+    }
+
+    @Test
+    public void nullSafe() {
+        assertEquals("", IOUtils.toSafeFilename(null));
+    }
+
+    @Test
+    public void testSafeFilename() {
+        assertEquals("1_Invoice#0001", IOUtils.toSafeFilename("1_Invoice#0001:*<>/\\"));
+        assertEquals("..test", IOUtils.toSafeFilename("../test"));
+        assertEquals("..test", IOUtils.toSafeFilename("..\\test"));
+        assertEquals(".test", IOUtils.toSafeFilename("./test"));
+        assertEquals("rest", IOUtils.toSafeFilename("\r\n\t\frest"));
+    }
+
+    @Test
+    public void safeFilenameWhitespaces() {
+        assertEquals("Chuck Norris", IOUtils.toSafeFilename("Chuck\tNorris"));
+        assertEquals("Chuck Norris", IOUtils.toSafeFilename("\u00A0Chuck\u00A0Norris\u00A0"));
+        assertEquals("Chuck Norris", IOUtils.toSafeFilename("\u00A0\n\t\u000B\f\rChuck\nNorris\u202f"));
+        assertEquals("This is a Chuck Norris roundkick, will Steven Segal survive Nope!", IOUtils.toSafeFilename(
+                "This\u1680is\u180ea\u2000Chuck\u200aNorris\u202froundkick,\u205fwill\u3000Steven\fSegal\rsurvive?\u000BNope!"));
+    }
+
+    @Test
+    public void testStrictFilename() {
+        assertEquals("1_Invoice0001", IOUtils.toStrictFilename("1_Invoice#0001:*<>/\\"));
+        assertEquals(StringUtils.repeat('a', 255), IOUtils.toStrictFilename(StringUtils.repeat('a', 256)));
+    }
+
+    @Test
+    public void testNulls() {
+        assertEquals("", IOUtils.toSafeFilename(null));
+        assertEquals("", IOUtils.toStrictFilename(null));
     }
 }

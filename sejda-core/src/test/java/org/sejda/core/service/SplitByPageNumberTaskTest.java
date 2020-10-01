@@ -178,7 +178,23 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
 
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(4);
-        testContext.assertOutputContainsFilenames("1_short-test-file.pdf", "3_short-test-file.pdf", "1_medium-test-file.pdf", "3_medium-test-file.pdf");
+        testContext.assertOutputContainsFilenames("1_short-test-file.pdf", "3_short-test-file.pdf",
+                "1_medium-test-file.pdf", "3_medium-test-file.pdf");
+    }
+
+    @Test
+    public void batchModeSpecificFilenames() throws IOException {
+        setUpParameters();
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+        parameters.addPage(2);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("three");
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one.pdf", "two.pdf", "three.pdf");
     }
 
     @Test
@@ -188,7 +204,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         parameters.addPage(2);
         parameters.addPage(5);
         parameters.addPage(7);
-        
+
         parameters.addSpecificResultFilename("one");
         parameters.addSpecificResultFilename("two");
         parameters.addSpecificResultFilename("three");

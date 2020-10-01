@@ -22,6 +22,8 @@ package org.sejda.core.support.io;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
 import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
@@ -170,6 +172,27 @@ public final class IOUtils {
         }
         // bytes based max length
         return shortenFilenameBytesLength(name, 254, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * @return A {@link String} where all the variations of whitespace and horizontal whitespace are replace with a standard whitespace, all characters deemed unsafe for a filename
+     *         are stripped and the resulting filename is trimmed
+     */
+    public static String toSafeFilename(String input) {
+        // TODO maybe we should do the trimming when we ensure a proper file name length to make sure we do it for every generated file? Or we shouldn't do it at all?
+        return defaultString(input).replaceAll("\\s|\\h", " ").replaceAll("[\0\f\t\n\r\\\\/:*?\\\"<>|]", "")
+                .trim();
+    }
+
+    /**
+     * Strips all but characters that are known to be safe: alphanumerics for now.
+     */
+    public static String toStrictFilename(String input) {
+        String safe = defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
+        if (safe.length() > 255) {
+            safe = safe.substring(0, 255);
+        }
+        return safe;
     }
 
     static String shortenFilenameCharLength(String input, int maxCharLength) {

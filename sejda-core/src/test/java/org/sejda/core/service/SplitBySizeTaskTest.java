@@ -67,7 +67,8 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(5);
-        testContext.assertOutputContainsFilenames("1-medium-test-file.pdf", "2-medium-test-file.pdf", "3-medium-test-file.pdf", "4-medium-test-file.pdf","5-test-file.pdf");
+        testContext.assertOutputContainsFilenames("1-medium-test-file.pdf", "2-medium-test-file.pdf",
+                "3-medium-test-file.pdf", "4-medium-test-file.pdf", "5-test-file.pdf");
     }
 
     @Test
@@ -108,6 +109,28 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
                 fail(e.getMessage());
             }
         });
-
     }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        parameters = new SplitBySizeParameters(100000);
+        parameters.setCompress(true);
+        parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.addSource(regularInput());
+        parameters.addSource(mediumInput());
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setOutputPrefix("[FILENUMBER]-[BASENAME]");
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("some/*?Invalid<chars");
+
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(5).assertOutputContainsFilenames("one.pdf", "two.pdf",
+                "someInvalidchars.pdf",
+                "4-medium-test-file.pdf", "5-medium-test-file.pdf");
+    }
+
 }

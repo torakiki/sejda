@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component.split;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
@@ -34,7 +35,7 @@ import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -48,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  *            the type of parameters the splitter needs to have all the information necessary to perform the split.
  */
-public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters> {
+public abstract class AbstractPdfSplitter<T extends MultiplePdfSourceMultipleOutputParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPdfSplitter.class);
 
@@ -67,7 +68,8 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
         this.discardOutline = discardOutline;
     }
 
-    public void split(TaskExecutionContext executionContext, String outputPrefix, PdfSource<?> source) throws TaskException {
+    public void split(TaskExecutionContext executionContext, String outputPrefix, PdfSource<?> source)
+            throws TaskException {
         nextOutputStrategy().ensureIsValid();
 
         this.outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(),
@@ -82,22 +84,23 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                     onOpen(page);
                     tmpFile = createTemporaryBuffer(parameters.getOutput());
                     LOG.debug("Created output temporary buffer {}", tmpFile);
-                    
+
                     int fileNumber = executionContext.incrementAndGetOutputDocumentsCounter();
-                    
-                    String outName = getSpecificResultFilename(fileNumber);
-                    if(outName == null || "".equals(outName.trim())) {
-                        outName = nameGen.generate(
-                                enrichNameGenerationRequest(
-                                        nameRequest().page(page).originalName(source.getName())
-                                                .fileNumber(fileNumber)));
+
+                    String outName = parameters.getSpecificResultFilename(fileNumber);
+                    if (isBlank(outName)) {
+                        outName = nameGen.generate(enrichNameGenerationRequest(nameRequest().page(page)
+                                .originalName(source.getName())
+                                .fileNumber(fileNumber)));
                     }
+
                     outputWriter.addOutput(file(tmpFile).name(outName));
                 }
                 LOG.trace("Retaining page {} of the original document", page);
                 onRetain(page);
                 extractor.retain(page, executionContext);
-                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(page).outOf(totalPages);
+                notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(page)
+                        .outOf(totalPages);
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     onClose(page);
                     extractor.setVersion(parameters.getVersion());
@@ -105,18 +108,16 @@ public abstract class AbstractPdfSplitter<T extends AbstractPdfOutputParameters>
                     if (optimize) {
                         extractor.optimize();
                     }
-                    extractor.save(tmpFile, discardOutline, parameters.getOutput().getEncryptionAtRestPolicy());
+                    extractor.save(tmpFile, discardOutline, parameters.getOutput()
+                            .getEncryptionAtRestPolicy());
                     extractor.reset();
                     LOG.debug("Ending split at page {} of the original document, generated document size is {}", page,
                             HumanReadableSize.toString(tmpFile.length()));
                 }
             }
         }
-        parameters.getOutput().accept(outputWriter);
-    }
-    
-    public String getSpecificResultFilename(int fileNumber) {
-        return null;
+        parameters.getOutput()
+                .accept(outputWriter);
     }
 
     public abstract NameGenerationRequest enrichNameGenerationRequest(NameGenerationRequest request);

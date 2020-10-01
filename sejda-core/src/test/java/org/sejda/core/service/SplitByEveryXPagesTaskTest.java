@@ -138,4 +138,21 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
             assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
         });
     }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        parameters = new SplitByEveryXPagesParameters(10);
+        parameters.setCompress(true);
+        parameters.setVersion(PdfVersion.VERSION_1_6);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addSource(mediumInput());
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("some/*?Invalid<chars");
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one.pdf", "two.pdf", "someInvalidchars.pdf");
+    }
 }

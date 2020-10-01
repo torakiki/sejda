@@ -18,8 +18,15 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import org.sejda.core.support.io.IOUtils;
 
+/**
+ * Moved to {@link IOUtils}
+ * 
+ * @author Andrea Vacondio
+ *
+ */
+@Deprecated
 public final class PrefixUtils {
     private PrefixUtils() {
         // hide
@@ -30,19 +37,13 @@ public final class PrefixUtils {
      *         stripped and the resulting filename is trimmed
      */
     public static String toSafeFilename(String input) {
-        // TODO maybe we should do the trimming when we ensure a proper file name length to make sure we do it for every generated file? Or we shouldn't do it at all?
-        return defaultIfBlank(input, "").replaceAll("\\s|\\h", " ").replaceAll("[`\0\f\t\n\r\\\\/:*?\\\"<>|]", "")
-                .trim();
+        return IOUtils.toSafeFilename(input);
     }
 
     /**
      * Strips all but characters that are known to be safe: alphanumerics for now.
      */
     public static String toStrictFilename(String input) {
-        String safe = defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
-        if (safe.length() > 255) {
-            safe = safe.substring(0, 255);
-        }
-        return safe;
+        return IOUtils.toStrictFilename(input);
     }
 }

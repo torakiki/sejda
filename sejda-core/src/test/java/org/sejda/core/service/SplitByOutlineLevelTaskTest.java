@@ -125,4 +125,15 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
         assertTrue(failListener.isFailed());
     }
 
+    @Test
+    public void specificResultFilenames() throws IOException {
+        SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("some/*?Invalid<chars");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one.pdf", "two.pdf", "someInvalidchars.pdf");
+    }
+
 }

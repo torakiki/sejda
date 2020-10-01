@@ -19,6 +19,8 @@
  */
 package org.sejda.core.service;
 
+import static org.sejda.TestUtils.encryptedAtRest;
+
 import java.io.IOException;
 
 import org.junit.Ignore;
@@ -27,8 +29,6 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-
-import static org.sejda.TestUtils.encryptedAtRest;
 
 /**
  * @author Andrea Vacondio
@@ -114,6 +114,19 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
                 "21_medium-test-file.pdf", "23_medium-test-file.pdf", "25_medium-test-file.pdf", "27_medium-test-file.pdf", "29_medium-test-file.pdf",
                 "31_medium-test-file.pdf", "33_medium-test-file.pdf"
         );
+    }
+
+    @Test
+    public void specificResultFilenames() throws IOException {
+        setUpParameters(PredefinedSetOfPages.ALL_PAGES);
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        parameters.addSpecificResultFilename("some/*?Invalid<chars");
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one.pdf", "two.pdf", "someInvalidchars.pdf");
     }
 
 }
