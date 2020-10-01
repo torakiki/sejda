@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
@@ -68,7 +69,6 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     @Override
     public void execute(T parameters) throws TaskException {
         int currentStep = 0;
-        int currentFileNumber = 0;
         int totalSteps = parameters.getSourceList().size();
 
         for (PdfSource<?> source : parameters.getSourceList()) {
@@ -83,17 +83,19 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                     LOG.trace("Found {} pages to convert", totalSteps);
 
                     for (int currentPage : requestedPages) {
-                        
-                        if(Boolean.getBoolean(Sejda.PERFORM_MEMORY_OPTIMIZATIONS_PROPERTY_NAME)) {
+
+                        if (Boolean.getBoolean(Sejda.PERFORM_MEMORY_OPTIMIZATIONS_PROPERTY_NAME)) {
                             int percentageMemoryUsed = RuntimeUtils.getPercentageMemoryUsed();
                             if (percentageMemoryUsed > 60) {
-                                LOG.debug("Closing and reopening source doc, memory usage reached: {}%", percentageMemoryUsed);
+                                LOG.debug("Closing and reopening source doc, memory usage reached: {}%",
+                                        percentageMemoryUsed);
                                 closeQuietly(documentHandler);
                                 documentHandler = source.open(sourceOpener);
                             }
                         }
 
                         File tmpFile = createTemporaryBuffer();
+                        int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
                         LOG.debug("Created output temporary buffer {} ", tmpFile);
 
                         try {
@@ -105,9 +107,14 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                             getWriter().write(pageImage, parameters);
                             getWriter().closeDestination();
 
-                            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                                    nameRequest(parameters.getOutputImageType().getExtension()).page(currentPage)
-                                            .originalName(source.getName()).fileNumber(currentFileNumber));
+                            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber,
+                                    "." + parameters.getOutputImageType().getExtension()))
+                                    .orElseGet(() -> {
+                                        return nameGenerator(parameters.getOutputPrefix())
+                                                .generate(nameRequest(parameters.getOutputImageType().getExtension())
+                                                        .page(currentPage).originalName(source.getName())
+                                                        .fileNumber(fileNumber));
+                                    });
                             outputWriter.addOutput(file(tmpFile).name(outName));
                         } catch (TaskException e) {
                             executionContext().assertTaskIsLenient(e);

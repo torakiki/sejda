@@ -19,8 +19,11 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.*;
-import static org.sejda.TestUtils.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.sejda.TestUtils.encryptedAtRest;
+import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -96,9 +99,25 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     }
 
     @Test
+    public void specificResultFilenames() throws IOException {
+        AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
+                ImageColorType.GRAY_SCALE);
+        parameters.addSource(encryptedInput());
+        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        String ext = parameters.getOutputImageType().getExtension();
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one." + ext, "two." + ext,
+                "3_encrypted-test-file." + ext, "4_encrypted-test-file." + ext);
+    }
+
+    @Test
     public void encryptionAtRestRoundTrip() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
-            ImageColorType.COLOR_RGB);
+                ImageColorType.COLOR_RGB);
         parameters.addSource(encryptedAtRest(shortInput()));
         parameters.addSource(encryptedAtRest(mediumInput()));
         parameters.addPageRange(new PageRange(1, 1));
@@ -112,7 +131,8 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         testContext.assertNoTaskWarnings();
         testContext.assertOutputSize(2).forEachRawOutput(path -> {
             try {
-                BufferedImage image = ImageIO.read(getEncryptionAtRestPolicy().decrypt(new FileInputStream(path.toFile())));
+                BufferedImage image = ImageIO
+                        .read(getEncryptionAtRestPolicy().decrypt(new FileInputStream(path.toFile())));
 
                 assertNotNull(image);
                 assertTrue(image.getHeight() > 0);
