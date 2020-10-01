@@ -211,14 +211,12 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertPages(4)
-                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
+        testContext.assertPages(4).forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
     }
 
     @Test
     public void specificResultFilenames() throws IOException {
         setUpRotateMultipleInputNotRangesContained();
-        testContext.directoryOutputTo(parameters);
         testContext.directoryOutputTo(parameters);
         parameters.addSpecificResultFilename("one.pdf");
         parameters.addSpecificResultFilename("two.PDF");
@@ -226,6 +224,7 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(2).assertOutputContainsFilenames("one.pdf", "two.PDF");
     }
+
     private void assertPageRotation(PDDocument doc, int pageIndex, int expectedDegrees) {
         assertEquals(expectedDegrees, doc.getPage(pageIndex).getRotation());
     }

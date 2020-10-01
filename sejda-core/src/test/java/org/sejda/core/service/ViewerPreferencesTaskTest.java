@@ -86,6 +86,21 @@ public abstract class ViewerPreferencesTaskTest extends BaseTaskTest<ViewerPrefe
         doExecute();
     }
 
+    @Test
+    public void specificResultFilenames() throws IOException {
+        setUpParams(shortInput());
+        parameters.addSource(regularInput());
+        parameters.addSource(mediumInput());
+        parameters.addSource(mediumInput());
+        testContext.directoryOutputTo(parameters);
+        parameters.addSpecificResultFilename("one");
+        parameters.addSpecificResultFilename("two");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(4).assertOutputContainsFilenames("one.pdf", "two.pdf", "medium-test-file.pdf",
+                "medium-test-file(1).pdf");
+    }
+
     private void doExecute() throws IOException {
         execute(parameters);
         testContext.assertTaskCompleted();

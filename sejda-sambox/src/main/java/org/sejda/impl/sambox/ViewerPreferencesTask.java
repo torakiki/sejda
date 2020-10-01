@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
@@ -76,10 +77,9 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
 
     @Override
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
-        int currentStep = 0;
         for (PdfSource<?> source : parameters.getSourceList()) {
             executionContext().assertTaskNotCancelled();
-            currentStep++;
+            int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);
             documentHandler.setCreatorOnPDDocument();
@@ -95,13 +95,15 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             setViewerPreferences(parameters);
 
             documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
-            String outName = nameGenerator(parameters.getOutputPrefix()).generate(
-                    nameRequest().originalName(source.getName()).fileNumber(currentStep));
+            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(() -> {
+                return nameGenerator(parameters.getOutputPrefix())
+                        .generate(nameRequest().originalName(source.getName()).fileNumber(fileNumber));
+            });
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closeQuietly(documentHandler);
 
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);
