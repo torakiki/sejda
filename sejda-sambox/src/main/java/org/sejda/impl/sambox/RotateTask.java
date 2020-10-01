@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
@@ -69,13 +70,12 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
     @Override
     public void execute(RotateParameters parameters) throws TaskException {
-        int currentStep = 0;
 
         for (int sourceIndex = 0; sourceIndex < parameters.getSourceList().size(); sourceIndex++) {
             PdfSource<?> source = parameters.getSourceList().get(sourceIndex);
 
             executionContext().assertTaskNotCancelled();
-            currentStep++;
+            int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
             try {
                 documentHandler = source.open(documentLoader);
@@ -90,7 +90,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
                     executionContext().assertTaskNotCancelled();
                     Rotation rotation = parameters.getRotation(sourceIndex, page);
 
-                    if(rotation != Rotation.DEGREES_0) {
+                    if (rotation != Rotation.DEGREES_0) {
                         try {
                             rotator.rotate(page, rotation);
                         } catch (PageNotFoundException e) {
@@ -106,14 +106,17 @@ public class RotateTask extends BaseTask<RotateParameters> {
                 documentHandler.setCompress(parameters.isCompress());
                 documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
 
-                String outName = nameGenerator(parameters.getOutputPrefix())
-                        .generate(nameRequest().originalName(source.getName()).fileNumber(currentStep));
+                String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(() -> {
+                    return nameGenerator(parameters.getOutputPrefix())
+                            .generate(nameRequest().originalName(source.getName()).fileNumber(fileNumber));
+                });
+
                 outputWriter.addOutput(file(tmpFile).name(outName));
             } finally {
                 closeQuietly(documentHandler);
             }
 
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
 
         parameters.getOutput().accept(outputWriter);

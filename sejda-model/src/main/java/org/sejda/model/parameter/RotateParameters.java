@@ -20,7 +20,9 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -39,7 +41,7 @@ import org.sejda.model.rotation.Rotation;
  *
  * Can specify a rotation to be applied to a predefined set of pages (all, even, odd), all sources.
  * Can specify a rotation to be applied per page range, all sources.
- * Can specify a rotation to be applied pe page range, per source.
+ * Can specify a rotation to be applied per page range, per source.
  * 
  * @author Andrea Vacondio
  * @author Edi Weissmann
