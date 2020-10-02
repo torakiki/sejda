@@ -60,7 +60,6 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
     @Override
     public void execute(SetPagesLabelParameters parameters) throws TaskException {
-        executionContext().assertTaskNotCancelled();
         notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();

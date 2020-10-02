@@ -72,7 +72,6 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         int totalSteps = parameters.getSourceList().size();
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
 
             LOG.debug("Opening {}", source);
             sourceDocumentHandler = source.open(documentLoader);

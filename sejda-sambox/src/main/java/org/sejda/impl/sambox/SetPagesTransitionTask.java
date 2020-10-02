@@ -70,7 +70,6 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
 
     @Override
     public void execute(SetPagesTransitionParameters parameters) throws TaskException {
-        executionContext().assertTaskNotCancelled();
         notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
 
         PdfSource<?> source = parameters.getSource();
@@ -84,7 +83,6 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         LOG.debug("Applying transitions");
         int current = 0;
         for (PDPage page : documentHandler.getPages()) {
-            executionContext().assertTaskNotCancelled();
             current++;
             ofNullable(parameters.getOrDefault(current)).ifPresent(t -> {
                 LOG.trace("Applying transition {}", t);

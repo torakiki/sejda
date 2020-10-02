@@ -22,7 +22,6 @@ import static java.util.Objects.isNull;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.sejda.model.exception.TaskCancelledException;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
@@ -38,7 +37,6 @@ public class TaskExecutionContext {
 
     private StopWatch stopWatch = new StopWatch();
     private NotifiableTaskMetadata taskMetadata;
-    private boolean cancelled = false;
     private Task<? extends TaskParameters> task;
     private boolean lenient;
     private int outputDocumentsCounter = 0;
@@ -54,15 +52,6 @@ public class TaskExecutionContext {
 
     public NotifiableTaskMetadata notifiableTaskMetadata() {
         return taskMetadata;
-    }
-
-    public void cancelTask() {
-        this.cancelled = true;
-    }
-
-    public void assertTaskNotCancelled() throws TaskCancelledException {
-        if (cancelled)
-            throw new TaskCancelledException();
     }
 
     @SuppressWarnings("rawtypes")

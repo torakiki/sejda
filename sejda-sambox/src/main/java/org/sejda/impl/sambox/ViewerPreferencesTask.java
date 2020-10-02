@@ -78,7 +78,6 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
     @Override
     public void execute(ViewerPreferencesParameters parameters) throws TaskException {
         for (PdfSource<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
             int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
             documentHandler = source.open(documentLoader);

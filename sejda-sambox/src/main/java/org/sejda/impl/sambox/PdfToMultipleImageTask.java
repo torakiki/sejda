@@ -72,7 +72,6 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
         int totalSteps = parameters.getSourceList().size();
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
             currentStep++;
             try {
                 LOG.debug("Opening {}", source);

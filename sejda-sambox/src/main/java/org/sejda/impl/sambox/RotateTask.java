@@ -74,7 +74,6 @@ public class RotateTask extends BaseTask<RotateParameters> {
         for (int sourceIndex = 0; sourceIndex < parameters.getSourceList().size(); sourceIndex++) {
             PdfSource<?> source = parameters.getSourceList().get(sourceIndex);
 
-            executionContext().assertTaskNotCancelled();
             int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
             try {
@@ -87,7 +86,6 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
                 PdfRotator rotator = new PdfRotator(documentHandler.getUnderlyingPDDocument());
                 for (int page = 1; page <= documentHandler.getNumberOfPages(); page++) {
-                    executionContext().assertTaskNotCancelled();
                     Rotation rotation = parameters.getRotation(sourceIndex, page);
 
                     if (rotation != Rotation.DEGREES_0) {

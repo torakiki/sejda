@@ -30,10 +30,9 @@ import java.util.Set;
 import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
-import org.sejda.model.exception.TaskCancelledException;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -77,12 +76,9 @@ public class PagesExtractor implements Closeable {
                 this.destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void retain(Set<Integer> pages, TaskExecutionContext executionContext)
-            throws TaskCancelledException, TaskExecutionException {
+    public void retain(Set<Integer> pages, TaskExecutionContext executionContext) throws TaskExecutionException {
         int currentStep = 0;
         for (Integer page : pages) {
-            executionContext.assertTaskNotCancelled();
-
             retain(page, executionContext);
             notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(pages.size());
         }
@@ -127,7 +123,8 @@ public class PagesExtractor implements Closeable {
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
-    public void save(File file, boolean discardOutline, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
+    public void save(File file, boolean discardOutline, EncryptionAtRestPolicy encryptionAtRestSecurity)
+            throws TaskException {
         if (!discardOutline) {
             createOutline();
         }

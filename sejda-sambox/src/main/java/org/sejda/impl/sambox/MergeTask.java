@@ -131,7 +131,6 @@ public class MergeTask extends BaseTask<MergeParameters> {
             long relativePagesCounter = 0;
             Set<Integer> pagesToImport = input.getPages(sourceDocumentHandler.getNumberOfPages());
             for (Integer currentPage : pagesToImport) {
-                executionContext().assertTaskNotCancelled();
                 pagesCounter++;
                 relativePagesCounter++;
                 try {

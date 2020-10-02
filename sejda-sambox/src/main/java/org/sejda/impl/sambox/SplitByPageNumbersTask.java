@@ -63,7 +63,6 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
             currentStep++;
 
             LOG.debug("Opening {}", source);

@@ -62,7 +62,6 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         int currentStep = 0;
 
         for (PdfSource<?> source : parameters.getSourceList()) {
-            executionContext().assertTaskNotCancelled();
             currentStep++;
             LOG.debug("Opening {}", source);
             document = source.open(documentLoader).getUnderlyingPDDocument();

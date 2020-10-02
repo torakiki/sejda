@@ -56,7 +56,6 @@ public class PdfAlternateMixer extends PDDocumentHandler {
                 (curr, value) -> curr + value);
 
         while (mixFragments.stream().anyMatch(PdfMixFragment::hasNextPage)) {
-            executionContext.assertTaskNotCancelled();
             mixFragments.stream().filter(PdfMixFragment::hasNextPage).forEach(f -> {
                 for (int i = 0; i < f.getStep() && f.hasNextPage(); i++) {
                     PDPage current = f.nextPage();

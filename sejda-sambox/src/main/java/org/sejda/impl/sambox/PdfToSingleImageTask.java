@@ -77,8 +77,6 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
 
         getWriter().openDestination(tmpFile, parameters);
         for (int page = 1; page <= numberOfPages; page++) {
-            executionContext().assertTaskNotCancelled();
-
             LOG.trace("Converting page {}", page);
             try {
                 BufferedImage pageImage = documentHandler.renderImage(page, parameters.getResolutionInDpi(),
