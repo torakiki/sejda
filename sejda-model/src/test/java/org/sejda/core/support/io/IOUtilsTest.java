@@ -56,6 +56,38 @@ public class IOUtilsTest {
         tmp.deleteOnExit();
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
+        assertThat(tmp.getName(), startsWith(IOUtils.BUFFER_NAME));
+    }
+
+    @Test
+    public void customPrefix() throws TaskIOException {
+        System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
+        File tmp = IOUtils.createTemporaryBuffer();
+        tmp.deleteOnExit();
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isFile());
+        assertThat(tmp.getName(), startsWith("chuck"));
+        System.clearProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME);
+    }
+
+    @Test
+    public void testCreateFolder() throws TaskIOException {
+        File tmp = IOUtils.createTemporaryFolder();
+        tmp.deleteOnExit();
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isDirectory());
+        assertThat(tmp.getName(), startsWith(IOUtils.BUFFER_NAME));
+    }
+
+    @Test
+    public void customPrefixFolder() {
+        System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
+        File tmp = IOUtils.createTemporaryFolder();
+        tmp.deleteOnExit();
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isDirectory());
+        assertThat(tmp.getName(), startsWith("chuck"));
+        System.clearProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME);
     }
 
     @Test
@@ -104,6 +136,19 @@ public class IOUtilsTest {
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
         assertEquals(dir.getAbsolutePath(), tmp.getParent());
+    }
+
+    @Test
+    public void testCreateBufferDirectoryOutCustomPrefix() throws TaskIOException, IOException {
+        System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
+        File dir = folder.newFolder("chuck.norris");
+        DirectoryTaskOutput out = new DirectoryTaskOutput(dir);
+        File tmp = IOUtils.createTemporaryBuffer(out);
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isFile());
+        assertEquals(dir.getAbsolutePath(), tmp.getParent());
+        assertThat(tmp.getName(), startsWith(".chuck"));
+        System.clearProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME);
     }
 
     @Test

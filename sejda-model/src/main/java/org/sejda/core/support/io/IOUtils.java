@@ -56,13 +56,15 @@ import org.slf4j.LoggerFactory;
  */
 public final class IOUtils {
 
+    public static final String TMP_BUFFER_PREFIX_PROPERTY_NAME = "sejda.tmp.buffer.prefix";
+
     private static final Logger LOG = LoggerFactory.getLogger(IOUtils.class);
 
     private IOUtils() {
         // hide
     }
 
-    private static final String BUFFER_NAME = "sejdaTmp";
+    static final String BUFFER_NAME = "sejdaTmp";
 
     /**
      * Creates a temp file trying to find the best location based on the task output.
@@ -91,7 +93,7 @@ public final class IOUtils {
 
     private static Path tmpFile(Path location) throws IOException {
         // don't add leading dot on Windows
-        String prefix = (IS_OS_WINDOWS ? "" : ".") + BUFFER_NAME;
+        String prefix = (IS_OS_WINDOWS ? "" : ".") + System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME);
         return Files.createTempFile(location, prefix, null);
     }
 
@@ -105,7 +107,8 @@ public final class IOUtils {
 
     public static File createTemporaryBuffer(String extension) throws TaskIOException {
         try {
-            File buffer = File.createTempFile(BUFFER_NAME, extension);
+            File buffer = File.createTempFile(System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME),
+                    extension);
             buffer.deleteOnExit();
             return buffer;
         } catch (IOException e) {
@@ -131,7 +134,8 @@ public final class IOUtils {
 
     public static File createTemporaryFolder() {
         File baseDir = SystemUtils.getJavaIoTmpDir();
-        String baseName = new StringBuilder(BUFFER_NAME).append(System.currentTimeMillis()).append("-").toString();
+        String baseName = new StringBuilder(System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME))
+                .append(System.currentTimeMillis()).append("-").toString();
 
         for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
             File tempDir = new File(baseDir, baseName + counter);
@@ -180,8 +184,7 @@ public final class IOUtils {
      */
     public static String toSafeFilename(String input) {
         // TODO maybe we should do the trimming when we ensure a proper file name length to make sure we do it for every generated file? Or we shouldn't do it at all?
-        return defaultString(input).replaceAll("\\s|\\h", " ").replaceAll("[\0\f\t\n\r\\\\/:*?\\\"<>|]", "")
-                .trim();
+        return defaultString(input).replaceAll("\\s|\\h", " ").replaceAll("[\0\f\t\n\r\\\\/:*?\\\"<>|]", "").trim();
     }
 
     /**
