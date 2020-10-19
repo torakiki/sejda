@@ -21,6 +21,7 @@ package org.sejda.core.support.io;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -147,7 +148,7 @@ public class IOUtilsTest {
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
         assertEquals(dir.getAbsolutePath(), tmp.getParent());
-        assertThat(tmp.getName(), startsWith(".chuck"));
+        assertThat(tmp.getName(), containsString("chuck"));
         System.clearProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME);
     }
 
