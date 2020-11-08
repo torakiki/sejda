@@ -65,7 +65,8 @@ public class FileSource extends AbstractSource<File> {
             return SeekableSources.seekableSourceFrom(file);
         }
 
-        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)));
+        return SeekableSources.onTempFileSeekableSourceFrom(
+                getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)), file.getName());
     }
 
     public static FileSource newInstance(File file) {

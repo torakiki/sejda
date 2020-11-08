@@ -63,7 +63,9 @@ public class PdfFileSource extends AbstractPdfSource<File> {
             return SeekableSources.seekableSourceFrom(file);
         }
 
-        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)));
+        // passes a filename hint
+        return SeekableSources.onTempFileSeekableSourceFrom(
+                getEncryptionAtRestPolicy().decrypt(new FileInputStream(file)), file.getName());
     }
 
     /**

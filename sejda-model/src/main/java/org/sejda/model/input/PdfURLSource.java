@@ -58,7 +58,8 @@ public final class PdfURLSource extends AbstractPdfSource<URL> {
 
     @Override
     public SeekableSource initializeSeekableSource() throws IOException {
-        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(url.openStream()));
+        return SeekableSources.onTempFileSeekableSourceFrom(
+                getEncryptionAtRestPolicy().decrypt(url.openStream()), getName());
     }
 
     @Override

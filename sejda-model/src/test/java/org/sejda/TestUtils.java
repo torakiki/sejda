@@ -26,10 +26,7 @@ import org.sejda.core.encryption.EncryptionHelpers;
 import org.sejda.model.encryption.CipherBasedEncryptionAtRest;
 import org.sejda.model.encryption.CipherSupplier;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
-import org.sejda.model.input.FileSource;
-import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.StreamSource;
+import org.sejda.model.input.*;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -168,9 +165,13 @@ public final class TestUtils {
         });
     }
 
-    private static File encryptedAtRest(InputStream in) {
+    private static File encryptedAtRestFile(TaskSource source) throws IOException {
+        return encryptedAtRest(source.getSeekableSource().asNewInputStream(), source.getName());    
+    }
+    
+    private static File encryptedAtRest(InputStream in, String name) {
         try {
-            File file = org.sejda.core.support.io.IOUtils.createTemporaryBuffer();
+            File file = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(name);
             OutputStream out = getEncryptionAtRestPolicy().encrypt(new FileOutputStream(file));
             IOUtils.copy(in, out);
             IOUtils.closeQuietly(out);
@@ -183,21 +184,21 @@ public final class TestUtils {
     }
 
     public static StreamSource encryptedAtRest(StreamSource source) throws IOException {
-        File file = encryptedAtRest(source.getSeekableSource().asNewInputStream());
+        File file = encryptedAtRestFile(source);
         StreamSource result = StreamSource.newInstance(new FileInputStream(file), source.getName());
         result.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
         return result;
     }
 
     public static FileSource encryptedAtRest(FileSource source) throws IOException {
-        File file = encryptedAtRest(source.getSeekableSource().asNewInputStream());
+        File file = encryptedAtRest(source.getSeekableSource().asNewInputStream(), source.getName());
         FileSource result = FileSource.newInstance(file);
         result.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
         return result;
     }
 
     public static PdfStreamSource encryptedAtRest(PdfStreamSource source) throws IOException {
-        File file = encryptedAtRest(source.getSeekableSource().asNewInputStream());
+        File file = encryptedAtRestFile(source);
         PdfStreamSource result = PdfStreamSource.newInstanceWithPassword(new FileInputStream(file), source.getName(),
                 source.getPassword());
         result.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
@@ -205,7 +206,7 @@ public final class TestUtils {
     }
 
     public static PdfFileSource encryptedAtRest(PdfFileSource source) throws IOException {
-        File file = encryptedAtRest(source.getSeekableSource().asNewInputStream());
+        File file = encryptedAtRestFile(source);
         PdfFileSource result = PdfFileSource.newInstanceWithPassword(file, source.getPassword());
         result.setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
         return result;

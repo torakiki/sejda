@@ -54,7 +54,7 @@ public class StreamSource extends AbstractSource<InputStream> {
 
     @Override
     public SeekableSource initializeSeekableSource() throws IOException {
-        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream));
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream), getName());
     }
 
     public static StreamSource newInstance(InputStream stream, String name) {

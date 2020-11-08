@@ -56,7 +56,7 @@ public final class PdfStreamSource extends AbstractPdfSource<InputStream> {
 
     @Override
     public SeekableSource initializeSeekableSource() throws IOException {
-        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream));
+        return SeekableSources.onTempFileSeekableSourceFrom(getEncryptionAtRestPolicy().decrypt(stream), getName());
     }
 
     /**
