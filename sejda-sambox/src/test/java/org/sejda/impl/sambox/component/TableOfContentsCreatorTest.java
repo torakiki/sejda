@@ -26,7 +26,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
@@ -388,13 +387,7 @@ public class TableOfContentsCreatorTest {
         victim.appendItem("Item multiple fonts ทดสอบ", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
-        doc.getFontsToSubset().forEach(f -> {
-            try {
-                f.subset();
-            } catch (IOException e) {
-                fail(e.getMessage());
-            }
-        });
+
         TestUtils.assertPageTextExactLines(doc.getPage(0), "Item multiple fonts ทดสอบ   10\n");
     }
 
