@@ -23,15 +23,13 @@ package org.sejda.core.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.input.ProxyInputStream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,15 +56,16 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveConstuctor() throws ConfigurationException, IOException {
-        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-test.xml"));
+    public void testPositiveConstuctor() throws ConfigurationException {
+        InputStreamWithStatus stream = new InputStreamWithStatus(
+                getClass().getClassLoader().getResourceAsStream("sejda-test.xml"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        verify(stream, atLeastOnce()).close();
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
         assertEquals(1, victim.getTasksMap().size());
         assertTrue(victim.isValidation());
         assertTrue(victim.isIgnoreXmlConfiguration());
+        assertTrue(stream.closed);
     }
 
     @Test
@@ -96,30 +95,47 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveNoValidation() throws ConfigurationException, IOException {
-        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-no-validation.xml"));
+    public void testPositiveNoValidation() throws ConfigurationException {
+        InputStreamWithStatus stream = new InputStreamWithStatus(
+                getClass().getClassLoader().getResourceAsStream("sejda-no-validation.xml"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        verify(stream, atLeastOnce()).close();
+        assertTrue(stream.closed);
         assertFalse(victim.isValidation());
     }
 
     @Test
-    public void testPositiveDefaultValidation() throws ConfigurationException, IOException {
-        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-default-validation.xml"));
+    public void testPositiveDefaultValidation() throws ConfigurationException {
+        InputStreamWithStatus stream = new InputStreamWithStatus(
+                getClass().getClassLoader().getResourceAsStream("sejda-default-validation.xml"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        verify(stream, atLeastOnce()).close();
+        assertTrue(stream.closed);
         assertFalse(victim.isValidation());
         assertFalse(victim.isIgnoreXmlConfiguration());
     }
 
     @Test
-    public void testPositiveAsyncNotification() throws ConfigurationException, IOException {
-        InputStream stream = spy(getClass().getClassLoader().getResourceAsStream("sejda-async-notification.xml"));
+    public void testPositiveAsyncNotification() throws ConfigurationException {
+        InputStreamWithStatus stream = new InputStreamWithStatus(
+                getClass().getClassLoader().getResourceAsStream("sejda-async-notification.xml"));
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        verify(stream, atLeastOnce()).close();
+        assertTrue(stream.closed);
         assertEquals(AsyncNotificationStrategy.class, victim.getNotificationStrategy());
+    }
+
+    public static class InputStreamWithStatus extends ProxyInputStream {
+        boolean closed = false;
+
+        public InputStreamWithStatus(InputStream is) {
+            super(is);
+        }
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+            super.close();
+        }
     }
 }
