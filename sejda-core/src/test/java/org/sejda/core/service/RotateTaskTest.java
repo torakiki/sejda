@@ -22,7 +22,7 @@ package org.sejda.core.service;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.sejda.TestUtils.encryptedAtRest;
 
 import java.io.IOException;

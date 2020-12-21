@@ -20,7 +20,7 @@
 package org.sejda.model.input;
 
 import static org.hamcrest.core.StringEndsWith.endsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
