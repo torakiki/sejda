@@ -29,17 +29,7 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -546,6 +536,41 @@ public final class FontUtils {
             LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
         }
 
+        return result;
+    }
+
+    /**
+     * Splits an input string into multiple fragments, when glyphs with 0 width are detected
+     */
+    public static List<String> resolveTextFragments(String input, PDFont font) {
+        List<String> result = new ArrayList<>();
+        List<Integer> current = new ArrayList<>();
+        
+        for(int codePoint: input.codePoints().toArray()){
+            try {
+                if(font.getWidth(codePoint) == 0) {
+                    if(current.size() > 0) {
+                        StringBuilder s = new StringBuilder();
+                        current.stream().map(Character::toChars).forEach(s::append);
+                        result.add(s.toString());
+                    }
+                    
+                    result.add(new String(Character.toChars(codePoint)));
+                    current = new ArrayList<>();
+                } else {
+                    current.add(codePoint);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        if(current.size() > 0) {
+            StringBuilder s = new StringBuilder();
+            current.stream().map(Character::toChars).forEach(s::append);
+            result.add(s.toString());
+        }
+        
         return result;
     }
 

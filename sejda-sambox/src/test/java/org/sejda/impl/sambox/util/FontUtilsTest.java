@@ -19,7 +19,6 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -33,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
 import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
 import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
+import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -45,7 +45,6 @@ import java.util.List;
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.junit.Test;
 import org.sejda.core.support.io.IOUtils;
-import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
@@ -55,7 +54,6 @@ import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
-import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
@@ -243,13 +241,6 @@ public class FontUtilsTest {
         assertThat(original.getName(), is("Verdana"));
     }
 
-    private PDDocument getTestDoc(String name) throws TaskIOException {
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
-
-        return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
-    }
-
     private boolean isFontAvailableOnSystem(String name) {
         FontMapping<TrueTypeFont> result = FontMappers.instance().getTrueTypeFont(name, null);
         return result != null && !result.isFallback();
@@ -346,5 +337,13 @@ public class FontUtilsTest {
         PDDocument doc = new PDDocument();
         FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն",
                 HELVETICA, 10, 191, doc);
+    }
+
+    @Test
+    public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
+        PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
+        List<String> result = FontUtils.resolveTextFragments("FRIDA", font);
+        assertThat(result, is(Arrays.asList("F", "RIDA")));
     }
 }

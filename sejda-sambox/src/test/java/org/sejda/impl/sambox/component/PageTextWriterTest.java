@@ -18,16 +18,23 @@ package org.sejda.impl.sambox.component;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.IOException;
 
 import org.junit.Test;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
+
+import static org.sejda.core.service.TestUtils.assertPageText;
+import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
 
 
 public class PageTextWriterTest {
@@ -55,5 +62,18 @@ public class PageTextWriterTest {
     @Test(expected = UnsupportedTextException.class)
     public void throwsWhenCharacterUnsupported() throws TaskException {
         write("\uFE0F");
+    }
+    
+    @Test
+    public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
+
+        PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
+        PDPage page = new PDPage();
+        PageTextWriter textWriter = new PageTextWriter(doc);
+        textWriter.write(page, new Point2D.Double(10d, 10d), 
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890", font, 12d, Color.RED);
+
+        assertPageText(page, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890");
     }
 }

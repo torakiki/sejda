@@ -147,54 +147,57 @@ public class PageTextWriter {
             for (TextWithFont stringAndFont : resolvedStringsToFonts) {
                 try {
                     PDFont resolvedFont = stringAndFont.getFont();
-                    String resolvedLabel = stringAndFont.getText();
+
                     double resolvedFontSize = fontSize;
+                    String resolvedLabel = stringAndFont.getText();
 
                     if (resolvedFont == null) {
                         throw new UnsupportedTextException("Unable to find suitable font for string \""
                                 + org.sejda.core.support.util.StringUtils.asUnicodes(resolvedLabel) + "\"",
                                 resolvedLabel);
                     }
+                    
+                    for(String textFragment: FontUtils.resolveTextFragments(resolvedLabel, resolvedFont)) {
+                        Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());
 
-                    Point2D resolvedPosition = new Point((int) position.getX() + offset, (int) position.getY());
+                        contentStream.setFont(resolvedFont, (float) resolvedFontSize);
 
-                    contentStream.setFont(resolvedFont, (float) resolvedFontSize);
+                        Matrix textMatrix;
+                        if (page.getRotation() > 0) {
+                            LOG.trace("Unrotated position {}", resolvedPosition);
+                            Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize,
+                                    resolvedPosition);
 
-                    Matrix textMatrix;
-                    if (page.getRotation() > 0) {
-                        LOG.trace("Unrotated position {}", resolvedPosition);
-                        Point2D rotatedPosition = findPositionInRotatedPage(page.getRotation(), pageSize,
-                                resolvedPosition);
+                            LOG.trace("Will write string '{}' using font {} at position {}", textFragment,
+                                    resolvedFont.getName(), rotatedPosition);
 
-                        LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
-                                resolvedFont.getName(), rotatedPosition);
+                            AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(),
+                                    rotatedPosition.getY());
+                            tx.rotate(Math.toRadians(page.getRotation()));
+                            textMatrix = new Matrix(tx);
 
-                        AffineTransform tx = AffineTransform.getTranslateInstance(rotatedPosition.getX(),
-                                rotatedPosition.getY());
-                        tx.rotate(Math.toRadians(page.getRotation()));
-                        textMatrix = new Matrix(tx);
+                        } else {
+                            LOG.trace("Will write string '{}' using font {} at position {}", textFragment,
+                                    resolvedFont.getName(), resolvedPosition);
 
-                    } else {
-                        LOG.trace("Will write string '{}' using font {} at position {}", resolvedLabel,
-                                resolvedFont.getName(), resolvedPosition);
+                            textMatrix = new Matrix(AffineTransform
+                                    .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY()));
+                        }
 
-                        textMatrix = new Matrix(AffineTransform
-                                .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY()));
+                        if (fauxItalic) {
+                            AffineTransform at = AffineTransform.getShearInstance(0.35, 0);
+                            textMatrix.concatenate(new Matrix(at));
+                        }
+
+                        contentStream.setTextMatrix(textMatrix);
+
+                        LOG.trace("Text position {}", resolvedPosition);
+                        contentStream.showText(textFragment);
+
+                        double textWidth = FontUtils.getSimpleStringWidth(textFragment, resolvedFont, fontSize);
+
+                        offset += textWidth;
                     }
-
-                    if(fauxItalic) {
-                        AffineTransform at = AffineTransform.getShearInstance(0.35, 0);
-                        textMatrix.concatenate(new Matrix(at));
-                    }
-
-                    contentStream.setTextMatrix(textMatrix);
-
-                    LOG.trace("Text position {}", resolvedPosition);
-                    contentStream.showText(resolvedLabel);
-
-                    double textWidth = FontUtils.getSimpleStringWidth(resolvedLabel, resolvedFont, fontSize);
-
-                    offset += textWidth;
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred writing text to the page.", e);
                 }
