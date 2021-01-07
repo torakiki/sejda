@@ -45,20 +45,23 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 public class TestUtils {
+    
+    public static String getPageText(PDPage page) throws IOException {
+        PDFTextStripperByArea textStripper = new PDFTextStripperByArea();
+        PDRectangle pageSize = page.getCropBox();
+        Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
+        if (page.getRotation() == 90 || page.getRotation() == 270) {
+            cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
+        }
+        textStripper.setSortByPosition(true);
+        textStripper.addRegion("area1", cropBoxRectangle);
+        textStripper.extractRegions(page);
+        return textStripper.getTextForRegion("area1");
+    }
 
     public static void withPageText(PDPage page, Consumer<String> callback) {
-        PDFTextStripperByArea textStripper;
         try {
-            textStripper = new PDFTextStripperByArea();
-            PDRectangle pageSize = page.getCropBox();
-            Rectangle cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getWidth(), (int) pageSize.getHeight());
-            if (page.getRotation() == 90 || page.getRotation() == 270) {
-                cropBoxRectangle = new Rectangle(0, 0, (int) pageSize.getHeight(), (int) pageSize.getWidth());
-            }
-            textStripper.setSortByPosition(true);
-            textStripper.addRegion("area1", cropBoxRectangle);
-            textStripper.extractRegions(page);
-            callback.accept(textStripper.getTextForRegion("area1"));
+            callback.accept(getPageText(page));
         } catch (IOException e) {
             fail(e.getMessage());
         }
