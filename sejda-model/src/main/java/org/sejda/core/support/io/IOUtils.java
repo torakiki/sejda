@@ -191,9 +191,10 @@ public final class IOUtils {
      * Strips all but characters that are known to be safe: alphanumerics for now.
      */
     public static String toStrictFilename(String input) {
+        int maxLength = 251; // leave room for extension ".pdf"
         String safe = defaultIfBlank(input, "").replaceAll("[^A-Za-z0-9_ .-]", "");
-        if (safe.length() > 255) {
-            safe = safe.substring(0, 255);
+        if (safe.length() > maxLength) {
+            safe = safe.substring(0, maxLength);
         }
         return safe;
     }

@@ -250,9 +250,20 @@ public class IOUtilsTest {
     }
 
     @Test
-    public void testStrictFilename() {
+    public void testStrictFilename_specialChars() throws TaskIOException {
         assertEquals("1_Invoice0001", IOUtils.toStrictFilename("1_Invoice#0001:*<>/\\"));
-        assertEquals(StringUtils.repeat('a', 255), IOUtils.toStrictFilename(StringUtils.repeat('a', 256)));
+    }
+
+    @Test
+    public void testStrictFilename_tooLong() throws TaskIOException {
+        String tooLong = StringUtils.repeat('a', 256);
+        
+        // check we can actually create the file, it's not too long
+        File tmpFile = IOUtils.createTemporaryBufferWithName(IOUtils.toStrictFilename(tooLong) + ".pdf");
+        assertTrue(tmpFile.exists());
+        tmpFile.delete();
+
+        assertEquals(StringUtils.repeat('a', 251), IOUtils.toStrictFilename(tooLong));
     }
 
     @Test
