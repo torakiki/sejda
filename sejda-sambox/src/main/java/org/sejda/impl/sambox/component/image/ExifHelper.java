@@ -41,7 +41,6 @@ public class ExifHelper {
             int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSeekableSource().asNewInputStream()));
             return getRotation(orientation);
         } catch (Throwable e) {
-            LOG.warn("Failed reading rotation based on exif orientation: {}", e.getMessage());
             return 0;
         }
     }
