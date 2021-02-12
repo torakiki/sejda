@@ -40,6 +40,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.imgscalr.Scalr;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
@@ -117,7 +118,13 @@ public class PageImageWriter {
 
     public static PDImageXObject createFromSeekableSource(SeekableSource original, String name) throws TaskIOException, IOException {
         SeekableSource source = original;
-        Optional<SeekableSource> maybeConvertedFile = convertCMYKJpegIf(source);
+
+        Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source);
+        if(maybeConvertedFile.isPresent()) {
+            source = maybeConvertedFile.get();
+        }
+        
+        maybeConvertedFile = convertCMYKJpegIf(source);
         if(maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
@@ -179,6 +186,52 @@ public class PageImageWriter {
         }
 
         return SeekableSources.seekableSourceFrom(tmpFile);
+    }
+
+    /**
+     * Checks if the input file has exit rotation
+     * If that's the case, converts to rotated image without exif rotation
+     */
+    private static Optional<SeekableSource> convertExifRotatedIf(SeekableSource source) throws IOException, TaskIOException {
+        int degrees = ExifHelper.getRotationBasedOnExifOrientation(source.asNewInputStream());
+        
+        BufferedImage image = ImageIO.read(source.asNewInputStream());
+        Scalr.Rotation rotation = toScalrRotation(degrees);
+        if(rotation != null) {
+            BufferedImage result = Scalr.rotate(image, rotation);
+
+            File tmpFile = IOUtils.createTemporaryBuffer();
+            ImageIO.write(result, getImageIOSaveFormat(source), tmpFile);
+            return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
+            
+        } else {
+            return Optional.empty();    
+        }
+    }
+    
+    private static String getImageIOSaveFormat(SeekableSource source) {
+        FileType fileType = getFileType(source);
+        if(fileType == FileType.JPEG) {
+            return "jpg";
+        }
+        
+        return "png";
+    }
+    
+    private static Scalr.Rotation toScalrRotation(int degrees) {
+        if(degrees == 90) {
+            return Scalr.Rotation.CW_90;
+        }
+        
+        if(degrees == 180) {
+            return Scalr.Rotation.CW_180;
+        }
+
+        if(degrees == 270) {
+            return Scalr.Rotation.CW_270;
+        }
+        
+        return null;
     }
 
     /**

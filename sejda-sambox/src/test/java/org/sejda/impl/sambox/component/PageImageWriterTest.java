@@ -114,4 +114,12 @@ public class PageImageWriterTest {
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(103));
     }
+
+    @Test
+    public void testExifRotated() throws TaskIOException, IOException {
+
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/with_exif_orientation.JPG"));
+        assertThat(result.getHeight(), is(3264));
+        assertThat(result.getWidth(), is(2448));
+    }
 }

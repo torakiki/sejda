@@ -1,4 +1,4 @@
-package org.sejda.impl.sambox.component.image;
+package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
 

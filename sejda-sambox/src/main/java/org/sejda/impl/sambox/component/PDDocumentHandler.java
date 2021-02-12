@@ -234,6 +234,11 @@ public class PDDocumentHandler implements Closeable {
         FontUtils.clearLoadedFontCache(document);
     }
 
+    // convenience method
+    public void savePDDocument(File file) throws TaskException {
+        savePDDocument(file, null, NoEncryptionAtRest.INSTANCE);
+    }
+
     /**
      * Saves the underlying {@link PDDocument} to the given file.
      *

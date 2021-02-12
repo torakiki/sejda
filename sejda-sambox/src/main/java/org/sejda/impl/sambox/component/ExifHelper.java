@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component.image;
+package org.sejda.impl.sambox.component;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
@@ -27,6 +27,8 @@ import org.sejda.model.input.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+
 /**
  * Reads exif orientation of an image and determines if the image should be rotated or not.
  * <p>
@@ -36,10 +38,18 @@ public class ExifHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExifHelper.class);
 
+    public static int getRotationBasedOnExifOrientation(InputStream inputStream) {
+        try {
+            int orientation = readExifOrientation(ImageMetadataReader.readMetadata(inputStream));
+            return getRotation(orientation);
+        } catch (Throwable e) {
+            return 0;
+        }
+    }
+
     public static int getRotationBasedOnExifOrientation(Source<?> source) {
         try {
-            int orientation = readExifOrientation(ImageMetadataReader.readMetadata(source.getSeekableSource().asNewInputStream()));
-            return getRotation(orientation);
+            return getRotationBasedOnExifOrientation(source.getSeekableSource().asNewInputStream());
         } catch (Throwable e) {
             return 0;
         }
