@@ -22,12 +22,12 @@ package org.sejda.model.parameter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Parameter class for the set metadata manipulation.
@@ -40,6 +40,7 @@ public final class SetMetadataParameters extends SinglePdfSourceSingleOutputPara
 
     @NotEmpty
     private final Map<String, String> metadata = new HashMap<String, String>();
+    private final Set<String> toRemove = new NullSafeSet<>();
 
     public Map<String, String> getMetadata() {
         return metadata;
@@ -52,10 +53,22 @@ public final class SetMetadataParameters extends SinglePdfSourceSingleOutputPara
     public void put(String key, String metadata) {
         this.metadata.put(key, metadata);
     }
+    
+    public void addFieldToRemove(String fieldName) {
+        toRemove.add(fieldName);
+    }
+
+    public void addFieldsToRemove(Collection<String> fieldNames) {
+        toRemove.addAll(fieldNames);
+    }
+
+    public Set<String> getToRemove() {
+        return toRemove;
+    }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(toRemove).toHashCode();
     }
 
     @Override
@@ -68,6 +81,7 @@ public final class SetMetadataParameters extends SinglePdfSourceSingleOutputPara
         }
         SetMetadataParameters parameter = (SetMetadataParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata, parameter.metadata)
+                .append(toRemove, parameter.toRemove)
                 .isEquals();
     }
 }

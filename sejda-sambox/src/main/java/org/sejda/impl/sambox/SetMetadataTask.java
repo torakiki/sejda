@@ -85,6 +85,11 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                     LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
                     actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
                 }
+
+                for (String keyToRemove : parameters.getToRemove()) {
+                    LOG.trace("Removing '{}'", keyToRemove);
+                    actualMeta.removeMetadataField(keyToRemove);
+                }
             }
         });
 

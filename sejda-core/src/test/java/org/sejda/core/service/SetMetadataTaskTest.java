@@ -32,8 +32,10 @@ import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.util.DateConverter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test unit for the set metadata task
@@ -70,6 +72,22 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
     public void testExecuteEncrypted() throws IOException {
         setUpParams(stronglyEncryptedInput());
         doExecute();
+    }
+
+    @Test
+    public void removingField() throws IOException {
+        SetMetadataParameters parameters = new SetMetadataParameters();
+        parameters.addFieldsToRemove(Arrays.asList("Creator", "Author", "RandomStringThatDoesNotExist"));
+        parameters.setSource(shortInput());
+        
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        
+        PDDocument document = testContext.assertTaskCompleted();
+        PDDocumentInformation info = document.getDocumentInformation();
+        assertNull(info.getAuthor());
+        assertNull(info.getCreator());
     }
 
     private void doExecute() throws IOException {
