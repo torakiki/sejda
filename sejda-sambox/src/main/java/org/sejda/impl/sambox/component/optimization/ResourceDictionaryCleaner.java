@@ -18,10 +18,11 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
@@ -35,10 +36,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component that walks through the page tree, finds resource dictionaries and removes any image xobject (type xobject, subtype image) that is not wrapped by a
- * {@link ReadOnlyFilteredCOSStream} and any font that is not wrapped by a {@link InUseFontDictionary}. This is the step performed after pages content stream have been already
- * parsed, all used image wrapped by a {@link ReadOnlyFilteredCOSStream} and all used fonts wrapped by a {@link InUseFontDictionary} and placed back to the resource dictionary.
- * This is done in two steps because dictionaries can be shared/inherited by pages so we can't take a single page, identify used images and remove the remaining because that same
- * resource dictionary can be used by other pages.
+ * {@link ReadOnlyFilteredCOSStream} and any font or extgstate that is not wrapped by a {@link InUseDictionary}. This is the step performed after pages content streams have been
+ * already parsed, every used image wrapped by a {@link ReadOnlyFilteredCOSStream} and every used fonts or extgstete wrapped by a {@link InUseDictionary} and placed back to the
+ * resources dictionary. This is done in two steps because dictionaries can be shared/inherited by pages so we can't take a single page, identify used images and remove the
+ * remaining because that same resource dictionary can be used by other pages.
  * 
  * @author Andrea Vacondio
  *
@@ -60,7 +61,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     private void clean(Stream<COSDictionary> nodes) {
         // clean all the resource dictionaries found at any level in the page tree
         Set<COSDictionary> resources = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
-                .filter(Objects::nonNull).collect(Collectors.toSet());
+                .filter(Objects::nonNull).collect(toSet());
         cleanResources(resources);
         // clean all the resource dictionaries found in any xobject form
         Set<COSDictionary> formsResources = resources.stream()
@@ -69,7 +70,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                 .map(d -> (COSDictionary) d.getCOSObject())
                 .filter(d -> COSName.FORM.equals(d.getCOSName(COSName.SUBTYPE)))
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .collect(toSet());
         cleanResources(formsResources);
     }
 
@@ -78,6 +79,8 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                 .filter(Objects::nonNull));
         cleanFonts(resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
                 .filter(Objects::nonNull));
+        cleanGraphicStates(resources.stream().map(d -> d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
+                .filter(Objects::nonNull));
     }
 
     private void cleanXObject(Stream<COSDictionary> xobjects) {
@@ -85,7 +88,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
                     .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(e -> e.getKey())
-                    .collect(Collectors.toSet());
+                    .collect(toSet());
             LOG.trace("Removing {} xobjects from {}", toRemove.size(), x);
             toRemove.stream().forEach(x::removeItem);
         });
@@ -94,10 +97,20 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     private void cleanFonts(Stream<COSDictionary> fonts) {
         fonts.forEach(f -> {
             Set<COSName> toRemove = f.entrySet().stream()
-                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseFontDictionary)).map(e -> e.getKey())
-                    .collect(Collectors.toSet());
+                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(e -> e.getKey())
+                    .collect(toSet());
             LOG.trace("Removing {} fonts from {}", toRemove.size(), f);
             toRemove.stream().forEach(f::removeItem);
+        });
+    }
+
+    private void cleanGraphicStates(Stream<COSDictionary> states) {
+        states.forEach(s -> {
+            Set<COSName> toRemove = s.entrySet().stream()
+                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(e -> e.getKey())
+                    .collect(toSet());
+            LOG.trace("Removing {} graphic states from {}", toRemove.size(), s);
+            toRemove.stream().forEach(s::removeItem);
         });
     }
 }

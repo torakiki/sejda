@@ -19,6 +19,8 @@
 package org.sejda.impl.sambox.component.optimization;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -79,7 +81,7 @@ public class ResourcesHitterTest {
             List<PDAppearanceDictionary> appearence = page.getAnnotations().stream()
                     .filter(a -> a.getSubtype().equals("Text")).map(a -> a.getAppearance())
                     .collect(Collectors.toList());
-            assertTrue(appearence.size() == 1);
+            assertEquals(1, appearence.size());
             COSDictionary normalAppRes = appearence.get(0).getNormalAppearance().getAppearanceStream().getResources()
                     .getCOSObject();
             assertTrue("Hitter should discover images in appearance streams resource dictionarlies",
@@ -112,7 +114,7 @@ public class ResourcesHitterTest {
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
             assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.FONT))
-                    .getDictionaryObject(COSName.getPDFName("A")).getCOSObject() instanceof InUseFontDictionary);
+                    .getDictionaryObject(COSName.getPDFName("A")).getCOSObject() instanceof InUseDictionary);
         }
     }
 
@@ -130,14 +132,32 @@ public class ResourcesHitterTest {
                 getClass().getClassLoader().getResourceAsStream("pdf/multiple_res_dic_sharing_same_font.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page0 = document.getPage(0);
-            InUseFontDictionary page0Font = page0.getResources().getCOSObject()
+            InUseDictionary page0Font = page0.getResources().getCOSObject()
                     .getDictionaryObject(COSName.FONT, COSDictionary.class)
-                    .getDictionaryObject(COSName.getPDFName("F1"), InUseFontDictionary.class);
+                    .getDictionaryObject(COSName.getPDFName("F1"), InUseDictionary.class);
             PDPage page1 = document.getPage(1);
-            InUseFontDictionary page1Font = page1.getResources().getCOSObject()
+            InUseDictionary page1Font = page1.getResources().getCOSObject()
                     .getDictionaryObject(COSName.FONT, COSDictionary.class)
-                    .getDictionaryObject(COSName.getPDFName("F1"), InUseFontDictionary.class);
+                    .getDictionaryObject(COSName.getPDFName("F1"), InUseDictionary.class);
             assertEquals(page0Font, page1Font);
+        }
+    }
+
+    @Test
+    public void unusedExtgstateAreNotHit() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_pages_res_unused_extgstate.pdf")))) {
+            document.getPages().forEach(victim::accept);
+            PDPage page0 = document.getPage(0);
+
+            assertNotNull("Hitter should hit used extgstate",
+                    page0.getResources().getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("gs2"), InUseDictionary.class));
+
+            assertNull("Hitter should not hit unused extgstate",
+                    page0.getResources().getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("gs1"), InUseDictionary.class));
+
         }
     }
 

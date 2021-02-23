@@ -21,12 +21,12 @@ package org.sejda.impl.sambox.component.optimization;
 import org.sejda.sambox.cos.COSDictionary;
 
 /**
- * Simple {@link COSDictionary} wrapper used to identify a font dictionary that is used in the page content stream
+ * Simple {@link COSDictionary} wrapper used to identify a dictionary that is used in the page content stream
  * 
  * @author Andrea Vacondio
  */
-public class InUseFontDictionary extends COSDictionary {
-    public InUseFontDictionary(COSDictionary wrapped) {
+public class InUseDictionary extends COSDictionary {
+    public InUseDictionary(COSDictionary wrapped) {
         super(wrapped);
     }
 }

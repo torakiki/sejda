@@ -19,6 +19,10 @@
 package org.sejda.impl.sambox.component.optimization;
 
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.require;
+import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
+import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_SIZE;
+import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -26,7 +30,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,8 +54,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component that parses the page content steam and the page annotations appearance stream, wraps any image xobject (type xobject, subtype image) found in an instance of
- * {@link ReadOnlyFilteredCOSStream}, every font in an instance of {@link InUseFontDictionary} and puts them back into the resource dictionary. It's later easy to identify xobjects
- * and fonts in use by the page/s and what can be discarded.
+ * {@link ReadOnlyFilteredCOSStream}, every font and every extended graphic state in an instance of {@link InUseDictionary} and puts them back into the resource dictionary. It's
+ * later easy to identify xobjects, fonts and extgstate in use by the page/s and what can be discarded.
  * 
  * @author Andrea Vacondio
  *
@@ -64,6 +67,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
     public ResourcesHitter() {
         addOperator(new XObjectHitterOperator());
         addOperator(new FontsHitterOperator());
+        addOperator(new SetGraphicState());
     }
 
     public static class XObjectHitterOperator extends OperatorProcessor {
@@ -77,8 +81,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
                 COSName objectName = (COSName) operand;
                 Optional<COSDictionary> xobjects = ofNullable(getContext().getResources())
-                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
-                        .filter(Objects::nonNull);
+                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class));
 
                 COSBase existing = xobjects.map(d -> d.getDictionaryObject(objectName))
                         .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
@@ -106,20 +109,20 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
         @Override
         public String getName() {
-            return "Do";
+            return DRAW_OBJECT;
         }
     }
 
     /**
-     * Tf operator that wraps a font dictionary with an {@link InUseFontDictionary} and puts it back to the resource dictionary so that we can later identify fonts that are
-     * actually used
+     * Tf operator that wraps a font dictionary with an {@link InUseDictionary} and puts it back to the resource dictionary so that we can later identify fonts that are actually
+     * used
      * 
      * @author Andrea Vacondio
      *
      */
     public static class FontsHitterOperator extends OperatorProcessor {
 
-        private final Map<IndirectCOSObjectIdentifier, InUseFontDictionary> hitFontsById = new HashMap<>();
+        private final Map<IndirectCOSObjectIdentifier, InUseDictionary> hitFontsById = new HashMap<>();
 
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
@@ -130,29 +133,28 @@ public class ResourcesHitter extends ContentStreamProcessor {
             if (operand instanceof COSName) {
                 COSName fontName = (COSName) operand;
                 Optional<COSDictionary> fonts = ofNullable(getContext().getResources())
-                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class))
-                        .filter(Objects::nonNull);
+                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class));
 
                 COSDictionary fontDictionary = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
                         .orElseThrow(() -> new MissingResourceException(
                                 "Font resource '" + fontName.getName() + "' missing or unexpected type"));
 
-                if (!(fontDictionary instanceof InUseFontDictionary)) {
+                if (!(fontDictionary instanceof InUseDictionary)) {
 
                     // we wrap the existing so we can identify it later as "in use" and already processed
                     if (fontDictionary.hasId()) {
-                        LOG.trace("Hit font with name {} id {}", fontName.getName(), fontDictionary.id().toString());
-                        // we wrap reuse the InUseFont if we hit it before
+                        LOG.trace("Hit font with name {} id {}", fontName.getName(), fontDictionary.id());
+                        // we wrap reuse the InUseDictionary if we hit it before
                         fonts.get().setItem(fontName,
                                 ofNullable(hitFontsById.get(fontDictionary.id())).orElseGet(() -> {
-                                    InUseFontDictionary font = new InUseFontDictionary(fontDictionary);
+                                    InUseDictionary font = new InUseDictionary(fontDictionary);
                                     hitFontsById.put(fontDictionary.id(), font);
                                     return font;
                                 }));
                     } else {
                         // not even sure we can have a font that's not an indirect ref (so without id), anyway better safe then sorry
                         LOG.trace("Hit font with name {}", fontName.getName());
-                        fonts.get().setItem(fontName, new InUseFontDictionary(fontDictionary));
+                        fonts.get().setItem(fontName, new InUseDictionary(fontDictionary));
                     }
 
                     // type 3 fonts glyphs are content stream and they may refer to named resource.
@@ -179,7 +181,57 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
         @Override
         public String getName() {
-            return "Tf";
+            return SET_FONT_AND_SIZE;
+        }
+    }
+
+    /**
+     * 
+     * @author Andrea Vacondio
+     *
+     */
+    public static class SetGraphicState extends OperatorProcessor {
+        // reuse the same dictionary in case the same indirect ref is used in two resource dictionaries in the original document
+        private final Map<IndirectCOSObjectIdentifier, InUseDictionary> hitGSById = new HashMap<>();
+
+        @Override
+        public void process(Operator operator, List<COSBase> operands) throws IOException {
+
+            require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
+            COSBase operand = operands.get(0);
+            if (operand instanceof COSName) {
+                COSName gsName = (COSName) operand;
+
+                Optional<COSDictionary> states = ofNullable(getContext().getResources())
+                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class));
+
+                COSDictionary gsDictionary = states.map(d -> d.getDictionaryObject(gsName, COSDictionary.class))
+                        .orElseThrow(() -> new MissingResourceException(
+                                "Graphic state resource '" + gsName.getName() + "' missing or unexpected type"));
+
+                if (!(gsDictionary instanceof InUseDictionary)) {
+                    // we wrap the existing so we can identify it later as "in use" and already processed
+                    if (gsDictionary.hasId()) {
+                        LOG.trace("Hit ExtGState with name {} id {}", gsName.getName(), gsDictionary.id());
+                        // we wrap reuse the InUseFont if we hit it before
+                        states.get().setItem(gsName, ofNullable(hitGSById.get(gsDictionary.id())).orElseGet(() -> {
+                            InUseDictionary gs = new InUseDictionary(gsDictionary);
+                            hitGSById.put(gsDictionary.id(), gs);
+                            return gs;
+                        }));
+                    } else {
+                        // not an indirect ref (so without id)
+                        LOG.trace("Hit ExtGState with name {}", gsName.getName());
+                        states.get().setItem(gsName, new InUseDictionary(gsDictionary));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public String getName() {
+            return SET_GRAPHICS_STATE_PARAMS;
         }
     }
 }

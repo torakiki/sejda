@@ -63,6 +63,14 @@ public class OptimizationRulerTest {
     }
 
     @Test
+    public void sharedResourceWithExtGStateDictionary() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
+                .getClassLoader().getResourceAsStream("pdf/shared_pages_res_extgstate_smasks_own_res.pdf")))) {
+            assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
+        }
+    }
+
+    @Test
     public void sharedXobjectsDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_xobjects_dics.pdf")))) {
@@ -75,6 +83,14 @@ public class OptimizationRulerTest {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_fonts_dics.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
+        }
+    }
+
+    @Test
+    public void notSharedResources() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/resources_not_shared.pdf")))) {
+            assertFalse(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
 }
