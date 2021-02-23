@@ -18,13 +18,15 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.sejda.TestUtils.encryptedAtRest;
 import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
 import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
 
-import java.io.*;
+import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -42,8 +44,8 @@ public class PageImageWriterTest {
         assertThat(result.getHeight(), is(3840));
         assertThat(result.getWidth(), is(5760));
 
-        assertTrue("Original bytes should be used",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/large.jpg").getSource()));
+        assertTrue("Original bytes should be used", IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                customNonPdfInput("image/large.jpg").getSource()));
     }
 
     @Test
@@ -69,7 +71,8 @@ public class PageImageWriterTest {
         assertThat(result.getWidth(), is(1400));
 
         assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/cmyk.jpg").getSource()));
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("image/cmyk.jpg").getSource()));
     }
 
     @Test
@@ -80,7 +83,8 @@ public class PageImageWriterTest {
         assertThat(result.getWidth(), is(1400));
 
         assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/cmyk.jpg").getSource()));
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("image/cmyk.jpg").getSource()));
     }
 
     @Test
@@ -89,7 +93,8 @@ public class PageImageWriterTest {
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
 
         assertFalse("Original bytes should not be used; the image should be converted from ICC Gray to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(), customNonPdfInput("image/icc_profile_gray.png").getSource()));
+                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("image/icc_profile_gray.png").getSource()));
     }
 
     @Test
@@ -99,18 +104,15 @@ public class PageImageWriterTest {
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(3840));
 
-        assertTrue("Decrypted bytes should be used",
-                IOUtils.contentEquals(
-                        result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/large.jpg").getSource()
-                )
-        );
+        assertTrue("Decrypted bytes should be used", IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                customNonPdfInput("image/large.jpg").getSource()));
     }
 
     @Test
     public void encryptedAtRestTest_file() throws TaskIOException, IOException {
 
-        PDImageXObject result = PageImageWriter.toPDXImageObject(encryptedAtRest(customNonPdfInputAsFileSource("image/draft.png")));
+        PDImageXObject result = PageImageWriter
+                .toPDXImageObject(encryptedAtRest(customNonPdfInputAsFileSource("image/draft.png")));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(103));
     }

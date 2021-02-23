@@ -93,8 +93,9 @@ public class PageImageWriter {
             PDPageContentStream.AppendMode mode, PDExtendedGraphicsState gs, boolean resetContext, int rotation)
             throws TaskIOException {
         try (PDPageContentStream contentStream = new PDPageContentStream(document, page, mode, true, resetContext)) {
-            AffineTransform at = new AffineTransform(width, 0, 0, height, (float) position.getX(), (float) position.getY());
-            if(rotation != 0) {
+            AffineTransform at = new AffineTransform(width, 0, 0, height, (float) position.getX(),
+                    (float) position.getY());
+            if (rotation != 0) {
                 at.rotate(Math.toRadians(rotation));
             }
 
@@ -112,25 +113,27 @@ public class PageImageWriter {
         try {
             return createFromSeekableSource(source.getSeekableSource(), source.getName());
         } catch (Exception e) {
-            throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + source.getName(), e);
+            throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + source.getName(),
+                    e);
         }
     }
 
-    public static PDImageXObject createFromSeekableSource(SeekableSource original, String name) throws TaskIOException, IOException {
+    public static PDImageXObject createFromSeekableSource(SeekableSource original, String name)
+            throws TaskIOException, IOException {
         SeekableSource source = original;
 
         Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source);
-        if(maybeConvertedFile.isPresent()) {
+        if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
-        
+
         maybeConvertedFile = convertCMYKJpegIf(source);
-        if(maybeConvertedFile.isPresent()) {
+        if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
 
         maybeConvertedFile = convertICCGrayPngIf(source);
-        if(maybeConvertedFile.isPresent()) {
+        if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
 
@@ -167,7 +170,8 @@ public class PageImageWriter {
         }
     }
 
-    public static SeekableSource convertImageTo(SeekableSource source, String format) throws IOException, TaskIOException {
+    public static SeekableSource convertImageTo(SeekableSource source, String format)
+            throws IOException, TaskIOException {
         BufferedImage image = ImageIO.read(source.asNewInputStream());
         File tmpFile = IOUtils.createTemporaryBuffer("." + format);
         ImageOutputStream outputStream = new FileImageOutputStream(tmpFile);
@@ -189,56 +193,55 @@ public class PageImageWriter {
     }
 
     /**
-     * Checks if the input file has exit rotation
-     * If that's the case, converts to rotated image without exif rotation
+     * Checks if the input file has exit rotation If that's the case, converts to rotated image without exif rotation
      */
-    private static Optional<SeekableSource> convertExifRotatedIf(SeekableSource source) throws IOException, TaskIOException {
+    private static Optional<SeekableSource> convertExifRotatedIf(SeekableSource source)
+            throws IOException, TaskIOException {
         int degrees = ExifHelper.getRotationBasedOnExifOrientation(source.asNewInputStream());
-        
+
         BufferedImage image = ImageIO.read(source.asNewInputStream());
         Scalr.Rotation rotation = toScalrRotation(degrees);
-        if(rotation != null) {
+        if (rotation != null) {
             BufferedImage result = Scalr.rotate(image, rotation);
 
             File tmpFile = IOUtils.createTemporaryBuffer();
             ImageIO.write(result, getImageIOSaveFormat(source), tmpFile);
             return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
-            
-        } else {
-            return Optional.empty();    
+
         }
+        return Optional.empty();
     }
-    
+
     private static String getImageIOSaveFormat(SeekableSource source) {
         FileType fileType = getFileType(source);
-        if(fileType == FileType.JPEG) {
+        if (fileType == FileType.JPEG) {
             return "jpg";
         }
-        
+
         return "png";
     }
-    
+
     private static Scalr.Rotation toScalrRotation(int degrees) {
-        if(degrees == 90) {
+        if (degrees == 90) {
             return Scalr.Rotation.CW_90;
         }
-        
-        if(degrees == 180) {
+
+        if (degrees == 180) {
             return Scalr.Rotation.CW_180;
         }
 
-        if(degrees == 270) {
+        if (degrees == 270) {
             return Scalr.Rotation.CW_270;
         }
-        
+
         return null;
     }
 
     /**
-     * Checks if the input file is a JPEG using CMYK
-     * If that's the case, converts to RGB and returns the file path
+     * Checks if the input file is a JPEG using CMYK If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<SeekableSource> convertCMYKJpegIf(SeekableSource source) throws IOException, TaskIOException {
+    private static Optional<SeekableSource> convertCMYKJpegIf(SeekableSource source)
+            throws IOException, TaskIOException {
         try {
             if (FileType.JPEG.equals(getFileType(source))) {
                 try (ImageInputStream iis = ImageIO.createImageInputStream(source.asNewInputStream())) {
@@ -247,7 +250,7 @@ public class PageImageWriter {
                     try {
                         ImageIO.setUseCache(false);
                         reader.setInput(iis);
-                        for (Iterator<ImageTypeSpecifier> it = reader.getImageTypes(0); it.hasNext(); ) {
+                        for (Iterator<ImageTypeSpecifier> it = reader.getImageTypes(0); it.hasNext();) {
                             ImageTypeSpecifier typeSpecifier = it.next();
                             if (typeSpecifier.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_CMYK) {
                                 isCmyk = true;
@@ -270,7 +273,7 @@ public class PageImageWriter {
                 }
             }
         } catch (IIOException e) {
-            if(e.getMessage().startsWith("Not a JPEG stream")) {
+            if (e.getMessage().startsWith("Not a JPEG stream")) {
                 // this was a different image format with a JPEG extension
             } else {
                 throw e;
@@ -281,10 +284,10 @@ public class PageImageWriter {
     }
 
     /**
-     * Checks if the input file is a PNG using ICC Gray color model
-     * If that's the case, converts to RGB and returns the file path
+     * Checks if the input file is a PNG using ICC Gray color model If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<SeekableSource> convertICCGrayPngIf(SeekableSource source) throws IOException, TaskIOException {
+    private static Optional<SeekableSource> convertICCGrayPngIf(SeekableSource source)
+            throws IOException, TaskIOException {
         try {
             if (FileType.PNG.equals(getFileType(source))) {
                 try (ImageInputStream iis = ImageIO.createImageInputStream(source.asNewInputStream())) {
@@ -293,10 +296,11 @@ public class PageImageWriter {
                     try {
                         ImageIO.setUseCache(false);
                         reader.setInput(iis);
-                        for (Iterator<ImageTypeSpecifier> it = reader.getImageTypes(0); it.hasNext(); ) {
+                        for (Iterator<ImageTypeSpecifier> it = reader.getImageTypes(0); it.hasNext();) {
                             ImageTypeSpecifier typeSpecifier = it.next();
                             ColorSpace colorSpace = typeSpecifier.getColorModel().getColorSpace();
-                            if (colorSpace instanceof ICC_ColorSpace && ((ICC_ColorSpace) colorSpace).getProfile() instanceof ICC_ProfileGray) {
+                            if (colorSpace instanceof ICC_ColorSpace
+                                    && ((ICC_ColorSpace) colorSpace).getProfile() instanceof ICC_ProfileGray) {
                                 isICCGray = true;
                                 break;
                             }

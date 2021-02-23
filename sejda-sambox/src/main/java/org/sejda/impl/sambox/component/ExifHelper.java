@@ -18,16 +18,15 @@
  */
 package org.sejda.impl.sambox.component;
 
+import java.io.InputStream;
+
+import org.sejda.model.input.Source;
+
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
-import org.sejda.model.input.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.InputStream;
 
 /**
  * Reads exif orientation of an image and determines if the image should be rotated or not.
@@ -35,8 +34,6 @@ import java.io.InputStream;
  * Based on https://stackoverflow.com/questions/5905868/how-to-rotate-jpeg-images-based-on-the-orientation-metadata
  */
 public class ExifHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ExifHelper.class);
 
     public static int getRotationBasedOnExifOrientation(InputStream inputStream) {
         try {

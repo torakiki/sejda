@@ -19,9 +19,10 @@
 package org.sejda.core.support.util;
 
 public class RuntimeUtils {
-    
-    private RuntimeUtils(){};
-    
+
+    private RuntimeUtils() {
+    }
+
     public static int getPercentageMemoryUsed() {
         long usedMemory = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
         long maxMemory = Runtime.getRuntime().maxMemory();

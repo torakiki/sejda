@@ -21,6 +21,7 @@
 package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.sejda.core.support.io.IOUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 
 /**
@@ -31,7 +32,7 @@ class TextPrefixProcessor implements PrefixProcessor {
 
     @Override
     public String process(String inputPrefix, NameGenerationRequest request) {
-        return StringUtils.replace(inputPrefix, "[TEXT]", PrefixUtils.toStrictFilename(request.getText()));
+        return StringUtils.replace(inputPrefix, "[TEXT]", IOUtils.toStrictFilename(request.getText()));
     }
 
 }
