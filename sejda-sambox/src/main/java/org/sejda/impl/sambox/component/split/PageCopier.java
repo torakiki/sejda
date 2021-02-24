@@ -22,8 +22,9 @@ import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.function.Consumer;
 
+import org.sejda.impl.sambox.component.optimization.NameResourcesDuplicator;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.sambox.cos.COSArray;
@@ -33,7 +34,6 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +47,8 @@ class PageCopier {
     private static final Logger LOG = LoggerFactory.getLogger(PageCopier.class);
 
     private boolean optimize;
-    private ResourcesHitter hitter = new ResourcesHitter();
-    private ResourceDictionaryCleaner cleaner = new ResourceDictionaryCleaner();
+    private Consumer<PDPage> hitAndClean = new NameResourcesDuplicator().andThen(new ResourcesHitter())
+            .andThen(new ResourceDictionaryCleaner()::clean);
 
     public PageCopier(boolean optimize) {
         this.optimize = optimize;
@@ -84,18 +84,7 @@ class PageCopier {
         }
 
         if (optimize) {
-            // each page must have it's own resource dic and it's own xobject and font name dic
-            // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
-            COSDictionary resources = ofNullable(copy.getResources().getCOSObject()).map(COSDictionary::duplicate)
-                    .orElseGet(COSDictionary::new);
-            // resources are cached in the PDPage so make sure they are replaced
-            copy.setResources(new PDResources(resources));
-            ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
-                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
-            ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).filter(Objects::nonNull)
-                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.FONT, d));
-            hitter.accept(copy);
-            cleaner.clean(copy);
+            hitAndClean.accept(copy);
         }
         duplicatePageStreams(page, copy);
         copy.sanitizeDictionary();

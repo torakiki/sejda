@@ -24,10 +24,11 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.sejda.commons.LookupTable;
+import org.sejda.impl.sambox.component.optimization.NameResourcesDuplicator;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
@@ -36,11 +37,8 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
-import org.sejda.sambox.cos.COSDictionary;
-import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
@@ -106,20 +104,8 @@ public class PagesExtractor implements Closeable {
 
     public void optimize() {
         LOG.trace("Optimizing document");
-        ResourcesHitter hitter = new ResourcesHitter();
-        pagesLookup.values().forEach(p -> {
-            // each page must have it's own resource dic and it's own xobject and font name dic
-            // so we don't optimize shared resource dic or xobjects/fonts name dictionaries
-            COSDictionary resources = ofNullable(p.getResources().getCOSObject()).map(COSDictionary::duplicate)
-                    .orElseGet(COSDictionary::new);
-            // resources are cached in the PDPage so make sure they are replaced
-            p.setResources(new PDResources(resources));
-            ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
-                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
-            ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).filter(Objects::nonNull)
-                    .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.FONT, d));
-            hitter.accept(p);
-        });
+        Consumer<PDPage> hitter = new NameResourcesDuplicator().andThen(new ResourcesHitter());
+        pagesLookup.values().forEach(hitter::accept);
         new ResourceDictionaryCleaner().accept(destinationDocument.getUnderlyingPDDocument());
     }
 
