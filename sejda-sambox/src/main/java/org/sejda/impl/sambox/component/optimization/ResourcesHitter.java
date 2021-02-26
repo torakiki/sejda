@@ -185,11 +185,6 @@ public class ResourcesHitter extends ContentStreamProcessor {
         }
     }
 
-    /**
-     * 
-     * @author Andrea Vacondio
-     *
-     */
     public static class SetGraphicState extends OperatorProcessor {
         // reuse the same dictionary in case the same indirect ref is used in two resource dictionaries in the original document
         private final Map<IndirectCOSObjectIdentifier, InUseDictionary> hitGSById = new HashMap<>();
@@ -224,6 +219,21 @@ public class ResourcesHitter extends ContentStreamProcessor {
                         // not an indirect ref (so without id)
                         LOG.trace("Hit ExtGState with name {}", gsName.getName());
                         states.get().setItem(gsName, new InUseDictionary(gsDictionary));
+                    }
+
+                    // ExtGState can contain a softmask dictionary in the form of a transparency group XObject. If present we process its stream to hit used resources
+                    Optional<COSStream> softMask = ofNullable(
+                            gsDictionary.getDictionaryObject(COSName.SMASK, COSDictionary.class))
+                                    .map(d -> d.getDictionaryObject(COSName.G, COSStream.class))
+                                    .filter(s -> COSName.FORM.getName().equals(s.getNameAsString(COSName.SUBTYPE)));
+                    if (softMask.isPresent()) {
+                        PDXObject xobject = PDXObject.createXObject(softMask.get(), getContext().getResources());
+                        // should always be transparency
+                        if (xobject instanceof PDTransparencyGroup) {
+                            getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
+                        } else if (xobject instanceof PDFormXObject) {
+                            getContext().showForm((PDFormXObject) xobject);
+                        }
                     }
                 }
             }

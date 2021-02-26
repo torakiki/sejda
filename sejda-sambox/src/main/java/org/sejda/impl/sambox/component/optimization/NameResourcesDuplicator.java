@@ -30,7 +30,11 @@ import org.sejda.sambox.pdmodel.PDResources;
 /**
  * Component that duplicates parts of the page resource dictionary that are relevant for the hit and clean process. The idea is that we want to hit and clean a resource dictionary
  * that is relevant only for the given page, and not potentially shared with other pages (e.g. if page is a copy we don't want to clean the resource dictionary of the original
- * page)
+ * page).
+ * 
+ * I'm not sure this is needed. Resource dictionaries may come from other places (XForm, ExtGState softmasks..) so we are already hitting/cleaning shared resource dictionaries. The
+ * reason why the whole hit/clean process works is because the ExistingIndirectCOSObject holding the resources is unloaded from the LazyIndirectObjectsProvider once the file is
+ * written, this way the next cycle reloads the resources getting a brand new resource dictionary, untouched by the previous hit/clean process.
  * 
  * @author Andrea Vacondio
  *

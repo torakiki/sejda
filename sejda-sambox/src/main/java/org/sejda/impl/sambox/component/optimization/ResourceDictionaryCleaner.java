@@ -20,9 +20,11 @@ package org.sejda.impl.sambox.component.optimization;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
@@ -51,66 +53,70 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
     @Override
     public void accept(PDDocument p) {
         LOG.debug("Cleaning resource dictionaries from unused resources");
-        clean(p.getPages().streamNodes());
+        clean(() -> p.getPages().streamNodes());
     }
 
     public void clean(PDPage page) {
-        clean(Stream.of(page.getCOSObject()));
+        clean(() -> Stream.of(page.getCOSObject()));
     }
 
-    private void clean(Stream<COSDictionary> nodes) {
-        // clean all the resource dictionaries found at any level in the page tree
-        Set<COSDictionary> resources = nodes.map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
-                .filter(Objects::nonNull).collect(toSet());
-        cleanResources(resources);
-        // clean all the resource dictionaries found in any xobject form
-        Set<COSDictionary> formsResources = resources.stream()
+    private void clean(Supplier<Stream<COSDictionary>> nodes) {
+        // all the resource dictionaries found at any level in the page tree
+        // PAGETREE -> Resources
+        Supplier<Stream<COSDictionary>> resources = () -> nodes.get()
+                .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull);
+
+        // all the resource dictionaries found in any xobject form
+        // PAGETREE -> Resources -> XObject (Form) -> Resources
+        Stream<COSDictionary> formsResources = resources.get()
                 .map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).filter(Objects::nonNull)
                 .flatMap(d -> d.getValues().stream()).filter(d -> d.getCOSObject() instanceof COSDictionary)
                 .map(d -> (COSDictionary) d.getCOSObject())
                 .filter(d -> COSName.FORM.equals(d.getCOSName(COSName.SUBTYPE)))
-                .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
-                .collect(toSet());
-        cleanResources(formsResources);
+                .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull);
+
+        // all the resource dictionaries found in any softmask dictionary stored in any ExtGState (ref. ISO 32000-2:2017 chap. 11.6.5.1 Soft-mask dictionaries)
+        // PAGETREE -> Resources -> ExtGState -> SMask -> G -> Resources
+        Stream<COSDictionary> softmaskResources = resources.get()
+                .map(d -> d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class)).filter(Objects::nonNull)
+                .flatMap(d -> d.getValues().stream()).filter(d -> d.getCOSObject() instanceof COSDictionary)
+                .map(d -> ((COSDictionary) d.getCOSObject()).getDictionaryObject(COSName.SMASK, COSDictionary.class))
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.G, COSDictionary.class))
+                .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
+                .filter(Objects::nonNull);
+
+        // NOTE: we currently don't clean type3 fonts resources. We hit them so we shouldn't have data loss in case of shared resource dictionaries but we don't clean them atm
+        cleanResources(Stream.of(resources.get(), formsResources, softmaskResources).flatMap(s -> s).collect(toSet()));
     }
 
     private void cleanResources(Set<COSDictionary> resources) {
+        LOG.trace("Found {} distinct resource dictionaries to clean", resources.size());
         cleanXObject(resources.stream().map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                 .filter(Objects::nonNull));
-        cleanFonts(resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
-                .filter(Objects::nonNull));
-        cleanGraphicStates(resources.stream().map(d -> d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
-                .filter(Objects::nonNull));
+        cleanUnused(resources.stream().map(d -> d.getDictionaryObject(COSName.FONT, COSDictionary.class))
+                .filter(Objects::nonNull), COSName.FONT);
+        cleanUnused(resources.stream().map(d -> d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
+                .filter(Objects::nonNull), COSName.EXT_G_STATE);
     }
 
     private void cleanXObject(Stream<COSDictionary> xobjects) {
         xobjects.forEach(x -> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
-                    .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(e -> e.getKey())
-                    .collect(toSet());
-            LOG.trace("Removing {} xobjects from {}", toRemove.size(), x);
+                    .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(Entry::getKey).collect(toSet());
+            LOG.trace("Removing {} unused {}", toRemove.size(), COSName.XOBJECT.getName());
             toRemove.stream().forEach(x::removeItem);
         });
     }
 
-    private void cleanFonts(Stream<COSDictionary> fonts) {
-        fonts.forEach(f -> {
+    private void cleanUnused(Stream<COSDictionary> resources, COSName type) {
+        resources.forEach(f -> {
             Set<COSName> toRemove = f.entrySet().stream()
-                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(e -> e.getKey())
+                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(Entry::getKey)
                     .collect(toSet());
-            LOG.trace("Removing {} fonts from {}", toRemove.size(), f);
+            LOG.trace("Removing {} unused {}", toRemove.size(), type.getName());
             toRemove.stream().forEach(f::removeItem);
         });
     }
 
-    private void cleanGraphicStates(Stream<COSDictionary> states) {
-        states.forEach(s -> {
-            Set<COSName> toRemove = s.entrySet().stream()
-                    .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(e -> e.getKey())
-                    .collect(toSet());
-            LOG.trace("Removing {} graphic states from {}", toRemove.size(), s);
-            toRemove.stream().forEach(s::removeItem);
-        });
-    }
 }
