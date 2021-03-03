@@ -40,7 +40,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.imgscalr.Scalr;
 import org.sejda.core.support.io.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
@@ -59,6 +58,8 @@ import org.sejda.sambox.util.filetypedetector.FileType;
 import org.sejda.sambox.util.filetypedetector.FileTypeDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 public class PageImageWriter {
     private static final Logger LOG = LoggerFactory.getLogger(PageImageWriter.class);
@@ -200,9 +201,8 @@ public class PageImageWriter {
         int degrees = ExifHelper.getRotationBasedOnExifOrientation(source.asNewInputStream());
 
         BufferedImage image = ImageIO.read(source.asNewInputStream());
-        Scalr.Rotation rotation = toScalrRotation(degrees);
-        if (rotation != null) {
-            BufferedImage result = Scalr.rotate(image, rotation);
+        if (degrees > 0) {
+            BufferedImage result = Thumbnails.of(image).scale(1).rotate(degrees).asBufferedImage();
 
             File tmpFile = IOUtils.createTemporaryBuffer();
             ImageIO.write(result, getImageIOSaveFormat(source), tmpFile);
@@ -219,22 +219,6 @@ public class PageImageWriter {
         }
 
         return "png";
-    }
-
-    private static Scalr.Rotation toScalrRotation(int degrees) {
-        if (degrees == 90) {
-            return Scalr.Rotation.CW_90;
-        }
-
-        if (degrees == 180) {
-            return Scalr.Rotation.CW_180;
-        }
-
-        if (degrees == 270) {
-            return Scalr.Rotation.CW_270;
-        }
-
-        return null;
     }
 
     /**
