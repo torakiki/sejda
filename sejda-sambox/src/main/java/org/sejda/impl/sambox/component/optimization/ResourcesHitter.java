@@ -18,6 +18,7 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
+import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.require;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
@@ -49,6 +50,7 @@ import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDTransparencyGroup;
+import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,37 +204,43 @@ public class ResourcesHitter extends ContentStreamProcessor {
                         .map(r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class));
 
                 COSDictionary gsDictionary = states.map(d -> d.getDictionaryObject(gsName, COSDictionary.class))
-                        .orElseThrow(() -> new MissingResourceException(
-                                "Graphic state resource '" + gsName.getName() + "' missing or unexpected type"));
+                        .orElseGet(() -> {
+                            LOG.warn("Graphic state resource '{}' missing or unexpected type", gsName.getName());
+                            return null;
+                        });
 
-                if (!(gsDictionary instanceof InUseDictionary)) {
-                    // we wrap the existing so we can identify it later as "in use" and already processed
-                    if (gsDictionary.hasId()) {
-                        LOG.trace("Hit ExtGState with name {} id {}", gsName.getName(), gsDictionary.id());
-                        // we wrap reuse the InUseFont if we hit it before
-                        states.get().setItem(gsName, ofNullable(hitGSById.get(gsDictionary.id())).orElseGet(() -> {
-                            InUseDictionary gs = new InUseDictionary(gsDictionary);
-                            hitGSById.put(gsDictionary.id(), gs);
-                            return gs;
-                        }));
-                    } else {
-                        // not an indirect ref (so without id)
-                        LOG.trace("Hit ExtGState with name {}", gsName.getName());
-                        states.get().setItem(gsName, new InUseDictionary(gsDictionary));
-                    }
+                if (nonNull(gsDictionary)) {
 
-                    // ExtGState can contain a softmask dictionary in the form of a transparency group XObject. If present we process its stream to hit used resources
-                    Optional<COSStream> softMask = ofNullable(
-                            gsDictionary.getDictionaryObject(COSName.SMASK, COSDictionary.class))
-                                    .map(d -> d.getDictionaryObject(COSName.G, COSStream.class))
-                                    .filter(s -> COSName.FORM.getName().equals(s.getNameAsString(COSName.SUBTYPE)));
-                    if (softMask.isPresent()) {
-                        PDXObject xobject = PDXObject.createXObject(softMask.get(), getContext().getResources());
-                        // should always be transparency
-                        if (xobject instanceof PDTransparencyGroup) {
-                            getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
-                        } else if (xobject instanceof PDFormXObject) {
-                            getContext().showForm((PDFormXObject) xobject);
+                    new PDExtendedGraphicsState(gsDictionary).copyIntoGraphicsState(getContext().getGraphicsState());
+                    if (!(gsDictionary instanceof InUseDictionary)) {
+                        // we wrap the existing so we can identify it later as "in use" and already processed
+                        if (gsDictionary.hasId()) {
+                            LOG.trace("Hit ExtGState with name {} id {}", gsName.getName(), gsDictionary.id());
+                            // we wrap reuse the InUseFont if we hit it before
+                            states.get().setItem(gsName, ofNullable(hitGSById.get(gsDictionary.id())).orElseGet(() -> {
+                                InUseDictionary gs = new InUseDictionary(gsDictionary);
+                                hitGSById.put(gsDictionary.id(), gs);
+                                return gs;
+                            }));
+                        } else {
+                            // not an indirect ref (so without id)
+                            LOG.trace("Hit ExtGState with name {}", gsName.getName());
+                            states.get().setItem(gsName, new InUseDictionary(gsDictionary));
+                        }
+
+                        // ExtGState can contain a softmask dictionary in the form of a transparency group XObject. If present we process its stream to hit used resources
+                        Optional<COSStream> softMask = ofNullable(
+                                gsDictionary.getDictionaryObject(COSName.SMASK, COSDictionary.class))
+                                        .map(d -> d.getDictionaryObject(COSName.G, COSStream.class))
+                                        .filter(s -> COSName.FORM.getName().equals(s.getNameAsString(COSName.SUBTYPE)));
+                        if (softMask.isPresent()) {
+                            PDXObject xobject = PDXObject.createXObject(softMask.get(), getContext().getResources());
+                            // should always be transparency
+                            if (xobject instanceof PDTransparencyGroup) {
+                                getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
+                            } else if (xobject instanceof PDFormXObject) {
+                                getContext().showForm((PDFormXObject) xobject);
+                            }
                         }
                     }
                 }
