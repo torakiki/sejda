@@ -37,6 +37,7 @@ import org.junit.rules.TemporaryFolder;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.parameter.SetPagesLabelParameters;
 
 /**
  * @author Andrea Vacondio
@@ -56,12 +57,12 @@ public class SingleOutputValidatorTest {
 
     @Test
     public void testNullOutput() {
-        assertFalse(victim.isValid(new SetMetadataParameters(), null));
+        assertFalse(victim.isValid(new SetPagesLabelParameters(), null));
     }
 
     @Test
     public void destinationExistsPolicyOverwrite() throws IOException {
-        SetMetadataParameters params = new SetMetadataParameters();
+        SetPagesLabelParameters params = new SetPagesLabelParameters();
         params.setOutput(new FileTaskOutput(folder.newFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         assertTrue(victim.isValid(params, null));
@@ -69,7 +70,7 @@ public class SingleOutputValidatorTest {
 
     @Test
     public void destinationExistsPolicyRename() throws IOException {
-        SetMetadataParameters params = new SetMetadataParameters();
+        SetPagesLabelParameters params = new SetPagesLabelParameters();
         params.setOutput(new FileTaskOutput(folder.newFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.RENAME);
         assertTrue(victim.isValid(params, null));
@@ -80,7 +81,7 @@ public class SingleOutputValidatorTest {
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
         ConstraintViolationBuilder builder = mock(ConstraintViolationBuilder.class);
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        SetMetadataParameters params = new SetMetadataParameters();
+        SetPagesLabelParameters params = new SetPagesLabelParameters();
         params.setOutput(new FileTaskOutput(folder.newFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.FAIL);
         assertFalse(victim.isValid(params, context));
@@ -92,7 +93,7 @@ public class SingleOutputValidatorTest {
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
         ConstraintViolationBuilder builder = mock(ConstraintViolationBuilder.class);
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        SetMetadataParameters params = new SetMetadataParameters();
+        SetPagesLabelParameters params = new SetPagesLabelParameters();
         params.setOutput(new FileTaskOutput(folder.newFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
         assertFalse(victim.isValid(params, context));

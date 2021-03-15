@@ -23,6 +23,7 @@ package org.sejda.model.parameter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.commons.collection.NullSafeSet;
+import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
@@ -35,8 +36,7 @@ import java.util.*;
  * @author Andrea Vacondio
  * 
  */
-@SingleOutputAllowedExtensions
-public final class SetMetadataParameters extends SinglePdfSourceSingleOutputParameters {
+public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @NotEmpty
     private final Map<String, String> metadata = new HashMap<String, String>();

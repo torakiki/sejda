@@ -18,14 +18,19 @@
  */
 package org.sejda.impl.sambox;
 
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map.Entry;
 
+import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -52,55 +57,70 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     private static final Logger LOG = LoggerFactory.getLogger(SetMetadataTask.class);
 
     private PDDocumentHandler documentHandler = null;
-    private SingleOutputWriter outputWriter;
+    private MultipleOutputWriter outputWriter;
     private PdfSourceOpener<PDDocumentHandler> documentLoader;
 
     @Override
     public void before(SetMetadataParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         documentLoader = new DefaultPdfSourceOpener();
-        outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
+        outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
     @Override
     public void execute(SetMetadataParameters parameters) throws TaskException {
-        notifyEvent(executionContext().notifiableTaskMetadata()).progressUndetermined();
+        int totalSteps = parameters.getSourceList().size();
 
-        PdfSource<?> source = parameters.getSource();
-        LOG.debug("Opening {}", source);
-        documentHandler = source.open(documentLoader);
-        documentHandler.setCreatorOnPDDocument();
+        for (int sourceIndex = 0; sourceIndex < parameters.getSourceList().size(); sourceIndex++) {
+            PdfSource<?> source = parameters.getSourceList().get(sourceIndex);
+            int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
+            
+            try {
+                LOG.debug("Opening {}", source);
 
-        File tmpFile = createTemporaryBuffer(parameters.getOutput());
-        outputWriter.taskOutput(tmpFile);
-        LOG.debug("Temporary output set to {}", tmpFile);
+                documentHandler = source.open(documentLoader);
+                documentHandler.setCreatorOnPDDocument();
 
-        PDDocument doc = documentHandler.getUnderlyingPDDocument();
-        doc.setOnBeforeWriteAction(new PDDocument.OnBeforeWrite() {
-            @Override
-            public void onBeforeWrite() throws IOException {
-                LOG.debug("Setting metadata on temporary document.");
-                PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
-                for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
-                    LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
-                    actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
-                }
+                File tmpFile = createTemporaryBuffer(parameters.getOutput());
 
-                for (String keyToRemove : parameters.getToRemove()) {
-                    LOG.trace("Removing '{}'", keyToRemove);
-                    actualMeta.removeMetadataField(keyToRemove);
-                }
+                PDDocument doc = documentHandler.getUnderlyingPDDocument();
+                doc.setOnBeforeWriteAction(new PDDocument.OnBeforeWrite() {
+                    @Override
+                    public void onBeforeWrite() throws IOException {
+                        LOG.debug("Setting metadata on temporary document.");
+                        PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
+                        for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
+                            LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
+                            actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
+                        }
+
+                        for (String keyToRemove : parameters.getToRemove()) {
+                            LOG.trace("Removing '{}'", keyToRemove);
+                            actualMeta.removeMetadataField(keyToRemove);
+                        }
+                    }
+                });
+
+                documentHandler.setVersionOnPDDocument(parameters.getVersion());
+                documentHandler.setCompress(parameters.isCompress());
+                documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
+
+                String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(() -> {
+                    return nameGenerator(parameters.getOutputPrefix())
+                            .generate(nameRequest().originalName(source.getName()).fileNumber(fileNumber));
+                });
+
+                outputWriter.addOutput(file(tmpFile).name(outName));
+                
+            } finally {
+                closeQuietly(documentHandler);
             }
-        });
 
-        documentHandler.setVersionOnPDDocument(parameters.getVersion());
-        documentHandler.setCompress(parameters.isCompress());
-        documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
-        closeQuietly(documentHandler);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
+        }
 
         parameters.getOutput().accept(outputWriter);
-
-        LOG.debug("Metadata set on {}", parameters.getOutput());
+        LOG.debug("Metadata set and written to {}", parameters.getOutput());
 
     }
 

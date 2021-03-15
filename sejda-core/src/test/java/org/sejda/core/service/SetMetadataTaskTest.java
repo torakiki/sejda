@@ -33,6 +33,8 @@ import org.sejda.sambox.util.DateConverter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.function.Consumer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -58,7 +60,8 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         parameters.put("ModDate", "D:20170814090348+02'00'");
         parameters.put("Producer", "test_producer");
         parameters.put("Custom field", "custom_field_value");
-        parameters.setSource(source);
+        parameters.removeAllSources();
+        parameters.addSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 
@@ -78,10 +81,10 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
     public void removingField() throws IOException {
         SetMetadataParameters parameters = new SetMetadataParameters();
         parameters.addFieldsToRemove(Arrays.asList("Creator", "Author", "RandomStringThatDoesNotExist"));
-        parameters.setSource(shortInput());
+        parameters.addSource(shortInput());
         
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         
         PDDocument document = testContext.assertTaskCompleted();
@@ -90,8 +93,30 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         assertNull(info.getCreator());
     }
 
+    @Test
+    public void multipleFiles() throws IOException {
+        SetMetadataParameters parameters = new SetMetadataParameters();
+        String author = "test_author_" + new Date().getTime();
+        parameters.put(PdfMetadataFields.AUTHOR, author);
+        parameters.addSource(shortInput());
+        parameters.addSource(mediumInput());
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument document) {
+                PDDocumentInformation info = document.getDocumentInformation();
+                assertEquals(author, info.getAuthor());
+            }
+        });
+    }
+
     private void doExecute() throws IOException {
-        testContext.pdfOutputTo(parameters);
+        testContext.directoryOutputTo(parameters);
         execute(parameters);
         PDDocument document = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7);

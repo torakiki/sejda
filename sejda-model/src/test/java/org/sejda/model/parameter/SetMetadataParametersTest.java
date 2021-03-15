@@ -72,15 +72,4 @@ public class SetMetadataParametersTest {
         assertTrue(keys.contains(PdfMetadataFields.CREATOR));
         assertFalse(keys.contains(PdfMetadataFields.KEYWORDS));
     }
-
-    @Test
-    public void testInvalidParameters() throws IOException {
-        SetMetadataParameters victim = new SetMetadataParameters();
-        SingleTaskOutput output = new FileTaskOutput(folder.newFile());
-        victim.setOutput(output);
-        InputStream stream = mock(InputStream.class);
-        PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
-        victim.setSource(input);
-        TestUtils.assertInvalidParameters(victim);
-    }
 }
