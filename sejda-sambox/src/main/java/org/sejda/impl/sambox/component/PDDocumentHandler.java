@@ -80,6 +80,7 @@ public class PDDocumentHandler implements Closeable {
     private PDDocument document;
     private PDDocumentAccessPermission permissions;
     private Set<WriteOption> writeOptions = new HashSet<>();
+    private boolean updateProducerModifiedDate = true;
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
@@ -262,6 +263,10 @@ public class PDDocumentHandler implements Closeable {
             if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
                 this.addWriteOption(WriteOption.ASYNC_BODY_WRITE);
             }
+            if(!updateProducerModifiedDate) {
+                this.addWriteOption(WriteOption.NO_METADATA_PRODUCER_MODIFIED_DATE_UPDATE);
+            }
+
             if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
                 LOG.trace("Saving document to {} using options {}", file, writeOptions);
                 document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
@@ -435,5 +440,13 @@ public class PDDocumentHandler implements Closeable {
         PDPage result = new PDPage(target.getMediaBox().rotate(target.getRotation()));
         document.getPages().insertBefore(result, target);
         return result;
+    }
+
+    public boolean isUpdateProducerModifiedDate() {
+        return updateProducerModifiedDate;
+    }
+
+    public void setUpdateProducerModifiedDate(boolean updateProducerModifiedDate) {
+        this.updateProducerModifiedDate = updateProducerModifiedDate;
     }
 }

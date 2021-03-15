@@ -24,9 +24,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.validation.constraint.NotEmpty;
-import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
 import java.util.*;
 
@@ -41,6 +39,7 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
     @NotEmpty
     private final Map<String, String> metadata = new HashMap<String, String>();
     private final Set<String> toRemove = new NullSafeSet<>();
+    private Boolean updateCreatorProducerModifiedDate = true;
 
     public Map<String, String> getMetadata() {
         return metadata;
@@ -66,9 +65,18 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
         return toRemove;
     }
 
+    public Boolean isUpdateProducerModifiedDate() {
+        return updateCreatorProducerModifiedDate;
+    }
+
+    public void setUpdateCreatorProducerModifiedDate(Boolean updateCreatorProducerModifiedDate) {
+        this.updateCreatorProducerModifiedDate = updateCreatorProducerModifiedDate;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(toRemove).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(toRemove)
+                .append(updateCreatorProducerModifiedDate).toHashCode();
     }
 
     @Override
@@ -82,6 +90,7 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
         SetMetadataParameters parameter = (SetMetadataParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata, parameter.metadata)
                 .append(toRemove, parameter.toRemove)
+                .append(updateCreatorProducerModifiedDate, parameter.updateCreatorProducerModifiedDate)
                 .isEquals();
     }
 }

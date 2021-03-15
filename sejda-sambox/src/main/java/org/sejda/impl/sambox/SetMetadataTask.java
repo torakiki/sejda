@@ -32,7 +32,6 @@ import java.util.Map.Entry;
 
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
-import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskException;
@@ -79,7 +78,10 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                 LOG.debug("Opening {}", source);
 
                 documentHandler = source.open(documentLoader);
-                documentHandler.setCreatorOnPDDocument();
+                documentHandler.setUpdateProducerModifiedDate(parameters.isUpdateProducerModifiedDate());
+                if(parameters.isUpdateProducerModifiedDate()) {
+                    documentHandler.setCreatorOnPDDocument();
+                }
 
                 File tmpFile = createTemporaryBuffer(parameters.getOutput());
 

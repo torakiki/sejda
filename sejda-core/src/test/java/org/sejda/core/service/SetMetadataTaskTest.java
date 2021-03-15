@@ -114,6 +114,30 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
             }
         });
     }
+    
+    @Test
+    public void doesNotChangeProducerAndModificationDate() throws IOException {
+        SetMetadataParameters parameters = new SetMetadataParameters();
+        parameters.put(PdfMetadataFields.AUTHOR, "test_author");
+        parameters.addSource(mediumInput());
+
+        parameters.setUpdateCreatorProducerModifiedDate(false);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument document) {
+                PDDocumentInformation info = document.getDocumentInformation();
+                assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
+                assertNull(info.getCreator());
+                assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"), info.getModificationDate());
+            }
+        });
+    }
 
     private void doExecute() throws IOException {
         testContext.directoryOutputTo(parameters);
