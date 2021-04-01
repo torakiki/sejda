@@ -87,14 +87,14 @@ public class SamboxOutlineLevelsHandler implements org.sejda.model.outline.Outli
                                 // Eg: a payslip document where each page has a bookmark (xyz destination) that points to the page, bookmark text is employee name
 
                                 endPage = includePageAfter ? after.page : after.page - 1;
+                                
+                                // no empty documents
+                                if(endPage < startPage) {
+                                    endPage = startPage;
+                                }
                                 // endPage = after.page;
                                 break;
                             }
-                        }
-
-                        // handle first page quirk when includePageAfter is false
-                        if (startPage == 1 && endPage == 0) {
-                            endPage = 1;
                         }
 
                         destinations.add(startPage, title, endPage);
