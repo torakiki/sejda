@@ -20,8 +20,8 @@ package org.sejda.model.validation.validator;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 
 /**
