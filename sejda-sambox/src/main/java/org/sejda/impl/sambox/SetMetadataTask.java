@@ -18,18 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Map.Entry;
-
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -41,9 +29,42 @@ import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
+import org.sejda.sambox.pdmodel.common.PDMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map.Entry;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * SAMBox implementation of a task setting metadata on an input {@link PdfSource}.
@@ -100,6 +121,12 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                             LOG.trace("Removing '{}'", keyToRemove);
                             actualMeta.removeMetadataField(keyToRemove);
                         }
+
+                        PDDocumentCatalog catalog = documentHandler.getUnderlyingPDDocument().getDocumentCatalog();
+                        if(catalog.getMetadata() != null) {
+                            LOG.debug("Document has XMP metadata stream");
+                            updateXmpMetadata(catalog, actualMeta);
+                        }
                     }
                 });
 
@@ -124,6 +151,63 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Metadata set and written to {}", parameters.getOutput());
 
+    }
+    
+    private void setDate(String path, Document document, Calendar calendar) throws XPathExpressionException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
+        if(node != null && calendar != null) {
+            node.setTextContent(dateFormat.format(calendar.getTime()));
+        }
+    }
+
+    private void setText(String path, Document document, String value) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
+        if(node != null && value != null) {
+            node.setTextContent(value);
+        }
+    }
+    
+    private void updateXmpMetadata(PDDocumentCatalog catalog, PDDocumentInformation metadata) {
+        try {
+            DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+            f.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            
+            DocumentBuilder b = f.newDocumentBuilder();
+            Document document = b.parse(catalog.getMetadata().createInputStream());
+
+            setDate("//*[name()='xmp:CreateDate']", document, metadata.getCreationDate());
+            setDate("//*[name()='xmp:ModifyDate']", document, metadata.getModificationDate());
+            
+            setText("//*[name()='pdf:Producer']", document, metadata.getProducer());
+            setText("//*[name()='xmp:CreatorTool']", document, metadata.getCreator());
+            setText("//*[name()='pdf:Keywords']", document, metadata.getKeywords());
+            
+            // TODO: update title, description
+
+            Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.setTime(new Date());
+            setDate("//*[name()='xmp:MetadataDate']", document, nowCalendar);
+            
+            // write the DOM object to the file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+
+            Transformer transformer = transformerFactory.newTransformer();
+            StringWriter writer = new StringWriter();
+            DOMSource domSource = new DOMSource(document);
+
+            StreamResult streamResult = new StreamResult(writer);
+            transformer.transform(domSource, streamResult);
+            
+            String updatedXml = writer.getBuffer().toString();
+            catalog.setMetadata(new PDMetadata(new ByteArrayInputStream(updatedXml.getBytes(StandardCharsets.UTF_8))));
+
+            
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to update XMP metadata", ex);    
+        }
     }
 
     @Override

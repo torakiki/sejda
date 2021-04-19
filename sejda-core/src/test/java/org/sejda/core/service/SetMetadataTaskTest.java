@@ -22,6 +22,7 @@ package org.sejda.core.service;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.hamcrest.core.StringStartsWith.*;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetMetadataParameters;
@@ -30,12 +31,22 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.util.DateConverter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Consumer;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -60,6 +71,7 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         parameters.put("ModDate", "D:20170814090348+02'00'");
         parameters.put("Producer", "test_producer");
         parameters.put("Custom field", "custom_field_value");
+        
         parameters.removeAllSources();
         parameters.addSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -135,6 +147,52 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
                 assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
                 assertNull(info.getCreator());
                 assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"), info.getModificationDate());
+            }
+        });
+    }
+    
+    private String getNodeValue(Document xmlDoc, String path) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node = (Node) xPath.compile(path).evaluate(xmlDoc, XPathConstants.NODE);
+        if(node != null) {
+            return node.getTextContent();
+        } else {
+            return null;
+        }
+    }
+
+    @Test
+    public void updatedXmpMetadata() throws IOException {
+        setUpParams(stronglyEncryptedInput());
+        parameters.put(PdfMetadataFields.CREATOR, "test_creator");
+        parameters.put("Producer", "test_producer");
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument document) {
+                try {
+                    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder b = f.newDocumentBuilder();
+                    Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+                    
+                    assertEquals("2015-08-14T09:03:48+0200", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
+                    assertEquals("2017-08-14T09:03:48+0200", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                    assertEquals("test_keywords", getNodeValue(xmlDoc, "//*[name()='pdf:Keywords']"));
+                    assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                    assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
+
+                    // exact second might be different
+                    String nowUptoMinute = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(new Date());
+                    assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
+                    
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
