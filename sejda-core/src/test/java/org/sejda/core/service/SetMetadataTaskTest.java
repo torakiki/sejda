@@ -197,6 +197,34 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         });
     }
 
+    @Test
+    public void updatedXmpMetadataRemoveFields() throws IOException {
+        setUpParams(stronglyEncryptedInput());
+        parameters.addFieldsToRemove(Arrays.asList("Producer", "ModDate"));
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument document) {
+                try {
+                    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder b = f.newDocumentBuilder();
+                    Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+
+                    assertEquals("", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                    assertEquals("", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
     private void doExecute() throws IOException {
         testContext.directoryOutputTo(parameters);
         execute(parameters);

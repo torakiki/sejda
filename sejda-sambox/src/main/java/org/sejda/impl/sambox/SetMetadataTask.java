@@ -157,15 +157,22 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
-        if(node != null && calendar != null) {
-            node.setTextContent(dateFormat.format(calendar.getTime()));
+        if(node != null) {
+            String value = "";
+            if(calendar != null) {
+                value = dateFormat.format(calendar.getTime());
+            }
+            node.setTextContent(value);
         }
     }
 
     private void setText(String path, Document document, String value) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
-        if(node != null && value != null) {
+        if(node != null) {
+            if(value == null) {
+                value = "";
+            }
             node.setTextContent(value);
         }
     }
