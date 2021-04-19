@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -180,14 +181,17 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
                     DocumentBuilder b = f.newDocumentBuilder();
                     Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
                     
-                    assertEquals("2015-08-14T09:03:48+0200", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
-                    assertEquals("2017-08-14T09:03:48+0200", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                    assertEquals("2015-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
+                    assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
                     assertEquals("test_keywords", getNodeValue(xmlDoc, "//*[name()='pdf:Keywords']"));
                     assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
                     assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
 
                     // exact second might be different
-                    String nowUptoMinute = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").format(new Date());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String nowUptoMinute = dateFormat.format(new Date());
+                    
                     assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
                     
                 } catch (Exception e) {

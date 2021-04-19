@@ -57,6 +57,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
@@ -155,6 +156,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     
     private void setDate(String path, Document document, Calendar calendar) throws XPathExpressionException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
         if(node != null) {
