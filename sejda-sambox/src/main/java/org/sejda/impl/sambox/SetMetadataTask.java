@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -183,23 +184,23 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         try {
             DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
             f.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            
+
             DocumentBuilder b = f.newDocumentBuilder();
             Document document = b.parse(catalog.getMetadata().createInputStream());
 
             setDate("//*[name()='xmp:CreateDate']", document, metadata.getCreationDate());
             setDate("//*[name()='xmp:ModifyDate']", document, metadata.getModificationDate());
-            
+
             setText("//*[name()='pdf:Producer']", document, metadata.getProducer());
             setText("//*[name()='xmp:CreatorTool']", document, metadata.getCreator());
             setText("//*[name()='pdf:Keywords']", document, metadata.getKeywords());
-            
+
             // TODO: update title, description
 
             Calendar nowCalendar = Calendar.getInstance();
             nowCalendar.setTime(new Date());
             setDate("//*[name()='xmp:MetadataDate']", document, nowCalendar);
-            
+
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
@@ -209,11 +210,12 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
             StreamResult streamResult = new StreamResult(writer);
             transformer.transform(domSource, streamResult);
-            
+
             String updatedXml = writer.getBuffer().toString();
             catalog.setMetadata(new PDMetadata(new ByteArrayInputStream(updatedXml.getBytes(StandardCharsets.UTF_8))));
 
-            
+        } catch (SAXParseException ex) {
+            LOG.warn("Failed to parse XMP metadata, skipping update", ex);
         } catch (Exception ex) {
             throw new RuntimeException("Failed to update XMP metadata", ex);    
         }
