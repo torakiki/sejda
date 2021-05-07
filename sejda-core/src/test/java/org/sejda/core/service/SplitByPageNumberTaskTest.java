@@ -25,12 +25,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDResources;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
 /**
  * @author Andrea Vacondio
@@ -231,5 +235,27 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
         testContext.assertOutputContainsFilenames("pathtosomewhere.pdf", "`&aaa.pdf", "3_medium-test-file.pdf");
+    }
+
+    @Test
+    public void sharedResourcesAreNotPurged() throws IOException {
+        setUpParameters();
+        parameters.addSource(customInput("pdf/pages-shared-res1-forms-not-shared.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.YES);
+        parameters.addPage(1);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forEachPdfOutput(d -> {
+            PDResources res = d.getPage(0).getResources();
+            for (COSName name : res.getXObjectNames()) {
+                try {
+                    PDFormXObject form = (PDFormXObject) res.getXObject(name);
+                    PDResources formRes = form.getResources();
+                    assertTrue(formRes.getXObjectNames().iterator().hasNext());
+                } catch (IOException e) {
+                    Assert.fail(e.getMessage());
+                }
+            }
+        });
     }
 }

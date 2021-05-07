@@ -66,6 +66,8 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
         Supplier<Stream<COSDictionary>> resources = () -> nodes.get()
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull);
 
+        cleanResources(resources.get().collect(toSet()));
+
         // all the resource dictionaries found in any xobject form
         // PAGETREE -> Resources -> XObject (Form) -> Resources
         Stream<COSDictionary> formsResources = resources.get()
@@ -86,7 +88,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                 .filter(Objects::nonNull);
 
         // NOTE: we currently don't clean type3 fonts resources. We hit them so we shouldn't have data loss in case of shared resource dictionaries but we don't clean them atm
-        cleanResources(Stream.of(resources.get(), formsResources, softmaskResources).flatMap(s -> s).collect(toSet()));
+        cleanResources(Stream.of(formsResources, softmaskResources).flatMap(s -> s).collect(toSet()));
     }
 
     private void cleanResources(Set<COSDictionary> resources) {
@@ -104,7 +106,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
             Set<COSName> toRemove = x.entrySet().stream()
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
                     .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(Entry::getKey).collect(toSet());
-            LOG.trace("Removing {} unused {}", toRemove.size(), COSName.XOBJECT.getName());
+            LOG.trace("Removing {} unused {} from {}", toRemove.size(), COSName.XOBJECT.getName(), x);
             toRemove.stream().forEach(x::removeItem);
         });
     }
