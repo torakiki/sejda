@@ -86,7 +86,7 @@ public class TopLeftRectangularBox {
     }
 
     public boolean containsPoint(float x, float y) {
-        return this.left < x && this.left + width  > x && this.top < y && this.top + height > y;
+        return this.left <= x && this.left + width  >= x && this.top <= y && this.top + height >= y;
     }
 
     public int getLeft() {
