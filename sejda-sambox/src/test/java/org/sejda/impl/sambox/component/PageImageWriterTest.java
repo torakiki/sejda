@@ -118,7 +118,7 @@ public class PageImageWriterTest {
     }
 
     @Test
-    public void testExifRotated() throws TaskIOException, IOException {
+    public void testExifRotated() throws TaskIOException {
 
         PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/with_exif_orientation.JPG"));
         assertThat(result.getHeight(), is(3264));

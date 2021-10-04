@@ -200,9 +200,9 @@ public class PageImageWriter {
             throws IOException, TaskIOException {
         int degrees = ExifHelper.getRotationBasedOnExifOrientation(source.asNewInputStream());
 
-        BufferedImage image = ImageIO.read(source.asNewInputStream());
         if (degrees > 0) {
-            BufferedImage result = Thumbnails.of(image).scale(1).rotate(degrees).asBufferedImage();
+            BufferedImage result = Thumbnails.of(ImageIO.read(source.asNewInputStream())).scale(1).rotate(degrees)
+                    .asBufferedImage();
 
             File tmpFile = IOUtils.createTemporaryBuffer();
             ImageIO.write(result, getImageIOSaveFormat(source), tmpFile);
