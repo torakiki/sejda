@@ -39,6 +39,7 @@ public class PdfMixInput extends PdfMergeInput {
     private boolean reverse = false;
     @Min(value = 1)
     private int step = 1;
+    private boolean repeatForever = false;
 
     public PdfMixInput(PdfSource<?> source, boolean reverse, int step) {
         super(source);
@@ -63,6 +64,14 @@ public class PdfMixInput extends PdfMergeInput {
         return step;
     }
 
+    public boolean isRepeatForever() {
+        return repeatForever;
+    }
+
+    public void setRepeatForever(boolean repeatForever) {
+        this.repeatForever = repeatForever;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).appendSuper(super.toString()).append(reverse).append(step).toString();
@@ -70,7 +79,8 @@ public class PdfMixInput extends PdfMergeInput {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(reverse).append(step).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(reverse).append(step).append(repeatForever)
+                .toHashCode();
     }
 
     @Override
@@ -83,7 +93,7 @@ public class PdfMixInput extends PdfMergeInput {
         }
         PdfMixInput input = (PdfMixInput) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(reverse, input.reverse)
-                .append(step, input.step).isEquals();
+                .append(step, input.step).append(repeatForever, input.repeatForever).isEquals();
     }
 
 }

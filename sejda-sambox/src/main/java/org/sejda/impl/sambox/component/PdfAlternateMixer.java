@@ -38,8 +38,8 @@ import org.sejda.sambox.pdmodel.PDPage;
  */
 public class PdfAlternateMixer extends PDDocumentHandler {
 
+
     private List<PdfMixFragment> mixFragments = new ArrayList<>();
-    private int currentStep = 0;
 
     /**
      * Perform the alternate mix on the given {@link PdfMixInput}s.
@@ -52,18 +52,32 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         for (PdfMixInput input : inputs) {
             mixFragments.add(PdfMixFragment.newInstance(input));
         }
-        int totalSteps = mixFragments.stream().map(PdfMixFragment::getNumberOfPages).reduce(0,
-                (curr, value) -> curr + value);
+        
+        int maxNumberOfPages = 0;
+        for(PdfMixFragment fragment: mixFragments) {
+            maxNumberOfPages = Math.max(fragment.getNumberOfPages(), maxNumberOfPages);
+        }
+        
+        int currentStep = 0;
+        int maxSteps = mixFragments.size() * maxNumberOfPages + 1;
 
-        while (mixFragments.stream().anyMatch(PdfMixFragment::hasNextPage)) {
+        // to properly calculate the expected total number of steps we'd have to look at page numbers, steps, reverse
+        notifyEvent(executionContext.notifiableTaskMetadata()).progressUndetermined();
+
+        while (mixFragments.stream().anyMatch(PdfMixFragment::hasNotReachedTheEnd)) {
             mixFragments.stream().filter(PdfMixFragment::hasNextPage).forEach(f -> {
                 for (int i = 0; i < f.getStep() && f.hasNextPage(); i++) {
                     PDPage current = f.nextPage();
                     f.addLookupEntry(current, importPage(current));
-                    notifyEvent(executionContext.notifiableTaskMetadata()).stepsCompleted(++currentStep)
-                            .outOf(totalSteps);
                 }
             });
+            
+            currentStep++;
+            
+            // a safety net so we don't loop here forever due to a bug and fill up the disk
+            if(currentStep > maxSteps) {
+                throw new RuntimeException("Too many loops, currentStep: " + currentStep + ", maxSteps: " + maxSteps);
+            }
         }
 
         mixFragments.stream().forEach(PdfMixFragment::saintizeAnnotations);
@@ -74,7 +88,6 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         super.close();
         mixFragments.stream().forEach(IOUtils::closeQuietly);
         mixFragments.clear();
-        currentStep = 0;
     }
 
 }

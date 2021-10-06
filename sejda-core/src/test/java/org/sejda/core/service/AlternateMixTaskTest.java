@@ -124,5 +124,31 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
         testContext.assertPages(8);
     }
 
+    @Test
+    public void repeatForeverExplicitlyMarkedInputs() throws IOException {
+        AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
+        params.addInput(new PdfMixInput(shortInput()));
+        params.addInput(new PdfMixInput(customInput("pdf/one_page.pdf")));
+        
+        for(PdfMixInput input :params.getInputList()) {
+            input.setRepeatForever(true);
+        }
+        
+        setUpParameters(params);
+        testContext.pdfOutputTo(params);
+        execute(params);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(8).forPdfOutput(d -> {
+            assertHeaderContains(d.getPage(0), "Pagina 1 di 4");
+            assertPageTextContains(d.getPage(1), "First page");
+            assertHeaderContains(d.getPage(2), "Pagina 2 di 4");
+            assertPageTextContains(d.getPage(3), "First page");
+            assertHeaderContains(d.getPage(4), "Pagina 3 di 4");
+            assertPageTextContains(d.getPage(5), "First page");
+            assertHeaderContains(d.getPage(6), "Pagina 4 di 4");
+            assertPageTextContains(d.getPage(7), "First page");
+        });
+    }
+
     protected abstract void assertHeaderContains(PDPage page, String expectedText);
 }

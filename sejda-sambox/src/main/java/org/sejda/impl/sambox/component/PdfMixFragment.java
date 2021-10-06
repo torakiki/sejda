@@ -41,28 +41,52 @@ import org.slf4j.LoggerFactory;
  */
 class PdfMixFragment implements Closeable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PdfAlternateMixer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PdfMixFragment.class);
 
     private LookupTable<PDPage> lookups = new LookupTable<>();
     private PDDocumentHandler handler;
     private PdfMixInput input;
     private LinkedList<Integer> pages;
+    private boolean hasNotReachedTheEnd = true;
 
     private PdfMixFragment(PdfMixInput input, PDDocumentHandler handler) {
-        this.pages = new LinkedList<>(input.getPages(handler.getNumberOfPages()));
         this.handler = handler;
         this.input = input;
+        populatePages();
+    }
+    
+    private void populatePages() {
+        this.pages = new LinkedList<>(input.getPages(handler.getNumberOfPages()));
+    }
+
+    private void populatePagesIfRequired() {
+        if(pages.isEmpty()) {
+            this.hasNotReachedTheEnd = false;
+            if(input.isRepeatForever()) {
+                populatePages();    
+            }
+        }
     }
 
     public PDPage nextPage() {
+        PDPage result;
+        
         if (input.isReverse()) {
-            return handler.getPage(pages.removeLast());
+            result = handler.getPage(pages.removeLast());
+        } else {
+            result = handler.getPage(pages.removeFirst());
         }
-        return handler.getPage(pages.removeFirst());
+        
+        populatePagesIfRequired();
+        return result;
     }
 
     public boolean hasNextPage() {
         return !pages.isEmpty();
+    }
+    
+    public boolean hasNotReachedTheEnd() {
+        return this.hasNotReachedTheEnd;
     }
 
     public int getNumberOfPages() {
