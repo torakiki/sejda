@@ -37,8 +37,12 @@ public final class RomanNumbersUtils {
      */
     public static String toRoman(long toConvert) {
 
-        if (toConvert <= 0) {
+        if (toConvert < 0) {
             throw new IllegalArgumentException();
+        }
+        
+        if (toConvert == 0) {
+            return "nulla";
         }
 
         long n = toConvert;

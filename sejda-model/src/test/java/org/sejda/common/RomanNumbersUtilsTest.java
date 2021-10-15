@@ -42,9 +42,8 @@ public class RomanNumbersUtilsTest {
         RomanNumbersUtils.toRoman(-1);
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void testFailingZero() {
-        RomanNumbersUtils.toRoman(0);
+        assertEquals("nulla", RomanNumbersUtils.toRoman(0));
     }
 
 }
