@@ -45,10 +45,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -155,10 +152,20 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
     }
     
+    private XPathFactory newXPathFactory() {
+        try {
+            XPathFactory f = XPathFactory.newInstance();
+            f.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            return f;
+        } catch (XPathFactoryConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private void setDate(String path, Document document, Calendar calendar) throws XPathExpressionException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = newXPathFactory().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
         if(node != null) {
             String value = "";
@@ -170,7 +177,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
 
     private void setText(String path, Document document, String value) throws XPathExpressionException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+        XPath xPath = newXPathFactory().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
         if(node != null) {
             if(value == null) {
@@ -184,6 +191,14 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         try {
             DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
             f.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            f.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            //f.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            f.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            f.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            f.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            f.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            f.setXIncludeAware(false);
+            f.setExpandEntityReferences(false);
 
             DocumentBuilder b = f.newDocumentBuilder();
             Document document = b.parse(catalog.getMetadata().createInputStream());
@@ -203,6 +218,9 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
 
             Transformer transformer = transformerFactory.newTransformer();
             StringWriter writer = new StringWriter();
