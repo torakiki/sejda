@@ -1,0 +1,35 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: release
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v4
+      with:
+        gpg_private_key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
+        passphrase: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}    
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        java-version: 8
+        distribution: 'temurin'
+        server-id: ossrh
+        server-username: OSSRH_USERNAME
+        server-password: OSSRH_TOKEN
+        cache: 'maven'
+    - name: Publish to Central
+      env:
+        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+        OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+      run: mvn --no-transfer-progress --batch-mode -Prelease deploy
