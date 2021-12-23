@@ -19,12 +19,20 @@
  */
 package org.sejda.core;
 
-import org.sejda.TestCycles;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class TestCyclesCore extends TestCycles {
-    // inherited
+@AnalyzeClasses(packages = "org.sejda")
+public class TestCycles {
+
+    @ArchTest
+    public static final ArchRule myRule = SlicesRuleDefinition.slices().matching("org.sejda.(*)..").should()
+            .beFreeOfCycles();
+
 }
