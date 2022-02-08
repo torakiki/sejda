@@ -1,0 +1,318 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] sejda                                                              [pom]
+[INFO] sejda model                                                        [jar]
+[INFO] sejda core                                                         [jar]
+[INFO] Sejda docs                                                         [pom]
+[INFO] sejda fonts                                                        [jar]
+[INFO] sejda image writers                                                [jar]
+[INFO] sejda sambox                                                       [jar]
+[INFO] sejda conversion                                                   [jar]
+[INFO] sejda distribution                                                 [pom]
+[INFO] 
+[INFO] -----------------------< org.sejda:sejda-parent >-----------------------
+[INFO] Building sejda 4.2.12-SNAPSHOT                                     [1/9]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-parent ---
+[INFO] org.sejda:sejda-parent:pom:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  +- org.sejda:sejda-io:jar:2.1.1:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] -----------------------< org.sejda:sejda-model >------------------------
+[INFO] Building sejda model 4.2.12-SNAPSHOT                               [2/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-model ---
+[INFO] org.sejda:sejda-model:jar:4.2.12-SNAPSHOT
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] +- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] +- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.hibernate:hibernate-validator:jar:4.2.0.Final:test
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] ------------------------< org.sejda:sejda-core >------------------------
+[INFO] Building sejda core 4.2.12-SNAPSHOT                                [3/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-core ---
+[INFO] org.sejda:sejda-core:jar:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] +- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
+[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] ------------------------< org.sejda:sejda-docs >------------------------
+[INFO] Building Sejda docs 4.2.12-SNAPSHOT                                [4/9]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-docs ---
+[INFO] org.sejda:sejda-docs:pom:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  +- org.sejda:sejda-io:jar:2.1.1:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] -----------------------< org.sejda:sejda-fonts >------------------------
+[INFO] Building sejda fonts 4.2.12-SNAPSHOT                               [5/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-fonts ---
+[INFO] org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] -------------------< org.sejda:sejda-image-writers >--------------------
+[INFO] Building sejda image writers 4.2.12-SNAPSHOT                       [6/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-image-writers ---
+[INFO] org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
+[INFO] |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] -----------------------< org.sejda:sejda-sambox >-----------------------
+[INFO] Building sejda sambox 4.2.12-SNAPSHOT                              [7/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-sambox ---
+[INFO] org.sejda:sejda-sambox:jar:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-core:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] |  +- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] |  \- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
+[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] +- org.sejda:sejda-core:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- org.sejda:sambox:jar:2.3.4:compile
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:compile
+[INFO] +- org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
+[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
+[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
+[INFO] +- org.bouncycastle:bcmail-jdk15on:jar:1.70:compile
+[INFO] |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
+[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
+[INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
+[INFO] +- com.drewnoakes:metadata-extractor:jar:2.16.0:compile
+[INFO] |  \- com.adobe.xmp:xmpcore:jar:6.1.11:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] +- net.coobird:thumbnailator:jar:0.4.15:compile
+[INFO] +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] ---------------------< org.sejda:sejda-conversion >---------------------
+[INFO] Building sejda conversion 4.2.12-SNAPSHOT                          [8/9]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-conversion ---
+[INFO] org.sejda:sejda-conversion:jar:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] 
+[INFO] --------------------< org.sejda:sejda-distribution >--------------------
+[INFO] Building sejda distribution 4.2.12-SNAPSHOT                        [9/9]
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-distribution ---
+[INFO] org.sejda:sejda-distribution:pom:4.2.12-SNAPSHOT
+[INFO] +- org.sejda:sejda-core:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] |  +- javax.validation:validation-api:jar:1.0.0.GA:compile
+[INFO] |  \- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
+[INFO] +- org.sejda:sejda-sambox:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- org.bouncycastle:bcmail-jdk15on:jar:1.70:compile
+[INFO] |  |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
+[INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
+[INFO] |  +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
+[INFO] |  +- com.drewnoakes:metadata-extractor:jar:2.16.0:compile
+[INFO] |  |  \- com.adobe.xmp:xmpcore:jar:6.1.11:compile
+[INFO] |  \- net.coobird:thumbnailator:jar:0.4.15:compile
+[INFO] +- org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
+[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
+[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
+[INFO] +- org.sejda:sejda-conversion:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] +- org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
+[INFO] +- junit:junit:jar:4.13.1:test
+[INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.2.8:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.8:test
+[INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+[INFO] +- org.sejda:sambox:jar:2.3.4:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
+[INFO] +- org.hamcrest:hamcrest-all:jar:1.3:test
+[INFO] \- jdepend:jdepend:jar:2.9.1:test
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for sejda 4.2.12-SNAPSHOT:
+[INFO] 
+[INFO] sejda .............................................. SUCCESS [  0.387 s]
+[INFO] sejda model ........................................ SUCCESS [  0.044 s]
+[INFO] sejda core ......................................... SUCCESS [  0.021 s]
+[INFO] Sejda docs ......................................... SUCCESS [  0.009 s]
+[INFO] sejda fonts ........................................ SUCCESS [  0.013 s]
+[INFO] sejda image writers ................................ SUCCESS [  0.023 s]
+[INFO] sejda sambox ....................................... SUCCESS [  0.029 s]
+[INFO] sejda conversion ................................... SUCCESS [  0.013 s]
+[INFO] sejda distribution ................................. SUCCESS [  0.025 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  0.779 s
+[INFO] Finished at: 2022-01-08T17:56:34+01:00
+[INFO] ------------------------------------------------------------------------
