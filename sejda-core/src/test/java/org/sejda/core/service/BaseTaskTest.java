@@ -172,7 +172,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
 
     public static StreamSource customNonPdfInput(String path) {
         String extension = FilenameUtils.getExtension(path);
-        String filename = randomAlphanumeric(16) + "." + extension;
+        String filename = new File(path).getName();
         return customNonPdfInput(path, filename);
     }
 

@@ -51,6 +51,7 @@ import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.graphics.image.UnsupportedImageFormatException;
 import org.sejda.sambox.pdmodel.graphics.image.UnsupportedTiffImageException;
 import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.sejda.sambox.util.Matrix;
@@ -123,17 +124,17 @@ public class PageImageWriter {
             throws TaskIOException, IOException {
         SeekableSource source = original;
 
-        Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source);
+        Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source, name);
         if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
 
-        maybeConvertedFile = convertCMYKJpegIf(source);
+        maybeConvertedFile = convertCMYKJpegIf(source, name);
         if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
 
-        maybeConvertedFile = convertICCGrayPngIf(source);
+        maybeConvertedFile = convertICCGrayPngIf(source, name);
         if (maybeConvertedFile.isPresent()) {
             source = maybeConvertedFile.get();
         }
@@ -196,19 +197,26 @@ public class PageImageWriter {
     /**
      * Checks if the input file has exit rotation If that's the case, converts to rotated image without exif rotation
      */
-    private static Optional<SeekableSource> convertExifRotatedIf(SeekableSource source)
+    private static Optional<SeekableSource> convertExifRotatedIf(SeekableSource source, String name)
             throws IOException, TaskIOException {
         int degrees = ExifHelper.getRotationBasedOnExifOrientation(source.asNewInputStream());
-
+        
         if (degrees > 0) {
-            BufferedImage result = Thumbnails.of(ImageIO.read(source.asNewInputStream())).scale(1).rotate(degrees)
-                    .asBufferedImage();
+            BufferedImage orig = ImageIO.read(source.asNewInputStream());
+            
+            if(orig == null) {
+                FileType type = FileTypeDetector.detectFileType(source);
+                throw new UnsupportedImageFormatException(type, name, null);
+            }
+            
+            BufferedImage result = Thumbnails.of(orig).scale(1).rotate(degrees).asBufferedImage();
 
-            File tmpFile = IOUtils.createTemporaryBuffer();
+            File tmpFile = IOUtils.createTemporaryBufferWithName(name);
             ImageIO.write(result, getImageIOSaveFormat(source), tmpFile);
             return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
 
         }
+        
         return Optional.empty();
     }
 
@@ -224,7 +232,7 @@ public class PageImageWriter {
     /**
      * Checks if the input file is a JPEG using CMYK If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<SeekableSource> convertCMYKJpegIf(SeekableSource source)
+    private static Optional<SeekableSource> convertCMYKJpegIf(SeekableSource source, String name)
             throws IOException, TaskIOException {
         try {
             if (FileType.JPEG.equals(getFileType(source))) {
@@ -247,7 +255,7 @@ public class PageImageWriter {
                             // twelvemonkeys JPEG plugin already converts it to rgb when reading the image
                             // just write it out
                             BufferedImage image = reader.read(0);
-                            File tmpFile = IOUtils.createTemporaryBuffer();
+                            File tmpFile = IOUtils.createTemporaryBufferWithName(name);
                             ImageIO.write(image, "jpg", tmpFile);
                             return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
                         }
@@ -270,7 +278,7 @@ public class PageImageWriter {
     /**
      * Checks if the input file is a PNG using ICC Gray color model If that's the case, converts to RGB and returns the file path
      */
-    private static Optional<SeekableSource> convertICCGrayPngIf(SeekableSource source)
+    private static Optional<SeekableSource> convertICCGrayPngIf(SeekableSource source, String name)
             throws IOException, TaskIOException {
         try {
             if (FileType.PNG.equals(getFileType(source))) {
@@ -295,7 +303,7 @@ public class PageImageWriter {
                             // convert to rgb
                             BufferedImage original = reader.read(0);
                             BufferedImage rgb = toARGB(original);
-                            File tmpFile = IOUtils.createTemporaryBuffer();
+                            File tmpFile = IOUtils.createTemporaryBufferWithName(name);
                             ImageIO.write(rgb, "png", tmpFile);
                             return Optional.of(SeekableSources.seekableSourceFrom(tmpFile));
                         }

@@ -20,8 +20,7 @@ package org.sejda.impl.sambox.component;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.sejda.TestUtils.encryptedAtRest;
 import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
 import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
@@ -33,6 +32,8 @@ import org.junit.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.sambox.pdmodel.graphics.image.UnsupportedImageFormatException;
+import org.sejda.sambox.util.filetypedetector.FileType;
 
 public class PageImageWriterTest {
 
@@ -46,6 +47,20 @@ public class PageImageWriterTest {
 
         assertTrue("Original bytes should be used", IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
                 customNonPdfInput("image/large.jpg").getSource()));
+    }
+
+    @Test
+    public void testHeif_unsupported() throws TaskIOException {
+        Exception ex = assertThrows(TaskIOException.class, () -> {
+            PageImageWriter.toPDXImageObject(customNonPdfInput("image/sample_heic.jpg"));   
+        });
+        
+        Throwable cause = ex.getCause();
+        assertEquals(cause.getClass(), UnsupportedImageFormatException.class);
+        UnsupportedImageFormatException uife = (UnsupportedImageFormatException) cause;
+        
+        assertEquals(uife.getFileType(), FileType.HEIF);
+        assertEquals(uife.getFilename(), "sample_heic.jpg");
     }
 
     @Test
