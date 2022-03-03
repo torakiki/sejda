@@ -25,9 +25,7 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -116,6 +114,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
         ImagesToPdfDocumentConverter.convertImageMergeInputToPdf(parameters, executionContext());
 
+        List<FooterWriterEntry> footerWriterEntries = new ArrayList<>();
+
         for (PdfMergeInput input : parameters.getPdfInputList()) {
             inputsCounter++;
             LOG.debug("Opening {}", input.getSource());
@@ -167,12 +167,17 @@ public class MergeTask extends BaseTask<MergeParameters> {
                         }
                     }
 
-                    long currentPageNumber = pagesCounter + tocCreator.tocNumberOfPages();
+                    boolean isPlacedAfterToc = true;
                     if (parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
                         // the toc will be added after the cover/title pages
-                        currentPageNumber = pagesCounter;
+                        isPlacedAfterToc = false;
                     }
-                    this.footerWriter.addFooter(importedPage, sourceBaseName, currentPageNumber);
+
+                    // we can determine the correct final page numbers only after the ToC has been generated
+                    // otherwise we don't know how many pages the ToC consists of
+                    // queue up footer writer items for after ToC generation
+                    footerWriterEntries.add(new FooterWriterEntry(importedPage, sourceBaseName, pagesCounter, isPlacedAfterToc));
+                    
                     LOG.trace("Added imported page");
                 } catch (PageNotFoundException e) {
                     executionContext().assertTaskIsLenient(e);
@@ -180,6 +185,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
                             .taskWarning(String.format("Page %d was skipped, could not be processed", currentPage), e);
                 }
             }
+            
             relativePagesCounter = 0;
 
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
@@ -218,16 +224,23 @@ public class MergeTask extends BaseTask<MergeParameters> {
             new PdfScaler(ScaleType.PAGE).scalePages(destinationDocument.getUnderlyingPDDocument());
         }
 
+        int tocNumberOfPages = 0;
         if (tocCreator.hasToc()) {
             LOG.debug("Adding generated ToC");
             try {
                 // add ToC as first page or after the cover/title pages
                 int beforePageNumber = parameters.isFirstInputCoverTitle() ? firstInputNumberOfPages : 0;
-                tocCreator.addToC(beforePageNumber);
+                tocNumberOfPages = tocCreator.addToC(beforePageNumber);
             } catch (TaskException e) {
                 notifyEvent(executionContext().notifiableTaskMetadata())
                         .taskWarning("Unable to create the Table of Contents", e);
             }
+        }
+        
+        LOG.debug("Writing page footers");
+        for(FooterWriterEntry entry: footerWriterEntries) {
+            long finalPageNumber = entry.isPlacedAfterToc ? entry.pageNumber + tocNumberOfPages : entry.pageNumber;
+            this.footerWriter.addFooter(entry.page, entry.fileName, finalPageNumber);
         }
 
         if (catalogPageLabelsMerger.hasPageLabels()) {
@@ -257,5 +270,18 @@ public class MergeTask extends BaseTask<MergeParameters> {
         closeResources();
         outputWriter = null;
     }
+    
+    private static class FooterWriterEntry {
+        final PDPage page; 
+        final String fileName; 
+        final long pageNumber;
+        final boolean isPlacedAfterToc;
 
+        public FooterWriterEntry(PDPage page, String fileName, long pageNumber, boolean isPlacedAfterToc) {
+            this.page = page;
+            this.fileName = fileName;
+            this.pageNumber = pageNumber;
+            this.isPlacedAfterToc = isPlacedAfterToc;
+        }
+    }
 }

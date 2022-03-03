@@ -73,8 +73,6 @@ public class TableOfContentsCreator {
     private float margin = DEFAULT_MARGIN;
     private PDFont font = PDType1Font.HELVETICA;
     private float lineHeight;
-    private int maxRowsPerPage;
-    private int tocNumberOfPages;
     private MergeParameters params;
     private PageTextWriter writer;
 
@@ -84,7 +82,6 @@ public class TableOfContentsCreator {
         this.document = document;
         this.params = params;
         this.writer = new PageTextWriter(document);
-        recalculateDimensions();
     }
 
     /**
@@ -98,9 +95,9 @@ public class TableOfContentsCreator {
         requireNotBlank(text, "ToC item cannot be blank");
         requireArg(pageNumber > 0, "ToC item cannot point to a negative page");
         requireNotNullArg(page, "ToC page cannot be null");
+        requireNotAlreadyGenerated();
         if (shouldGenerateToC()) {
             items.add(new ToCItem(text, pageNumber, linkAnnotationFor(page)));
-            recalculateDimensions();
         }
     }
 
@@ -118,8 +115,8 @@ public class TableOfContentsCreator {
      * @throws TaskException
      *             if there is an error generating the ToC
      */
-    public void addToC() throws TaskException {
-        addToC(0);
+    public int addToC() throws TaskException {
+        return addToC(0);
     }
 
     /**
@@ -128,38 +125,55 @@ public class TableOfContentsCreator {
      * @throws TaskException
      *             if there is an error generating the ToC
      */
-    public void addToC(int beforePageNumber) throws TaskException {
-        try {
-            PDPageTree pagesTree = document.getPages();
-            ofNullable(generateToC()).filter(l -> !l.isEmpty()).ifPresent(t -> {
-                int toCPagesCount = t.size();
-                t.descendingIterator().forEachRemaining(p -> {
-                    if (pagesTree.getCount() > 0) {
-                        pagesTree.insertBefore(p, pagesTree.get(beforePageNumber));
-                    } else {
-                        pagesTree.add(p);
-                    }
-                });
-                if (params.isBlankPageIfOdd() && toCPagesCount % 2 == 1) {
-                    PDPage lastTocPage = pagesTree.get(beforePageNumber + toCPagesCount - 1);
-                    PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
-                    pagesTree.insertAfter(blankPage, lastTocPage);
-                }
-            });
-        } catch (IOException e) {
-            throw new TaskException("An error occurred while create the ToC", e);
-        }
+    public int addToC(int beforePageNumber) throws TaskException {
+        PDPageTree pagesTree = document.getPages();
+        LinkedList<PDPage> toc = generateToC();
+        
+        toc.descendingIterator().forEachRemaining(p -> {
+            if (pagesTree.getCount() > 0) {
+                pagesTree.insertBefore(p, pagesTree.get(beforePageNumber));
+            } else {
+                pagesTree.add(p);
+            }
+        });
+        
+        return toc.size();
     }
 
-    private LinkedList<PDPage> generateToC() throws TaskIOException, IOException {
-        LinkedList<PDPage> pages = new LinkedList<>();
-        if (shouldGenerateToC()) {
+    private LinkedList<PDPage> generatedToC;
+    private LinkedList<PDPage> generateToC() throws TaskIOException {
+        if(generatedToC == null) {
+            generatedToC = _generateToC();
+        }
+        
+        return generatedToC;
+    }
 
+    private LinkedList<PDPage> _generateToC() throws TaskIOException {
+        // we need to know how many pages the ToC itself has
+        // so we can write the page numbers of the ToC items correctly
+        // but can only know how many pages the ToC has after we generate it
+        
+        // therefore, 1) generate ToC using a dummy estimate for the tocNumberOfPages
+        int tocNumberOfPages = _generateToC(0).size();
+        
+        // 2) generate ToC again with correct tocNumberOfPages
+        return _generateToC(tocNumberOfPages);
+    }
+    
+    private LinkedList<PDPage> _generateToC(int tocNumberOfPages) throws TaskIOException {
+        LinkedList<PDPage> pages = new LinkedList<>();
+        recalculateDimensions();
+        
+        int maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
+        Deque<ToCItem> items = new LinkedList<>(this.items);
+         
+        if (shouldGenerateToC()) {
             while (!items.isEmpty()) {
                 int row = 0;
 
                 float separatorWidth = stringLength(SEPARATOR);
-                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth, tocNumberOfPages);
+                float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth);
 
                 PDPage page = createPage(pages);
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
@@ -197,7 +211,7 @@ public class TableOfContentsCreator {
 
                             long pageNumber = i.page + tocNumberOfPages;
                             String pageString = SEPARATOR + Long.toString(pageNumber);
-                            float x2 = getPageNumberX(separatorWidth, pageNumber);
+                            float x2 = getPageNumberX(separatorWidth);
                             writeText(page, pageString, x2, y);
 
                             // make the item clickable and link to the page number
@@ -222,10 +236,25 @@ public class TableOfContentsCreator {
                         }
                         row++;
                     }
+                } catch (IOException e) {
+                    throw new TaskIOException("An error occurred while create the ToC", e);
                 }
             }
+
+            if (params.isBlankPageIfOdd() && pages.size() % 2 == 1) {
+                PDPage lastTocPage = pages.getLast();
+                PDPage blankPage = new PDPage(lastTocPage.getMediaBox());
+                pages.add(blankPage);
+            }
         }
+        
         return pages;
+    }
+
+    private void requireNotAlreadyGenerated() {
+        if(generatedToC != null) {
+            throw new IllegalStateException("ToC has already been generated");
+        }
     }
 
     private void writeText(PDPage page, String s, float x, float y) throws TaskIOException {
@@ -246,16 +275,14 @@ public class TableOfContentsCreator {
         return page;
     }
 
-    private float getSeparatingLineEndingX(float separatorWidth, long indexPages) throws TaskIOException {
-        // this method gets called from recalculateFontSize()
-        // which in turn could be called from the constructor, when no items are yet available
-        ToCItem last = items.peekLast();
-        long lastItemPage = last == null ? 0 : last.page;
-        return getPageNumberX(separatorWidth, lastItemPage + indexPages);
+    private float getSeparatingLineEndingX(float separatorWidth) throws TaskIOException {
+        return getPageNumberX(separatorWidth);
     }
 
-    private float getPageNumberX(float separatorWidth, long pageNumber) throws TaskIOException {
-        return pageSize().getWidth() - margin - separatorWidth - stringLength(Long.toString(pageNumber));
+    private float getPageNumberX(float separatorWidth) throws TaskIOException {
+        return pageSize().getWidth() - margin - separatorWidth
+                /* leave enough space for a 4 digit page number, assumes 9 to be a wide enough digit */        
+                - stringLength(Long.toString(9999));
     }
 
     private float stringLength(String text) throws TaskIOException {
@@ -271,9 +298,9 @@ public class TableOfContentsCreator {
     }
 
     public void pageSizeIfNotSet(PDRectangle pageSize) {
+        requireNotAlreadyGenerated();
         if (this.pageSize == null) {
             this.pageSize = pageSize;
-            recalculateDimensions();
         }
     }
 
@@ -282,16 +309,7 @@ public class TableOfContentsCreator {
 
         this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
         this.margin = scalingFactor * DEFAULT_MARGIN;
-
         this.lineHeight = (float) (fontSize + (fontSize * 0.7));
-        this.maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
-        if (shouldGenerateToC()) {
-            tocNumberOfPages = params.getInputList().size() / maxRowsPerPage
-                    + (params.getInputList().size() % maxRowsPerPage == 0 ? 0 : 1);
-            if (params.isBlankPageIfOdd() && tocNumberOfPages % 2 == 1) {
-                tocNumberOfPages++;
-            }
-        }
     }
 
     private PDRectangle pageSize() {
@@ -300,13 +318,6 @@ public class TableOfContentsCreator {
 
     public float getFontSize() {
         return fontSize;
-    }
-
-    /**
-     * @return the number of pages this toc will consist of
-     */
-    public long tocNumberOfPages() {
-        return tocNumberOfPages;
     }
 
     private static class ToCItem {

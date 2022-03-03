@@ -66,6 +66,10 @@ public class TestUtils {
             fail(e.getMessage());
         }
     }
+    
+    public static String getPageTextNormalized(PDPage page) throws IOException {
+        return normalizeLineEndings(getPageText(page));
+    }
 
     public static void assertPageText(PDPage page, String text) {
         withPageText(page, pageText -> {

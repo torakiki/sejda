@@ -861,6 +861,44 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertNoTaskWarnings();
         testContext.assertPages(13);
     }
+    
+    @Test
+    public void withLargeTocItemsThatWrapAndGenerateMultipleTocPages() throws IOException {
+        List<String> entries = new ArrayList<>();
+        for(int i = 1; i <= 26; i++) {
+            if(i % 3 == 0) {
+                entries.add("Attachment " + i + " - Sample file name - longer item that might wrap on the next line");
+            } else {
+                entries.add("Attachment " + i + " - Sample file name - shorter");
+            }
+        }
+
+        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>(entries.size());
+        for(String entry: entries) {
+            inputs.add(new PdfMergeInput(customInput("pdf/one_page.pdf", entry + ".pdf"))); // 1 page
+        }
+
+        MergeParameters parameters = setUpParameters(inputs);
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setFilenameFooter(true);
+
+        testContext.pdfOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(entries.size() + 2).forEachPdfOutput(d -> {
+            // the TOC
+            assertPageTextExactLines(d.getPage(0), "Attachment 1 - Sample file name - shorter   3\nAttachment 2 - Sample file name - shorter   4\nAttachment 3 - Sample file name - longer item that might wrap on\nthe next line   5\nAttachment 4 - Sample file name - shorter   6\nAttachment 5 - Sample file name - shorter   7\nAttachment 6 - Sample file name - longer item that might wrap on\nthe next line   8\nAttachment 7 - Sample file name - shorter   9\nAttachment 8 - Sample file name - shorter   10\nAttachment 9 - Sample file name - longer item that might wrap on\nthe next line   11\nAttachment 10 - Sample file name - shorter   12\nAttachment 11 - Sample file name - shorter   13\nAttachment 12 - Sample file name - longer item that might wrap\non the next line   14\nAttachment 13 - Sample file name - shorter   15\nAttachment 14 - Sample file name - shorter   16\nAttachment 15 - Sample file name - longer item that might wrap\non the next line   17\nAttachment 16 - Sample file name - shorter   18\nAttachment 17 - Sample file name - shorter   19\nAttachment 18 - Sample file name - longer item that might wrap\non the next line   20\nAttachment 19 - Sample file name - shorter   21\nAttachment 20 - Sample file name - shorter   22\nAttachment 21 - Sample file name - longer item that might wrap\non the next line   23\nAttachment 22 - Sample file name - shorter   24\nAttachment 23 - Sample file name - shorter   25\n");
+            assertPageTextExactLines(d.getPage(1), "Attachment 24 - Sample file name - longer item that might wrap\non the next line   26\nAttachment 25 - Sample file name - shorter   27\nAttachment 26 - Sample file name - shorter   28\n");
+
+            // next pages are the merged inputs
+            assertFooterHasText(d.getPage(2), "Attachment 1 - Sample file name - shorter 3");
+            assertFooterHasText(d.getPage(3), "Attachment 2 - Sample file name - shorter 4");
+            assertFooterHasText(d.getPage(4), "Attachment 3 - Sample file name - longer item that might wrap on the next line 5");
+            assertFooterHasText(d.getPage(27), "Attachment 26 - Sample file name - shorter 28");
+        });
+    }
 
     private float widthOfCropBox(PDPage page) {
         return page.getCropBox().rotate(page.getRotation()).getWidth();
