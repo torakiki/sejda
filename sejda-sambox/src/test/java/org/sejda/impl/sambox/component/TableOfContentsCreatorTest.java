@@ -25,11 +25,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.sejda.core.service.TestUtils.assertPageTextExactLines;
-import static org.sejda.core.service.TestUtils.getPageTextNormalized;
+import static org.sejda.core.service.TestUtils.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -47,7 +47,6 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
-import org.sejda.sambox.text.PDFTextStripper;
 
 /**
  * @author Andrea Vacondio
@@ -112,30 +111,6 @@ public class TableOfContentsCreatorTest {
     }
 
     @Test
-    public void testAddToCNone() throws TaskException {
-        PDDocument doc = new PDDocument();
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.NONE);
-        assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("text", 10, new PDPage());
-        victim.addToC();
-        assertEquals(0, doc.getNumberOfPages());
-    }
-
-    @Test
-    public void testAddToC() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("text", 10, new PDPage());
-        victim.addToC();
-        assertEquals(1, doc.getNumberOfPages());
-    }
-
-    @Test
     public void testAddToCTop() throws IOException, TaskException {
         PDDocument doc = PDFParser.parse(SeekableSources
                 .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
@@ -178,6 +153,7 @@ public class TableOfContentsCreatorTest {
         for (int i = 1; i < 40; i++) {
             victim.appendItem("text", i, new PDPage());
         }
+        
         victim.addToC();
         assertEquals(5, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
@@ -185,95 +161,59 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddToCSuperLongText() throws TaskException {
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem(
-                "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
-                100, new PDPage());
+        TableOfContentsCreator victim = newToCCreator("This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.");
+        
         victim.addToC();
-        assertEquals(1, doc.getNumberOfPages());
+        
+        assertEquals(1, victim.getDoc().getNumberOfPages());
     }
 
     @Test
     public void testToCPageSize() throws TaskException {
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         victim.pageSizeIfNotSet(PDRectangle.LETTER);
-        victim.appendItem("test.", 100, new PDPage());
         victim.addToC();
-        assertEquals(PDRectangle.LETTER, doc.getPage(0).getMediaBox());
+        assertEquals(PDRectangle.LETTER, victim.getDoc().getPage(0).getMediaBox());
     }
 
     @Test
     public void testToCForLargePageSize() throws TaskException {
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         victim.pageSizeIfNotSet(PDRectangle.A1);
-        victim.appendItem("test.", 100, new PDPage());
         victim.addToC();
         assertEquals(39.64, victim.getFontSize(), 0.1);
     }
 
     @Test
     public void testStringsThatMixMultipleFontRequirements() throws TaskException {
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("1-abc-עברית", 100, new PDPage());
+        TableOfContentsCreator victim = newToCCreator("1-abc-עברית");
         victim.addToC();
-        assertEquals(1, doc.getNumberOfPages());
+        assertEquals(1, victim.getDoc().getNumberOfPages());
     }
 
     @Test
     public void indexPageIsConsideredInPageNumbers() throws IOException, TaskException {
-        PDDocument doc = new PDDocument();
-        assertEquals(0, doc.getNumberOfPages());
-        MergeParameters params = new MergeParameters();
-        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem(
-                "This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled.",
-                100, new PDPage());
+        TableOfContentsCreator victim = newToCCreator(ToCPolicy.DOC_TITLES, 
+                Arrays.asList("This is a very long file name and we expect that it's handled correctly and no Exception is thrown by the component. We are making this very very long so we can make sure that even the veeeery long ones are handled."));
+        
         victim.addToC();
-        assertThat(new PDFTextStripper().getText(doc), containsString("101"));
+        assertThat(getDocTextNormalized(victim.getDoc()), endsWith("veeeery long ones are handled.   101\n"));
     }
 
     @Test
     public void testTocNumberOfPagesNoToc() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.NONE);
-        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator(ToCPolicy.NONE, Arrays.asList("sample title"));
         int tocNumPages = victim.addToC();
         assertEquals(0, tocNumPages);
-        assertEquals(0, doc.getNumberOfPages());
+        assertEquals(0, victim.getDoc().getNumberOfPages());
     }
 
     @Test
     public void testTocNumberOfPages() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
-        params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
-        
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("sample title", 1, new PDPage());
+        TableOfContentsCreator victim = newToCCreator("sample title");
         int tocNumPages = victim.addToC();
         assertEquals(1, tocNumPages);
-        assertEquals(1, doc.getNumberOfPages());
+        assertEquals(1, victim.getDoc().getNumberOfPages());
     }
 
     @Test
@@ -292,37 +232,29 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testTocNumberOfPages_Multiple() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         victim.pageSizeIfNotSet(PDRectangle.A4);
         for (int i = 1; i < 40; i++) {
-            params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
             victim.appendItem("entry " + i, i, new PDPage());
         }
 
         int tocNumPages = victim.addToC();
         assertEquals(2, tocNumPages);
-        assertEquals(2, doc.getNumberOfPages());
+        assertEquals(2, victim.getDoc().getNumberOfPages());
     }
 
     @Test
     public void testTocNumberOfPagesMultipleInA2() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         victim.pageSizeIfNotSet(PDRectangle.A2);
         for (int i = 1; i < 40; i++) {
-            params.addInput(new PdfMergeInput(mock(PdfFileSource.class)));
             victim.appendItem("sample " + i + ".pdf", i + 1, new PDPage());
         }
         
         // ToC font is scaled so we get 2 pages even if a2 is twice the a4 height
         int tocNumPages = victim.addToC();
         assertEquals(2, tocNumPages);
-        assertEquals(2, doc.getNumberOfPages());
+        assertEquals(2, victim.getDoc().getNumberOfPages());
     }
 
     @Test
@@ -364,10 +296,7 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void test_Toc_Long_Item_That_Wraps_At_The_End_Of_The_Page() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         for (int i = 0; i < 30; i++) {
             victim.appendItem("This is an item", 1, new PDPage());
         }
@@ -379,47 +308,33 @@ public class TableOfContentsCreatorTest {
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        TestUtils.assertPageTextDoesNotContain(doc.getPage(0), "This is a long item that");
-
-        TestUtils.assertPageTextContains(doc.getPage(1), "This is a long item that");
+        TestUtils.assertPageTextDoesNotContain(victim.getDoc().getPage(0), "This is a long item that");
+        TestUtils.assertPageTextContains(victim.getDoc().getPage(1), "This is a long item that");
     }
 
     @Test
     public void test_Toc_Long_Item_That_Has_No_Word_Breaks() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem(
-                "This_is_a_file_that_has_a_very_long_name_and_should_not_be_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf",
-                10, new PDPage());
+        TableOfContentsCreator victim = newToCCreator("This_is_a_file_that_has_a_very_long_name_and_should_not_be_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf");
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        assertPageTextExactLines(doc.getPage(0),
+        assertPageTextExactLines(victim.getDoc().getPage(0),
                 "This_is_a_file_that_has_a_very_long_name_and_should_not_be-\n"
-                        + "_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf   11\n");
+                        + "_truncated_so_that_the_version_is_visible_at_the_end_v7.pdf   101\n");
     }
 
     @Test
     public void test_Toc_Item_Requiring_Multiple_Fonts() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("Item multiple fonts ทดสอบ", 10, new PDPage());
+        TableOfContentsCreator victim = newToCCreator("Item multiple fonts ทดสอบ");
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
 
-        assertPageTextExactLines(doc.getPage(0), "Item multiple fonts ทดสอบ   11\n");
+        assertPageTextExactLines(victim.getDoc().getPage(0), "Item multiple fonts ทดสอบ   101\n");
     }
 
     @Test(expected = UnsupportedTextException.class)
     public void tocItemsMultipleFontsButNotFound() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator();
         victim.appendItem("Item multiple fonts հայերէն", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         victim.addToC();
@@ -514,19 +429,12 @@ public class TableOfContentsCreatorTest {
             }
         }
         
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-        
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator(entries);
         victim.pageSizeIfNotSet(PDRectangle.A4);
-        for (int i = 0; i < entries.size(); i++) {
-            victim.appendItem(entries.get(i), 100 + i, new PDPage());
-        }
 
         victim.addToC();
         
-        assertThat(doc.getNumberOfPages(), is(2));
+        assertThat(victim.getDoc().getNumberOfPages(), is(2));
         
         String expected = "Attachment 1 - Sample file name - shorter   102\n" +
                 "Attachment 2 - Sample file name - shorter   103\n" +
@@ -562,8 +470,8 @@ public class TableOfContentsCreatorTest {
                 "on the next line   125\n" +
                 "Attachment 25 - Sample file name - shorter   126\n" +
                 "Attachment 26 - Sample file name - shorter   127\n";
-        
-        assertThat(new PDFTextStripper().getText(doc), is(expected));
+
+        assertDocTextExactLines(victim.getDoc(), expected);
     }
 
     @Test
@@ -580,20 +488,13 @@ public class TableOfContentsCreatorTest {
         // this item will not fit the 1st TOC page, will be added to the 2nd
         entries.add("Attachment final - Sample file name - longer item that might wrap on the next line");
 
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator(entries);
         victim.pageSizeIfNotSet(PDRectangle.A4);
-        for (int i = 0; i < entries.size(); i++) {
-            victim.appendItem(entries.get(i), 100 + i, new PDPage());
-        }
 
         victim.addToC();
-        assertThat(doc.getNumberOfPages(), is(2));
-
-        assertPageTextExactLines(doc.getPage(1), "Attachment final - Sample file name - longer item that might wrap\non the next line   124\n");
+        
+        assertThat(victim.getDoc().getNumberOfPages(), is(2));
+        assertPageTextExactLines(victim.getDoc().getPage(1), "Attachment final - Sample file name - longer item that might wrap\non the next line   124\n");
     }
 
     @Test
@@ -610,32 +511,51 @@ public class TableOfContentsCreatorTest {
         // this item will fit the 1st TOC page
         entries.add("Attachment final - Sample file name - short and fits");
 
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        TableOfContentsCreator victim = newToCCreator(entries);
         victim.pageSizeIfNotSet(PDRectangle.A4);
-        for (int i = 0; i < entries.size(); i++) {
-            victim.appendItem(entries.get(i), 100 + i, new PDPage());
-        }
 
         victim.addToC();
-        assertThat(doc.getNumberOfPages(), is(1));
 
-        assertThat(getPageTextNormalized(doc.getPage(0)), endsWith("\nAttachment final - Sample file name - short and fits   123\n"));
+        assertThat(victim.getDoc().getNumberOfPages(), is(1));
+        assertThat(getPageTextNormalized(victim.getDoc().getPage(0)), endsWith("\nAttachment final - Sample file name - short and fits   123\n"));
     }
     
     @Test(expected = IllegalStateException.class)
     public void catchesWrongUsage_ItemAddedAfterTocGenerated() throws TaskException {
-        MergeParameters params = new MergeParameters();
-        params.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
-
-        PDDocument doc = new PDDocument();
-        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
-        victim.appendItem("test", 1, new PDPage());
+        TableOfContentsCreator victim = newToCCreator();
+        
         victim.addToC();
         
         victim.appendItem("cannot add more", 2, new PDPage());
+    }
+    
+    private TableOfContentsCreator newToCCreator() {
+        return newToCCreator("test");
+    }
+
+    private TableOfContentsCreator newToCCreator(String item) {
+        return newToCCreator(Arrays.asList(item));
+    }
+
+    private TableOfContentsCreator newToCCreator(List<String> items) {
+        return newToCCreator(ToCPolicy.FILE_NAMES, items);
+    }
+
+    private TableOfContentsCreator newToCCreator(ToCPolicy toCPolicy, List<String> items) {
+        MergeParameters params = new MergeParameters();
+        params.setTableOfContentsPolicy(toCPolicy);
+
+        return newToCCreator(params, items);
+    }
+
+    private TableOfContentsCreator newToCCreator(MergeParameters params, List<String> items) {
+        PDDocument doc = new PDDocument();
+        TableOfContentsCreator victim = new TableOfContentsCreator(params, doc);
+        
+        for (int i = 0; i < items.size(); i++) {
+            victim.appendItem(items.get(i), 100 + i, new PDPage());    
+        }
+        
+        return  victim;
     }
 }

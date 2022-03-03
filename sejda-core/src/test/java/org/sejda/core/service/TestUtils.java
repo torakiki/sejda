@@ -36,12 +36,14 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.sejda.commons.util.StringUtils;
+import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.text.PDFTextStripper;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 public class TestUtils {
@@ -70,6 +72,10 @@ public class TestUtils {
     public static String getPageTextNormalized(PDPage page) throws IOException {
         return normalizeLineEndings(getPageText(page));
     }
+    
+    public static String getDocTextNormalized(PDDocument doc) throws IOException {
+        return normalizeLineEndings(new PDFTextStripper().getText(doc));
+    }
 
     public static void assertPageText(PDPage page, String text) {
         withPageText(page, pageText -> {
@@ -87,6 +93,10 @@ public class TestUtils {
         withPageText(page, pageText -> {
             assertEquals(normalizeLineEndings(text), normalizeLineEndings(pageText));
         });
+    }
+
+    public static void assertDocTextExactLines(PDDocument doc, String text) throws IOException {
+        assertEquals((text), getDocTextNormalized(doc));
     }
 
     public static void assertPageTextContains(PDPage page, String text) {
