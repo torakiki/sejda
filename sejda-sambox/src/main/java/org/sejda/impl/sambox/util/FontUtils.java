@@ -194,22 +194,17 @@ public final class FontUtils {
     }
 
     public static boolean canDisplaySpace(PDFont font) {
-        try {
-            // try encode
-            font.encode(" ");
-
-            // see if width is non zero
-            return font.getStringWidth(" ") > 0;
-        } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
-            // Nope
-        }
-        return false;
+        return canDisplayString(" ", font);
     }
 
     /**
      * Returns true if the given font can display the given text. IMPORTANT: Ignores all whitespace in text.
      */
     public static boolean canDisplay(String text, PDFont font) {
+        return canDisplayString(removeWhitespace(text), font);
+    }
+
+    private static boolean canDisplayString(String text, PDFont font) {
         if (font == null)
             return false;
 
@@ -217,7 +212,7 @@ public final class FontUtils {
 
         try {
             // remove all whitespace characters and check only if those can be written using the font
-            byte[] encoded = font.encode(removeWhitespace(text));
+            byte[] encoded = font.encode(text);
 
             if (font instanceof PDVectorFont) {
                 InputStream in = new ByteArrayInputStream(encoded);
