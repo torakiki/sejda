@@ -194,7 +194,35 @@ public final class FontUtils {
     }
 
     public static boolean canDisplaySpace(PDFont font) {
-        return canDisplayString(" ", font);
+        try {
+            // try encode
+            byte[] encoded = font.encode(" ");
+
+            if (font instanceof PDVectorFont) {
+                InputStream in = new ByteArrayInputStream(encoded);
+                while (in.available() > 0) {
+                    int code = font.readCode(in);
+
+                    // LOG.debug("Read codePoint {}", code);
+
+                    PDVectorFont vectorFont = (PDVectorFont) font;
+                    GeneralPath path = vectorFont.getPath(code);
+                    // if(path != null) {
+                    // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
+                    // }
+
+                    if (path == null || path.getBounds2D().getWidth() == 0) {
+                        return false;
+                    }
+                }
+            }
+
+            // see if width is non zero
+            return font.getStringWidth(" ") > 0;
+        } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
+            // Nope
+        }
+        return false;
     }
 
     /**
