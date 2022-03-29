@@ -41,8 +41,7 @@ import org.xml.sax.SAXParseException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
@@ -221,6 +220,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            transformerFactory.setURIResolver(new NoopURIResolver());
 
             Transformer transformer = transformerFactory.newTransformer();
             StringWriter writer = new StringWriter();
@@ -242,6 +242,13 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     @Override
     public void after() {
         closeQuietly(documentHandler);
+    }
+    
+    private static class NoopURIResolver implements URIResolver {
+        @Override
+        public Source resolve(String href, String base) throws TransformerException {
+            return null;
+        }
     }
 
 }
