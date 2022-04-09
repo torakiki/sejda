@@ -25,7 +25,11 @@ import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -186,8 +190,6 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 }
             }
             
-            relativePagesCounter = 0;
-
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
 

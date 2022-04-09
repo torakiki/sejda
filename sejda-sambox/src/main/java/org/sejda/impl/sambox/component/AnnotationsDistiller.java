@@ -32,14 +32,11 @@ import org.sejda.commons.LookupTable;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.action.PDAction;
-import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
-import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,15 +97,15 @@ public final class AnnotationsDistiller {
 
     private void processLinkAnnotation(LookupTable<PDPage> relevantPages, Set<PDAnnotation> keptAnnotations,
             PDAnnotationLink annotation) throws IOException {
-        PDDestination destination = getDestinationFrom(annotation);
-        if (destination instanceof PDPageDestination) {
-            PDPage destPage = relevantPages.lookup(((PDPageDestination) destination).getPage());
+        PDPageDestination destination = getDestinationFrom(annotation);
+        if (nonNull(destination)) {
+            PDPage destPage = relevantPages.lookup(destination.getPage());
             if (nonNull(destPage)) {
                 // relevant page dest
                 PDAnnotationLink duplicate = (PDAnnotationLink) duplicate(annotation, relevantPages);
                 duplicate.getCOSObject().removeItem(COSName.A);
                 PDPageDestination newDestination = (PDPageDestination) PDDestination
-                        .create(((PDPageDestination) destination).getCOSObject().duplicate());
+                        .create(destination.getCOSObject().duplicate());
                 newDestination.setPage(destPage);
                 duplicate.setDestination(newDestination);
                 keptAnnotations.add(duplicate);
@@ -161,19 +158,9 @@ public final class AnnotationsDistiller {
         return duplicate;
     }
 
-    private PDDestination getDestinationFrom(PDAnnotationLink link) {
+    private PDPageDestination getDestinationFrom(PDAnnotationLink link) {
         try {
-            PDDestination destination = link.getDestination();
-            if (destination == null) {
-                PDAction action = link.getAction();
-                if (action instanceof PDActionGoTo) {
-                    destination = ((PDActionGoTo) action).getDestination();
-                }
-            }
-            if (destination instanceof PDNamedDestination) {
-                return document.getDocumentCatalog().findNamedDestinationPage((PDNamedDestination) destination);
-            }
-            return destination;
+            return link.resolveToPageDestination(document.getDocumentCatalog()).orElse(null);
         } catch (Exception e) {
             LOG.warn("Failed to get destination for annotation", e);
             return null;

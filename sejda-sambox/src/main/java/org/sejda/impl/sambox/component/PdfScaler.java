@@ -46,6 +46,7 @@ import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,14 +171,15 @@ public class PdfScaler {
                 } else {
                     scaleContentBoxes(scale, page);
                 }
-                transformAnnotations(page, matrix, processedAnnots);
+                transformAnnotations(page, matrix, processedAnnots, doc);
             } catch (IOException e) {
                 throw new TaskIOException("An error occurred writing scaling the page.", e);
             }
         }
     }
 
-    private static void transformAnnotations(PDPage page, Matrix transform, Set<COSDictionary> processedAnnots) {
+    private static void transformAnnotations(PDPage page, Matrix transform, Set<COSDictionary> processedAnnots,
+            PDDocument doc) {
         page.getAnnotations().stream().filter(a -> !processedAnnots.contains(a.getCOSObject())).forEach(a -> {
 
             // set the new rectangle
@@ -189,6 +191,16 @@ public class PdfScaler {
                     .filter(p -> p.size() == 8).map(COSArray::toFloatArray).ifPresent(f -> {
                         a.getCOSObject().setItem(COSName.QUADPOINTS, transformPoints(f, transform));
                     });
+
+            // adjust destination coordinates
+            if (a instanceof PDAnnotationLink) {
+                try {
+                    ((PDAnnotationLink) a).resolveToPageDestination(doc.getDocumentCatalog())
+                            .ifPresent(d -> d.transform(transform));
+                } catch (IOException e) {
+                    LOG.warn("Unable to process link annotation destination", e);
+                }
+            }
 
             // adjust line length
             if (a instanceof PDAnnotationLine) {
@@ -246,7 +258,7 @@ public class PdfScaler {
                     // realign the content
                     contentStream.transform(matrix);
 
-                    transformAnnotations(page, matrix, processedAnnots);
+                    transformAnnotations(page, matrix, processedAnnots, doc);
 
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred adding margins to the page.", e);

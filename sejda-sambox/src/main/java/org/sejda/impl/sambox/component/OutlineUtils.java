@@ -39,8 +39,6 @@ import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.interactive.action.PDAction;
-import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -82,19 +80,7 @@ public final class OutlineUtils {
      */
     public static Optional<PDPageDestination> toPageDestination(PDOutlineItem current, PDDocumentCatalog catalog) {
         try {
-            PDDestination dest = current.getDestination();
-            if (dest == null) {
-                PDAction outlineAction = current.getAction();
-                if (outlineAction instanceof PDActionGoTo) {
-                    dest = ((PDActionGoTo) outlineAction).getDestination();
-                }
-            }
-            if (dest instanceof PDNamedDestination && catalog != null) {
-                dest = catalog.findNamedDestinationPage((PDNamedDestination) dest);
-            }
-            if (dest instanceof PDPageDestination) {
-                return Optional.of((PDPageDestination) dest);
-            }
+            return current.resolveToPageDestination(catalog);
         } catch (IOException e) {
             LOG.warn("Unable to get outline item destination ", e);
         }

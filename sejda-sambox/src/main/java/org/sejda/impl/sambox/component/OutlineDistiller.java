@@ -65,7 +65,7 @@ public class OutlineDistiller {
         if (!pagesLookup.isEmpty()) {
             ofNullable(document.getDocumentCatalog().getDocumentOutline()).ifPresent(outline -> {
                 for (PDOutlineItem child : outline.children()) {
-                    cloneNode(child, pagesLookup).ifPresent(c -> to.addLast(c));
+                    cloneNode(child, pagesLookup).ifPresent(to::addLast);
                 }
                 LOG.debug("Appended relevant outline items");
             });
@@ -79,14 +79,12 @@ public class OutlineDistiller {
                 if (current.equals(node)) {
                     LOG.warn("Outline item has a child pointing to the parent, skipping at cloning");
                 } else {
-                    cloneNode(current, pagesLookup).ifPresent(clonedChild -> {
-                        clone.addLast(clonedChild);
-                    });
+                    cloneNode(current, pagesLookup).ifPresent(clone::addLast);
                 }
             }
             Optional<PDPageDestination> pageDestination = toPageDestination(node, document.getDocumentCatalog());
             Optional<PDPage> destinationPage = pageDestination.map(d -> resolvePageDestination(d, document))
-                    .map(p -> pagesLookup.lookup(p));
+                    .map(pagesLookup::lookup);
             if (clone.hasChildren() || destinationPage.isPresent()) {
                 copyOutlineDictionary(node, clone);
                 destinationPage.ifPresent(p -> clone.setDestination(clonePageDestination(pageDestination.get(), p)));
