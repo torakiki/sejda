@@ -18,13 +18,13 @@
  */
 package org.sejda.impl.sambox.component;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -311,5 +312,48 @@ public class OutlineUtilsTest {
         PDPageDestination notFound = new PDPageXYZDestination();
         notFound.setPageNumber(10);
         assertNull(OutlineUtils.resolvePageDestination(notFound, document));
+    }
+
+    @Test
+    public void pageGroupedPageDestinations() {
+        PDPage page1 = new PDPage();
+        PDPage page2 = new PDPage();
+        PDPage page3 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        document.addPage(page2);
+        document.addPage(page3);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("title");
+        PDOutlineItem child = new PDOutlineItem();
+        child.setTitle("child");
+        child.setDestination(page2);
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page1);
+        PDOutlineItem child3 = new PDOutlineItem();
+        child3.setTitle("child3");
+        PDPageFitHeightDestination gotoDest = new PDPageFitHeightDestination();
+        gotoDest.setLeft(50);
+        gotoDest.setPage(page1);
+        PDActionGoTo action = new PDActionGoTo();
+        action.setDestination(gotoDest);
+        child3.setAction(action);
+        child2.getCOSObject().getDictionaryObject(COSName.DEST, COSArray.class).set(0, COSInteger.ONE);
+        PDOutlineItem child4 = new PDOutlineItem();
+        child4.setTitle("child4");
+        child4.setDestination(page3);
+        child3.addLast(child4);
+        root.addFirst(child);
+        root.addLast(child2);
+        root.addLast(child3);
+        outlines.addFirst(root);
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        Map<PDPage, Set<PDPageDestination>> victim = OutlineUtils.pageGroupedOutlinePageDestinations(document);
+        assertEquals(3, victim.size());
+        assertEquals(1, victim.get(page1).size());
+        assertEquals(2, victim.get(page2).size());
+        assertEquals(1, victim.get(page3).size());
     }
 }

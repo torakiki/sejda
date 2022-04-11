@@ -19,8 +19,13 @@
 package org.sejda.impl.sambox.component;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.StreamSupport;
 
 import org.junit.Test;
 import org.sejda.io.SeekableSources;
@@ -30,6 +35,10 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineTreeIterator;
 
 /**
  * @author Andrea Vacondio
@@ -185,4 +194,45 @@ public class PdfScalerTest {
             assertEquals(new PDRectangle(0, 0, 300, 600), page.getTrimBox());
         }
     }
+
+    @Test
+    public void expandPageAdjustOutlineCoordinates() throws IOException, TaskIOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
+            PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
+            scaler.scale(document, PDRectangle.A0.getHeight() / PDRectangle.A4.getHeight());
+            PDOutlineItem outlineItem = StreamSupport
+                    .stream(Spliterators.spliteratorUnknownSize(
+                            new PDOutlineTreeIterator(document.getDocumentCatalog().getDocumentOutline()),
+                            Spliterator.ORDERED | Spliterator.NONNULL), false)
+                    .filter(item -> item.getTitle().contains("third level")).findFirst().orElse(null);
+            Optional<PDPageDestination> destination = outlineItem
+                    .resolveToPageDestination(document.getDocumentCatalog());
+            assertTrue(destination.isPresent());
+            PDPageXYZDestination pageDest = ((PDPageXYZDestination) destination.get());
+            assertEquals(2754, pageDest.getTop());
+            assertEquals(224, pageDest.getLeft());
+        }
+    }
+
+    @Test
+    public void expandContentAdjustOutlineCoordinates() throws IOException, TaskIOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
+            PdfScaler scaler = new PdfScaler(ScaleType.CONTENT);
+            scaler.scale(document, PDRectangle.A5.getHeight() / PDRectangle.A4.getHeight());
+            PDOutlineItem outlineItem = StreamSupport
+                    .stream(Spliterators.spliteratorUnknownSize(
+                            new PDOutlineTreeIterator(document.getDocumentCatalog().getDocumentOutline()),
+                            Spliterator.ORDERED | Spliterator.NONNULL), false)
+                    .filter(item -> item.getTitle().contains("third level")).findFirst().orElse(null);
+            Optional<PDPageDestination> destination = outlineItem
+                    .resolveToPageDestination(document.getDocumentCatalog());
+            assertTrue(destination.isPresent());
+            PDPageXYZDestination pageDest = ((PDPageXYZDestination) destination.get());
+            assertEquals(609, pageDest.getTop());
+            assertEquals(126, pageDest.getLeft());
+        }
+    }
+
 }

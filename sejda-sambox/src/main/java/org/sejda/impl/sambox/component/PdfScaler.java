@@ -23,6 +23,7 @@ package org.sejda.impl.sambox.component;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import static org.sejda.impl.sambox.component.OutlineUtils.pageGroupedOutlinePageDestinations;
 import static org.sejda.model.scale.Margins.inchesToPoints;
 
 import java.awt.geom.AffineTransform;
@@ -31,6 +32,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.sejda.model.exception.TaskIOException;
@@ -47,6 +49,7 @@ import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,6 +165,7 @@ public class PdfScaler {
 
     private void doScale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
         Set<COSDictionary> processedAnnots = new HashSet<>();
+        Map<PDPage, Set<PDPageDestination>> groupedOutline = pageGroupedOutlinePageDestinations(doc);
         for (PDPage page : pages) {
             try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
                 Matrix matrix = getMatrix(scale, page.getCropBox(), page.getCropBox());
@@ -172,6 +176,9 @@ public class PdfScaler {
                     scaleContentBoxes(scale, page);
                 }
                 transformAnnotations(page, matrix, processedAnnots, doc);
+
+                // adjust outline destination coordinates for all the outline items pointing to this page
+                ofNullable(groupedOutline.get(page)).ifPresent(g -> g.forEach(d -> d.transform(matrix)));
             } catch (IOException e) {
                 throw new TaskIOException("An error occurred writing scaling the page.", e);
             }
@@ -239,6 +246,7 @@ public class PdfScaler {
      */
     public static void margin(PDDocument doc, Iterable<PDPage> pages, Margins margins) throws TaskIOException {
         if (nonNull(margins)) {
+            Map<PDPage, Set<PDPageDestination>> groupedOutline = pageGroupedOutlinePageDestinations(doc);
             Set<COSDictionary> processedAnnots = new HashSet<>();
             for (PDPage page : pages) {
                 try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
@@ -259,7 +267,8 @@ public class PdfScaler {
                     contentStream.transform(matrix);
 
                     transformAnnotations(page, matrix, processedAnnots, doc);
-
+                    // adjust outline destination coordinates for all the outline items pointing to this page
+                    ofNullable(groupedOutline.get(page)).ifPresent(g -> g.forEach(d -> d.transform(matrix)));
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred adding margins to the page.", e);
                 }

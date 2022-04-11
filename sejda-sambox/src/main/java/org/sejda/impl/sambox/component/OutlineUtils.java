@@ -26,10 +26,16 @@ import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.cos.COSArray;
@@ -45,6 +51,7 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineTreeIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,6 +192,27 @@ public final class OutlineUtils {
         } else {
             to.closeNode();
         }
+    }
+
+    /**
+     * @param document
+     * @return a multi map representing a page grouped view of all the outline page destinations.
+     */
+    public static Map<PDPage, Set<PDPageDestination>> pageGroupedOutlinePageDestinations(PDDocument document) {
+        Map<PDPage, Set<PDPageDestination>> destinations = new HashMap<>();
+        PDDocumentCatalog catalog = document.getDocumentCatalog();
+        ofNullable(catalog.getDocumentOutline()).ifPresent(outline -> {
+            StreamSupport.stream(Spliterators.spliteratorUnknownSize(new PDOutlineTreeIterator(outline),
+                    Spliterator.ORDERED | Spliterator.NONNULL), false).forEach(i -> {
+                        toPageDestination(i, document.getDocumentCatalog()).ifPresent(d -> {
+                            PDPage page = resolvePageDestination(d, document);
+                            if (nonNull(page)) {
+                                destinations.computeIfAbsent(page, p -> new HashSet<>()).add(d);
+                            }
+                        });
+                    });
+        });
+        return destinations;
     }
 
     /**
