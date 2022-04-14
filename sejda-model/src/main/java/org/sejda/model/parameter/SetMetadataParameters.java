@@ -40,6 +40,7 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
     private final Map<String, String> metadata = new HashMap<String, String>();
     private final Set<String> toRemove = new NullSafeSet<>();
     private Boolean updateCreatorProducerModifiedDate = true;
+    private Boolean removeAllMetadata = false;
 
     public Map<String, String> getMetadata() {
         return metadata;
@@ -73,10 +74,19 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
         this.updateCreatorProducerModifiedDate = updateCreatorProducerModifiedDate;
     }
 
+    public Boolean isRemoveAllMetadata() {
+        return removeAllMetadata;
+    }
+
+    public void setRemoveAllMetadata(Boolean removeAllMetadata) {
+        this.removeAllMetadata = removeAllMetadata;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(metadata).append(toRemove)
-                .append(updateCreatorProducerModifiedDate).toHashCode();
+                .append(updateCreatorProducerModifiedDate).append(removeAllMetadata)
+                .toHashCode();
     }
 
     @Override
@@ -91,6 +101,7 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata, parameter.metadata)
                 .append(toRemove, parameter.toRemove)
                 .append(updateCreatorProducerModifiedDate, parameter.updateCreatorProducerModifiedDate)
+                .append(removeAllMetadata, parameter.removeAllMetadata)
                 .isEquals();
     }
 }

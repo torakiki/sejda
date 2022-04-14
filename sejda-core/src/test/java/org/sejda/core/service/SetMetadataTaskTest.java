@@ -229,6 +229,41 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         });
     }
 
+    @Test
+    public void removeAllMetadata() throws IOException {
+        setUpParams(stronglyEncryptedInput());
+        parameters.setRemoveAllMetadata(true);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument document) {
+                try {
+                    PDDocumentInformation info = document.getDocumentInformation();
+                    
+                    assertEquals(0, info.getMetadataKeys().size());
+                    
+                    assertNull(info.getCreator());
+                    assertNull(info.getAuthor());
+                    assertNull(info.getProducer());
+                    assertNull(info.getModificationDate());
+                    assertNull(info.getCreationDate());
+                    assertNull(info.getKeywords());
+                    assertNull(info.getTitle());
+
+                    assertNull(document.getDocumentCatalog().getMetadata());
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+    }
+
     private void doExecute() throws IOException {
         testContext.directoryOutputTo(parameters);
         execute(parameters);

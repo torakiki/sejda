@@ -109,7 +109,18 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                     @Override
                     public void onBeforeWrite() throws IOException {
                         LOG.debug("Setting metadata on temporary document.");
-                        PDDocumentInformation actualMeta = documentHandler.getUnderlyingPDDocument().getDocumentInformation();
+
+                        PDDocument doc = documentHandler.getUnderlyingPDDocument();
+                        PDDocumentCatalog catalog = doc.getDocumentCatalog();
+                        
+                        if(parameters.isRemoveAllMetadata()) {
+                            doc.setDocumentInformation(new PDDocumentInformation());
+                            catalog.setMetadata(null);
+                            
+                            return;
+                        }
+
+                        PDDocumentInformation actualMeta = doc.getDocumentInformation();
                         for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
                             LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
                             actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
@@ -120,7 +131,6 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                             actualMeta.removeMetadataField(keyToRemove);
                         }
 
-                        PDDocumentCatalog catalog = documentHandler.getUnderlyingPDDocument().getDocumentCatalog();
                         if(catalog.getMetadata() != null) {
                             LOG.debug("Document has XMP metadata stream");
                             updateXmpMetadata(catalog, actualMeta);
