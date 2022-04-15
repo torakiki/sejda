@@ -348,17 +348,14 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void brokenFontWithZeroWidthGlyphs() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("pdf/font-with-zero-width-glyphs.pdf");
+    public void vectorFontWithSpace() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/font-with-vector-font.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
-        
-        assertThat(FontUtils.canDisplaySpace(font), is(false));
+
+        assertThat(FontUtils.canDisplaySpace(font), is(true));
         
         List<TextWithFont> result = FontUtils.resolveFonts("31 days", font, doc);
-        assertThat(result.get(0).getText(), is("31"));
+        assertThat(result.get(0).getText(), is("31 days"));
         assertThat(result.get(0).getFont(), is(font));
-        assertThat(result.get(1).getText(), is(" "));
-        assertThat(result.get(1).getFont().getName(), is("Helvetica"));
-        assertThat(result.get(2).getText(), is("days"));
     }
 }
