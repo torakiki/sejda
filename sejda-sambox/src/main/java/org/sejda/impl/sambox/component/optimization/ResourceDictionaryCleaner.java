@@ -87,7 +87,8 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                 .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
                 .filter(Objects::nonNull);
 
-        // NOTE: we currently don't clean type3 fonts resources. We hit them so we shouldn't have data loss in case of shared resource dictionaries but we don't clean them atm
+        // NOTE: we currently don't clean type3 fonts and tiling patterns resources. We hit them so we shouldn't have data loss in case of shared resource dictionaries but we don't
+        // clean them atm
         cleanResources(Stream.of(formsResources, softmaskResources).flatMap(s -> s).collect(toSet()));
     }
 

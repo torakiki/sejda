@@ -96,11 +96,11 @@ public class ResourcesHitterTest {
             COSDictionary downAppRes = appearence.get(0).getDownAppearance().getAppearanceStream().getResources()
                     .getCOSObject();
             assertTrue("Hitter should discover images in appearance streams resource dictionarlies",
-                    ((COSDictionary) downAppRes.getDictionaryObject(COSName.XOBJECT))
+                    downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
                             .getDictionaryObject(COSName.getPDFName("X0"))
                             .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
             assertTrue("Hitter should discover images in appearance streams resource dictionarlies",
-                    ((COSDictionary) downAppRes.getDictionaryObject(COSName.XOBJECT))
+                    downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
                             .getDictionaryObject(COSName.getPDFName("X1"))
                             .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
         }
@@ -115,6 +115,20 @@ public class ResourcesHitterTest {
             COSDictionary pageRes = page.getResources().getCOSObject();
             assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.FONT))
                     .getDictionaryObject(COSName.getPDFName("A")).getCOSObject() instanceof InUseDictionary);
+        }
+    }
+
+    @Test
+    public void testTilingPattern() throws Exception {
+        try (PDDocument document = PDFParser.parse(SeekableSources
+                .inMemorySeekableSourceFrom(
+                        getClass().getClassLoader().getResourceAsStream("pdf/pattern_shared_res.pdf")))) {
+            document.getPages().forEach(victim::accept);
+            PDPage page = document.getPage(0);
+            COSDictionary pageRes = page.getResources().getCOSObject();
+            assertTrue(pageRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("Im1"))
+                    .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
         }
     }
 

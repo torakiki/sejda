@@ -55,6 +55,8 @@ public class NameResourcesDuplicator implements Consumer<PDPage> {
                 .ifPresent(d -> resources.setItem(COSName.FONT, d));
         ofNullable(resources.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
                 .map(COSDictionary::duplicate).ifPresent(d -> resources.setItem(COSName.EXT_G_STATE, d));
+        ofNullable(resources.getDictionaryObject(COSName.PATTERN, COSDictionary.class)).map(COSDictionary::duplicate)
+                .ifPresent(d -> resources.setItem(COSName.PATTERN, d));
     }
 
 }
