@@ -374,8 +374,6 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
-    @Disabled("Fails because an empty value in a 0 width 0 height text field")
-    @Ignore
     public void testExecuteMergeRangesWithFlattenForms() throws IOException {
         List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
         inputs.add(new PdfMergeInput(customInput("pdf/forms/simple_form_with_values.pdf")));
