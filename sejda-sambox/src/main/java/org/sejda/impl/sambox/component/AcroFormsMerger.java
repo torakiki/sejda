@@ -150,9 +150,13 @@ public class AcroFormsMerger {
         PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFieldAddingChildToParent(this.form,
                 existing.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
         if (nonNull(getMergedField(existing.getFullyQualifiedName())) || fieldsLookup.hasLookupFor(existing)) {
-            newField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
-            LOG.info("Existing terminal field renamed from {} to {}", existing.getPartialName(),
-                    newField.getPartialName());
+            String partialName = existing.getPartialName();
+            // dots are not allowed in the partial name, but still broken documents may exist
+            if(partialName.contains(".")) {
+                partialName = partialName.replace(".", "");
+            }
+            newField.setPartialName(String.format("%s%s%d", partialName, random, ++counter));
+            LOG.info("Existing terminal field renamed from {} to {}", partialName, newField.getPartialName());
         }
         newField.getCOSObject().removeItem(COSName.KIDS);
         fieldsLookup.addLookupEntry(existing, newField);

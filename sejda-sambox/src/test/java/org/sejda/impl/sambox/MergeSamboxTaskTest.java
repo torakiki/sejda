@@ -265,6 +265,21 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void testExecuteMergeFieldsWithDots() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form_with_dot_partial_name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form_with_dot_partial_name.pdf")));
+        parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertHasAcroforms(true);
+    }
+
+    @Test
     public void testExecuteMergeDiscardForms() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
