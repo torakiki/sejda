@@ -21,11 +21,7 @@ package org.sejda.impl.sambox;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.sejda.TestUtils.encryptedAtRest;
 import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
 import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
@@ -36,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Ignore;
@@ -277,6 +275,18 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertHasAcroforms(true);
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument doc) {
+                List<String> fieldNames = doc.getDocumentCatalog().getAcroForm().getFieldTree().stream()
+                        .map(f -> f.getFullyQualifiedName())
+                        .collect(Collectors.toList());
+                
+                assertTrue(fieldNames.contains("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpg.withdot"));
+                assertEquals(1, fieldNames.stream()
+                        .filter(n -> n.startsWith("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpgwithdot")).count());
+            }
+        });
     }
 
     @Test
