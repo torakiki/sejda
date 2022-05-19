@@ -132,7 +132,7 @@ public class ReadOnlyFilteredCOSStreamTest {
         InputStream stream = mock(InputStream.class);
         victim = new ReadOnlyFilteredCOSStream(dictionary, stream, 10);
         victim.close();
-        verify(stream).close();
+        assertEquals(-1, victim.getFilteredStream().read());
     }
 
     @Test
@@ -224,15 +224,4 @@ public class ReadOnlyFilteredCOSStreamTest {
         assertEquals(COSInteger.TWO, victim.getItem(COSName.COLORSPACE));
     }
 
-    @Test
-    public void sameInputStreamIsReturned() throws FileNotFoundException, IOException {
-        PDColorSpace colorSpace = mock(PDColorSpace.class);
-        when(colorSpace.getCOSObject()).thenReturn(COSInteger.TWO);
-        victim = new ReadOnlyFilteredCOSStream(new COSDictionary(), () -> mock(InputStream.class), 10);
-        InputStream stream1 = victim.getFilteredStream();
-        InputStream stream2 = victim.getFilteredStream();
-        assertEquals(stream1, stream2);
-        victim.close();
-        verify(stream1).close();
-    }
 }
