@@ -19,14 +19,29 @@
 package org.sejda.impl.sambox.component.optimization;
 
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 
 /**
  * Simple {@link COSDictionary} wrapper used to identify a dictionary that is used in the page content stream
- * 
+ *
  * @author Andrea Vacondio
  */
 public class InUseDictionary extends COSDictionary {
+
+    private final COSDictionary wrapped;
+
     public InUseDictionary(COSDictionary wrapped) {
         super(wrapped);
+        this.wrapped = wrapped;
+    }
+
+    @Override
+    public IndirectCOSObjectIdentifier id() {
+        return wrapped.id();
+    }
+
+    @Override
+    public void idIfAbsent(IndirectCOSObjectIdentifier id) {
+        wrapped.idIfAbsent(id);
     }
 }

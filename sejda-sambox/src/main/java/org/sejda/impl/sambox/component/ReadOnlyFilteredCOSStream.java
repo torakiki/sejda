@@ -18,20 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.RequireUtils.requireIOCondition;
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.GregorianCalendar;
-import java.util.zip.DeflaterInputStream;
-
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.model.exception.SejdaRuntimeException;
@@ -47,17 +33,30 @@ import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.GregorianCalendar;
+import java.util.zip.DeflaterInputStream;
+
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.requireIOCondition;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+
 /**
  * A read only, filtered, encryptable, indirect reference length {@link COSStream} whose purpose is to be read by the PDF writer during the write process. This can allow to create
  * streams from File input streams and predefine the expected dictionary without having to read anything into memory.
- * 
- * @author Andrea Vacondio
  *
+ * @author Andrea Vacondio
  */
 public class ReadOnlyFilteredCOSStream extends COSStream {
-    private InputStreamSupplier<InputStream> stream;
-    private long length;
-    private COSDictionary wrapped;
+    private final InputStreamSupplier<InputStream> stream;
+    private final long length;
+    private final COSDictionary wrapped;
 
     ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
         this(existingDictionary, () -> stream, length);
@@ -66,8 +65,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     public ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStreamSupplier<InputStream> stream,
             long length) {
-        super(ofNullable(existingDictionary)
-                .orElseThrow(() -> new IllegalArgumentException("wrapped dictionary cannot be null")));
+        super(ofNullable(existingDictionary).orElseThrow(
+                () -> new IllegalArgumentException("wrapped dictionary cannot be null")));
         requireNotNullArg(stream, "input stream provider cannot be null");
         this.stream = stream;
         this.length = length;
