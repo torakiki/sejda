@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.zip.DeflaterInputStream;
 
+import static java.util.Objects.isNull;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
@@ -54,28 +55,36 @@ import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
  * @author Andrea Vacondio
  */
 public class ReadOnlyFilteredCOSStream extends COSStream {
-    private final InputStreamSupplier<InputStream> stream;
+    private final InputStreamSupplier<InputStream> supplier;
     private final long length;
     private final COSDictionary wrapped;
+    private InputStream stream;
 
-    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
-        this(existingDictionary, () -> stream, length);
-        requireNotNullArg(stream, "input stream cannot be null");
+    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream supplier, long length) {
+        this(existingDictionary, () -> supplier, length);
+        requireNotNullArg(supplier, "input stream cannot be null");
     }
 
-    public ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStreamSupplier<InputStream> stream,
+    public ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStreamSupplier<InputStream> supplier,
             long length) {
         super(ofNullable(existingDictionary).orElseThrow(
                 () -> new IllegalArgumentException("wrapped dictionary cannot be null")));
-        requireNotNullArg(stream, "input stream provider cannot be null");
-        this.stream = stream;
+        requireNotNullArg(supplier, "input stream provider cannot be null");
+        this.supplier = supplier;
         this.length = length;
         this.wrapped = existingDictionary;
     }
 
     @Override
     protected InputStream doGetFilteredStream() throws IOException {
-        return stream.get();
+        return doSupplyStream();
+    }
+
+    private synchronized InputStream doSupplyStream() throws IOException {
+        if (isNull(stream)) {
+            stream = supplier.get();
+        }
+        return stream;
     }
 
     @Override
@@ -161,7 +170,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     public void close() throws IOException {
-        IOUtils.closeQuietly(stream.get());
+        IOUtils.closeQuietly(doSupplyStream());
+        stream = null;
     }
 
     /**

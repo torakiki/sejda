@@ -18,24 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.DeflaterInputStream;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,6 +32,24 @@ import org.sejda.sambox.cos.COSObjectKey;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.DeflaterInputStream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -222,5 +222,17 @@ public class ReadOnlyFilteredCOSStreamTest {
         assertEquals(20, victim.getInt(COSName.HEIGHT));
         assertEquals(10, victim.getInt(COSName.WIDTH));
         assertEquals(COSInteger.TWO, victim.getItem(COSName.COLORSPACE));
+    }
+
+    @Test
+    public void sameInputStreamIsReturned() throws FileNotFoundException, IOException {
+        PDColorSpace colorSpace = mock(PDColorSpace.class);
+        when(colorSpace.getCOSObject()).thenReturn(COSInteger.TWO);
+        victim = new ReadOnlyFilteredCOSStream(new COSDictionary(), () -> mock(InputStream.class), 10);
+        InputStream stream1 = victim.getFilteredStream();
+        InputStream stream2 = victim.getFilteredStream();
+        assertEquals(stream1, stream2);
+        victim.close();
+        verify(stream1).close();
     }
 }
