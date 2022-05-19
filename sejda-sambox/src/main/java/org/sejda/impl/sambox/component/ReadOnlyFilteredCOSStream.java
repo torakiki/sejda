@@ -18,7 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.exception.TaskIOException;
@@ -33,6 +32,7 @@ import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,7 +42,6 @@ import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.zip.DeflaterInputStream;
 
-import static java.util.Objects.isNull;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
@@ -55,10 +54,9 @@ import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
  * @author Andrea Vacondio
  */
 public class ReadOnlyFilteredCOSStream extends COSStream {
-    private final InputStreamSupplier<InputStream> supplier;
+    private InputStreamSupplier<InputStream> supplier;
     private final long length;
     private final COSDictionary wrapped;
-    private InputStream stream;
 
     ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream supplier, long length) {
         this(existingDictionary, () -> supplier, length);
@@ -77,14 +75,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     protected InputStream doGetFilteredStream() throws IOException {
-        return doSupplyStream();
-    }
-
-    private synchronized InputStream doSupplyStream() throws IOException {
-        if (isNull(stream)) {
-            stream = supplier.get();
-        }
-        return stream;
+        return supplier.get();
     }
 
     @Override
@@ -170,8 +161,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     public void close() throws IOException {
-        IOUtils.closeQuietly(doSupplyStream());
-        stream = null;
+        //consistent with COSStream that once closed has COSStream::getFilteredStream returning an empty ByteArrayInputStream
+        this.supplier = () -> new ByteArrayInputStream(new byte[0]);
     }
 
     /**
@@ -185,8 +176,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         requireNotNullArg(existing, "input stream cannot be null");
         // let's make sure we get the unencrypted and filtered
         existing.setEncryptor(null);
-        return new ReadOnlyFilteredCOSStream(existing, () -> existing.getFilteredStream(),
-                existing.getFilteredLength());
+        return new ReadOnlyFilteredCOSStream(existing, existing::getFilteredStream, existing.getFilteredLength());
     }
 
     /**
