@@ -18,9 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
 import org.sejda.core.support.util.HumanReadableSize;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -36,6 +33,9 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Task splitting an input pdf document when the generated document reaches a given size. This implementation doesn't allow to store the pdf document objects i Objects Stream.
@@ -64,6 +64,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
         for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {}", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             document = source.open(documentLoader).getUnderlyingPDDocument();
 
             splitter = new SizePdfSplitter(document, parameters,
@@ -74,15 +75,12 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());
     }
 
     @Override
     public void after() {
-        closeResource();
-    }
-
-    private void closeResource() {
         closeQuietly(document);
         splitter = null;
     }

@@ -16,8 +16,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
@@ -32,6 +30,8 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
 
 /**
  * Extract chapters to separate documents based on the bookmarks in the outline
@@ -54,6 +54,7 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
     public void execute(ExtractByOutlineParameters parameters) throws TaskException {
         for(PdfSource<?> source: parameters.getSourceList()) {
             LOG.debug("Opening {} ", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             document = source.open(documentLoader).getUnderlyingPDDocument();
 
             LOG.debug("Retrieving outline information for level {} and match regex {}", parameters.getLevel(),
@@ -68,7 +69,7 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
 
             closeQuietly(document);
         }
-
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         LOG.debug("Extraction completed and outputs written to {}", parameters.getOutput());
     }
 

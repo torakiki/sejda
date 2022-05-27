@@ -18,19 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.Set;
-
 import org.sejda.core.Sejda;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.util.RuntimeUtils;
@@ -43,6 +30,19 @@ import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * SAMBox implementation of a task which converts a pdf document to a collection of images, one image per page.
@@ -75,6 +75,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             currentStep++;
             try {
                 LOG.debug("Opening {}", source);
+                executionContext().notifiableTaskMetadata().setCurrentSource(source);
                 documentHandler = source.open(sourceOpener);
 
                 Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
@@ -129,6 +130,7 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
             }
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Documents converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());

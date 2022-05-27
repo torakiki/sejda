@@ -18,21 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getDirection;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getDuplex;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getNFSMode;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPrintScaling;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.setBooleanPreferences;
-
-import java.io.File;
-
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -50,6 +35,21 @@ import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreference
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getDirection;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getDuplex;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getNFSMode;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPrintScaling;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.setBooleanPreferences;
 
 /**
  * SAMBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
@@ -80,6 +80,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
         for (PdfSource<?> source : parameters.getSourceList()) {
             int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             documentHandler = source.open(documentLoader);
             documentHandler.setCreatorOnPDDocument();
 
@@ -105,6 +106,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Viewer preferences set on input documents and written to {}", parameters.getOutput());
 

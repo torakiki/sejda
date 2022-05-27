@@ -18,16 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.io.File;
-
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -44,6 +34,16 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * SAMBox implementation of a task performing pages rotation on a list of {@link PdfSource}.
@@ -76,6 +76,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
             int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
             LOG.debug("Opening {}", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             try {
                 documentHandler = source.open(documentLoader);
                 documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
@@ -116,6 +117,7 @@ public class RotateTask extends BaseTask<RotateParameters> {
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents rotated and written to {}", parameters.getOutput());

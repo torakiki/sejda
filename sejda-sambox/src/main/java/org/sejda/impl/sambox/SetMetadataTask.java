@@ -41,10 +41,18 @@ import org.xml.sax.SAXParseException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFactoryConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -95,6 +103,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
             
             try {
                 LOG.debug("Opening {}", source);
+                executionContext().notifiableTaskMetadata().setCurrentSource(source);
 
                 documentHandler = source.open(documentLoader);
                 documentHandler.setUpdateProducerModifiedDate(parameters.isUpdateProducerModifiedDate());
@@ -156,6 +165,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Metadata set and written to {}", parameters.getOutput());
 

@@ -18,33 +18,6 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
@@ -68,11 +41,40 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumen
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * Context to be used in tests
- * 
- * @author Andrea Vacondio
  *
+ * @author Andrea Vacondio
  */
 public class TaskTestContext implements Closeable {
 
@@ -82,7 +84,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link FileTaskOutput}
-     * 
+     *
      * @param params
      * @return
      */
@@ -95,7 +97,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link FileTaskOutput} on a file with the given extension
-     * 
+     *
      * @param params
      * @param extension
      * @return
@@ -110,7 +112,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link DirectoryTaskOutput}
-     * 
+     *
      * @param params
      * @return
      * @throws IOException
@@ -124,7 +126,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a directory as {@link FileOrDirectoryTaskOutput}
-     * 
+     *
      * @param params
      * @return
      */
@@ -137,7 +139,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a pdf file as {@link FileOrDirectoryTaskOutput}
-     * 
+     *
      * @param params
      * @return
      */
@@ -150,7 +152,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the creator has been set to the info dictionary
-     * 
+     *
      * @return
      */
     public TaskTestContext assertCreator() {
@@ -161,7 +163,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the PDF version of the output is the given one
-     * 
+     *
      * @return
      */
     public TaskTestContext assertVersion(PdfVersion version) {
@@ -172,7 +174,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the output document has that number of pages
-     * 
+     *
      * @return
      */
     public TaskTestContext assertPages(int expected) {
@@ -183,7 +185,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the output document with the given filename exists and has that number of pages. This assert will work only for multiple output task.
-     * 
+     *
      * @return
      * @throws IOException
      * @see this{@link #assertPages(int)}
@@ -211,7 +213,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert that the document has an acroform with some field in it
-     * 
+     *
      * @param hasForms
      */
     public TaskTestContext assertHasAcroforms(boolean hasForms) {
@@ -227,8 +229,8 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert the document outline contains an item with the given title
-     * 
-     * @param string
+     *
+     * @param title
      * @return
      */
     public TaskTestContext assertOutlineContains(String title) {
@@ -243,8 +245,8 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert the document outline doesn't contain an item with the given title
-     * 
-     * @param string
+     *
+     * @param title
      * @return
      */
     public TaskTestContext assertOutlineDoesntContain(String title) {
@@ -277,7 +279,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given number of output files, hidden files don't count
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -306,7 +308,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given number of output files, including hidden files (in case the task is expected to have some hidden leftover)
-     * 
+     *
      * @param size
      * @return
      */
@@ -324,7 +326,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated no output
-     * 
+     *
      * @return
      */
     public TaskTestContext assertEmptyMultipleOutput() {
@@ -337,7 +339,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given file names
-     * 
+     *
      * @param filenames
      * @return
      */
@@ -352,7 +354,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to every generated output
-     * 
+     *
      * @param consumer
      * @return
      * @throws IOException
@@ -376,7 +378,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to generated single output PDF document
-     * 
+     *
      * @param consumer
      * @return
      * @throws IOException
@@ -389,7 +391,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to generated output PDF document with the given name
-     * 
+     *
      * @param consumer
      * @return
      * @throws IOException
@@ -406,7 +408,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to every generated output
-     * 
+     *
      * @param consumer
      * @return
      * @throws IOException
@@ -419,7 +421,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to a single generated output
-     * 
+     *
      * @param consumer
      * @return
      * @throws IOException
@@ -452,7 +454,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Asserts that the task has completed and generated some output. If a single output task, then the output is paresed and a {@link PDDocument} is returned
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -462,7 +464,7 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Asserts that the task has completed and generated some output. If the task generated a single output, then the output is parsed and a {@link PDDocument} is returned
-     * 
+     *
      * @param password
      * @return
      * @throws IOException
@@ -491,6 +493,7 @@ public class TaskTestContext implements Closeable {
     }
 
     Throwable taskFailureCause = null;
+    String failedSource;
     List<String> taskWarnings = new ArrayList<>();
 
     private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<TaskExecutionWarningEvent>() {
@@ -504,6 +507,7 @@ public class TaskTestContext implements Closeable {
         @Override
         public void onEvent(TaskExecutionFailedEvent event) {
             taskFailureCause = event.getFailingCause();
+            failedSource = event.getNotifiableTaskMetadata().getCurrentSource();
         }
     };
 
@@ -522,6 +526,16 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertTaskFailed(Class<? extends Throwable> cause) {
         assertNotNull(taskFailureCause);
         assertThat(taskFailureCause, instanceOf(cause));
+        return this;
+    }
+
+    public TaskTestContext assertTaskFailed() {
+        assertNotNull(taskFailureCause);
+        return this;
+    }
+
+    public TaskTestContext assertFailedSource(String source) {
+        assertEquals(source, failedSource);
         return this;
     }
 

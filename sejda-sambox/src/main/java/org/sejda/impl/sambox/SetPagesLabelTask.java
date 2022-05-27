@@ -18,12 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-
-import java.io.File;
-
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -36,6 +30,12 @@ import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of a task that applies page labels to a given document
@@ -64,6 +64,8 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
+        executionContext().notifiableTaskMetadata().setCurrentSource(source);
+
         documentHandler = source.open(documentLoader);
 
         File tmpFile = createTemporaryBuffer(parameters.getOutput());
@@ -79,6 +81,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
         documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Labels applied to {}", parameters.getOutput());
     }

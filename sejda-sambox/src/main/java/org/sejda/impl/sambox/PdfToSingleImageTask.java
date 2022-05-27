@@ -18,14 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
@@ -36,6 +28,14 @@ import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
 
 /**
  * SAMBox implementation of a task which converts a pdf document to an image format that supports multiple images into a single image.
@@ -70,6 +70,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         LOG.debug("Temporary output set to {}", tmpFile);
 
         LOG.debug("Opening {}", parameters.getSource());
+        executionContext().notifiableTaskMetadata().setCurrentSource(parameters.getSource());
         documentHandler = parameters.getSource().open(sourceOpener);
 
         int numberOfPages = documentHandler.getNumberOfPages();
@@ -91,6 +92,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(page + 1).outOf(numberOfPages);
         }
         getWriter().closeDestination();
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
 
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Document converted to {} and saved to {}", parameters.getOutputImageType(), parameters.getOutput());

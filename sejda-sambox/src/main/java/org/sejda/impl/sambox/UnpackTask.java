@@ -18,20 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-
 import org.apache.commons.io.FileUtils;
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
@@ -50,6 +36,20 @@ import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecificat
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationFileAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
 
 /**
  * SAMBox implementation of a task that unpacks files attached to a collection of input documents.
@@ -81,6 +81,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
             currentStep++;
             try {
                 LOG.debug("Opening {}", source);
+                executionContext().notifiableTaskMetadata().setCurrentSource(source);
                 sourceDocumentHandler = source.open(documentLoader);
 
                 Map<String, PDComplexFileSpecification> names = new HashMap<>();
@@ -101,6 +102,7 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Attachments unpacked and written to {}", parameters.getOutput());
     }

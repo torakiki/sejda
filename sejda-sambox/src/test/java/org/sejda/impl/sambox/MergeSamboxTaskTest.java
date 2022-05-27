@@ -18,30 +18,8 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.*;
-import static org.sejda.TestUtils.encryptedAtRest;
-import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
-import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
-
-import java.awt.Rectangle;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
-import org.sejda.core.TestListenerFactory;
-import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
@@ -66,6 +44,27 @@ import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.text.PDFTextStripperByArea;
+
+import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.sejda.TestUtils.encryptedAtRest;
+import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
+import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
 
 /**
  * @author Andrea Vacondio
@@ -426,10 +425,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
         parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
         testContext.pdfOutputTo(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed().assertFailedSource("name.pdf");
     }
 
     @Test
@@ -680,7 +677,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         // TODO: friendlier error message
-        testContext.assertTaskFailed("An error occurred creating PDImageXObject from file source: corrupt.png");
+        testContext.assertTaskFailed("An error occurred creating PDImageXObject from file source: corrupt.png")
+                .assertFailedSource("corrupt.png");
     }
 
     @Test
