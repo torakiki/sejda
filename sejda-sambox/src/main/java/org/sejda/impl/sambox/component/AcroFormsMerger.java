@@ -150,11 +150,7 @@ public class AcroFormsMerger {
         PDTerminalField newField = (PDTerminalField) PDFieldFactory.createFieldAddingChildToParent(this.form,
                 existing.getCOSObject().duplicate(), (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
         if (nonNull(getMergedField(existing.getFullyQualifiedName())) || fieldsLookup.hasLookupFor(existing)) {
-            String partialName = existing.getPartialName();
-            // dots are not allowed in the partial name, but still broken documents may exist
-            if(partialName.contains(".")) {
-                partialName = partialName.replace(".", "");
-            }
+            String partialName = removeDotsIfAny(existing.getPartialName());
             newField.setPartialName(String.format("%s%s%d", partialName, random, ++counter));
             LOG.info("Existing terminal field renamed from {} to {}", partialName, newField.getPartialName());
         }
@@ -162,6 +158,11 @@ public class AcroFormsMerger {
         fieldsLookup.addLookupEntry(existing, newField);
         return newField;
     };
+
+    // dots are not allowed in the partial name, but still broken documents may exist
+    private static String removeDotsIfAny(String s) {
+        return s.replace(".", "");
+    }
 
     private final BiConsumer<PDField, LookupTable<PDField>> createOrReuseNonTerminalField = (PDField existing,
             LookupTable<PDField> fieldsLookup) -> {
@@ -179,7 +180,8 @@ public class AcroFormsMerger {
                         existing.getCOSObject().duplicate(),
                         (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
                 mergedField.getCOSObject().removeItem(COSName.KIDS);
-                mergedField.setPartialName(String.format("%s%s%d", existing.getPartialName(), random, ++counter));
+                mergedField.setPartialName(String.format("%s%s%d", removeDotsIfAny(existing.getPartialName()), 
+                        random, ++counter));
                 LOG.warn("Cannot reuse merged terminal field {} as a non terminal field, renaming it to {}",
                         existing.getPartialName(), mergedField.getPartialName());
             }
@@ -196,7 +198,7 @@ public class AcroFormsMerger {
         PDField newField = PDFieldFactory.createFieldAddingChildToParent(this.form, field.getCOSObject().duplicate(),
                 (PDNonTerminalField) fieldsLookup.lookup(field.getParent()));
         if (getMergedField(field.getFullyQualifiedName()) != null || fieldsLookup.hasLookupFor(field)) {
-            newField.setPartialName(String.format("%s%s%d", field.getPartialName(), random, ++counter));
+            newField.setPartialName(String.format("%s%s%d", removeDotsIfAny(field.getPartialName()), random, ++counter));
             LOG.info("Existing non terminal field renamed from {} to {}", field.getPartialName(),
                     newField.getPartialName());
         }
