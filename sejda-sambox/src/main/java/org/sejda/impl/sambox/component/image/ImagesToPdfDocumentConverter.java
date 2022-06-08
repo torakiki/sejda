@@ -18,14 +18,6 @@
  */
 package org.sejda.impl.sambox.component.image;
 
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
-
-import java.awt.Point;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageImageWriter;
@@ -46,6 +38,14 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
 
 public class ImagesToPdfDocumentConverter {
 
@@ -148,8 +148,11 @@ public class ImagesToPdfDocumentConverter {
         List<MergeInput> newInputList = new ArrayList<>();
         for (MergeInput input : parameters.getInputList()) {
             if (input instanceof ImageMergeInput) {
+                ImageMergeInput image = (ImageMergeInput) input;
                 // collect all consecutive images and convert them to a PDF document
-                newInputList.add(convertImagesToPdfMergeInput((ImageMergeInput) input, context));
+                context.notifiableTaskMetadata().setCurrentSource(image.getSource());
+                newInputList.add(convertImagesToPdfMergeInput(image, context));
+                context.notifiableTaskMetadata().clearCurrentSource();
             } else {
                 newInputList.add(input);
             }
@@ -180,7 +183,7 @@ public class ImagesToPdfDocumentConverter {
         if (image.isShouldPageSizeMatchImageSize()) {
             pageSize = null;
         }
-        
+
         PDDocumentHandler converted = converter.addPage(image.getSource(), pageSize, image.getPageOrientation(), 0);
         String basename = FilenameUtils.getBaseName(image.getSource().getName());
         String filename = String.format("%s.pdf", basename);

@@ -1,7 +1,7 @@
 /*
  * Created on 28/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,12 @@
  */
 package org.sejda.model.task;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.sejda.model.input.TaskSource;
 
 import java.io.File;
 import java.io.Serializable;
@@ -29,17 +33,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import static java.util.Objects.nonNull;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 /**
  * An set of metadata related to the task the event is notifying about.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class NotifiableTaskMetadata implements Serializable {
 
@@ -51,15 +51,14 @@ public class NotifiableTaskMetadata implements Serializable {
     private UUID taskIdentifier;
     private String qualifiedName;
     private List<File> taskOutput = new ArrayList<>();
+    private String currentSource;
 
     private NotifiableTaskMetadata() {
         // empty constructor
     }
 
     public NotifiableTaskMetadata(Task<?> task) {
-        if (isNull(task)) {
-            throw new IllegalArgumentException("No task given, unable to create notifiable metadata.");
-        }
+        requireNotNullArg(task, "No task given, unable to create notifiable metadata.");
         this.taskIdentifier = UUID.randomUUID();
         this.qualifiedName = task.getClass().getName();
     }
@@ -82,6 +81,18 @@ public class NotifiableTaskMetadata implements Serializable {
         if (nonNull(output)) {
             taskOutput.add(output);
         }
+    }
+
+    public void setCurrentSource(TaskSource<?> source) {
+        this.currentSource = source.getName();
+    }
+
+    public void clearCurrentSource() {
+        this.currentSource = "";
+    }
+
+    public String getCurrentSource() {
+        return this.currentSource;
     }
 
     /**
@@ -117,9 +128,8 @@ public class NotifiableTaskMetadata implements Serializable {
 
     /**
      * Null object pattern providing empty behavior.
-     * 
+     *
      * @author Andrea Vacondio
-     * 
      */
     private static class NullNotifiableTaskMetadata extends NotifiableTaskMetadata {
 

@@ -20,15 +20,6 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
 import org.sejda.core.validation.DefaultValidationContext;
@@ -39,6 +30,14 @@ import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.ConstraintViolation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Default implementation of the {@link TaskExecutionService}.
@@ -130,7 +129,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
      * actual execution of the task
      *
      * @param parameters
-     * @param task
+     * @param executionContext
      * @throws TaskException
      */
     @SuppressWarnings("unchecked")

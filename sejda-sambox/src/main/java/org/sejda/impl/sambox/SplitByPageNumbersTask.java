@@ -18,9 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.optimization.OptimizationRuler;
@@ -34,6 +31,9 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Task splitting an input pdf document on a set of pages defined in the input parameter object.
@@ -66,6 +66,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
             currentStep++;
 
             LOG.debug("Opening {}", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             document = source.open(documentLoader).getUnderlyingPDDocument();
 
             splitter = new PagesPdfSplitter<>(document, parameters,
@@ -79,6 +80,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         LOG.debug("Input documents split and written to {}", parameters.getOutput());
     }
 

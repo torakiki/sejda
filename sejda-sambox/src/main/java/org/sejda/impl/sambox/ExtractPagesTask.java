@@ -18,17 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.io.File;
-import java.util.Set;
-
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -44,6 +33,17 @@ import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * SAMBox implementation of the task responsible for extracting pages from a given pdf document.
@@ -74,6 +74,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
         for (PdfSource<?> source : parameters.getSourceList()) {
 
             LOG.debug("Opening {}", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             sourceDocumentHandler = source.open(documentLoader);
             sourceDocumentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
 
@@ -125,7 +126,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             closeQuietly(sourceDocumentHandler);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
-
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Pages extracted and written to {}", parameters.getOutput());
     }

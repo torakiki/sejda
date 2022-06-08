@@ -18,19 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
-
-import java.io.Closeable;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.LookupTable;
@@ -63,6 +50,19 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Closeable;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 /**
  * SAMBox implementation of the Merge task that merges together a number of documents or part of them.
@@ -123,6 +123,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         for (PdfMergeInput input : parameters.getPdfInputList()) {
             inputsCounter++;
             LOG.debug("Opening {}", input.getSource());
+            executionContext().notifiableTaskMetadata().setCurrentSource(input.getSource());
             PDDocumentHandler sourceDocumentHandler = input.getSource().open(sourceOpener);
             toClose.add(sourceDocumentHandler);
 
@@ -209,6 +210,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }
+
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
 
         if (outlineMerger.hasOutline()) {
             LOG.debug("Adding generated outline");

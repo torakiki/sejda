@@ -18,9 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.SamboxOutlineLevelsHandler;
@@ -36,6 +33,9 @@ import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Task splitting an input pdf document on a set of pages given by an outline level defined in the input parameter.
@@ -67,6 +67,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
         for (PdfSource<?> source : parameters.getSourceList()) {
             currentStep++;
             LOG.debug("Opening {} ", source);
+            executionContext().notifiableTaskMetadata().setCurrentSource(source);
             document = source.open(documentLoader).getUnderlyingPDDocument();
 
             LOG.debug("Retrieving outline information for level {}", parameters.getLevelToSplitAt());
@@ -80,6 +81,7 @@ public class SplitByOutlineLevelTask extends BaseTask<SplitByOutlineLevelParamet
 
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         LOG.debug("Input documents splitted and written to {}", parameters.getOutput());
     }
 

@@ -18,17 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-import static org.sejda.impl.sambox.util.TransitionUtils.getTransition;
-import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDimension;
-import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDirection;
-import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionMotion;
-
-import java.io.File;
-
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
@@ -45,6 +34,17 @@ import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransition;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.impl.sambox.util.TransitionUtils.getTransition;
+import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDimension;
+import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDirection;
+import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionMotion;
 
 /**
  * SAMBox implementation of a task that applies pages transitions to an input document.
@@ -74,6 +74,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
 
         PdfSource<?> source = parameters.getSource();
         LOG.debug("Opening {}", source);
+        executionContext().notifiableTaskMetadata().setCurrentSource(source);
         documentHandler = source.open(documentLoader);
 
         File tmpFile = createTemporaryBuffer(parameters.getOutput());
@@ -106,6 +107,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
         documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Transitions set on {}", parameters.getOutput());
     }

@@ -19,24 +19,8 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.TestUtils.encryptedAtRest;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sejda.core.TestListenerFactory;
-import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -48,6 +32,19 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.sejda.TestUtils.encryptedAtRest;
 
 /**
  * Test for an extract pages task.
@@ -132,10 +129,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     public void extractWrongPageRages() throws IOException {
         setUpParametersWrongPageRanges();
         testContext.directoryOutputTo(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed();
     }
 
     @Test
