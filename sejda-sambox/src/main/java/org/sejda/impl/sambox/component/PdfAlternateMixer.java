@@ -18,17 +18,17 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sejda.commons.util.IOUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * Component providing functionalities to perform an alternate mix on two {@link PdfMixInput}.
@@ -50,6 +50,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     public void mix(List<PdfMixInput> inputs, TaskExecutionContext executionContext) throws TaskException {
         setCreatorOnPDDocument();
         for (PdfMixInput input : inputs) {
+            executionContext.notifiableTaskMetadata().setCurrentSource(input.getSource());
             mixFragments.add(PdfMixFragment.newInstance(input));
         }
         
@@ -67,20 +68,25 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         while (mixFragments.stream().anyMatch(PdfMixFragment::hasNotReachedTheEnd)) {
             mixFragments.stream().filter(PdfMixFragment::hasNextPage).forEach(f -> {
                 for (int i = 0; i < f.getStep() && f.hasNextPage(); i++) {
+                    executionContext.notifiableTaskMetadata().setCurrentSource(f.source());
                     PDPage current = f.nextPage();
                     f.addLookupEntry(current, importPage(current));
                 }
             });
-            
+
             currentStep++;
-            
+
             // a safety net so we don't loop here forever due to a bug and fill up the disk
-            if(currentStep > maxSteps) {
+            if (currentStep > maxSteps) {
                 throw new RuntimeException("Too many loops, currentStep: " + currentStep + ", maxSteps: " + maxSteps);
             }
         }
 
-        mixFragments.stream().forEach(PdfMixFragment::saintizeAnnotations);
+        mixFragments.stream().forEach(f -> {
+            executionContext.notifiableTaskMetadata().setCurrentSource(f.source());
+            f.saintizeAnnotations();
+        });
+        executionContext.notifiableTaskMetadata().clearCurrentSource();
     }
 
     @Override

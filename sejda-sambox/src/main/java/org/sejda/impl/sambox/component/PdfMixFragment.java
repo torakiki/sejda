@@ -18,20 +18,21 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
+import org.sejda.commons.LookupTable;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.exception.TaskPermissionsException;
+import org.sejda.model.input.PdfMixInput;
+import org.sejda.model.input.PdfSource;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import org.sejda.commons.LookupTable;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.exception.TaskPermissionsException;
-import org.sejda.model.input.PdfMixInput;
-import org.sejda.model.pdf.encryption.PdfAccessPermission;
-import org.sejda.sambox.pdmodel.PDPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
 
 /**
  * Fragment of a mix task. It has inputs and current status of the fragment in the mix process.
@@ -95,6 +96,10 @@ class PdfMixFragment implements Closeable {
 
     public int getStep() {
         return input.getStep();
+    }
+
+    public PdfSource<?> source() {
+        return input.getSource();
     }
 
     public void addLookupEntry(PDPage current, PDPage importPage) {
