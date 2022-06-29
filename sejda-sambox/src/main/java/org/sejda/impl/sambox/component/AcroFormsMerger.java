@@ -168,6 +168,9 @@ public class AcroFormsMerger {
 
     // dots are not allowed in the partial name, but still broken documents may exist
     private static String removeDotsIfAny(String s) {
+        if(s == null) {
+            return null;
+        }
         return s.replace(".", "");
     }
 
