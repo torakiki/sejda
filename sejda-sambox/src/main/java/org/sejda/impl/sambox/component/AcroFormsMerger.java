@@ -73,15 +73,7 @@ import static org.sejda.sambox.cos.COSName.V;
 import static org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory.createField;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -130,13 +122,28 @@ public class AcroFormsMerger {
             PDTerminalField existing, LookupTable<PDField> fieldsLookup) -> {
         PDField previouslyCreated = ofNullable(getMergedField(existing.getFullyQualifiedName()))
                 .orElseGet(() -> fieldsLookup.lookup(existing));
-        if (isNull(previouslyCreated)) {
+        
+        boolean shouldCreateNew = isNull(previouslyCreated);
+        boolean shouldCreateNewAndRename = previouslyCreated != null && 
+                !previouslyCreated.getValueAsString().equals(existing.getValueAsString()); 
+
+        if (shouldCreateNew || shouldCreateNewAndRename) {
             previouslyCreated = PDFieldFactory.createFieldAddingChildToParent(this.form,
                     existing.getCOSObject().duplicate(),
                     (PDNonTerminalField) fieldsLookup.lookup(existing.getParent()));
+            
+            if(shouldCreateNewAndRename) {
+                LOG.warn("Cannot merge terminal field because another field with the same name but different value already exists: {}",
+                        existing.getFullyQualifiedName());
+
+                previouslyCreated.setPartialName(String.format("%s%s%d", removeDotsIfAny(existing.getPartialName()),
+                        random, ++counter));
+            }
+
             previouslyCreated.getCOSObject().removeItem(COSName.KIDS);
             fieldsLookup.addLookupEntry(existing, previouslyCreated);
         }
+        
         if (!previouslyCreated.isTerminal()) {
             LOG.warn("Cannot merge terminal field because a non terminal field with the same name already exists: {}",
                     existing.getFullyQualifiedName());

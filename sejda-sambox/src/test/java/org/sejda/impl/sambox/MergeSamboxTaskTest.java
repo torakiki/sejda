@@ -43,6 +43,8 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDTextField;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.Rectangle;
@@ -277,13 +279,10 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.forEachPdfOutput(new Consumer<PDDocument>() {
             @Override
             public void accept(PDDocument doc) {
-                List<String> fieldNames = doc.getDocumentCatalog().getAcroForm().getFieldTree().stream()
-                        .map(f -> f.getFullyQualifiedName())
-                        .collect(Collectors.toList());
-                
-                assertTrue(fieldNames.contains("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpg.withdot"));
-                assertEquals(1, fieldNames.stream()
-                        .filter(n -> n.startsWith("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpgwithdot")).count());
+                // original field
+                assertEquals(1, findFieldsNamedExact("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpg.withdot", doc).size());
+                // renamed field
+                assertEquals(1, findFieldsMatching("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpgwithdot", doc).size());
             }
         });
     }
@@ -414,6 +413,58 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         String pageText = stripper.getTextForRegion("completePage");
 
         assertThat(pageText, containsString("TextFieldValue"));
+    }
+
+    @Test
+    public void executeMergeFieldsWithSameNamesDifferentValues() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_two.pdf")));
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertHasAcroforms(true);
+        
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument doc) {
+                assertEquals(1, findFieldsNamedExact("text_field", doc).size());
+                assertEquals(2, findFieldsMatching("text_field", doc).size());
+                
+                // 1 widget each
+                assertEquals(Arrays.asList(1, 1), findFieldsMatching("text_field", doc).stream()
+                        .map(f -> f.getWidgets().size()).collect(Collectors.toList()));
+            }
+        });
+    }
+
+    @Test
+    public void executeMergeFieldsWithSameNamesSameValues() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertHasAcroforms(true);
+
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument doc) {
+                assertEquals(1, findFieldsNamedExact("text_field", doc).size());
+                assertEquals(1, findFieldsMatching("text_field", doc).size());
+
+                // 2 widgets, 1 field
+                assertEquals(Arrays.asList(2), findFieldsMatching("text_field", doc).stream()
+                        .map(f -> f.getWidgets().size()).collect(Collectors.toList()));
+            }
+        });
     }
 
     @Test
@@ -946,5 +997,17 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
                 .extractTextFromArea(page,
                         new Rectangle(0, 0, (int) page.getTrimBox().getWidth(), (int) page.getTrimBox().getHeight()))
                 .trim());
+    }
+    
+    private List<PDField> findFieldsMatching(String partialName, PDDocument doc) {
+        return doc.getDocumentCatalog().getAcroForm().getFieldTree().stream()
+                .filter(f -> f.getFullyQualifiedName().contains(partialName))
+                .collect(Collectors.toList());
+    }
+    
+    private List<PDField> findFieldsNamedExact(String name, PDDocument doc) {
+        return doc.getDocumentCatalog().getAcroForm().getFieldTree().stream()
+                .filter(f -> f.getFullyQualifiedName().equals(name))
+                .collect(Collectors.toList());
     }
 }
