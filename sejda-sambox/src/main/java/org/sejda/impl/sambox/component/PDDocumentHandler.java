@@ -92,7 +92,9 @@ public class PDDocumentHandler implements Closeable {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }
 
-        document.assertNumberOfPagesIsAccurate();
+        if(Boolean.getBoolean(Sejda.PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME)) {
+            document.assertNumberOfPagesIsAccurate();
+        }
         
         this.document = document;
         permissions = new PDDocumentAccessPermission(document);

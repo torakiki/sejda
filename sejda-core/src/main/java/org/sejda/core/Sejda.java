@@ -40,6 +40,7 @@ public final class Sejda {
     public static final String USER_CONFIG_FILE_PROPERTY_NAME = "sejda.config.file";
     public static final String PERFORM_SCHEMA_VALIDATION_PROPERTY_NAME = "sejda.perform.schema.validation";
     public static final String PERFORM_MEMORY_OPTIMIZATIONS_PROPERTY_NAME = "sejda.perform.memory.optimizations";
+    public static final String PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME = "sejda.perform.eager.assertions";
 
     private Sejda() {
         // on purpose

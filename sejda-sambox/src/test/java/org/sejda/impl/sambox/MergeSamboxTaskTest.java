@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.sejda.core.Sejda;
 import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.DocBuilder;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
@@ -38,9 +39,9 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
-import org.sejda.sambox.pdmodel.InvalidNumberOfPagesException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -468,7 +469,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         });
     }
 
-    @Test(expected = InvalidNumberOfPagesException.class)
+    @Test
     public void executeMergeMissingPageNonLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -481,7 +482,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskFailed().assertFailedSource("name.pdf");
     }
 
-    @Test(expected = InvalidNumberOfPagesException.class)
+    @Test
     public void executeMergeMissingPageLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -494,6 +495,22 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(3).assertVersion(PdfVersion.VERSION_1_6);
+    }
+
+    @Test(expected = PageNotFoundException.class)
+    public void executeMergeMissingPageEagerAssertions() throws IOException {
+        try {
+            System.setProperty(Sejda.PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME, "true");
+            
+            MergeParameters parameters = new MergeParameters();
+            parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+            parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
+            testContext.pdfOutputTo(parameters);
+            execute(parameters);
+            testContext.assertTaskFailed().assertFailedSource("name.pdf");
+        } finally {
+            System.setProperty(Sejda.PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME, "");
+        }
     }
 
     @Test
