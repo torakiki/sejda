@@ -38,12 +38,14 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.pdmodel.InvalidNumberOfPagesException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDTextField;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 
 import java.awt.Rectangle;
@@ -466,7 +468,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         });
     }
 
-    @Test
+    @Test(expected = InvalidNumberOfPagesException.class)
     public void executeMergeMissingPageNonLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -479,7 +481,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskFailed().assertFailedSource("name.pdf");
     }
 
-    @Test
+    @Test(expected = InvalidNumberOfPagesException.class)
     public void executeMergeMissingPageLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

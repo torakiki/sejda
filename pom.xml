@@ -331,7 +331,7 @@
 		<archunit.version>0.22.0</archunit.version>
 		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
 		<hamcrest.version>2.2</hamcrest.version>
-		<sambox.version>2.4.19</sambox.version>
+		<sambox.version>2.4.21</sambox.version>
 		<sejda.io.version>2.1.4</sejda.io.version>
 		<bouncycastle.version>1.71</bouncycastle.version>
 		<twelvemonkeys.version>3.8.0</twelvemonkeys.version>

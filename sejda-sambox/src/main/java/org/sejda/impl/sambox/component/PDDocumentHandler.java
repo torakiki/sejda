@@ -92,6 +92,8 @@ public class PDDocumentHandler implements Closeable {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }
 
+        document.assertNumberOfPagesIsAccurate();
+        
         this.document = document;
         permissions = new PDDocumentAccessPermission(document);
     }
