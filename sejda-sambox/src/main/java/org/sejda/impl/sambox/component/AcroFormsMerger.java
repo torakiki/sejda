@@ -124,8 +124,13 @@ public class AcroFormsMerger {
                 .orElseGet(() -> fieldsLookup.lookup(existing));
         
         boolean shouldCreateNew = isNull(previouslyCreated);
-        boolean shouldCreateNewAndRename = previouslyCreated != null && 
-                !previouslyCreated.getValueAsString().equals(existing.getValueAsString()); 
+        boolean shouldCreateNewAndRename = previouslyCreated != null &&
+                (        
+                    // different types (eg: checkbox vs text)
+                    !previouslyCreated.getClass().equals(existing.getClass()) ||
+                    // different values (eg: john vs jack)
+                    !previouslyCreated.getValueAsString().equals(existing.getValueAsString())
+                ); 
 
         if (shouldCreateNew || shouldCreateNewAndRename) {
             previouslyCreated = PDFieldFactory.createFieldAddingChildToParent(this.form,

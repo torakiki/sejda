@@ -290,6 +290,30 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void testExecuteMergeFieldsWithSameNameDifferentKinds() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/form_field_checkbox.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/form_field_text.pdf")));
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertHasAcroforms(true);
+        
+        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
+            @Override
+            public void accept(PDDocument doc) {
+                // original field
+                assertEquals(1, findFieldsNamedExact("form_field", doc).size());
+                // renamed field
+                assertEquals(2, findFieldsMatching("form_field", doc).size());
+            }
+        });
+    }
+
+    @Test
     public void testExecuteMergeDiscardForms() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
         parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
