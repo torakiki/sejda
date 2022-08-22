@@ -22,7 +22,7 @@ import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.validation.constraint.IsFile;
+import org.sejda.model.validation.constraint.ExistingFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,7 +35,7 @@ import java.io.IOException;
  */
 public class FileSource extends AbstractSource<File> {
 
-    @IsFile
+    @ExistingFile
     private final File file;
 
     public FileSource(File file) {
