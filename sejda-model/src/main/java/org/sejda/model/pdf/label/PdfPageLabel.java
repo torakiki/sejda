@@ -19,14 +19,13 @@
  */
 package org.sejda.model.pdf.label;
 
-import java.security.InvalidParameterException;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.security.InvalidParameterException;
 
 /**
  * Model for a page label. <br>

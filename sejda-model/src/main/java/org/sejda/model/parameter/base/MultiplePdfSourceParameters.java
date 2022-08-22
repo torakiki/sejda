@@ -20,17 +20,16 @@
  */
 package org.sejda.model.parameter.base;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.input.PdfSource;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import javax.validation.Valid;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.input.PdfSource;
-import org.sejda.model.validation.constraint.NotEmpty;
 
 /**
  * Base parameters class for manipulations with a list of {@link PdfSource}.

@@ -24,7 +24,8 @@ import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 

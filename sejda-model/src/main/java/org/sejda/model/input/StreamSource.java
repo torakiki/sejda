@@ -21,7 +21,7 @@ package org.sejda.model.input;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;

@@ -18,8 +18,8 @@
  */
 package org.sejda.model.input;
 
+import jakarta.validation.constraints.NotEmpty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.sejda.model.validation.constraint.NotEmpty;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 

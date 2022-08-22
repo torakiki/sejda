@@ -1,7 +1,7 @@
 /*
  * Created on 19/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,16 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.io.File;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.validation.constraint.Directory;
+
+import java.io.File;
 
 /**
  * Validator to verify that a {@link File} is an existing directory.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class DirectoryValidator implements ConstraintValidator<Directory, File> {
 

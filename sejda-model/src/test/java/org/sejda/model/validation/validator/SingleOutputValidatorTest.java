@@ -28,8 +28,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
 
 import org.junit.Rule;
 import org.junit.Test;

@@ -19,8 +19,7 @@
  */
 package org.sejda.model.input;
 
-import javax.validation.constraints.Min;
-
+import jakarta.validation.constraints.Min;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;

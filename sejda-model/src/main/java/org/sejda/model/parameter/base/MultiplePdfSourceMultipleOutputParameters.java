@@ -19,22 +19,21 @@
  */
 package org.sejda.model.parameter.base;
 
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.core.support.io.IOUtils;
-import org.sejda.model.output.SingleOrMultipleTaskOutput;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 /**
  * Provides a skeletal implementation for parameter classes having multiple pdf source as input and generating multiple output files. The output can be a file for scenarios where a

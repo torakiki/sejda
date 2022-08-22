@@ -2,7 +2,7 @@
  * Created on 24/giu/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,22 +20,20 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.apache.commons.io.FilenameUtils.indexOfExtension;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-
-import java.io.File;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.io.FilenameUtils;
 import org.sejda.model.validation.constraint.FileExtension;
 
+import java.io.File;
+
+import static org.apache.commons.io.FilenameUtils.indexOfExtension;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+
 /**
  * Validates the extension of the a {@link File}.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class FileExtensionValidator implements ConstraintValidator<FileExtension, File> {
 

@@ -19,9 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.optimization.OptimizationPolicy;
@@ -31,9 +30,8 @@ import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 
 /**
  * Parameter class for a split by size task.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class SplitBySizeParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {

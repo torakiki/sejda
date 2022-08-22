@@ -20,12 +20,7 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
@@ -33,11 +28,14 @@ import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.validation.constraint.HasTransitions;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Parameter class for the set pages transition manipulation.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 @SingleOutputAllowedExtensions
 @HasTransitions

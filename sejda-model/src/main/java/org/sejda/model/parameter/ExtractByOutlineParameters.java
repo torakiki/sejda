@@ -19,9 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -32,7 +31,7 @@ import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 
 /**
  * Extract chapters to separate documents based on the bookmarks in the outline
- *
+ * <p>
  * Specify which outline level to use for selecting bookmarks and optionally a regex to filter them.
  */
 public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputParameters

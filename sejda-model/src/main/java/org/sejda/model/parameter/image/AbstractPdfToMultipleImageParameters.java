@@ -19,14 +19,9 @@
  */
 package org.sejda.model.parameter.image;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.commons.collection.NullSafeSet;
@@ -38,11 +33,14 @@ import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Base class for a parameter meant to convert an existing pdf source to multiple images of a specified type.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSourceMultipleOutputParameters
         implements PageRangeSelection, PagesSelection, PdfToImageParameters {

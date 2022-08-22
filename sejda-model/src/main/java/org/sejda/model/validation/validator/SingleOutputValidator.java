@@ -1,7 +1,7 @@
 /*
  * Created on 12/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,22 +19,20 @@
  */
 package org.sejda.model.validation.validator;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.ValidSingleOutput;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 /**
  * Validates that a single output parameter has a valid output name if the selected output is not a file. The output name is used when writing the generated output to a zip stream
  * or a directory.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class SingleOutputValidator implements ConstraintValidator<ValidSingleOutput, SingleOutputTaskParameters> {
 
@@ -49,12 +47,12 @@ public class SingleOutputValidator implements ConstraintValidator<ValidSingleOut
             if (isNull(value.getOutput())) {
                 return false;
             }
-            if (isNull(value.getOutput().getDestination()) || (value.getOutput().getDestination().exists()
-                    && (value.getExistingOutputPolicy() == ExistingOutputPolicy.FAIL
+            if (isNull(value.getOutput().getDestination()) || (value.getOutput().getDestination().exists() && (
+                    value.getExistingOutputPolicy() == ExistingOutputPolicy.FAIL
                             || value.getExistingOutputPolicy() == ExistingOutputPolicy.SKIP))) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(
-                        String.format("File destination already exists: %s.", value.getOutput().getDestination()))
+                                String.format("File destination already exists: %s.", value.getOutput().getDestination()))
                         .addConstraintViolation();
                 return false;
             }

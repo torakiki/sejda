@@ -1,8 +1,28 @@
 package org.sejda;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import jakarta.validation.Configuration;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.sejda.commons.util.IOUtils;
+import org.sejda.core.encryption.EncryptionHelpers;
+import org.sejda.model.encryption.CipherBasedEncryptionAtRest;
+import org.sejda.model.encryption.CipherSupplier;
+import org.sejda.model.encryption.EncryptionAtRestPolicy;
+import org.sejda.model.input.FileSource;
+import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.input.StreamSource;
+import org.sejda.model.input.TaskSource;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.crypto.Cipher;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,24 +32,8 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Set;
 
-import javax.crypto.Cipher;
-import javax.validation.Configuration;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.sejda.commons.util.IOUtils;
-import org.sejda.core.encryption.EncryptionHelpers;
-import org.sejda.model.encryption.CipherBasedEncryptionAtRest;
-import org.sejda.model.encryption.CipherSupplier;
-import org.sejda.model.encryption.EncryptionAtRestPolicy;
-import org.sejda.model.input.*;
-import org.sejda.model.parameter.base.TaskParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test utilitites
@@ -140,6 +144,7 @@ public final class TestUtils {
         private ValidatorHolder() {
             Configuration<?> validationConfig = Validation.byDefaultProvider().configure();
             validationConfig.ignoreXmlConfiguration();
+            validationConfig.messageInterpolator(new ParameterMessageInterpolator());
             ValidatorFactory factory = validationConfig.buildValidatorFactory();
             validator = factory.getValidator();
         }

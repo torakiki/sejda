@@ -1,7 +1,7 @@
 /*
  * Created on 23/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,16 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.io.File;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.validation.constraint.IsFile;
+
+import java.io.File;
 
 /**
  * Constraint validating the an instance of {@link File} is actually a file and not a directory.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class FileValidator implements ConstraintValidator<IsFile, File> {
 

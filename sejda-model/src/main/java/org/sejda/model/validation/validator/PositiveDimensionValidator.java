@@ -18,18 +18,16 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.awt.geom.Dimension2D;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.validation.constraint.PositiveDimensions;
+
+import java.awt.geom.Dimension2D;
 
 /**
  * Validates a {@link Dimension2D} that should have positive height and width
- * 
- * @author Andrea Vacondio
  *
+ * @author Andrea Vacondio
  */
 public class PositiveDimensionValidator implements ConstraintValidator<PositiveDimensions, Dimension2D> {
 

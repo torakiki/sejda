@@ -20,21 +20,19 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Set;
-
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.NotAllowed;
 
+import java.util.Set;
+
 /**
  * Parameter class for a simple split task. Used to perform split types which have a predefined set of pages based on the selected split type.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class SimpleSplitParameters extends AbstractSplitByPageParameters {
 

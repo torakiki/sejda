@@ -2,7 +2,7 @@
  * Created on 09/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,18 +20,16 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.io.File;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.validation.constraint.ExistingFile;
+
+import java.io.File;
 
 /**
  * Validates that the given {@link File} exists.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class ExistingFileValidator implements ConstraintValidator<ExistingFile, File> {
 

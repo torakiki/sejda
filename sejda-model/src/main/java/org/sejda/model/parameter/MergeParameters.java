@@ -19,14 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import static java.util.Optional.ofNullable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.MergeInput;
@@ -36,6 +30,11 @@ import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Parameter class for a merge task containing a collection of input to be merged.

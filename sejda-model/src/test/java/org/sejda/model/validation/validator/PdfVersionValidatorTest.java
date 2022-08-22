@@ -19,21 +19,19 @@
  */
 package org.sejda.model.validation.validator;
 
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import org.junit.Before;
+import org.junit.Test;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.pdf.PdfVersion;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-import javax.validation.ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderDefinedContext;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.pdf.PdfVersion;
 
 /**
  * @author Andrea Vacondio
@@ -71,8 +69,8 @@ public class PdfVersionValidatorTest {
         ConstraintValidatorContext context = mock(ConstraintValidatorContext.class);
         ConstraintViolationBuilder builder = mock(ConstraintViolationBuilder.class);
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
-        NodeBuilderDefinedContext nodeBuilderContext = mock(NodeBuilderDefinedContext.class);
-        when(builder.addNode(anyString())).thenReturn(nodeBuilderContext);
+        var nodeBuilderContext = mock(ConstraintViolationBuilder.NodeBuilderCustomizableContext.class);
+        when(builder.addPropertyNode(anyString())).thenReturn(nodeBuilderContext);
         when(params.getVersion()).thenReturn(PdfVersion.VERSION_1_2);
         when(params.getMinRequiredPdfVersion()).thenReturn(PdfVersion.VERSION_1_5);
         assertFalse(victim.isValid(params, context));

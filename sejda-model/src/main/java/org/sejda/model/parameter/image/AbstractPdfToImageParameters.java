@@ -19,10 +19,9 @@
  */
 package org.sejda.model.parameter.image;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.image.ImageColorType;
@@ -33,9 +32,8 @@ import org.sejda.model.parameter.base.SinglePdfSourceTaskParameters;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to an image of a specified type.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public abstract class AbstractPdfToImageParameters extends AbstractParameters
         implements SinglePdfSourceTaskParameters, PdfToImageParameters {

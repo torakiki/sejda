@@ -20,13 +20,16 @@
  */
 package org.sejda.model.parameter;
 
+import jakarta.validation.constraints.NotEmpty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
-import org.sejda.model.validation.constraint.NotEmpty;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Parameter class for the set metadata manipulation.

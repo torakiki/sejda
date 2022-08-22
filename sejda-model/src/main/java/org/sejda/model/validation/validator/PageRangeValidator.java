@@ -2,7 +2,7 @@
  * Created on 26/giu/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,15 @@
  */
 package org.sejda.model.validation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.validation.constraint.EndGreaterThenOrEqualToStart;
 
 /**
  * Validates that in a {@link PageRange} the end page is greater or equals the start page.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PageRangeValidator implements ConstraintValidator<EndGreaterThenOrEqualToStart, PageRange> {
 

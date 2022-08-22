@@ -1,7 +1,7 @@
 /*
  * Created on 27/dic/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,17 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.util.Arrays;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.NotAllowed;
 
+import java.util.Arrays;
+
 /**
  * Validator for an {@link Enum} annotated field or method where some of the values are not allowed.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class NotAllowedValidator implements ConstraintValidator<NotAllowed, PredefinedSetOfPages> {
 

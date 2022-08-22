@@ -19,9 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -32,9 +31,8 @@ import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 
 /**
  * Parameter class to split a PDF document at a given outline level.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class SplitByOutlineLevelParameters extends MultiplePdfSourceMultipleOutputParameters
         implements OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {

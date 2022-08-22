@@ -1,7 +1,7 @@
 /*
  * Created on 02/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,16 @@
  */
 package org.sejda.model.validation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.HasSelectedPages;
 
 /**
  * Validator for an {@link ExtractPagesParameters} to make sure that a predefined set of pages or some page selection has been set.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class HasSelectedPagesValidator implements ConstraintValidator<HasSelectedPages, ExtractPagesParameters> {
 

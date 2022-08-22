@@ -19,19 +19,18 @@
  */
 package org.sejda.model.parameter.image;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
+import jakarta.validation.constraints.Min;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.ImageType;
 
+import jakarta.validation.constraints.Max;
+
 /**
  * Parameter meant to convert an existing pdf source to JPEG images.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PdfToJpegParameters extends AbstractPdfToMultipleImageParameters {
 

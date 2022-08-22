@@ -20,7 +20,7 @@
  */
 package org.sejda.core.validation;
 
-import javax.validation.Validator;
+import jakarta.validation.Validator;
 
 /**
  * Validation context holding a {@link Validator} instance that can be reused to perform beans validation.

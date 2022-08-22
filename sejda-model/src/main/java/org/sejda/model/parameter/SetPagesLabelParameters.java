@@ -19,18 +19,17 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.parameter.base.SinglePdfSourceSingleOutputParameters;
 import org.sejda.model.pdf.label.PdfPageLabel;
-import org.sejda.model.validation.constraint.NotEmpty;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parameter class for the set pages label manipulation. The manipulation will apply a label to physical pages until a new label for a physical page number is found.

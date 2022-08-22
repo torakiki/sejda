@@ -19,14 +19,13 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Set;
-
-import javax.validation.constraints.Min;
-
+import jakarta.validation.constraints.Min;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.commons.collection.NullSafeSet;
+
+import java.util.Set;
 
 /**
  * Parameter class for a split by every X pages task. Used to perform split where an input pdf document is divided into documents of X pages.

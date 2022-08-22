@@ -20,14 +20,13 @@
  */
 package org.sejda.model.pdf.page;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import javax.validation.constraints.Min;
-
+import jakarta.validation.constraints.Min;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.validation.constraint.EndGreaterThenOrEqualToStart;
+
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Model for range of pages.

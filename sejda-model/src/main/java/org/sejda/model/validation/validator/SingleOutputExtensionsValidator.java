@@ -1,7 +1,7 @@
 /*
  * Created on 23/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,28 +19,26 @@
  */
 package org.sejda.model.validation.validator;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.io.FilenameUtils.getExtension;
-import static org.apache.commons.io.FilenameUtils.indexOfExtension;
-import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
+import static java.util.Objects.nonNull;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.io.FilenameUtils.indexOfExtension;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+
 /**
  * Validates that the input single output task parameter has a {@link FileTaskOutput} whose file is of the expected type (extension) or, if not a {@link FileTaskOutput}, the
  * outputName is of the expected type (extension).
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-public class SingleOutputExtensionsValidator implements
-        ConstraintValidator<SingleOutputAllowedExtensions, SingleOutputTaskParameters> {
+public class SingleOutputExtensionsValidator
+        implements ConstraintValidator<SingleOutputAllowedExtensions, SingleOutputTaskParameters> {
 
     private String[] extensions;
 
@@ -60,7 +58,7 @@ public class SingleOutputExtensionsValidator implements
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
                     String.format("The output '%s' is not one of the expected types: %s", fileName,
-                            ArrayUtils.toString(extensions))).addNode("taskOutput").addConstraintViolation();
+                            ArrayUtils.toString(extensions))).addPropertyNode("taskOutput").addConstraintViolation();
             return false;
         }
         return true;

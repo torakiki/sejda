@@ -1,7 +1,7 @@
 /*
  * Created on 28/nov/2010
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,17 +19,15 @@
  */
 package org.sejda.model.validation.validator;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.validation.constraint.ValidPdfVersion;
 
 /**
  * Validates an AbstractParameters instance ensuring that the PdfVersion set is valid considering the other fields value.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion, AbstractPdfOutputParameters> {
 
@@ -46,7 +44,7 @@ public class PdfVersionValidator implements ConstraintValidator<ValidPdfVersion,
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
                     String.format("Invalid version %s. Minimum version required is %s.", value.getVersion(),
-                            value.getMinRequiredPdfVersion())).addNode("parameters").addConstraintViolation();
+                            value.getMinRequiredPdfVersion())).addPropertyNode("version").addConstraintViolation();
         }
         return isValid;
     }

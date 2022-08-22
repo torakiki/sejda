@@ -1,7 +1,7 @@
 /*
  * Created on 11/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,19 @@
  */
 package org.sejda.model.validation.validator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.validation.constraint.NoIntersections;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Validator for a {@link NoIntersections} constraint to ensure page ranges in an input {@link PageRangeSelection} do not intersect.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class NoIntersectionsValidator implements ConstraintValidator<NoIntersections, PageRangeSelection> {
 
@@ -54,7 +52,7 @@ public class NoIntersectionsValidator implements ConstraintValidator<NoIntersect
                         context.disableDefaultConstraintViolation();
                         context.buildConstraintViolationWithTemplate(
                                 String.format("Invalid page ranges, found an intersection between %s and %s", range,
-                                        current)).addNode("page ranges").addConstraintViolation();
+                                        current)).addPropertyNode("page ranges").addConstraintViolation();
                         return false;
                     }
                 }

@@ -19,16 +19,16 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import jakarta.validation.constraints.NotEmpty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.commons.collection.NullSafeSet;
-import org.sejda.model.validation.constraint.NotEmpty;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Parameter class for a split by page task. Used to perform split at a given set of page numbers.

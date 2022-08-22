@@ -8,17 +8,24 @@ Before you post
 Open an issue
 ---------
 You verified the points above and you want to open an issue.
- - Be descriptive, clearly explain what the issue is.
- - If it's a bug, include a clear example or the steps to reproduce it
- - If it's a feature request, try to clearly explain the use case. We don't include features that are too specific or of no use for the other users. On the other hand we are happy to include features other users may benefit from.
+
+- Be descriptive, clearly explain what the issue is.
+- If it's a bug, include a clear example or the steps to reproduce it
+- If it's a feature request, try to clearly explain the use case. We don't include features that are too specific or of
+  no use for the other users. On the other hand we are happy to include features other users may benefit from.
 
 Code contribution
 ----------
- - we need you to sign [our CLA].
- - Before starting to write large amounts of code talk to us. Open an issue or send us an email, we can discuss together how to proceed.
- - We are very strict with the code style. Code format and templates for the Eclipse IDE are included in the sejda-docs module as well as the checkstyle plugin configuration, use them.
- - Include unit tests to cover your feature or bugfix.
- 
- [our CLA]: https://github.com/torakiki/sejda-CLAs 
- [sejda.org]: http://sejda.org 
- [stackoverflow]: http://stackoverflow.com/questions/tagged/sejda
+
+- we need you to sign [our CLA].
+- Before starting to write large amounts of code talk to us. Open an issue or send us an email, we can discuss together
+  how to proceed.
+- We are very strict with the code style. Code format and templates for the Eclipse IDE are included in the sejda-docs
+  module as well as the checkstyle plugin configuration, use them.
+- Include unit tests to cover your feature or bugfix.
+
+[our CLA]: https://github.com/torakiki/sejda-CLAs
+
+[sejda.org]: https://sejda.org
+
+[stackoverflow]: https://stackoverflow.com/questions/tagged/sejda

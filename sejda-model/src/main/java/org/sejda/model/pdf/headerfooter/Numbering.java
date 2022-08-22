@@ -19,9 +19,8 @@
  */
 package org.sejda.model.pdf.headerfooter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 /**

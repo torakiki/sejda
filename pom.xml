@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<url>http://www.sejda.org</url>
+	<url>https://www.sejda.org</url>
 	<groupId>org.sejda</groupId>
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>4.3.15-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
 		<name>sejda</name>
-		<url>http://www.sejda.org</url>
+		<url>https://www.sejda.org</url>
 	</organization>
 
 	<issueManagement>
@@ -22,7 +22,7 @@
 	<licenses>
 		<license>
 			<name>GNU Affero General Public License</name>
-			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
+			<url>https://www.gnu.org/licenses/agpl-3.0.html</url>
 			<distribution>repo</distribution>
 			<comments>AGPLv3</comments>
 		</license>
@@ -32,7 +32,7 @@
 		<connection>scm:git:git@github.com:torakiki/sejda.git</connection>
 		<developerConnection>scm:git:git@github.com:torakiki/sejda.git</developerConnection>
 		<url>scm:git:git@github.com:torakiki/sejda.git</url>
-		<tag>v4.2.13</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<developers>
@@ -72,7 +72,7 @@
 						<configuration>
 							<toolchains>
 								<jdk>
-									<version>8</version>
+									<version>17</version>
 								</jdk>
 							</toolchains>
 						</configuration>
@@ -222,7 +222,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>3.0.0-M4</version>
+					<version>3.0.0-M6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -247,7 +247,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -278,8 +278,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>17</release>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -320,21 +319,22 @@
 	</distributionManagement>
 
 	<properties>
-		<sejda.commons.version>1.1.7</sejda.commons.version>
+		<sejda.commons.version>2.0.0</sejda.commons.version>
 		<junit.version>5.8.2</junit.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<commons.lang.version>3.12.0</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
-		<validation.api.version>1.0.0.GA</validation.api.version>
-		<mockito.version>4.6.1</mockito.version>
+		<validation.api.version>3.0.2</validation.api.version>
+		<mockito.version>4.7.0</mockito.version>
 		<logback.version>1.2.11</logback.version>
 		<archunit.version>0.22.0</archunit.version>
-		<hibernate-validator.version>4.2.0.Final</hibernate-validator.version>
+		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
+		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
-		<sambox.version>2.4.24</sambox.version>
-		<sejda.io.version>2.1.4</sejda.io.version>
+		<sambox.version>3.0.0.M1</sambox.version>
+		<sejda.io.version>3.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.71</bouncycastle.version>
-		<twelvemonkeys.version>3.8.2</twelvemonkeys.version>
+		<twelvemonkeys.version>3.8.3</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
 		<!-- so that build is not platform dependent via encoding -->
@@ -346,8 +346,8 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>javax.validation</groupId>
-				<artifactId>validation-api</artifactId>
+				<groupId>jakarta.validation</groupId>
+				<artifactId>jakarta.validation-api</artifactId>
 				<version>${validation.api.version}</version>
 			</dependency>
 			<dependency>

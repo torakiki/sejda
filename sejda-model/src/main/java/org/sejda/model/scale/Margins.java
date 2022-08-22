@@ -18,11 +18,11 @@
  */
 package org.sejda.model.scale;
 
+import jakarta.validation.constraints.PositiveOrZero;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.sejda.model.validation.constraint.NotNegative;
 
 /**
  * Margins in inches to be added to a PDF document
@@ -30,13 +30,13 @@ import org.sejda.model.validation.constraint.NotNegative;
  * @author Andrea Vacondio
  */
 public class Margins {
-    @NotNegative
+    @PositiveOrZero
     public final double top;
-    @NotNegative
+    @PositiveOrZero
     public final double right;
-    @NotNegative
+    @PositiveOrZero
     public final double bottom;
-    @NotNegative
+    @PositiveOrZero
     public final double left;
 
     public Margins(double top, double right, double bottom, double left) {

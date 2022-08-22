@@ -19,20 +19,19 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.MultipleTaskOutput;
 import org.sejda.model.parameter.base.AbstractParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceTaskParameters;
-import org.sejda.model.validation.constraint.NotEmpty;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Parameter class for the unpack manipulation. Accepts a list of {@link PdfSource} that will be unpacked.
