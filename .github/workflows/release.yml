@@ -20,9 +20,9 @@ jobs:
         gpg_private_key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
         passphrase: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}    
     - name: Set up JDK
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
-        java-version: 8
+        java-version: 17
         distribution: 'temurin'
         server-id: ossrh
         server-username: OSSRH_USERNAME
