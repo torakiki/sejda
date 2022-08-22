@@ -32,11 +32,6 @@ import java.awt.geom.Dimension2D;
 public class PositiveDimensionValidator implements ConstraintValidator<PositiveDimensions, Dimension2D> {
 
     @Override
-    public void initialize(PositiveDimensions constraintAnnotation) {
-        // nothing to do
-    }
-
-    @Override
     public boolean isValid(Dimension2D value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getWidth() > 0 && value.getHeight() > 0;

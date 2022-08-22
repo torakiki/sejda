@@ -37,11 +37,6 @@ import static java.util.Objects.nonNull;
 public class SingleOutputValidator implements ConstraintValidator<ValidSingleOutput, SingleOutputTaskParameters> {
 
     @Override
-    public void initialize(ValidSingleOutput constraintAnnotation) {
-        // nothing to do
-    }
-
-    @Override
     public boolean isValid(SingleOutputTaskParameters value, ConstraintValidatorContext context) {
         if (nonNull(value)) {
             if (isNull(value.getOutput())) {

@@ -26,16 +26,11 @@ import org.sejda.model.validation.constraint.IsFile;
 import java.io.File;
 
 /**
- * Constraint validating the an instance of {@link File} is actually a file and not a directory.
+ * Constraint validating that an instance of {@link File} is actually a file and not a directory.
  *
  * @author Andrea Vacondio
  */
 public class FileValidator implements ConstraintValidator<IsFile, File> {
-
-    @Override
-    public void initialize(IsFile constraintAnnotation) {
-        // on purpose
-    }
 
     @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {

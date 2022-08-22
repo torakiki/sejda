@@ -33,11 +33,6 @@ import java.io.File;
 public class DirectoryValidator implements ConstraintValidator<Directory, File> {
 
     @Override
-    public void initialize(Directory constraintAnnotation) {
-        // on purpose
-    }
-
-    @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null && value.exists()) {
             return value.isDirectory();

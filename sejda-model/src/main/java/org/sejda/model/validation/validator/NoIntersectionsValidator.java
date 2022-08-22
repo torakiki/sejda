@@ -36,11 +36,6 @@ import java.util.List;
 public class NoIntersectionsValidator implements ConstraintValidator<NoIntersections, PageRangeSelection> {
 
     @Override
-    public void initialize(NoIntersections constraintAnnotation) {
-        // on purpose
-    }
-
-    @Override
     public boolean isValid(PageRangeSelection value, ConstraintValidatorContext context) {
         if (value != null) {
             List<PageRange> ranges = new ArrayList<PageRange>(value.getPageSelection());

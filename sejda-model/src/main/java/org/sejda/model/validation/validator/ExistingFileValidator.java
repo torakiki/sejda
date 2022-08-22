@@ -34,11 +34,6 @@ import java.io.File;
 public class ExistingFileValidator implements ConstraintValidator<ExistingFile, File> {
 
     @Override
-    public void initialize(ExistingFile constraintAnnotation) {
-        // on purpose
-    }
-
-    @Override
     public boolean isValid(File value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.exists();

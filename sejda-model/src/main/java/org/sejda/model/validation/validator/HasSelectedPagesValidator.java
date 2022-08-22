@@ -33,11 +33,6 @@ import org.sejda.model.validation.constraint.HasSelectedPages;
 public class HasSelectedPagesValidator implements ConstraintValidator<HasSelectedPages, ExtractPagesParameters> {
 
     @Override
-    public void initialize(HasSelectedPages constraintAnnotation) {
-        // nothing to do
-    }
-
-    @Override
     public boolean isValid(ExtractPagesParameters value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getPredefinedSetOfPages() != PredefinedSetOfPages.NONE || !value.getPageSelection().isEmpty();

@@ -33,11 +33,6 @@ import org.sejda.model.validation.constraint.EndGreaterThenOrEqualToStart;
 public class PageRangeValidator implements ConstraintValidator<EndGreaterThenOrEqualToStart, PageRange> {
 
     @Override
-    public void initialize(EndGreaterThenOrEqualToStart constraintAnnotation) {
-        // on purpose
-    }
-
-    @Override
     public boolean isValid(PageRange value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getStart() <= value.getEnd();

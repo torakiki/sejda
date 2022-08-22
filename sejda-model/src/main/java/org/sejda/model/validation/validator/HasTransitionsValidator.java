@@ -32,11 +32,6 @@ import org.sejda.model.validation.constraint.HasTransitions;
 public class HasTransitionsValidator implements ConstraintValidator<HasTransitions, SetPagesTransitionParameters> {
 
     @Override
-    public void initialize(HasTransitions constraintAnnotation) {
-        // nothing to do
-    }
-
-    @Override
     public boolean isValid(SetPagesTransitionParameters value, ConstraintValidatorContext context) {
         if (value != null) {
             return value.getDefaultTransition() != null || !value.getTransitions().isEmpty();
