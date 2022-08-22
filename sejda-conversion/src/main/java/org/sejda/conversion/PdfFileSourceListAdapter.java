@@ -19,27 +19,6 @@
  */
 package org.sejda.conversion;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.io.FilenameUtils.getExtension;
-import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathException;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,6 +32,26 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathException;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.io.FilenameUtils.getExtension;
 
 /**
  * Adapter for a list of {@link PdfFileSource}s. Provides a filePath based constructor. Will parse xml, csv config file formats, and list a directory contents
@@ -314,5 +313,10 @@ class XmlFileSourceListParser extends AbstractPdfInputFilesSource {
 
     private NodeList getNodeListMatchingXpath(String xpathString, Document doc) throws XPathExpressionException {
         return (NodeList) xpathFactory.newXPath().evaluate(xpathString, doc, XPathConstants.NODESET);
+    }
+
+    private static String nullSafeGetStringAttribute(Node node, String attributeName) {
+        return Optional.ofNullable(node).map(Node::getAttributes).map(m -> m.getNamedItem(attributeName))
+                .map(Node::getNodeValue).orElse(null);
     }
 }

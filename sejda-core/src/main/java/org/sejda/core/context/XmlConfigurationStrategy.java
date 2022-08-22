@@ -2,7 +2,7 @@
  * Created on 27/apr/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,26 +20,7 @@
  */
 package org.sejda.core.context;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.sejda.common.XMLUtils.nullSafeGetBooleanAttribute;
-import static org.sejda.common.XMLUtils.nullSafeGetStringAttribute;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
@@ -53,11 +34,28 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 /**
  * Retrieves the configuration from the input xml stream
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 
 final class XmlConfigurationStrategy implements ConfigurationStrategy {
@@ -81,11 +79,9 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     /**
      * Creates an instance initialized with the given input stream. The stream is not closed.
-     * 
-     * @param input
-     *            stream to the input xml configuration file
-     * @throws ConfigurationException
-     *             in case of error parsing the input stream
+     *
+     * @param input stream to the input xml configuration file
+     * @throws ConfigurationException in case of error parsing the input stream
      */
     private XmlConfigurationStrategy(InputStream input) throws ConfigurationException {
         initializeFromInputStream(input);
@@ -145,8 +141,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private Map<Class<? extends TaskParameters>, Class<? extends Task>> getTasksMap(Document document)
             throws ConfigurationException, XPathExpressionException {
         Map<Class<? extends TaskParameters>, Class<? extends Task>> retMap = new HashMap<>();
-        NodeList nodes = (NodeList) xpathFactory.newXPath().evaluate(ROOT_NODE + TASKS_XPATH, document,
-                XPathConstants.NODESET);
+        NodeList nodes = (NodeList) xpathFactory.newXPath()
+                .evaluate(ROOT_NODE + TASKS_XPATH, document, XPathConstants.NODESET);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
             Class<? extends TaskParameters> paramClass = getClassFromNode(node, TASK_PARAM_ATTRIBUTENAME,
@@ -161,9 +157,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     /**
      * Retrieves the value of the input xpath in the given node, creates a Class object and performs a check to ensure that the input assignableInterface is assignable by the
      * created Class object.
-     * 
+     *
      * @param <T>
-     * 
      * @param node
      * @param attributeName
      * @param assignableInterface
@@ -191,15 +186,15 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     /**
      * Given a document, search for the notification strategy configuration and returns the configured strategy or the default one if nothing is configured.
-     * 
+     *
      * @param document
      * @return the class extending {@link NotificationStrategy} configured.
      * @throws XPathExpressionException
      */
     private Class<? extends NotificationStrategy> getNotificationStrategy(Document document)
             throws XPathExpressionException {
-        Node node = (Node) xpathFactory.newXPath().evaluate(ROOT_NODE + NOTIFICATION_XPATH, document,
-                XPathConstants.NODE);
+        Node node = (Node) xpathFactory.newXPath()
+                .evaluate(ROOT_NODE + NOTIFICATION_XPATH, document, XPathConstants.NODE);
         if (nullSafeGetBooleanAttribute(node, NOTIFICATION_ASYNC_ATTRIBUTENAME)) {
             return AsyncNotificationStrategy.class;
         }
@@ -218,9 +213,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
 
     /**
      * static factory method.
-     * 
-     * @param provider
-     *            provider for the configuration stream.
+     *
+     * @param provider provider for the configuration stream.
      * @return the new instance.
      * @throws ConfigurationException
      */
@@ -232,5 +226,19 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
         } finally {
             IOUtils.closeQuietly(stream);
         }
+    }
+
+    private static String nullSafeGetStringAttribute(Node node, String attributeName) {
+        return ofNullable(node).map(Node::getAttributes).map(m -> m.getNamedItem(attributeName)).map(Node::getNodeValue)
+                .orElse(null);
+    }
+
+    private static boolean nullSafeGetBooleanAttribute(Node node, String attributeName) {
+        return nullSafeGetBooleanAttribute(node, attributeName, false);
+    }
+
+    private static boolean nullSafeGetBooleanAttribute(Node node, String attributeName, boolean defaultValue) {
+        return ofNullable(nullSafeGetStringAttribute(node, attributeName)).filter(StringUtils::isNotBlank)
+                .map(Boolean::parseBoolean).orElse(defaultValue);
     }
 }

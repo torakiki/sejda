@@ -1,7 +1,7 @@
 /*
  * Created on 05/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,18 @@
  */
 package org.sejda.model;
 
-import java.awt.*;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.model.validation.constraint.ValidCoordinates;
 
+import java.awt.Point;
+
 /**
  * A rectangular box with rotation capabilities.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 @ValidCoordinates
 public final class RectangularBox {
@@ -73,7 +72,7 @@ public final class RectangularBox {
 
     /**
      * rotates this {@link RectangularBox} using the given rotation. This method is null safe.
-     * 
+     *
      * @param desiredRotation
      */
     public void rotate(Rotation desiredRotation) {
@@ -125,14 +124,13 @@ public final class RectangularBox {
 
     /**
      * static factory method.
-     * 
+     *
      * @param bottom
      * @param left
      * @param top
      * @param right
      * @return the newly created instance.
-     * @throws IllegalArgumentException
-     *             if one of the arguments is negative, top is lower then bottom or right is lower then left.
+     * @throws IllegalArgumentException if one of the arguments is negative, top is lower then bottom or right is lower then left.
      */
     public static RectangularBox newInstance(int bottom, int left, int top, int right) {
         return new RectangularBox(bottom, left, top, right);
@@ -140,7 +138,7 @@ public final class RectangularBox {
 
     /**
      * static factory method creating a new instance of the {@link RectangularBox} from two points.
-     * 
+     *
      * @param bottomLeft
      * @param topRight
      * @return newly created instance.
