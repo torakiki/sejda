@@ -18,24 +18,27 @@
  */
 package org.sejda.core.writer.imageio;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
+import org.sejda.model.parameter.image.PdfToJpegParameters;
 
+import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.imageio.ImageIO;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.image.ImageColorType;
-import org.sejda.model.output.FileOrDirectoryTaskOutput;
-import org.sejda.model.parameter.image.PdfToJpegParameters;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
 
 /**
  * @author Andrea Vacondio
@@ -44,16 +47,18 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 public class JpegImageWriterTest {
     private JpegImageWriter victim;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         victim = new JpegImageWriter();
     }
 
-    @Test(expected = TaskIOException.class)
+    @Test
     public void writeNotOpened() throws TaskIOException {
         PdfToJpegParameters params = mock(PdfToJpegParameters.class);
         RenderedImage image = mock(RenderedImage.class);
-        victim.write(image, params);
+        assertThrows(TaskException.class, () -> {
+            victim.write(image, params);
+        });
     }
 
     @Test
@@ -63,7 +68,7 @@ public class JpegImageWriterTest {
 
     @Test
     public void write() throws IOException, TaskIOException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.jpg");
+        InputStream stream = getClass().getResourceAsStream("/image/test.jpg");
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
         PdfToJpegParameters params = new PdfToJpegParameters(ImageColorType.GRAY_SCALE);
@@ -84,7 +89,7 @@ public class JpegImageWriterTest {
 
     @Test
     public void writeEncrypted() throws IOException, TaskIOException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.jpg");
+        InputStream stream = getClass().getResourceAsStream("/image/test.jpg");
         File destination = File.createTempFile("test", ".jpg");
         destination.deleteOnExit();
 

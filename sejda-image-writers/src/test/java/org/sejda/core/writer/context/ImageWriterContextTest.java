@@ -1,7 +1,7 @@
 /*
  * Created on 25/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,18 @@
  */
 package org.sejda.core.writer.context;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class ImageWriterContextTest {
 
@@ -40,8 +40,11 @@ public class ImageWriterContextTest {
                 ImageWriterContext.getContext().createImageWriter(new PdfToJpegParameters(ImageColorType.COLOR_RGB)));
     }
 
-    @Test(expected = TaskException.class)
-    public void invalidParamsClass() throws Exception {
-        ImageWriterContext.getContext().createImageWriter(mock(AbstractPdfToSingleImageParameters.class));
+    @Test
+    public void invalidParamsClass() {
+        assertThrows(TaskException.class, () -> {
+            ImageWriterContext.getContext().createImageWriter(mock(AbstractPdfToSingleImageParameters.class));
+        });
+
     }
 }

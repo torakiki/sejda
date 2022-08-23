@@ -18,41 +18,43 @@
  */
 package org.sejda.core.writer.imageio;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.FileOrDirectoryTaskOutput;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class TiffSingleImageWriterTest {
     private TiffSingleImageWriter victim;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         victim = new TiffSingleImageWriter();
     }
 
-    @Test(expected = TaskIOException.class)
+    @Test
     public void writeNotOpened() throws TaskIOException {
         PdfToMultipleTiffParameters params = mock(PdfToMultipleTiffParameters.class);
         RenderedImage image = mock(RenderedImage.class);
-        victim.write(image, params);
+        assertThrows(TaskException.class, () -> {
+            victim.write(image, params);
+        });
     }
 
     @Test
@@ -62,7 +64,7 @@ public class TiffSingleImageWriterTest {
 
     @Test
     public void write() throws IOException, TaskIOException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.tiff");
+        InputStream stream = getClass().getResourceAsStream("/image/test.tiff");
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
         PdfToMultipleTiffParameters params = new PdfToMultipleTiffParameters(ImageColorType.GRAY_SCALE);

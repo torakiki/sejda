@@ -18,40 +18,42 @@
  */
 package org.sejda.core.writer.imageio;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.awt.image.RenderedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class TiffMultiImageWriterTest {
     private TiffMultiImageWriter victim;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         victim = new TiffMultiImageWriter();
     }
 
-    @Test(expected = TaskIOException.class)
+    @Test
     public void writeNotOpened() throws TaskIOException {
         PdfToSingleTiffParameters params = mock(PdfToSingleTiffParameters.class);
         RenderedImage image = mock(RenderedImage.class);
-        victim.write(image, params);
+        assertThrows(TaskException.class, () -> {
+            victim.write(image, params);
+        });
     }
 
     @Test
@@ -61,7 +63,7 @@ public class TiffMultiImageWriterTest {
 
     @Test
     public void write() throws IOException, TaskIOException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("image/test.tiff");
+        InputStream stream = getClass().getResourceAsStream("/image/test.tiff");
         File destination = File.createTempFile("test", ".tmp");
         destination.deleteOnExit();
         PdfToSingleTiffParameters params = new PdfToSingleTiffParameters(ImageColorType.GRAY_SCALE);

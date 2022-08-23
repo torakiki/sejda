@@ -36,10 +36,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test utilitites
- * 
+ * Test utilities
+ *
  * @author Andrea Vacondio
- * 
  */
 @Ignore
 public final class TestUtils {
