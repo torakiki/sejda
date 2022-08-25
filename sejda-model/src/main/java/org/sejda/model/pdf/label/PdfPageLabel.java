@@ -27,6 +27,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.security.InvalidParameterException;
 
+import static org.sejda.commons.util.RequireUtils.requireArg;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+
 /**
  * Model for a page label. <br>
  * Pdf reference 1.7, Chap. 8.3.1
@@ -101,25 +104,18 @@ public final class PdfPageLabel {
 
     /**
      * Creates a label with given label and given style for the given logical page number.
-     * 
+     *
      * @param label
      * @param numberingStyle
      * @param logicalPageNumber
      * @return the newly created instance
-     * @throws InvalidParameterException
-     *             if the input logical page number is not positive. if the input label or numbering style are null.
+     * @throws IllegalArgumentException if the input logical page number is not positive. if the input label or numbering style are null.
      */
     public static PdfPageLabel newInstanceWithLabel(String label, PdfLabelNumberingStyle numberingStyle,
             int logicalPageNumber) {
-        if (logicalPageNumber < 1) {
-            throw new InvalidParameterException("Input page number must be positive.");
-        }
-        if (label == null) {
-            throw new InvalidParameterException("Input label cannot be null.");
-        }
-        if (numberingStyle == null) {
-            throw new InvalidParameterException("Input numbering style cannot be null.");
-        }
+        requireArg(logicalPageNumber >= 0, "Input page number must be positive");
+        requireNotNullArg(label, "Input label cannot be null");
+        requireNotNullArg(numberingStyle, "Input numbering style cannot be null");
         return new PdfPageLabel(label, numberingStyle, logicalPageNumber);
     }
 
