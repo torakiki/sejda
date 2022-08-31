@@ -18,14 +18,7 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
@@ -35,16 +28,22 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class AcroFormUtilsTest {
 
     @Test
     public void megeDetaults() throws IOException {
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDAcroForm destination = new PDAcroForm(new PDDocument());
             AcroFormUtils.mergeDefaults(anotherDoc.getDocumentCatalog().getAcroForm(), destination);
             assertEquals(2, destination.getQuadding());
@@ -117,7 +116,7 @@ public class AcroFormUtilsTest {
     public void mergeFormsWithProcSet() throws IOException {
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_proc_set.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_proc_set.pdf")))) {
             PDAcroForm destination = new PDAcroForm(new PDDocument());
             AcroFormUtils.mergeDefaults(anotherDoc.getDocumentCatalog().getAcroForm(), destination);
             COSBase procSet = destination.getDefaultResources().getCOSObject().getItem(COSName.PROC_SET);

@@ -16,30 +16,23 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.sejda.TestUtils.encryptedAtRest;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
-import org.sejda.core.TestListenerFactory;
-import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.pdf.PdfVersion;
+import org.sejda.tests.TestUtils;
 
-@Ignore
+import java.io.IOException;
+
 public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOutlineParameters> {
 
     private ExtractByOutlineParameters setUpParameters(int level) {
-        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", null);
+        return setUpParameters(level, "/pdf/extract_by_outline_sample.pdf", null);
     }
 
     private ExtractByOutlineParameters setUpParameters(int level, String regEx) {
-        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", regEx);
+        return setUpParameters(level, "/pdf/extract_by_outline_sample.pdf", regEx);
     }
 
     private ExtractByOutlineParameters setUpParameters(int level, String sourceFile, String regEx) {
@@ -89,7 +82,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     @Test
     public void testBatchFilesWithConflictingOutputFiles() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(2);
-        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf"));
+        parameters.addSource(customInput("/pdf/extract_by_outline_sample.pdf", "file2.pdf"));
         parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -121,26 +114,22 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     @Test
     public void testNotMatchingregEx() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
-        testContext.directoryOutputTo(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        testContext.directoryOutputTo(parameters).listenForTaskFailure();
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed();
     }
 
     @Test
     public void testNonExistingLevel() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(4);
-        testContext.directoryOutputTo(parameters);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        testContext.directoryOutputTo(parameters).listenForTaskFailure();
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed();
     }
 
     @Test
     public void testIncludingPageAfterOff() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputContainsFilenames("1_Employee One.pdf", "3_Employee Three.pdf", "2_Employee Two.pdf");
@@ -150,7 +139,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void testIncludingPageAfterOn() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
         parameters.setIncludePageAfter(true);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -162,7 +151,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
     @Test
     public void atRestEncryptionTest() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(2);
-        parameters.addSource(encryptedAtRest(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf")));
+        parameters.addSource(TestUtils.encryptedAtRest(customInput("/pdf/extract_by_outline_sample.pdf", "file2.pdf")));
         parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
 
         testContext.directoryOutputTo(parameters);
@@ -173,7 +162,7 @@ public abstract class ExtractByOutlineTaskTest extends BaseTaskTest<ExtractByOut
 
     @Test
     public void specificResultFilenames() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
         testContext.directoryOutputTo(parameters);
         parameters.addSpecificResultFilename("one");
         parameters.addSpecificResultFilename("two");

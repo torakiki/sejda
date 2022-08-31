@@ -18,7 +18,7 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.util.IOUtils;
 
 /**
  * Moved to {@link IOUtils}

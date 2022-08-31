@@ -19,11 +19,12 @@
  */
 package org.sejda.model.outline;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
@@ -40,10 +41,10 @@ public class OutlinePageDestinationsTest {
         assertEquals(1, victim.getPages().size());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAddNull() {
         OutlinePageDestinations victim = new OutlinePageDestinations();
-        victim.addPage(null, "Title1");
+        assertThrows(IllegalArgumentException.class, () -> victim.addPage(null, "Title1"));
     }
 
     @Test
@@ -54,14 +55,15 @@ public class OutlinePageDestinationsTest {
         assertEquals(2, victim.getPages().size());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testUnmodifiablePagesSet() {
         OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(1, "Title1");
         victim.addPage(2, "Title2");
-        victim.getPages().add(3);
+        assertThrows(UnsupportedOperationException.class, () -> victim.getPages().add(3));
     }
 
+    @Test
     public void testGetTitle() {
         OutlinePageDestinations victim = new OutlinePageDestinations();
         victim.addPage(1, "Title1");

@@ -18,9 +18,11 @@
  */
 package org.sejda.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TopLeftRectangularBoxTest {
     
@@ -30,12 +32,21 @@ public class TopLeftRectangularBoxTest {
         assertTrue(box.containsPoint(10, 20));
         assertTrue(box.containsPoint(11, 21));
         assertTrue(box.containsPoint(15, 26));
-        
+
         assertFalse(box.containsPoint(9, 20));
         assertFalse(box.containsPoint(10, 19));
         assertFalse(box.containsPoint(9, 19));
         assertFalse(box.containsPoint(15, 27));
         assertFalse(box.containsPoint(16, 26));
         assertFalse(box.containsPoint(16, 27));
+    }
+
+    @Test
+    public void testEquals() {
+        var eq1 = new TopLeftRectangularBox(10, 20, 5, 6);
+        var eq2 = new TopLeftRectangularBox(10, 20, 5, 6);
+        var eq3 = new TopLeftRectangularBox(10, 20, 5, 6);
+        var diff = new TopLeftRectangularBox(11, 30, 5, 6);
+        TestUtils.testEqualsAndHashCodes(eq1, eq2, eq3, diff);
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 13/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,20 +19,22 @@
  */
 package org.sejda.core.context;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.sejda.model.exception.ConfigurationException;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
+@Isolated
 public class XmlConfigurationStreamProviderTest {
 
-    @After
+    @AfterEach
     public void tearDown() {
         System.setProperty("sejda.config.file", EMPTY);
     }
@@ -44,10 +46,10 @@ public class XmlConfigurationStreamProviderTest {
         assertNotNull(provider.getConfigurationStream());
     }
 
-    @Test(expected = ConfigurationException.class)
-    public void testNotExistingCustomConfiguration() throws ConfigurationException {
+    @Test
+    public void testNotExistingCustomConfiguration() {
         System.setProperty("sejda.config.file", "not-existing-sejda.xml");
         ConfigurationStreamProvider provider = new XmlConfigurationStreamProvider();
-        assertNotNull(provider.getConfigurationStream());
+        assertThrows(ConfigurationException.class, provider::getConfigurationStream);
     }
 }

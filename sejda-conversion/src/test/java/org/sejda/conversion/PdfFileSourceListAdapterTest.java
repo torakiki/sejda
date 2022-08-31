@@ -19,47 +19,45 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.input.PdfFileSource;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PdfFileSourceListAdapterTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    private File path;
+    private Path path;
 
-    @Before
-    public void setUp() throws IOException {
-        folder.newFile("1 Hello world.pdf");
-        folder.newFile("10 Blablabla.pdf");
-        folder.newFile("11 test_file.pdf");
-        folder.newFile("2 test_file.pdf");
-        folder.newFile("3 test_file.pdf");
-        folder.newFile("ignore_this.something");
-        this.path = folder.getRoot();
+    @BeforeEach
+    public void setUp(@TempDir Path folder) throws IOException {
+        path = Files.createTempDirectory(folder, "testSejda");
+        Files.createFile(path.resolve("1 Hello world.pdf"));
+        Files.createFile(path.resolve("10 Blablabla.pdf"));
+        Files.createFile(path.resolve("11 test_file.pdf"));
+        Files.createFile(path.resolve("2 test_file.pdf"));
+        Files.createFile(path.resolve("3 test_file.pdf"));
+        Files.createFile(path.resolve("ignore_this.something"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new PdfFileSourceListAdapter("/I/dont/exist");
+        assertThrows(ConversionException.class, () -> new PdfFileSourceListAdapter("/I/dont/exist"));
     }
 
     @Test
     public void testPositive() {
-        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath());
+        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.toAbsolutePath().toString());
         List<PdfFileSource> list = victim.getFileSourceList();
         assertEquals(5, list.size());
         assertEquals("1 Hello world.pdf", list.get(0).getName());
@@ -71,20 +69,21 @@ public class PdfFileSourceListAdapterTest {
 
     @Test
     public void testRegex() {
-        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath())
-                .filter("^(\\d+) test(.*).pdf");
+        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.toAbsolutePath().toString()).filter(
+                "^(\\d+) test(.*).pdf");
         assertEquals(3, victim.getFileSourceList().size());
     }
 
     @Test
     public void testEmptyRegex() {
-        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath()).filter("");
+        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.toAbsolutePath().toString()).filter("");
         assertEquals(5, victim.getFileSourceList().size());
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNoFile() {
-        PdfFileSourceListAdapter victim = new PdfFileSourceListAdapter(path.getAbsolutePath()).filter("NOMATCH");
-        victim.getFileSourceList();
+        assertThrows(ConversionException.class,
+                () -> new PdfFileSourceListAdapter(path.toAbsolutePath().toString()).filter("NOMATCH")
+                        .getFileSourceList());
     }
 }

@@ -305,6 +305,7 @@
 		<module>sejda-distribution</module>
 		<module>sejda-conversion</module>
 		<module>sejda-fonts</module>
+		<module>sejda-tests</module>
 	</modules>
 
 	<distributionManagement>
@@ -320,7 +321,7 @@
 
 	<properties>
 		<sejda.commons.version>2.0.0</sejda.commons.version>
-		<junit.version>5.8.2</junit.version>
+		<junit.version>5.9.0</junit.version>
 		<slf4j.version>1.7.36</slf4j.version>
 		<commons.lang.version>3.12.0</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
@@ -337,6 +338,7 @@
 		<twelvemonkeys.version>3.8.3</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
+		<awaitility.version>4.2.0</awaitility.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -385,6 +387,16 @@
 				<artifactId>imageio-jpeg</artifactId>
 				<version>${twelvemonkeys.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.hibernate.validator</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${hibernate-validator.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish</groupId>
+				<artifactId>jakarta.el</artifactId>
+				<version>${jakarta-el.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -406,12 +418,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.sejda</groupId>
-			<artifactId>sambox</artifactId>
-			<version>${sambox.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
@@ -420,12 +426,6 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -439,6 +439,12 @@
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit-junit5</artifactId>
 			<version>${archunit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>${awaitility.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

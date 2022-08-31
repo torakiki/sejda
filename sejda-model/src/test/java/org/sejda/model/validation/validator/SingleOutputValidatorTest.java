@@ -18,36 +18,35 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.parameter.SetPagesLabelParameters;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.output.FileTaskOutput;
-import org.sejda.model.parameter.SetPagesLabelParameters;
-
 /**
  * @author Andrea Vacondio
- *
  */
 public class SingleOutputValidatorTest {
 
-    private SingleOutputValidator victim = new SingleOutputValidator();
+    private final SingleOutputValidator victim = new SingleOutputValidator();
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
     @Test
     public void testNull() {
@@ -62,7 +61,7 @@ public class SingleOutputValidatorTest {
     @Test
     public void destinationExistsPolicyOverwrite() throws IOException {
         SetPagesLabelParameters params = new SetPagesLabelParameters();
-        params.setOutput(new FileTaskOutput(folder.newFile()));
+        params.setOutput(new FileTaskOutput(Files.createTempFile(folder, null, ".pdf").toFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         assertTrue(victim.isValid(params, null));
     }
@@ -70,7 +69,7 @@ public class SingleOutputValidatorTest {
     @Test
     public void destinationExistsPolicyRename() throws IOException {
         SetPagesLabelParameters params = new SetPagesLabelParameters();
-        params.setOutput(new FileTaskOutput(folder.newFile()));
+        params.setOutput(new FileTaskOutput(Files.createTempFile(folder, null, ".pdf").toFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.RENAME);
         assertTrue(victim.isValid(params, null));
     }
@@ -81,7 +80,7 @@ public class SingleOutputValidatorTest {
         ConstraintViolationBuilder builder = mock(ConstraintViolationBuilder.class);
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         SetPagesLabelParameters params = new SetPagesLabelParameters();
-        params.setOutput(new FileTaskOutput(folder.newFile()));
+        params.setOutput(new FileTaskOutput(Files.createTempFile(folder, null, ".pdf").toFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.FAIL);
         assertFalse(victim.isValid(params, context));
         verify(context).buildConstraintViolationWithTemplate(contains("File destination already exists"));
@@ -93,7 +92,7 @@ public class SingleOutputValidatorTest {
         ConstraintViolationBuilder builder = mock(ConstraintViolationBuilder.class);
         when(context.buildConstraintViolationWithTemplate(anyString())).thenReturn(builder);
         SetPagesLabelParameters params = new SetPagesLabelParameters();
-        params.setOutput(new FileTaskOutput(folder.newFile()));
+        params.setOutput(new FileTaskOutput(Files.createTempFile(folder, null, ".pdf").toFile()));
         params.setExistingOutputPolicy(ExistingOutputPolicy.SKIP);
         assertFalse(victim.isValid(params, context));
         verify(context).buildConstraintViolationWithTemplate(contains("File destination already exists"));

@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,35 +19,33 @@
  */
 package org.sejda.conversion;
 
-import java.io.File;
-import java.io.IOException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.io.TempDir;
 
-import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
+@Disabled
 public class BaseFileSourceListParserTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
-    File xmlFile;
-    File csvFile;
-    File emptyFile;
+    Path xmlFile;
+    Path csvFile;
+    Path emptyFile;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        xmlFile = folder.newFile("merge-filelist-config.xml");
-        csvFile = folder.newFile("merge-list.csv");
-        emptyFile = folder.newFile("test.txt");
-        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-filelist-config.xml"), xmlFile);
-        FileUtils.copyInputStreamToFile(getClass().getResourceAsStream("/merge-list.csv"), csvFile);
+        xmlFile = folder.resolve("merge-filelist-config.xml");
+        csvFile = folder.resolve("merge-list.csv");
+        emptyFile = folder.resolve("test.txt");
+        Files.copy(getClass().getResourceAsStream("/merge-filelist-config.xml"), xmlFile);
+        Files.copy(getClass().getResourceAsStream("/merge-list.csv"), csvFile);
     }
 
 }

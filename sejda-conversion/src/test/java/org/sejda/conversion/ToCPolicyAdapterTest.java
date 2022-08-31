@@ -18,8 +18,10 @@
  */
 package org.sejda.conversion;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -33,8 +35,8 @@ public class ToCPolicyAdapterTest {
         new ToCPolicyAdapter("file_names").getEnumValue();
     }
 
-    @Test(expected = SejdaRuntimeException.class)
+    @Test
     public void testInvalid() {
-        new ToCPolicyAdapter("Chuck").getEnumValue();
+        assertThrows(SejdaRuntimeException.class, () -> new ToCPolicyAdapter("Chuck").getEnumValue());
     }
 }

@@ -19,18 +19,19 @@
  */
 package org.sejda.model.input;
 
-import static org.hamcrest.core.StringEndsWith.endsWith;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.sejda.TestUtils.encryptedAtRest;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskIOException;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.StringEndsWith.endsWith;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.sejda.tests.TestUtils.encryptedAtRest;
 
 /**
  * @author Andrea Vacondio
@@ -38,16 +39,16 @@ import org.sejda.model.exception.TaskIOException;
  */
 public class PdfFileSourceTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullFile() {
-        PdfFileSource.newInstanceNoPassword(null);
+        assertThrows(IllegalArgumentException.class, () -> PdfFileSource.newInstanceNoPassword(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDirectory() {
         File file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        PdfFileSource.newInstanceNoPassword(file);
+        assertThrows(IllegalArgumentException.class, () -> PdfFileSource.newInstanceNoPassword(file));
     }
 
     @Test
@@ -73,15 +74,15 @@ public class PdfFileSourceTest {
     @Test
     public void encryptedAtRestKeepsOriginalFilename_stream() throws IOException {
         PdfStreamSource source = encryptedAtRest(
-                PdfStreamSource.newInstanceNoPassword(
-                        this.getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf"));
+                PdfStreamSource.newInstanceNoPassword(this.getClass().getResourceAsStream("/pdf/test_file.pdf"),
+                        "test_file.pdf"));
         
         assertThat(source.getSeekableSource().id(), endsWith("test_file.pdf"));
     }
 
     @Test
     public void encryptedAtRestKeepsOriginalFilename_file() throws IOException {
-        File fileSource = new File(this.getClass().getClassLoader().getResource("pdf/test_file.pdf").getFile());
+        File fileSource = new File(this.getClass().getResource("/pdf/test_file.pdf").getFile());
         PdfFileSource source = encryptedAtRest(PdfFileSource.newInstanceNoPassword(fileSource));
 
         assertThat(source.getSeekableSource().id(), endsWith("test_file.pdf"));

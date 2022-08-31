@@ -18,9 +18,9 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransition;

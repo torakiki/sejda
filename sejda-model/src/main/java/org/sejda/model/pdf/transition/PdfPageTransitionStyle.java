@@ -20,7 +20,7 @@
  */
 package org.sejda.model.pdf.transition;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 import org.sejda.model.pdf.MinRequiredVersion;
 import org.sejda.model.pdf.PdfVersion;
 

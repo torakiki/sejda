@@ -20,14 +20,8 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
@@ -48,13 +42,17 @@ import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreference
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.PRINT_SCALING;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.READING_DIRECTION;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * test unit for the viewer preferences task
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class ViewerPreferencesTaskTest extends BaseTaskTest<ViewerPreferencesParameters> {
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
@@ -106,15 +104,15 @@ public abstract class ViewerPreferencesTaskTest extends BaseTaskTest<ViewerPrefe
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7).forEachPdfOutput(d -> {
             PDDocumentCatalog catalog = d.getDocumentCatalog();
             PDViewerPreferences prefs = catalog.getViewerPreferences();
-            assertTrue(prefs.hideMenubar());
-            assertTrue(prefs.centerWindow());
-            assertFalse(prefs.hideToolbar());
-            assertEquals(DUPLEX.Simplex.toString(), prefs.getDuplex());
-            assertEquals(NON_FULL_SCREEN_PAGE_MODE.UseThumbs.toString(), prefs.getNonFullScreenPageMode());
-            assertEquals(PRINT_SCALING.AppDefault.toString(), prefs.getPrintScaling());
-            assertEquals(READING_DIRECTION.L2R.toString(), prefs.getReadingDirection());
-            assertEquals(PageLayout.ONE_COLUMN, catalog.getPageLayout());
-            assertEquals(PageMode.USE_THUMBS, catalog.getPageMode());
+            Assertions.assertTrue(prefs.hideMenubar());
+            Assertions.assertTrue(prefs.centerWindow());
+            Assertions.assertFalse(prefs.hideToolbar());
+            Assertions.assertEquals(DUPLEX.Simplex.toString(), prefs.getDuplex());
+            Assertions.assertEquals(NON_FULL_SCREEN_PAGE_MODE.UseThumbs.toString(), prefs.getNonFullScreenPageMode());
+            Assertions.assertEquals(PRINT_SCALING.AppDefault.toString(), prefs.getPrintScaling());
+            Assertions.assertEquals(READING_DIRECTION.L2R.toString(), prefs.getReadingDirection());
+            Assertions.assertEquals(PageLayout.ONE_COLUMN, catalog.getPageLayout());
+            Assertions.assertEquals(PageMode.USE_THUMBS, catalog.getPageMode());
         });
     }
 }

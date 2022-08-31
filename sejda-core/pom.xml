@@ -50,6 +50,19 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-opens org.sejda.model/org.sejda.model.parameter.base=ALL-UNNAMED
+                        --add-opens org.sejda.model/org.sejda.model.validation.validator=ALL-UNNAMED
+                        --add-opens org.sejda.core/org.sejda.core.service=ALL-UNNAMED
+                        --add-opens org.sejda.core/org.sejda.core.service=org.apache.commons.lang3
+                    </argLine>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -76,20 +89,23 @@
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
         </dependency>
         <!-- exclude this in your POM if your validation is turned off in your configuration or your validation is configured to not use EL based message interpolation
         https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#non-el-message-interpolator-->
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>jakarta.el</artifactId>
-            <version>${jakarta-el.version}</version>
         </dependency>
         <dependency>
             <groupId>org.sejda</groupId>
-            <artifactId>sejda-model</artifactId>
+            <artifactId>sejda-tests</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sejda</groupId>
+            <artifactId>sambox</artifactId>
+            <version>${sambox.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

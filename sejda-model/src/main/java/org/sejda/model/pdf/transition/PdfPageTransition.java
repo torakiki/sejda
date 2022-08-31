@@ -28,6 +28,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.security.InvalidParameterException;
 
+import static org.sejda.commons.util.RequireUtils.requireArg;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+
 /**
  * Model for a page transition. <br>
  * Pdf reference 1.7, Chap. 8.3.3
@@ -104,16 +107,9 @@ public final class PdfPageTransition {
      */
     public static PdfPageTransition newInstance(PdfPageTransitionStyle style, int transitionDuration,
             int displayDuration) {
-
-        if (transitionDuration < 1) {
-            throw new InvalidParameterException("Input transition duration must be positive.");
-        }
-        if (displayDuration < 1) {
-            throw new InvalidParameterException("Input display duration must be positive.");
-        }
-        if (style == null) {
-            throw new InvalidParameterException("Input style cannot be null.");
-        }
+        requireArg(displayDuration > 0, "Input display duration must be positive");
+        requireArg(transitionDuration > 0, "Input transition duration must be positive");
+        requireNotNullArg(style, "Input style cannot be null");
         return new PdfPageTransition(style, transitionDuration, displayDuration);
     }
 

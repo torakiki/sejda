@@ -17,11 +17,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.common;
+package org.sejda.model.util;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -37,9 +38,9 @@ public class RomanNumbersUtilsTest {
         assertEquals("C", RomanNumbersUtils.toRoman(100));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testFailingNegative() {
-        RomanNumbersUtils.toRoman(-1);
+        assertThrows(IllegalArgumentException.class, () -> RomanNumbersUtils.toRoman(-1));
     }
 
     public void testFailingZero() {

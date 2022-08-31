@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,16 +19,16 @@
  */
 package org.sejda.conversion;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.RectangularBox;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class RectangularBoxAdapterTest {
     @Test
@@ -37,15 +37,13 @@ public class RectangularBoxAdapterTest {
                 is(RectangularBox.newInstance(2, 3, 10, 20)));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void missingPoint() {
-        assertThat(new RectangularBoxAdapter("[2:3][10:]").getRectangularBox(),
-                is(RectangularBox.newInstance(2, 3, 10, 20)));
+        assertThrows(ConversionException.class, () -> new RectangularBoxAdapter("[2:3][10:]").getRectangularBox());
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void missingPointAgain() {
-        assertThat(new RectangularBoxAdapter("[2:3][10]").getRectangularBox(),
-                is(RectangularBox.newInstance(2, 3, 10, 20)));
+        assertThrows(ConversionException.class, () -> new RectangularBoxAdapter("[2:3][10]").getRectangularBox());
     }
 }

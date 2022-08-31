@@ -20,39 +20,41 @@
  */
 package org.sejda.core.notification;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.core.TestListenerFactory.newGeneralListener;
-import static org.sejda.core.TestListenerFactory.newPercentageListener;
-import static org.sejda.core.TestListenerFactory.newStartListener;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
+import org.mockito.ArgumentCaptor;
+import org.sejda.core.Sejda;
+import org.sejda.core.notification.context.GlobalNotificationContext;
+import org.sejda.core.notification.context.NotificationContext;
+import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
+import org.sejda.model.notification.event.TaskExecutionFailedEvent;
+import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.core.Sejda;
-import org.sejda.core.TestListenerFactory.TestListenerAny;
-import org.sejda.core.TestListenerFactory.TestListenerPercentage;
-import org.sejda.core.TestListenerFactory.TestListenerStart;
-import org.sejda.core.notification.context.GlobalNotificationContext;
-import org.sejda.core.notification.context.NotificationContext;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
-import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
-import org.sejda.model.notification.event.TaskExecutionFailedEvent;
-import org.sejda.model.task.NotifiableTaskMetadata;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
- * 
  */
+@Isolated
 public class NotificationContextTest {
 
     private List<NotificationContext> contexts = new ArrayList<NotificationContext>();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         contexts.add(GlobalNotificationContext.getContext());
@@ -79,10 +81,10 @@ public class NotificationContextTest {
     }
 
     private void testNotificationContextNotify(NotificationContext victim) {
-        TestListenerPercentage listener = newPercentageListener();
-        TestListenerAny<PercentageOfWorkDoneChangedEvent> secondListener = newGeneralListener();
-        TestListenerAny<TaskExecutionFailedEvent> thirdListener = newGeneralListener();
-        victim.addListener(listener);
+        EventListener<TaskExecutionStartedEvent> listener = mock(EventListener.class);
+        EventListener<PercentageOfWorkDoneChangedEvent> secondListener = mock(EventListener.class);
+        EventListener<TaskExecutionFailedEvent> thirdListener = mock(EventListener.class);
+        victim.addListener(TaskExecutionStartedEvent.class, listener);
         victim.addListener(PercentageOfWorkDoneChangedEvent.class, secondListener);
         victim.addListener(TaskExecutionFailedEvent.class, thirdListener);
         BigDecimal value = new BigDecimal("32");
@@ -90,32 +92,40 @@ public class NotificationContextTest {
                 NotifiableTaskMetadata.NULL);
         assertFalse(event.isUndetermined());
         victim.notifyListeners(event);
-        assertEquals(value, listener.getPercentage());
-        assertFalse(listener.isUndeterminate());
-        assertTrue(secondListener.hasListened());
-        assertFalse(thirdListener.hasListened());
+        victim.notifyListeners(new TaskExecutionStartedEvent(NotifiableTaskMetadata.NULL));
+        ArgumentCaptor<PercentageOfWorkDoneChangedEvent> argument = ArgumentCaptor.forClass(
+                PercentageOfWorkDoneChangedEvent.class);
+        verify(secondListener).onEvent(argument.capture());
+        assertEquals(value, argument.getValue().getPercentage());
+        assertFalse(argument.getValue().isUndetermined());
+        verify(listener).onEvent(any());
+        verify(thirdListener, never()).onEvent(any());
     }
 
     private void testNotificationContextUndetermined(NotificationContext victim) {
-        TestListenerPercentage listener = newPercentageListener();
-        victim.addListener(listener);
+        EventListener<PercentageOfWorkDoneChangedEvent> listener = mock(EventListener.class);
+        ArgumentCaptor<PercentageOfWorkDoneChangedEvent> argument = ArgumentCaptor.forClass(
+                PercentageOfWorkDoneChangedEvent.class);
+        victim.addListener(PercentageOfWorkDoneChangedEvent.class, listener);
         PercentageOfWorkDoneChangedEvent event = new PercentageOfWorkDoneChangedEvent(
                 PercentageOfWorkDoneChangedEvent.UNDETERMINED, NotifiableTaskMetadata.NULL);
         assertTrue(event.isUndetermined());
         victim.notifyListeners(event);
-        assertTrue(listener.isUndeterminate());
+        verify(listener).onEvent(argument.capture());
+        assertTrue(argument.getValue().isUndetermined());
     }
 
     private void testNotificationContextAddListener(NotificationContext victim) {
-        victim.addListener(newStartListener());
+        EventListener<TaskExecutionStartedEvent> listener = mock(EventListener.class);
+        victim.addListener(TaskExecutionStartedEvent.class, listener);
         assertEquals(1, victim.size());
-        TestListenerAny<PercentageOfWorkDoneChangedEvent> listener = newGeneralListener();
-        victim.addListener(PercentageOfWorkDoneChangedEvent.class, listener);
+        EventListener<PercentageOfWorkDoneChangedEvent> listener2 = mock(EventListener.class);
+        victim.addListener(PercentageOfWorkDoneChangedEvent.class, listener2);
         assertEquals(2, victim.size());
     }
 
     private void testNotificationContextRemoveListener(NotificationContext victim) {
-        TestListenerStart listener = newStartListener();
+        EventListener<TaskExecutionStartedEvent> listener = new TestListenerStart();
         victim.addListener(listener);
         assertEquals(1, victim.size());
         victim.removeListener(listener);
@@ -129,5 +139,12 @@ public class NotificationContextTest {
         assertFalse(0 == victim.size());
         victim.clearListeners();
         assertEquals(0, victim.size());
+    }
+
+    public static class TestListenerStart implements EventListener<TaskExecutionStartedEvent> {
+        @Override
+        public void onEvent(TaskExecutionStartedEvent event) {
+            //nothing
+        }
     }
 }

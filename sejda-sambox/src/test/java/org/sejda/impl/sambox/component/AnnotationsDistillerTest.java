@@ -18,25 +18,9 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle.SUB_TYPE_SQUARE;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSName;
@@ -57,9 +41,25 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNam
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle.SUB_TYPE_SQUARE;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class AnnotationsDistillerTest {
 
@@ -67,7 +67,7 @@ public class AnnotationsDistillerTest {
     private PDPage newPage;
     private LookupTable<PDPage> lookup;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         oldPage = new PDPage();
         newPage = new PDPage();
@@ -75,9 +75,9 @@ public class AnnotationsDistillerTest {
         lookup.addLookupEntry(oldPage, newPage);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void fiterNullDocument() {
-        new AnnotationsDistiller(null);
+        assertThrows(IllegalArgumentException.class, () -> new AnnotationsDistiller(null));
     }
 
     @Test
@@ -323,7 +323,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void popupRelevant() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             PDPage firstNew = new PDPage();
             lookup.addLookupEntry(firstOrigin, firstNew);
@@ -340,7 +340,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void removePopupIfGarbage() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             // let's put some garbage in place of the popup
             firstOrigin.getAnnotations().stream().filter(a -> !(a instanceof PDAnnotationPopup))
@@ -361,7 +361,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void popupRelevantRevertedOrder() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             List<PDAnnotation> annots = firstOrigin.getAnnotations();
             Collections.reverse(annots);

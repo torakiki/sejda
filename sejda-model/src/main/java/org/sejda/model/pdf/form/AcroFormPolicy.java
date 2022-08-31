@@ -18,7 +18,7 @@
  */
 package org.sejda.model.pdf.form;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Enumerates policies that a task can use to handle the interactive forms(AcroForms). This is mostly relevant when merging documents but it can be used for other tasks as well.

@@ -19,24 +19,21 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 
+import java.io.IOException;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEveryXPagesParameters> {
     private SplitByEveryXPagesParameters parameters;
 
@@ -72,7 +69,7 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
+        parameters.addSource(customInput("/pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -86,7 +83,7 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("pdf/shared_xobjects_dics.pdf"));
+        parameters.addSource(customInput("/pdf/shared_xobjects_dics.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -100,7 +97,7 @@ public abstract class SplitByEveryXPagesTaskTest extends BaseTaskTest<SplitByEve
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("pdf/shared_fonts.pdf"));
+        parameters.addSource(customInput("/pdf/shared_fonts.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);

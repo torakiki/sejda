@@ -20,7 +20,7 @@
  */
 package org.sejda.model.pdf.encryption;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Access permissions correspond to various operations that can be allowed/disallowed when encrypting a pdf document.<br>

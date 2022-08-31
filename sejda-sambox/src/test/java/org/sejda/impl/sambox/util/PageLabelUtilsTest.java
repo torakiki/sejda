@@ -19,18 +19,18 @@
 
 package org.sejda.impl.sambox.util;
 
-import static java.util.Arrays.asList;
-import static org.sejda.core.service.TestUtils.assertPageLabelIndexesAre;
-import static org.sejda.core.service.TestUtils.assertPageLabelRangeIs;
+import org.junit.jupiter.api.Test;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.common.PDPageLabels;
+import org.sejda.tests.DocBuilder;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.junit.Test;
-import org.sejda.impl.sambox.component.DocBuilder;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.common.PDPageLabels;
+import static java.util.Arrays.asList;
+import static org.sejda.tests.TestUtils.assertPageLabelIndexesAre;
+import static org.sejda.tests.TestUtils.assertPageLabelRangeIs;
 
 public class PageLabelUtilsTest {
 

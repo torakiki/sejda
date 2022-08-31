@@ -1,31 +1,32 @@
 package org.sejda.model.pdf.transition;
 
-import java.security.InvalidParameterException;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test unit for PdfPageTransition
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PdfPageTransitionTest {
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testNullStyle() {
-        PdfPageTransition.newInstance(null, 1, 1);
+        assertThrows(IllegalArgumentException.class, () -> PdfPageTransition.newInstance(null, 1, 1));
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testNoTransitionDuration() {
-        PdfPageTransition.newInstance(PdfPageTransitionStyle.BLINDS_HORIZONTAL, 0, 1);
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfPageTransition.newInstance(PdfPageTransitionStyle.BLINDS_HORIZONTAL, 0, 1));
     }
 
-    @Test(expected = InvalidParameterException.class)
+    @Test
     public void testNoDisplayDuration() {
-        PdfPageTransition.newInstance(PdfPageTransitionStyle.BLINDS_HORIZONTAL, 1, 0);
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfPageTransition.newInstance(PdfPageTransitionStyle.BLINDS_HORIZONTAL, 1, 0));
     }
 
     @Test

@@ -19,32 +19,8 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
-import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
-import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
-import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.fontbox.ttf.TrueTypeFont;
-import org.junit.Test;
-import org.sejda.core.support.io.IOUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
@@ -55,6 +31,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
+import org.sejda.model.util.IOUtils;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -65,6 +42,31 @@ import org.sejda.sambox.pdmodel.font.FontMapping;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.impl.sambox.util.FontUtils.canDisplay;
+import static org.sejda.impl.sambox.util.FontUtils.fontOrFallback;
+import static org.sejda.impl.sambox.util.FontUtils.getStandardType1Font;
+import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
 
 /**
  * @author Andrea Vacondio
@@ -195,7 +197,7 @@ public class FontUtilsTest {
         assertNotNull(expected);
 
         PDFont actual = FontUtils.findFontFor(doc, "ทด");
-        assertTrue("Font is cached, same instance is returned", expected == actual);
+        assertSame(expected, actual, "Font is cached, same instance is returned");
     }
 
     @Test
@@ -210,7 +212,7 @@ public class FontUtilsTest {
 
     @Test
     public void testCanDisplayType0FontsThatDontThrow() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("pdf/2-up-sample.pdf");
+        PDDocument doc = getTestDoc("/pdf/2-up-sample.pdf");
 
         PDResources res = doc.getPage(0).getResources();
         PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Form2"));
@@ -228,7 +230,7 @@ public class FontUtilsTest {
             return;
         }
 
-        PDDocument doc = getTestDoc("pdf/subset-font.pdf");
+        PDDocument doc = getTestDoc("/pdf/subset-font.pdf");
 
         PDResources res = doc.getPage(0).getResources();
         PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Xf1"));
@@ -332,16 +334,17 @@ public class FontUtilsTest {
         assertThat(lines, is(Arrays.asList("This is a long linethatcannotfitonasingleline-", "andcouldbe wrapped")));
     }
 
-    @Test(expected = UnsupportedTextException.class)
+    @Test
     public void wrappingLinesUnableToFindFont() throws TaskIOException {
         PDDocument doc = new PDDocument();
-        FontUtils.wrapLines("This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն",
-                HELVETICA, 10, 191, doc);
+        assertThrows(UnsupportedTextException.class, () -> FontUtils.wrapLines(
+                "This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն", HELVETICA, 10, 191,
+                doc));
     }
 
     @Test
     public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
+        PDDocument doc = getTestDoc("/pdf/font-with-zero-widths.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
         List<String> result = FontUtils.resolveTextFragments("FRIDA", font);
         assertThat(result, is(Arrays.asList("F", "RIDA")));
@@ -349,7 +352,7 @@ public class FontUtilsTest {
 
     @Test
     public void vectorFontWithSpace() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("pdf/font-with-vector-font.pdf");
+        PDDocument doc = getTestDoc("/pdf/font-with-vector-font.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
 
         assertThat(FontUtils.canDisplaySpace(font), is(true));

@@ -21,7 +21,7 @@ package org.sejda.impl.sambox.util;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 
 public class RectangleUtilsTest {

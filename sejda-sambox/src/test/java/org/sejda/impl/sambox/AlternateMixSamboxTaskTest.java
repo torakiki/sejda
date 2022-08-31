@@ -19,16 +19,16 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
-
 import org.sejda.core.service.AlternateMixTaskTest;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.pdmodel.PDPage;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Andrea Vacondio

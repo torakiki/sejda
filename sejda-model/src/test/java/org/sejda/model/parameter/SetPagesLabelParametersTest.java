@@ -19,22 +19,21 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
@@ -42,8 +41,6 @@ import org.sejda.model.pdf.label.PdfPageLabel;
  */
 public class SetPagesLabelParametersTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testEquals() {
@@ -67,17 +64,17 @@ public class SetPagesLabelParametersTest {
         SetPagesLabelParameters victim = new SetPagesLabelParameters();
         PdfPageLabel firstLabel = PdfPageLabel.newInstanceWithLabel("label1", PdfLabelNumberingStyle.ARABIC, 2);
         victim.putLabel(3, firstLabel);
-        Assert.assertEquals(1, victim.getLabels().size());
+        assertEquals(1, victim.getLabels().size());
         PdfPageLabel secondLabel = PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 2);
         PdfPageLabel result = victim.putLabel(3, secondLabel);
-        Assert.assertEquals(firstLabel, result);
-        Assert.assertEquals(1, victim.getLabels().size());
+        assertEquals(firstLabel, result);
+        assertEquals(1, victim.getLabels().size());
     }
 
     @Test
     public void testInvalidParameters() throws IOException {
         SetPagesLabelParameters victim = new SetPagesLabelParameters();
-        SingleTaskOutput output = new FileTaskOutput(folder.newFile());
+        SingleTaskOutput output = new FileTaskOutput(Files.createTempFile(null, ".pdf").toFile());
         victim.setOutput(output);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");

@@ -19,15 +19,15 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;

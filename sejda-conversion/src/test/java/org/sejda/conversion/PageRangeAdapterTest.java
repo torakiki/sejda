@@ -1,19 +1,35 @@
+/*
+ * Copyright 2022 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * This file is part of Sejda.
+ *
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Sejda is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.sejda.conversion;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.fail;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.BasePageRangeAdapter.PageRangeAdapter;
 import org.sejda.conversion.BasePageRangeAdapter.PageRangeWithAllAdapter;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.pdf.page.PageRange;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Created on 3/11/12 4:08 PM
- * 
+ *
  * @author: Edi Weissmann
  */
 public class PageRangeAdapterTest {
@@ -29,18 +45,14 @@ public class PageRangeAdapterTest {
 
     @Test
     public void testNegative() {
-        failsWith("1,3", "Unparsable page range '1,3'");
-        failsWith("all", "Unparsable page range 'all'");
-        failsWith("4-3", "Invalid page range '4-3', ends before starting");
-        failsWith("1-3-4", "Unparsable page range '1-3-4'");
+        assertThrows(ConversionException.class, () -> new PageRangeAdapter("1,3").getPageRange(),
+                "Unparsable page range '1,3'");
+        assertThrows(ConversionException.class, () -> new PageRangeAdapter("all").getPageRange(),
+                "Unparsable page range 'all'");
+        assertThrows(ConversionException.class, () -> new PageRangeAdapter("4-3").getPageRange(),
+                "Invalid page range '4-3', ends before starting");
+        assertThrows(ConversionException.class, () -> new PageRangeAdapter("1-3-4").getPageRange(),
+                "Unparsable page range '1-3-4'");
     }
 
-    private void failsWith(String input, String expectedMsg) {
-        try {
-            new PageRangeAdapter(input).getPageRange();
-            fail("Expected conversion exception: " + expectedMsg);
-        } catch (ConversionException e) {
-            assertThat(e.getMessage(), containsString(expectedMsg));
-        }
-    }
 }

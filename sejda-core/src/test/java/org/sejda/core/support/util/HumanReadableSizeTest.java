@@ -18,17 +18,17 @@
  */
 package org.sejda.core.support.util;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class HumanReadableSizeTest {
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Locale.setDefault(Locale.UK);
     }

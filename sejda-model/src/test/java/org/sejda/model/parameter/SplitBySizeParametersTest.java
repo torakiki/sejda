@@ -1,7 +1,7 @@
 /*
  * Created on 03/ago/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,19 +19,18 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.InputStream;
-
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
+import org.sejda.tests.TestUtils;
+
+import java.io.InputStream;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class SplitBySizeParametersTest {
     @Test

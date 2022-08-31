@@ -18,22 +18,7 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.sejda.core.service.TestUtils.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.junit.Test;
-import org.sejda.core.service.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.UnsupportedTextException;
@@ -47,22 +32,43 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.sejda.tests.TestUtils.assertDocTextExactLines;
+import static org.sejda.tests.TestUtils.assertPageTextExactLines;
+import static org.sejda.tests.TestUtils.getDocTextNormalized;
+import static org.sejda.tests.TestUtils.getPageTextNormalized;
 
 /**
  * @author Andrea Vacondio
  * @author Edi Weissmann
- *
  */
 public class TableOfContentsCreatorTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullDocument() {
-        new TableOfContentsCreator(new MergeParameters(), null);
+        assertThrows(IllegalArgumentException.class, () -> new TableOfContentsCreator(new MergeParameters(), null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullParams() {
-        new TableOfContentsCreator(null, new PDDocument());
+        assertThrows(IllegalArgumentException.class, () -> new TableOfContentsCreator(null, new PDDocument()));
     }
 
     @Test
@@ -85,19 +91,24 @@ public class TableOfContentsCreatorTest {
         assertTrue(victim.hasToc());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppendItemInvalidString() {
-        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem(" ", 10, new PDPage());
+        assertThrows(IllegalArgumentException.class,
+                () -> new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem(" ", 10,
+                        new PDPage()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppendItemInvalidPage() {
-        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", -10, new PDPage());
+        assertThrows(IllegalArgumentException.class,
+                () -> new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", -10,
+                        new PDPage()));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testAppendItemInvalidAnnotation() {
-        new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", 10, null);
+        assertThrows(IllegalArgumentException.class,
+                () -> new TableOfContentsCreator(new MergeParameters(), new PDDocument()).appendItem("Text", 10, null));
     }
 
     @Test
@@ -112,8 +123,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddToCTop() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -127,8 +138,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddToCWithBlankPageIfOdd() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -143,8 +154,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddTwoPagesToC() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -153,7 +164,7 @@ public class TableOfContentsCreatorTest {
         for (int i = 1; i < 40; i++) {
             victim.appendItem("text", i, new PDPage());
         }
-        
+
         victim.addToC();
         assertEquals(5, doc.getNumberOfPages());
         assertEquals(firstPage.getCOSObject(), doc.getPage(2).getCOSObject());
@@ -332,12 +343,12 @@ public class TableOfContentsCreatorTest {
         assertPageTextExactLines(victim.getDoc().getPage(0), "Item multiple fonts ทดสอบ   101\n");
     }
 
-    @Test(expected = UnsupportedTextException.class)
+    @Test
     public void tocItemsMultipleFontsButNotFound() throws TaskException {
         TableOfContentsCreator victim = newToCCreator();
         victim.appendItem("Item multiple fonts հայերէն", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
-        victim.addToC();
+        assertThrows(UnsupportedTextException.class, () -> victim.addToC());
     }
 
     @Test
@@ -517,24 +528,23 @@ public class TableOfContentsCreatorTest {
         victim.addToC();
 
         assertThat(victim.getDoc().getNumberOfPages(), is(1));
-        assertThat(getPageTextNormalized(victim.getDoc().getPage(0)), endsWith("\nAttachment final - Sample file name - short and fits   123\n"));
+        assertThat(getPageTextNormalized(victim.getDoc().getPage(0)),
+                endsWith("\nAttachment final - Sample file name - short and fits   123\n"));
     }
-    
-    @Test(expected = IllegalStateException.class)
+
+    @Test
     public void catchesWrongUsage_ItemAddedAfterTocGenerated() throws TaskException {
         TableOfContentsCreator victim = newToCCreator();
-        
         victim.addToC();
-        
-        victim.appendItem("cannot add more", 2, new PDPage());
+        assertThrows(IllegalStateException.class, () -> victim.appendItem("cannot add more", 2, new PDPage()));
     }
-    
+
     private TableOfContentsCreator newToCCreator() {
         return newToCCreator("test");
     }
 
     private TableOfContentsCreator newToCCreator(String item) {
-        return newToCCreator(Arrays.asList(item));
+        return newToCCreator(Collections.singletonList(item));
     }
 
     private TableOfContentsCreator newToCCreator(List<String> items) {

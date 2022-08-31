@@ -19,8 +19,7 @@
  */
 package org.sejda.core.service;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -34,7 +33,6 @@ import java.io.IOException;
 /**
  * @author Andrea Vacondio
  */
-@Ignore
 public abstract class PdfToMultipleTiffTaskTest
         extends MultipleImageConversionTaskTest<PdfToMultipleTiffParameters> {
 

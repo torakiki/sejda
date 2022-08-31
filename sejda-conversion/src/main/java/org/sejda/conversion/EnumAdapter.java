@@ -19,7 +19,7 @@
  */
 package org.sejda.conversion;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Base class for adapters for sejda {@link Enum}s. Provides common boiler plate code to initialize the actual enum value from it's user friendly display name

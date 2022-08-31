@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName;
+import static org.sejda.model.util.IOUtils.createTemporaryBufferWithName;
 
 public class ImagesToPdfDocumentConverter {
 

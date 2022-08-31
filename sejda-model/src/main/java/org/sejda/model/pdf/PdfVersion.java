@@ -24,7 +24,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * pdf versions

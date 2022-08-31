@@ -19,27 +19,27 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.core.Sejda;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.encryption.AccessPermission;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PDDocumentAccessPermissionTest {
 
     private PDDocumentAccessPermission victim;
     private AccessPermission permission;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         PDDocument document = mock(PDDocument.class);
         permission = mock(AccessPermission.class);
@@ -47,15 +47,15 @@ public class PDDocumentAccessPermissionTest {
         victim = new PDDocumentAccessPermission(document);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNull() {
-        new PDDocumentAccessPermission(null);
+        assertThrows(IllegalArgumentException.class, () -> new PDDocumentAccessPermission(null));
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotOwner() throws TaskPermissionsException {
         when(permission.isOwnerPermission()).thenReturn(Boolean.FALSE);
-        victim.ensureOwnerPermissions();
+        assertThrows(TaskPermissionsException.class, () -> victim.ensureOwnerPermissions());
     }
 
     @Test
@@ -72,10 +72,10 @@ public class PDDocumentAccessPermissionTest {
         System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotPrint() throws TaskPermissionsException {
         when(permission.canPrint()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.PRINT);
+        assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.PRINT));
     }
 
     @Test
@@ -92,10 +92,11 @@ public class PDDocumentAccessPermissionTest {
         System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotDegradedPrint() throws TaskPermissionsException {
         when(permission.canPrintDegraded()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.DEGRADATED_PRINT);
+        assertThrows(TaskPermissionsException.class,
+                () -> victim.ensurePermission(PdfAccessPermission.DEGRADATED_PRINT));
     }
 
     @Test
@@ -104,10 +105,10 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.DEGRADATED_PRINT);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotAssemble() throws TaskPermissionsException {
         when(permission.canAssembleDocument()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.ASSEMBLE);
+        assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.ASSEMBLE));
     }
 
     @Test
@@ -116,10 +117,10 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.ASSEMBLE);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotAannotation() throws TaskPermissionsException {
         when(permission.canModifyAnnotations()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.ANNOTATION);
+        assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.ANNOTATION));
     }
 
     @Test
@@ -128,10 +129,11 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.ANNOTATION);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotCopy() throws TaskPermissionsException {
         when(permission.canExtractContent()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
+        assertThrows(TaskPermissionsException.class,
+                () -> victim.ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT));
     }
 
     @Test
@@ -140,10 +142,11 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotExtract() throws TaskPermissionsException {
         when(permission.canExtractForAccessibility()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.EXTRACTION_FOR_DISABLES);
+        assertThrows(TaskPermissionsException.class,
+                () -> victim.ensurePermission(PdfAccessPermission.EXTRACTION_FOR_DISABLES));
     }
 
     @Test
@@ -152,10 +155,10 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.EXTRACTION_FOR_DISABLES);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotFillForm() throws TaskPermissionsException {
         when(permission.canFillInForm()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.FILL_FORMS);
+        assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.FILL_FORMS));
     }
 
     @Test
@@ -164,10 +167,10 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.FILL_FORMS);
     }
 
-    @Test(expected = TaskPermissionsException.class)
+    @Test
     public void testNotModify() throws TaskPermissionsException {
         when(permission.canModify()).thenReturn(Boolean.FALSE);
-        victim.ensurePermission(PdfAccessPermission.MODIFY);
+        assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.MODIFY));
     }
 
     @Test
@@ -176,8 +179,8 @@ public class PDDocumentAccessPermissionTest {
         victim.ensurePermission(PdfAccessPermission.MODIFY);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullPermission() throws TaskPermissionsException {
-        victim.ensurePermission(null);
+        assertThrows(IllegalArgumentException.class, () -> victim.ensurePermission(null));
     }
 }

@@ -19,15 +19,16 @@
  */
 package org.sejda.model.task;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.parameter.SimpleSplitParameters;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
- * 
+ *
  */
 public class BaseTaskTest {
 
@@ -35,7 +36,28 @@ public class BaseTaskTest {
 
     @Test
     public void nonNullTaskExecutionContext() throws TaskException {
-        victim.before(mock(TestTaskParameter.class), mock(TaskExecutionContext.class));
+        victim.before(mock(SimpleSplitParameters.class), mock(TaskExecutionContext.class));
         assertNotNull(victim.executionContext());
+    }
+
+    private static class TestTask extends BaseTask<SimpleSplitParameters> {
+
+        @Override
+        public void after() {
+            // nothing
+
+        }
+
+        @Override
+        public void before(SimpleSplitParameters parameters, TaskExecutionContext context) throws TaskException {
+            super.before(parameters, context);
+            // nothing
+        }
+
+        @Override
+        public void execute(SimpleSplitParameters parameters) {
+            // nothing
+        }
+
     }
 }

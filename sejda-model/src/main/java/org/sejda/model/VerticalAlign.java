@@ -19,8 +19,6 @@
  */
 package org.sejda.model;
 
-import org.sejda.common.FriendlyNamed;
-
 /**
  * Possible vertical alignments
  * 

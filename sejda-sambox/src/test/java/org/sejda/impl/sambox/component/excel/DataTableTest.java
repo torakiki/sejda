@@ -24,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class DataTableTest {
 

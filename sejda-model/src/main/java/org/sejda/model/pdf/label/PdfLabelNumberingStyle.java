@@ -19,7 +19,7 @@
  */
 package org.sejda.model.pdf.label;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Possible values for a numbering style to be used for page labels.<br>

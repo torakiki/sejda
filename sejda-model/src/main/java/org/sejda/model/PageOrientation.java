@@ -18,8 +18,6 @@
  */
 package org.sejda.model;
 
-import org.sejda.common.FriendlyNamed;
-
 public enum PageOrientation implements FriendlyNamed {
     PORTRAIT("portrait"),
     LANDSCAPE("landscape"),

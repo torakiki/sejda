@@ -17,7 +17,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.support.io;
+package org.sejda.model.util;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.FileOrDirectoryTaskOutput;
+import org.sejda.model.output.FileTaskOutput;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,31 +41,18 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.StringEndsWith.endsWith;
 import static org.hamcrest.core.StringStartsWith.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.output.DirectoryTaskOutput;
-import org.sejda.model.output.FileOrDirectoryTaskOutput;
-import org.sejda.model.output.FileTaskOutput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ResourceAccessMode.READ_WRITE;
+import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class IOUtilsTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
     @Test
     public void testCreateBuffer() throws TaskIOException {
@@ -61,6 +64,7 @@ public class IOUtilsTest {
     }
 
     @Test
+    @ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
     public void customPrefix() throws TaskIOException {
         System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
         File tmp = IOUtils.createTemporaryBuffer();
@@ -81,6 +85,7 @@ public class IOUtilsTest {
     }
 
     @Test
+    @ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
     public void customPrefixFolder() {
         System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
         File tmp = IOUtils.createTemporaryFolder();
@@ -102,7 +107,7 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferFileOut() throws TaskIOException, IOException {
-        File file = folder.newFile("chuck.norris");
+        var file = Files.createTempFile(folder, "chuck", "norris").toFile();
         FileTaskOutput out = new FileTaskOutput(file);
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
@@ -121,8 +126,8 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferFileOutNonExistingParentExists() throws TaskIOException, IOException {
-        File dir = folder.newFolder("chuck.norris");
-        FileTaskOutput out = new FileTaskOutput(new File(dir.getAbsolutePath(), "I dont exist"));
+        var dir = Files.createTempDirectory(folder, null).toFile();
+        var out = new FileTaskOutput(new File(dir.getAbsolutePath(), "I dont exist"));
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
         assertTrue(tmp.isFile());
@@ -131,7 +136,7 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferDirectoryOut() throws TaskIOException, IOException {
-        File dir = folder.newFolder("chuck.norris");
+        var dir = Files.createTempDirectory(folder, null).toFile();
         DirectoryTaskOutput out = new DirectoryTaskOutput(dir);
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
@@ -140,9 +145,10 @@ public class IOUtilsTest {
     }
 
     @Test
+    @ResourceLock(value = SYSTEM_PROPERTIES, mode = READ_WRITE)
     public void testCreateBufferDirectoryOutCustomPrefix() throws TaskIOException, IOException {
         System.setProperty(IOUtils.TMP_BUFFER_PREFIX_PROPERTY_NAME, "chuck");
-        File dir = folder.newFolder("chuck.norris");
+        var dir = Files.createTempDirectory(folder, null).toFile();
         DirectoryTaskOutput out = new DirectoryTaskOutput(dir);
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
@@ -172,7 +178,7 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferFileOrDirectoryOutFile() throws TaskIOException, IOException {
-        File file = folder.newFile("chuck.norris");
+        var file = Files.createTempFile(folder, "chuck", "norris").toFile();
         FileOrDirectoryTaskOutput out = new FileOrDirectoryTaskOutput(file);
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
@@ -182,7 +188,7 @@ public class IOUtilsTest {
 
     @Test
     public void testCreateBufferFileOrDirectoryOutDir() throws TaskIOException, IOException {
-        File dir = folder.newFolder();
+        var dir = Files.createTempDirectory(folder, null).toFile();
         FileOrDirectoryTaskOutput out = new FileOrDirectoryTaskOutput(dir);
         File tmp = IOUtils.createTemporaryBuffer(out);
         assertTrue(tmp.exists());
@@ -192,9 +198,9 @@ public class IOUtilsTest {
 
     @Test
     public void testFindNewNameThatDoesNotExist() throws Exception {
-        File file = folder.newFile("chuck.norris");
+        var file = Files.createFile(folder.resolve("chuck.norris")).toFile();
         assertEquals("chuck(1).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
-        folder.newFile("chuck(1).norris");
+        Files.createFile(folder.resolve("chuck(1).norris"));
         assertEquals("chuck(2).norris", IOUtils.findNewNameThatDoesNotExist(file).getName());
     }
 

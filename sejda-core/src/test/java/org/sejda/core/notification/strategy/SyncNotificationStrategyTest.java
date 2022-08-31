@@ -19,13 +19,12 @@
  */
 package org.sejda.core.notification.strategy;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
@@ -33,16 +32,10 @@ import org.sejda.model.notification.event.AbstractNotificationEvent;
  */
 public class SyncNotificationStrategyTest {
 
-    private AbstractNotificationEvent event;
-
-    @Before
-    public void setUp() {
-        event = mock(AbstractNotificationEvent.class);
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void testNotify() {
+        AbstractNotificationEvent event = mock(AbstractNotificationEvent.class);
         SyncNotificationStrategy victim = new SyncNotificationStrategy();
         victim.notifyListener(null, event);
         EventListener<AbstractNotificationEvent> listener = mock(EventListener.class);

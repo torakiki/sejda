@@ -18,24 +18,7 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSInteger;
@@ -53,6 +36,24 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -121,9 +122,9 @@ public class OutlineUtilsTest {
         assertEquals(dest, OutlineUtils.toPageDestination(victim, catalog).get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void pageDestinationForNull() {
-        OutlineUtils.pageDestinationFor(null);
+        assertThrows(IllegalArgumentException.class, () -> OutlineUtils.pageDestinationFor(null));
     }
 
     @Test
@@ -149,9 +150,9 @@ public class OutlineUtilsTest {
         assertEquals((int) PDRectangle.A4.getHeight(), rotation270.getTop());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void clonePageDestinationNullDest() {
-        OutlineUtils.clonePageDestination(null, new PDPage());
+        assertThrows(IllegalArgumentException.class, () -> OutlineUtils.clonePageDestination(null, new PDPage()));
     }
 
     @Test

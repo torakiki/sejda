@@ -19,6 +19,7 @@
 package org.sejda.core.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
 import org.sejda.core.notification.context.GlobalNotificationContext;
@@ -40,6 +41,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
+import org.sejda.tests.TestListenerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -65,11 +67,11 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Context to be used in tests
@@ -157,7 +159,7 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertCreator() {
         requirePDDocument();
-        assertEquals(Sejda.CREATOR, outputDocument.getDocumentInformation().getCreator());
+        Assertions.assertEquals(Sejda.CREATOR, outputDocument.getDocumentInformation().getCreator());
         return this;
     }
 
@@ -168,7 +170,7 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertVersion(PdfVersion version) {
         requirePDDocument();
-        assertEquals("Wrong output PDF version", version.getVersionString(), outputDocument.getVersion());
+        Assertions.assertEquals(version.getVersionString(), outputDocument.getVersion(), "Wrong output PDF version");
         return this;
     }
 
@@ -179,7 +181,7 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertPages(int expected) {
         requirePDDocument();
-        assertEquals("Wrong number of pages", expected, outputDocument.getNumberOfPages());
+        Assertions.assertEquals(expected, outputDocument.getNumberOfPages(), "Wrong number of pages");
         return this;
     }
 
@@ -193,7 +195,7 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertPages(String filename, int expected) throws IOException {
         assertOutputContainsFilenames(filename);
         try (PDDocument doc = PDFParser.parse(SeekableSources.seekableSourceFrom(new File(fileOutput, filename)))) {
-            assertEquals(expected, doc.getNumberOfPages());
+            Assertions.assertEquals(expected, doc.getNumberOfPages());
         }
         return this;
     }
@@ -288,21 +290,20 @@ public class TaskTestContext implements Closeable {
             return assertEmptyMultipleOutput();
         }
         requireMultipleOutputs();
-        assertEquals("An unexpected number of output files has been created: ", size,
-                Files.list(fileOutput.toPath()).filter(p -> {
-                    if (IS_OS_WINDOWS) {
-                        try {
-                            return !(Boolean) Files.getAttribute(p, "dos:hidden");
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return false;
-                    }
-                    if (p.getFileName().toString().startsWith(".")) {
-                        return false;
-                    }
-                    return true;
-                }).count());
+        assertEquals(size, Files.list(fileOutput.toPath()).filter(p -> {
+            if (IS_OS_WINDOWS) {
+                try {
+                    return !(Boolean) Files.getAttribute(p, "dos:hidden");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+            if (p.getFileName().toString().startsWith(".")) {
+                return false;
+            }
+            return true;
+        }).count(), "An unexpected number of output files has been created");
         return this;
     }
 
@@ -319,8 +320,8 @@ public class TaskTestContext implements Closeable {
         requireMultipleOutputs();
 
         String[] files = fileOutput.list();
-        assertEquals("An unexpected number of output files has been created: " + StringUtils.join(files, ","), size,
-                files.length);
+        assertEquals(size, files.length,
+                "An unexpected number of output files has been created: " + StringUtils.join(files, ","));
         return this;
     }
 
@@ -331,9 +332,9 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext assertEmptyMultipleOutput() {
         assertNotNull(fileOutput);
-        assertTrue("Expected an output directory", fileOutput.isDirectory());
-        assertEquals("Found output files while expecting none", 0,
-                fileOutput.listFiles((d, n) -> !n.endsWith(".tmp")).length);
+        assertTrue(fileOutput.isDirectory(), "Expected an output directory");
+        assertEquals(0, fileOutput.listFiles((d, n) -> !n.endsWith(".tmp")).length,
+                "Found output files while expecting none");
         return this;
     }
 
@@ -346,9 +347,8 @@ public class TaskTestContext implements Closeable {
     public TaskTestContext assertOutputContainsFilenames(String... filenames) {
         requireMultipleOutputs();
         Set<String> outputFiles = Arrays.stream(fileOutput.listFiles()).map(File::getName).collect(Collectors.toSet());
-        Arrays.stream(filenames)
-                .forEach(f -> assertTrue(f + " missing but expected. Files were: " + StringUtils.join(outputFiles),
-                        outputFiles.contains(f)));
+        Arrays.stream(filenames).forEach(f -> assertTrue(outputFiles.contains(f),
+                f + " missing but expected. Files were: " + StringUtils.join(outputFiles)));
         return this;
     }
 
@@ -398,8 +398,8 @@ public class TaskTestContext implements Closeable {
      */
     public TaskTestContext forPdfOutput(String filename, Consumer<PDDocument> consumer) throws IOException {
         requireMultipleOutputs();
-        assertTrue("Not a PDF output",
-                isNotEmpty(filename) && filename.toLowerCase().endsWith(SejdaFileExtensions.PDF_EXTENSION));
+        assertTrue(isNotEmpty(filename) && filename.toLowerCase().endsWith(SejdaFileExtensions.PDF_EXTENSION),
+                "Not a PDF output");
         try (PDDocument doc = PDFParser.parse(SeekableSources.seekableSourceFrom(new File(fileOutput, filename)))) {
             consumer.accept(doc);
         }
@@ -442,14 +442,13 @@ public class TaskTestContext implements Closeable {
 
     private void requireMultipleOutputs() {
         assertNotNull(fileOutput);
-        assertTrue("Expected an output directory", fileOutput.isDirectory());
-        assertTrue("No output has been created", fileOutput.listFiles().length > 0);
+        assertTrue(fileOutput.isDirectory(), "Expected an output directory");
+        assertTrue(fileOutput.listFiles().length > 0, "No output has been created");
     }
 
     private void requirePDDocument() {
-        assertNotNull(
-                "No output document, make sure to call TaskTestContext::assertTaskCompleted before any other assert method",
-                outputDocument);
+        Assertions.assertNotNull(outputDocument,
+                "No output document, make sure to call TaskTestContext::assertTaskCompleted before any other assert method");
     }
 
     /**
@@ -478,7 +477,7 @@ public class TaskTestContext implements Closeable {
         if (nonNull(fileOutput)) {
             if (fileOutput.isDirectory()) {
                 File[] files = fileOutput.listFiles();
-                assertTrue("No output has been created", files.length > 0);
+                assertTrue(files.length > 0, "No output has been created");
                 if (files.length == 1) {
                     initOutputFromSource(files[0], password);
                 }
@@ -496,6 +495,8 @@ public class TaskTestContext implements Closeable {
     String failedSource;
     List<String> taskWarnings = new ArrayList<>();
 
+    private TestListenerFactory.TestListenerStart startListener = TestListenerFactory.newStartListener();
+
     private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<TaskExecutionWarningEvent>() {
         @Override
         public void onEvent(TaskExecutionWarningEvent event) {
@@ -503,7 +504,7 @@ public class TaskTestContext implements Closeable {
         }
     };
 
-    private EventListener<TaskExecutionFailedEvent> failureListener = new EventListener<TaskExecutionFailedEvent>() {
+    private EventListener<TaskExecutionFailedEvent> failureListener = new EventListener<>() {
         @Override
         public void onEvent(TaskExecutionFailedEvent event) {
             taskFailureCause = event.getFailingCause();
@@ -515,6 +516,11 @@ public class TaskTestContext implements Closeable {
         taskFailureCause = null;
         GlobalNotificationContext.getContext().removeListener(failureListener);
         GlobalNotificationContext.getContext().addListener(failureListener);
+    }
+
+    public void listenForTaskStart() {
+        GlobalNotificationContext.getContext().removeListener(startListener);
+        GlobalNotificationContext.getContext().addListener(startListener);
     }
 
     public TaskTestContext assertTaskFailed(String message) {
@@ -539,8 +545,13 @@ public class TaskTestContext implements Closeable {
         return this;
     }
 
+    public TaskTestContext assertTaskStarted() {
+        Assertions.assertTrue(startListener.isStarted());
+        return this;
+    }
+
     public TaskTestContext assertTaskDidNotFail() {
-        assertNull("Task failed", taskFailureCause);
+        assertNull(taskFailureCause, "Task failed");
         return this;
     }
 
@@ -566,7 +577,7 @@ public class TaskTestContext implements Closeable {
     }
 
     public TaskTestContext assertNoTaskWarnings() {
-        assertEquals("Expected no warnings but got: " + StringUtils.join(taskWarnings, ","), taskWarnings.size(), 0);
+        assertEquals(taskWarnings.size(), 0, "Expected no warnings but got: " + StringUtils.join(taskWarnings, ","));
         return this;
     }
 

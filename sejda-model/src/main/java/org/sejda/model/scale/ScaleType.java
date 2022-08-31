@@ -18,7 +18,7 @@
  */
 package org.sejda.model.scale;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Types of scaling

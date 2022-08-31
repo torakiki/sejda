@@ -18,17 +18,17 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
@@ -49,7 +49,7 @@ public class OptimizationRulerTest {
     @Test
     public void sharedResourceWithImagesDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_resource_dic_w_images.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
@@ -57,15 +57,15 @@ public class OptimizationRulerTest {
     @Test
     public void sharedResourceWithFontsDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_fonts.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_resource_dic_w_fonts.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
 
     @Test
     public void sharedResourceWithExtGStateDictionary() throws IOException {
-        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/shared_pages_res_extgstate_smasks_own_res.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/shared_pages_res_extgstate_smasks_own_res.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
@@ -73,7 +73,7 @@ public class OptimizationRulerTest {
     @Test
     public void sharedXobjectsDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_xobjects_dics.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_xobjects_dics.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
@@ -81,7 +81,7 @@ public class OptimizationRulerTest {
     @Test
     public void sharedFontsDictionary() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_fonts_dics.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_fonts_dics.pdf")))) {
             assertTrue(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }
@@ -89,7 +89,7 @@ public class OptimizationRulerTest {
     @Test
     public void notSharedResources() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/resources_not_shared.pdf")))) {
+                getClass().getResourceAsStream("/pdf/resources_not_shared.pdf")))) {
             assertFalse(new OptimizationRuler(OptimizationPolicy.AUTO).apply(document));
         }
     }

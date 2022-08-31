@@ -1,6 +1,6 @@
 package org.sejda.conversion;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created on 6/2/12 12:24 PM

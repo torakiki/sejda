@@ -1,7 +1,6 @@
 /*
- * Created on 27/mag/2010
- *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on Oct 5, 2011
+ * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -18,14 +17,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.task;
-
+package org.sejda.model;
 
 /**
- * Test class
- * @author Andrea Vacondio
- *
+ * Designates an entity that has a user friendly string representation usually used for UI purpose.
+ * 
+ * @author Eduard Weissmann
+ * 
  */
-public class ChildTestTaskParameter extends TestTaskParameter {
+@FunctionalInterface
+public interface FriendlyNamed {
 
+    /**
+     * @return the friendly name of the entity, to be usually used as a representation for an user.
+     */
+    String getFriendlyName();
 }

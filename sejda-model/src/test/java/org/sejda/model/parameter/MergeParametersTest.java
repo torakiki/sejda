@@ -19,16 +19,8 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
@@ -37,20 +29,24 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class MergeParametersTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
     private SingleTaskOutput output;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        output = new FileTaskOutput(folder.newFile());
+        output = new FileTaskOutput(Files.createTempFile(null, ".pdf").toFile());
     }
 
     @Test

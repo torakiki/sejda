@@ -18,33 +18,32 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.task;
+package org.sejda.core.service;
 
-import org.junit.Ignore;
-import org.sejda.model.exception.TaskException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.sejda.model.output.SingleTaskOutput;
+import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
+import org.sejda.model.parameter.base.SingleOutputTaskParameters;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-@Ignore
-public class TestTask extends BaseTask<TestTaskParameter> {
+public class TestTaskParameter extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
+
+    @Valid
+    @NotNull
+    private SingleTaskOutput output;
 
     @Override
-    public void after() {
-        // nothing
-
+    public SingleTaskOutput getOutput() {
+        return output;
     }
 
     @Override
-    public void before(TestTaskParameter parameters, TaskExecutionContext context) throws TaskException {
-        super.before(parameters, context);
-        // nothing
-    }
-
-    @Override
-    public void execute(TestTaskParameter parameters) {
-        // nothing
+    public void setOutput(SingleTaskOutput output) {
+        this.output = output;
     }
 
 }

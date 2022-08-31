@@ -21,13 +21,13 @@ package org.sejda.model.validation.validator;
 
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.ConstraintValidatorContext.ConstraintViolationBuilder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
 import org.sejda.model.pdf.PdfVersion;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -41,7 +41,7 @@ public class PdfVersionValidatorTest {
     private PdfVersionValidator victim = new PdfVersionValidator();
     private AbstractPdfOutputParameters params;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         params = mock(AbstractPdfOutputParameters.class);
     }

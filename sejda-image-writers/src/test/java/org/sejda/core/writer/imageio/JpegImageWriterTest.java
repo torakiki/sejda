@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
+import static org.sejda.tests.TestUtils.getEncryptionAtRestPolicy;
 
 /**
  * @author Andrea Vacondio

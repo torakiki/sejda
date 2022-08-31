@@ -19,23 +19,19 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Test;
-import org.sejda.core.TestListenerFactory;
-import org.sejda.core.TestListenerFactory.TestListenerFailed;
-import org.sejda.core.notification.context.ThreadLocalNotificationContext;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
 
+import java.io.IOException;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOutlineLevelParameters> {
 
@@ -44,7 +40,7 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/bigger_outline_test.pdf"));
+        parameters.addSource(customInput("/pdf/bigger_outline_test.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         return parameters;
@@ -91,7 +87,7 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
     public void testSameBookmarkName() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
         parameters.removeAllSources();
-        parameters.addSource(customInput("pdf/same_bookmarks_name.pdf"));
+        parameters.addSource(customInput("/pdf/same_bookmarks_name.pdf"));
         parameters.setOutputPrefix("[BOOKMARK_NAME]");
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -110,19 +106,17 @@ public abstract class SplitByOutlineLevelTaskTest extends BaseTaskTest<SplitByOu
     @Test
     public void testExecuteLevel1NotMatchingregEx() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, ".+(Chuck)+.+");
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        testContext.listenForTaskFailure();
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed();
     }
 
     @Test
     public void testExecuteLevel4() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(4, null);
-        TestListenerFailed failListener = TestListenerFactory.newFailedListener();
-        ThreadLocalNotificationContext.getContext().addListener(failListener);
+        testContext.listenForTaskFailure();
         execute(parameters);
-        assertTrue(failListener.isFailed());
+        testContext.assertTaskFailed();
     }
 
     @Test

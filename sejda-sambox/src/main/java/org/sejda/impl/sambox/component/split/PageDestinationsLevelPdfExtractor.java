@@ -18,7 +18,7 @@ package org.sejda.impl.sambox.component.split;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;

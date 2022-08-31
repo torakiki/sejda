@@ -3,7 +3,7 @@ package org.sejda.model.pdf.page;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Represent a predefined set of pages like odd or even pages.

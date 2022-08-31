@@ -18,7 +18,6 @@
  */
 package org.sejda.core.service;
 
-import org.junit.Ignore;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToPngParameters;
@@ -27,7 +26,6 @@ import org.sejda.model.parameter.image.PdfToPngParameters;
  * @author Andrea Vacondio
  *
  */
-@Ignore
 public abstract class PdfToMultiplePngTaskTest extends MultipleImageConversionTaskTest<PdfToPngParameters> {
 
     @Override

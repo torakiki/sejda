@@ -19,20 +19,20 @@
  */
 package org.sejda.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.sejda.model.pdf.page.PageRange.one;
-
-import java.io.InputStream;
-
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+import org.sejda.tests.TestUtils;
+
+import java.io.InputStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.sejda.model.pdf.page.PageRange.one;
 /**
  * @author Andrea Vacondio
  * 

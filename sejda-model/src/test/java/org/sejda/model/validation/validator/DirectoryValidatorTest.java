@@ -1,7 +1,7 @@
 /*
  * Created on 19/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,26 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class DirectoryValidatorTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
+
     private DirectoryValidator victim = new DirectoryValidator();
-
-
 
     @Test
     public void testNull() {
@@ -48,7 +47,7 @@ public class DirectoryValidatorTest {
 
     @Test
     public void testPositiveExisting() throws IOException {
-        assertTrue(victim.isValid(folder.newFolder(), null));
+        assertTrue(victim.isValid(folder.toFile(), null));
     }
 
     @Test
@@ -58,6 +57,6 @@ public class DirectoryValidatorTest {
 
     @Test
     public void testNegative() throws IOException {
-        assertFalse(victim.isValid(folder.newFile(), null));
+        assertFalse(victim.isValid(Files.createTempFile(folder, null, ".pdf").toFile(), null));
     }
 }

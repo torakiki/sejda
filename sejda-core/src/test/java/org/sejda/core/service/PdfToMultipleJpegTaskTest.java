@@ -19,20 +19,17 @@
  */
 package org.sejda.core.service;
 
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.pdf.page.PageRange;
 
+import java.io.IOException;
+
 /**
  * @author Andrea Vacondio
- *
  */
-@Ignore
 public abstract class PdfToMultipleJpegTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override

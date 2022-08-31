@@ -19,13 +19,13 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.RectangularBox;
+import org.sejda.tests.TestUtils;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
@@ -36,7 +36,7 @@ public class CoordinatesValidatorTest {
     private CoordinatesValidator victim = new CoordinatesValidator();
     private RectangularBox box;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         box = RectangularBox.newInstance(0, 0, 10, 10);
     }

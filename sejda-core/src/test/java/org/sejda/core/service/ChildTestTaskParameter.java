@@ -1,5 +1,5 @@
 /*
- * Created on 12/mag/2010
+ * Created on 27/mag/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
@@ -18,36 +18,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.task;
-
-import jakarta.validation.Valid;
-
-import jakarta.validation.constraints.NotNull;
-
-import org.junit.Ignore;
-import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.model.parameter.base.AbstractPdfOutputParameters;
-import org.sejda.model.parameter.base.SingleOutputTaskParameters;
+package org.sejda.core.service;
 
 /**
+ * Test class
  * @author Andrea Vacondio
- * 
+ *
  */
-@Ignore
-public class TestTaskParameter extends AbstractPdfOutputParameters implements SingleOutputTaskParameters {
-
-    @Valid
-    @NotNull
-    private SingleTaskOutput output;
-
-    @Override
-    public SingleTaskOutput getOutput() {
-        return output;
-    }
-
-    @Override
-    public void setOutput(SingleTaskOutput output) {
-        this.output = output;
-    }
+public class ChildTestTaskParameter extends TestTaskParameter {
 
 }

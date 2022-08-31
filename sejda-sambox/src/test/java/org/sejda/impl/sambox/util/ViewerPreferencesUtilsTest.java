@@ -19,14 +19,7 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.util.Collections;
-import java.util.Set;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDirection;
@@ -36,6 +29,14 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.model.pdf.viewerpreference.PdfPrintScaling;
 import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+
+import java.util.Collections;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
@@ -92,9 +93,10 @@ public class ViewerPreferencesUtilsTest {
         verify(preferences).setFitWindow(false);
     }
 
-    @Test(expected = TaskException.class)
+    @Test
     public void testSetBooleanPreferencesNullPref() throws TaskException {
-        ViewerPreferencesUtils.setBooleanPreferences(null, Collections.EMPTY_SET);
+        assertThrows(TaskException.class,
+                () -> ViewerPreferencesUtils.setBooleanPreferences(null, Collections.EMPTY_SET));
     }
 
     @Test

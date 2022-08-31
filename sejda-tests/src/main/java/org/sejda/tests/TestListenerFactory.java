@@ -1,10 +1,22 @@
-package org.sejda.core;
+/*
+ * Copyright 2022 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * This file is part of Sejda.
+ *
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Sejda is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.sejda.tests;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Ignore;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
@@ -12,13 +24,16 @@ import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 import org.sejda.model.notification.event.TaskExecutionStartedEvent;
 import org.sejda.model.notification.event.TaskExecutionWarningEvent;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Factory used by tests to create event listeners.
  * 
  * @author Andrea Vacondio
  * 
  */
-@Ignore
 public final class TestListenerFactory {
 
     private TestListenerFactory() {

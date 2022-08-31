@@ -18,17 +18,10 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.stream.StreamSupport;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
@@ -39,22 +32,28 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
+import java.io.IOException;
+import java.util.stream.StreamSupport;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class OutlineMergerTest {
 
     private ImmutablePair<PDDocument, LookupTable<PDPage>> testData;
     private ImmutablePair<PDDocument, LookupTable<PDPage>> testData2;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        testData = getTestData("pdf/large_outline.pdf");
-        testData2 = getTestData("pdf/test_outline.pdf");
+        testData = getTestData("/pdf/large_outline.pdf");
+        testData2 = getTestData("/pdf/test_outline.pdf");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         IOUtils.closeQuietly(testData.getKey());
         IOUtils.closeQuietly(testData2.getKey());
@@ -129,7 +128,7 @@ public class OutlineMergerTest {
     @Test
     public void handlePageNumsInsteadOfRefsInDestinations() throws IOException {
         ImmutablePair<PDDocument, LookupTable<PDPage>> data = getTestData(
-                "pdf/page_dests_with_number_insteadof_refs.pdf");
+                "/pdf/page_dests_with_number_insteadof_refs.pdf");
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         victim.updateOutline(data.getKey(), "page_dests_with_number_insteadof_refs.pdf", data.getValue());
         assertTrue(victim.hasOutline());
@@ -140,7 +139,7 @@ public class OutlineMergerTest {
 
     private ImmutablePair<PDDocument, LookupTable<PDPage>> getTestData(String path) throws IOException {
         PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(path)));
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream(path)));
         LookupTable<PDPage> mapping = new LookupTable<>();
         for (PDPage current : document.getPages()) {
             mapping.addLookupEntry(current, new PDPage());

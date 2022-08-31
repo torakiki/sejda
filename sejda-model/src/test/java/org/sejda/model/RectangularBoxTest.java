@@ -1,7 +1,7 @@
 /*
  * Created on 08/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,38 +19,40 @@
  */
 package org.sejda.model;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.rotation.Rotation;
+import org.sejda.tests.TestUtils;
 
 import java.awt.Point;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.model.rotation.Rotation;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class RectangularBoxTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLeftGreaterRight() {
-        RectangularBox.newInstance(0, 11, 10, 10);
+        assertThrows(IllegalArgumentException.class, () -> RectangularBox.newInstance(0, 11, 10, 10));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testBottomGreaterTop() {
-        RectangularBox.newInstance(11, 0, 10, 10);
+        assertThrows(IllegalArgumentException.class, () -> RectangularBox.newInstance(11, 0, 10, 10));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullBottomLeft() {
-        RectangularBox.newInstanceFromPoints(null, new Point(10, 10));
+        assertThrows(IllegalArgumentException.class,
+                () -> RectangularBox.newInstanceFromPoints(null, new Point(10, 10)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullTopRight() {
-        RectangularBox.newInstanceFromPoints(new Point(10, 10), null);
+        assertThrows(IllegalArgumentException.class,
+                () -> RectangularBox.newInstanceFromPoints(new Point(10, 10), null));
     }
 
     @Test

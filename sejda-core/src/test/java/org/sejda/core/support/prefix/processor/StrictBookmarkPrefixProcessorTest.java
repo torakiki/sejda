@@ -19,10 +19,10 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Andrea Vacondio

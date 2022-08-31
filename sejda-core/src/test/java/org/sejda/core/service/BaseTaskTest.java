@@ -18,27 +18,10 @@
  */
 package org.sejda.core.service;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.sejda.commons.util.RequireUtils.requireNotBlank;
-
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.io.FilenameUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
@@ -54,19 +37,35 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
+import org.sejda.tests.TestUtils;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
 
 /**
  * @author Andrea Vacondio
  *
  */
-@Ignore
 public abstract class BaseTaskTest<T extends TaskParameters> implements TestableTask<T> {
 
     public final TaskTestContext testContext = new TaskTestContext();
     private DefaultTaskExecutionService service = new DefaultTaskExecutionService();
     private SejdaContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() throws TaskException {
         context = mock(DefaultSejdaContext.class);
         TestUtils.setProperty(service, "context", context);
@@ -84,58 +83,55 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
         service.execute(parameters);
     }
 
-    @After
+    @AfterEach
     public void closeContext() {
         IOUtils.closeQuietly(testContext);
     }
 
     public static PdfStreamSource shortInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/short-test-file.pdf"),
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/short-test-file.pdf"),
                 "short-test-file.pdf");
     }
 
     public static PdfStreamSource regularInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/test-pdf.pdf"), "test-file.pdf");
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/test-pdf.pdf"),
+                "test-file.pdf");
     }
 
     public static PdfStreamSource mediumInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/medium_test.pdf"), "medium-test-file.pdf");
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/medium_test.pdf"),
+                "medium-test-file.pdf");
     }
 
     public static PdfStreamSource largeInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/large_test.pdf"), "large-test-file.pdf");
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/large_test.pdf"),
+                "large-test-file.pdf");
     }
 
     public static PdfStreamSource largeOutlineInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/large_outline.pdf"),
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/large_outline.pdf"),
                 "large-outline-test-file.pdf");
     }
 
     public static PdfStreamSource encryptedInput() {
         return PdfStreamSource.newInstanceWithPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf"),
-                "encrypted-test-file.pdf", "test");
+                BaseTaskTest.class.getResourceAsStream("/pdf/encrypted_AES128_user_pwd.pdf"), "encrypted-test-file.pdf",
+                "test");
     }
 
     public static PdfStreamSource formInput() {
         return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf"),
-                "test-form.pdf");
+                BaseTaskTest.class.getResourceAsStream("/pdf/forms/two_pages_form.pdf"), "test-form.pdf");
     }
 
     public static PdfStreamSource stronglyEncryptedInput() {
         return PdfStreamSource.newInstanceWithPassword(
-                BaseTaskTest.class.getClassLoader().getResourceAsStream("pdf/encrypted_AES256_user_pwd.pdf"),
+                BaseTaskTest.class.getResourceAsStream("/pdf/encrypted_AES256_user_pwd.pdf"),
                 "strongly-encrypted-test-file.pdf", "test");
     }
 
     public static PdfStreamSource customInput(String path) {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getClassLoader().getResourceAsStream(path),
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream(path),
                 randomAlphanumeric(16) + ".pdf");
     }
 
@@ -145,19 +141,18 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public static PdfFileSource customInputAsFileSource(String path, String filename) {
-        InputStream in = BaseTaskTest.class.getClassLoader().getResourceAsStream(path);
+        InputStream in = BaseTaskTest.class.getResourceAsStream(path);
         return PdfFileSource.newInstanceNoPassword(streamToTmpFile(in, filename));
     }
 
     public static PdfStreamSource customInput(String path, String name) {
         requireNotBlank(name, "Name cannot be blank");
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getClassLoader().getResourceAsStream(path),
-                name);
+        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream(path), name);
     }
 
     public static PdfFileSource customInput(PDDocument doc, String name) {
         try {
-            File tmp = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(name);
+            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(name);
             doc.writeTo(tmp);
             return PdfFileSource.newInstanceNoPassword(tmp);
         } catch (TaskIOException | IOException e) {
@@ -166,7 +161,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public static PdfStreamSource customEncryptedInput(String path, String password) {
-        return PdfStreamSource.newInstanceWithPassword(BaseTaskTest.class.getClassLoader().getResourceAsStream(path),
+        return PdfStreamSource.newInstanceWithPassword(BaseTaskTest.class.getResourceAsStream(path),
                 randomAlphanumeric(16) + ".pdf", password);
     }
 
@@ -177,7 +172,7 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public static StreamSource customNonPdfInput(String path, String filename) {
-        return StreamSource.newInstance(BaseTaskTest.class.getClassLoader().getResourceAsStream(path), filename);
+        return StreamSource.newInstance(BaseTaskTest.class.getResourceAsStream(path), filename);
     }
 
     public static FileSource customNonPdfInputAsFileSource(String path) {
@@ -186,13 +181,13 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public static FileSource customNonPdfInputAsFileSource(String path, String filename) {
-        InputStream in = BaseTaskTest.class.getClassLoader().getResourceAsStream(path);
+        InputStream in = BaseTaskTest.class.getResourceAsStream(path);
         return FileSource.newInstance(streamToTmpFile(in, filename));
     }
 
     public static File streamToTmpFile(InputStream in, String filename) {
         try {
-            File tmp = org.sejda.core.support.io.IOUtils.createTemporaryBufferWithName(filename);
+            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(filename);
             OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
             IOUtils.copy(in, out);
             IOUtils.closeQuietly(out);
@@ -205,24 +200,24 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     }
 
     public static void assertPageText(PDPage page, String text) {
-        org.sejda.core.service.TestUtils.assertPageText(page, text);
+        TestUtils.assertPageText(page, text);
     }
 
     public static void assertPageTextExactLines(PDPage page, String text) {
-        org.sejda.core.service.TestUtils.assertPageTextExactLines(page, text);
+        TestUtils.assertPageTextExactLines(page, text);
     }
 
     public static void assertPageTextContains(PDPage page, String text) {
-        org.sejda.core.service.TestUtils.assertPageTextContains(page, text);
+        TestUtils.assertPageTextContains(page, text);
     }
 
     public static void assertMediaBox(PDPage page, float width, float height) {
-        assertEquals(page.getMediaBox().getWidth(), width, 0.01);
-        assertEquals(page.getMediaBox().getHeight(), height, 0.01);
+        Assertions.assertEquals(page.getMediaBox().getWidth(), width, 0.01);
+        Assertions.assertEquals(page.getMediaBox().getHeight(), height, 0.01);
     }
 
     public static <T> List<T> getAnnotationsOf(PDPage page, Class<T> clazz) {
-        return org.sejda.core.service.TestUtils.getAnnotationsOf(page, clazz);
+        return TestUtils.getAnnotationsOf(page, clazz);
     }
 
     // returns 1-based page numbers

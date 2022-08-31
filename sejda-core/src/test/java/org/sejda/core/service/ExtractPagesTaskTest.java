@@ -19,8 +19,8 @@
  */
 package org.sejda.core.service;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -32,26 +32,22 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.tests.TestUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.TestUtils.encryptedAtRest;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for an extract pages task.
  *
  * @author Andrea Vacondio
  */
-@Ignore
 public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesParameters> {
 
     private ExtractPagesParameters parameters;
@@ -78,7 +74,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/shared_resource_dic_w_fonts.pdf"));
+        parameters.addSource(customInput("/pdf/shared_resource_dic_w_fonts.pdf"));
     }
 
     private void setUpParametersPageRangesPages() {
@@ -187,10 +183,10 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
         parameters.addPageRange(new PageRange(7, 9));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
-        assertThat(parameters.getPages(11), is(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 10, 11))));
+        assertThat(parameters.getPages(11), hasItems(1, 2, 3, 4, 5, 6, 10, 11));
 
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -203,12 +199,11 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
         parameters.addPageRange(new PageRange(7, 9));
-        parameters.addSource(customInputAsFileSource("pdf/test-pdf.pdf"));
+        parameters.addSource(customInputAsFileSource("/pdf/test-pdf.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
         parameters.setSeparateFileForEachRange(true);
-
-        assertThat(parameters.getPages(11), is(new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 10, 11))));
+        assertThat(parameters.getPages(11), hasItems(1, 2, 3, 4, 5, 6, 10, 11));
 
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -264,7 +259,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
 
         testContext.assertOutputSize(2);
         testContext.forEachPdfOutput(d -> {
-            assertEquals(d.getNumberOfPages(), 2);
+            Assertions.assertEquals(d.getNumberOfPages(), 2);
         });
     }
 
@@ -291,7 +286,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     public void encryptionAtRestTest() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 2));
-        parameters.addSource(encryptedAtRest(customInput("pdf/test-pdf.pdf")));
+        parameters.addSource(TestUtils.encryptedAtRest(customInput("/pdf/test-pdf.pdf")));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -306,8 +301,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setInvertSelection(true);
         parameters.setLenient(true);
         parameters.addPageRange(new PageRange(1, 3));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -321,8 +316,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setLenient(true);
         parameters.addPageRange(new PageRange(3, 3));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -337,8 +332,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setInvertSelection(true);
         parameters.addPageRange(new PageRange(1, 3));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -350,8 +345,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     public void extractPagesBatchLenientNonLenient() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(3, 3));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -365,8 +360,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.setInvertSelection(true);
         parameters.setLenient(true);
         parameters.addPageRange(new PageRange(1));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -379,8 +374,8 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters = new ExtractPagesParameters();
         parameters.setLenient(true);
         parameters.addPageRange(new PageRange(100));
-        parameters.addSource(customInput("pdf/test-pdf.pdf"));
-        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.addSource(customInput("/pdf/test-pdf.pdf"));
+        parameters.addSource(customInput("/pdf/one_page.pdf", "one_page.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
@@ -397,7 +392,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
     public void optimizationReuseFontsDictionaries() throws IOException {
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 2));
-        parameters.addSource(customInput("pdf/multiple_res_dic_sharing_same_font.pdf"));
+        parameters.addSource(customInput("/pdf/multiple_res_dic_sharing_same_font.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.YES);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
@@ -412,7 +407,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         COSDictionary page1Font = page1.getResources().getCOSObject()
                 .getDictionaryObject(COSName.FONT, COSDictionary.class)
                 .getDictionaryObject(COSName.getPDFName("F1"), COSDictionary.class);
-        assertEquals(page0Font, page1Font);
+        Assertions.assertEquals(page0Font, page1Font);
     }
 
     @Test
@@ -422,7 +417,7 @@ public abstract class ExtractPagesTaskTest extends BaseTaskTest<ExtractPagesPara
         parameters.addPageRange(new PageRange(4, 5));
         parameters.addPageRange(new PageRange(7, 9));
         parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
-        parameters.addSource(customInputAsFileSource("pdf/test-pdf.pdf"));
+        parameters.addSource(customInputAsFileSource("/pdf/test-pdf.pdf"));
         parameters.setSeparateFileForEachRange(true);
         testContext.directoryOutputTo(parameters);
         parameters.addSpecificResultFilename("one");

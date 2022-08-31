@@ -18,17 +18,7 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSName;
@@ -42,6 +32,16 @@ import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
  *
@@ -51,7 +51,7 @@ public class PageCopierTest {
     @Test
     public void existingPage() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_resource_dic_w_images.pdf")))) {
             PDPage page = document.getPage(0);
             PDPage copy = new PageCopier(false).copyOf(page);
             PDPage optimizedCopy = new PageCopier(true).copyOf(page);
@@ -66,7 +66,7 @@ public class PageCopierTest {
     @Test
     public void discardBeads() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
+                getClass().getResourceAsStream("/pdf/shared_resource_dic_w_images.pdf")))) {
             PDPage page = document.getPage(0);
             page.setThreadBeads(Arrays.asList(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
@@ -78,7 +78,7 @@ public class PageCopierTest {
     @Test
     public void removesParentAndPopup() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
+                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
             PDPage page = document.getPage(0);
             PDPage copy = new PageCopier(false).copyOf(page);
             copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
@@ -91,7 +91,7 @@ public class PageCopierTest {
     @Test
     public void pageWithAnnots() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDPage page = document.getPage(0);
             PDPage copy = new PageCopier(false).copyOf(page);
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
@@ -108,7 +108,7 @@ public class PageCopierTest {
     @Test
     public void removeActionWithDestination() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDPage page = document.getPage(0);
             PDAnnotationLink link = new PDAnnotationLink();
             PDActionGoTo action = new PDActionGoTo();
@@ -131,7 +131,7 @@ public class PageCopierTest {
     @Test
     public void doesntRemoveActionWithoutDestination() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDPage page = document.getPage(0);
             PDAnnotationLink link = new PDAnnotationLink();
             PDActionGoTo action = new PDActionGoTo();
@@ -153,7 +153,7 @@ public class PageCopierTest {
     @Test
     public void copyStreamIsSanitized() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/annots_in_stream.pdf")))) {
+                getClass().getResourceAsStream("/pdf/annots_in_stream.pdf")))) {
             PDPage page = document.getPage(0);
             assertNotNull(
                     page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class).getItem(COSName.ANNOTS));
@@ -166,7 +166,7 @@ public class PageCopierTest {
     @Test
     public void copyStreamInArrayIsSanitized() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/annots_in_contents_array_stream.pdf")))) {
+                getClass().getResourceAsStream("/pdf/annots_in_contents_array_stream.pdf")))) {
             PDPage page = document.getPage(0);
             assertNotNull(page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class)
                     .getObject(0, COSStream.class).getItem(COSName.ANNOTS));

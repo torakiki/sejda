@@ -19,9 +19,9 @@
  */
 package org.sejda.model.pdf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;

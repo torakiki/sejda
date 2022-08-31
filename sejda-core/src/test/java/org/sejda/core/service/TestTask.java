@@ -1,6 +1,7 @@
 /*
- * Created on 29/ott/2011
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 12/mag/2010
+ *
+ * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -17,21 +18,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.model.task;
+package org.sejda.core.service;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.task.BaseTask;
+import org.sejda.model.task.TaskExecutionContext;
 
 /**
  * @author Andrea Vacondio
  * 
  */
-public class NotifiableTakMetadataTest {
-    @Test
-    public void testEquals() {
-        NotifiableTaskMetadata eq = new NotifiableTaskMetadata(new TestTask());
-        NotifiableTaskMetadata diff = new NotifiableTaskMetadata(new TestTask());
-        TestUtils.testEqualsAndHashCodes(eq, eq, eq, diff);
-        TestUtils.testEqualsAndHashCodes(eq, eq, eq, NotifiableTaskMetadata.NULL);
+public class TestTask extends BaseTask<TestTaskParameter> {
+
+    @Override
+    public void after() {
+        // nothing
+
     }
+
+    @Override
+    public void before(TestTaskParameter parameters, TaskExecutionContext context) throws TaskException {
+        super.before(parameters, context);
+        // nothing
+    }
+
+    @Override
+    public void execute(TestTaskParameter parameters) {
+        // nothing
+    }
+
 }

@@ -21,7 +21,7 @@ package org.sejda.model.image;
 
 import java.awt.image.BufferedImage;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * The color type for an image.

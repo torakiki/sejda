@@ -19,12 +19,12 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.output.MultipleTaskOutput;
+import org.sejda.tests.TestUtils;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
@@ -34,7 +34,7 @@ public class UnpackParametersTest {
 
     private MultipleTaskOutput output;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         output = mock(MultipleTaskOutput.class);
     }

@@ -18,7 +18,7 @@
  */
 package org.sejda.model.optimization;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Possible optimization policies to use on tasks generated documents

@@ -1,7 +1,7 @@
 /*
  * Created on 23/gen/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,38 +19,40 @@
  */
 package org.sejda.model.output;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sejda.tests.TestUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class DirectoryTaskOutputTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullFile() {
-        new DirectoryTaskOutput(null);
+        assertThrows(IllegalArgumentException.class, () -> new DirectoryTaskOutput(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testInvalidDirectory() throws IOException {
-        new DirectoryTaskOutput(folder.newFile());
+    @Test
+    public void testInvalidDirectory() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new DirectoryTaskOutput(Files.createTempFile(folder, "sejda", "txt").toFile()));
     }
 
     @Test
     public void testValidDirectory() throws IOException {
-        DirectoryTaskOutput instance = new DirectoryTaskOutput(folder.newFolder());
+        DirectoryTaskOutput instance = new DirectoryTaskOutput(Files.createTempDirectory(folder, "sejda").toFile());
         assertNotNull(instance);
     }
 
@@ -62,8 +64,8 @@ public class DirectoryTaskOutputTest {
 
     @Test
     public void testEquals() throws IOException {
-        File directory = folder.newFolder();
-        File diffDirectory = folder.newFolder();
+        var directory = Files.createTempDirectory(folder, "sejda").toFile();
+        var diffDirectory = Files.createTempDirectory(folder, "sejda").toFile();
         DirectoryTaskOutput eq1 = new DirectoryTaskOutput(directory);
         DirectoryTaskOutput eq2 = new DirectoryTaskOutput(directory);
         DirectoryTaskOutput eq3 = new DirectoryTaskOutput(directory);

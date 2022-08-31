@@ -18,34 +18,35 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
  *
  */
 public class StreamSourceTest {
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullStream() {
-        StreamSource.newInstance(null, "fdsfs");
+        assertThrows(IllegalArgumentException.class, () -> StreamSource.newInstance(null, "fdsfs"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullName() {
-        InputStream stream = mock(InputStream.class);
-        StreamSource.newInstance(stream, null);
+        var stream = mock(InputStream.class);
+        assertThrows(IllegalArgumentException.class, () -> StreamSource.newInstance(stream, null));
     }
 
     @Test
     public void testValidStream() {
-        InputStream stream = mock(InputStream.class);
-        StreamSource instance = StreamSource.newInstance(stream, "Chuck");
+        var stream = mock(InputStream.class);
+        var instance = StreamSource.newInstance(stream, "Chuck");
         assertNotNull(instance);
         assertEquals("Chuck", instance.getName());
         assertEquals(stream, instance.getSource());

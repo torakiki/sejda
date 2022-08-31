@@ -19,16 +19,7 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.awt.image.RenderedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.output.ExistingOutputPolicy;
@@ -38,11 +29,16 @@ import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class PdfToSingleTiffTaskTest extends BaseTaskTest<PdfToSingleTiffParameters> {
 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleTiffTaskTest.class);
@@ -56,7 +52,7 @@ public abstract class PdfToSingleTiffTaskTest extends BaseTaskTest<PdfToSingleTi
 
     private void setCommonParams(AbstractPdfToImageParameters parameters) {
         parameters.setResolutionInDpi(96);
-        parameters.setSource(customEncryptedInput("pdf/enc_test_test_file.pdf", "test"));
+        parameters.setSource(customEncryptedInput("/pdf/enc_test_test_file.pdf", "test"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 

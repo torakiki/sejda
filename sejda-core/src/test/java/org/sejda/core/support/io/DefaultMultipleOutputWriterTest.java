@@ -1,7 +1,7 @@
 /*
  * Created on 19/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,18 +19,9 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.core.support.io.model.FileOutput;
 import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.output.DirectoryTaskOutput;
@@ -40,136 +31,149 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.task.Task;
 import org.sejda.model.task.TaskExecutionContext;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class DefaultMultipleOutputWriterTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
     private TaskExecutionContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new TaskExecutionContext(mock(Task.class), true);
     }
 
-    @Test(expected = TaskOutputVisitException.class)
-    public void failOnFile() throws TaskOutputVisitException {
+    @Test
+    public void failOnFile() {
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        new FileTaskOutput(mock(File.class)).accept(victim);
+        assertThrows(TaskOutputVisitException.class, () -> new FileTaskOutput(mock(File.class)).accept(victim));
     }
 
     @Test
-    public void moveToDir() throws TaskOutputVisitException, IOException {
-        File out = folder.newFolder();
+    public void moveToDir(@TempDir Path folder) throws TaskOutputVisitException, IOException {
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name("out.pdf"));
-        new DirectoryTaskOutput(out).accept(victim);
-        assertEquals(1, out.list().length);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("out.pdf"));
+        new DirectoryTaskOutput(folder.toFile()).accept(victim);
+        assertEquals(1, folder.toFile().list().length);
     }
 
     @Test
-    public void moveToFileOrDir() throws TaskOutputVisitException, IOException {
-        File out = folder.newFolder();
+    public void moveToFileOrDir(@TempDir Path folder) throws TaskOutputVisitException, IOException {
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name("out.pdf"));
-        new FileOrDirectoryTaskOutput(out).accept(victim);
-        assertEquals(1, out.list().length);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("out.pdf"));
+        new FileOrDirectoryTaskOutput(folder.toFile()).accept(victim);
+        assertEquals(1, folder.toFile().list().length);
     }
 
-    @Test(expected = TaskOutputVisitException.class)
-    public void moveToDirExsisting() throws TaskOutputVisitException, IOException {
-        File outFile = folder.newFile();
+    @Test
+    public void moveToDirExisting(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outFile = Files.createTempFile(folder, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
         victim.addOutput(FileOutput.file(outFile).name(outFile.getName()));
-        new DirectoryTaskOutput(outFile.getParentFile()).accept(victim);
+        assertThrows(TaskOutputVisitException.class,
+                () -> new DirectoryTaskOutput(outFile.getParentFile()).accept(victim));
     }
 
     @Test
-    public void moveToDirExsistingOverwrite() throws TaskOutputVisitException, IOException {
-        File existing = folder.newFile();
+    public void moveToDirExistingOverwrite(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         assertEquals(0, existing.length());
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        Path outFile = Files.createTempFile("sejda", ".tmp");
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
         Files.write(outFile, new byte[] { 0, 1, 1, 1 });
         victim.addOutput(FileOutput.file(outFile.toFile()).name(existing.getName()));
-        new DirectoryTaskOutput(existing.getParentFile()).accept(victim);
-        assertEquals(1, existing.getParentFile().list().length);
-        assertEquals(4, existing.getParentFile().listFiles()[0].length());
-        Files.deleteIfExists(outFile);
+        new DirectoryTaskOutput(outDir.toFile()).accept(victim);
+        assertEquals(1, Files.list(outDir).count());
+        assertEquals(4, Files.list(outDir).findFirst().map(Path::toFile).map(File::length).orElse(0L));
     }
 
     @Test
-    public void moveToDirExsistingSkip() throws TaskOutputVisitException, IOException {
-        File existing = folder.newFile();
+    public void moveToDirExsistingSkip(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         assertEquals(0, existing.length());
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.SKIP, context);
-        Path outFile = Files.createTempFile("sejda", ".tmp");
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
         Files.write(outFile, new byte[] { 0, 1, 1, 1 });
         victim.addOutput(FileOutput.file(outFile.toFile()).name(existing.getName()));
-        new DirectoryTaskOutput(existing.getParentFile()).accept(victim);
-        assertEquals(1, existing.getParentFile().list().length);
-        assertEquals(0, existing.getParentFile().listFiles()[0].length());
-        Files.delete(outFile);
+        new DirectoryTaskOutput(outDir.toFile()).accept(victim);
+        assertEquals(1, Files.list(outDir).count());
+        assertEquals(0, Files.list(outDir).findFirst().map(Path::toFile).map(File::length).orElse(0L));
     }
 
-    @Test(expected = TaskOutputVisitException.class)
-    public void moveToFileDirExsisting() throws TaskOutputVisitException, IOException {
-        File outFile = folder.newFile();
+    @Test
+    public void moveToFileDirExisting(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var out = Files.createTempFile(folder, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
-        victim.addOutput(FileOutput.file(outFile).name(outFile.getName()));
-        new FileOrDirectoryTaskOutput(outFile.getParentFile()).accept(victim);
+        victim.addOutput(FileOutput.file(out).name(out.getName()));
+        assertThrows(TaskOutputVisitException.class,
+                () -> new FileOrDirectoryTaskOutput(out.getParentFile()).accept(victim));
     }
 
     @Test
-    public void moveToDirExsistingRenamed() throws TaskOutputVisitException, IOException {
-        File outFile = folder.newFile();
+    public void moveToDirExistingRenamed(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name(outFile.getName()));
-        new DirectoryTaskOutput(outFile.getParentFile()).accept(victim);
-        assertEquals(2, outFile.getParentFile().list().length);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name(existing.getName()));
+        new DirectoryTaskOutput(outDir.toFile()).accept(victim);
+        assertEquals(2, Files.list(outDir).count());
     }
 
     @Test
-    public void addFilesRenamesExisting() throws TaskOutputVisitException, IOException {
+    public void addFilesRenamesExisting(@TempDir Path folder) throws TaskOutputVisitException, IOException {
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
-        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
-        victim.addOutput(FileOutput.file(folder.newFile()).name("myName.pdf"));
-        File outFolder = folder.newFolder();
-        new DirectoryTaskOutput(outFolder).accept(victim);
-        assertEquals(3, outFolder.list().length);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("myName.pdf"));
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("myName.pdf"));
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("myName.pdf"));
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        new DirectoryTaskOutput(outDir.toFile()).accept(victim);
+        assertEquals(3, Files.list(outDir).count());
     }
 
     @Test
-    public void moveToFileOrDirExsistingRenamed() throws TaskOutputVisitException, IOException {
-        File outFile = folder.newFile();
+    public void moveToFileOrDirExistingRenamed(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name(outFile.getName()));
-        new FileOrDirectoryTaskOutput(outFile.getParentFile()).accept(victim);
-        assertEquals(2, outFile.getParentFile().list().length);
-    }
-
-    @Test(expected = TaskOutputVisitException.class)
-    public void moveToFileOrDirInvalidOut() throws TaskOutputVisitException, IOException {
-        DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);
-        victim.addOutput(FileOutput.file(folder.newFile()).name("a"));
-        victim.addOutput(FileOutput.file(folder.newFile()).name("b"));
-        new FileOrDirectoryTaskOutput(folder.newFile()).accept(victim);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name(existing.getName()));
+        new FileOrDirectoryTaskOutput(outDir.toFile()).accept(victim);
+        assertEquals(2, Files.list(outDir).count());
     }
 
     @Test
-    public void moveToFileOrDirSingleFile() throws TaskOutputVisitException, IOException {
-        File out = folder.newFile();
-        assertEquals(0, out.length());
-        Path outFile = Files.createTempFile("sejda", ".tmp");
-        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+    public void moveToFileOrDirInvalidOut(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("a"));
+        victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("b"));
+        var e = assertThrows(IOException.class, () -> victim.dispatch(
+                new FileOrDirectoryTaskOutput(Files.createTempFile(folder, null, null).toFile())));
+        assertThat(e.getMessage(), containsString("Wrong output destination"));
+    }
+
+    @Test
+    public void moveToFileOrDirSingleFile(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
+        assertEquals(0, existing.length());
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
         victim.addOutput(FileOutput.file(outFile.toFile()).name("out.pdf"));
-        new FileOrDirectoryTaskOutput(out).accept(victim);
-        assertEquals(4, out.length());
-        Files.deleteIfExists(outFile);
+        new FileOrDirectoryTaskOutput(existing).accept(victim);
+        assertEquals(1, Files.list(outDir).count());
+        assertEquals(4, existing.length());
     }
 }

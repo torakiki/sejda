@@ -20,8 +20,8 @@
 package org.sejda.model.pdf.headerfooter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.FriendlyNamed;
-import org.sejda.common.RomanNumbersUtils;
+import org.sejda.model.FriendlyNamed;
+import org.sejda.model.util.RomanNumbersUtils;
 
 /**
  * Numbering styles for footer labels.

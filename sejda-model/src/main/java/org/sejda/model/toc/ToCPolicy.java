@@ -18,7 +18,7 @@
  */
 package org.sejda.model.toc;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Possible ToC creation policies to use in tasks that may require a ToC

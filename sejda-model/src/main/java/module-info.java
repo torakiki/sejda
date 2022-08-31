@@ -29,9 +29,6 @@ module org.sejda.model {
     requires transitive java.desktop;
     requires transitive org.sejda.io;
 
-    exports org.sejda.common;
-    exports org.sejda.core.encryption;
-    exports org.sejda.core.support.io;
     exports org.sejda.model;
     exports org.sejda.model.encryption;
     exports org.sejda.model.exception;
@@ -63,5 +60,10 @@ module org.sejda.model {
     exports org.sejda.model.task;
     exports org.sejda.model.toc;
     exports org.sejda.model.validation.constraint;
+    exports org.sejda.model.util;
 
+    //reflective toString
+    opens org.sejda.model.parameter to org.apache.commons.lang3;
+    opens org.sejda.model.parameter.base to org.apache.commons.lang3;
+    opens org.sejda.model.parameter.image to org.apache.commons.lang3;
 }

@@ -54,7 +54,7 @@ final class GlobalConfiguration {
     private GlobalConfiguration() {
         LOG.info("Configuring Sejda {}", Sejda.VERSION);
         initialize();
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isTraceEnabled()) {
             logConfiguredTasks();
         }
     }

@@ -1,7 +1,7 @@
 /*
  * Created on 23/gen/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,36 +19,36 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskIOException;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PdfURLSourceTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullUrl() {
-        PdfURLSource.newInstanceWithPassword(null, "fdsfs", null);
+        assertThrows(IllegalArgumentException.class, () -> PdfURLSource.newInstanceWithPassword(null, "fdsfs", null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullName() throws MalformedURLException {
-        URL url = new URL("http://www.sejda.org");
-        PdfURLSource.newInstanceWithPassword(url, null, null);
+        var url = new URL("https://www.sejda.org");
+        assertThrows(IllegalArgumentException.class, () -> PdfURLSource.newInstanceWithPassword(url, null, null));
     }
 
     @Test
     public void testValidStream() throws MalformedURLException {
-        URL url = new URL("http://www.sejda.org");
+        var url = new URL("https://www.sejda.org");
         PdfURLSource instance = PdfURLSource.newInstanceWithPassword(url, "dsadsada", "dsdasdsa");
         assertNotNull(instance);
     }
@@ -56,8 +56,8 @@ public class PdfURLSourceTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testOpener() throws MalformedURLException, TaskIOException {
-        PdfSourceOpener opener = mock(PdfSourceOpener.class);
-        URL url = new URL("http://www.sejda.org");
+        var opener = mock(PdfSourceOpener.class);
+        var url = new URL("https://www.sejda.org");
         PdfURLSource instance = PdfURLSource.newInstanceNoPassword(url, "dsadsada");
         instance.open(opener);
         verify(opener).open(instance);

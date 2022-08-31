@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,29 +19,31 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class FileOutputAdapterTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testNegative() throws IOException {
-        new FileOutputAdapter(folder.newFolder().getAbsolutePath());
+    @Test
+    public void testNegative() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new FileOutputAdapter(Files.createTempDirectory(folder, "a folder").toString()));
     }
 
     @Test
     public void testPositive() throws IOException {
-        assertNotNull(new FileOutputAdapter(folder.newFile().getAbsolutePath()).getFileOutput());
+        assertNotNull(new FileOutputAdapter(Files.createTempFile(folder, "sejda", ".txt").toString()).getFileOutput());
     }
 }

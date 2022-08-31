@@ -20,11 +20,12 @@
  */
 package org.sejda.core.support.prefix;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import org.junit.Test;
 
 /**
  * Test unit for the NameGenerator
@@ -40,7 +41,7 @@ public class NameGeneratorTest {
         String originalName = "Original";
         String expected = "BLA_002_Original.pdf";
         assertEquals(expected,
-                nameGenerator(prefix).generate(nameRequest().page(Integer.valueOf("2")).originalName(originalName)));
+                nameGenerator(prefix).generate(nameRequest().page(Integer.parseInt("2")).originalName(originalName)));
     }
 
     @Test
@@ -77,10 +78,10 @@ public class NameGeneratorTest {
         assertEquals("BLA_010_Original.pdf", generator.generate(nameRequest().originalName(originalName).page(10)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullRequest() {
         String prefix = "BLA_";
-        nameGenerator(prefix).generate(null);
+        assertThrows(IllegalArgumentException.class, () -> nameGenerator(prefix).generate(null));
     }
 
     @Test

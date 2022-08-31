@@ -19,44 +19,42 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Parent test for an Unpack test.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class UnpackTaskTest extends BaseTaskTest<UnpackParameters> {
 
     private UnpackParameters parameters;
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
     @Test
     public void unpackAnnotations() throws IOException {
-        executeTest("pdf/attachments_as_annots.pdf");
+        executeTest("/pdf/attachments_as_annots.pdf");
     }
 
     @Test
     public void unpackNamedTree() throws IOException {
-        executeTest("pdf/attachments_as_named_tree.pdf");
+        executeTest("/pdf/attachments_as_named_tree.pdf");
     }
 
     public void executeTest(String filename) throws IOException {
-        File out = folder.newFolder();
+        File out = Files.createTempDirectory(folder, "sejda").toFile();
         parameters = new UnpackParameters(new DirectoryTaskOutput(out));
         parameters.addSource(customInput(filename));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

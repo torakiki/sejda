@@ -113,7 +113,7 @@ public final class PdfPageLabel {
      */
     public static PdfPageLabel newInstanceWithLabel(String label, PdfLabelNumberingStyle numberingStyle,
             int logicalPageNumber) {
-        requireArg(logicalPageNumber >= 0, "Input page number must be positive");
+        requireArg(logicalPageNumber > 0, "Input page number must be positive");
         requireNotNullArg(label, "Input label cannot be null");
         requireNotNullArg(numberingStyle, "Input numbering style cannot be null");
         return new PdfPageLabel(label, numberingStyle, logicalPageNumber);

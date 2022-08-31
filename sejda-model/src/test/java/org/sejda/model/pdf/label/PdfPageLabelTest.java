@@ -1,7 +1,7 @@
 /*
  * Created on 22/gen/2011
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,28 +19,37 @@
  */
 package org.sejda.model.pdf.label;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PdfPageLabelTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullLabel() {
-        PdfPageLabel.newInstanceWithLabel(null, PdfLabelNumberingStyle.ARABIC, 1);
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfPageLabel.newInstanceWithLabel(null, PdfLabelNumberingStyle.ARABIC, 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
+    public void testLogicalNumberPositive() {
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, 0));
+    }
+
+    @Test
     public void testNullStyle() {
-        PdfPageLabel.newInstanceWithLabel("dsdsadsa", null, 1);
+        assertThrows(IllegalArgumentException.class, () -> PdfPageLabel.newInstanceWithLabel("dsdsadsa", null, 1));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNegativePhysicalNumb() {
-        PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, -1);
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfPageLabel.newInstanceWithLabel("dsdsadsa", PdfLabelNumberingStyle.ARABIC, -1));
     }
 
     @Test

@@ -19,18 +19,18 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.tests.TestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.sejda.TestUtils;
-import org.sejda.model.pdf.page.PageRange;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
@@ -39,7 +39,7 @@ import org.sejda.model.pdf.page.PageRange;
 public class PdfMergeInputTest {
     private PdfSource<?> source;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         source = Mockito.mock(PdfSource.class);
     }

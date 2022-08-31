@@ -19,18 +19,16 @@
  */
 package org.sejda.core.service;
 
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.tests.TestUtils;
 
-import static org.sejda.TestUtils.encryptedAtRest;
+import java.io.IOException;
 
 /**
  * Abstract test unit for the alternate mix task
@@ -38,7 +36,6 @@ import static org.sejda.TestUtils.encryptedAtRest;
  * @author Andrea Vacondio
  * 
  */
-@Ignore
 public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMultipleInputParameters> {
 
     private void setUpParameters(AlternateMixMultipleInputParameters parameters) {
@@ -114,8 +111,8 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
     @Test
     public void atRestEncryptionTest() throws IOException {
         AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
-        params.addInput(new PdfMixInput(encryptedAtRest(shortInput())));
-        params.addInput(new PdfMixInput(encryptedAtRest(stronglyEncryptedInput())));
+        params.addInput(new PdfMixInput(TestUtils.encryptedAtRest(shortInput())));
+        params.addInput(new PdfMixInput(TestUtils.encryptedAtRest(stronglyEncryptedInput())));
         setUpParameters(params);
         testContext.pdfOutputTo(params);
         execute(params);
@@ -128,7 +125,7 @@ public abstract class AlternateMixTaskTest extends BaseTaskTest<AlternateMixMult
     public void repeatForeverExplicitlyMarkedInputs() throws IOException {
         AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
         params.addInput(new PdfMixInput(shortInput()));
-        params.addInput(new PdfMixInput(customInput("pdf/one_page.pdf")));
+        params.addInput(new PdfMixInput(customInput("/pdf/one_page.pdf")));
         
         for(PdfMixInput input :params.getInputList()) {
             input.setRepeatForever(true);

@@ -19,10 +19,10 @@
  */
 package org.sejda.model.parameter.image;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
+import org.sejda.tests.TestUtils;
 
 /**
  * @author Andrea Vacondio

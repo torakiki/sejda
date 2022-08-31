@@ -18,30 +18,31 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
- *
  */
 public class FileSourceTest {
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void testNullFile() {
-        FileSource.newInstance(null);
+        assertThrows(IllegalArgumentException.class, () -> FileSource.newInstance(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testDirectory() {
         File file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        FileSource.newInstance(file);
+        assertThrows(IllegalArgumentException.class, () -> FileSource.newInstance(file));
     }
 
     @Test

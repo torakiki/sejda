@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,36 +19,39 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertNotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sejda.conversion.exception.ConversionException;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.conversion.exception.ConversionException;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class DirectoryOutputAdapterTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public Path folder;
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new DirectoryOutputAdapter("/I/dont/exist");
+        assertThrows(ConversionException.class, () -> new DirectoryOutputAdapter("/I/dont/exist"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testFile() throws IOException {
-        new DirectoryOutputAdapter(folder.newFile().getAbsolutePath());
+        assertThrows(ConversionException.class,
+                () -> new DirectoryOutputAdapter(Files.createTempFile(folder, "sejda", ".txt").toString()));
     }
 
     @Test
     public void testPositive() throws IOException {
-        assertNotNull(new DirectoryOutputAdapter(folder.newFolder().getAbsolutePath()).getPdfDirectoryOutput());
+        assertNotNull(new DirectoryOutputAdapter(
+                Files.createTempDirectory(folder, "a folder").toString()).getPdfDirectoryOutput());
     }
 }

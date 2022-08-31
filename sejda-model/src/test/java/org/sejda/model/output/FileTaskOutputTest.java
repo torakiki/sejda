@@ -19,15 +19,16 @@
  */
 package org.sejda.model.output;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -37,22 +38,22 @@ public class FileTaskOutputTest {
 
     private File file;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.TRUE);
         when(file.exists()).thenReturn(Boolean.TRUE);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullFile() {
-        new FileTaskOutput(null);
+        assertThrows(IllegalArgumentException.class, () -> new FileTaskOutput(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidFile() {
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        new FileTaskOutput(file);
+        assertThrows(IllegalArgumentException.class, () -> new FileTaskOutput(file));
     }
 
     @Test

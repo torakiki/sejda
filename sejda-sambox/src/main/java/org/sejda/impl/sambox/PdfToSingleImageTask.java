@@ -34,7 +34,7 @@ import java.io.File;
 
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.OutputWriters.newSingleOutputWriter;
 
 /**

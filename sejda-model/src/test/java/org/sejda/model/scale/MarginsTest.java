@@ -19,10 +19,10 @@
  */
 package org.sejda.model.scale;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarginsTest {
     @Test

@@ -18,7 +18,7 @@
  */
 package org.sejda.model.outline;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Different ways to handle PageLabels found in the DocumentCatalog when processing documents

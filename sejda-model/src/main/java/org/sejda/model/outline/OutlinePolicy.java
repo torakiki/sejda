@@ -19,7 +19,7 @@
  */
 package org.sejda.model.outline;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Enumerates policies that a task can use to handle the outline tree. This is mostly relevant when merging documents but it can be used for other tasks as well.

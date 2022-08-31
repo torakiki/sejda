@@ -19,13 +19,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<archive>
 						<manifestEntries>
@@ -55,15 +48,13 @@
 			<artifactId>jakarta.validation-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>${hibernate-validator.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish</groupId>
 			<artifactId>jakarta.el</artifactId>
-			<version>${jakarta-el.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

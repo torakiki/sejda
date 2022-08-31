@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.sejda.impl.sambox.component;
-
-import java.io.IOException;
+package org.sejda.tests;
 
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
+
+import java.io.IOException;
 
 /**
  * Build a doc on the fly (and test with it)

@@ -1,30 +1,29 @@
 /*
- * Created on 29/dic/2012
- * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
- * This file is part of the Sejda source code
+ * Copyright 2022 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * This file is part of Sejda.
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Sejda is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.sejda.conversion;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class HorizontalAlignAdapterTest {
     @Test
@@ -34,9 +33,9 @@ public class HorizontalAlignAdapterTest {
         new HorizontalAlignAdapter("left").getEnumValue();
     }
 
-    @Test(expected = SejdaRuntimeException.class)
+    @Test
     public void testInvalid() {
-        new HorizontalAlignAdapter("Chuck").getEnumValue();
+        assertThrows(SejdaRuntimeException.class, () -> new HorizontalAlignAdapter("Chuck").getEnumValue());
     }
 
 }

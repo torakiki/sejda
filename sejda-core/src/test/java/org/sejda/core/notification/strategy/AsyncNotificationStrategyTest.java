@@ -20,34 +20,29 @@
  */
 package org.sejda.core.notification.strategy;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.model.notification.EventListener;
+import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.task.NotifiableTaskMetadata;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
-import org.sejda.model.notification.EventListener;
-import org.sejda.model.notification.event.AbstractNotificationEvent;
-import org.sejda.model.notification.event.TaskExecutionCompletedEvent;
-import org.sejda.model.task.NotifiableTaskMetadata;
 /**
  * Test unit for {@link AsyncNotificationStrategy}
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class AsyncNotificationStrategyTest {
 
     private AsyncNotificationStrategy victim = new AsyncNotificationStrategy();
 
     @Test
-    @SuppressWarnings("rawtypes")
-    public void testNotifyEvent() throws InterruptedException {
-        EventListener listener = mock(EventListener.class);
-        victim.notifyListener(listener, new TaskExecutionCompletedEvent(1L, NotifiableTaskMetadata.NULL));
-        // FIXME
-        // ugly but needed to give time for the async notification
-        Thread.sleep(1000);
-        verify(listener, times(1)).onEvent(any(AbstractNotificationEvent.class));
+    public void testNotifyEvent() {
+        EventListener<TaskExecutionStartedEvent> listener = mock(EventListener.class);
+        victim.notifyListener(listener, new TaskExecutionStartedEvent(NotifiableTaskMetadata.NULL));
+        verify(listener, timeout(100)).onEvent(any());
     }
 }

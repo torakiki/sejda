@@ -20,15 +20,8 @@
  */
 package org.sejda.core.service;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.sejda.TestUtils.encryptedAtRest;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -36,14 +29,17 @@ import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Abstract test unit for the rotate task
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
 
     private RotateParameters parameters;
@@ -92,7 +88,7 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(4)
-                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> Assertions.assertEquals(180, p.getRotation())));
     }
 
     @Test
@@ -101,7 +97,8 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertCreator().assertPages(4).forEachPdfOutput(d -> assertEquals(90, d.getPage(2).getRotation()));
+        testContext.assertCreator().assertPages(4)
+                .forEachPdfOutput(d -> Assertions.assertEquals(90, d.getPage(2).getRotation()));
     }
 
     @Test
@@ -111,7 +108,7 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(4)
-                .forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> Assertions.assertEquals(180, p.getRotation())));
     }
 
     @Test
@@ -143,10 +140,10 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertCreator().assertPages(4).forEachPdfOutput(d -> {
-            assertEquals(90, d.getPage(0).getRotation());
-            assertEquals(90, d.getPage(1).getRotation());
-            assertEquals(180, d.getPage(2).getRotation());
-            assertEquals(180, d.getPage(3).getRotation());
+            Assertions.assertEquals(90, d.getPage(0).getRotation());
+            Assertions.assertEquals(90, d.getPage(1).getRotation());
+            Assertions.assertEquals(180, d.getPage(2).getRotation());
+            Assertions.assertEquals(180, d.getPage(3).getRotation());
         });
 
     }
@@ -159,8 +156,8 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
 
-        assertThat(parameters.getRotation(0), is(Rotation.DEGREES_180));
-        assertThat(parameters.getRotation(1), is(Rotation.DEGREES_0));
+        assertEquals(parameters.getRotation(0), Rotation.DEGREES_180);
+        assertEquals(parameters.getRotation(1), Rotation.DEGREES_0);
 
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -205,13 +202,14 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
     @Test
     public void encryptionAtRestTest() throws IOException {
         parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
-        parameters.addSource(encryptedAtRest(shortInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(shortInput()));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertPages(4).forEachPdfOutput(d -> d.getPages().forEach(p -> assertEquals(180, p.getRotation())));
+        testContext.assertPages(4)
+                .forEachPdfOutput(d -> d.getPages().forEach(p -> Assertions.assertEquals(180, p.getRotation())));
     }
 
     @Test
@@ -226,6 +224,6 @@ public abstract class RotateTaskTest extends BaseTaskTest<RotateParameters> {
     }
 
     private void assertPageRotation(PDDocument doc, int pageIndex, int expectedDegrees) {
-        assertEquals(expectedDegrees, doc.getPage(pageIndex).getRotation());
+        Assertions.assertEquals(expectedDegrees, doc.getPage(pageIndex).getRotation());
     }
 }

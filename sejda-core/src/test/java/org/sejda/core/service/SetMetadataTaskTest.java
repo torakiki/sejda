@@ -20,9 +20,8 @@
  */
 package org.sejda.core.service;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.hamcrest.core.StringStartsWith.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetMetadataParameters;
@@ -48,8 +47,9 @@ import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.core.StringStartsWith.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test unit for the set metadata task
@@ -57,7 +57,6 @@ import static org.junit.Assert.assertNull;
  * @author Andrea Vacondio
  * 
  */
-@Ignore
 public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParameters> {
     private SetMetadataParameters parameters = new SetMetadataParameters();
 
@@ -123,7 +122,7 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
             @Override
             public void accept(PDDocument document) {
                 PDDocumentInformation info = document.getDocumentInformation();
-                assertEquals(author, info.getAuthor());
+                Assertions.assertEquals(author, info.getAuthor());
             }
         });
     }
@@ -145,9 +144,10 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
             @Override
             public void accept(PDDocument document) {
                 PDDocumentInformation info = document.getDocumentInformation();
-                assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
+                Assertions.assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
                 assertNull(info.getCreator());
-                assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"), info.getModificationDate());
+                Assertions.assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"),
+                        info.getModificationDate());
             }
         });
     }
@@ -244,8 +244,8 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
             public void accept(PDDocument document) {
                 try {
                     PDDocumentInformation info = document.getDocumentInformation();
-                    
-                    assertEquals(0, info.getMetadataKeys().size());
+
+                    Assertions.assertEquals(0, info.getMetadataKeys().size());
                     
                     assertNull(info.getCreator());
                     assertNull(info.getAuthor());
@@ -270,15 +270,15 @@ public abstract class SetMetadataTaskTest extends BaseTaskTest<SetMetadataParame
         PDDocument document = testContext.assertTaskCompleted();
         testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_7);
         PDDocumentInformation info = document.getDocumentInformation();
-        assertEquals("test_author", info.getAuthor());
-        assertEquals("test_keywords", info.getKeywords());
-        assertEquals("test_subject", info.getSubject());
-        assertEquals("test_title", info.getTitle());
-        assertEquals(DateConverter.toCalendar("D:20150814090348+02'00'"), info.getCreationDate());
-        assertEquals("custom_field_value", info.getCustomMetadataValue("Custom field"));
+        Assertions.assertEquals("test_author", info.getAuthor());
+        Assertions.assertEquals("test_keywords", info.getKeywords());
+        Assertions.assertEquals("test_subject", info.getSubject());
+        Assertions.assertEquals("test_title", info.getTitle());
+        Assertions.assertEquals(DateConverter.toCalendar("D:20150814090348+02'00'"), info.getCreationDate());
+        Assertions.assertEquals("custom_field_value", info.getCustomMetadataValue("Custom field"));
 
-        assertEquals("test_producer", info.getProducer());
-        assertEquals(DateConverter.toCalendar("D:20170814090348+02'00'"), info.getModificationDate());
+        Assertions.assertEquals("test_producer", info.getProducer());
+        Assertions.assertEquals(DateConverter.toCalendar("D:20170814090348+02'00'"), info.getModificationDate());
     }
 
 }

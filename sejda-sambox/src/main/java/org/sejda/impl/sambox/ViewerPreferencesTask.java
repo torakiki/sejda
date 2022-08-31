@@ -41,7 +41,7 @@ import java.io.File;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;

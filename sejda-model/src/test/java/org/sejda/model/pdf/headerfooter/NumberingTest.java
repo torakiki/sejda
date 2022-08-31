@@ -1,7 +1,7 @@
 /*
  * Created on 29/dic/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
  */
 package org.sejda.model.pdf.headerfooter;
 
+import org.junit.jupiter.api.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class NumberingTest {
     @Test
@@ -41,8 +41,8 @@ public class NumberingTest {
         assertThat(victim.styledLabelFor(110), is("CX"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testRequiredStyle() {
-        new Numbering(null, 100);
+        assertThrows(IllegalArgumentException.class, () -> new Numbering(null, 100));
     }
 }

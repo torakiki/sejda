@@ -18,14 +18,8 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -36,6 +30,12 @@ import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
  *
@@ -44,7 +44,7 @@ public class SignatureClipperTest {
 
     private COSDictionary dictionary;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         dictionary = new COSDictionary();
         dictionary.setItem(COSName.FT, COSName.SIG);

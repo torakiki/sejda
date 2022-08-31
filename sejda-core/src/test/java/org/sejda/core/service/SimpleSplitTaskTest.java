@@ -19,17 +19,8 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.sejda.TestUtils.encryptedAtRest;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SimpleSplitParameters;
@@ -39,12 +30,17 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.sejda.sambox.pdmodel.graphics.state.PDSoftMask;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParameters> {
 
     private SimpleSplitParameters parameters;
@@ -69,7 +65,7 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
     @Test
     public void testEncryptionAtRest() throws IOException {
         parameters = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
-        parameters.addSource(encryptedAtRest(shortInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(shortInput()));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
 
@@ -133,7 +129,7 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
         parameters = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/shared_res_form_extgs_softmask.pdf"));
+        parameters.addSource(customInput("/pdf/shared_res_form_extgs_softmask.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setOutputPrefix("[FILENUMBER]-chuck");
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
@@ -143,18 +139,18 @@ public abstract class SimpleSplitTaskTest extends BaseTaskTest<SimpleSplitParame
         testContext.assertOutputSize(2).forPdfOutput("1-chuck.pdf", d -> {
             try {
                 PDResources pageRes = d.getPage(0).getResources();
-                assertTrue(pageRes.isImageXObject(COSName.getPDFName("Im1")));
-                assertTrue(pageRes.isFormXObject(COSName.getPDFName("Form2")));
-                assertFalse(pageRes.isImageXObject(COSName.getPDFName("Im3")));
+                Assertions.assertTrue(pageRes.isImageXObject(COSName.getPDFName("Im1")));
+                Assertions.assertTrue(pageRes.isFormXObject(COSName.getPDFName("Form2")));
+                Assertions.assertFalse(pageRes.isImageXObject(COSName.getPDFName("Im3")));
                 assertNull(pageRes.getExtGState(COSName.getPDFName("gs2")));
                 PDExtendedGraphicsState gs1 = pageRes.getExtGState(COSName.getPDFName("gs1"));
                 assertNotNull(gs1);
                 PDSoftMask softMask = gs1.getSoftMask();
                 assertNotNull(softMask);
                 PDResources maskRes = softMask.getGroup().getResources();
-                assertTrue(maskRes.isImageXObject(COSName.getPDFName("Im1")));
-                assertTrue(maskRes.isImageXObject(COSName.getPDFName("Im2")));
-                assertFalse(maskRes.isImageXObject(COSName.getPDFName("Im3")));
+                Assertions.assertTrue(maskRes.isImageXObject(COSName.getPDFName("Im1")));
+                Assertions.assertTrue(maskRes.isImageXObject(COSName.getPDFName("Im2")));
+                Assertions.assertFalse(maskRes.isImageXObject(COSName.getPDFName("Im3")));
             } catch (IOException e) {
                 fail();
             }

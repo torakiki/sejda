@@ -22,7 +22,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;

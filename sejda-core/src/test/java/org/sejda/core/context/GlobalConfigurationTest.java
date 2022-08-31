@@ -1,8 +1,11 @@
 package org.sejda.core.context;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.sejda.core.Sejda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test for the GlobalConfiguration
@@ -10,13 +13,14 @@ import org.sejda.core.Sejda;
  * @author Andrea Vacondio
  * 
  */
+@Isolated
 public class GlobalConfigurationTest {
 
     @Test
     public void testConstructor() {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         GlobalConfiguration config = GlobalConfiguration.getInstance();
-        Assert.assertTrue(config.isValidation());
-        Assert.assertEquals(1, config.getTasksRegistry().getTasks().size());
+        assertTrue(config.isValidation());
+        assertEquals(1, config.getTasksRegistry().getTasks().size());
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2012
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,21 +19,21 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.NameGenerationRequest;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Test;
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
-
 /**
  * @author Andrea Vacondio
- * 
  */
 public class LoggingPrefixProcessorDecoratorTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testIllegalConstructor() {
-        new LoggingPrefixProcessorDecorator(null);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new LoggingPrefixProcessorDecorator(null));
     }
 
     @Test

@@ -2,7 +2,7 @@
  * Created on 20/giu/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,228 +20,193 @@
  */
 package org.sejda.core.support.io;
 
-import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.lessThan;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.task.Task;
-import org.sejda.model.task.TaskExecutionContext;
+import static org.apache.commons.lang3.StringUtils.repeat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test unit for the {@link OutputWriterHelper}
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class OutputWriterHelperTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    @Rule
-    public TemporaryFolder outputFolder = new TemporaryFolder();
-
     private TaskExecutionContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new TaskExecutionContext(mock(Task.class), true);
     }
 
     @Test
-    public void copyStreamZipped() throws IOException {
-        File tempFile = folder.newFile();
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+    public void copyStreamZipped(@TempDir Path folder) throws IOException {
+        var tempFile = Files.createTempFile(folder, null, null).toFile();
+        Map<String, File> files = Map.of("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         OutputWriterHelper.copyToStreamZipped(files, out);
-        assertFalse("temporary file not deleted", tempFile.exists());
+        assertFalse(tempFile.exists(), "temporary file not deleted");
         assertTrue(out.size() > 0);
     }
 
     @Test
-    public void copyStreamSingleFile() throws IOException {
-        File tempFile = folder.newFile();
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+    public void copyStreamSingleFile(@TempDir Path folder) throws IOException {
+        var tempFile = Files.createTempFile(folder, null, null).toFile();
+        Map<String, File> files = Map.of("newName", tempFile);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         OutputWriterHelper.copyToStream(files.values().iterator().next(), out);
-        assertFalse("temporary file not deleted", tempFile.exists());
+        assertFalse(tempFile.exists(), "temporary file not deleted");
         assertEquals(out.size(), tempFile.length());
     }
 
     @Test
-    public void copyFailsMapSize() {
-        Map<String, File> files = new HashMap<String, File>();
-
-        File outFile = mock(File.class);
-        when(outFile.isFile()).thenReturn(Boolean.TRUE);
-
-        try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong files map size"));
-        }
+    public void copyFailsMapSize(@TempDir Path folder) throws IOException {
+        Map<String, File> files = new HashMap<>();
+        var outFile = Files.createTempFile(folder, null, null).toFile();
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context));
+        assertThat(e.getMessage(), containsString("Wrong files map size"));
     }
 
     @Test
-    public void copyFailsFileType() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", folder.newFile());
-
+    public void copyFailsFileType(@TempDir Path folder) throws IOException {
+        Map<String, File> files = Map.of("newName", Files.createTempFile(folder, null, null).toFile());
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.FALSE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
-
-        try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().endsWith("must be a file."));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.OVERWRITE, context));
+        assertThat(e.getMessage(), containsString("must be a file"));
     }
 
     @Test
-    public void copyFailsOverwrite() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", folder.newFile());
+    public void copyFailsOverwrite(@TempDir Path folder) throws IOException {
+        Map<String, File> files = Map.of("newName", Files.createTempFile(folder, null, null).toFile());
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
-
-        try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.FAIL, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.FAIL, context));
+        assertThat(e.getMessage(), containsString("Unable to write"));
     }
 
     @Test
-    public void copySingleFileSkipFallbacksToFail() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", folder.newFile());
+    public void copySingleFileSkipFallbacksToFail(@TempDir Path folder) throws IOException {
+        Map<String, File> files = Map.of("newName", Files.createTempFile(folder, null, null).toFile());
 
         File outFile = mock(File.class);
         when(outFile.isFile()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.TRUE);
-
-        try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.SKIP, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to write"));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.SKIP, context));
+        assertThat(e.getMessage(), containsString("Unable to write"));
     }
 
     @Test
-    public void copyFailsDirectoryType() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", folder.newFile());
+    public void copyFailsDirectoryType(@TempDir Path folder) throws IOException {
+        Map<String, File> files = Map.of("newName", Files.createTempFile(folder, null, null).toFile());
 
-        try {
-            OutputWriterHelper.moveToDirectory(files, folder.newFile(), ExistingOutputPolicy.OVERWRITE, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Wrong output destination"));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToDirectory(files, Files.createTempFile(folder, null, null).toFile(),
+                        ExistingOutputPolicy.OVERWRITE, context));
+        assertThat(e.getMessage(), containsString("Wrong output destination"));
     }
 
     @Test
-    public void copyDirectorySkips() throws IOException {
-        File dest = folder.newFolder();
-        File tempFile = folder.newFile();
-        Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
-        assertEquals(2, dest.list().length);
+    public void copyDirectorySkips(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var tempFile = Files.createTempFile(folder, null, null).toFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile, folder);
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
+        assertEquals(2, dest.toFile().list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
     }
 
     @Test
-    public void copyDirectoryOverwrite() throws IOException {
-        File dest = folder.newFolder();
-        File tempFile = folder.newFile();
-        Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.OVERWRITE, context);
-        assertEquals(2, dest.list().length);
+    public void copyDirectoryOverwrite(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var tempFile = Files.createTempFile(folder, null, null).toFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile, folder);
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.OVERWRITE, context);
+        assertEquals(2, dest.toFile().list().length);
         assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
     }
 
-    @Test(expected = IOException.class)
-    public void copyDirectoryFail() throws IOException {
-        File dest = folder.newFolder();
-        File tempFile = folder.newFile();
-        Map<String, File> files = populateWithOneExisting(dest, tempFile);
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.FAIL, context);
+    @Test
+    public void copyDirectoryFail(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var tempFile = Files.createTempFile(folder, null, null).toFile();
+        Map<String, File> files = populateWithOneExisting(dest, tempFile, folder);
+        assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.FAIL, context));
     }
 
-    private Map<String, File> populateWithOneExisting(File dest, File tempFile) throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
+    private Map<String, File> populateWithOneExisting(Path dest, File tempFile, Path tempFolder) throws IOException {
+        Map<String, File> files = new HashMap<>();
         files.put("newName", tempFile);
-        File existing = File.createTempFile("Chuck", "Norris", dest);
-        files.put(existing.getName(), folder.newFile());
+        var existing = Files.createTempFile(dest, "Chuck", "Norris").toFile();
+        files.put(existing.getName(), Files.createTempFile(tempFolder, null, null).toFile());
         return files;
     }
 
     @Test
-    public void updateFilname() throws IOException {
+    public void updateFilname(@TempDir Path folder) throws IOException {
         Map<String, File> files = new LinkedHashMap<>();
-        File dest = folder.newFolder();
-        files.put("1_of_[TOTAL_FILESNUMBER].pdf", folder.newFile());
-        files.put("2_of_[TOTAL_FILESNUMBER].pdf", folder.newFile());
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
-        assertEquals(2, dest.list().length);
+        var dest = Files.createTempDirectory(folder, "sejda");
+        files.put("1_of_[TOTAL_FILESNUMBER].pdf", Files.createTempFile(dest, "Chuck", "Norris").toFile());
+        files.put("2_of_[TOTAL_FILESNUMBER].pdf", Files.createTempFile(dest, "Chuck", "Norris").toFile());
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
+        assertEquals(2, dest.toFile().list().length);
         assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
         assertEquals("1_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(0).getName());
         assertEquals("2_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(1).getName());
     }
 
     @Test
-    public void namesAreUpdatedBeforeShorten() throws IOException {
-        Map<String, File> files = new LinkedHashMap<>();
-        File dest = folder.newFolder();
-        files.put("[TOTAL_FILESNUMBER]" + repeat("a", 248) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
-        assertEquals(1, dest.list().length);
+    public void namesAreUpdatedBeforeShorten(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("[TOTAL_FILESNUMBER]" + repeat("a", 248) + "[TOTAL_FILESNUMBER].pdf",
+                Files.createTempFile(dest, null, null).toFile());
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.toFile().list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("1.pdf"));
     }
 
     @Test
-    public void namesAreShortened() throws IOException {
-        Map<String, File> files = new LinkedHashMap<>();
-        File dest = folder.newFolder();
-        files.put("[TOTAL_FILESNUMBER]" + repeat("a", 400) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
-        assertEquals(1, dest.list().length);
+    public void namesAreShortened(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("[TOTAL_FILESNUMBER]" + repeat("a", 400) + "[TOTAL_FILESNUMBER].pdf",
+                Files.createTempFile(dest, null, null).toFile());
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.toFile().list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("a.pdf"));
@@ -249,12 +214,12 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void namesAreShortenedUnicode() throws IOException {
-        Map<String, File> files = new LinkedHashMap<>();
-        File dest = folder.newFolder();
-        files.put("[TOTAL_FILESNUMBER]" + repeat("ว", 400) + "[TOTAL_FILESNUMBER].pdf", folder.newFile());
-        OutputWriterHelper.moveToDirectory(files, dest, ExistingOutputPolicy.SKIP, context);
-        assertEquals(1, dest.list().length);
+    public void namesAreShortenedUnicode(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("[TOTAL_FILESNUMBER]" + repeat("ว", 400) + "[TOTAL_FILESNUMBER].pdf",
+                Files.createTempFile(dest, null, null).toFile());
+        OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
+        assertEquals(1, dest.toFile().list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), startsWith("1"));
         assertThat(context.notifiableTaskMetadata().taskOutput().get(0).getName(), endsWith("ว.pdf"));
@@ -262,74 +227,70 @@ public class OutputWriterHelperTest {
     }
 
     @Test
-    public void copyFailsDirectoryMkdirs() throws IOException {
-        File tempFile = folder.newFile();
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("newName", tempFile);
+    public void copyFailsDirectoryMkdirs(@TempDir Path folder) throws IOException {
+        var files = Map.of("newName", Files.createTempFile(folder, null, null).toFile());
 
         File outFile = mock(File.class);
         when(outFile.isDirectory()).thenReturn(Boolean.TRUE);
         when(outFile.exists()).thenReturn(Boolean.FALSE);
         when(outFile.mkdirs()).thenReturn(Boolean.FALSE);
 
-        try {
-            OutputWriterHelper.moveToDirectory(files, outFile, ExistingOutputPolicy.OVERWRITE, context);
-            fail("Exception expected");
-        } catch (IOException e) {
-            assertTrue("Different exception expected.", e.getMessage().startsWith("Unable to make destination"));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToDirectory(files, outFile, ExistingOutputPolicy.OVERWRITE, context));
+        assertThat(e.getMessage(), containsString("Unable to make destination"));
     }
 
     @Test
-    public void existingOutputPolicyRENAME_conflict() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("existing.pdf", folder.newFile());
+    public void existingOutputPolicyRENAME_conflict(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("existing.pdf", Files.createTempFile(folder, null, null).toFile());
 
-        File outFile = outputFolder.newFile("existing.pdf");
-        outputFolder.newFile("existing(1).pdf");
-        outputFolder.newFile("existing(2).pdf");
+        File outFile = Files.createFile(dest.resolve("existing.pdf")).toFile();
+        Files.createFile(dest.resolve("existing(1).pdf"));
+        Files.createFile(dest.resolve("existing(2).pdf"));
 
         OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
-        assertThat(Arrays.asList(outputFolder.getRoot().list()), hasItem("existing(3).pdf"));
+        assertEquals(4, Files.list(dest).count());
+        assertEquals(1,
+                Files.list(dest).map(Path::getFileName).map(Path::toString).filter(n -> n.equals("existing(3).pdf"))
+                        .count());
 
     }
 
     @Test
-    public void existingOutputPolicyRENAME_noConflict() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("ok.pdf", folder.newFile());
+    public void existingOutputPolicyRENAME_noConflict(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("ok.pdf", Files.createTempFile(folder, null, null).toFile());
 
-        File outFile = new File(outputFolder.getRoot(), "ok.pdf");
+        var outFile = dest.resolve("ok.pdf");
 
-        OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
-        assertThat(Arrays.asList(outputFolder.getRoot().list()), hasItem("ok.pdf"));
+        OutputWriterHelper.moveToFile(files, outFile.toFile(), ExistingOutputPolicy.RENAME, context);
+        assertEquals(1, Files.list(dest).count());
+        assertEquals(1,
+                Files.list(dest).map(Path::getFileName).map(Path::toString).filter(n -> n.equals("ok.pdf")).count());
     }
 
     @Test
-    public void existingOutputPolicyRENAME_exception() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("existing.pdf", folder.newFile());
+    public void existingOutputPolicyRENAME_exception(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("existing.pdf", Files.createTempFile(folder, null, null).toFile());
 
-        File outFile = outputFolder.newFile("existing.pdf");
+        File outFile = Files.createFile(dest.resolve("existing.pdf")).toFile();
         for (int i = 1; i <= 100; i++) {
-            outputFolder.newFile(String.format("existing(%d).pdf", i));
+            Files.createFile(dest.resolve(String.format("existing(%d).pdf", i)));
         }
 
-        try {
-            OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context);
-            fail("Exception expected, about the fact that a new filename that doesn't exist could not be generated");
-        } catch (IOException e) {
-            assertTrue("Different exception expected, got: " + e.getMessage(),
-                    e.getMessage().startsWith("Unable to generate a new filename that does not exist"));
-        }
+        var e = assertThrows(IOException.class,
+                () -> OutputWriterHelper.moveToFile(files, outFile, ExistingOutputPolicy.RENAME, context));
+        assertThat(e.getMessage(), containsString("Unable to generate a new filename that does not exist"));
     }
 
     @Test
-    public void moveCreatesDirectoryTree() throws IOException {
-        Map<String, File> files = new HashMap<String, File>();
-        files.put("file.pdf", folder.newFile());
+    public void moveCreatesDirectoryTree(@TempDir Path folder) throws IOException {
+        var dest = Files.createTempDirectory(folder, "sejda");
+        var files = Map.of("file.pdf", Files.createTempFile(folder, null, null).toFile());
 
-        Path out = Paths.get(outputFolder.newFolder().getAbsolutePath(), "this", "does", "not", "exist");
+        Path out = dest.resolve("this/does/not/exist");
         assertFalse(Files.isDirectory(out));
 
         OutputWriterHelper.moveToDirectory(files, out.toFile(), ExistingOutputPolicy.OVERWRITE, context);

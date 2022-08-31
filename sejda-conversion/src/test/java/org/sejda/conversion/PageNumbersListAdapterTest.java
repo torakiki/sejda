@@ -19,11 +19,12 @@
  */
 package org.sejda.conversion;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.conversion.exception.ConversionException;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-
-import org.junit.Test;
-import org.sejda.conversion.exception.ConversionException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -38,13 +39,13 @@ public class PageNumbersListAdapterTest {
         assertThat(new PageNumbersListAdapter(" 1, 3, 6 ").getPageNumbers(), contains(1, 3, 6));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidNumberCollection() {
-        new PageNumbersListAdapter("1,3,a");
+        assertThrows(ConversionException.class, () -> new PageNumbersListAdapter("1,3,a"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidNumber() {
-        new PageNumbersListAdapter("chuck");
+        assertThrows(ConversionException.class, () -> new PageNumbersListAdapter("chuck"));
     }
 }

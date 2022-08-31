@@ -19,15 +19,15 @@
  */
 package org.sejda.conversion;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.sejda.conversion.exception.ConversionException;
+
+import java.util.List;
+
 import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.File;
-import java.util.List;
-
-import org.junit.Test;
-import org.sejda.conversion.exception.ConversionException;
 
 /**
  * Tests for {@link XmlFileSourceListParser}
@@ -41,20 +41,22 @@ public class XmlFileSourceListParserTest extends BaseFileSourceListParserTest {
 
     @Test
     public void parseFileNames() {
-        List<String> result = victim.parseFileNames(xmlFile);
+        List<String> result = victim.parseFileNames(xmlFile.toFile());
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
-        assertThat(result, hasItem(new File(xmlFile.getParent(), "inputFile1.pdf").getAbsolutePath()));
-        assertThat(result, hasItem(new File(xmlFile.getParent(), "inputFile2.pdf").getAbsolutePath()));
+
+        assertThat(result, hasItem(xmlFile.getParent().resolve("inputFile1.pdf").toString()));
+        assertThat(result, hasItem(xmlFile.getParent().resolve("inputFile2.pdf").toString()));
         assertThat(result, hasItem(separatorsToSystem("/tmp/subdir/inputFile1.pdf")));
-        assertThat(result, hasItem(separatorsToSystem("/tmp/subdir3/inputFile2.pdf"))); // its defined in absolute path mode in the file
+        assertThat(result, hasItem(separatorsToSystem(
+                "/tmp/subdir3/inputFile2.pdf"))); // its defined in absolute path mode in the file
         assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile1.pdf")));
         assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile2.pdf:secret2")));
         assertThat(result, hasItem(separatorsToSystem("/tmp/subdir2/inputFile3.pdf")));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        victim.parseFileNames(emptyFile);
+        Assertions.assertThrows(ConversionException.class, () -> victim.parseFileNames(emptyFile.toFile()));
     }
 }

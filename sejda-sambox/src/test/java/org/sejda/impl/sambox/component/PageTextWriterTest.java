@@ -16,12 +16,7 @@
  */
 package org.sejda.impl.sambox.component;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -33,9 +28,14 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 
-import static org.sejda.core.service.TestUtils.assertPageText;
-import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
+import static org.sejda.tests.TestUtils.assertPageText;
 
 public class PageTextWriterTest {
 
@@ -59,14 +59,14 @@ public class PageTextWriterTest {
         write("ab cd");
     }
 
-    @Test(expected = UnsupportedTextException.class)
+    @Test
     public void throwsWhenCharacterUnsupported() throws TaskException {
-        write("\uFE0F");
+        assertThrows(UnsupportedTextException.class, () -> write("\uFE0F"));
     }
     
     @Test
     public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
+        PDDocument doc = getTestDoc("/pdf/font-with-zero-widths.pdf");
 
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
         PDPage page = new PDPage();

@@ -19,7 +19,7 @@
  */
 package org.sejda.model.pdf;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Standard font type 1 fonts.<br>

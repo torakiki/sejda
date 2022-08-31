@@ -19,15 +19,14 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.pdf.page.PageRange;
+
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Andrea Vacondio
@@ -45,7 +44,7 @@ public class PageRangeSetAdapterTest {
 
     private void doTestInsertionOrder(PageRange... pageRanges) {
         String inputString = StringUtils.join(pageRanges, ',');
-        List<PageRange> ranges = new ArrayList<PageRange>(new PageRangeSetAdapter(inputString).getPageRangeSet());
+        var ranges = new ArrayList<>(new PageRangeSetAdapter(inputString).getPageRangeSet());
         for (int i = 0; i < pageRanges.length; i++) {
             assertEquals(pageRanges[i], ranges.get(i));
         }

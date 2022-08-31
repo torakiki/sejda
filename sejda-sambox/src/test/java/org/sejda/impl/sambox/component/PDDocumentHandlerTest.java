@@ -18,23 +18,11 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
-import org.junit.Test;
-import org.sejda.core.support.io.IOUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfFileSource;
+import org.sejda.model.util.IOUtils;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -44,15 +32,25 @@ import org.sejda.sambox.pdmodel.PageMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.tests.TestUtils.getEncryptionAtRestPolicy;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class PDDocumentHandlerTest {
 
     @Test
     public void discardBeads() throws IOException {
-        try (PDDocument document = testDoc("pdf/one_page.pdf")) {
+        try (PDDocument document = testDoc("/pdf/one_page.pdf")) {
             PDPage page = document.getPage(0);
             page.setThreadBeads(Arrays.asList(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
@@ -98,15 +96,15 @@ public class PDDocumentHandlerTest {
 
     @Test
     public void inheritedMediaBox() throws IOException {
-        try (PDDocumentHandler handler1 = new PDDocumentHandler(testDoc("pdf/media_box_inherited.pdf"))) {
+        try (PDDocumentHandler handler1 = new PDDocumentHandler(testDoc("/pdf/media_box_inherited.pdf"))) {
             PDPage page = handler1.getPage(1);
             assertEquals(PDRectangle.A4, page.getMediaBox());
 
             try (PDDocumentHandler handler2 = new PDDocumentHandler()) {
                 PDPage imported = handler2.importPage(page);
 
-                assertEquals("Imported page has different media box than source", imported.getMediaBox(),
-                        page.getMediaBox());
+                assertEquals(imported.getMediaBox(), page.getMediaBox(),
+                        "Imported page has different media box than source");
             }
         }
     }
@@ -115,7 +113,7 @@ public class PDDocumentHandlerTest {
     public void encryptionAtRestOutputRoundtrip() throws IOException, TaskException {
         File tmpFile = IOUtils.createTemporaryBuffer();
         int pageNum = 0;
-        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("pdf/test-pdf.pdf"))) {
+        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("/pdf/test-pdf.pdf"))) {
             pageNum = handler.getNumberOfPages();
             handler.savePDDocument(tmpFile, getEncryptionAtRestPolicy());
         }
@@ -129,11 +127,8 @@ public class PDDocumentHandlerTest {
         }
     }
 
-    private InputStream resourceAsStream(String name) {
-        return getClass().getClassLoader().getResourceAsStream(name);
-    }
-
     private PDDocument testDoc(String resourceName) throws IOException {
-        return PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(resourceAsStream(resourceName)));
+        return PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream(resourceName)));
     }
 }

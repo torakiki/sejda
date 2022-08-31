@@ -19,11 +19,12 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -31,9 +32,9 @@ import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
  */
 public class PdfPageTransitionAdapterTest {
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new PdfPageTransitionAdapter("ChuckNorris");
+        assertThrows(ConversionException.class, () -> new PdfPageTransitionAdapter("ChuckNorris"));
     }
 
     @Test

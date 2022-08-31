@@ -20,7 +20,7 @@
  */
 package org.sejda.model.pdf.viewerpreference;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Possible values for the document’s page mode, specifying how to display the document on exiting full-screen mode.<br>

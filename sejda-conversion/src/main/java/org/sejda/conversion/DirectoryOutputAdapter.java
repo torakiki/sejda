@@ -19,13 +19,13 @@
  */
 package org.sejda.conversion;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.FileOrDirectoryTaskOutput;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Adapter for {@link DirectoryTaskOutput}. Main role is to be a string-based constructor for the underlying model object
@@ -41,7 +41,7 @@ public class DirectoryOutputAdapter {
         Path directory = Paths.get(directoryPath).toAbsolutePath().normalize();
 
         if (!Files.isDirectory(directory)) {
-            throw new ConversionException("Path '" + directory.toString() + "' is not an existing directory");
+            throw new ConversionException("Path '" + directory + "' is not an existing directory");
         }
 
         this.pdfDirectoryOutput = new DirectoryTaskOutput(directory.toFile());

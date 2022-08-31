@@ -1,7 +1,7 @@
 /*
  * Created on 10/giu/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,28 +19,29 @@
  */
 package org.sejda.model.split;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.outline.OutlinePageDestinations;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.model.exception.TaskExecutionException;
-import org.sejda.model.outline.OutlinePageDestinations;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PageDestinationsSplitPagesTest {
 
     private OutlinePageDestinations destinations;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         destinations = mock(OutlinePageDestinations.class);
         Set<Integer> pages = new HashSet<Integer>();
@@ -54,27 +55,27 @@ public class PageDestinationsSplitPagesTest {
     public void firstPageIsOpening() throws TaskExecutionException {
         PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
         victim.ensureIsValid();
-        Assert.assertTrue(victim.isOpening(1));
-        Assert.assertFalse(victim.isClosing(1));
+        assertTrue(victim.isOpening(1));
+        assertFalse(victim.isClosing(1));
     }
 
     @Test
     public void allPages() {
         PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
-        Assert.assertTrue(victim.isClosing(2));
-        Assert.assertTrue(victim.isOpening(3));
-        Assert.assertTrue(victim.isClosing(3));
-        Assert.assertTrue(victim.isOpening(4));
-        Assert.assertFalse(victim.isClosing(4));
-        Assert.assertTrue(victim.isOpening(10));
-        Assert.assertFalse(victim.isClosing(10));
-        Assert.assertTrue(victim.isClosing(9));
+        assertTrue(victim.isClosing(2));
+        assertTrue(victim.isOpening(3));
+        assertTrue(victim.isClosing(3));
+        assertTrue(victim.isOpening(4));
+        assertFalse(victim.isClosing(4));
+        assertTrue(victim.isOpening(10));
+        assertFalse(victim.isClosing(10));
+        assertTrue(victim.isClosing(9));
     }
 
-    @Test(expected = TaskExecutionException.class)
-    public void invalid() throws TaskExecutionException {
-        when(destinations.getPages()).thenReturn(Collections.EMPTY_SET);
+    @Test
+    public void invalid() {
+        when(destinations.getPages()).thenReturn(Collections.emptySet());
         PageDestinationsSplitPages victim = new PageDestinationsSplitPages(destinations);
-        victim.ensureIsValid();
+        assertThrows(TaskExecutionException.class, victim::ensureIsValid);
     }
 }

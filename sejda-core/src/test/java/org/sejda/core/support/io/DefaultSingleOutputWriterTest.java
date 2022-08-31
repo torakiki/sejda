@@ -18,18 +18,9 @@
  */
 package org.sejda.core.support.io;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.sejda.core.support.io.IOUtils.createTemporaryBuffer;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskOutputVisitException;
 import org.sejda.model.output.DirectoryTaskOutput;
@@ -39,95 +30,104 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.task.Task;
 import org.sejda.model.task.TaskExecutionContext;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
  */
 public class DefaultSingleOutputWriterTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
     private TaskExecutionContext context;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         context = new TaskExecutionContext(mock(Task.class), true);
     }
 
-    @Test(expected = TaskOutputVisitException.class)
-    public void failOnDir() throws TaskOutputVisitException, IOException {
+    @Test
+    public void failOnDir(@TempDir Path folder) {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        new DirectoryTaskOutput(folder.newFolder()).accept(victim);
-    }
-
-    @Test(expected = TaskOutputVisitException.class)
-    public void failOnFileOrDir() throws TaskOutputVisitException, IOException {
-        DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        new FileOrDirectoryTaskOutput(folder.newFolder()).accept(victim);
-    }
-
-    @Test(expected = IOException.class)
-    public void missingOutput() throws IOException {
-        DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        victim.dispatch(new FileTaskOutput(folder.newFile()));
+        assertThrows(TaskOutputVisitException.class,
+                () -> new DirectoryTaskOutput(Files.createTempDirectory(folder, "sejda").toFile()).accept(victim));
     }
 
     @Test
-    public void moveIfNotSameFile() throws IOException, TaskIOException {
+    public void failOnFileOrDir(@TempDir Path folder) {
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        File out = new File(folder.newFolder(), "not-existing.tmp");
-        out.deleteOnExit();
-        File outFile = createTemporaryBuffer();
-        victim.taskOutput(outFile);
-        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
+        assertThrows(TaskOutputVisitException.class,
+                () -> new FileOrDirectoryTaskOutput(Files.createTempDirectory(folder, "sejda").toFile()).accept(
+                        victim));
+    }
+
+    @Test
+    public void missingOutput(@TempDir Path folder) {
+        DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
+        assertThrows(IOException.class,
+                () -> victim.dispatch(new FileTaskOutput(Files.createTempFile(folder, null, null).toFile())));
+    }
+
+    @Test
+    public void nonExisting(@TempDir Path folder) throws IOException, TaskIOException {
+        File out = folder.resolve("not-existing.tmp").toFile();
+        DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+        victim.taskOutput(outFile.toFile());
         victim.dispatch(new FileTaskOutput(out));
         assertEquals(4, out.length());
     }
 
     @Test
-    public void overwrites() throws IOException, TaskIOException {
+    public void overwrites(@TempDir Path folder) throws IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
+        assertEquals(0, existing.length());
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
-        File out = folder.newFile();
-        out.deleteOnExit();
-        File outFile = createTemporaryBuffer();
-        victim.taskOutput(outFile);
-        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
-        victim.dispatch(new FileTaskOutput(out));
-        assertEquals(4, out.length());
-        assertEquals(1, out.getParentFile().list().length);
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+        victim.taskOutput(outFile.toFile());
+        victim.dispatch(new FileTaskOutput(existing));
+        assertEquals(1, Files.list(outDir).count());
+        assertEquals(4, existing.length());
     }
 
     @Test
-    public void rename() throws IOException, TaskIOException {
+    public void rename(@TempDir Path folder) throws IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.RENAME, context);
-        File out = folder.newFile();
-        out.deleteOnExit();
-        File outFile = createTemporaryBuffer();
-        victim.taskOutput(outFile);
-        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
-        victim.dispatch(new FileTaskOutput(out));
-        assertEquals(2, out.getParentFile().list().length);
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+        victim.taskOutput(outFile.toFile());
+        victim.dispatch(new FileTaskOutput(existing));
+        assertEquals(2, Files.list(outDir).count());
     }
 
-    @Test(expected = IOException.class)
-    public void failOnExisting() throws IOException, TaskIOException {
+    @Test
+    public void failOnExisting(@TempDir Path folder) throws IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.FAIL, context);
-        File out = folder.newFile();
-        out.deleteOnExit();
-        victim.taskOutput(out);
-        File outFile = createTemporaryBuffer();
-        victim.taskOutput(outFile);
-        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
-        victim.dispatch(new FileTaskOutput(out));
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+        victim.taskOutput(outFile.toFile());
+        assertThrows(IOException.class, () -> victim.dispatch(new FileTaskOutput(existing)));
     }
 
-    @Test(expected = IOException.class)
-    public void skipBehavesLikeFails() throws IOException, TaskIOException {
+    @Test
+    public void skipBehavesLikeFails(@TempDir Path folder) throws IOException {
+        var outDir = Files.createTempDirectory(folder, "sejda");
+        var existing = Files.createTempFile(outDir, null, null).toFile();
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.SKIP, context);
-        File out = folder.newFile();
-        out.deleteOnExit();
-        victim.taskOutput(out);
-        File outFile = createTemporaryBuffer();
-        victim.taskOutput(outFile);
-        Files.write(outFile.toPath(), new byte[] { 0, 1, 1, 1 });
-        victim.dispatch(new FileTaskOutput(out));
+        var outFile = Files.createTempFile(folder, "sejda", ".tmp");
+        Files.write(outFile, new byte[] { 0, 1, 1, 1 });
+        victim.taskOutput(outFile.toFile());
+        assertThrows(IOException.class, () -> victim.dispatch(new FileTaskOutput(existing)));
     }
 }

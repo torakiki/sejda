@@ -19,7 +19,9 @@
  */
 package org.sejda.core.support.prefix.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -27,13 +29,13 @@ import org.junit.Test;
  */
 public class NameGenerationRequestTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void blankExtension() {
-        NameGenerationRequest.nameRequest("");
+        assertThrows(IllegalArgumentException.class, () -> NameGenerationRequest.nameRequest(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullExtension() {
-        NameGenerationRequest.nameRequest(null);
+        assertThrows(IllegalArgumentException.class, () -> NameGenerationRequest.nameRequest(null));
     }
 }

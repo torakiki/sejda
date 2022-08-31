@@ -19,10 +19,11 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.exception.ConversionException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -35,8 +36,8 @@ public class MultiplePageRangeSetAdapterTest {
         assertEquals(3, new MultiplePageRangeSetAdapter("all:12-14:32,12-14,4,34-:").ranges().size());
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new MultiplePageRangeSetAdapter("all:Chuck:norris").ranges();
+        assertThrows(ConversionException.class, () -> new MultiplePageRangeSetAdapter("all:Chuck:norris").ranges());
     }
 }

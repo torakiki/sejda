@@ -1,0 +1,17 @@
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.sejda" level="INFO" />
+
+	<!-- careful here. when the build is too verbose Travis-CI starts terminating it too early and deeming build failure.
+	change it locally when investigating something, but please don't commit it changed -->
+	<root level="WARN">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

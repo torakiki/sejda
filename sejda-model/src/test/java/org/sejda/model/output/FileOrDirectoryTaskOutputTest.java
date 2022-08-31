@@ -18,22 +18,23 @@
  */
 package org.sejda.model.output;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class FileOrDirectoryTaskOutputTest {
 
     private File file;
     private File directory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         file = mock(File.class);
         when(file.isFile()).thenReturn(Boolean.TRUE);
@@ -63,20 +64,20 @@ public class FileOrDirectoryTaskOutputTest {
         assertNotNull(instance);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullFile() {
-        new FileOrDirectoryTaskOutput(null);
+        assertThrows(IllegalArgumentException.class, () -> new FileOrDirectoryTaskOutput(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void fileFactoryNullFile() {
-        FileOrDirectoryTaskOutput.file(null);
+        assertThrows(IllegalArgumentException.class, () -> FileOrDirectoryTaskOutput.file(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void fileFactoryInvalidFile() {
         when(file.isFile()).thenReturn(Boolean.FALSE);
-        FileOrDirectoryTaskOutput.file(file);
+        assertThrows(IllegalArgumentException.class, () -> FileOrDirectoryTaskOutput.file(file));
     }
 
     @Test
@@ -88,15 +89,15 @@ public class FileOrDirectoryTaskOutputTest {
         assertNotNull(instance);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void dirFactoryNullFile() {
-        FileOrDirectoryTaskOutput.directory(null);
+        assertThrows(IllegalArgumentException.class, () -> FileOrDirectoryTaskOutput.directory(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void dirFactoryInvalidDirectory() {
         when(directory.isDirectory()).thenReturn(Boolean.FALSE);
-        FileOrDirectoryTaskOutput.directory(directory);
+        assertThrows(IllegalArgumentException.class, () -> FileOrDirectoryTaskOutput.directory(directory));
     }
 
     @Test

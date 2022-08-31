@@ -2,7 +2,7 @@
  * Created on 17/set/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,23 +20,23 @@
  */
 package org.sejda.model.parameter.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.TaskOutput;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class MultiplePdfSourceParametersTest {
 
     private MultiplePdfSourceParameters victim;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         victim = new MultiplePdfSourceParameters() {
 
@@ -56,10 +56,10 @@ public class MultiplePdfSourceParametersTest {
         assertEquals(1, victim.getSourceList().size());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testUnmodifiableList() {
         PdfSource<?> source = mock(PdfSource.class);
         victim.addSource(source);
-        victim.getSourceList().clear();
+        assertThrows(UnsupportedOperationException.class, () -> victim.getSourceList().clear());
     }
 }

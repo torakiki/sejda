@@ -18,26 +18,24 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static org.sejda.core.service.BaseTaskTest.customInput;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import org.junit.Assert;
-import org.sejda.core.support.io.IOUtils;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskIOException;
+import org.sejda.model.util.IOUtils;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.resizers.configurations.ScalingMode;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.core.service.BaseTaskTest.customInput;
 
 public class PixelCompareUtils {
 
@@ -64,7 +62,7 @@ public class PixelCompareUtils {
     public static void assertSimilar(PDDocument doc1, PDDocument doc2, int maxNumberOfPages) {
         try {
             if (doc1.getNumberOfPages() != doc2.getNumberOfPages()) {
-                Assert.fail("Documents have different number of pages:" + doc1.getNumberOfPages() + ", "
+                fail("Documents have different number of pages:" + doc1.getNumberOfPages() + ", "
                         + doc2.getNumberOfPages());
             }
 
@@ -85,7 +83,7 @@ public class PixelCompareUtils {
                     ImageIO.write(p2, "png", f2);
                     LOG.error("Troubleshoot:\n" + f1 + "\n" + f2);
 
-                    Assert.fail("Page " + (i + 1) + " differs, similarity is: " + pixelSimilarityOf(p1, p2));
+                    fail("Page " + (i + 1) + " differs, similarity is: " + pixelSimilarityOf(p1, p2));
                 }
             }
         } catch (Exception e) {

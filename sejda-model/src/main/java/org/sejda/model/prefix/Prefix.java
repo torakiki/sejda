@@ -19,7 +19,7 @@
  */
 package org.sejda.model.prefix;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Enumerates the available complex prefixes that Sejda can handle. A prefix has a friendly name that can be used to build help message or UI menus.

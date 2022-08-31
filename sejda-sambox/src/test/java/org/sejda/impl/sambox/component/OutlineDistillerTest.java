@@ -18,18 +18,9 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
@@ -42,22 +33,30 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 
+import java.io.IOException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class OutlineDistillerTest {
 
     private PDDocument document;
     private LookupTable<PDPage> mapping = new LookupTable<>();
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        document = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
+        document = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         IOUtils.closeQuietly(document);
         mapping.clear();
@@ -116,8 +115,8 @@ public class OutlineDistillerTest {
 
     @Test
     public void destinationTypeIsPreservedInLeaves() throws IOException {
-        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf")))) {
+        try (PDDocument document = PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/large_outline.pdf")))) {
             mapping.addLookupEntry(document.getPage(2), new PDPage());
             PDDocumentOutline outline = new PDDocumentOutline();
             new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
@@ -142,7 +141,7 @@ public class OutlineDistillerTest {
     public void fallbackHandlesBrokenDestinations() throws IOException {
         // https://github.com/torakiki/pdfsam/issues/361
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/page_dests_with_number_insteadof_refs.pdf")))) {
+                getClass().getResourceAsStream("/pdf/page_dests_with_number_insteadof_refs.pdf")))) {
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());
             }
@@ -155,8 +154,8 @@ public class OutlineDistillerTest {
     @Test
     public void fallbackHandlesBrokenDestinationsWithNonExistingPageNumber() throws IOException {
         // https://github.com/torakiki/pdfsam/issues/361
-        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/page_dests_with_number_insteadof_refs_wrong_num.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/page_dests_with_number_insteadof_refs_wrong_num.pdf")))) {
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());
             }
@@ -168,8 +167,8 @@ public class OutlineDistillerTest {
 
     @Test
     public void infiniteLoop() throws IOException {
-        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/infinite_outline.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/infinite_outline.pdf")))) {
 
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());
@@ -177,12 +176,12 @@ public class OutlineDistillerTest {
             PDDocumentOutline outline = new PDDocumentOutline();
             new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
             assertTrue(outline.hasChildren());
-            
+
             int outlineChildCount = 0;
-            for(PDOutlineItem child: outline.children()) {
+            for (PDOutlineItem child : outline.children()) {
                 outlineChildCount++;
             }
-            
+
             assertEquals(3, outlineChildCount);
         }
     }

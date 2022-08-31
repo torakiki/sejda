@@ -19,9 +19,10 @@
  */
 package org.sejda.core.context;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import org.sejda.core.Sejda;
+import org.sejda.model.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,10 +30,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.sejda.core.Sejda;
-import org.sejda.model.exception.ConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Provides a stream where the xml configuration can be read.
@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
  * <li>If the system property <b>sejda.config.file</b> is NOT provided it searches for the standard configuration file named<b> sejda.xml </b></li>
  * </ul>
  * </p>
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
@@ -55,8 +55,8 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     @Override
     public InputStream getConfigurationStream() throws ConfigurationException {
-        return ofNullable(getConfiguration())
-                .orElseThrow(() -> new ConfigurationException("Unable to find xml configuration file"));
+        return ofNullable(getConfiguration()).orElseThrow(
+                () -> new ConfigurationException("Unable to find xml configuration file"));
     }
 
     private InputStream getConfiguration() throws ConfigurationException {
@@ -69,17 +69,19 @@ class XmlConfigurationStreamProvider implements ConfigurationStreamProvider {
 
     private InputStream getCustomConfigurationStream(String userConfigFileName) throws ConfigurationException {
         LOG.trace("Loading Sejda configuration form {}", userConfigFileName);
-        InputStream retVal = ClassLoader.getSystemResourceAsStream(userConfigFileName);
-        if (retVal == null) {
-            try {
-                LOG.trace("Searching Sejda configuration on filesystem");
-                return new FileInputStream(userConfigFileName);
-            } catch (FileNotFoundException e) {
-                throw new ConfigurationException(
-                        String.format("Unable to access the provided configuration file [%s]", userConfigFileName), e);
-            }
+        InputStream configStream = ClassLoader.getSystemResourceAsStream(userConfigFileName);
+
+        if (nonNull(configStream)) {
+            return configStream;
         }
-        return retVal;
+
+        try {
+            LOG.trace("Searching Sejda configuration on filesystem");
+            return new FileInputStream(userConfigFileName);
+        } catch (FileNotFoundException e) {
+            throw new ConfigurationException(
+                    String.format("Unable to access the provided configuration file [%s]", userConfigFileName), e);
+        }
     }
 
     private InputStream getDefaultConfigurationStream() {

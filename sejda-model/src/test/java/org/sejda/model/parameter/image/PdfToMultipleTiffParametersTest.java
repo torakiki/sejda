@@ -19,15 +19,15 @@
  */
 package org.sejda.model.parameter.image;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.image.TiffCompressionType;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.tests.TestUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio

@@ -2,7 +2,7 @@
  * Created on 01/mag/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,122 +20,106 @@
  */
 package org.sejda.core.context;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.input.ProxyInputStream;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.exception.ConfigurationException;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * Test unit
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class XmlConfigurationStrategyTest {
 
-    @Rule
-    public ExpectedException expected = ExpectedException.none();
     private ConfigurationStreamProvider provider;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         provider = mock(ConfigurationStreamProvider.class);
     }
 
     @Test
-    public void testPositiveConstuctor() throws ConfigurationException {
-        InputStreamWithStatus stream = new InputStreamWithStatus(
-                getClass().getClassLoader().getResourceAsStream("sejda-test.xml"));
+    public void testPositiveConstuctor() throws ConfigurationException, IOException {
+        var stream = getClass().getResourceAsStream("/sejda-test.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
         assertEquals(SyncNotificationStrategy.class, victim.getNotificationStrategy());
         assertEquals(1, victim.getTasksMap().size());
         assertTrue(victim.isValidation());
         assertTrue(victim.isIgnoreXmlConfiguration());
-        assertTrue(stream.closed);
     }
 
     @Test
     public void testNegativeConstuctorWrongTask() throws ConfigurationException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-task-sejda-config.xml");
-        expected.expectMessage(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.model.task.Task");
+        InputStream stream = getClass().getResourceAsStream("/failing-task-sejda-config.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
-        XmlConfigurationStrategy.newInstance(provider);
+        var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
+        assertEquals("The configured class java.lang.String is not a subtype of interface org.sejda.model.task.Task",
+                e.getMessage());
     }
 
     @Test
     public void testNegativeConstuctorWrongParam() throws ConfigurationException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-param-sejda-config.xml");
-        expected.expectMessage(
-                "The configured class java.lang.String is not a subtype of interface org.sejda.model.parameter.base.TaskParameters");
+        InputStream stream = getClass().getResourceAsStream("/failing-param-sejda-config.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
-        XmlConfigurationStrategy.newInstance(provider);
+        var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
+        assertEquals(
+                "The configured class java.lang.String is not a subtype of interface org.sejda.model.parameter.base.TaskParameters",
+                e.getMessage());
     }
 
     @Test
     public void testNegativeNotFoundClassParam() throws ConfigurationException {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream("failing-no-param-class-sejda-config.xml");
-        expected.expectMessage("Unable to find the configured bla.bla.not.existing.Class");
+        InputStream stream = getClass().getResourceAsStream("/failing-no-param-class-sejda-config.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
-        XmlConfigurationStrategy.newInstance(provider);
+        var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
+        assertEquals("Unable to find the configured bla.bla.not.existing.Class", e.getMessage());
     }
 
     @Test
-    public void testPositiveNoValidation() throws ConfigurationException {
-        InputStreamWithStatus stream = new InputStreamWithStatus(
-                getClass().getClassLoader().getResourceAsStream("sejda-no-validation.xml"));
+    public void testPositiveNoValidation() throws ConfigurationException, IOException {
+        var stream = getClass().getResourceAsStream("/sejda-no-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        assertTrue(stream.closed);
         assertFalse(victim.isValidation());
     }
 
     @Test
-    public void testPositiveDefaultValidation() throws ConfigurationException {
-        InputStreamWithStatus stream = new InputStreamWithStatus(
-                getClass().getClassLoader().getResourceAsStream("sejda-default-validation.xml"));
+    public void testPositiveDefaultValidation() throws ConfigurationException, IOException {
+        var stream = getClass().getResourceAsStream("/sejda-default-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        assertTrue(stream.closed);
         assertFalse(victim.isValidation());
         assertFalse(victim.isIgnoreXmlConfiguration());
     }
 
     @Test
-    public void testPositiveAsyncNotification() throws ConfigurationException {
-        InputStreamWithStatus stream = new InputStreamWithStatus(
-                getClass().getClassLoader().getResourceAsStream("sejda-async-notification.xml"));
+    public void testPositiveAsyncNotification() throws ConfigurationException, IOException {
+        var stream = getClass().getResourceAsStream("/sejda-async-notification.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        assertTrue(stream.closed);
         assertEquals(AsyncNotificationStrategy.class, victim.getNotificationStrategy());
     }
 
-    public static class InputStreamWithStatus extends ProxyInputStream {
-        boolean closed = false;
-
-        public InputStreamWithStatus(InputStream is) {
-            super(is);
-        }
-
-        @Override
-        public void close() throws IOException {
-            closed = true;
-            super.close();
-        }
+    public void testStreamIsClosed() throws ConfigurationException, IOException {
+        var stream = getClass().getResourceAsStream("/sejda-default-validation.xml");
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
+        var e = assertThrows(IOException.class, () -> stream.read());
+        assertThat(e.getMessage(), containsString("its closed"));
     }
 }

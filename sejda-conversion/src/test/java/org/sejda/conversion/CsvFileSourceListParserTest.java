@@ -19,12 +19,12 @@
  */
 package org.sejda.conversion;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author Andrea Vacondio
@@ -35,7 +35,7 @@ public class CsvFileSourceListParserTest extends BaseFileSourceListParserTest {
 
     @Test
     public void parseFileNames() {
-        List<String> result = victim.parseFileNames(csvFile);
+        List<String> result = victim.parseFileNames(csvFile.toFile());
         assertThat(result, hasItem("/another/second.pdf"));
         assertThat(result, hasItem("/my/path/first.pdf"));
     }

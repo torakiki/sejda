@@ -19,22 +19,22 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class PageNumberWithPdfPageTransitionAdapterTest {
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new PageNumberWithPdfPageTransitionAdapter("box_inward:2:3");
+        assertThrows(ConversionException.class, () -> new PageNumberWithPdfPageTransitionAdapter("box_inward:2:3"));
     }
 
     @Test

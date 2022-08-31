@@ -29,4 +29,5 @@ module org.sejda.core.writer {
 
     exports org.sejda.core.writer.context;
     exports org.sejda.core.writer.imageio;
+    exports org.sejda.core.writer.model;
 }

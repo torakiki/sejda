@@ -21,7 +21,7 @@ package org.sejda.impl.sambox;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.LookupTable;
-import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.util.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;

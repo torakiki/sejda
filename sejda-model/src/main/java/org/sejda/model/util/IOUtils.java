@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.support.io;
+package org.sejda.model.util;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.io.FilenameUtils.getBaseName;

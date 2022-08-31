@@ -18,12 +18,13 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.sejda.conversion.exception.ConversionException;
 
 import java.awt.Point;
 
-import org.junit.Test;
-import org.sejda.conversion.exception.ConversionException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -36,18 +37,18 @@ public class PointAdatperTest {
         assertEquals(new Point(-10, -550), new PointAdatper("-10,-550").getPoint());
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void missingCoordinate() {
-        new PointAdatper("10");
+        assertThrows(ConversionException.class, () -> new PointAdatper("10"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidX() {
-        new PointAdatper("Chuck,10");
+        assertThrows(ConversionException.class, () -> new PointAdatper("Chuck,10"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidY() {
-        new PointAdatper("10,Norris");
+        assertThrows(ConversionException.class, () -> new PointAdatper("10,Norris"));
     }
 }

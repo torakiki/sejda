@@ -20,7 +20,7 @@
  */
 package org.sejda.model.rotation;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Enum to model a page rotation.

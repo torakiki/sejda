@@ -18,7 +18,7 @@
  */
 package org.sejda.model.output;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Possible policies to use in case of an existing output

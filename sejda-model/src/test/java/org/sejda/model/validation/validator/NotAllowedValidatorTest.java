@@ -19,15 +19,15 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.NotAllowed;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -38,7 +38,7 @@ public class NotAllowedValidatorTest {
     private NotAllowedValidator victim = new NotAllowedValidator();
     private NotAllowed annotation;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         annotation = mock(NotAllowed.class);
         when(annotation.disallow()).thenReturn(new PredefinedSetOfPages[] { PredefinedSetOfPages.ALL_PAGES });

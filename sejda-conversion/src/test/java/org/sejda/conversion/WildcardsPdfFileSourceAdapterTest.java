@@ -18,70 +18,68 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.IOException;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.conversion.exception.ConversionException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- *
  */
 public class WildcardsPdfFileSourceAdapterTest {
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
-    private File setUpFiles() throws IOException {
-        folder.newFile("test_file.pdf");
-        folder.newFile("test2_file.pdf");
-        folder.newFile("another_test_file.pdf");
-        folder.newFile("ignore_this.something");
-        return folder.getRoot();
+    @TempDir
+    public static Path folder;
+
+    private static Path path;
+
+    @BeforeAll
+    public static void setUp() throws IOException {
+        path = Files.createTempDirectory(folder, "sejda");
+        Files.createFile(path.resolve("7.pdf"));
+        Files.createFile(path.resolve("44.pdf"));
+        Files.createFile(path.resolve("14.pdf"));
+        Files.createFile(path.resolve("ignore_this.something"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegative() {
-        new WildcardsPdfFileSourceAdapter("/I/dont/exist");
+        assertThrows(ConversionException.class, () -> new WildcardsPdfFileSourceAdapter("/I/dont/exist"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void testNegativeWildcardNonExistingParent() {
-        new WildcardsPdfFileSourceAdapter("/I/dont/exist/*.pdf");
+        assertThrows(ConversionException.class, () -> new WildcardsPdfFileSourceAdapter("/I/dont/exist/*.pdf"));
     }
 
     @Test
     public void testPositive() throws IOException {
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
-                setUpFiles().getAbsolutePath() + "/*.pdf");
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.pdf");
         assertEquals(3, victim.getPdfFileSources().size());
     }
 
     @Test
     public void testPositiveCaseInsensitive() throws IOException {
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
-                setUpFiles().getAbsolutePath() + "/*.PdF");
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.PdF");
         assertEquals(3, victim.getPdfFileSources().size());
     }
 
     @Test
     public void testPositiveFilePath() throws IOException {
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
-                setUpFiles().getAbsolutePath() + "/test_file.pdf");
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/14.pdf");
         assertEquals(1, victim.getPdfFileSources().size());
     }
 
     @Test
     public void testOrder() throws IOException {
-        folder.newFile("7.pdf");
-        folder.newFile("44.pdf");
-        folder.newFile("14.pdf");
-        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(
-                folder.getRoot().getAbsolutePath() + "/*.pdf");
+        WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.pdf");
         assertEquals(3, victim.getPdfFileSources().size());
         assertEquals("7.pdf", victim.getPdfFileSources().get(0).getName());
         assertEquals("14.pdf", victim.getPdfFileSources().get(1).getName());

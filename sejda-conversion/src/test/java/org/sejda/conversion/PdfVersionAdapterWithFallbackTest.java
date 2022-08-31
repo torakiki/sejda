@@ -18,11 +18,12 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.pdf.PdfVersion;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -39,9 +40,9 @@ public class PdfVersionAdapterWithFallbackTest {
         assertEquals(PdfVersion.VERSION_1_6, new PdfVersionAdapterWithFallback("1.6").getVersion());
     }
 
-    @Test(expected = SejdaRuntimeException.class)
+    @Test
     public void missingPoint() {
-        new PdfVersionAdapterWithFallback("9").getVersion();
+        assertThrows(SejdaRuntimeException.class, () -> new PdfVersionAdapterWithFallback("9").getVersion());
     }
 
 }

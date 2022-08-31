@@ -18,21 +18,21 @@
  */
 package org.sejda.model.task;
 
-import static org.mockito.Mockito.mock;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+
 /**
  * @author Andrea Vacondio
- *
  */
 public class TaskExecutionContextTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testTaskExecutionContext() {
-        new TaskExecutionContext(null, true);
+        assertThrows(IllegalArgumentException.class, () -> new TaskExecutionContext(null, true));
     }
 
     @Test
@@ -41,9 +41,9 @@ public class TaskExecutionContextTest {
         victim.assertTaskIsLenient(new Exception("Test"));
     }
 
-    @Test(expected = TaskNonLenientExecutionException.class)
+    @Test
     public void nonLenient() throws TaskExecutionException {
         TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), false);
-        victim.assertTaskIsLenient(new Exception("Test"));
+        assertThrows(TaskNonLenientExecutionException.class, () -> victim.assertTaskIsLenient(new Exception("Test")));
     }
 }

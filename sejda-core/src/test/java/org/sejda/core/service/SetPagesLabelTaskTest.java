@@ -19,15 +19,8 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -36,11 +29,16 @@ import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class SetPagesLabelTaskTest extends BaseTaskTest<SetPagesLabelParameters> {
 
     private SetPagesLabelParameters parameters;
@@ -67,13 +65,13 @@ public abstract class SetPagesLabelTaskTest extends BaseTaskTest<SetPagesLabelPa
                 PDPageLabels labels = d.getDocumentCatalog().getPageLabels();
                 PDPageLabelRange range1 = labels.getPageLabelRange(0);
                 assertNotNull(range1);
-                assertEquals(PDPageLabelRange.STYLE_ROMAN_LOWER, range1.getStyle());
-                assertEquals(1, range1.getStart());
+                Assertions.assertEquals(PDPageLabelRange.STYLE_ROMAN_LOWER, range1.getStyle());
+                Assertions.assertEquals(1, range1.getStart());
                 PDPageLabelRange range2 = labels.getPageLabelRange(2);
                 assertNotNull(range2);
-                assertEquals(PDPageLabelRange.STYLE_DECIMAL, range2.getStyle());
-                assertEquals(1, range2.getStart());
-                assertEquals("Test", range2.getPrefix());
+                Assertions.assertEquals(PDPageLabelRange.STYLE_DECIMAL, range2.getStyle());
+                Assertions.assertEquals(1, range2.getStart());
+                Assertions.assertEquals("Test", range2.getPrefix());
                 assertNull(labels.getPageLabelRange(19));
             } catch (Exception e) {
                 fail(e.getMessage());

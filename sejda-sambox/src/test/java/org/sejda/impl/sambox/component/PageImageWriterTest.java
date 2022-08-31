@@ -18,47 +18,50 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.sejda.TestUtils.encryptedAtRest;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
-
-import java.io.IOException;
-
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.sambox.pdmodel.graphics.image.UnsupportedImageFormatException;
 import org.sejda.sambox.util.filetypedetector.FileType;
 
+import java.io.IOException;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
+import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
+import static org.sejda.tests.TestUtils.encryptedAtRest;
+
 public class PageImageWriterTest {
 
     @Test
     public void testJpeg() throws TaskIOException, IOException {
 
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/large.jpg"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/large.jpg"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(3840));
         assertThat(result.getWidth(), is(5760));
 
-        assertTrue("Original bytes should be used", IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                customNonPdfInput("image/large.jpg").getSource()));
+        assertTrue(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                customNonPdfInput("/image/large.jpg").getSource()), "Original bytes should be used");
     }
 
     @Test
     public void testHeif_unsupported() throws TaskIOException {
         Exception ex = assertThrows(TaskIOException.class, () -> {
-            PageImageWriter.toPDXImageObject(customNonPdfInput("image/sample_heic.jpg"));   
+            PageImageWriter.toPDXImageObject(customNonPdfInput("/image/sample_heic.jpg"));
         });
-        
+
         Throwable cause = ex.getCause();
         assertEquals(cause.getClass(), UnsupportedImageFormatException.class);
         UnsupportedImageFormatException uife = (UnsupportedImageFormatException) cause;
-        
+
         assertEquals(uife.getFileType(), FileType.HEIF);
         assertEquals(uife.getFilename(), "sample_heic.jpg");
     }
@@ -66,7 +69,7 @@ public class PageImageWriterTest {
     @Test
     public void testPng() throws TaskIOException, IOException {
 
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/draft.png"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/draft.png"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(103));
         assertThat(result.getWidth(), is(248));
@@ -74,60 +77,61 @@ public class PageImageWriterTest {
 
     @Test
     public void testTiffWithAlphaToPDXImageObject() throws TaskIOException {
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/draft.tiff"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/draft.tiff"));
         assertThat(result.getHeight(), is(103));
     }
 
     @Test
     public void test_CMYK_jpeg() throws TaskIOException, IOException {
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/cmyk.jpg"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/cmyk.jpg"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(560));
         assertThat(result.getWidth(), is(1400));
 
-        assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/cmyk.jpg").getSource()));
+        assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("/image/cmyk.jpg").getSource()),
+                "Original bytes should not be used; the image should be converted from CMYK to RGB");
     }
 
     @Test
     public void test_CMYK_jpeg_wrong_extension() throws TaskIOException, IOException {
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/cmyk.jpg", "cmyk.png"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/cmyk.jpg", "cmyk.png"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(560));
         assertThat(result.getWidth(), is(1400));
 
-        assertFalse("Original bytes should not be used; the image should be converted from CMYK to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/cmyk.jpg").getSource()));
+        assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("/image/cmyk.jpg").getSource()),
+                "Original bytes should not be used; the image should be converted from CMYK to RGB");
     }
 
     @Test
     public void test_Gray_ICC_png() throws TaskIOException, IOException {
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/icc_profile_gray.png"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/icc_profile_gray.png"));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
 
-        assertFalse("Original bytes should not be used; the image should be converted from ICC Gray to RGB",
-                IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/icc_profile_gray.png").getSource()));
+        assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                        customNonPdfInput("/image/icc_profile_gray.png").getSource()),
+                "Original bytes should not be used; the image should be converted from ICC Gray to RGB");
     }
 
     @Test
     public void encryptedAtRestTest_stream() throws TaskIOException, IOException {
 
-        PDImageXObject result = PageImageWriter.toPDXImageObject(encryptedAtRest(customNonPdfInput("image/large.jpg")));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(
+                encryptedAtRest(customNonPdfInput("/image/large.jpg")));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(3840));
 
-        assertTrue("Decrypted bytes should be used", IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                customNonPdfInput("image/large.jpg").getSource()));
+        assertTrue(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
+                customNonPdfInput("/image/large.jpg").getSource()), "Decrypted bytes should be used");
     }
 
     @Test
     public void encryptedAtRestTest_file() throws TaskIOException, IOException {
 
-        PDImageXObject result = PageImageWriter
-                .toPDXImageObject(encryptedAtRest(customNonPdfInputAsFileSource("image/draft.png")));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(
+                encryptedAtRest(customNonPdfInputAsFileSource("/image/draft.png")));
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
         assertThat(result.getHeight(), is(103));
     }
@@ -135,7 +139,7 @@ public class PageImageWriterTest {
     @Test
     public void testExifRotated() throws TaskIOException {
 
-        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("image/with_exif_orientation.JPG"));
+        PDImageXObject result = PageImageWriter.toPDXImageObject(customNonPdfInput("/image/with_exif_orientation.JPG"));
         assertThat(result.getHeight(), is(3264));
         assertThat(result.getWidth(), is(2448));
     }

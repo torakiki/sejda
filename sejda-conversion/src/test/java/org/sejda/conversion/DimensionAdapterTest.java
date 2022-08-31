@@ -18,12 +18,13 @@
  */
 package org.sejda.conversion;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.sejda.conversion.exception.ConversionException;
 
 import java.awt.Dimension;
 
-import org.junit.Test;
-import org.sejda.conversion.exception.ConversionException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -35,18 +36,18 @@ public class DimensionAdapterTest {
         assertEquals(new Dimension(100, 50), new DimensionAdapter("100x50").getDimension());
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void missing() {
-        new DimensionAdapter("10");
+        assertThrows(ConversionException.class, () -> new DimensionAdapter("10"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidX() {
-        new DimensionAdapter("Chuckx10");
+        assertThrows(ConversionException.class, () -> new DimensionAdapter("Chuckx10"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidY() {
-        new DimensionAdapter("10xNorris");
+        assertThrows(ConversionException.class, () -> new DimensionAdapter("10xNorris"));
     }
 }

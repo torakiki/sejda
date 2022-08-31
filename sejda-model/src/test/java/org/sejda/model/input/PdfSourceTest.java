@@ -19,15 +19,15 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Andrea Vacondio
@@ -37,7 +37,7 @@ public class PdfSourceTest {
 
     private File file;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         file = mock(File.class);
         when(file.getName()).thenReturn("name");

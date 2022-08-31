@@ -19,15 +19,8 @@
  */
 package org.sejda.core.service;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
@@ -36,11 +29,16 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDResources;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
+import java.io.IOException;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPagesParameters> {
     private SplitByPagesParameters parameters;
 
@@ -62,7 +60,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void burstOptimizeImages() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
+        parameters.addSource(customInput("/pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         execute(parameters);
@@ -73,7 +71,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void burstOptimizeFonts() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("pdf/shared_fonts.pdf"));
+        parameters.addSource(customInput("/pdf/shared_fonts.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         parameters.addPage(2);
@@ -240,7 +238,7 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
     @Test
     public void sharedResourcesAreNotPurged() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("pdf/pages-shared-res1-forms-not-shared.pdf"));
+        parameters.addSource(customInput("/pdf/pages-shared-res1-forms-not-shared.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.YES);
         parameters.addPage(1);
         execute(parameters);
@@ -251,9 +249,9 @@ public abstract class SplitByPageNumberTaskTest extends BaseTaskTest<SplitByPage
                 try {
                     PDFormXObject form = (PDFormXObject) res.getXObject(name);
                     PDResources formRes = form.getResources();
-                    assertTrue(formRes.getXObjectNames().iterator().hasNext());
+                    Assertions.assertTrue(formRes.getXObjectNames().iterator().hasNext());
                 } catch (IOException e) {
-                    Assert.fail(e.getMessage());
+                    fail(e.getMessage());
                 }
             }
         });

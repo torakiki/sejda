@@ -40,7 +40,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.util.IOUtils;
 import org.sejda.io.SeekableSource;
 import org.sejda.io.SeekableSources;
 import org.sejda.model.exception.TaskIOException;

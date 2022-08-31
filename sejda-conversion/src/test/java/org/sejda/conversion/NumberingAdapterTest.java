@@ -19,12 +19,13 @@
  */
 package org.sejda.conversion;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.conversion.exception.ConversionException;
 import org.sejda.model.pdf.headerfooter.NumberingStyle;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
@@ -38,18 +39,18 @@ public class NumberingAdapterTest {
         assertThat(new NumberingAdapter("1:arabic").getNumbering().getNumberingStyle(), is(NumberingStyle.ARABIC));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidNumber() {
-        new NumberingAdapter("a:arabic");
+        assertThrows(ConversionException.class, () -> new NumberingAdapter("a:arabic"));
     }
 
-    @Test(expected = ConversionException.class)
+    @Test
     public void invalidStyle() {
-        new NumberingAdapter("1:noStyle");
+        assertThrows(ConversionException.class, () -> new NumberingAdapter("1:noStyle"));
     }
 
-    @Test(expected = ConversionException.class)
-    public void invalidTokens() {
-        new NumberingAdapter("1:arabic:chuck");
+    @Test
+    public void testNegative() {
+        assertThrows(ConversionException.class, () -> new NumberingAdapter("1:arabic:chuck"));
     }
 }

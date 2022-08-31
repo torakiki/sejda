@@ -20,18 +20,17 @@
  */
 package org.sejda.model.pdf.page;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.sejda.tests.TestUtils;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test unit for the Bounds class
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PageRangeTest {
 

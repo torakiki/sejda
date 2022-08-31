@@ -18,15 +18,15 @@
  */
 package org.sejda.model.parameter.base;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
+import org.sejda.tests.TestUtils;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-import org.sejda.TestUtils;
-import org.sejda.model.output.SingleOrMultipleTaskOutput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio

@@ -19,26 +19,20 @@
  */
 package org.sejda.model.parameter;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.pdf.PdfMetadataFields;
+import org.sejda.tests.TestUtils;
 
 import java.util.Set;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.TestUtils;
-import org.sejda.model.pdf.PdfMetadataFields;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class SetMetadataParametersTest {
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
     @Test
     public void testEquals() {

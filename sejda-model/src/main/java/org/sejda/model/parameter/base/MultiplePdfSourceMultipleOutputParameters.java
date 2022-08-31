@@ -24,7 +24,7 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.core.support.io.IOUtils;
+import org.sejda.model.util.IOUtils;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 import java.util.ArrayList;

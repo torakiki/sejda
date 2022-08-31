@@ -18,17 +18,9 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sejda.commons.LookupTable;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.io.SeekableSources;
@@ -44,6 +36,15 @@ import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
 import org.sejda.sambox.pdmodel.interactive.form.PDRadioButton;
 import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
 
+import java.io.IOException;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author Andrea Vacondio
  *
@@ -53,17 +54,17 @@ public class AcroFormsMergerTest {
     private LookupTable<PDPage> mapping = new LookupTable<>();
     private LookupTable<PDAnnotation> annotationsLookup;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/simple_form.pdf")));
         for (PDPage current : document.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
             annotationsLookup = new AnnotationsDistiller(document).retainRelevantAnnotations(mapping);
         }
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         IOUtils.closeQuietly(document);
     }
@@ -128,7 +129,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_hierarchy.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -148,7 +149,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_hierarchy.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -156,8 +157,8 @@ public class AcroFormsMergerTest {
         mapping.clear();
         annotationsLookup.clear();
 
-        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy_same_root.pdf")))) {
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_hierarchy_same_root.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -181,7 +182,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_hierarchy.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_hierarchy.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -208,7 +209,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/two_pages_form.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/two_pages_form.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -226,8 +227,8 @@ public class AcroFormsMergerTest {
         mapping.clear();
         annotationsLookup.clear();
 
-        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_merged_dic_no_hierarchy.pdf")))) {
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/forms/form_orphan_fields_merged_dic_no_hierarchy.pdf")))) {
             PDPage destPage = new PDPage();
             mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
@@ -247,7 +248,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_no_hierarchy.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/form_orphan_fields_no_hierarchy.pdf")))) {
             PDPage destPage = new PDPage();
             mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
@@ -267,7 +268,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_with_hierarchy.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/form_orphan_fields_with_hierarchy.pdf")))) {
             PDPage destPage = new PDPage();
             mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
@@ -289,8 +290,8 @@ public class AcroFormsMergerTest {
         mapping.clear();
         annotationsLookup.clear();
 
-        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass()
-                .getClassLoader().getResourceAsStream("pdf/forms/form_orphan_fields_merged_dic_with_hierarchy.pdf")))) {
+        try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getResourceAsStream("/pdf/forms/form_orphan_fields_merged_dic_with_hierarchy.pdf")))) {
             PDPage destPage = new PDPage();
             mapping.addLookupEntry(anotherDoc.getPage(0), destPage);
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
@@ -314,7 +315,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         PDDocument sameDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/simple_form.pdf")));
         for (PDPage current : sameDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
             annotationsLookup = new AnnotationsDistiller(sameDoc).retainRelevantAnnotations(mapping);
@@ -347,7 +348,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         PDDocument sameDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/simple_form.pdf")));
         for (PDPage current : sameDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
             annotationsLookup = new AnnotationsDistiller(sameDoc).retainRelevantAnnotations(mapping);
@@ -358,7 +359,7 @@ public class AcroFormsMergerTest {
         assertEquals(8, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field instanceof PDRadioButton) {
-                assertEquals(field.getPartialName(), 2, ((PDTerminalField) field).getWidgets().size());
+                assertEquals(2, ((PDTerminalField) field).getWidgets().size(), field.getPartialName());
             } else {
                 assertEquals(1, ((PDTerminalField) field).getWidgets().size());
             }
@@ -376,7 +377,7 @@ public class AcroFormsMergerTest {
         annotationsLookup.clear();
 
         PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_signature_signed.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/simple_form_with_signature_signed.pdf")));
         for (PDPage current : anotherDoc.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
@@ -389,7 +390,7 @@ public class AcroFormsMergerTest {
         assertNotNull(form);
         PDField signature = null;
         for (PDField current : form.getFieldTree()) {
-            if (current.getFieldType() == COSName.SIG.getName()) {
+            if (Objects.equals(current.getFieldType(), COSName.SIG.getName())) {
                 signature = current;
             }
         }
@@ -406,7 +407,7 @@ public class AcroFormsMergerTest {
         mapping.clear();
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")))) {
+                getClass().getResourceAsStream("/pdf/forms/test_form_with_calc.pdf")))) {
             mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
             annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
             victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);
@@ -425,14 +426,14 @@ public class AcroFormsMergerTest {
         mapping.clear();
 
         PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/test_form_with_calc.pdf")));
         mapping.addLookupEntry(doc.getPage(0), new PDPage());
         annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(mapping);
         victim.mergeForm(doc.getDocumentCatalog().getAcroForm(), annotationsLookup);
         mapping.clear();
 
         PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getClassLoader().getResourceAsStream("pdf/forms/test_form_with_calc.pdf")));
+                getClass().getResourceAsStream("/pdf/forms/test_form_with_calc.pdf")));
         mapping.addLookupEntry(anotherDoc.getPage(0), new PDPage());
         annotationsLookup = new AnnotationsDistiller(anotherDoc).retainRelevantAnnotations(mapping);
         victim.mergeForm(anotherDoc.getDocumentCatalog().getAcroForm(), annotationsLookup);

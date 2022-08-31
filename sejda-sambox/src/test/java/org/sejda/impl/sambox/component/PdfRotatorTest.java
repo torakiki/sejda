@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.rotation.Rotation;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;

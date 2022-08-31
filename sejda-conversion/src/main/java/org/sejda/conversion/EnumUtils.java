@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 import org.sejda.model.exception.SejdaRuntimeException;
 
 /**

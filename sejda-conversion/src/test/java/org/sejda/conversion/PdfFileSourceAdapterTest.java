@@ -1,7 +1,7 @@
 /*
  * Created on Oct 13, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,86 +19,70 @@
  */
 package org.sejda.conversion;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNull;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.core.CombinableMatcher;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.model.exception.SejdaRuntimeException;
 import org.sejda.model.input.PdfFileSource;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Tests for {@link PdfFileSourceAdapter}
- * 
+ *
  * @author Eduard Weissmann
- * 
  */
 public class PdfFileSourceAdapterTest {
 
-    private File file;
+    @TempDir
+    public Path folder;
 
-    @Before
-    public void setUp() {
-        InputStream contents = getClass().getResourceAsStream("/pdf/test_outline.pdf");
-        file = new File("/tmp/inputFile1.pdf");
-        file.deleteOnExit();
-        try {
-            FileUtils.copyInputStreamToFile(contents, file);
-        } catch (IOException e) {
-            throw new SejdaRuntimeException("Can't create test file. Reason: " + e.getMessage(), e);
-        }
-    }
+    private Path file;
 
-    @After
-    public void tearDown() {
-        if (file != null) {
-            file.delete();
-        }
+    @BeforeEach
+    public void setUp() throws IOException {
+        file = folder.resolve("inputFile1.pdf");
+        Files.copy(getClass().getResourceAsStream("/pdf/test_outline.pdf"), file);
     }
 
     @Test
     public void windowsFileWithPassword() {
-        PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret123").getPdfFileSource();
+        var filePath = file.toAbsolutePath().toString();
+        PdfFileSource result = new PdfFileSourceAdapter(filePath + ":secret123").getPdfFileSource();
         assertThat(result.getPassword(), is("secret123"));
-        assertThat(result.getSource(),
-                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
-                        is(new File("c:\\tmp\\inputFile1.pdf"))));
+        assertThat(result.getSource(), is(new File(filePath)));
     }
 
     @Test
     public void windowsFileNoPassword() {
-        PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf").getPdfFileSource();
+        var filePath = file.toAbsolutePath().toString();
+        PdfFileSource result = new PdfFileSourceAdapter(filePath).getPdfFileSource();
         assertNull(result.getPassword());
-        assertThat(result.getSource(),
-                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
-                        is(new File("c:\\tmp\\inputFile1.pdf"))));
+        assertThat(result.getSource(), is(new File(filePath)));
     }
 
     @Test
     public void protectedFileWithPasswordContainingSeparator() {
-        PdfFileSource result = new PdfFileSourceAdapter("/tmp/inputFile1.pdf:secret.pdf:password").getPdfFileSource();
+        var filePath = file.toAbsolutePath().toString();
+        PdfFileSource result = new PdfFileSourceAdapter(filePath + ":secret.pdf:password").getPdfFileSource();
         assertThat(result.getPassword(), is("secret.pdf:password"));
-        assertThat(result.getSource(),
-                CombinableMatcher.<File> either(is(new File("/tmp/inputFile1.pdf"))).or(
-                        is(new File("c:\\tmp\\inputFile1.pdf"))));
+        assertThat(result.getSource(), is(new File(filePath)));
     }
 
     @Test
     public void fileDoestExist() {
-        try {
-            new PdfFileSourceAdapter("/tmp/doesntexist.pdf:secret").getPdfFileSource();
-        } catch (SejdaRuntimeException e) {
-            assertThat(e.getMessage(), containsString("does not exist"));
-        }
+        var e = assertThrows(SejdaRuntimeException.class,
+                () -> new PdfFileSourceAdapter("/tmp/doesntexist.pdf:secret").getPdfFileSource());
+        assertThat(e.getMessage(), containsString("does not exist"));
     }
 
 }

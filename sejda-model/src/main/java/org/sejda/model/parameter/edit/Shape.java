@@ -17,7 +17,7 @@
  */
 package org.sejda.model.parameter.edit;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 public enum Shape implements FriendlyNamed {
     RECTANGLE("rectangle"),

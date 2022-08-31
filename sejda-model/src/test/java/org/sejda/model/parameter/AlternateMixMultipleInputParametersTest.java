@@ -18,25 +18,26 @@
  */
 package org.sejda.model.parameter;
 
-import static org.mockito.Mockito.mock;
-
-import java.io.IOException;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.sejda.TestUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.FileTaskOutput;
+import org.sejda.tests.TestUtils;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Andrea Vacondio
- *
  */
 public class AlternateMixMultipleInputParametersTest {
-    @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+
+    @TempDir
+    public Path folder;
 
     @Test
     public void testEquals() {
@@ -59,17 +60,19 @@ public class AlternateMixMultipleInputParametersTest {
     @Test
     public void invalidMinInputSize() throws IOException {
         AlternateMixMultipleInputParameters victim = new AlternateMixMultipleInputParameters();
-        victim.addInput(new PdfMixInput(PdfFileSource.newInstanceNoPassword(tmpFolder.newFile("test.pdf")), false, 1));
-        victim.setOutput(new FileTaskOutput(tmpFolder.newFile("out.pdf")));
+        victim.addInput(new PdfMixInput(
+                PdfFileSource.newInstanceNoPassword(Files.createTempFile(folder, "test", ".pdf").toFile()), false, 1));
+        victim.setOutput(new FileTaskOutput(Files.createTempFile(folder, "out", ".pdf").toFile()));
         TestUtils.assertInvalidParameters(victim);
     }
 
     @Test
-    public void testInvalidParametersNullSource() throws IOException {
+    public void testInvalidParametersNullSource(@TempDir Path folder) throws IOException {
         AlternateMixMultipleInputParameters victim = new AlternateMixMultipleInputParameters();
-        victim.addInput(new PdfMixInput(PdfFileSource.newInstanceNoPassword(tmpFolder.newFile("test.pdf")), false, 1));
+        victim.addInput(new PdfMixInput(
+                PdfFileSource.newInstanceNoPassword(Files.createTempFile(folder, "test", ".pdf").toFile()), false, 1));
         victim.addInput(new PdfMixInput(null, false, 1));
-        victim.setOutput(new FileTaskOutput(tmpFolder.newFile("out.pdf")));
+        victim.setOutput(new FileTaskOutput(Files.createTempFile(folder, "out", ".pdf").toFile()));
         TestUtils.assertInvalidParameters(victim);
     }
 }

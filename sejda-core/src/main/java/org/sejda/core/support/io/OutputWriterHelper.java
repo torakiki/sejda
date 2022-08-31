@@ -20,12 +20,12 @@
  */
 package org.sejda.core.support.io;
 
-import static java.util.Optional.of;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.sejda.core.support.io.IOUtils.findNewNameThatDoesNotExist;
-import static org.sejda.core.support.io.IOUtils.shortenFilename;
-import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
-import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
+import org.apache.commons.io.FileUtils;
+import org.sejda.commons.util.IOUtils;
+import org.sejda.model.output.ExistingOutputPolicy;
+import org.sejda.model.task.TaskExecutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,12 +39,12 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.sejda.model.output.ExistingOutputPolicy;
-import org.sejda.model.task.TaskExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Optional.of;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.sejda.model.util.IOUtils.findNewNameThatDoesNotExist;
+import static org.sejda.model.util.IOUtils.shortenFilename;
+import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
+import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
 
 /**
  * Utility class responsible for writing the input files to the output destination

@@ -18,15 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Objects.nonNull;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.io.IOException;
-import java.util.List;
-
 import org.sejda.commons.util.StringUtils;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.HorizontalAlign;
@@ -45,6 +36,15 @@ import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.io.IOException;
+import java.util.List;
+
+import static java.util.Objects.nonNull;
 
 /**
  * Component capable of writing text to a pdf page
@@ -134,7 +134,7 @@ public class PageTextWriter {
         }
 
         LOG.trace("media: {} crop: {}", mediaSize, cropSize);
-        LOG.trace("offsets: {}, {} and rotation", cropOffsetX, cropOffsetY, page.getRotation());
+        LOG.trace("offsets: {}, {} and rotation {}", cropOffsetX, cropOffsetY, page.getRotation());
 
         position = new Point((int) position.getX() + (int) cropOffsetX, (int) position.getY() + (int) cropOffsetY);
 
@@ -152,9 +152,9 @@ public class PageTextWriter {
                     String resolvedLabel = stringAndFont.getText();
 
                     if (resolvedFont == null) {
-                        throw new UnsupportedTextException("Unable to find suitable font for string \""
-                                + org.sejda.core.support.util.StringUtils.asUnicodes(resolvedLabel) + "\"",
-                                resolvedLabel);
+                        throw new UnsupportedTextException(
+                                "Unable to find suitable font for string \"" + StringUtils.asUnicodes(resolvedLabel)
+                                        + "\"", resolvedLabel);
                     }
                     
                     for(String textFragment: FontUtils.resolveTextFragments(resolvedLabel, resolvedFont)) {

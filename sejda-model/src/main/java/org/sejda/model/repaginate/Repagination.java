@@ -18,7 +18,7 @@
  */
 package org.sejda.model.repaginate;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 public enum Repagination implements FriendlyNamed {
     /**

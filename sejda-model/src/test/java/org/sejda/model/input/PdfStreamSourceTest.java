@@ -19,14 +19,15 @@
  */
 package org.sejda.model.input;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.exception.TaskIOException;
 
 import java.io.InputStream;
 
-import org.junit.Test;
-import org.sejda.model.exception.TaskIOException;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
@@ -34,29 +35,30 @@ import org.sejda.model.exception.TaskIOException;
  */
 public class PdfStreamSourceTest {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullStream() {
-        PdfStreamSource.newInstanceWithPassword(null, "fdsfs", null);
+        assertThrows(IllegalArgumentException.class,
+                () -> PdfStreamSource.newInstanceWithPassword(null, "fdsfs", null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullName() {
-        InputStream stream = mock(InputStream.class);
-        PdfStreamSource.newInstanceWithPassword(stream, null, null);
+        var stream = mock(InputStream.class);
+        assertThrows(IllegalArgumentException.class, () -> PdfStreamSource.newInstanceWithPassword(stream, null, null));
     }
 
     @Test
     public void testValidStream() {
-        InputStream stream = mock(InputStream.class);
-        PdfStreamSource instance = PdfStreamSource.newInstanceWithPassword(stream, "dsadsada", "dsdasdsa");
+        var stream = mock(InputStream.class);
+        var instance = PdfStreamSource.newInstanceWithPassword(stream, "dsadsada", "dsdasdsa");
         assertNotNull(instance);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testOpener() throws TaskIOException {
-        PdfSourceOpener opener = mock(PdfSourceOpener.class);
-        InputStream stream = mock(InputStream.class);
+        var opener = mock(PdfSourceOpener.class);
+        var stream = mock(InputStream.class);
         PdfStreamSource instance = PdfStreamSource.newInstanceWithPassword(stream, "dsadsada", "dsdasdsa");
         instance.open(opener);
         verify(opener).open(instance);

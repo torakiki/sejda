@@ -19,24 +19,21 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.nio.file.Files;
-
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
 
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParameters> {
 
     private SplitBySizeParameters parameters;
@@ -77,7 +74,7 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("/pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -97,7 +94,7 @@ public abstract class SplitBySizeTaskTest extends BaseTaskTest<SplitBySizeParame
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.NO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("/pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);

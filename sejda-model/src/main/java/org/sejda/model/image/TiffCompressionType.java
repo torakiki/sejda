@@ -19,7 +19,7 @@
  */
 package org.sejda.model.image;
 
-import org.sejda.common.FriendlyNamed;
+import org.sejda.model.FriendlyNamed;
 
 /**
  * Types of compression for the TIFF format.

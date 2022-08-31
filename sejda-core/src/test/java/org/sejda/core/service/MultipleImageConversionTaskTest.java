@@ -19,32 +19,27 @@
  */
 package org.sejda.core.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.sejda.TestUtils.encryptedAtRest;
-import static org.sejda.TestUtils.getEncryptionAtRestPolicy;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.tests.TestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
-import org.junit.Ignore;
-import org.junit.Test;
-import org.sejda.model.image.ImageColorType;
-import org.sejda.model.parameter.image.AbstractPdfToMultipleImageParameters;
-import org.sejda.model.pdf.page.PageRange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Andrea Vacondio
- * 
  */
-@Ignore
 public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMultipleImageParameters>
         extends BaseTaskTest<T> implements TestableTask<T> {
     private static Logger LOG = LoggerFactory.getLogger(MultipleImageConversionTaskTest.class);
@@ -63,7 +58,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     public void testExecuteStreamToMultipleImage() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
                 ImageColorType.GRAY_SCALE);
-        parameters.addSource(customInput("pdf/test_jpg.pdf"));
+        parameters.addSource(customInput("/pdf/test_jpg.pdf"));
         doExecute(parameters, 1);
     }
 
@@ -91,8 +86,8 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     public void encryptionAtRestTest() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
                 ImageColorType.GRAY_SCALE);
-        parameters.addSource(encryptedAtRest(mediumInput()));
-        parameters.addSource(encryptedAtRest(regularInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(mediumInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(regularInput()));
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setOutputPrefix("[BASENAME]-[PAGENUMBER]");
         doExecute(parameters, 2);
@@ -118,12 +113,12 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     public void encryptionAtRestRoundTrip() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
                 ImageColorType.COLOR_RGB);
-        parameters.addSource(encryptedAtRest(shortInput()));
-        parameters.addSource(encryptedAtRest(mediumInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(shortInput()));
+        parameters.addSource(TestUtils.encryptedAtRest(mediumInput()));
         parameters.addPageRange(new PageRange(1, 1));
 
         testContext.directoryOutputTo(parameters);
-        parameters.getOutput().setEncryptionAtRestPolicy(getEncryptionAtRestPolicy());
+        parameters.getOutput().setEncryptionAtRestPolicy(TestUtils.getEncryptionAtRestPolicy());
 
         execute(parameters);
 
@@ -131,8 +126,8 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         testContext.assertNoTaskWarnings();
         testContext.assertOutputSize(2).forEachRawOutput(path -> {
             try {
-                BufferedImage image = ImageIO
-                        .read(getEncryptionAtRestPolicy().decrypt(new FileInputStream(path.toFile())));
+                BufferedImage image = ImageIO.read(
+                        TestUtils.getEncryptionAtRestPolicy().decrypt(new FileInputStream(path.toFile())));
 
                 assertNotNull(image);
                 assertTrue(image.getHeight() > 0);
