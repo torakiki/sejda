@@ -20,11 +20,11 @@
 package org.sejda.model.parameter;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.model.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-import org.sejda.tests.TestUtils;
 
 import java.io.InputStream;
 

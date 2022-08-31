@@ -1,7 +1,7 @@
 /*
  * Created on 10/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,18 @@
  */
 package org.sejda.model.validation.validator;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.RectangularBox;
-import org.sejda.tests.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class NotNegativeCoordinatesValidatorTest {
 
     private NotNegativeCoordinatesValidator victim = new NotNegativeCoordinatesValidator();
-    private RectangularBox box;
-
-    @BeforeEach
-    public void setUp() {
-        box = RectangularBox.newInstance(0, 0, 10, 10);
-    }
 
     @Test
     public void testNull() {
@@ -47,31 +38,20 @@ public class NotNegativeCoordinatesValidatorTest {
     }
 
     @Test
-    public void testTopNegative() {
-        TestUtils.setProperty(box, "top", -1);
-        assertFalse(victim.isValid(box, null));
-    }
-
-    @Test
     public void testBottomNegative() {
-        TestUtils.setProperty(box, "bottom", -1);
+        var box = RectangularBox.newInstance(-1, 0, 10, 10);
         assertFalse(victim.isValid(box, null));
     }
 
     @Test
     public void testLeftNegative() {
-        TestUtils.setProperty(box, "left", -1);
-        assertFalse(victim.isValid(box, null));
-    }
-
-    @Test
-    public void testRightNegative() {
-        TestUtils.setProperty(box, "right", -1);
+        var box = RectangularBox.newInstance(0, -1, 10, 10);
         assertFalse(victim.isValid(box, null));
     }
 
     @Test
     public void testValid() {
+        var box = RectangularBox.newInstance(0, 0, 10, 10);
         assertTrue(victim.isValid(box, null));
     }
 }

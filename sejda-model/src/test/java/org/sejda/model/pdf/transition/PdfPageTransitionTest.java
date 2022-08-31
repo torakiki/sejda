@@ -1,7 +1,7 @@
 package org.sejda.model.pdf.transition;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

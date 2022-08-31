@@ -1,6 +1,7 @@
 /*
+ * Created on 30/ott/2010
  *
- * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * 
  * This file is part of the Sejda source code
  *
@@ -17,22 +18,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.service;
+package org.sejda.tests.tasks;
 
-import java.io.IOException;
+import org.sejda.model.parameter.base.TaskParameters;
+import org.sejda.model.task.Task;
 
-import org.sejda.core.Sejda;
-import org.sejda.model.exception.TaskException;
+/**
+ * @author Andrea Vacondio
+ * 
+ * @param <T>
+ */
+public interface TestableTask<T extends TaskParameters> {
 
-public abstract class WithUnethicalReadProperty {
-    public WithUnethicalReadProperty(Boolean value) throws TaskException, IOException {
-        try {
-            System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, String.valueOf(value));
-            execute();
-        } finally {
-            System.setProperty(Sejda.UNETHICAL_READ_PROPERTY_NAME, "false");
-        }
-    }
-
-    abstract public void execute() throws TaskException, IOException;
+    /**
+     * @return the task to be tested
+     */
+    Task<T> getTask();
 }

@@ -39,4 +39,5 @@ module org.sejda.core {
     exports org.sejda.core.support.prefix.processor;
     exports org.sejda.core.support.util;
     exports org.sejda.core.notification.dsl;
+    exports org.sejda.core.context;
 }

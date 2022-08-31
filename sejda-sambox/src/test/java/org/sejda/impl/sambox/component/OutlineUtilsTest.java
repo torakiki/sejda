@@ -197,24 +197,24 @@ public class OutlineUtilsTest {
 
     @Test
     public void noOutlineFlat() throws IOException {
-        try (PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_no_outline.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_no_outline.pdf")))) {
             assertTrue(OutlineUtils.getFlatOutline(doc).isEmpty());
         }
     }
 
     @Test
     public void outlineFlat() throws IOException {
-        try (PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
             assertEquals(5, OutlineUtils.getFlatOutline(doc).size());
         }
     }
 
     @Test
     public void outlineFlatIntPageDestinations() throws IOException {
-        try (PDDocument doc = PDFParser.parse(SeekableSources
-                .inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/destination_pages_as_int.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/destination_pages_as_int.pdf")))) {
             List<OutlineItem> flatOutline = OutlineUtils.getFlatOutline(doc);
             assertEquals(5, flatOutline.size());
             assertEquals(1, flatOutline.get(0).page);
@@ -227,8 +227,8 @@ public class OutlineUtilsTest {
 
     @Test
     public void outlineLevels() throws IOException {
-        try (PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+        try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
             Set<Integer> levels = OutlineUtils.getOutlineLevelsWithPageDestination(doc);
             assertEquals(3, levels.size());
             assertTrue(levels.contains(1));

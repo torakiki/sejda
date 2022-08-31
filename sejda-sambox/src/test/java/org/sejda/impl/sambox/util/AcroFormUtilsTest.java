@@ -43,7 +43,7 @@ public class AcroFormUtilsTest {
     @Test
     public void megeDetaults() throws IOException {
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/forms/simple_form_with_full_dic.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDAcroForm destination = new PDAcroForm(new PDDocument());
             AcroFormUtils.mergeDefaults(anotherDoc.getDocumentCatalog().getAcroForm(), destination);
             assertEquals(2, destination.getQuadding());
@@ -116,7 +116,7 @@ public class AcroFormUtilsTest {
     public void mergeFormsWithProcSet() throws IOException {
 
         try (PDDocument anotherDoc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/forms/simple_form_proc_set.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_proc_set.pdf")))) {
             PDAcroForm destination = new PDAcroForm(new PDDocument());
             AcroFormUtils.mergeDefaults(anotherDoc.getDocumentCatalog().getAcroForm(), destination);
             COSBase procSet = destination.getDefaultResources().getCOSObject().getItem(COSName.PROC_SET);

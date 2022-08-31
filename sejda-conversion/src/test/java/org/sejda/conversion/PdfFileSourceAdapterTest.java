@@ -51,7 +51,7 @@ public class PdfFileSourceAdapterTest {
     @BeforeEach
     public void setUp() throws IOException {
         file = folder.resolve("inputFile1.pdf");
-        Files.copy(getClass().getResourceAsStream("/pdf/test_outline.pdf"), file);
+        Files.copy(getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf"), file);
     }
 
     @Test

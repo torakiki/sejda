@@ -1,7 +1,7 @@
 /*
  * Created on 10/set/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,17 @@
  */
 package org.sejda.model.validation.validator;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.RectangularBox;
-import org.sejda.tests.TestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class CoordinatesValidatorTest {
 
     private CoordinatesValidator victim = new CoordinatesValidator();
-    private RectangularBox box;
-
-    @BeforeEach
-    public void setUp() {
-        box = RectangularBox.newInstance(0, 0, 10, 10);
-    }
 
     @Test
     public void testNull() {
@@ -47,19 +37,8 @@ public class CoordinatesValidatorTest {
     }
 
     @Test
-    public void testLeftGreater() {
-        TestUtils.setProperty(box, "left", 11);
-        assertFalse(victim.isValid(box, null));
-    }
-
-    @Test
-    public void testBottomGreater() {
-        TestUtils.setProperty(box, "bottom", 11);
-        assertFalse(victim.isValid(box, null));
-    }
-
-    @Test
     public void testValid() {
+        var box = RectangularBox.newInstance(0, 0, 10, 10);
         assertTrue(victim.isValid(box, null));
     }
 }

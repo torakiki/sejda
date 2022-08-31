@@ -19,7 +19,7 @@
 package org.sejda.model;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

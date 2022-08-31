@@ -26,7 +26,7 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.label.PdfLabelNumberingStyle;
 import org.sejda.model.pdf.label.PdfPageLabel;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

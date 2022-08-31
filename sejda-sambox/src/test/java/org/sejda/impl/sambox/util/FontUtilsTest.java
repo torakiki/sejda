@@ -212,7 +212,7 @@ public class FontUtilsTest {
 
     @Test
     public void testCanDisplayType0FontsThatDontThrow() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("/pdf/2-up-sample.pdf");
+        PDDocument doc = getTestDoc("pdf/2-up-sample.pdf");
 
         PDResources res = doc.getPage(0).getResources();
         PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Form2"));
@@ -230,7 +230,7 @@ public class FontUtilsTest {
             return;
         }
 
-        PDDocument doc = getTestDoc("/pdf/subset-font.pdf");
+        PDDocument doc = getTestDoc("pdf/subset-font.pdf");
 
         PDResources res = doc.getPage(0).getResources();
         PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("Xf1"));
@@ -344,7 +344,7 @@ public class FontUtilsTest {
 
     @Test
     public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("/pdf/font-with-zero-widths.pdf");
+        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
         List<String> result = FontUtils.resolveTextFragments("FRIDA", font);
         assertThat(result, is(Arrays.asList("F", "RIDA")));
@@ -352,7 +352,7 @@ public class FontUtilsTest {
 
     @Test
     public void vectorFontWithSpace() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("/pdf/font-with-vector-font.pdf");
+        PDDocument doc = getTestDoc("pdf/font-with-vector-font.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
 
         assertThat(FontUtils.canDisplaySpace(font), is(true));

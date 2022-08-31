@@ -22,7 +22,7 @@ package org.sejda.model.task;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.parameter.SimpleSplitParameters;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 /**
  * @author Andrea Vacondio

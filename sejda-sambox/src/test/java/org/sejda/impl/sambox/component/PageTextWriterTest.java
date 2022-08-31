@@ -66,7 +66,7 @@ public class PageTextWriterTest {
     
     @Test
     public void brokenFontWithZeroWidthLetters() throws TaskIOException, IOException {
-        PDDocument doc = getTestDoc("/pdf/font-with-zero-widths.pdf");
+        PDDocument doc = getTestDoc("pdf/font-with-zero-widths.pdf");
 
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
         PDPage page = new PDPage();

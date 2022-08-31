@@ -52,8 +52,8 @@ public class OutlineDistillerTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
+        document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
     }
 
     @AfterEach
@@ -115,8 +115,8 @@ public class OutlineDistillerTest {
 
     @Test
     public void destinationTypeIsPreservedInLeaves() throws IOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/large_outline.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/large_outline.pdf")))) {
             mapping.addLookupEntry(document.getPage(2), new PDPage());
             PDDocumentOutline outline = new PDDocumentOutline();
             new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
@@ -141,7 +141,7 @@ public class OutlineDistillerTest {
     public void fallbackHandlesBrokenDestinations() throws IOException {
         // https://github.com/torakiki/pdfsam/issues/361
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/page_dests_with_number_insteadof_refs.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/page_dests_with_number_insteadof_refs.pdf")))) {
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());
             }
@@ -155,7 +155,8 @@ public class OutlineDistillerTest {
     public void fallbackHandlesBrokenDestinationsWithNonExistingPageNumber() throws IOException {
         // https://github.com/torakiki/pdfsam/issues/361
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/page_dests_with_number_insteadof_refs_wrong_num.pdf")))) {
+                getClass().getClassLoader()
+                        .getResourceAsStream("pdf/page_dests_with_number_insteadof_refs_wrong_num.pdf")))) {
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());
             }
@@ -168,7 +169,7 @@ public class OutlineDistillerTest {
     @Test
     public void infiniteLoop() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/infinite_outline.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/infinite_outline.pdf")))) {
 
             for (PDPage current : document.getPages()) {
                 mapping.addLookupEntry(current, new PDPage());

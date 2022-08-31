@@ -18,15 +18,26 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.core.service.PdfToMultiplePngTaskTest;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToPngParameters;
 import org.sejda.model.task.Task;
+import org.sejda.tests.tasks.MultipleImageConversionTaskTest;
 
 /**
  * @author Andrea Vacondio
- *
  */
-public class PdfToMultiplePngSamboxTaskTest extends PdfToMultiplePngTaskTest {
+public class PdfToMultiplePngSamboxTaskTest extends MultipleImageConversionTaskTest<PdfToPngParameters> {
+
+    @Override
+    public PdfToPngParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
+        PdfToPngParameters parameters = new PdfToPngParameters(type);
+        parameters.setOutputPrefix("[CURRENTPAGE]");
+        parameters.setResolutionInDpi(300);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        return parameters;
+    }
+
     @Override
     public Task<PdfToPngParameters> getTask() {
         return new PdfToMultipleImageTask();

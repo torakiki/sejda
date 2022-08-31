@@ -23,7 +23,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.output.FileTaskOutput;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;

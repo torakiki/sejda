@@ -20,7 +20,7 @@ package org.sejda.model.parameter.image;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 /**
  * @author Andrea Vacondio

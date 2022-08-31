@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInput;
-import static org.sejda.core.service.BaseTaskTest.customNonPdfInputAsFileSource;
+import static org.sejda.tests.tasks.BaseTaskTest.customNonPdfInput;
+import static org.sejda.tests.tasks.BaseTaskTest.customNonPdfInputAsFileSource;
 import static org.sejda.tests.TestUtils.encryptedAtRest;
 
 public class PageImageWriterTest {

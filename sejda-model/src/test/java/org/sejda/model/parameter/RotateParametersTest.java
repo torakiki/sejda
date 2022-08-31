@@ -25,7 +25,7 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.io.InputStream;
 

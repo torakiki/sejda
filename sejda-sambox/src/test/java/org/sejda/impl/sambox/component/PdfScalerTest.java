@@ -47,8 +47,8 @@ public class PdfScalerTest {
 
     @Test
     public void shrinkContentNoBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.CONTENT);
             scaler.scale(document, 0.5);
             PDPage page = document.getPage(0);
@@ -62,8 +62,8 @@ public class PdfScalerTest {
 
     @Test
     public void shrinkContentYesBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PDPage page = document.getPage(0);
             PDRectangle yesBox = new PDRectangle(0, 0, 200, 400);
             PDRectangle cropBox = new PDRectangle(0, 0, 400, 800);
@@ -84,8 +84,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandContentNoBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.CONTENT);
             scaler.scale(document, 1.5);
             PDPage page = document.getPage(0);
@@ -99,8 +99,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandContentYesBoxesOverflow() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PDPage page = document.getPage(0);
             PDRectangle yesBox = new PDRectangle(0, 0, 200, 400);
             PDRectangle cropBox = new PDRectangle(0, 0, 400, 800);
@@ -121,8 +121,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandContentYesBoxesNoOverflow() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PDPage page = document.getPage(0);
             PDRectangle yesBox = new PDRectangle(0, 0, 200, 400);
             PDRectangle cropBox = new PDRectangle(0, 0, 400, 800);
@@ -142,8 +142,8 @@ public class PdfScalerTest {
 
     @Test
     public void shrinkPageNoBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
             scaler.scale(document, 0.5);
             PDPage page = document.getPage(0);
@@ -158,8 +158,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandPageNoBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
             scaler.scale(document, 1.5);
             PDPage page = document.getPage(0);
@@ -174,8 +174,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandPagesYesBoxes() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/one_page.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/one_page.pdf")))) {
             PDPage page = document.getPage(0);
             PDRectangle yesBox = new PDRectangle(0, 0, 200, 400);
             PDRectangle cropBox = new PDRectangle(0, 0, 400, 800);
@@ -196,8 +196,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandPageAdjustOutlineCoordinates() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.PAGE);
             scaler.scale(document, PDRectangle.A0.getHeight() / PDRectangle.A4.getHeight());
             PDOutlineItem outlineItem = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
@@ -215,8 +215,8 @@ public class PdfScalerTest {
 
     @Test
     public void expandContentAdjustOutlineCoordinates() throws IOException, TaskIOException {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")))) {
             PdfScaler scaler = new PdfScaler(ScaleType.CONTENT);
             scaler.scale(document, PDRectangle.A5.getHeight() / PDRectangle.A4.getHeight());
             PDOutlineItem outlineItem = StreamSupport.stream(Spliterators.spliteratorUnknownSize(

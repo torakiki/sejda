@@ -7,7 +7,7 @@ import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

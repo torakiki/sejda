@@ -22,7 +22,7 @@ package org.sejda.model.parameter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.output.MultipleTaskOutput;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import static org.mockito.Mockito.mock;
 

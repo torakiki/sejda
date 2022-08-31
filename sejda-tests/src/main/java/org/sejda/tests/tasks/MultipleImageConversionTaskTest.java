@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.service;
+package org.sejda.tests.tasks;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.image.ImageColorType;
@@ -44,7 +44,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         extends BaseTaskTest<T> implements TestableTask<T> {
     private static Logger LOG = LoggerFactory.getLogger(MultipleImageConversionTaskTest.class);
 
-    abstract T getMultipleImageParametersWithoutSource(ImageColorType type);
+    public abstract T getMultipleImageParametersWithoutSource(ImageColorType type);
 
     @Test
     public void testExecuteEncryptedStreamToMultipleImage() throws IOException {
@@ -138,7 +138,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
         });
     }
 
-    void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {
+    protected void doExecute(AbstractPdfToMultipleImageParameters parameters, int size) throws IOException {
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();

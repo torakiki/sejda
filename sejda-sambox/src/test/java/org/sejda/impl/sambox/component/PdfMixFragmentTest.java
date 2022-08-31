@@ -41,8 +41,8 @@ public class PdfMixFragmentTest {
     @Test
     public void nextPage() throws TaskIOException, TaskPermissionsException, IOException {
         try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/2_pages.pdf"),
-                        "test.pdf")))) {
+                PdfStreamSource.newInstanceNoPassword(
+                        getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")))) {
             assertTrue(victim.hasNextPage());
             assertThat(
                     new PdfTextExtractorByArea().extractTextFromArea(victim.nextPage(), new Rectangle(54, 56, 60, 21))
@@ -57,27 +57,24 @@ public class PdfMixFragmentTest {
 
     @Test
     public void numberOfPages() throws TaskIOException, TaskPermissionsException, IOException {
-        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/2_pages.pdf"),
-                        "test.pdf")))) {
+        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")))) {
             assertEquals(2, victim.getNumberOfPages());
         }
     }
 
     @Test
     public void step() throws TaskIOException, TaskPermissionsException, IOException {
-        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/2_pages.pdf"), "test.pdf"),
-                true, 2))) {
+        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 2))) {
             assertEquals(2, victim.getStep());
         }
     }
 
     @Test
     public void reverse() throws TaskIOException, TaskPermissionsException, IOException {
-        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/2_pages.pdf"), "test.pdf"),
-                true, 1))) {
+        try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 1))) {
             assertTrue(victim.hasNextPage());
             assertThat(
                     new PdfTextExtractorByArea().extractTextFromArea(victim.nextPage(), new Rectangle(54, 56, 60, 21))

@@ -21,7 +21,7 @@ package org.sejda.model.parameter.base;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.output.SingleTaskOutput;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import static org.mockito.Mockito.mock;
 

@@ -37,13 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SamboxOutlineLevelsHandlerTest {
 
     private PDDocument fromResource(String name) throws IOException {
-        return PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream(name)));
+        return PDFParser.parse(
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(name)));
     }
 
 
     @Test
     public void getPageNumbersAtOutlineLevel() throws IOException {
-        try (PDDocument document = fromResource("/pdf/test_outline.pdf")) {
+        try (PDDocument document = fromResource("pdf/test_outline.pdf")) {
             org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
             assertTrue(victim.getPageDestinationsForLevel(4).getPages().isEmpty());
             assertEquals(2, victim.getPageDestinationsForLevel(2).getPages().size());
@@ -53,7 +54,7 @@ public class SamboxOutlineLevelsHandlerTest {
 
     @Test
     public void getPageNumbersAtOutlineLevelNoOutline() throws IOException {
-        try (PDDocument document = fromResource("/pdf/test_no_outline.pdf")) {
+        try (PDDocument document = fromResource("pdf/test_no_outline.pdf")) {
             org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
             assertEquals(0, victim.getPageDestinationsForLevel(2).getPages().size());
         }
@@ -61,7 +62,7 @@ public class SamboxOutlineLevelsHandlerTest {
 
     @Test
     public void getPageNumbersAtOutlineLevelMatching() throws IOException {
-        try (PDDocument document = fromResource("/pdf/test_outline.pdf")) {
+        try (PDDocument document = fromResource("pdf/test_outline.pdf")) {
             org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document,
                     "(.+)page(.*)");
             assertEquals(1, victim.getPageDestinationsForLevel(2).getPages().size());
@@ -92,7 +93,7 @@ public class SamboxOutlineLevelsHandlerTest {
 
     @Test
     public void newLinesInBookmarks() throws IOException {
-        try (PDDocument document = fromResource("/pdf/new_line_in_bookmarks.pdf")) {
+        try (PDDocument document = fromResource("pdf/new_line_in_bookmarks.pdf")) {
             org.sejda.model.outline.OutlineLevelsHandler victim = new SamboxOutlineLevelsHandler(document, null);
             assertEquals(3, victim.getPageDestinationsForLevel(1).getPages().size());
         }

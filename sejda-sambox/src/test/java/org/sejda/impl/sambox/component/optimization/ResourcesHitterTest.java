@@ -49,7 +49,7 @@ public class ResourcesHitterTest {
     @Test
     public void testAccept() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/draw_w_transparency.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/draw_w_transparency.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
@@ -73,7 +73,7 @@ public class ResourcesHitterTest {
     @Test
     public void anotationsAppearanceIsProcessed() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page = document.getPage(0);
             List<PDAppearanceDictionary> appearence = page.getAnnotations().stream()
@@ -102,8 +102,8 @@ public class ResourcesHitterTest {
 
     @Test
     public void testType3() throws Exception {
-        try (PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/type3.pdf")))) {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/type3.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
@@ -115,7 +115,7 @@ public class ResourcesHitterTest {
     @Test
     public void testTilingPattern() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/pattern_shared_res.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/pattern_shared_res.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
@@ -136,7 +136,7 @@ public class ResourcesHitterTest {
     @Test
     public void sameFontSameInUseFontInstance() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/multiple_res_dic_sharing_same_font.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/multiple_res_dic_sharing_same_font.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page0 = document.getPage(0);
             InUseDictionary page0Font = page0.getResources().getCOSObject()
@@ -153,7 +153,7 @@ public class ResourcesHitterTest {
     @Test
     public void unusedExtgstateAreNotHit() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/shared_pages_res_unused_extgstate.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_pages_res_unused_extgstate.pdf")))) {
             document.getPages().forEach(victim::accept);
             PDPage page0 = document.getPage(0);
 

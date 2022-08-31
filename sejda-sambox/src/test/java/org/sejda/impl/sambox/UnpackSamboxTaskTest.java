@@ -18,15 +18,48 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.core.service.UnpackTaskTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.sejda.model.output.DirectoryTaskOutput;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.Task;
+import org.sejda.tests.tasks.BaseTaskTest;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Andrea Vacondio
- *
  */
-public class UnpackSamboxTaskTest extends UnpackTaskTest {
+public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
+
+    private UnpackParameters parameters;
+    @TempDir
+    public Path folder;
+
+    @Test
+    public void unpackAnnotations() throws IOException {
+        executeTest("/pdf/attachments_as_annots.pdf");
+    }
+
+    @Test
+    public void unpackNamedTree() throws IOException {
+        executeTest("/pdf/attachments_as_named_tree.pdf");
+    }
+
+    public void executeTest(String filename) throws IOException {
+        File out = Files.createTempDirectory(folder, "sejda").toFile();
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.addSource(customInput(filename));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        execute(parameters);
+        assertEquals(1, out.list().length);
+    }
 
     @Override
     public Task<UnpackParameters> getTask() {

@@ -28,10 +28,14 @@ module org.sejda.tests {
     requires org.hibernate.validator;
     requires org.sejda.commons;
     requires org.sejda.sambox;
+    requires org.sejda.core;
     requires org.mockito;
     requires org.apache.commons.lang3;
     requires org.apache.commons.io;
     requires org.hamcrest;
 
     exports org.sejda.tests;
+    opens pdf;
+    opens pdf.forms;
+    opens image;
 }

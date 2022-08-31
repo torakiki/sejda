@@ -20,8 +20,8 @@
 package org.sejda.model.parameter;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.model.TestUtils;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
-import org.sejda.tests.TestUtils;
 
 /**
  * @author Andrea Vacondio

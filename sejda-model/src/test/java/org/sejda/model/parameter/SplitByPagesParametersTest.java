@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.io.InputStream;
 

@@ -36,8 +36,8 @@ public class TestUtils {
             return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
         }
 
-        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream(name),
-                randomAlphanumeric(16) + ".pdf");
+        PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(
+                TestUtils.class.getClassLoader().getResourceAsStream(name), randomAlphanumeric(16) + ".pdf");
 
         return new DefaultPdfSourceOpener().open(source).getUnderlyingPDDocument();
     }

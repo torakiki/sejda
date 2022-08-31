@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.sejda.tests.TestUtils.encryptedAtRest;
+import static org.sejda.model.TestUtils.encryptedAtRest;
 
 /**
  * @author Andrea Vacondio
@@ -73,9 +73,8 @@ public class PdfFileSourceTest {
     
     @Test
     public void encryptedAtRestKeepsOriginalFilename_stream() throws IOException {
-        PdfStreamSource source = encryptedAtRest(
-                PdfStreamSource.newInstanceNoPassword(this.getClass().getResourceAsStream("/pdf/test_file.pdf"),
-                        "test_file.pdf"));
+        PdfStreamSource source = encryptedAtRest(PdfStreamSource.newInstanceNoPassword(
+                this.getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "test_file.pdf"));
         
         assertThat(source.getSeekableSource().id(), endsWith("test_file.pdf"));
     }

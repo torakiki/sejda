@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 import org.sejda.core.Sejda;
-import org.sejda.core.service.BaseTaskTest;
+import org.sejda.tests.tasks.BaseTaskTest;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskIOException;

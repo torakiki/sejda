@@ -323,7 +323,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void popupRelevant() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             PDPage firstNew = new PDPage();
             lookup.addLookupEntry(firstOrigin, firstNew);
@@ -340,7 +340,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void removePopupIfGarbage() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             // let's put some garbage in place of the popup
             firstOrigin.getAnnotations().stream().filter(a -> !(a instanceof PDAnnotationPopup))
@@ -361,7 +361,7 @@ public class AnnotationsDistillerTest {
     @Test
     public void popupRelevantRevertedOrder() throws IOException {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
-                getClass().getResourceAsStream("/pdf/popup_annotation.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
             List<PDAnnotation> annots = firstOrigin.getAnnotations();
             Collections.reverse(annots);

@@ -50,7 +50,7 @@ public class PDDocumentHandlerTest {
 
     @Test
     public void discardBeads() throws IOException {
-        try (PDDocument document = testDoc("/pdf/one_page.pdf")) {
+        try (PDDocument document = testDoc("pdf/one_page.pdf")) {
             PDPage page = document.getPage(0);
             page.setThreadBeads(Arrays.asList(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
@@ -96,7 +96,7 @@ public class PDDocumentHandlerTest {
 
     @Test
     public void inheritedMediaBox() throws IOException {
-        try (PDDocumentHandler handler1 = new PDDocumentHandler(testDoc("/pdf/media_box_inherited.pdf"))) {
+        try (PDDocumentHandler handler1 = new PDDocumentHandler(testDoc("pdf/media_box_inherited.pdf"))) {
             PDPage page = handler1.getPage(1);
             assertEquals(PDRectangle.A4, page.getMediaBox());
 
@@ -113,7 +113,7 @@ public class PDDocumentHandlerTest {
     public void encryptionAtRestOutputRoundtrip() throws IOException, TaskException {
         File tmpFile = IOUtils.createTemporaryBuffer();
         int pageNum = 0;
-        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("/pdf/test-pdf.pdf"))) {
+        try (PDDocumentHandler handler = new PDDocumentHandler(testDoc("pdf/test-pdf.pdf"))) {
             pageNum = handler.getNumberOfPages();
             handler.savePDDocument(tmpFile, getEncryptionAtRestPolicy());
         }
@@ -128,7 +128,7 @@ public class PDDocumentHandlerTest {
     }
 
     private PDDocument testDoc(String resourceName) throws IOException {
-        return PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream(resourceName)));
+        return PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream(resourceName)));
     }
 }

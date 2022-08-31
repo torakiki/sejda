@@ -27,6 +27,8 @@ import org.sejda.model.validation.constraint.ValidCoordinates;
 
 import java.awt.Point;
 
+import static org.sejda.commons.util.RequireUtils.requireArg;
+
 /**
  * A rectangular box with rotation capabilities.
  *
@@ -41,12 +43,8 @@ public final class RectangularBox {
     private int right;
 
     public RectangularBox(int bottom, int left, int top, int right) {
-        if (top <= bottom) {
-            throw new IllegalArgumentException("Top must be greater then bottom.");
-        }
-        if (right <= left) {
-            throw new IllegalArgumentException("Right must be greater then left.");
-        }
+        requireArg(top > bottom, "Top must be greater then bottom");
+        requireArg(right > left, "Right must be greater then left");
 
         this.bottom = bottom;
         this.left = left;

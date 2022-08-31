@@ -205,14 +205,14 @@ public class ReadOnlyFilteredCOSStreamTest {
 
     @Test
     public void readOnly() throws IOException {
-        COSStream existing = spy(new COSStream());
-        existing.setItem(COSName.A, COSInteger.THREE);
-        victim = ReadOnlyFilteredCOSStream.readOnly(existing);
+        var spy = spy(COSStream.class);
+        spy.setItem(COSName.A, COSInteger.THREE);
+        victim = ReadOnlyFilteredCOSStream.readOnly(spy);
         assertEquals(COSInteger.THREE, victim.getItem(COSName.A));
-        verify(existing).setEncryptor(null);
-        verify(existing, never()).getFilteredStream();
+        verify(spy).setEncryptor(null);
+        verify(spy, never()).getFilteredStream();
         victim.getFilteredStream();
-        verify(existing).getFilteredStream();
+        verify(spy).getFilteredStream();
     }
 
     @Test

@@ -1,7 +1,6 @@
 package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.core.service.BaseTaskTest;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.model.exception.TaskIOException;
@@ -11,6 +10,7 @@ import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.task.Task;
+import org.sejda.tests.tasks.BaseTaskTest;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

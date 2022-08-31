@@ -92,13 +92,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.sejda</groupId>
-			<artifactId>sejda-core</artifactId>
-			<version>${project.version}</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.sejda</groupId>
 			<artifactId>sejda-tests</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>

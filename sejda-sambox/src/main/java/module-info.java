@@ -44,5 +44,6 @@ module org.sejda.impl.sambox {
     exports org.sejda.impl.sambox.component.optimization;
     exports org.sejda.impl.sambox.component.split;
     exports org.sejda.impl.sambox.util;
-
+    
+    uses org.sejda.model.pdf.font.Type0FontsProvider;
 }

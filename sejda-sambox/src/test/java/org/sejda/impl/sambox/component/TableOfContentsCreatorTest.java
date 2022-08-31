@@ -123,8 +123,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddToCTop() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -138,8 +138,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddToCWithBlankPageIfOdd() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();
@@ -154,8 +154,8 @@ public class TableOfContentsCreatorTest {
 
     @Test
     public void testAddTwoPagesToC() throws IOException, TaskException {
-        PDDocument doc = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream("/pdf/test_outline.pdf")));
+        PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_outline.pdf")));
         PDPage firstPage = doc.getPage(0);
         assertEquals(3, doc.getNumberOfPages());
         MergeParameters params = new MergeParameters();

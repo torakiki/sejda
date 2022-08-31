@@ -1,7 +1,7 @@
 package org.sejda.impl.sambox.component.image;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.core.service.BaseTaskTest;
+import org.sejda.tests.tasks.BaseTaskTest;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
 import org.sejda.impl.sambox.util.PixelCompareUtils;
 import org.sejda.model.exception.TaskException;

@@ -35,7 +35,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.sejda.core.service.BaseTaskTest.customInput;
+import static org.sejda.tests.tasks.BaseTaskTest.customInput;
 
 public class PixelCompareUtils {
 

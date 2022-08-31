@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.service;
+package org.sejda.tests.tasks;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.context.DefaultSejdaContext;
 import org.sejda.core.context.SejdaContext;
+import org.sejda.core.service.DefaultTaskExecutionService;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.FileSource;
@@ -49,7 +50,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -19,12 +19,12 @@
 package org.sejda.impl.sambox.component;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.core.service.BaseTaskTest;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.util.IOUtils;
+import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,21 +45,22 @@ public class DefaultPdfSourceOpenerTest {
 
     @Test
     public void openDocument() throws TaskIOException {
-        assertNotNull(new DefaultPdfSourceOpener().open(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/test_file.pdf"),
-                        "my source")));
+        assertNotNull(new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceNoPassword(
+                getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf"), "my source")));
     }
 
     @Test
     public void openDocumentWithPasswordAES128() throws TaskIOException {
         assertNotNull(new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceWithPassword(
-                getClass().getResourceAsStream("/pdf/encrypted_AES128_user_pwd.pdf"), "my source", "test")));
+                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf"), "my source",
+                "test")));
     }
 
     @Test
     public void openDocumentWithPasswordAES256() throws TaskIOException {
         assertNotNull(new DefaultPdfSourceOpener().open(PdfStreamSource.newInstanceWithPassword(
-                getClass().getResourceAsStream("/pdf/encrypted_AES256_user_pwd.pdf"), "my source", "test")));
+                getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES256_user_pwd.pdf"), "my source",
+                "test")));
     }
 
     @Test
@@ -67,7 +68,7 @@ public class DefaultPdfSourceOpenerTest {
         try {
             File tmp = IOUtils.createTemporaryBufferWithName("dumbo.pdf");
             OutputStream out = new FileOutputStream(tmp);
-            InputStream in = getClass().getResourceAsStream("/pdf/encrypted_AES128_user_pwd.pdf");
+            InputStream in = getClass().getClassLoader().getResourceAsStream("pdf/encrypted_AES128_user_pwd.pdf");
 
             try {
                 org.apache.commons.io.IOUtils.copy(in, out);
@@ -86,14 +87,14 @@ public class DefaultPdfSourceOpenerTest {
     @Test
     public void openDocumentError() {
         assertThrows(TaskIOException.class, () -> new DefaultPdfSourceOpener().open(
-                PdfStreamSource.newInstanceNoPassword(getClass().getResourceAsStream("/pdf/not_a_pdf.pdf"),
-                        "my source")));
+                PdfStreamSource.newInstanceNoPassword(
+                        getClass().getClassLoader().getResourceAsStream("pdf/not_a_pdf.pdf"), "my source")));
 
     }
 
     @Test
     public void openDocumentTwice_streamSource_not_possible() throws TaskIOException, IOException {
-        try (var is = getClass().getResourceAsStream("/pdf/test_file.pdf")) {
+        try (var is = getClass().getClassLoader().getResourceAsStream("pdf/test_file.pdf")) {
             PdfStreamSource source = PdfStreamSource.newInstanceNoPassword(is, "my source");
             try (PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
                 assertNotNull(handler.getUnderlyingPDDocument());

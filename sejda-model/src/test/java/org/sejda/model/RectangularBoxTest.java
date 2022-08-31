@@ -21,7 +21,7 @@ package org.sejda.model;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.rotation.Rotation;
-import org.sejda.tests.TestUtils;
+import org.sejda.model.TestUtils;
 
 import java.awt.Point;
 

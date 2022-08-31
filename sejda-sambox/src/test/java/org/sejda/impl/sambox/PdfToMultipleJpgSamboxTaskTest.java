@@ -17,11 +17,49 @@
  */
 package org.sejda.impl.sambox;
 
-import org.sejda.core.service.PdfToMultipleJpegTaskTest;
+import org.junit.jupiter.api.Test;
+import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.PdfToJpegParameters;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
+import org.sejda.tests.tasks.MultipleImageConversionTaskTest;
 
-public class PdfToMultipleJpgSamboxTaskTest extends PdfToMultipleJpegTaskTest {
+import java.io.IOException;
+
+public class PdfToMultipleJpgSamboxTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
+
+    @Override
+    public PdfToJpegParameters getMultipleImageParametersWithoutSource(ImageColorType type) {
+        PdfToJpegParameters parameters = new PdfToJpegParameters(type);
+        parameters.setOutputPrefix("[CURRENTPAGE]");
+        parameters.setResolutionInDpi(300);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        return parameters;
+    }
+
+    @Test
+    public void colorAndCompressionCombinations() throws IOException {
+        for (ImageColorType type : ImageColorType.values()) {
+            PdfToJpegParameters parameters = getMultipleImageParametersWithoutSource(type);
+            parameters.addSource(shortInput());
+            parameters.addPageRange(new PageRange(1, 1));
+            parameters.setQuality(35);
+            doExecute(parameters, 1);
+        }
+    }
+
+    @Test
+    public void noPages() throws IOException {
+        PdfToJpegParameters parameters = new PdfToJpegParameters(ImageColorType.COLOR_RGB);
+        parameters.addSource(shortInput());
+        parameters.addPageRange(new PageRange(100, 200));
+        testContext.directoryOutputTo(parameters);
+
+        testContext.listenForTaskFailure();
+        execute(parameters);
+        testContext.assertTaskFailed("No pages converted");
+    }
 
     @Override
     public Task<PdfToJpegParameters> getTask() {

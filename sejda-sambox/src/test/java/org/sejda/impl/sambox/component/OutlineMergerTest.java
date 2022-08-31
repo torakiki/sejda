@@ -49,8 +49,8 @@ public class OutlineMergerTest {
 
     @BeforeEach
     public void setUp() throws IOException {
-        testData = getTestData("/pdf/large_outline.pdf");
-        testData2 = getTestData("/pdf/test_outline.pdf");
+        testData = getTestData("pdf/large_outline.pdf");
+        testData2 = getTestData("pdf/test_outline.pdf");
     }
 
     @AfterEach
@@ -128,7 +128,7 @@ public class OutlineMergerTest {
     @Test
     public void handlePageNumsInsteadOfRefsInDestinations() throws IOException {
         ImmutablePair<PDDocument, LookupTable<PDPage>> data = getTestData(
-                "/pdf/page_dests_with_number_insteadof_refs.pdf");
+                "pdf/page_dests_with_number_insteadof_refs.pdf");
         OutlineMerger victim = new OutlineMerger(OutlinePolicy.RETAIN);
         victim.updateOutline(data.getKey(), "page_dests_with_number_insteadof_refs.pdf", data.getValue());
         assertTrue(victim.hasOutline());
@@ -139,7 +139,7 @@ public class OutlineMergerTest {
 
     private ImmutablePair<PDDocument, LookupTable<PDPage>> getTestData(String path) throws IOException {
         PDDocument document = PDFParser.parse(
-                SeekableSources.inMemorySeekableSourceFrom(getClass().getResourceAsStream(path)));
+                SeekableSources.inMemorySeekableSourceFrom(getClass().getClassLoader().getResourceAsStream(path)));
         LookupTable<PDPage> mapping = new LookupTable<>();
         for (PDPage current : document.getPages()) {
             mapping.addLookupEntry(current, new PDPage());
