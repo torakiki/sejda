@@ -19,7 +19,8 @@
 /**
  * @author Andrea Vacondio
  */
-module org.sejda.model {
+//open because of reflective toString and validation
+open module org.sejda.model {
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires org.sejda.commons;
@@ -62,8 +63,4 @@ module org.sejda.model {
     exports org.sejda.model.validation.constraint;
     exports org.sejda.model.util;
 
-    //reflective toString
-    opens org.sejda.model.parameter to org.apache.commons.lang3;
-    opens org.sejda.model.parameter.base to org.apache.commons.lang3;
-    opens org.sejda.model.parameter.image to org.apache.commons.lang3;
 }

@@ -20,15 +20,15 @@
  */
 package org.sejda.core.context;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Default implementation holding the tasks information providing accessory methods.
@@ -41,11 +41,8 @@ class DefaultTasksRegistry implements TasksRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTasksRegistry.class);
 
-    private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap;
+    private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap = new HashMap<>();
 
-    DefaultTasksRegistry() {
-        this.tasksMap = new HashMap<Class<? extends TaskParameters>, Class<? extends Task>>();
-    }
 
     @Override
     public Class<? extends Task> getTask(Class<? extends TaskParameters> parametersClass) {

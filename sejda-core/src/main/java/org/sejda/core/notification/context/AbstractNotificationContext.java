@@ -20,13 +20,15 @@
  */
 package org.sejda.core.notification.context;
 
-import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.DefaultSejdaConfiguration;
 import org.sejda.core.notification.strategy.NotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Abstract notification context implementing common context functionalities.
@@ -97,9 +99,10 @@ abstract class AbstractNotificationContext implements NotificationContext {
      */
     private NotificationStrategy getStrategy() {
         try {
-            return new DefaultSejdaContext().getNotificationStrategy().newInstance();
-        } catch (InstantiationException e) {
-            LOG.warn("An error occur while instantiating a new NotificationStrategy. Default strategy will be used.", e);
+            return DefaultSejdaConfiguration.getInstance().getNotificationStrategy().getConstructor().newInstance();
+        } catch (InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+            LOG.warn("An error occur while instantiating a new NotificationStrategy. Default strategy will be used.",
+                    e);
         } catch (IllegalAccessException e) {
             LOG.warn(
                     "Unable to access constructor for the configured NotificationStrategy. Default strategy will be used.",

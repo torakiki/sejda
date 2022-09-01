@@ -28,6 +28,17 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>
+						--add-opens org.sejda.model/org.sejda.model.parameter=ALL-UNNAMED
+						--add-opens org.sejda.model/org.sejda.model.parameter.base=ALL-UNNAMED
+						--add-opens org.sejda.model/org.sejda.model.validation.validator=ALL-UNNAMED
+					</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

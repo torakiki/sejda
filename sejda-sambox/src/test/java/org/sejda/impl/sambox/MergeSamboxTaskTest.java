@@ -23,9 +23,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.api.parallel.Resources;
 import org.sejda.core.Sejda;
-import org.sejda.tests.tasks.BaseTaskTest;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.InvalidTaskParametersException;
+import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.MergeInput;
@@ -49,6 +49,7 @@ import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 import org.sejda.tests.DocBuilder;
+import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -779,7 +780,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
-    public void mergeImagesWithValidation() throws IOException {
+    public void mergeImagesWithValidation() throws IOException, TaskException {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

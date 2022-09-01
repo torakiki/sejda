@@ -23,8 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.sejda.commons.util.IOUtils;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
+import org.sejda.core.context.SejdaConfiguration;
 import org.sejda.core.service.DefaultTaskExecutionService;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -57,30 +56,32 @@ import static org.sejda.commons.util.RequireUtils.requireNotBlank;
 
 /**
  * @author Andrea Vacondio
- *
  */
 public abstract class BaseTaskTest<T extends TaskParameters> implements TestableTask<T> {
 
     public final TaskTestContext testContext = new TaskTestContext();
-    private DefaultTaskExecutionService service = new DefaultTaskExecutionService();
-    private SejdaContext context;
+    private SejdaConfiguration configuration;
+    private DefaultTaskExecutionService victim;
 
     @BeforeEach
     public void setUp() throws TaskException {
-        context = mock(DefaultSejdaContext.class);
-        TestUtils.setProperty(service, "context", context);
-        when(context.getTask(any())).thenReturn((Task) getTask());
+        configuration = mock(SejdaConfiguration.class);
+        when(configuration.getTask(any())).thenReturn((Task) getTask());
+        victim = new DefaultTaskExecutionService(configuration);
     }
 
     public void executeWithValidation(TaskParameters parameters) {
-        when(context.isValidation()).thenReturn(Boolean.TRUE);
-        execute(parameters);
+        when(configuration.isValidation()).thenReturn(Boolean.TRUE);
+        testContext.listenForTaskFailure();
+        testContext.listenForTaskWarnings();
+        victim.execute(parameters);
     }
 
     public void execute(TaskParameters parameters) {
+        when(configuration.isValidation()).thenReturn(Boolean.FALSE);
         testContext.listenForTaskFailure();
         testContext.listenForTaskWarnings();
-        service.execute(parameters);
+        victim.execute(parameters);
     }
 
     @AfterEach

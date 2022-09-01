@@ -50,12 +50,9 @@
                     <argLine>
                         --add-opens org.sejda.model/org.sejda.model.parameter.base=ALL-UNNAMED
                         --add-opens org.sejda.model/org.sejda.model.validation.validator=ALL-UNNAMED
-                        --add-opens org.sejda.core/org.sejda.core.service=ALL-UNNAMED
-                        --add-opens org.sejda.core/org.sejda.core.service=org.apache.commons.lang3
                     </argLine>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

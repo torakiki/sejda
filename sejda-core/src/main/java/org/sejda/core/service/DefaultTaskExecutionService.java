@@ -20,8 +20,9 @@
  */
 package org.sejda.core.service;
 
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
+import jakarta.validation.ConstraintViolation;
+import org.sejda.core.context.DefaultSejdaConfiguration;
+import org.sejda.core.context.SejdaConfiguration;
 import org.sejda.core.validation.DefaultValidationContext;
 import org.sejda.model.exception.InvalidTaskParametersException;
 import org.sejda.model.exception.TaskException;
@@ -30,8 +31,6 @@ import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import jakarta.validation.ConstraintViolation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +43,21 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
  * Default implementation of the {@link TaskExecutionService}.
  *
  * @author Andrea Vacondio
- *
  */
 public final class DefaultTaskExecutionService implements TaskExecutionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTaskExecutionService.class);
 
-    private final SejdaContext context = new DefaultSejdaContext();
+    private final SejdaConfiguration configuration;
+
+    public DefaultTaskExecutionService() {
+        this(DefaultSejdaConfiguration.getInstance());
+    }
+
+    //for tests
+    public DefaultTaskExecutionService(SejdaConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
     @Override
     public void execute(TaskParameters parameters) {
@@ -58,7 +65,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
         LOG.trace("Starting execution for {}", parameters);
         try {
             validateIfRequired(parameters);
-            executionContext = new TaskExecutionContext(context.getTask(parameters), parameters.isLenient());
+            executionContext = new TaskExecutionContext(configuration.getTask(parameters), parameters.isLenient());
             LOG.info("Starting task ({}) execution.", executionContext.task());
             preExecution(executionContext);
             actualExecution(parameters, executionContext);
@@ -67,7 +74,7 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
             LOG.error("Task execution failed due to invalid parameters: " + String.join(". ", i.getReasons()), i);
             executionFailed(i, executionContext);
         } catch (TaskException e) {
-            LOG.error(String.format("Task (%s) execution failed.",
+            LOG.error(String.format("Task (%s) execution failed",
                     ofNullable(executionContext).map(c -> c.task().toString()).orElse("")), e);
             executionFailed(e, executionContext);
         } catch (RuntimeException e) {
@@ -85,11 +92,11 @@ public final class DefaultTaskExecutionService implements TaskExecutionService {
     }
 
     private void validateIfRequired(TaskParameters parameters) throws InvalidTaskParametersException {
-        if (context.isValidation()) {
-            LOG.debug("Validating parameters.");
+        if (configuration.isValidation()) {
+            LOG.debug("Validating parameters");
             validate(parameters);
         } else {
-            LOG.info("Validation skipped.");
+            LOG.info("Validation skipped");
         }
     }
 

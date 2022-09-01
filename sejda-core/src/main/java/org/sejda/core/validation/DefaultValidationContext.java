@@ -24,7 +24,7 @@ import jakarta.validation.Configuration;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.sejda.core.context.DefaultSejdaContext;
+import org.sejda.core.context.DefaultSejdaConfiguration;
 
 /**
  * Default implementation of {@link ValidationContext}
@@ -38,7 +38,7 @@ public final class DefaultValidationContext implements ValidationContext {
 
     private DefaultValidationContext() {
         Configuration<?> validationConfig = Validation.byDefaultProvider().configure();
-        if (new DefaultSejdaContext().isIgnoreXmlConfiguration()) {
+        if (DefaultSejdaConfiguration.getInstance().isValidationIgnoringXmlConfiguration()) {
             validationConfig.ignoreXmlConfiguration();
         }
         ValidatorFactory factory = validationConfig.buildValidatorFactory();

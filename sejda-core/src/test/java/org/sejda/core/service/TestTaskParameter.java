@@ -46,4 +46,8 @@ public class TestTaskParameter extends AbstractPdfOutputParameters implements Si
         this.output = output;
     }
 
+    @Override
+    public String toString() {
+        return TestTaskParameter.class.toString();
+    }
 }

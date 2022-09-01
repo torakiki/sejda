@@ -24,22 +24,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.sejda.core.Sejda;
-import org.sejda.core.context.DefaultSejdaContext;
-import org.sejda.core.context.SejdaContext;
+import org.sejda.core.context.SejdaConfiguration;
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionStartedEvent;
 import org.sejda.model.output.FileTaskOutput;
+import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
+import org.sejda.model.task.TaskExecutionContext;
 
 import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -53,9 +56,8 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class DefaultTaskExecutionServiceTest {
 
-    private DefaultTaskExecutionService victim = new DefaultTaskExecutionService();
+    private DefaultTaskExecutionService victim;
     private TestTaskParameter parameters = new TestTaskParameter();
-    private SejdaContext context = mock(DefaultSejdaContext.class);
     private Task task = mock(Task.class);
     @TempDir
     public Path folder;
@@ -64,8 +66,10 @@ public class DefaultTaskExecutionServiceTest {
     public void setUp() throws TaskException, IOException {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         parameters.setOutput(new FileTaskOutput(folder.resolve("out.pdf").toFile()));
-        when(context.getTask(any(TaskParameters.class))).thenReturn(task);
-        when(context.isValidation()).thenReturn(Boolean.TRUE);
+        var configuration = mock(SejdaConfiguration.class);
+        when(configuration.getTask(any(TaskParameters.class))).thenReturn(task);
+        when(configuration.isValidation()).thenReturn(Boolean.TRUE);
+        victim = new DefaultTaskExecutionService(configuration);
     }
 
     @Test
@@ -87,18 +91,16 @@ public class DefaultTaskExecutionServiceTest {
         verify(task, never()).execute(parameters);
     }
 
-    //TODO review this once everything is in place
-    /*@Test
+    @Test
     public void testNegativeBeforeExecution() throws TaskException {
         doThrow(new TaskExecutionException("Mock exception")).when(task)
                 .before(any(TaskParameters.class), any(TaskExecutionContext.class));
         SingleTaskOutput output = mock(SingleTaskOutput.class);
         parameters.setOutput(output);
-        TestUtils.setProperty(victim, "context", context);
         victim.execute(parameters);
         verify(task).before(eq(parameters), any());
         verify(task).after();
         verify(task, never()).execute(parameters);
-    }*/
+    }
 
 }
