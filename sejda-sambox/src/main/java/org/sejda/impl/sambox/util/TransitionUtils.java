@@ -18,10 +18,6 @@
  */
 package org.sejda.impl.sambox.util;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sejda.model.pdf.transition.PdfPageTransition;
 import org.sejda.model.pdf.transition.PdfPageTransitionStyle;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransition;
@@ -29,6 +25,10 @@ import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionDimension
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionDirection;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionMotion;
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDTransitionStyle;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utility class used to deal with transitions mapping.
@@ -59,7 +59,7 @@ public final class TransitionUtils {
         transitionsStyles.put(PdfPageTransitionStyle.GLITTER_LEFT_TO_RIGHT, PDTransitionStyle.Glitter);
         transitionsStyles.put(PdfPageTransitionStyle.GLITTER_TOP_TO_BOTTOM, PDTransitionStyle.Glitter);
         transitionsStyles.put(PdfPageTransitionStyle.REPLACE, PDTransitionStyle.R);
-        transitionsStyles.put(PdfPageTransitionStyle.FLY_LEFT_TO_RIGHT, PDTransitionStyle.Fly);
+        transitionsStyles.put(PdfPageTransitionStyle.FLY_TOP_TO_BOTTOM, PDTransitionStyle.Fly);
         transitionsStyles.put(PdfPageTransitionStyle.FLY_LEFT_TO_RIGHT, PDTransitionStyle.Fly);
         transitionsStyles.put(PdfPageTransitionStyle.FADE, PDTransitionStyle.Fade);
         transitionsStyles.put(PdfPageTransitionStyle.COVER_LEFT_TO_RIGHT, PDTransitionStyle.Cover);
