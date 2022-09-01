@@ -18,12 +18,6 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-
-import java.io.IOException;
-import java.util.function.Consumer;
-
 import org.sejda.impl.sambox.component.optimization.NameResourcesDuplicator;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
@@ -36,6 +30,12 @@ import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.function.Consumer;
+
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 
 /**
  * Component providing copies of pages that can be fed to the ExistingPagesSizePredictor
@@ -102,7 +102,7 @@ class PageCopier {
                 COSArray streamsCopy = new COSArray();
                 streams.stream().filter(s -> s instanceof COSStream).map(COSStream.class::cast).map(MockPageStream::new)
                         .forEach(streamsCopy::add);
-                copy.getCOSObject().setItem(COSName.CONTENTS, streams);
+                copy.getCOSObject().setItem(COSName.CONTENTS, streamsCopy);
             }
         }
     }
