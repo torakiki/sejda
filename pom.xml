@@ -322,12 +322,12 @@
 	<properties>
 		<sejda.commons.version>2.0.0</sejda.commons.version>
 		<junit.version>5.9.0</junit.version>
-		<slf4j.version>1.7.36</slf4j.version>
+		<slf4j.version>2.0.0</slf4j.version>
 		<commons.lang.version>3.12.0</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>4.7.0</mockito.version>
-		<logback.version>1.2.11</logback.version>
+		<logback.version>1.4.0</logback.version>
 		<archunit.version>0.23.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
@@ -338,7 +338,6 @@
 		<twelvemonkeys.version>3.8.3</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
-		<awaitility.version>4.2.0</awaitility.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
