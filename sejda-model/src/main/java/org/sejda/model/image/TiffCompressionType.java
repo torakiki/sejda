@@ -38,9 +38,9 @@ public enum TiffCompressionType implements FriendlyNamed {
     PACKBITS("packbits"),
     DEFLATE("deflate");
 
-    private String displayName;
+    private final String displayName;
 
-    private TiffCompressionType(String displayName) {
+    TiffCompressionType(String displayName) {
         this.displayName = displayName;
     }
 

@@ -63,7 +63,7 @@ public class DefaultTaskExecutionServiceTest {
     public Path folder;
 
     @BeforeEach
-    public void setUp() throws TaskException, IOException {
+    public void setUp() throws TaskException {
         System.setProperty(Sejda.USER_CONFIG_FILE_PROPERTY_NAME, "sejda-test.xml");
         parameters.setOutput(new FileTaskOutput(folder.resolve("out.pdf").toFile()));
         var configuration = mock(SejdaConfiguration.class);

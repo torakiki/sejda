@@ -55,7 +55,6 @@ import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -67,10 +66,10 @@ import java.util.TimeZone;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of a task setting metadata on an input {@link PdfSource}.
@@ -107,43 +106,40 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
                 documentHandler = source.open(documentLoader);
                 documentHandler.setUpdateProducerModifiedDate(parameters.isUpdateProducerModifiedDate());
-                if(parameters.isUpdateProducerModifiedDate()) {
+                if (parameters.isUpdateProducerModifiedDate()) {
                     documentHandler.setCreatorOnPDDocument();
                 }
 
                 File tmpFile = createTemporaryBuffer(parameters.getOutput());
 
                 PDDocument doc = documentHandler.getUnderlyingPDDocument();
-                doc.setOnBeforeWriteAction(new PDDocument.OnBeforeWrite() {
-                    @Override
-                    public void onBeforeWrite() throws IOException {
-                        LOG.debug("Setting metadata on temporary document.");
+                doc.setOnBeforeWriteAction(() -> {
+                    LOG.debug("Setting metadata on temporary document.");
 
-                        PDDocument doc = documentHandler.getUnderlyingPDDocument();
-                        PDDocumentCatalog catalog = doc.getDocumentCatalog();
-                        
-                        if(parameters.isRemoveAllMetadata()) {
-                            doc.setDocumentInformation(new PDDocumentInformation());
-                            catalog.setMetadata(null);
-                            
-                            return;
-                        }
+                    PDDocument doc1 = documentHandler.getUnderlyingPDDocument();
+                    PDDocumentCatalog catalog = doc1.getDocumentCatalog();
 
-                        PDDocumentInformation actualMeta = doc.getDocumentInformation();
-                        for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
-                            LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
-                            actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
-                        }
+                    if (parameters.isRemoveAllMetadata()) {
+                        doc1.setDocumentInformation(new PDDocumentInformation());
+                        catalog.setMetadata(null);
 
-                        for (String keyToRemove : parameters.getToRemove()) {
-                            LOG.trace("Removing '{}'", keyToRemove);
-                            actualMeta.removeMetadataField(keyToRemove);
-                        }
+                        return;
+                    }
 
-                        if(catalog.getMetadata() != null) {
-                            LOG.debug("Document has XMP metadata stream");
-                            updateXmpMetadata(catalog, actualMeta);
-                        }
+                    PDDocumentInformation actualMeta = doc1.getDocumentInformation();
+                    for (Entry<String, String> meta : parameters.getMetadata().entrySet()) {
+                        LOG.trace("'{}' -> '{}'", meta.getKey(), meta.getValue());
+                        actualMeta.setCustomMetadataValue(meta.getKey(), meta.getValue());
+                    }
+
+                    for (String keyToRemove : parameters.getToRemove()) {
+                        LOG.trace("Removing '{}'", keyToRemove);
+                        actualMeta.removeMetadataField(keyToRemove);
+                    }
+
+                    if (catalog.getMetadata() != null) {
+                        LOG.debug("Document has XMP metadata stream");
+                        updateXmpMetadata(catalog, actualMeta);
                     }
                 });
 
@@ -151,13 +147,12 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                 documentHandler.setCompress(parameters.isCompress());
                 documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
 
-                String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(() -> {
-                    return nameGenerator(parameters.getOutputPrefix())
-                            .generate(nameRequest().originalName(source.getName()).fileNumber(fileNumber));
-                });
+                String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
+                        () -> nameGenerator(parameters.getOutputPrefix()).generate(
+                                nameRequest().originalName(source.getName()).fileNumber(fileNumber)));
 
                 outputWriter.addOutput(file(tmpFile).name(outName));
-                
+
             } finally {
                 closeQuietly(documentHandler);
             }

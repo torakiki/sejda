@@ -50,9 +50,9 @@ public enum NumberingStyle implements FriendlyNamed {
         }
     };
 
-    private String displayName;
+    private final String displayName;
 
-    private NumberingStyle(String displayName) {
+    NumberingStyle(String displayName) {
         this.displayName = displayName;
     }
 

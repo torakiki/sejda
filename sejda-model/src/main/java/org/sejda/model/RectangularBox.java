@@ -112,10 +112,9 @@ public final class RectangularBox {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof RectangularBox)) {
+        if (!(other instanceof RectangularBox instance)) {
             return false;
         }
-        RectangularBox instance = (RectangularBox) other;
         return new EqualsBuilder().append(top, instance.getTop()).append(right, instance.getRight())
                 .append(left, instance.getLeft()).append(bottom, instance.getBottom()).isEquals();
     }

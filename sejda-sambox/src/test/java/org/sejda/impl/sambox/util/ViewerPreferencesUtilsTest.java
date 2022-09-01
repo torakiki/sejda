@@ -94,7 +94,7 @@ public class ViewerPreferencesUtilsTest {
     }
 
     @Test
-    public void testSetBooleanPreferencesNullPref() throws TaskException {
+    public void testSetBooleanPreferencesNullPref() {
         assertThrows(TaskException.class,
                 () -> ViewerPreferencesUtils.setBooleanPreferences(null, Collections.EMPTY_SET));
     }

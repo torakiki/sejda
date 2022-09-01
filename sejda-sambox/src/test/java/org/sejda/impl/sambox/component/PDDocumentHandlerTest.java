@@ -35,6 +35,7 @@ import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,7 +53,7 @@ public class PDDocumentHandlerTest {
     public void discardBeads() throws IOException {
         try (PDDocument document = testDoc("pdf/one_page.pdf")) {
             PDPage page = document.getPage(0);
-            page.setThreadBeads(Arrays.asList(new PDThreadBead()));
+            page.setThreadBeads(List.of(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
             PDPage copy = new PDDocumentHandler().importPage(page);
             assertEquals(page.getMediaBox(), copy.getMediaBox());

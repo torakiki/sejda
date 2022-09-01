@@ -83,7 +83,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
     }
 
     @Valid
-    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+    private final Set<PageRange> pageSelection = new NullSafeSet<>();
 
     public void addPageRange(PageRange range) {
         pageSelection.add(range);
@@ -114,7 +114,7 @@ public abstract class AbstractPdfToMultipleImageParameters extends MultiplePdfSo
             return PredefinedSetOfPages.ALL_PAGES.getPages(upperLimit);
         }
 
-        Set<Integer> retSet = new NullSafeSet<Integer>();
+        Set<Integer> retSet = new NullSafeSet<>();
         for (PageRange range : getPageSelection()) {
             retSet.addAll(range.getPages(upperLimit));
         }

@@ -34,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.tests.TestUtils.encryptedAtRest;
 import static org.sejda.tests.tasks.BaseTaskTest.customNonPdfInput;
 import static org.sejda.tests.tasks.BaseTaskTest.customNonPdfInputAsFileSource;
-import static org.sejda.tests.TestUtils.encryptedAtRest;
 
 public class PageImageWriterTest {
 
@@ -53,10 +53,9 @@ public class PageImageWriterTest {
     }
 
     @Test
-    public void testHeif_unsupported() throws TaskIOException {
-        Exception ex = assertThrows(TaskIOException.class, () -> {
-            PageImageWriter.toPDXImageObject(customNonPdfInput("/image/sample_heic.jpg"));
-        });
+    public void testHeif_unsupported() {
+        Exception ex = assertThrows(TaskIOException.class,
+                () -> PageImageWriter.toPDXImageObject(customNonPdfInput("/image/sample_heic.jpg")));
 
         Throwable cause = ex.getCause();
         assertEquals(cause.getClass(), UnsupportedImageFormatException.class);

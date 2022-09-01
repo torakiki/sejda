@@ -39,7 +39,7 @@ public abstract class AbstractNotificationEvent implements NotificationEvent, Se
     private NotifiableTaskMetadata notifiableTaskMetadata;
 
     AbstractNotificationEvent(NotifiableTaskMetadata notifiableTaskMetadata) {
-        this.eventTimestamp = Long.valueOf(System.currentTimeMillis());
+        this.eventTimestamp = System.currentTimeMillis();
         this.notifiableTaskMetadata = notifiableTaskMetadata;
     }
 

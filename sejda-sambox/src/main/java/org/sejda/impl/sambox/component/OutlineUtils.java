@@ -234,12 +234,11 @@ public final class OutlineUtils {
                         .orElseGet(() -> d.getPageNumber() + 1);
 
                 boolean specificLocationInPage = false;
-                if (d instanceof PDPageXYZDestination) {
-                    PDPageXYZDestination xyzPageDest = (PDPageXYZDestination) d;
+                if (d instanceof PDPageXYZDestination xyzPageDest) {
                     // it's a specific page destination but not the top of the page
                     if (xyzPageDest.getPage() != null) {
-                        specificLocationInPage = xyzPageDest
-                                .getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
+                        specificLocationInPage =
+                                xyzPageDest.getTop() != (int) xyzPageDest.getPage().getCropBox().getHeight();
                     }
                 }
 
@@ -262,11 +261,9 @@ public final class OutlineUtils {
 
     private static void printNode(PDOutlineItem node, int level, int childCounter) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("-");
-        }
+        sb.append("-".repeat(Math.max(0, level)));
         sb.append(" ").append(node.getTitle()).append(" (").append(childCounter).append(")");
-        System.out.println(sb.toString());
+        System.out.println(sb);
 
         if (node.hasChildren()) {
             int childrenCount = 0;

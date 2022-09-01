@@ -82,7 +82,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
             }
         }
 
-        mixFragments.stream().forEach(f -> {
+        mixFragments.forEach(f -> {
             executionContext.notifiableTaskMetadata().setCurrentSource(f.source());
             f.saintizeAnnotations();
         });
@@ -92,7 +92,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
     @Override
     public void close() throws IOException {
         super.close();
-        mixFragments.stream().forEach(IOUtils::closeQuietly);
+        mixFragments.forEach(IOUtils::closeQuietly);
         mixFragments.clear();
     }
 

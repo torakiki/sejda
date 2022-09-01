@@ -53,17 +53,10 @@ abstract class AbstractImageWriter<T extends PdfToImageParameters> implements Im
 
     static final Map<TiffCompressionType, String> TIFF_COMPRESSION_TYPE_CACHE;
     static {
-        Map<TiffCompressionType, String> compressionTypesCache = new HashMap<TiffCompressionType, String>();
-        compressionTypesCache.put(TiffCompressionType.PACKBITS, "PackBits");
-        compressionTypesCache.put(TiffCompressionType.NONE, "None");
-        compressionTypesCache.put(TiffCompressionType.JPEG_TTN2, "JPEG");
-        compressionTypesCache.put(TiffCompressionType.DEFLATE, "Deflate");
-        compressionTypesCache.put(TiffCompressionType.LZW, "LZW");
-        compressionTypesCache.put(TiffCompressionType.ZLIB, "ZLib");
-        compressionTypesCache.put(TiffCompressionType.CCITT_GROUP_3_1D, "CCITT RLE");
-        compressionTypesCache.put(TiffCompressionType.CCITT_GROUP_3_2D, "CCITT T.4");
-        compressionTypesCache.put(TiffCompressionType.CCITT_GROUP_4, "CCITT T.6");
-        TIFF_COMPRESSION_TYPE_CACHE = Collections.unmodifiableMap(compressionTypesCache);
+        TIFF_COMPRESSION_TYPE_CACHE = Map.of(TiffCompressionType.PACKBITS, "PackBits", TiffCompressionType.NONE, "None",
+                TiffCompressionType.JPEG_TTN2, "JPEG", TiffCompressionType.DEFLATE, "Deflate", TiffCompressionType.LZW,
+                "LZW", TiffCompressionType.ZLIB, "ZLib", TiffCompressionType.CCITT_GROUP_3_1D, "CCITT RLE",
+                TiffCompressionType.CCITT_GROUP_3_2D, "CCITT T.4", TiffCompressionType.CCITT_GROUP_4, "CCITT T.6");
     }
 
     private ImageOutputStream out;

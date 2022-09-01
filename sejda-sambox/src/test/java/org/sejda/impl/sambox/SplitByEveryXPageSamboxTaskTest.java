@@ -116,9 +116,8 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(2).forEachPdfOutput(d -> {
-            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(2)
+                .forEachPdfOutput(d -> assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -132,9 +131,8 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(2).forEachPdfOutput(d -> {
-            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(2)
+                .forEachPdfOutput(d -> assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -156,6 +154,6 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
 
     @Override
     public Task<SplitByEveryXPagesParameters> getTask() {
-        return new SplitByPageNumbersTask<SplitByEveryXPagesParameters>();
+        return new SplitByPageNumbersTask<>();
     }
 }

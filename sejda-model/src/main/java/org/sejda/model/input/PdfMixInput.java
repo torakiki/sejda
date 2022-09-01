@@ -87,10 +87,9 @@ public class PdfMixInput extends PdfMergeInput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfMixInput)) {
+        if (!(other instanceof PdfMixInput input)) {
             return false;
         }
-        PdfMixInput input = (PdfMixInput) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(reverse, input.reverse)
                 .append(step, input.step).append(repeatForever, input.repeatForever).isEquals();
     }

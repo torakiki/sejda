@@ -95,9 +95,8 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
         parameters.addPage(3);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(4).forEachPdfOutput(d -> {
-            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(4)
+                .forEachPdfOutput(d -> assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -110,9 +109,8 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
         parameters.addPage(3);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(4).forEachPdfOutput(d -> {
-            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(4)
+                .forEachPdfOutput(d -> assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     public void doTestBurst() throws IOException {

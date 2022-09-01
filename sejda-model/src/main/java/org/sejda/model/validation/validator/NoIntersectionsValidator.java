@@ -38,7 +38,7 @@ public class NoIntersectionsValidator implements ConstraintValidator<NoIntersect
     @Override
     public boolean isValid(PageRangeSelection value, ConstraintValidatorContext context) {
         if (value != null) {
-            List<PageRange> ranges = new ArrayList<PageRange>(value.getPageSelection());
+            List<PageRange> ranges = new ArrayList<>(value.getPageSelection());
             for (int i = 0; i < ranges.size(); i++) {
                 PageRange range = ranges.get(i);
                 for (int j = i + 1; j < ranges.size(); j++) {

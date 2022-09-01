@@ -38,8 +38,8 @@ public enum Rotation implements FriendlyNamed {
     private static final int D_90 = 90;
     private static final int D_270 = 270;
 
-    private int degrees;
-    private String displayName;
+    private final int degrees;
+    private final String displayName;
 
     Rotation(int degrees) {
         this.displayName = String.valueOf(degrees);

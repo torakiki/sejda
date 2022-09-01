@@ -25,19 +25,19 @@ import org.sejda.model.FriendlyNamed;
 
 /**
  * The color type for an image.
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum ImageColorType implements FriendlyNamed {
     BLACK_AND_WHITE("black_and_white", BufferedImage.TYPE_BYTE_BINARY),
     GRAY_SCALE("gray_scale", BufferedImage.TYPE_BYTE_GRAY),
     COLOR_RGB("color_rgb", BufferedImage.TYPE_INT_RGB);
 
-    private int bufferedImageType;
-    private String displayName;
+    private final int bufferedImageType;
+    private final String displayName;
 
-    private ImageColorType(String displayName, int bufferedImageType) {
+    ImageColorType(String displayName, int bufferedImageType) {
         this.displayName = displayName;
         this.bufferedImageType = bufferedImageType;
     }

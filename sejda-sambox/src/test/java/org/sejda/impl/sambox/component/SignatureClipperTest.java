@@ -32,6 +32,7 @@ import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,7 +67,7 @@ public class SignatureClipperTest {
     @Test
     public void clipWidget() {
         PDAnnotationWidget widget = new PDAnnotationWidget(dictionary);
-        SignatureClipper.clipSignatures(Arrays.asList(widget));
+        SignatureClipper.clipSignatures(List.of(widget));
         assertFalse(widget.getCOSObject().containsKey(COSName.V));
         assertFalse(widget.getCOSObject().containsKey(COSName.SV));
         assertFalse(widget.getCOSObject().containsKey(COSName.LOCK));
@@ -75,7 +76,7 @@ public class SignatureClipperTest {
     @Test
     public void clipNonWidget() {
         PDAnnotationLink widget = new PDAnnotationLink(dictionary);
-        SignatureClipper.clipSignatures(Arrays.asList(widget));
+        SignatureClipper.clipSignatures(List.of(widget));
         assertTrue(widget.getCOSObject().containsKey(COSName.V));
         assertTrue(widget.getCOSObject().containsKey(COSName.SV));
         assertTrue(widget.getCOSObject().containsKey(COSName.LOCK));
@@ -85,7 +86,7 @@ public class SignatureClipperTest {
     public void clipWidgetNonSign() {
         dictionary.setItem(COSName.FT, COSName.BTN);
         PDAnnotationWidget widget = new PDAnnotationWidget(dictionary);
-        SignatureClipper.clipSignatures(Arrays.asList(widget));
+        SignatureClipper.clipSignatures(List.of(widget));
         assertTrue(widget.getCOSObject().containsKey(COSName.V));
         assertTrue(widget.getCOSObject().containsKey(COSName.SV));
         assertTrue(widget.getCOSObject().containsKey(COSName.LOCK));

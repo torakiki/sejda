@@ -60,10 +60,10 @@ public enum PdfPageTransitionStyle implements MinRequiredVersion, FriendlyNamed 
     FLY_LEFT_TO_RIGHT("fly_left_to_right", PdfVersion.VERSION_1_5),
     FLY_TOP_TO_BOTTOM("fly_top_to_bottom", PdfVersion.VERSION_1_5);
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfPageTransitionStyle(String displayName, PdfVersion minVersion) {
+    PdfPageTransitionStyle(String displayName, PdfVersion minVersion) {
         this.displayName = displayName;
         this.minVersion = minVersion;
     }

@@ -40,10 +40,10 @@ public enum PdfAccessPermission implements FriendlyNamed {
     ASSEMBLE("assembly", 0b00000000000000000000010000000000),
     DEGRADATED_PRINT("degradedprinting", 0b00000000000000000000100000000000);
 
-    private String displayName;
+    private final String displayName;
     public final int bits;
 
-    private PdfAccessPermission(String displayName, int bits) {
+    PdfAccessPermission(String displayName, int bits) {
         this.displayName = displayName;
         this.bits = bits;
     }

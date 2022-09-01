@@ -28,6 +28,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAppearanceDictionary;
 
 import java.io.IOException;
@@ -77,8 +78,7 @@ public class ResourcesHitterTest {
             document.getPages().forEach(victim::accept);
             PDPage page = document.getPage(0);
             List<PDAppearanceDictionary> appearence = page.getAnnotations().stream()
-                    .filter(a -> a.getSubtype().equals("Text")).map(a -> a.getAppearance())
-                    .collect(Collectors.toList());
+                    .filter(a -> a.getSubtype().equals("Text")).map(PDAnnotation::getAppearance).toList();
             assertEquals(1, appearence.size());
             COSDictionary normalAppRes = appearence.get(0).getNormalAppearance().getAppearanceStream().getResources()
                     .getCOSObject();

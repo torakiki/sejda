@@ -46,7 +46,7 @@ public class DirectoryValidatorTest {
     }
 
     @Test
-    public void testPositiveExisting() throws IOException {
+    public void testPositiveExisting() {
         assertTrue(victim.isValid(folder.toFile(), null));
     }
 

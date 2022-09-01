@@ -53,7 +53,7 @@ public class PdfURLSourceTest {
         assertNotNull(instance);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void testOpener() throws MalformedURLException, TaskIOException {
         var opener = mock(PdfSourceOpener.class);

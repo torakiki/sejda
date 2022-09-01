@@ -68,7 +68,7 @@ public class PdfMergeInputTest {
     @Test
     public void getPages() {
         PdfMergeInput victim = new PdfMergeInput(source);
-        List<PageRange> ranges = new ArrayList<PageRange>();
+        List<PageRange> ranges = new ArrayList<>();
         ranges.add(new PageRange(5, 8));
         ranges.add(new PageRange(10, 11));
         victim.addAllPageRanges(ranges);

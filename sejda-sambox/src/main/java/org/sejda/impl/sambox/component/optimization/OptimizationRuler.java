@@ -77,7 +77,7 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
         // pages are going to inherit images or fonts, potentially unused in which case we want to optimize
         List<COSDictionary> resources = document.getPages().streamNodes().filter(PDPageTree::isPageTreeNode)
                 .map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class)).filter(Objects::nonNull)
-                .distinct().collect(Collectors.toList());
+                .distinct().toList();
 
         long inheritedImage = resources.stream().map(d -> d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class))
                 .filter(Objects::nonNull).flatMap(d -> d.getValues().stream()).map(COSBase::getCOSObject)
@@ -106,11 +106,11 @@ public class OptimizationRuler implements Function<PDDocument, Boolean> {
         // we get from all the pages resource dictionaries, all the optimizable resources name dictionaries (fonts, xobject, extgstate)
         List<COSDictionary> optimizableDictionaries = document.getPages().stream().map(PDPage::getCOSObject)
                 .filter(Objects::nonNull).map(d -> d.getDictionaryObject(COSName.RESOURCES, COSDictionary.class))
-                .filter(Objects::nonNull)
-                .flatMap(d -> Stream.of(d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class),
-                        d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class),
-                        d.getDictionaryObject(COSName.FONT, COSDictionary.class)))
-                .filter(Objects::nonNull).filter(x -> x.size() > 0).collect(Collectors.toList());
+                .filter(Objects::nonNull).flatMap(
+                        d -> Stream.of(d.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class),
+                                d.getDictionaryObject(COSName.XOBJECT, COSDictionary.class),
+                                d.getDictionaryObject(COSName.FONT, COSDictionary.class))).filter(Objects::nonNull)
+                .filter(x -> x.size() > 0).toList();
         long distinctFontDictionaries = optimizableDictionaries.stream().distinct().count();
         if (optimizableDictionaries.size() > distinctFontDictionaries) {
             // if the distinct count is different it means one or more name dictionaries is shared among pages

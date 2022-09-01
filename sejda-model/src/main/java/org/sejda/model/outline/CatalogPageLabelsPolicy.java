@@ -28,9 +28,9 @@ public enum CatalogPageLabelsPolicy implements FriendlyNamed {
     DISCARD("discard"),
     RETAIN("retain");
 
-    private String displayName;
+    private final String displayName;
 
-    private CatalogPageLabelsPolicy(String displayName) {
+    CatalogPageLabelsPolicy(String displayName) {
         this.displayName = displayName;
     }
 

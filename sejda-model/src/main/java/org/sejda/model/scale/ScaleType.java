@@ -30,9 +30,9 @@ public enum ScaleType implements FriendlyNamed {
     PAGE("page"),
     CONTENT("content");
 
-    private String displayName;
+    private final String displayName;
 
-    private ScaleType(String displayName) {
+    ScaleType(String displayName) {
         this.displayName = displayName;
     }
 

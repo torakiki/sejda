@@ -78,7 +78,7 @@ public class PdfToSingleTiffSamboxTaskTest extends BaseTaskTest<PdfToSingleTiffP
 
     @Override
     public Task<PdfToSingleTiffParameters> getTask() {
-        return new PdfToSingleImageTask<PdfToSingleTiffParameters>();
+        return new PdfToSingleImageTask<>();
     }
 
 }

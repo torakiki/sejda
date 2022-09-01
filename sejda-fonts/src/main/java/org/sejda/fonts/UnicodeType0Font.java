@@ -23,7 +23,7 @@ import org.sejda.model.pdf.font.FontResource;
 public enum UnicodeType0Font implements FontResource {
     NOTO_SANS_MERGED_REGULAR("/fonts/sans/NotoSansMerged-Regular.ttf");
 
-    private String resource;
+    private final String resource;
 
     UnicodeType0Font(String resource) {
         this.resource = resource;

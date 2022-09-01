@@ -362,9 +362,9 @@ public class AcroFormsMergerTest {
         assertEquals(8, victim.getForm().getFields().size());
         for (PDField field : victim.getForm().getFieldTree()) {
             if (field instanceof PDRadioButton) {
-                assertEquals(2, ((PDTerminalField) field).getWidgets().size(), field.getPartialName());
+                assertEquals(2, field.getWidgets().size(), field.getPartialName());
             } else {
-                assertEquals(1, ((PDTerminalField) field).getWidgets().size());
+                assertEquals(1, field.getWidgets().size());
             }
         }
         assertNull(destination.getDocumentCatalog().getAcroForm());

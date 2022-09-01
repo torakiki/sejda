@@ -23,9 +23,9 @@ public enum Shape implements FriendlyNamed {
     RECTANGLE("rectangle"),
     ELLIPSE("ellipse");
 
-    private String displayName;
+    private final String displayName;
 
-    private Shape(String displayName) {
+    Shape(String displayName) {
         this.displayName = displayName;
     }
 

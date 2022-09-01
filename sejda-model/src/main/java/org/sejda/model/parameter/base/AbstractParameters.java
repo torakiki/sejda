@@ -65,10 +65,9 @@ public abstract class AbstractParameters implements TaskParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractParameters)) {
+        if (!(other instanceof AbstractParameters parameter)) {
             return false;
         }
-        AbstractParameters parameter = (AbstractParameters) other;
         return new EqualsBuilder().append(existingOutputPolicy, parameter.existingOutputPolicy)
                 .append(lenient, parameter.lenient).isEquals();
     }

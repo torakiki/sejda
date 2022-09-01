@@ -31,9 +31,9 @@ public enum ToCPolicy implements FriendlyNamed {
     FILE_NAMES("file_names"),
     DOC_TITLES("doc_titles");
 
-    private String displayName;
+    private final String displayName;
 
-    private ToCPolicy(String displayName) {
+    ToCPolicy(String displayName) {
         this.displayName = displayName;
     }
 

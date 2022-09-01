@@ -497,7 +497,7 @@ public class TaskTestContext implements Closeable {
 
     private TestListenerFactory.TestListenerStart startListener = TestListenerFactory.newStartListener();
 
-    private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<TaskExecutionWarningEvent>() {
+    private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<>() {
         @Override
         public void onEvent(TaskExecutionWarningEvent event) {
             taskWarnings.add(event.getWarning());
@@ -601,7 +601,7 @@ public class TaskTestContext implements Closeable {
         this.outputDocument = null;
         if (nonNull(fileOutput)) {
             if (fileOutput.isDirectory()) {
-                Files.walkFileTree(fileOutput.toPath(), new SimpleFileVisitor<Path>() {
+                Files.walkFileTree(fileOutput.toPath(), new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         Files.delete(file);

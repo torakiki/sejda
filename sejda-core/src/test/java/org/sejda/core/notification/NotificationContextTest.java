@@ -40,6 +40,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -52,7 +53,7 @@ import static org.mockito.Mockito.verify;
 @Isolated
 public class NotificationContextTest {
 
-    private List<NotificationContext> contexts = new ArrayList<NotificationContext>();
+    private List<NotificationContext> contexts = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
@@ -136,7 +137,7 @@ public class NotificationContextTest {
      * @param victim
      */
     private void testNotificationContextClear(NotificationContext victim) {
-        assertFalse(0 == victim.size());
+        assertNotEquals(0, victim.size());
         victim.clearListeners();
         assertEquals(0, victim.size());
     }

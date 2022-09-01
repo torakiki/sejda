@@ -78,7 +78,7 @@ public final class RomanNumbersUtils {
         CM(900),
         M(1000);
 
-        private int weight;
+        private final int weight;
 
         Numeral(int weight) {
             this.weight = weight;

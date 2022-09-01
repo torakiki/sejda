@@ -27,14 +27,13 @@ import org.sejda.model.exception.TaskExecutionException;
 
 /**
  * Strategy that holds the page numbers where the split process has to split.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class SplitPages implements NextOutputStrategy {
 
-    private Set<Integer> closingPages = new HashSet<Integer>();
-    private Set<Integer> openingPages = new HashSet<Integer>();
+    private Set<Integer> closingPages = new HashSet<>();
+    private Set<Integer> openingPages = new HashSet<>();
 
     public SplitPages(Collection<Integer> pages) {
         this(pages.toArray(new Integer[pages.size()]));

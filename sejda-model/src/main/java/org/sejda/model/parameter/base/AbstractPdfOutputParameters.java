@@ -76,10 +76,9 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractPdfOutputParameters)) {
+        if (!(other instanceof AbstractPdfOutputParameters parameter)) {
             return false;
         }
-        AbstractPdfOutputParameters parameter = (AbstractPdfOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(compress, parameter.isCompress())
                 .append(version, parameter.getVersion()).append(getOutput(), parameter.getOutput()).isEquals();
     }

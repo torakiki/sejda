@@ -209,7 +209,7 @@ public class TableOfContentsCreator {
                             }
 
                             long pageNumber = i.page + tocNumberOfPages;
-                            String pageString = SEPARATOR + Long.toString(pageNumber);
+                            String pageString = SEPARATOR + pageNumber;
                             float x2 = getPageNumberX(separatorWidth);
                             writeText(page, pageString, x2, y);
 
@@ -323,16 +323,7 @@ public class TableOfContentsCreator {
         return document;
     }
 
-    private static class ToCItem {
-        public final String text;
-        public final long page;
-        public final PDAnnotation annotation;
-
-        public ToCItem(String text, long page, PDAnnotation annotation) {
-            this.text = text;
-            this.page = page;
-            this.annotation = annotation;
-        }
+    private record ToCItem(String text, long page, PDAnnotation annotation) {
     }
 
 }

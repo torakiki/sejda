@@ -15,7 +15,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
     ALL_PAGES("all") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
-            SortedSet<Integer> retSet = new TreeSet<Integer>();
+            SortedSet<Integer> retSet = new TreeSet<>();
             for (int i = 1; i <= totalNumberOfPage; i++) {
                 retSet.add(i);
             }
@@ -30,7 +30,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
     EVEN_PAGES("even") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
-            SortedSet<Integer> retSet = new TreeSet<Integer>();
+            SortedSet<Integer> retSet = new TreeSet<>();
             for (int i = 2; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
@@ -45,7 +45,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
     ODD_PAGES("odd") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
-            SortedSet<Integer> retSet = new TreeSet<Integer>();
+            SortedSet<Integer> retSet = new TreeSet<>();
             for (int i = 1; i <= totalNumberOfPage; i = i + 2) {
                 retSet.add(i);
             }
@@ -61,7 +61,7 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
     NONE("none") {
         @Override
         public SortedSet<Integer> getPages(int totalNumberOfPage) {
-            return new TreeSet<Integer>();
+            return new TreeSet<>();
         }
 
         @Override
@@ -81,9 +81,9 @@ public enum PredefinedSetOfPages implements PagesSelection, FriendlyNamed {
 
     public abstract boolean includes(int page);
 
-    private String displayName;
+    private final String displayName;
 
-    private PredefinedSetOfPages(String displayName) {
+    PredefinedSetOfPages(String displayName) {
         this.displayName = displayName;
     }
 

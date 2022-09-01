@@ -60,7 +60,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
     @NotAllowed(disallow = { PredefinedSetOfPages.ALL_PAGES })
     private PredefinedSetOfPages predefinedSetOfPages;
     @Valid
-    private final Set<PageRange> pageSelection = new NullSafeSet<PageRange>();
+    private final Set<PageRange> pageSelection = new NullSafeSet<>();
     private boolean invertSelection = false;
     private boolean separateFileForEachRange = false;
 
@@ -109,7 +109,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
      */
     @Override
     public Set<Integer> getPages(int upperLimit) {
-        Set<Integer> pages = new NullSafeSet<Integer>();
+        Set<Integer> pages = new NullSafeSet<>();
         if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
             pages = predefinedSetOfPages.getPages(upperLimit);
         } else {
@@ -122,7 +122,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
             return pages;
         }
 
-        Set<Integer> invertedPages = new NullSafeSet<Integer>();
+        Set<Integer> invertedPages = new NullSafeSet<>();
         for (int i = 1; i <= upperLimit; i++) {
             if (!pages.contains(i)) {
                 invertedPages.add(i);
@@ -142,7 +142,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         ArrayList<Set<Integer>> pages = new ArrayList<>();
         if (predefinedSetOfPages == PredefinedSetOfPages.NONE && isSeparateFileForEachRange()) {
             if (invertSelection) {
-                Set<Integer> currentRange = new NullSafeSet<Integer>();
+                Set<Integer> currentRange = new NullSafeSet<>();
                 int previous = 0;
                 for (int current : getPages(upperLimit)) {
                     if (currentRange.isEmpty() || (current == previous + 1)) {
@@ -150,7 +150,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
                         previous = current;
                     } else {
                         pages.add(currentRange);
-                        currentRange = new NullSafeSet<Integer>();
+                        currentRange = new NullSafeSet<>();
                         currentRange.add(current);
                         previous = current;
                     }
@@ -167,7 +167,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
             return pages;
 
         }
-        return Arrays.asList(getPages(upperLimit));
+        return Collections.singletonList(getPages(upperLimit));
     }
 
     @Override
@@ -221,10 +221,9 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         if (this == other) {
             return true;
         }
-        if (!(other instanceof ExtractPagesParameters)) {
+        if (!(other instanceof ExtractPagesParameters parameter)) {
             return false;
         }
-        ExtractPagesParameters parameter = (ExtractPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
                 .append(optimizationPolicy, parameter.optimizationPolicy)

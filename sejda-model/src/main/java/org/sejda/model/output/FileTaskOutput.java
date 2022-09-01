@@ -80,10 +80,9 @@ public class FileTaskOutput extends AbstractTaskOutput implements SingleTaskOutp
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FileTaskOutput)) {
+        if (!(other instanceof FileTaskOutput output)) {
             return false;
         }
-        FileTaskOutput output = (FileTaskOutput) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(file, output.getDestination()).isEquals();
     }
 

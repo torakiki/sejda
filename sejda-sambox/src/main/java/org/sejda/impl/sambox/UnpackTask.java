@@ -30,6 +30,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.sejda.sambox.pdmodel.common.PDNameTreeNode;
 import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -86,14 +87,15 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
 
                 Map<String, PDComplexFileSpecification> names = new HashMap<>();
                 PDEmbeddedFilesNameTreeNode ef = ofNullable(
-                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getNames())
-                                .map(n -> n.getEmbeddedFiles()).orElse(null);
+                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentCatalog().getNames()).map(
+                        PDDocumentNameDictionary::getEmbeddedFiles).orElse(null);
                 collectNamesVisitingTree(ef, names);
-                Stream.concat(names.values().stream(), sourceDocumentHandler.getPages().stream()
-                        .flatMap(p -> p.getAnnotations().stream()).filter(a -> a instanceof PDAnnotationFileAttachment)
-                        .map(a -> (PDAnnotationFileAttachment) a).map(PDAnnotationFileAttachment::getFile)
-                        .filter(f -> f instanceof PDComplexFileSpecification).map(f -> (PDComplexFileSpecification) f))
-                        .forEach(f -> unpack(f));
+                Stream.concat(names.values().stream(),
+                        sourceDocumentHandler.getPages().stream().flatMap(p -> p.getAnnotations().stream())
+                                .filter(a -> a instanceof PDAnnotationFileAttachment)
+                                .map(a -> (PDAnnotationFileAttachment) a).map(PDAnnotationFileAttachment::getFile)
+                                .filter(f -> f instanceof PDComplexFileSpecification)
+                                .map(f -> (PDComplexFileSpecification) f)).forEach(this::unpack);
 
             } finally {
                 closeQuietly(sourceDocumentHandler);

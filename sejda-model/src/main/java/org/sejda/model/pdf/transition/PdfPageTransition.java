@@ -86,10 +86,9 @@ public final class PdfPageTransition {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfPageTransition)) {
+        if (!(other instanceof PdfPageTransition transition)) {
             return false;
         }
-        PdfPageTransition transition = (PdfPageTransition) other;
         return new EqualsBuilder().append(style, transition.getStyle())
                 .append(transitionDuration, transition.getTransitionDuration())
                 .append(displayDuration, transition.getDisplayDuration()).isEquals();

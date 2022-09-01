@@ -58,9 +58,8 @@ public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutli
         SplitByOutlineLevelParameters parameters = setUpParameters(2, null);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(3).forEachPdfOutput(d -> {
-            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(3)
+                .forEachPdfOutput(d -> assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -69,9 +68,8 @@ public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutli
         parameters.discardOutline(true);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertOutputSize(3).forEachPdfOutput(d -> {
-            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertOutputSize(3)
+                .forEachPdfOutput(d -> assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test

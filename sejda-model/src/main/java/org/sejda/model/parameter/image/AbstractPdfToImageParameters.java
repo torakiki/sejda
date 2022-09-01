@@ -99,10 +99,9 @@ public abstract class AbstractPdfToImageParameters extends AbstractParameters
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractPdfToImageParameters)) {
+        if (!(other instanceof AbstractPdfToImageParameters parameter)) {
             return false;
         }
-        AbstractPdfToImageParameters parameter = (AbstractPdfToImageParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(resolutionInDpi, parameter.getResolutionInDpi())
                 .append(outputImageColorType, parameter.getOutputImageColorType())

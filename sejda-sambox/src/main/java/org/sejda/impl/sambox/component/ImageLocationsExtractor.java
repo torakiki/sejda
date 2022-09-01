@@ -75,10 +75,10 @@ public class ImageLocationsExtractor extends PDFStreamEngine {
                 if (!imageLocations.containsKey(getCurrentPage())) {
                     imageLocations.put(getCurrentPage(), new ArrayList<>());
                 }
-                imageLocations.get(getCurrentPage()).add(new Rectangle((int) ctmNew.getTranslateX(),
-                        (int) ctmNew.getTranslateY(), (int) imageXScale, (int) imageYScale));
-            } else if (xobject instanceof PDFormXObject) {
-                PDFormXObject form = (PDFormXObject) xobject;
+                imageLocations.get(getCurrentPage())
+                        .add(new Rectangle((int) ctmNew.getTranslateX(), (int) ctmNew.getTranslateY(),
+                                (int) imageXScale, (int) imageYScale));
+            } else if (xobject instanceof PDFormXObject form) {
                 showForm(form);
             }
         }

@@ -27,18 +27,18 @@ import org.sejda.model.pdf.PdfVersion;
 /**
  * Possible values for the page scaling option to be selected when a print dialog is displayed for this document.<br>
  * Pdf reference 1.7, TABLE 8.1 Entries in a viewer preferences dictionary
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum PdfPrintScaling implements MinRequiredVersion, FriendlyNamed {
     NONE(PdfVersion.VERSION_1_6, "none"),
     APP_DEFAULT(PdfVersion.VERSION_1_6, "app_default");
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfPrintScaling(PdfVersion minVersion, String displayName) {
+    PdfPrintScaling(PdfVersion minVersion, String displayName) {
         this.minVersion = minVersion;
         this.displayName = displayName;
     }

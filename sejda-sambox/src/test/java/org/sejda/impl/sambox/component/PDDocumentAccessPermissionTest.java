@@ -53,7 +53,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotOwner() throws TaskPermissionsException {
+    public void testNotOwner() {
         when(permission.isOwnerPermission()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensureOwnerPermissions());
     }
@@ -73,7 +73,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotPrint() throws TaskPermissionsException {
+    public void testNotPrint() {
         when(permission.canPrint()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.PRINT));
     }
@@ -93,7 +93,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotDegradedPrint() throws TaskPermissionsException {
+    public void testNotDegradedPrint() {
         when(permission.canPrintDegraded()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class,
                 () -> victim.ensurePermission(PdfAccessPermission.DEGRADATED_PRINT));
@@ -106,7 +106,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotAssemble() throws TaskPermissionsException {
+    public void testNotAssemble() {
         when(permission.canAssembleDocument()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.ASSEMBLE));
     }
@@ -118,7 +118,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotAannotation() throws TaskPermissionsException {
+    public void testNotAannotation() {
         when(permission.canModifyAnnotations()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.ANNOTATION));
     }
@@ -130,7 +130,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotCopy() throws TaskPermissionsException {
+    public void testNotCopy() {
         when(permission.canExtractContent()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class,
                 () -> victim.ensurePermission(PdfAccessPermission.COPY_AND_EXTRACT));
@@ -143,7 +143,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotExtract() throws TaskPermissionsException {
+    public void testNotExtract() {
         when(permission.canExtractForAccessibility()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class,
                 () -> victim.ensurePermission(PdfAccessPermission.EXTRACTION_FOR_DISABLES));
@@ -156,7 +156,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotFillForm() throws TaskPermissionsException {
+    public void testNotFillForm() {
         when(permission.canFillInForm()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.FILL_FORMS));
     }
@@ -168,7 +168,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNotModify() throws TaskPermissionsException {
+    public void testNotModify() {
         when(permission.canModify()).thenReturn(Boolean.FALSE);
         assertThrows(TaskPermissionsException.class, () -> victim.ensurePermission(PdfAccessPermission.MODIFY));
     }
@@ -180,7 +180,7 @@ public class PDDocumentAccessPermissionTest {
     }
 
     @Test
-    public void testNullPermission() throws TaskPermissionsException {
+    public void testNullPermission() {
         assertThrows(IllegalArgumentException.class, () -> victim.ensurePermission(null));
     }
 }

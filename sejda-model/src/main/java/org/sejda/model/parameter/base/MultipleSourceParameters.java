@@ -75,10 +75,9 @@ public abstract class MultipleSourceParameters extends AbstractPdfOutputParamete
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MultipleSourceParameters)) {
+        if (!(other instanceof MultipleSourceParameters parameter)) {
             return false;
         }
-        MultipleSourceParameters parameter = (MultipleSourceParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(sourceList, parameter.getSourceList())
                 .isEquals();
     }

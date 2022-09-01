@@ -46,7 +46,7 @@ public class UnpackParameters extends AbstractParameters implements MultiplePdfS
     private final MultipleTaskOutput output;
     @NotEmpty
     @Valid
-    private final List<PdfSource<?>> sourceList = new ArrayList<PdfSource<?>>();
+    private final List<PdfSource<?>> sourceList = new ArrayList<>();
 
     public UnpackParameters(MultipleTaskOutput output) {
         this.output = output;
@@ -85,10 +85,9 @@ public class UnpackParameters extends AbstractParameters implements MultiplePdfS
         if (this == other) {
             return true;
         }
-        if (!(other instanceof UnpackParameters)) {
+        if (!(other instanceof UnpackParameters parameter)) {
             return false;
         }
-        UnpackParameters parameter = (UnpackParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
                 .append(sourceList, parameter.getSourceList()).isEquals();
     }

@@ -42,9 +42,8 @@ public class ImageWriterContextTest {
 
     @Test
     public void invalidParamsClass() {
-        assertThrows(TaskException.class, () -> {
-            ImageWriterContext.getContext().createImageWriter(mock(AbstractPdfToSingleImageParameters.class));
-        });
+        assertThrows(TaskException.class, () -> ImageWriterContext.getContext()
+                .createImageWriter(mock(AbstractPdfToSingleImageParameters.class)));
 
     }
 }

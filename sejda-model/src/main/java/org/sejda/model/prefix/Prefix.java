@@ -36,9 +36,9 @@ public enum Prefix implements FriendlyNamed {
     BOOKMARK("[BOOKMARK_NAME]"),
     BOOKMARK_STRICT("[BOOKMARK_NAME_STRICT]");
 
-    private String name;
+    private final String name;
 
-    private Prefix(String name) {
+    Prefix(String name) {
         this.name = name;
     }
 

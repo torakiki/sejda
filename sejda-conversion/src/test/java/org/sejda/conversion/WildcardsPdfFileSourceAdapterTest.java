@@ -60,25 +60,25 @@ public class WildcardsPdfFileSourceAdapterTest {
     }
 
     @Test
-    public void testPositive() throws IOException {
+    public void testPositive() {
         WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.pdf");
         assertEquals(3, victim.getPdfFileSources().size());
     }
 
     @Test
-    public void testPositiveCaseInsensitive() throws IOException {
+    public void testPositiveCaseInsensitive() {
         WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.PdF");
         assertEquals(3, victim.getPdfFileSources().size());
     }
 
     @Test
-    public void testPositiveFilePath() throws IOException {
+    public void testPositiveFilePath() {
         WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/14.pdf");
         assertEquals(1, victim.getPdfFileSources().size());
     }
 
     @Test
-    public void testOrder() throws IOException {
+    public void testOrder() {
         WildcardsPdfFileSourceAdapter victim = new WildcardsPdfFileSourceAdapter(path.toAbsolutePath() + "/*.pdf");
         assertEquals(3, victim.getPdfFileSources().size());
         assertEquals("7.pdf", victim.getPdfFileSources().get(0).getName());

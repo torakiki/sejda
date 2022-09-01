@@ -65,10 +65,9 @@ public class TopLeftRectangularBox {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof TopLeftRectangularBox)) {
+        if (!(other instanceof TopLeftRectangularBox instance)) {
             return false;
         }
-        TopLeftRectangularBox instance = (TopLeftRectangularBox) other;
         return new EqualsBuilder().append(left, instance.left).append(top, instance.top)
                 .append(width, instance.width).append(height, instance.height).isEquals();
     }

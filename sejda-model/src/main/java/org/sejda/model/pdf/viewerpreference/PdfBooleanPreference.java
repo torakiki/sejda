@@ -38,9 +38,9 @@ public enum PdfBooleanPreference implements MinRequiredVersion {
     CENTER_WINDOW(PdfVersion.VERSION_1_2),
     DISPLAY_DOC_TITLE(PdfVersion.VERSION_1_4);
 
-    private PdfVersion minVersion;
+    private final PdfVersion minVersion;
 
-    private PdfBooleanPreference(PdfVersion minVersion) {
+    PdfBooleanPreference(PdfVersion minVersion) {
         this.minVersion = minVersion;
     }
 

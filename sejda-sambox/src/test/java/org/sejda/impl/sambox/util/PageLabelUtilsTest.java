@@ -41,7 +41,7 @@ public class PageLabelUtilsTest {
                 .withPageLabelRange(2, "D")
                 .get();
 
-        removePages(doc, asList(1), result -> {
+        removePages(doc, List.of(1), result -> {
             assertPageLabelIndexesAre(result, 0, 1);
             assertPageLabelRangeIs(result, 0, "r");
             assertPageLabelRangeIs(result, 1, "D");
@@ -68,7 +68,7 @@ public class PageLabelUtilsTest {
                 .withPageLabelRange(2, "D")
                 .get();
 
-        removePages(doc, asList(2), result -> {
+        removePages(doc, List.of(2), result -> {
             assertPageLabelIndexesAre(result, 0, 1);
             assertPageLabelRangeIs(result, 0, "r");
             assertPageLabelRangeIs(result, 1, "D");
@@ -97,7 +97,7 @@ public class PageLabelUtilsTest {
                 .withPageLabelRange(2, "D")
                 .get();
 
-        removePages(doc, asList(10), result -> {
+        removePages(doc, List.of(10), result -> {
             assertPageLabelIndexesAre(result, 0, 2);
             assertPageLabelRangeIs(result, 0, "r");
             assertPageLabelRangeIs(result, 2, "D");

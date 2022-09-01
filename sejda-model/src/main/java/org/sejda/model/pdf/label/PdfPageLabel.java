@@ -80,10 +80,9 @@ public final class PdfPageLabel {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfPageLabel)) {
+        if (!(other instanceof PdfPageLabel pageLabel)) {
             return false;
         }
-        PdfPageLabel pageLabel = (PdfPageLabel) other;
         return new EqualsBuilder().append(labelPrefix, pageLabel.getLabelPrefix())
                 .append(numberingStyle, pageLabel.getNumberingStyle())
                 .append(logicalPageNumber, pageLabel.getLogicalPageNumber()).isEquals();

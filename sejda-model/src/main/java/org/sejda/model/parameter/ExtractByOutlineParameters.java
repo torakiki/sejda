@@ -109,10 +109,9 @@ public class ExtractByOutlineParameters extends MultiplePdfSourceMultipleOutputP
         if (this == other) {
             return true;
         }
-        if (!(other instanceof ExtractByOutlineParameters)) {
+        if (!(other instanceof ExtractByOutlineParameters parameter)) {
             return false;
         }
-        ExtractByOutlineParameters parameter = (ExtractByOutlineParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.optimizationPolicy)
                 .append(discardOutline, parameter.discardOutline).append(level, parameter.getLevel())

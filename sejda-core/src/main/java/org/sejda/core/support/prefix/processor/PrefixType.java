@@ -44,11 +44,11 @@ enum PrefixType {
     BOOKMARK_STRICT(true, "\\[BOOKMARK_NAME_STRICT\\]", new StrictBookmarkPrefixProcessor()),
     TEXT(true, "\\[TEXT\\]", new TextPrefixProcessor());
 
-    private boolean ensureUniqueNames;
-    private Pattern pattern;
-    private PrefixProcessor processor;
+    private final boolean ensureUniqueNames;
+    private final Pattern pattern;
+    private final PrefixProcessor processor;
 
-    private PrefixType(boolean ensureUniqueNames, String matchingRegexp, PrefixProcessor processor) {
+    PrefixType(boolean ensureUniqueNames, String matchingRegexp, PrefixProcessor processor) {
         this.ensureUniqueNames = ensureUniqueNames;
         this.pattern = Pattern.compile(matchingRegexp);
         this.processor = processor;

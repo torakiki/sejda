@@ -38,11 +38,11 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.OutputWriters.newMultipleOutputWriter;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of a task which converts a pdf document to a collection of images, one image per page.
@@ -108,13 +108,11 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
                             getWriter().closeDestination();
 
                             String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber,
-                                    "." + parameters.getOutputImageType().getExtension()))
-                                    .orElseGet(() -> {
-                                        return nameGenerator(parameters.getOutputPrefix())
-                                                .generate(nameRequest(parameters.getOutputImageType().getExtension())
-                                                        .page(currentPage).originalName(source.getName())
-                                                        .fileNumber(fileNumber));
-                                    });
+                                    "." + parameters.getOutputImageType().getExtension())).orElseGet(
+                                    () -> nameGenerator(parameters.getOutputPrefix()).generate(
+                                            nameRequest(parameters.getOutputImageType().getExtension()).page(
+                                                            currentPage).originalName(source.getName())
+                                                    .fileNumber(fileNumber)));
                             outputWriter.addOutput(file(tmpFile).name(outName));
                         } catch (TaskException e) {
                             executionContext().assertTaskIsLenient(e);

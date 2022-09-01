@@ -58,10 +58,9 @@ abstract class SinglePdfSourceParameters extends AbstractPdfOutputParameters imp
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SinglePdfSourceParameters)) {
+        if (!(other instanceof SinglePdfSourceParameters parameter)) {
             return false;
         }
-        SinglePdfSourceParameters parameter = (SinglePdfSourceParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(source, parameter.getSource()).isEquals();
     }
 

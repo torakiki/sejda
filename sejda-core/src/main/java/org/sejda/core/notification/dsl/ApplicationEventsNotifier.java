@@ -20,8 +20,6 @@
  */
 package org.sejda.core.notification.dsl;
 
-import java.math.BigDecimal;
-
 import org.sejda.core.notification.context.GlobalNotificationContext;
 import org.sejda.core.notification.context.ThreadLocalNotificationContext;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
@@ -34,13 +32,15 @@ import org.sejda.model.task.NotifiableTaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * An DSL class that can be used to notify all the global and local listeners about an event. All the listeners registered on the {@link GlobalNotificationContext} and on the
  * {@link ThreadLocalNotificationContext} will be notified.
- * 
+ *
  * @author Andrea Vacondio
  * @see org.sejda.core.notification.context.NotificationContext#notifyListeners(AbstractNotificationEvent)
- * 
  */
 public final class ApplicationEventsNotifier implements Notifier, OngoingNotification {
 
@@ -122,9 +122,9 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     @Override
     public void outOf(BigDecimal total) {
-        notifyListeners(new PercentageOfWorkDoneChangedEvent(percentage
-                .multiply(PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE).divide(total, BigDecimal.ROUND_HALF_DOWN),
-                taskMetadata));
+        notifyListeners(new PercentageOfWorkDoneChangedEvent(
+                percentage.multiply(PercentageOfWorkDoneChangedEvent.MAX_PERGENTAGE)
+                        .divide(total, RoundingMode.HALF_DOWN), taskMetadata));
 
     }
 
@@ -134,7 +134,7 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
      * @param event
      */
     private void notifyListeners(AbstractNotificationEvent event) {
-        LOG.trace("Notifing event {}", event);
+        LOG.trace("Notifying event {}", event);
         GlobalNotificationContext.getContext().notifyListeners(event);
         ThreadLocalNotificationContext.getContext().notifyListeners(event);
     }

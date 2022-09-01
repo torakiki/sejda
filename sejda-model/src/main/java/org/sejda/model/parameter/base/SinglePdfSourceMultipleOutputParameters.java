@@ -69,10 +69,9 @@ public abstract class SinglePdfSourceMultipleOutputParameters extends SinglePdfS
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SinglePdfSourceMultipleOutputParameters)) {
+        if (!(other instanceof SinglePdfSourceMultipleOutputParameters parameter)) {
             return false;
         }
-        SinglePdfSourceMultipleOutputParameters parameter = (SinglePdfSourceMultipleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.outputPrefix)
                 .append(output, parameter.output).isEquals();
     }

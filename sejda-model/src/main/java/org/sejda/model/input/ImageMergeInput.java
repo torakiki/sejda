@@ -99,10 +99,9 @@ public class ImageMergeInput implements MergeInput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof ImageMergeInput)) {
+        if (!(other instanceof ImageMergeInput input)) {
             return false;
         }
-        ImageMergeInput input = (ImageMergeInput) other;
         return new EqualsBuilder().append(source, input.getSource()).append(pageOrientation, input.pageOrientation)
                 .append(pageSize, input.pageSize)
                 .append(shouldPageSizeMatchImageSize, input.shouldPageSizeMatchImageSize).isEquals();

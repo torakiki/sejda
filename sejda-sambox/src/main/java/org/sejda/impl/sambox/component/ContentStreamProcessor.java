@@ -28,6 +28,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.sejda.sambox.contentstream.PDFStreamEngine;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSNull;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
@@ -48,17 +49,16 @@ public class ContentStreamProcessor extends PDFStreamEngine implements Consumer<
 
     private void processAnnotation(PDAnnotation annotation) throws IOException {
         // we want to parse all states for all the appearance streams (N, D, R), not just the normal
-        List<PDAppearanceEntry> appreaceEntries = ofNullable(annotation.getAppearance())
-                .map(d -> d.getCOSObject().getValues()).filter(Objects::nonNull).orElse(Collections.emptyList())
-                .stream().map(a -> a.getCOSObject()).filter(a -> !(a instanceof COSNull)).map(PDAppearanceEntry::new)
-                .collect(Collectors.toList());
+        List<PDAppearanceEntry> appreaceEntries = ofNullable(annotation.getAppearance()).map(
+                        d -> d.getCOSObject().getValues()).filter(obj -> true).orElse(Collections.emptyList()).stream()
+                .map(COSBase::getCOSObject).filter(a -> !(a instanceof COSNull)).map(PDAppearanceEntry::new).toList();
         for (PDAppearanceEntry entry : appreaceEntries) {
             if (entry.isStream()) {
                 processStream(entry.getAppearanceStream());
             } else {
                 for (PDAppearanceStream stream : entry.getSubDictionary().values()) {
                     // TODO investigate this case with named dictionary
-                    if(stream != null) {
+                    if (stream != null) {
                         processStream(stream);
                     }
                 }

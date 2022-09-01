@@ -63,7 +63,7 @@ public class PdfMixInputTest {
     @Test
     public void getPages() {
         PdfMixInput victim = new PdfMixInput(source);
-        List<PageRange> ranges = new ArrayList<PageRange>();
+        List<PageRange> ranges = new ArrayList<>();
         ranges.add(new PageRange(5, 8));
         ranges.add(new PageRange(10, 11));
         victim.addAllPageRanges(ranges);

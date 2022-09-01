@@ -78,10 +78,9 @@ public class Margins {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof Margins)) {
+        if (!(other instanceof Margins instance)) {
             return false;
         }
-        Margins instance = (Margins) other;
         return new EqualsBuilder().append(top, instance.top).append(right, instance.right)
                 .append(bottom, instance.bottom).append(left, instance.left).isEquals();
     }

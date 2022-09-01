@@ -20,10 +20,10 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * Test unit for {@link TimestampPrefixProcessor}
@@ -42,7 +42,7 @@ public class TimestampPrefixProcessorTest extends BasePrefixProcessorTest {
     @Test
     public void testComplexProcess() {
         String prefix = "prefix_[TIMESTAMP]_[BASENAME]";
-        assertFalse(prefix.equals(victim.process(prefix, nameRequest())));
+        assertNotEquals(prefix, victim.process(prefix, nameRequest()));
     }
 
 }

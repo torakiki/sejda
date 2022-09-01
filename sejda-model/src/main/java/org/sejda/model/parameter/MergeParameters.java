@@ -171,10 +171,9 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MergeParameters)) {
+        if (!(other instanceof MergeParameters params)) {
             return false;
         }
-        MergeParameters params = (MergeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(acroFormPolicy, params.getAcroFormPolicy()).append(blankPageIfOdd, params.isBlankPageIfOdd())
                 .append(outlinePolicy, params.getOutlinePolicy()).append(tocPolicy, params.getTableOfContentsPolicy())

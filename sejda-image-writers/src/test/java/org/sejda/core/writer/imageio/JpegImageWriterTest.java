@@ -53,12 +53,10 @@ public class JpegImageWriterTest {
     }
 
     @Test
-    public void writeNotOpened() throws TaskIOException {
+    public void writeNotOpened() {
         PdfToJpegParameters params = mock(PdfToJpegParameters.class);
         RenderedImage image = mock(RenderedImage.class);
-        assertThrows(TaskException.class, () -> {
-            victim.write(image, params);
-        });
+        assertThrows(TaskException.class, () -> victim.write(image, params));
     }
 
     @Test

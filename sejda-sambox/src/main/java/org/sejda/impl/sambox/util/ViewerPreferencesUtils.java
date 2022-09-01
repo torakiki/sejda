@@ -57,7 +57,7 @@ public final class ViewerPreferencesUtils {
 
     private static final Map<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE> NFS_MODE_CACHE;
     static {
-        Map<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE> nfsModeCache = new HashMap<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE>();
+        Map<PdfNonFullScreenPageMode, NON_FULL_SCREEN_PAGE_MODE> nfsModeCache = new HashMap<>();
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_NONE, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseNone);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OC, PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE.UseOC);
         nfsModeCache.put(PdfNonFullScreenPageMode.USE_OUTLINES,
@@ -68,7 +68,7 @@ public final class ViewerPreferencesUtils {
 
     private static final Map<PdfPageLayout, PageLayout> LAYOUT_CACHE;
     static {
-        Map<PdfPageLayout, PageLayout> layoutCache = new HashMap<PdfPageLayout, PageLayout>();
+        Map<PdfPageLayout, PageLayout> layoutCache = new HashMap<>();
         layoutCache.put(PdfPageLayout.SINGLE_PAGE, PageLayout.SINGLE_PAGE);
         layoutCache.put(PdfPageLayout.ONE_COLUMN, PageLayout.ONE_COLUMN);
         layoutCache.put(PdfPageLayout.TWO_COLUMN_LEFT, PageLayout.TWO_COLUMN_LEFT);
@@ -80,7 +80,7 @@ public final class ViewerPreferencesUtils {
 
     private static final Map<PdfPageMode, PageMode> PAGE_MODE_CACHE;
     static {
-        Map<PdfPageMode, PageMode> pageModeCache = new HashMap<PdfPageMode, PageMode>();
+        Map<PdfPageMode, PageMode> pageModeCache = new HashMap<>();
         pageModeCache.put(PdfPageMode.USE_NONE, PageMode.USE_NONE);
         pageModeCache.put(PdfPageMode.USE_THUMBS, PageMode.USE_THUMBS);
         pageModeCache.put(PdfPageMode.USE_OUTLINES, PageMode.USE_OUTLINES);
@@ -92,7 +92,7 @@ public final class ViewerPreferencesUtils {
 
     private static final Map<PdfDuplex, DUPLEX> DUPLEX_CACHE;
     static {
-        Map<PdfDuplex, DUPLEX> duplexCache = new HashMap<PdfDuplex, DUPLEX>();
+        Map<PdfDuplex, DUPLEX> duplexCache = new HashMap<>();
         duplexCache.put(PdfDuplex.SIMPLEX, PDViewerPreferences.DUPLEX.Simplex);
         duplexCache.put(PdfDuplex.DUPLEX_FLIP_LONG_EDGE, PDViewerPreferences.DUPLEX.DuplexFlipLongEdge);
         duplexCache.put(PdfDuplex.DUPLEX_FLIP_SHORT_EDGE, PDViewerPreferences.DUPLEX.DuplexFlipShortEdge);
@@ -191,11 +191,10 @@ public final class ViewerPreferencesUtils {
 
     /**
      * enum mapping from Sejda boolean preferences to an enam capable of activating boolean preferences on a PDFBox {@link PDViewerPreferences}.
-     * 
+     *
      * @author Andrea Vacondio
-     * 
      */
-    private static enum PDFBoxActivableBooleanPreference {
+    private enum PDFBoxActivableBooleanPreference {
         HIDE_TOOLBAR(PdfBooleanPreference.HIDE_TOOLBAR) {
             @Override
             void enable(PDViewerPreferences preferences) {
@@ -263,9 +262,9 @@ public final class ViewerPreferencesUtils {
             }
         };
 
-        private PdfBooleanPreference preference;
+        private final PdfBooleanPreference preference;
 
-        private PDFBoxActivableBooleanPreference(PdfBooleanPreference preference) {
+        PDFBoxActivableBooleanPreference(PdfBooleanPreference preference) {
             this.preference = preference;
         }
 

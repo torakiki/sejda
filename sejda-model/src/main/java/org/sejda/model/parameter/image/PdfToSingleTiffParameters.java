@@ -67,10 +67,9 @@ public class PdfToSingleTiffParameters extends AbstractPdfToSingleImageParameter
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof PdfToSingleTiffParameters)) {
+        if (!(other instanceof PdfToSingleTiffParameters parameter)) {
             return false;
         }
-        PdfToSingleTiffParameters parameter = (PdfToSingleTiffParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(compressionType, parameter.getCompressionType()).isEquals();
     }

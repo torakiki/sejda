@@ -124,9 +124,9 @@ public class PDDocumentAccessPermission {
             }
         };
 
-        private PdfAccessPermission permission;
+        private final PdfAccessPermission permission;
 
-        private ForwardingPdfAccessPermission(PdfAccessPermission permission) {
+        ForwardingPdfAccessPermission(PdfAccessPermission permission) {
             this.permission = permission;
         }
 

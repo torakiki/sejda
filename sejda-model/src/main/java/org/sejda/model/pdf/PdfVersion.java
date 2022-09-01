@@ -43,11 +43,11 @@ public enum PdfVersion implements FriendlyNamed {
     VERSION_1_6(1.6d, "%PDF-1.6"),
     VERSION_1_7(1.7d, "%PDF-1.7");
 
-    private double version;
-    private String versionHeader;
-    private String displayName;
+    private final double version;
+    private final String versionHeader;
+    private final String displayName;
 
-    private PdfVersion(double version, String versionHeader) {
+    PdfVersion(double version, String versionHeader) {
         this.displayName = String.valueOf(version);
         this.version = version;
         this.versionHeader = versionHeader;

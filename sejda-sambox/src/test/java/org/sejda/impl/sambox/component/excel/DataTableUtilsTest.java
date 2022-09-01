@@ -78,49 +78,47 @@ public class DataTableUtilsTest {
     @Test
     public void mergeWithAccountingBlankHeaders_scenario1() {
         DataTable dt = new DataTable(1)
-                .addRow("H1", "H2", "H3")
-                .addRow("A1", "A2", "A3");
+                .addRow("H1", "H2", "H3").addRow("A1", "A2", "A3");
 
-        DataTable dt2 = new DataTable(3)
-                .addRow("H1", " ", "", "H2", "H3")
-                .addRow("C1", "CX", "CY", "C2", "C3");
+        DataTable dt2 = new DataTable(3).addRow("H1", " ", "", "H2", "H3").addRow("C1", "CX", "CY", "C2", "C3");
 
         List<DataTable> mergedList = DataTableUtils.mergeTablesSpanningMultiplePages(Arrays.asList(dt, dt2));
         assertThat(mergedList.size(), is(1));
         DataTable merged = mergedList.get(0);
-        
-        assertThat(merged.toString(), is("\n" +
-                "+--------------+\n" +
-                "|H1|  |  |H2|H3|\n" +
-                "+--------------+\n" +
-                "|A1|  |  |A2|A3|\n" +
-                "+--------------+\n" +
-                "|C1|CX|CY|C2|C3|\n" +
-                "+--------------+\n"));
+
+        assertThat(merged.toString(), is("""
+
+                +--------------+
+                |H1|  |  |H2|H3|
+                +--------------+
+                |A1|  |  |A2|A3|
+                +--------------+
+                |C1|CX|CY|C2|C3|
+                +--------------+
+                """));
 
     }
 
     @Test
     public void mergeWithAccountingBlankHeaders_scenario2() {
         DataTable dt = new DataTable(1)
-                .addRow("H1", "", "H2", "H3")
-                .addRow("A1", "AX", "A2", "A3");
+                .addRow("H1", "", "H2", "H3").addRow("A1", "AX", "A2", "A3");
 
-        DataTable dt2 = new DataTable(3)
-                .addRow("H1", "H2", "", "H3")
-                .addRow("C1", "C2", "CX", "C3");
+        DataTable dt2 = new DataTable(3).addRow("H1", "H2", "", "H3").addRow("C1", "C2", "CX", "C3");
 
         List<DataTable> mergedList = DataTableUtils.mergeTablesSpanningMultiplePages(Arrays.asList(dt, dt2));
         assertThat(mergedList.size(), is(1));
         DataTable merged = mergedList.get(0);
 
-        assertThat(merged.toString(), is("\n" +
-                "+--------------+\n" +
-                "|H1|  |H2|  |H3|\n" +
-                "+--------------+\n" +
-                "|A1|AX|A2|  |A3|\n" +
-                "+--------------+\n" +
-                "|C1|  |C2|CX|C3|\n" +
-                "+--------------+\n"));
+        assertThat(merged.toString(), is("""
+
+                +--------------+
+                |H1|  |H2|  |H3|
+                +--------------+
+                |A1|AX|A2|  |A3|
+                +--------------+
+                |C1|  |C2|CX|C3|
+                +--------------+
+                """));
     }
 }

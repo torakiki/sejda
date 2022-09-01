@@ -76,7 +76,7 @@ public class IOUtilsTest {
     }
 
     @Test
-    public void testCreateFolder() throws TaskIOException {
+    public void testCreateFolder() {
         File tmp = IOUtils.createTemporaryFolder();
         tmp.deleteOnExit();
         assertTrue(tmp.exists());
@@ -256,7 +256,7 @@ public class IOUtilsTest {
     }
 
     @Test
-    public void testStrictFilename_specialChars() throws TaskIOException {
+    public void testStrictFilename_specialChars() {
         assertEquals("1_Invoice0001", IOUtils.toStrictFilename("1_Invoice#0001:*<>/\\"));
     }
 

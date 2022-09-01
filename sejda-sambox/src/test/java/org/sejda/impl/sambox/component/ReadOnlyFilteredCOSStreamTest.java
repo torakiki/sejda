@@ -97,8 +97,7 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test
-    public void readOnlyJpegImageNullColorSpace(@TempDir Path folder) throws IOException {
-        ;
+    public void readOnlyJpegImageNullColorSpace(@TempDir Path folder) {
         assertThrows(IllegalArgumentException.class,
                 () -> ReadOnlyFilteredCOSStream.readOnlyJpegImage(Files.createTempFile(folder, null, null).toFile(), 10,
                         10, 1, null));
@@ -216,7 +215,7 @@ public class ReadOnlyFilteredCOSStreamTest {
     }
 
     @Test
-    public void readOnlyJpegImage(@TempDir Path folder) throws FileNotFoundException, IOException {
+    public void readOnlyJpegImage(@TempDir Path folder) throws IOException {
         PDColorSpace colorSpace = mock(PDColorSpace.class);
         when(colorSpace.getCOSObject()).thenReturn(COSInteger.TWO);
         victim = ReadOnlyFilteredCOSStream.readOnlyJpegImage(Files.createTempFile(folder, null, null).toFile(), 10, 20,

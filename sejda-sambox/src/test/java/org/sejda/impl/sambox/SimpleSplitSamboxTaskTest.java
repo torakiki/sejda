@@ -173,7 +173,7 @@ public class SimpleSplitSamboxTaskTest extends BaseTaskTest<SimpleSplitParameter
 
     @Override
     public Task<SimpleSplitParameters> getTask() {
-        return new SplitByPageNumbersTask<SimpleSplitParameters>();
+        return new SplitByPageNumbersTask<>();
     }
 
 }

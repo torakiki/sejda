@@ -45,7 +45,7 @@ public class SetPagesLabelParameters extends SinglePdfSourceSingleOutputParamete
 
     @NotEmpty
     @Valid
-    private final Map<Integer, PdfPageLabel> labels = new HashMap<Integer, PdfPageLabel>();
+    private final Map<Integer, PdfPageLabel> labels = new HashMap<>();
 
     /**
      * Associates the given label to the given page number. If a label was already associated to the given page, it is replaced with the new one.
@@ -76,10 +76,9 @@ public class SetPagesLabelParameters extends SinglePdfSourceSingleOutputParamete
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SetPagesLabelParameters)) {
+        if (!(other instanceof SetPagesLabelParameters parameter)) {
             return false;
         }
-        SetPagesLabelParameters parameter = (SetPagesLabelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(getLabels(), parameter.getLabels())
                 .isEquals();
     }

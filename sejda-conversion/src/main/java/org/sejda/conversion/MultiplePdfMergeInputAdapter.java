@@ -36,7 +36,7 @@ import org.sejda.model.pdf.page.PageRange;
  */
 public class MultiplePdfMergeInputAdapter {
 
-    private final List<PdfMergeInput> pdfMergeInputs = new ArrayList<PdfMergeInput>();
+    private final List<PdfMergeInput> pdfMergeInputs = new ArrayList<>();
 
     public MultiplePdfMergeInputAdapter(List<PdfFileSource> inputFiles, List<Set<PageRange>> pageRanges) {
         Iterator<Set<PageRange>> pageRangeSetIterator = pageRanges.iterator();

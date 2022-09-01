@@ -18,9 +18,6 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import java.io.IOException;
-import java.util.function.Supplier;
-
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.impl.sambox.component.PagesExtractor;
@@ -31,6 +28,9 @@ import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
+
+import java.io.IOException;
+import java.util.function.Supplier;
 
 /**
  * Splitter implementation that tries to split a document at roughly a given size
@@ -100,9 +100,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         private long sizeLimit;
         private PDDocument document;
         private ExistingPagesSizePredictor predictor;
-        private Supplier<ExistingPagesSizePredictor> predictorSupplier = () -> {
-            return ExistingPagesSizePredictor.instance();
-        };
+        private Supplier<ExistingPagesSizePredictor> predictorSupplier = ExistingPagesSizePredictor::instance;
         private PageCopier copier;
 
         OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
@@ -110,9 +108,8 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
             this.document = document;
             this.copier = new PageCopier(optimize);
             if (parameters.isCompress()) {
-                predictorSupplier = () -> {
-                    return ExistingPagesSizePredictor.instance(WriteOption.COMPRESS_STREAMS, WriteOption.XREF_STREAM);
-                };
+                predictorSupplier = () -> ExistingPagesSizePredictor.instance(WriteOption.COMPRESS_STREAMS,
+                        WriteOption.XREF_STREAM);
             }
 
         }

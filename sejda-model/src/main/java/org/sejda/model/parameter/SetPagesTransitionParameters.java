@@ -42,7 +42,7 @@ import java.util.Map;
 public class SetPagesTransitionParameters extends SinglePdfSourceSingleOutputParameters {
 
     @Valid
-    private final Map<Integer, PdfPageTransition> transitions = new HashMap<Integer, PdfPageTransition>();
+    private final Map<Integer, PdfPageTransition> transitions = new HashMap<>();
     @Valid
     private PdfPageTransition defaultTransition;
     private boolean fullScreen = false;
@@ -115,10 +115,9 @@ public class SetPagesTransitionParameters extends SinglePdfSourceSingleOutputPar
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SetPagesTransitionParameters)) {
+        if (!(other instanceof SetPagesTransitionParameters parameter)) {
             return false;
         }
-        SetPagesTransitionParameters parameter = (SetPagesTransitionParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(transitions, parameter.getTransitions())
                 .append(defaultTransition, parameter.getDefaultTransition())
                 .append(fullScreen, parameter.isFullScreen()).isEquals();

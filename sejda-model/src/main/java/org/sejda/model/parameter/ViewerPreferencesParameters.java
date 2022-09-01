@@ -140,10 +140,9 @@ public class ViewerPreferencesParameters extends MultiplePdfSourceMultipleOutput
         if (this == other) {
             return true;
         }
-        if (!(other instanceof ViewerPreferencesParameters)) {
+        if (!(other instanceof ViewerPreferencesParameters parameter)) {
             return false;
         }
-        ViewerPreferencesParameters parameter = (ViewerPreferencesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(printScaling, parameter.getPrintScaling())
                 .append(direction, parameter.getDirection()).append(duplex, parameter.getDuplex())
                 .append(pageLayout, parameter.getPageLayout()).append(pageMode, parameter.getPageMode())

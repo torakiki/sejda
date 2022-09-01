@@ -60,10 +60,9 @@ public abstract class MultiplePdfSourceSingleOutputParameters extends MultiplePd
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MultiplePdfSourceSingleOutputParameters)) {
+        if (!(other instanceof MultiplePdfSourceSingleOutputParameters parameter)) {
             return false;
         }
-        MultiplePdfSourceSingleOutputParameters parameter = (MultiplePdfSourceSingleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output).isEquals();
     }
 }

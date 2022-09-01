@@ -37,9 +37,9 @@ public enum PdfNonFullScreenPageMode implements FriendlyNamed {
     USE_THUMNS("nfsthumbs"),
     USE_OC("nfsocontent");
 
-    private String displayName;
+    private final String displayName;
 
-    private PdfNonFullScreenPageMode(String displayName) {
+    PdfNonFullScreenPageMode(String displayName) {
         this.displayName = displayName;
     }
 

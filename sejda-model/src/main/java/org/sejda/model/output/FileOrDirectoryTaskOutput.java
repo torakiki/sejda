@@ -32,7 +32,7 @@ public class FileOrDirectoryTaskOutput extends AbstractTaskOutput implements Sin
 
     public FileOrDirectoryTaskOutput(File file) {
         if (file == null) {
-            throw new IllegalArgumentException("A not null file or directory instance is expected. Path: " + file);
+            throw new IllegalArgumentException("A not null file or directory instance is expected");
         }
         this.file = file;
     }
@@ -66,10 +66,9 @@ public class FileOrDirectoryTaskOutput extends AbstractTaskOutput implements Sin
         if (this == other) {
             return true;
         }
-        if (!(other instanceof FileOrDirectoryTaskOutput)) {
+        if (!(other instanceof FileOrDirectoryTaskOutput output)) {
             return false;
         }
-        FileOrDirectoryTaskOutput output = (FileOrDirectoryTaskOutput) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(file, output.file).isEquals();
     }
 

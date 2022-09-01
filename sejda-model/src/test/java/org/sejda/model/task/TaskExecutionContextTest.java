@@ -42,7 +42,7 @@ public class TaskExecutionContextTest {
     }
 
     @Test
-    public void nonLenient() throws TaskExecutionException {
+    public void nonLenient() {
         TaskExecutionContext victim = new TaskExecutionContext(mock(Task.class), false);
         assertThrows(TaskNonLenientExecutionException.class, () -> victim.assertTaskIsLenient(new Exception("Test")));
     }

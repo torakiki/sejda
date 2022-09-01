@@ -44,7 +44,7 @@ public class SplitByEveryXPagesParameters extends AbstractSplitByPageParameters 
 
     @Override
     public Set<Integer> getPages(int upperLimit) {
-        Set<Integer> pages = new NullSafeSet<Integer>();
+        Set<Integer> pages = new NullSafeSet<>();
         for (int i = step; i <= upperLimit; i += step) {
             pages.add(i);
         }
@@ -66,10 +66,9 @@ public class SplitByEveryXPagesParameters extends AbstractSplitByPageParameters 
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitByEveryXPagesParameters)) {
+        if (!(other instanceof SplitByEveryXPagesParameters parameter)) {
             return false;
         }
-        SplitByEveryXPagesParameters parameter = (SplitByEveryXPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(step, parameter.step).isEquals();
     }
 }

@@ -49,7 +49,6 @@ public final class DefaultSejdaConfiguration implements SejdaConfiguration {
 
     private Class<? extends NotificationStrategy> notificationStrategy;
     private final TasksRegistry tasksRegistry = new DefaultTasksRegistry();
-    ;
     private boolean validation;
     private boolean ignoreXmlConfiguration;
 

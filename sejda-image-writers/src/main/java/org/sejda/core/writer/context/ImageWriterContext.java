@@ -19,12 +19,6 @@
  */
 package org.sejda.core.writer.context;
 
-import static java.util.Objects.isNull;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.sejda.core.writer.imageio.JpegImageWriter;
 import org.sejda.core.writer.imageio.PngImageWriter;
 import org.sejda.core.writer.imageio.TiffMultiImageWriter;
@@ -37,6 +31,12 @@ import org.sejda.model.parameter.image.PdfToJpegParameters;
 import org.sejda.model.parameter.image.PdfToMultipleTiffParameters;
 import org.sejda.model.parameter.image.PdfToPngParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 /**
  * Image Writer Context used to get the proper {@link ImageWriter}.

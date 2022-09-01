@@ -40,10 +40,10 @@ import java.util.Set;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of the task responsible for extracting pages from a given pdf document.
@@ -94,12 +94,10 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
                             int fileNumber = executionContext().incrementAndGetOutputDocumentsCounter();
 
-                            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber))
-                                    .orElseGet(() -> {
-                                        return nameGenerator(parameters.getOutputPrefix())
-                                                .generate(nameRequest().originalName(source.getName())
-                                                        .fileNumber(fileNumber).page(pageSets.iterator().next()));
-                                    });
+                            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
+                                    () -> nameGenerator(parameters.getOutputPrefix()).generate(
+                                            nameRequest().originalName(source.getName()).fileNumber(fileNumber)
+                                                    .page(pageSets.iterator().next())));
 
                             outputWriter.addOutput(file(tmpFile).name(outName));
 

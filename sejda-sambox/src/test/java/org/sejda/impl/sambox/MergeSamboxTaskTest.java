@@ -25,7 +25,6 @@ import org.junit.jupiter.api.parallel.Resources;
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.InvalidTaskParametersException;
-import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.ImageMergeInput;
 import org.sejda.model.input.MergeInput;
@@ -57,7 +56,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -95,21 +93,21 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     private List<PdfMergeInput> getInputWithOutline() {
-        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(largeOutlineInput()));
         input.add(new PdfMergeInput(largeInput()));
         return input;
     }
 
     private List<PdfMergeInput> getInputWithEncrypted() {
-        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(stronglyEncryptedInput()));
         input.add(new PdfMergeInput(largeInput()));
         return input;
     }
 
     private List<PdfMergeInput> getInput() {
-        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(regularInput()));
         input.add(new PdfMergeInput(customInput("/pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf")));
         return input;
@@ -165,9 +163,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.forPdfOutput(d -> {
-            assertEquals(new PDRectangle(0, 0, 595, 842).rotate(90).toString(), d.getPage(0).getMediaBox().toString());
-        });
+        testContext.forPdfOutput(d -> assertEquals(new PDRectangle(0, 0, 595, 842).rotate(90).toString(),
+                d.getPage(0).getMediaBox().toString()));
     }
 
     @Test
@@ -280,14 +277,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertHasAcroforms(true);
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument doc) {
-                // original field
-                assertEquals(1, findFieldsNamedExact("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpg.withdot", doc).size());
-                // renamed field
-                assertEquals(1, findFieldsMatching("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpgwithdot", doc).size());
-            }
+        testContext.forEachPdfOutput(doc -> {
+            // original field
+            assertEquals(1, findFieldsNamedExact("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpg.withdot", doc).size());
+            // renamed field
+            assertEquals(1, findFieldsMatching("Choice_Caption_0wUBrGuJDKIWD9g7kWcKpgwithdot", doc).size());
         });
     }
 
@@ -304,14 +298,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertHasAcroforms(true);
 
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument doc) {
-                // original field
-                assertEquals(1, findFieldsNamedExact("form_field", doc).size());
-                // renamed field
-                assertEquals(2, findFieldsMatching("form_field", doc).size());
-            }
+        testContext.forEachPdfOutput(doc -> {
+            // original field
+            assertEquals(1, findFieldsNamedExact("form_field", doc).size());
+            // renamed field
+            assertEquals(2, findFieldsMatching("form_field", doc).size());
         });
     }
 
@@ -353,9 +344,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertPages(1).assertHasAcroforms(false);
-        testContext.forEachPdfOutput(doc -> {
-            assertPageTextContains(doc.getPage(0), "ጩ");
-        });
+        testContext.forEachPdfOutput(doc -> assertPageTextContains(doc.getPage(0), "ጩ"));
     }
 
     @Test
@@ -426,7 +415,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void testExecuteMergeRangesWithFlattenForms() throws IOException {
-        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(customInput("/pdf/forms/simple_form_with_values.pdf")));
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
@@ -456,17 +445,14 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertHasAcroforms(true);
 
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument doc) {
-                assertEquals(1, findFieldsNamedExact("text_field", doc).size());
-                assertEquals(2, findFieldsMatching("text_field", doc).size());
+        testContext.forEachPdfOutput(doc -> {
+            assertEquals(1, findFieldsNamedExact("text_field", doc).size());
+            assertEquals(2, findFieldsMatching("text_field", doc).size());
 
-                // 1 widget each
-                assertEquals(Arrays.asList(1, 1),
-                        findFieldsMatching("text_field", doc).stream().map(f -> f.getWidgets().size())
-                                .collect(Collectors.toList()));
-            }
+            // 1 widget each
+            assertEquals(Arrays.asList(1, 1),
+                    findFieldsMatching("text_field", doc).stream().map(f -> f.getWidgets().size())
+                            .collect(Collectors.toList()));
         });
     }
 
@@ -483,17 +469,13 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertHasAcroforms(true);
 
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument doc) {
-                assertEquals(1, findFieldsNamedExact("text_field", doc).size());
-                assertEquals(1, findFieldsMatching("text_field", doc).size());
+        testContext.forEachPdfOutput(doc -> {
+            assertEquals(1, findFieldsNamedExact("text_field", doc).size());
+            assertEquals(1, findFieldsMatching("text_field", doc).size());
 
-                // 2 widgets, 1 field
-                assertEquals(Arrays.asList(2),
-                        findFieldsMatching("text_field", doc).stream().map(f -> f.getWidgets().size())
-                                .collect(Collectors.toList()));
-            }
+            // 2 widgets, 1 field
+            assertEquals(List.of(2), findFieldsMatching("text_field", doc).stream().map(f -> f.getWidgets().size())
+                    .collect(Collectors.toList()));
         });
     }
 
@@ -648,7 +630,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void pageFooterAndTocwithDocTitles() throws IOException {
-        List<PdfMergeInput> input = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(regularInput()));
         input.add(new PdfMergeInput(customInput("/pdf/test_file.pdf", "my_file.pdf")));
         MergeParameters parameters = setUpParameters(input);
@@ -700,9 +682,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.assertPages(1 + 11 + 3 + 11 + 1).forEachPdfOutput(d -> {
-            assertEquals(Arrays.asList(1, 13, 14, 15, 27), getPagesContainingImages(d));
-        });
+        testContext.assertPages(1 + 11 + 3 + 11 + 1)
+                .forEachPdfOutput(d -> assertEquals(Arrays.asList(1, 13, 14, 15, 27), getPagesContainingImages(d)));
     }
 
     @Test
@@ -720,9 +701,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(d -> {
-            assertEquals(d.getPage(0).getMediaBox().getWidth(), 248, 0.0);
-        });
+        testContext.forEachPdfOutput(d -> assertEquals(d.getPage(0).getMediaBox().getWidth(), 248, 0.0));
     }
 
     @Test
@@ -780,7 +759,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
-    public void mergeImagesWithValidation() throws IOException, TaskException {
+    public void mergeImagesWithValidation() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -888,7 +867,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void withCoverPage() throws IOException {
-        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>();
+        List<PdfMergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
         inputs.add(new PdfMergeInput(regularInput())); // 11 pages
         inputs.add(new PdfMergeInput(
@@ -925,7 +904,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void withoutRotations() throws IOException {
-        List<MergeInput> inputs = new ArrayList<MergeInput>();
+        List<MergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
         inputs.add(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
 
@@ -948,7 +927,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void withRotations() throws IOException {
-        List<MergeInput> inputs = new ArrayList<MergeInput>();
+        List<MergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
         inputs.add(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
 
@@ -997,7 +976,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             }
         }
 
-        List<PdfMergeInput> inputs = new ArrayList<PdfMergeInput>(entries.size());
+        List<PdfMergeInput> inputs = new ArrayList<>(entries.size());
         for (String entry : entries) {
             inputs.add(new PdfMergeInput(customInput("/pdf/one_page.pdf", entry + ".pdf"))); // 1 page
         }

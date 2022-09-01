@@ -140,10 +140,9 @@ public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSource
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MultiplePdfSourceMultipleOutputParameters)) {
+        if (!(other instanceof MultiplePdfSourceMultipleOutputParameters parameter)) {
             return false;
         }
-        MultiplePdfSourceMultipleOutputParameters parameter = (MultiplePdfSourceMultipleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(outputPrefix, parameter.outputPrefix)
                 .append(output, parameter.output).append(specificResultFilenames, parameter.specificResultFilenames)
                 .isEquals();

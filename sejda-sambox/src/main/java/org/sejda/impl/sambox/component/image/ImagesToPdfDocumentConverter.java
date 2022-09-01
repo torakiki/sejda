@@ -147,8 +147,7 @@ public class ImagesToPdfDocumentConverter {
         // if images were supplied, convert them to PDF
         List<MergeInput> newInputList = new ArrayList<>();
         for (MergeInput input : parameters.getInputList()) {
-            if (input instanceof ImageMergeInput) {
-                ImageMergeInput image = (ImageMergeInput) input;
+            if (input instanceof ImageMergeInput image) {
                 // collect all consecutive images and convert them to a PDF document
                 context.notifiableTaskMetadata().setCurrentSource(image.getSource());
                 newInputList.add(convertImagesToPdfMergeInput(image, context));

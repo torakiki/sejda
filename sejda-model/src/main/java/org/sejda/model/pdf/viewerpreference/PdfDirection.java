@@ -27,17 +27,17 @@ import org.sejda.model.pdf.PdfVersion;
 /**
  * Possible values for the predominant reading order for text. <br>
  * Pdf reference 1.7, TABLE 8.1 Entries in a viewer preferences dictionary
- * 
+ *
  * @author Andrea Vacondio
  */
 public enum PdfDirection implements MinRequiredVersion, FriendlyNamed {
     LEFT_TO_RIGHT("l2r", PdfVersion.VERSION_1_3),
     RIGHT_TO_LEFT("r2l", PdfVersion.VERSION_1_3);
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfDirection(String displayName, PdfVersion minVersion) {
+    PdfDirection(String displayName, PdfVersion minVersion) {
         this.displayName = displayName;
         this.minVersion = minVersion;
     }

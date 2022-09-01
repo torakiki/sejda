@@ -146,10 +146,9 @@ public class RotateParameters extends MultiplePdfSourceMultipleOutputParameters 
         if (this == other) {
             return true;
         }
-        if (!(other instanceof RotateParameters)) {
+        if (!(other instanceof RotateParameters parameter)) {
             return false;
         }
-        RotateParameters parameter = (RotateParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(predefinedSetOfPages, parameter.predefinedSetOfPages)
                 .append(pageSelection, parameter.pageSelection)

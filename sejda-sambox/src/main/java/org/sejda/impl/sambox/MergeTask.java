@@ -44,6 +44,7 @@ import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
@@ -164,8 +165,8 @@ public class MergeTask extends BaseTask<MergeParameters> {
                             String tocText = sourceBaseName;
                             if (ToCPolicy.DOC_TITLES == parameters.getTableOfContentsPolicy()) {
                                 tocText = ofNullable(
-                                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation())
-                                                .map(i -> i.getTitle()).filter(StringUtils::isNotBlank)
+                                        sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation()).map(
+                                                PDDocumentInformation::getTitle).filter(StringUtils::isNotBlank)
                                                 .orElse(sourceBaseName);
                             }
                             tocCreator.appendItem(tocText, pagesCounter, importedPage);

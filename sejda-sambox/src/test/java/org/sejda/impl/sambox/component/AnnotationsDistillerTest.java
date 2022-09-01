@@ -102,14 +102,14 @@ public class AnnotationsDistillerTest {
         new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         List<PDAnnotation> annots = newPage.getAnnotations();
         assertEquals(6, annots.size());
-        assertThat(annots.stream().map(PDAnnotation::getAnnotationName).collect(Collectors.toList()),
-                Matchers.contains(annotations.stream().map(PDAnnotation::getAnnotationName)
-                        .map(d -> Matchers.equalTo(d)).collect(Collectors.toList())));
+        assertThat(annots.stream().map(PDAnnotation::getAnnotationName).collect(Collectors.toList()), Matchers.contains(
+                annotations.stream().map(PDAnnotation::getAnnotationName).map(Matchers::equalTo)
+                        .collect(Collectors.toList())));
     }
 
     @Test
     public void noLinks() {
-        List<PDAnnotation> annotations = Arrays.asList(new PDAnnotationText());
+        List<PDAnnotation> annotations = List.of(new PDAnnotationText());
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -121,7 +121,7 @@ public class AnnotationsDistillerTest {
         PDPage destPage = new PDPage();
         PDAnnotationText annotation = new PDAnnotationText();
         annotation.setPage(destPage);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -133,7 +133,7 @@ public class AnnotationsDistillerTest {
     public void noLinks_PageNotRelevant() {
         PDAnnotationText annotation = new PDAnnotationText();
         annotation.setPage(new PDPage());
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -161,7 +161,7 @@ public class AnnotationsDistillerTest {
     public void linksNoGoTo() {
         PDAnnotationLink annotation = new PDAnnotationLink();
         annotation.setAction(new PDActionJavaScript());
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -176,7 +176,7 @@ public class AnnotationsDistillerTest {
         PDPageDestination dest = new PDPageFitDestination();
         dest.setPage(destPage);
         annotation.setDestination(dest);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -191,7 +191,7 @@ public class AnnotationsDistillerTest {
         PDPageDestination dest = new PDPageFitDestination();
         dest.setPage(oldPage);
         annotation.setDestination(dest);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -231,7 +231,7 @@ public class AnnotationsDistillerTest {
         PDActionGoTo action = new PDActionGoTo();
         action.setDestination(dest);
         annotation.setAction(action);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -248,7 +248,7 @@ public class AnnotationsDistillerTest {
         PDActionGoTo action = new PDActionGoTo();
         action.setDestination(dest);
         annotation.setAction(action);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
@@ -289,7 +289,7 @@ public class AnnotationsDistillerTest {
         PDPageDestination dest = new PDPageFitDestination();
         dest.setPage(destPage);
         annotation.setDestination(namedDest);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = mock(PDDocument.class);
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
@@ -309,7 +309,7 @@ public class AnnotationsDistillerTest {
         PDPageDestination dest = new PDPageFitDestination();
         dest.setPage(oldPage);
         annotation.setDestination(namedDest);
-        List<PDAnnotation> annotations = Arrays.asList(annotation);
+        List<PDAnnotation> annotations = List.of(annotation);
         oldPage.setAnnotations(annotations);
         PDDocument doc = mock(PDDocument.class);
         PDDocumentCatalog catalog = mock(PDDocumentCatalog.class);
@@ -331,7 +331,7 @@ public class AnnotationsDistillerTest {
             List<PDAnnotation> annotations = firstNew.getAnnotations();
             assertFalse(annotations.isEmpty());
             List<PDAnnotationMarkup> parent = annotations.stream().filter(a -> a instanceof PDAnnotationPopup)
-                    .map(a -> ((PDAnnotationPopup) a).getParent()).collect(Collectors.toList());
+                    .map(a -> ((PDAnnotationPopup) a).getParent()).toList();
             assertEquals(1, parent.size());
             assertTrue(annotations.contains(parent.get(0)));
         }
@@ -372,7 +372,7 @@ public class AnnotationsDistillerTest {
             List<PDAnnotation> annotations = firstNew.getAnnotations();
             assertFalse(annotations.isEmpty());
             List<PDAnnotationMarkup> parent = annotations.stream().filter(a -> a instanceof PDAnnotationPopup)
-                    .map(a -> ((PDAnnotationPopup) a).getParent()).collect(Collectors.toList());
+                    .map(a -> ((PDAnnotationPopup) a).getParent()).toList();
             assertEquals(1, parent.size());
             assertTrue(annotations.contains(parent.get(0)));
         }

@@ -93,7 +93,7 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection, MergeI
      */
     @Override
     public Set<Integer> getPages(int totalNumberOfPage) {
-        Set<Integer> retSet = new NullSafeSet<Integer>();
+        Set<Integer> retSet = new NullSafeSet<>();
         if (isAllPages()) {
             for (int i = 1; i <= totalNumberOfPage; i++) {
                 retSet.add(i);
@@ -121,10 +121,9 @@ public class PdfMergeInput implements PageRangeSelection, PagesSelection, MergeI
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfMergeInput)) {
+        if (!(other instanceof PdfMergeInput input)) {
             return false;
         }
-        PdfMergeInput input = (PdfMergeInput) other;
         return new EqualsBuilder().append(source, input.getSource()).append(pageSelection, input.pageSelection)
                 .isEquals();
     }

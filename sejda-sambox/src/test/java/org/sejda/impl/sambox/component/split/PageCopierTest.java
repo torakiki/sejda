@@ -34,6 +34,7 @@ import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -68,7 +69,7 @@ public class PageCopierTest {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
             PDPage page = document.getPage(0);
-            page.setThreadBeads(Arrays.asList(new PDThreadBead()));
+            page.setThreadBeads(List.of(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
             PDPage copy = new PageCopier(false).copyOf(page);
             assertTrue(copy.getThreadBeads().isEmpty());
@@ -114,7 +115,7 @@ public class PageCopierTest {
             PDActionGoTo action = new PDActionGoTo();
             action.setDestination(PDDestination.create(COSName.C));
             link.setAction(action);
-            page.setAnnotations(Arrays.asList(link));
+            page.setAnnotations(List.of(link));
             PDPage copy = new PageCopier(false).copyOf(page);
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
                     page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
@@ -136,7 +137,7 @@ public class PageCopierTest {
             PDAnnotationLink link = new PDAnnotationLink();
             PDActionGoTo action = new PDActionGoTo();
             link.setAction(action);
-            page.setAnnotations(Arrays.asList(link));
+            page.setAnnotations(List.of(link));
             PDPage copy = new PageCopier(false).copyOf(page);
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
                     page.getCOSObject().getDictionaryObject(COSName.ANNOTS));

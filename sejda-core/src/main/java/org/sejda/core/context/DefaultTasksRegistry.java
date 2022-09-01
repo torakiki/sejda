@@ -41,7 +41,7 @@ class DefaultTasksRegistry implements TasksRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTasksRegistry.class);
 
-    private Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap = new HashMap<>();
+    private final Map<Class<? extends TaskParameters>, Class<? extends Task>> tasksMap = new HashMap<>();
 
 
     @Override

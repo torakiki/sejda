@@ -44,7 +44,7 @@ public class PageDestinationsSplitPagesTest {
     @BeforeEach
     public void setUp() {
         destinations = mock(OutlinePageDestinations.class);
-        Set<Integer> pages = new HashSet<Integer>();
+        Set<Integer> pages = new HashSet<>();
         pages.add(3);
         pages.add(4);
         pages.add(10);

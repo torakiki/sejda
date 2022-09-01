@@ -26,11 +26,9 @@ import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.exception.ConfigurationException;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.ClosedChannelException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,7 +51,7 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveConstuctor() throws ConfigurationException, IOException {
+    public void testPositiveConstuctor() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-test.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
@@ -91,7 +89,7 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveNoValidation() throws ConfigurationException, IOException {
+    public void testPositiveNoValidation() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-no-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
@@ -99,7 +97,7 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveDefaultValidation() throws ConfigurationException, IOException {
+    public void testPositiveDefaultValidation() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-default-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
@@ -108,18 +106,18 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveAsyncNotification() throws ConfigurationException, IOException {
+    public void testPositiveAsyncNotification() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-async-notification.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
         assertEquals(AsyncNotificationStrategy.class, victim.getNotificationStrategy());
     }
 
-    public void testStreamIsClosed() throws ConfigurationException, IOException {
+    @Test
+    public void testStreamIsClosed() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-default-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        var e = assertThrows(IOException.class, () -> stream.read());
-        assertThat(e.getMessage(), containsString("its closed"));
+        assertThrows(ClosedChannelException.class, () -> stream.read());
     }
 }

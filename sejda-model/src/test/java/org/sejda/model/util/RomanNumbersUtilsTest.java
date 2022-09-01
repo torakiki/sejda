@@ -43,6 +43,7 @@ public class RomanNumbersUtilsTest {
         assertThrows(IllegalArgumentException.class, () -> RomanNumbersUtils.toRoman(-1));
     }
 
+    @Test
     public void testFailingZero() {
         assertEquals("nulla", RomanNumbersUtils.toRoman(0));
     }

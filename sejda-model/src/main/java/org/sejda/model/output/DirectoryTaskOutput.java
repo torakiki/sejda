@@ -84,10 +84,9 @@ public class DirectoryTaskOutput extends AbstractTaskOutput implements MultipleT
         if (this == other) {
             return true;
         }
-        if (!(other instanceof DirectoryTaskOutput)) {
+        if (!(other instanceof DirectoryTaskOutput output)) {
             return false;
         }
-        DirectoryTaskOutput output = (DirectoryTaskOutput) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(directory, output.getDestination()).isEquals();
     }

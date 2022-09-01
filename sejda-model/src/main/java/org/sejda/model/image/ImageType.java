@@ -24,9 +24,9 @@ import java.util.Set;
 
 /**
  * Model for an image type with helper methods related to the ability of the image type to support multiple images written into the same file.
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum ImageType {
     PNG("image/png", "png", false),
@@ -34,11 +34,11 @@ public enum ImageType {
     GIF("image/gif", "gif", true),
     TIFF("image/tiff", "tif", true);
 
-    private String mimeType;
-    private String extension;
-    private boolean supportMultiImage;
+    private final String mimeType;
+    private final String extension;
+    private final boolean supportMultiImage;
 
-    private ImageType(String mimeType, String extension, boolean supportMultiImage) {
+    ImageType(String mimeType, String extension, boolean supportMultiImage) {
         this.mimeType = mimeType;
         this.extension = extension;
         this.supportMultiImage = supportMultiImage;

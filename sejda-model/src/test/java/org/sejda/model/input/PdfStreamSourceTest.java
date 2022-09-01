@@ -54,7 +54,7 @@ public class PdfStreamSourceTest {
         assertNotNull(instance);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void testOpener() throws TaskIOException {
         var opener = mock(PdfSourceOpener.class);

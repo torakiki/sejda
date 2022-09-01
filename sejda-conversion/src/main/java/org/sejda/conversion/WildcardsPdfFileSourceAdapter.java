@@ -49,7 +49,7 @@ public class WildcardsPdfFileSourceAdapter {
             Path directory = Paths.get(getFullPath(path)).toAbsolutePath().normalize();
 
             if (!Files.isDirectory(directory)) {
-                throw new ConversionException("Path '" + directory.toString() + "' is not an existing directory");
+                throw new ConversionException("Path '" + directory + "' is not an existing directory");
             }
 
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(directory, "*.pdf")) {

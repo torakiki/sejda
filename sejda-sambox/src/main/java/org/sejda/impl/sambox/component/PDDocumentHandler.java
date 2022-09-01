@@ -27,6 +27,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Map;
@@ -192,9 +193,7 @@ public class PDDocumentHandler implements Closeable {
      * @param opts
      */
     public void addWriteOption(WriteOption... opts) {
-        for (WriteOption opt : opts) {
-            this.writeOptions.add(opt);
-        }
+        this.writeOptions.addAll(Arrays.asList(opts));
     }
 
     /**
@@ -274,11 +273,11 @@ public class PDDocumentHandler implements Closeable {
 
             if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
                 LOG.trace("Saving document to {} using options {}", file, writeOptions);
-                document.writeTo(file, security, writeOptions.stream().toArray(WriteOption[]::new));
+                document.writeTo(file, security, writeOptions.toArray(WriteOption[]::new));
             } else {
                 LOG.trace("Saving document to {} using options {}", file, writeOptions);
                 document.writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
-                        writeOptions.stream().toArray(WriteOption[]::new));
+                        writeOptions.toArray(WriteOption[]::new));
             }
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);

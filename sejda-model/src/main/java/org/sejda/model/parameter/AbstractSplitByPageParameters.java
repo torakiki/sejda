@@ -71,10 +71,9 @@ public abstract class AbstractSplitByPageParameters extends MultiplePdfSourceMul
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractSplitByPageParameters)) {
+        if (!(other instanceof AbstractSplitByPageParameters parameter)) {
             return false;
         }
-        AbstractSplitByPageParameters parameter = (AbstractSplitByPageParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.optimizationPolicy)
                 .append(discardOutline, parameter.discardOutline).isEquals();

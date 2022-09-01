@@ -97,10 +97,9 @@ public class SplitByOutlineLevelParameters extends MultiplePdfSourceMultipleOutp
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitByOutlineLevelParameters)) {
+        if (!(other instanceof SplitByOutlineLevelParameters parameter)) {
             return false;
         }
-        SplitByOutlineLevelParameters parameter = (SplitByOutlineLevelParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.getOptimizationPolicy())
                 .append(discardOutline, parameter.discardOutline())

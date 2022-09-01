@@ -34,9 +34,9 @@ public enum Repagination implements FriendlyNamed {
     LAST_FIRST("last-first"),
     NONE("none");
 
-    private String displayName;
+    private final String displayName;
 
-    private Repagination(String displayName) {
+    Repagination(String displayName) {
         this.displayName = displayName;
     }
 

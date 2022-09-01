@@ -117,12 +117,9 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument document) {
-                PDDocumentInformation info = document.getDocumentInformation();
-                Assertions.assertEquals(author, info.getAuthor());
-            }
+        testContext.forEachPdfOutput(document -> {
+            PDDocumentInformation info = document.getDocumentInformation();
+            Assertions.assertEquals(author, info.getAuthor());
         });
     }
 
@@ -139,15 +136,11 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument document) {
-                PDDocumentInformation info = document.getDocumentInformation();
-                Assertions.assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
-                assertNull(info.getCreator());
-                Assertions.assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"),
-                        info.getModificationDate());
-            }
+        testContext.forEachPdfOutput(document -> {
+            PDDocumentInformation info = document.getDocumentInformation();
+            Assertions.assertEquals("iText 2.1.7 by 1T3XT", info.getProducer());
+            assertNull(info.getCreator());
+            Assertions.assertEquals(DateConverter.toCalendar("D:20111010235709+02'00'"), info.getModificationDate());
         });
     }
 
@@ -172,30 +165,27 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument document) {
-                try {
-                    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder b = f.newDocumentBuilder();
-                    Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
 
-                    assertEquals("2015-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
-                    assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
-                    assertEquals("test_keywords", getNodeValue(xmlDoc, "//*[name()='pdf:Keywords']"));
-                    assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
-                    assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
+                assertEquals("2015-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
+                assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                assertEquals("test_keywords", getNodeValue(xmlDoc, "//*[name()='pdf:Keywords']"));
+                assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
 
-                    // exact second might be different
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                    String nowUptoMinute = dateFormat.format(new Date());
+                // exact second might be different
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String nowUptoMinute = dateFormat.format(new Date());
 
-                    assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
+                assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
     }
@@ -210,20 +200,17 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument document) {
-                try {
-                    DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder b = f.newDocumentBuilder();
-                    Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
 
-                    assertEquals("", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
-                    assertEquals("", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                assertEquals("", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                assertEquals("", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
     }
@@ -238,27 +225,24 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(new Consumer<PDDocument>() {
-            @Override
-            public void accept(PDDocument document) {
-                try {
-                    PDDocumentInformation info = document.getDocumentInformation();
+        testContext.forEachPdfOutput(document -> {
+            try {
+                PDDocumentInformation info = document.getDocumentInformation();
 
-                    assertEquals(0, info.getMetadataKeys().size());
+                assertEquals(0, info.getMetadataKeys().size());
 
-                    assertNull(info.getCreator());
-                    assertNull(info.getAuthor());
-                    assertNull(info.getProducer());
-                    assertNull(info.getModificationDate());
-                    assertNull(info.getCreationDate());
-                    assertNull(info.getKeywords());
-                    assertNull(info.getTitle());
+                assertNull(info.getCreator());
+                assertNull(info.getAuthor());
+                assertNull(info.getProducer());
+                assertNull(info.getModificationDate());
+                assertNull(info.getCreationDate());
+                assertNull(info.getKeywords());
+                assertNull(info.getTitle());
 
-                    assertNull(document.getDocumentCatalog().getMetadata());
+                assertNull(document.getDocumentCatalog().getMetadata());
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
     }

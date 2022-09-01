@@ -13,7 +13,7 @@ public class SplitPagesTest {
 
     @Test
     public void testFailingEnsureIsValid() {
-        assertThrows(TaskExecutionException.class, () -> new SplitPages(new ArrayList<Integer>()).ensureIsValid());
+        assertThrows(TaskExecutionException.class, () -> new SplitPages(new ArrayList<>()).ensureIsValid());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class SplitPagesTest {
 
     @Test
     public void firstPageAndAnother() {
-        ArrayList<Integer> pages = new ArrayList<Integer>();
+        ArrayList<Integer> pages = new ArrayList<>();
         pages.add(1);
         pages.add(3);
         SplitPages victim = new SplitPages(pages);

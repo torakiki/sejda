@@ -83,6 +83,6 @@ public class PdfToMultipleTiffSamboxTaskTest extends MultipleImageConversionTask
 
     @Override
     public Task<PdfToMultipleTiffParameters> getTask() {
-        return new PdfToMultipleImageTask<PdfToMultipleTiffParameters>();
+        return new PdfToMultipleImageTask<>();
     }
 }

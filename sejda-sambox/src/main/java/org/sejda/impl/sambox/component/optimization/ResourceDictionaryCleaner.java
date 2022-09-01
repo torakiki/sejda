@@ -108,7 +108,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                     .filter(e -> !(e.getValue().getCOSObject() instanceof ReadOnlyFilteredCOSStream))
                     .filter(e -> e.getValue().getCOSObject() instanceof COSStream).map(Entry::getKey).collect(toSet());
             LOG.trace("Removing {} unused {} from {}", toRemove.size(), COSName.XOBJECT.getName(), x);
-            toRemove.stream().forEach(x::removeItem);
+            toRemove.forEach(x::removeItem);
         });
     }
 
@@ -118,7 +118,7 @@ public class ResourceDictionaryCleaner implements Consumer<PDDocument> {
                     .filter(e -> !(e.getValue().getCOSObject() instanceof InUseDictionary)).map(Entry::getKey)
                     .collect(toSet());
             LOG.trace("Removing {} unused {}", toRemove.size(), type.getName());
-            toRemove.stream().forEach(f::removeItem);
+            toRemove.forEach(f::removeItem);
         });
     }
 

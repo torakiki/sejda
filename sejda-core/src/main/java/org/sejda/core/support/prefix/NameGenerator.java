@@ -27,6 +27,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.processor.PrefixTypesChain;
 
+import java.util.Optional;
+
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
  * 
@@ -59,7 +61,7 @@ public final class NameGenerator {
         if (request == null) {
             throw new IllegalArgumentException("Unable to generate a name for a null request.");
         }
-        return prefixTypesChain.process(prefix, ofNullable(request).orElseGet(() -> nameRequest()));
+        return prefixTypesChain.process(prefix, request);
     }
 
 }

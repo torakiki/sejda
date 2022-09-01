@@ -328,7 +328,7 @@
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>4.7.0</mockito.version>
 		<logback.version>1.2.11</logback.version>
-		<archunit.version>0.22.0</archunit.version>
+		<archunit.version>0.23.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
@@ -439,12 +439,6 @@
 			<groupId>com.tngtech.archunit</groupId>
 			<artifactId>archunit-junit5</artifactId>
 			<version>${archunit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.awaitility</groupId>
-			<artifactId>awaitility</artifactId>
-			<version>${awaitility.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

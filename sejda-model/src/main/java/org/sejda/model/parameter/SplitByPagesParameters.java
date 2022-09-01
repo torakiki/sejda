@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @NotEmpty
-    private final Set<Integer> pages = new NullSafeSet<Integer>();
+    private final Set<Integer> pages = new NullSafeSet<>();
 
     /**
      * Adds all pages to split at.
@@ -61,8 +61,7 @@ public class SplitByPagesParameters extends AbstractSplitByPageParameters {
 
     @Override
     public Set<Integer> getPages(int upperLimit) {
-        return Collections
-                .unmodifiableSet(pages.stream().filter(p -> p <= upperLimit && p > 0).collect(Collectors.toSet()));
+        return pages.stream().filter(p -> p <= upperLimit && p > 0).collect(Collectors.toUnmodifiableSet());
     }
 
     @Override
@@ -80,10 +79,9 @@ public class SplitByPagesParameters extends AbstractSplitByPageParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitByPagesParameters)) {
+        if (!(other instanceof SplitByPagesParameters parameter)) {
             return false;
         }
-        SplitByPagesParameters parameter = (SplitByPagesParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(pages, parameter.pages).isEquals();
     }
 }

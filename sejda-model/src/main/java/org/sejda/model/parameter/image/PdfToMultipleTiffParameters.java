@@ -68,10 +68,9 @@ public class PdfToMultipleTiffParameters extends AbstractPdfToMultipleImageParam
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof PdfToMultipleTiffParameters)) {
+        if (!(other instanceof PdfToMultipleTiffParameters parameter)) {
             return false;
         }
-        PdfToMultipleTiffParameters parameter = (PdfToMultipleTiffParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(compressionType, parameter.getCompressionType()).isEquals();
     }

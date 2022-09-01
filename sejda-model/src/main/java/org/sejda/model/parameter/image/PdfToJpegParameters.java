@@ -70,10 +70,9 @@ public class PdfToJpegParameters extends AbstractPdfToMultipleImageParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PdfToJpegParameters)) {
+        if (!(other instanceof PdfToJpegParameters parameter)) {
             return false;
         }
-        PdfToJpegParameters parameter = (PdfToJpegParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(quality, parameter.quality).isEquals();
     }
 }

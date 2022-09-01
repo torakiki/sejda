@@ -73,7 +73,7 @@ public class DefaultSingleOutputWriterTest {
     }
 
     @Test
-    public void nonExisting(@TempDir Path folder) throws IOException, TaskIOException {
+    public void nonExisting(@TempDir Path folder) throws IOException {
         File out = folder.resolve("not-existing.tmp").toFile();
         DefaultSingleOutputWriter victim = new DefaultSingleOutputWriter(ExistingOutputPolicy.OVERWRITE, context);
         var outFile = Files.createTempFile(folder, "sejda", ".tmp");

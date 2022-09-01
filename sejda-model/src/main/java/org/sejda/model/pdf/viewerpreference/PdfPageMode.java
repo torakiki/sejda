@@ -29,7 +29,7 @@ import org.sejda.model.pdf.PdfVersion;
  * Pdf reference 1.7, TABLE 3.25 Entries in the catalog dictionary
  * 
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum PdfPageMode implements MinRequiredVersion, FriendlyNamed {
     USE_NONE("none", PdfVersion.VERSION_1_2),
@@ -39,10 +39,10 @@ public enum PdfPageMode implements MinRequiredVersion, FriendlyNamed {
     USE_OC("ocontent", PdfVersion.VERSION_1_5),
     USE_ATTACHMENTS("attachments", PdfVersion.VERSION_1_6);
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfPageMode(String displayName, PdfVersion minVersion) {
+    PdfPageMode(String displayName, PdfVersion minVersion) {
         this.displayName = displayName;
         this.minVersion = minVersion;
     }

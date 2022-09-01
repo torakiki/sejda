@@ -45,9 +45,9 @@ public enum StandardType1Font implements FriendlyNamed {
     SYMBOL("Symbol"),
     ZAPFDINGBATS("ZapfDingbats");
 
-    private String displayName;
+    private final String displayName;
 
-    private StandardType1Font(String displayName) {
+    StandardType1Font(String displayName) {
         this.displayName = displayName;
     }
 

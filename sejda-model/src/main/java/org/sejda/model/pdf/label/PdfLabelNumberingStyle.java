@@ -36,9 +36,9 @@ public enum PdfLabelNumberingStyle implements FriendlyNamed {
     LOWERCASE_LETTERS("lletter"),
     EMPTY("empty");
 
-    private String displayName;
+    private final String displayName;
 
-    private PdfLabelNumberingStyle(String displayName) {
+    PdfLabelNumberingStyle(String displayName) {
         this.displayName = displayName;
     }
 

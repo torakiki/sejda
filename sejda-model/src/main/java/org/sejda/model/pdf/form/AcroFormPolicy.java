@@ -32,9 +32,9 @@ public enum AcroFormPolicy implements FriendlyNamed {
     MERGE_RENAMING_EXISTING_FIELDS("merge_renaming"),
     FLATTEN("flatten");
 
-    private String displayName;
+    private final String displayName;
 
-    private AcroFormPolicy(String displayName) {
+    AcroFormPolicy(String displayName) {
         this.displayName = displayName;
     }
 

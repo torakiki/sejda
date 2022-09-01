@@ -55,10 +55,9 @@ public class MultipleSourceSingleOutputParameters extends MultipleSourceParamete
         if (this == other) {
             return true;
         }
-        if (!(other instanceof MultipleSourceSingleOutputParameters)) {
+        if (!(other instanceof MultipleSourceSingleOutputParameters parameter)) {
             return false;
         }
-        MultipleSourceSingleOutputParameters parameter = (MultipleSourceSingleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.output).isEquals();
     }
 

@@ -64,10 +64,9 @@ public class SimpleSplitParameters extends AbstractSplitByPageParameters {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SimpleSplitParameters)) {
+        if (!(other instanceof SimpleSplitParameters parameter)) {
             return false;
         }
-        SimpleSplitParameters parameter = (SimpleSplitParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(setOfPages, parameter.setOfPages).isEquals();
     }
 

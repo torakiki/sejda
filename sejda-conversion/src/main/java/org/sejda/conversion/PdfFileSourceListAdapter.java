@@ -174,10 +174,10 @@ class FolderFileSourceListParser extends AbstractPdfInputFilesSource {
     @Override
     protected List<String> parseFileNames(File file) {
 
-        return Arrays.asList(file.listFiles((dir, filename) -> {
-            return StringUtils.equalsIgnoreCase(getExtension(filename), PDF_EXTENSION)
-                    && pattern.matcher(filename).matches();
-        })).stream().sorted(new NumericalSortFilenameComparator()).map(File::getAbsolutePath).collect(toList());
+        return Arrays.stream(file.listFiles(
+                        (dir, filename) -> StringUtils.equalsIgnoreCase(getExtension(filename), PDF_EXTENSION)
+                                && pattern.matcher(filename).matches())).sorted(new NumericalSortFilenameComparator())
+                .map(File::getAbsolutePath).collect(toList());
     }
 
 }

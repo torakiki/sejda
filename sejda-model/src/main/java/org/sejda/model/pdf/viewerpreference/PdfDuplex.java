@@ -27,19 +27,19 @@ import org.sejda.model.pdf.PdfVersion;
 /**
  * Possible values for the paper handling option to use when printing the file from the print dialog.<br>
  * Pdf reference 1.7, TABLE 8.1 Entries in a viewer preferences dictionary
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum PdfDuplex implements MinRequiredVersion, FriendlyNamed {
     SIMPLEX("simplex", PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_SHORT_EDGE("duplex_flip_short_edge", PdfVersion.VERSION_1_7),
     DUPLEX_FLIP_LONG_EDGE("duplex_flip_long_edge", PdfVersion.VERSION_1_7);
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfDuplex(String displayName, PdfVersion minVersion) {
+    PdfDuplex(String displayName, PdfVersion minVersion) {
         this.displayName = displayName;
         this.minVersion = minVersion;
     }

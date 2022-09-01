@@ -19,24 +19,24 @@
  */
 package org.sejda.core.support.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.AbstractNotificationEvent;
 import org.sejda.model.notification.event.PercentageOfWorkDoneChangedEvent;
 import org.sejda.model.notification.event.TaskExecutionFailedEvent;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 /**
  * @author Andrea Vacondio
- * 
  */
 public class ReflectionUtilsTest {
 
     @Test
     public void testFailingInfer() {
-        TestListener<TaskExecutionFailedEvent> victim = new TestListener<TaskExecutionFailedEvent>();
-        assertEquals(null, ReflectionUtils.inferParameterClass(victim.getClass(), "onEvent"));
+        TestListener<TaskExecutionFailedEvent> victim = new TestListener<>();
+        assertNull(ReflectionUtils.inferParameterClass(victim.getClass(), "onEvent"));
     }
 
     @Test

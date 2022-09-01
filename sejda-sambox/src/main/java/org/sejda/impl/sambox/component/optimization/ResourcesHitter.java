@@ -88,11 +88,10 @@ public class ResourcesHitter extends ContentStreamProcessor {
                 throw new MissingOperandException(operator, operands);
             }
             COSBase operand = operands.get(0);
-            if (operand instanceof COSName) {
+            if (operand instanceof COSName objectName) {
 
-                COSName objectName = (COSName) operand;
-                Optional<COSDictionary> xobjects = ofNullable(getContext().getResources())
-                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class));
+                Optional<COSDictionary> xobjects = ofNullable(getContext().getResources()).map(
+                        r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class));
 
                 COSBase existing = xobjects.map(d -> d.getDictionaryObject(objectName))
                         .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
@@ -140,10 +139,9 @@ public class ResourcesHitter extends ContentStreamProcessor {
                 throw new MissingOperandException(operator, operands);
             }
             COSBase operand = operands.get(0);
-            if (operand instanceof COSName) {
-                COSName fontName = (COSName) operand;
-                Optional<COSDictionary> fonts = ofNullable(getContext().getResources())
-                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class));
+            if (operand instanceof COSName fontName) {
+                Optional<COSDictionary> fonts = ofNullable(getContext().getResources()).map(
+                        r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class));
 
                 COSDictionary fontDictionary = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
                         .orElseThrow(() -> new MissingResourceException(
@@ -174,12 +172,11 @@ public class ResourcesHitter extends ContentStreamProcessor {
                     if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))) {
                         PDType3Font font = new PDType3Font(fontDictionary);
                         Collection<COSBase> glyphStreams = ofNullable(
-                                fontDictionary.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class))
-                                        .map(chars -> chars.getValues()).filter(v -> !v.isEmpty())
-                                        .orElseGet(Collections::emptyList);
+                                fontDictionary.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class)).map(
+                                COSDictionary::getValues).filter(v -> !v.isEmpty()).orElseGet(Collections::emptyList);
                         List<PDType3CharProc> pdStreams = glyphStreams.stream().map(COSBase::getCOSObject)
                                 .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
-                                .map(s -> new PDType3CharProc(font, s)).collect(Collectors.toList());
+                                .map(s -> new PDType3CharProc(font, s)).toList();
                         LOG.trace("Found type3 font {} with {} streams to parse", fontName.getName(), pdStreams.size());
                         for (PDType3CharProc glyph : pdStreams) {
                             getContext().processStream(glyph);
@@ -205,11 +202,10 @@ public class ResourcesHitter extends ContentStreamProcessor {
             require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
 
             COSBase operand = operands.get(0);
-            if (operand instanceof COSName) {
-                COSName gsName = (COSName) operand;
+            if (operand instanceof COSName gsName) {
 
-                Optional<COSDictionary> states = ofNullable(getContext().getResources())
-                        .map(r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class));
+                Optional<COSDictionary> states = ofNullable(getContext().getResources()).map(
+                        r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class));
 
                 COSDictionary gsDictionary = states.map(d -> d.getDictionaryObject(gsName, COSDictionary.class))
                         .orElseGet(() -> {
@@ -280,10 +276,9 @@ public class ResourcesHitter extends ContentStreamProcessor {
                 PDColorSpace colorSpace = this.colorSpace();
                 if (colorSpace instanceof PDPattern) {
                     COSBase base = arguments.get(arguments.size() - 1);
-                    if (base instanceof COSName) {
-                        COSName patternName = (COSName) base;
-                        COSStream pattern = ofNullable(getContext().getResources())
-                                .map(r -> r.getCOSObject().getDictionaryObject(COSName.PATTERN, COSDictionary.class))
+                    if (base instanceof COSName patternName) {
+                        COSStream pattern = ofNullable(getContext().getResources()).map(
+                                        r -> r.getCOSObject().getDictionaryObject(COSName.PATTERN, COSDictionary.class))
                                 .map(d -> d.getDictionaryObject(patternName, COSStream.class)).orElse(null);
                         // it's a pattern and it's a stream, it should be a tiling pattern, type == 1
                         if (nonNull(pattern) && pattern.getInt(COSName.PATTERN_TYPE) == 1) {

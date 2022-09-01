@@ -31,9 +31,9 @@ public enum OptimizationPolicy implements FriendlyNamed {
     NO("no"),
     AUTO("auto");
 
-    private String displayName;
+    private final String displayName;
 
-    private OptimizationPolicy(String displayName) {
+    OptimizationPolicy(String displayName) {
         this.displayName = displayName;
     }
 

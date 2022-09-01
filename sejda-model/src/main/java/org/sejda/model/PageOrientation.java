@@ -23,9 +23,9 @@ public enum PageOrientation implements FriendlyNamed {
     LANDSCAPE("landscape"),
     AUTO("auto");
 
-    private String name;
+    private final String name;
 
-    private PageOrientation(String name) {
+    PageOrientation(String name) {
         this.name = name;
     }
 

@@ -66,10 +66,9 @@ public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToIm
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractPdfToSingleImageParameters)) {
+        if (!(other instanceof AbstractPdfToSingleImageParameters parameter)) {
             return false;
         }
-        AbstractPdfToSingleImageParameters parameter = (AbstractPdfToSingleImageParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput()).isEquals();
     }
 

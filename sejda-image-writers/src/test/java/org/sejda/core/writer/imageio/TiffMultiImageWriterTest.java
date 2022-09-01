@@ -48,12 +48,10 @@ public class TiffMultiImageWriterTest {
     }
 
     @Test
-    public void writeNotOpened() throws TaskIOException {
+    public void writeNotOpened() {
         PdfToSingleTiffParameters params = mock(PdfToSingleTiffParameters.class);
         RenderedImage image = mock(RenderedImage.class);
-        assertThrows(TaskException.class, () -> {
-            victim.write(image, params);
-        });
+        assertThrows(TaskException.class, () -> victim.write(image, params));
     }
 
     @Test

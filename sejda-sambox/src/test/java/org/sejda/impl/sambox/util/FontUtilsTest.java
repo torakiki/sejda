@@ -335,7 +335,7 @@ public class FontUtilsTest {
     }
 
     @Test
-    public void wrappingLinesUnableToFindFont() throws TaskIOException {
+    public void wrappingLinesUnableToFindFont() {
         PDDocument doc = new PDDocument();
         assertThrows(UnsupportedTextException.class, () -> FontUtils.wrapLines(
                 "This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն", HELVETICA, 10, 191,

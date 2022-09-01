@@ -69,7 +69,7 @@ public final class TestListenerFactory {
      * @return a general listener that can listen on any event to use in tests.
      */
     public static <T extends AbstractNotificationEvent> TestListenerAny<T> newGeneralListener() {
-        return new TestListenerAny<T>();
+        return new TestListenerAny<>();
     }
 
     /**

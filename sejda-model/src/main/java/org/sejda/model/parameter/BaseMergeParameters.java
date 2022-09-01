@@ -67,8 +67,7 @@ public abstract class BaseMergeParameters<T extends MergeInput> extends Abstract
     }
 
     public List<PdfMergeInput> getPdfInputList() {
-        return Collections
-                .unmodifiableList(inputList.stream().map(input -> (PdfMergeInput) input).collect(Collectors.toList()));
+        return inputList.stream().map(input -> (PdfMergeInput) input).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -90,10 +89,9 @@ public abstract class BaseMergeParameters<T extends MergeInput> extends Abstract
         if (this == other) {
             return true;
         }
-        if (!(other instanceof BaseMergeParameters)) {
+        if (!(other instanceof BaseMergeParameters<?> params)) {
             return false;
         }
-        BaseMergeParameters<?> params = (BaseMergeParameters<?>) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(inputList, params.inputList)
                 .append(output, params.getOutput()).isEquals();
     }

@@ -216,7 +216,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     public static final ReadOnlyFilteredCOSStream readOnlyEmbeddedFile(Source<?> source) throws TaskIOException {
         COSDictionary dictionary = new COSDictionary();
         dictionary.setItem(COSName.FILTER, COSName.FLATE_DECODE);
-        return source.dispatch(new SourceDispatcher<ReadOnlyFilteredCOSStream>() {
+        return source.dispatch(new SourceDispatcher<>() {
 
             @Override
             public ReadOnlyFilteredCOSStream dispatch(FileSource source) throws TaskIOException {

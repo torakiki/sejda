@@ -61,7 +61,7 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      * @return the processed string if a match is found. An empty string if no match is found.
      */
     protected String findAndReplace(String inputString, Integer num) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Matcher m = pattern.matcher(inputString);
         while (m.find()) {
             String replacement = getReplacement(m.group(1), m.group(2), num);
@@ -92,7 +92,7 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      */
     private Integer getReplacementNumber(String startingNumber, Integer num) {
         if (StringUtils.isNotBlank(startingNumber)) {
-            return num + Integer.valueOf(startingNumber);
+            return num + Integer.parseInt(startingNumber);
         }
         return num;
     }

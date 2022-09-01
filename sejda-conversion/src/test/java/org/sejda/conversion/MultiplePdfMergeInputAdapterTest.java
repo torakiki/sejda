@@ -44,7 +44,7 @@ public class MultiplePdfMergeInputAdapterTest {
         File file = mock(File.class);
         when(file.isFile()).thenReturn(true);
         when(file.getName()).thenReturn("test.pdf");
-        List<PdfFileSource> inputList = new ArrayList<PdfFileSource>();
+        List<PdfFileSource> inputList = new ArrayList<>();
         inputList.add(PdfFileSource.newInstanceNoPassword(file));
         inputList.add(PdfFileSource.newInstanceNoPassword(file));
         List<PdfMergeInput> result = new MultiplePdfMergeInputAdapter(inputList,

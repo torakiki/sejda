@@ -134,8 +134,8 @@ public final class IOUtils {
 
     public static File createTemporaryFolder() {
         File baseDir = SystemUtils.getJavaIoTmpDir();
-        String baseName = new StringBuilder(System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME))
-                .append(System.currentTimeMillis()).append("-").toString();
+        String baseName =
+                System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME) + System.currentTimeMillis() + "-";
 
         for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
             File tempDir = new File(baseDir, baseName + counter);
@@ -143,8 +143,9 @@ public final class IOUtils {
                 return tempDir;
             }
         }
-        throw new IllegalStateException("Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried "
-                + baseName + "0 to " + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
+        throw new IllegalStateException(
+                "Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to "
+                        + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
     }
 
     public static File findNewNameThatDoesNotExist(File output) throws IOException {

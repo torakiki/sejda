@@ -101,7 +101,7 @@ public class PageRange implements PagesSelection {
      */
     @Override
     public SortedSet<Integer> getPages(int totalNumberOfPage) {
-        SortedSet<Integer> retSet = new TreeSet<Integer>();
+        SortedSet<Integer> retSet = new TreeSet<>();
         for (int i = start; i <= totalNumberOfPage && i <= end; i++) {
             retSet.add(i);
         }
@@ -135,10 +135,9 @@ public class PageRange implements PagesSelection {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof PageRange)) {
+        if (!(other instanceof PageRange range)) {
             return false;
         }
-        PageRange range = (PageRange) other;
         return new EqualsBuilder().append(start, range.getStart()).append(end, range.getEnd()).isEquals();
     }
 

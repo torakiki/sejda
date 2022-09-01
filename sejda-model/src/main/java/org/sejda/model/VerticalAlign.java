@@ -39,9 +39,9 @@ public enum VerticalAlign implements FriendlyNamed {
             return margin;
         }
     };
-    private String displayName;
+    private final String displayName;
 
-    private VerticalAlign(String displayName) {
+    VerticalAlign(String displayName) {
         this.displayName = displayName;
     }
 

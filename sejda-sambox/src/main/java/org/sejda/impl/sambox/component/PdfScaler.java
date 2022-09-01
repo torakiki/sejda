@@ -20,21 +20,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
-import static org.sejda.impl.sambox.component.OutlineUtils.pageGroupedOutlinePageDestinations;
-import static org.sejda.model.scale.Margins.inchesToPoints;
-
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D.Float;
-import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.Margins;
 import org.sejda.model.scale.ScaleType;
@@ -53,6 +38,21 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPag
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D.Float;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import static org.sejda.impl.sambox.component.OutlineUtils.pageGroupedOutlinePageDestinations;
+import static org.sejda.model.scale.Margins.inchesToPoints;
 
 /**
  * Component capable of scaling pages or pages content
@@ -194,10 +194,9 @@ public class PdfScaler {
                     .ifPresent(a::setRectangle);
 
             // Text Markup, Link and Redaction annotations can have quadpoints
-            ofNullable(a.getCOSObject().getDictionaryObject(COSName.QUADPOINTS, COSArray.class))
-                    .filter(p -> p.size() == 8).map(COSArray::toFloatArray).ifPresent(f -> {
-                        a.getCOSObject().setItem(COSName.QUADPOINTS, transformPoints(f, transform));
-                    });
+            ofNullable(a.getCOSObject().getDictionaryObject(COSName.QUADPOINTS, COSArray.class)).filter(
+                            p -> p.size() == 8).map(COSArray::toFloatArray)
+                    .ifPresent(f -> a.getCOSObject().setItem(COSName.QUADPOINTS, transformPoints(f, transform)));
 
             // adjust destination coordinates
             if (a instanceof PDAnnotationLink) {
@@ -211,22 +210,19 @@ public class PdfScaler {
 
             // adjust line length
             if (a instanceof PDAnnotationLine) {
-                ofNullable(((PDAnnotationLine) a).getLine()).filter(p -> p.length == 4).ifPresent(f -> {
-                    a.getCOSObject().setItem(COSName.L, transformPoints(f, transform));
-                });
+                ofNullable(((PDAnnotationLine) a).getLine()).filter(p -> p.length == 4)
+                        .ifPresent(f -> a.getCOSObject().setItem(COSName.L, transformPoints(f, transform)));
             }
 
             // adjust Free Text CL
             ofNullable(a.getCOSObject().getDictionaryObject(COSName.CL, COSArray.class)).filter(p -> p.size() % 2 == 0)
-                    .map(COSArray::toFloatArray).ifPresent(f -> {
-                        a.getCOSObject().setItem(COSName.CL, transformPoints(f, transform));
-                    });
+                    .map(COSArray::toFloatArray)
+                    .ifPresent(f -> a.getCOSObject().setItem(COSName.CL, transformPoints(f, transform)));
 
             // Polygon and Polyline vertices
-            ofNullable(a.getCOSObject().getDictionaryObject(COSName.VERTICES, COSArray.class))
-                    .filter(p -> p.size() % 2 == 0).map(COSArray::toFloatArray).ifPresent(f -> {
-                        a.getCOSObject().setItem(COSName.VERTICES, transformPoints(f, transform));
-                    });
+            ofNullable(a.getCOSObject().getDictionaryObject(COSName.VERTICES, COSArray.class)).filter(
+                            p -> p.size() % 2 == 0).map(COSArray::toFloatArray)
+                    .ifPresent(f -> a.getCOSObject().setItem(COSName.VERTICES, transformPoints(f, transform)));
             processedAnnots.add(a.getCOSObject());
         });
     }

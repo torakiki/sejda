@@ -40,7 +40,7 @@ public final class AsyncNotificationStrategy implements NotificationStrategy {
     /**
      * ThreadLocal returning a {@link ExecutorService} (the same instance for the same thread).
      */
-    private static final ThreadLocal<ExecutorService> THREAD_LOCAL = new ThreadLocal<ExecutorService>() {
+    private static final ThreadLocal<ExecutorService> THREAD_LOCAL = new ThreadLocal<>() {
         @Override
         protected ExecutorService initialValue() {
             return Executors.newSingleThreadExecutor();

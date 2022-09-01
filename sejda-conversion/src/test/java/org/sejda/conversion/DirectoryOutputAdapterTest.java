@@ -44,7 +44,7 @@ public class DirectoryOutputAdapterTest {
     }
 
     @Test
-    public void testFile() throws IOException {
+    public void testFile() {
         assertThrows(ConversionException.class,
                 () -> new DirectoryOutputAdapter(Files.createTempFile(folder, "sejda", ".txt").toString()));
     }

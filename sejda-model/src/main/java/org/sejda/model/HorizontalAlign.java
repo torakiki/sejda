@@ -46,9 +46,9 @@ public enum HorizontalAlign implements FriendlyNamed {
         }
     };
 
-    private String displayName;
+    private final String displayName;
 
-    private HorizontalAlign(String displayName) {
+    HorizontalAlign(String displayName) {
         this.displayName = displayName;
     }
 

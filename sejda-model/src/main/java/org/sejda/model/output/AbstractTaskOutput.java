@@ -53,10 +53,9 @@ public abstract class AbstractTaskOutput implements TaskOutput {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof AbstractTaskOutput)) {
+        if (!(other instanceof AbstractTaskOutput output)) {
             return false;
         }
-        AbstractTaskOutput output = (AbstractTaskOutput) other;
         return new EqualsBuilder().append(encryptionAtRestPolicy, output.encryptionAtRestPolicy).isEquals();
     }
 }

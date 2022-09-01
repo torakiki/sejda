@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component.excel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
@@ -48,9 +49,7 @@ public class DataTable {
 
     public DataTable addRow(String... dataRow) {
         List<String> row = new ArrayList<>();
-        for (String item: dataRow) {
-            row.add(item);
-        }
+        row.addAll(Arrays.asList(dataRow));
         addRow(row);
         
         return this;
@@ -192,8 +191,7 @@ public class DataTable {
                 if (c == c2) {
                     // noop, continue
                 } else if (c == c1) {
-                    String newValue = new StringBuilder().append(getOrEmpty(row, c1)).append(" ")
-                            .append(getOrEmpty(row, c2)).toString().trim();
+                    String newValue = (getOrEmpty(row, c1) + " " + getOrEmpty(row, c2)).trim();
                     newRow.add(newValue);
                 } else {
                     newRow.add(getOrEmpty(row, c));

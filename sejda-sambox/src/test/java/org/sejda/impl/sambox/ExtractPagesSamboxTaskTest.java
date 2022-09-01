@@ -226,9 +226,8 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
-            assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3)
+                .forEachPdfOutput(d -> assertTrue(nonNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -238,9 +237,8 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
-        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3).forEachPdfOutput(d -> {
-            assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline()));
-        });
+        testContext.assertCreator().assertVersion(PdfVersion.VERSION_1_6).assertPages(3)
+                .forEachPdfOutput(d -> assertTrue(isNull(d.getDocumentCatalog().getDocumentOutline())));
     }
 
     @Test
@@ -258,9 +256,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         execute(parameters);
 
         testContext.assertOutputSize(2);
-        testContext.forEachPdfOutput(d -> {
-            Assertions.assertEquals(d.getNumberOfPages(), 2);
-        });
+        testContext.forEachPdfOutput(d -> Assertions.assertEquals(d.getNumberOfPages(), 2));
     }
 
     @Test
@@ -277,9 +273,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         execute(parameters);
 
         testContext.assertOutputSize(1);
-        testContext.forEachPdfOutput(d -> {
-            assertNotNull(d.getDocumentCatalog().getAcroForm());
-        });
+        testContext.forEachPdfOutput(d -> assertNotNull(d.getDocumentCatalog().getAcroForm()));
     }
 
     @Test

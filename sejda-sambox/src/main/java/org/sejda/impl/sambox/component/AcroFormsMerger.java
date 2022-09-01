@@ -289,8 +289,9 @@ public class AcroFormsMerger {
 
         // it must be a pre order visit because we have to process non terminal first otherwise terminal ones won't get a parent
         // every widget we meet is removed from the allRelevantWidgets so we can identify widgets not referenced by the originalForm
-        originalForm.getFieldTree().stream().forEach(f -> mergeField(f, annotationsLookup, getTerminalField,
-                createNonTerminalField, fieldsLookup, of(w -> allRelevantWidgets.remove(w))));
+        originalForm.getFieldTree().stream().forEach(
+                f -> mergeField(f, annotationsLookup, getTerminalField, createNonTerminalField, fieldsLookup,
+                        of(allRelevantWidgets::remove)));
         // keep track of the root fields
         originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
 
@@ -305,7 +306,7 @@ public class AcroFormsMerger {
                     currentField = currentField.getDictionaryObject(COSName.PARENT, COSDictionary.class);
                 }
                 // we add it as root to a dummy form so we can reuse its tree visit logic
-                dummy.addFields(Arrays.asList(createField(originalForm, currentField, null)));
+                dummy.addFields(List.of(createField(originalForm, currentField, null)));
             });
 
             dummy.getFieldTree().stream().forEach(f -> mergeField(f, annotationsLookup, getTerminalField,
@@ -345,10 +346,10 @@ public class AcroFormsMerger {
 
     private void mergeCalculationOrder(PDAcroForm originalForm, LookupTable<PDField> fieldsLookup) {
         List<PDField> co = originalForm.getCalculationOrder().stream().map(fieldsLookup::lookup)
-                .filter(Objects::nonNull).collect(toList());
-        if (nonNull(co) && co.size() > 0) {
-            COSArray formCo = ofNullable(this.form.getCOSObject().getDictionaryObject(COSName.CO, COSArray.class))
-                    .orElseGet(COSArray::new);
+                .filter(Objects::nonNull).toList();
+        if (co.size() > 0) {
+            COSArray formCo = ofNullable(
+                    this.form.getCOSObject().getDictionaryObject(COSName.CO, COSArray.class)).orElseGet(COSArray::new);
             for (PDField field : co) {
                 formCo.add(field);
             }

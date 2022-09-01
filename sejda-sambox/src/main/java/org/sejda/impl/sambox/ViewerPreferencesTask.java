@@ -41,7 +41,6 @@ import java.io.File;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
@@ -50,6 +49,7 @@ import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getDuplex;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getNFSMode;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPrintScaling;
 import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.setBooleanPreferences;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of a task setting viewer preferences on a list of {@link PdfSource}.
@@ -95,10 +95,9 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             setViewerPreferences(parameters);
 
             documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
-            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(() -> {
-                return nameGenerator(parameters.getOutputPrefix())
-                        .generate(nameRequest().originalName(source.getName()).fileNumber(fileNumber));
-            });
+            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
+                    () -> nameGenerator(parameters.getOutputPrefix()).generate(
+                            nameRequest().originalName(source.getName()).fileNumber(fileNumber)));
             outputWriter.addOutput(file(tmpFile).name(outName));
 
             closeQuietly(documentHandler);

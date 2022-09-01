@@ -82,10 +82,9 @@ public class SplitBySizeParameters extends MultiplePdfSourceMultipleOutputParame
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SplitBySizeParameters)) {
+        if (!(other instanceof SplitBySizeParameters parameter)) {
             return false;
         }
-        SplitBySizeParameters parameter = (SplitBySizeParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other))
                 .append(optimizationPolicy, parameter.getOptimizationPolicy())
                 .append(sizeToSplitAt, parameter.getSizeToSplitAt()).append(discardOutline, parameter.discardOutline)

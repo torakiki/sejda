@@ -18,15 +18,15 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.MatcherAssert.assertThat;
-
 import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyOrNullString;
 
 /**
  * @author Andrea Vacondio
@@ -58,7 +58,7 @@ public class FilenameFooterWriterTest {
         PDPage page = new PDPage();
         doc.addPage(page);
         new FilenameFooterWriter(false, doc).addFooter(page, "My Footer", 20);
-        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), isEmptyOrNullString());
+        assertThat(new PdfTextExtractorByArea().extractFooterText(page).trim(), emptyOrNullString());
     }
 
     @Test

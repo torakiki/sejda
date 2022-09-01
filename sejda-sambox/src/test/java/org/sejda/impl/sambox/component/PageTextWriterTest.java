@@ -60,7 +60,7 @@ public class PageTextWriterTest {
     }
 
     @Test
-    public void throwsWhenCharacterUnsupported() throws TaskException {
+    public void throwsWhenCharacterUnsupported() {
         assertThrows(UnsupportedTextException.class, () -> write("\uFE0F"));
     }
     

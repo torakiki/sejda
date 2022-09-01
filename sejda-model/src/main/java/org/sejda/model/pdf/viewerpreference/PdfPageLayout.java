@@ -29,7 +29,7 @@ import org.sejda.model.pdf.PdfVersion;
  * Pdf reference 1.7, TABLE 3.25 Entries in the catalog dictionary
  * 
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum PdfPageLayout implements MinRequiredVersion, FriendlyNamed {
     SINGLE_PAGE("singlepage", PdfVersion.VERSION_1_2),
@@ -39,10 +39,10 @@ public enum PdfPageLayout implements MinRequiredVersion, FriendlyNamed {
     TWO_PAGE_LEFT("twopagel", PdfVersion.VERSION_1_5),
     TWO_PAGE_RIGHT("twopager", PdfVersion.VERSION_1_5);
 
-    private PdfVersion minVersion;
-    private String displayName;
+    private final PdfVersion minVersion;
+    private final String displayName;
 
-    private PdfPageLayout(String displayName, PdfVersion minVersion) {
+    PdfPageLayout(String displayName, PdfVersion minVersion) {
         this.displayName = displayName;
         this.minVersion = minVersion;
     }

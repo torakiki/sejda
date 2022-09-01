@@ -112,10 +112,9 @@ public class NotifiableTaskMetadata implements Serializable {
         if (this == other) {
             return true;
         }
-        if (!(other instanceof NotifiableTaskMetadata)) {
+        if (!(other instanceof NotifiableTaskMetadata meta)) {
             return false;
         }
-        NotifiableTaskMetadata meta = (NotifiableTaskMetadata) other;
         return new EqualsBuilder().append(taskIdentifier, meta.taskIdentifier).append(qualifiedName, meta.qualifiedName)
                 .isEquals();
     }

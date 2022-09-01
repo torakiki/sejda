@@ -18,20 +18,6 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static java.util.stream.StreamSupport.stream;
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
-import static org.sejda.sambox.util.BidiUtils.visualToLogical;
-
-import java.awt.geom.GeneralPath;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.sejda.impl.sambox.component.TextWithFont;
@@ -55,6 +41,30 @@ import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.font.PDVectorFont;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.geom.GeneralPath;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.StreamSupport.stream;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import static org.sejda.sambox.util.BidiUtils.visualToLogical;
 
 /**
  * Utility to map from Sejda font definition to PDFBox.
@@ -164,7 +174,7 @@ public final class FontUtils {
      * @param text
      * @return a font capable of displaying the given string or null
      */
-    public static final PDFont findFontFor(PDDocument document, String text) {
+    public static PDFont findFontFor(PDDocument document, String text) {
         for (FontResource font : TYPE0FONTS) {
             PDFont loaded = loadFont(document, font);
             if (canDisplay(text, loaded)) {
@@ -261,10 +271,10 @@ public final class FontUtils {
                             ofNullable(((PDType3Font) font).getCharProc(code)).map(PDType3CharProc::getGlyphBBox)
                                     .map(PDRectangle::toGeneralPath).map(p -> p.getBounds2D().getHeight()).orElse(0d));
                 } else if (font instanceof PDVectorFont) {
-                    maxHeight = Math.max(maxHeight, ofNullable(((PDVectorFont) font).getPath(code))
-                            .map(p -> p.getBounds2D().getHeight()).orElse(0d));
-                } else if (font instanceof PDSimpleFont) {
-                    PDSimpleFont simpleFont = (PDSimpleFont) font;
+                    maxHeight = Math.max(maxHeight,
+                            ofNullable(((PDVectorFont) font).getPath(code)).map(p -> p.getBounds2D().getHeight())
+                                    .orElse(0d));
+                } else if (font instanceof PDSimpleFont simpleFont) {
                     String name = ofNullable(simpleFont.getEncoding()).map(e -> e.getName(code)).orElse(null);
                     if (nonNull(name)) {
                         maxHeight = Math.max(maxHeight, simpleFont.getPath(name).getBounds2D().getHeight());
@@ -594,7 +604,7 @@ public final class FontUtils {
         // replace unsupported groups of text longer ones first
         // eg: first replace "ääç" and then "ä"
         List<String> unsupportedSortedByLength = new ArrayList<>(unsupported);
-        unsupportedSortedByLength.sort((o1, o2) -> new Integer(o2.length()).compareTo(o1.length()));
+        unsupportedSortedByLength.sort((o1, o2) -> Integer.valueOf(o2.length()).compareTo(o1.length()));
 
         String result = text;
         for (String s : unsupportedSortedByLength) {

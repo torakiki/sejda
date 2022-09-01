@@ -33,9 +33,9 @@ public enum OutlinePolicy implements FriendlyNamed {
     ONE_ENTRY_EACH_DOC("one_entry_each_doc"),
     RETAIN_AS_ONE_ENTRY("retain_as_one_entry");
 
-    private String displayName;
+    private final String displayName;
 
-    private OutlinePolicy(String displayName) {
+    OutlinePolicy(String displayName) {
         this.displayName = displayName;
     }
 

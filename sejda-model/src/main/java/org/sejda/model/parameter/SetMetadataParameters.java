@@ -40,7 +40,7 @@ import java.util.Set;
 public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutputParameters {
 
     @NotEmpty
-    private final Map<String, String> metadata = new HashMap<String, String>();
+    private final Map<String, String> metadata = new HashMap<>();
     private final Set<String> toRemove = new NullSafeSet<>();
     private boolean updateCreatorProducerModifiedDate = true;
     private boolean removeAllMetadata = false;
@@ -97,10 +97,9 @@ public final class SetMetadataParameters extends MultiplePdfSourceMultipleOutput
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SetMetadataParameters)) {
+        if (!(other instanceof SetMetadataParameters parameter)) {
             return false;
         }
-        SetMetadataParameters parameter = (SetMetadataParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(metadata, parameter.metadata)
                 .append(toRemove, parameter.toRemove)
                 .append(updateCreatorProducerModifiedDate, parameter.updateCreatorProducerModifiedDate)

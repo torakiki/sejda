@@ -61,10 +61,9 @@ public abstract class SinglePdfSourceSingleOutputParameters extends SinglePdfSou
         if (this == other) {
             return true;
         }
-        if (!(other instanceof SinglePdfSourceSingleOutputParameters)) {
+        if (!(other instanceof SinglePdfSourceSingleOutputParameters parameter)) {
             return false;
         }
-        SinglePdfSourceSingleOutputParameters parameter = (SinglePdfSourceSingleOutputParameters) other;
         return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput())
                 .isEquals();
     }

@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class OutlinePageDestinations {
 
-    private Map<Integer, String> destinations = new HashMap<Integer, String>();
+    private Map<Integer, String> destinations = new HashMap<>();
 
     /**
      * Adds the given page destination with the given title.

@@ -77,7 +77,7 @@ public class DefaultMultipleOutputWriterTest {
     }
 
     @Test
-    public void moveToDirExisting(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+    public void moveToDirExisting(@TempDir Path folder) throws IOException {
         var outFile = Files.createTempFile(folder, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
         victim.addOutput(FileOutput.file(outFile).name(outFile.getName()));
@@ -114,7 +114,7 @@ public class DefaultMultipleOutputWriterTest {
     }
 
     @Test
-    public void moveToFileDirExisting(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+    public void moveToFileDirExisting(@TempDir Path folder) throws IOException {
         var out = Files.createTempFile(folder, null, null).toFile();
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.FAIL, context);
         victim.addOutput(FileOutput.file(out).name(out.getName()));
@@ -154,7 +154,7 @@ public class DefaultMultipleOutputWriterTest {
     }
 
     @Test
-    public void moveToFileOrDirInvalidOut(@TempDir Path folder) throws TaskOutputVisitException, IOException {
+    public void moveToFileOrDirInvalidOut(@TempDir Path folder) throws IOException {
         DefaultMultipleOutputWriter victim = new DefaultMultipleOutputWriter(ExistingOutputPolicy.RENAME, context);
         victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("a"));
         victim.addOutput(FileOutput.file(Files.createTempFile(folder, null, null).toFile()).name("b"));

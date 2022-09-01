@@ -277,21 +277,15 @@ public final class TestUtils {
     }
 
     public static void assertPageText(PDPage page, String text) {
-        withPageText(page, pageText -> {
-            assertEquals(text, pageText.replaceAll("[^A-Za-z0-9]", ""));
-        });
+        withPageText(page, pageText -> assertEquals(text, pageText.replaceAll("[^A-Za-z0-9]", "")));
     }
 
     public static void assertPageTextExact(PDPage page, String text) {
-        withPageText(page, pageText -> {
-            assertEquals(text, pageText);
-        });
+        withPageText(page, pageText -> assertEquals(text, pageText));
     }
 
     public static void assertPageTextExactLines(PDPage page, String text) {
-        withPageText(page, pageText -> {
-            assertEquals(normalizeLineEndings(text), normalizeLineEndings(pageText));
-        });
+        withPageText(page, pageText -> assertEquals(normalizeLineEndings(text), normalizeLineEndings(pageText)));
     }
 
     public static void assertDocTextExactLines(PDDocument doc, String text) throws IOException {
