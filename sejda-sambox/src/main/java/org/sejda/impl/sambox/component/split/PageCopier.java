@@ -100,7 +100,8 @@ class PageCopier {
             COSArray streams = page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class);
             if (nonNull(streams)) {
                 COSArray streamsCopy = new COSArray();
-                streams.stream().filter(s -> s instanceof COSStream).map(COSStream.class::cast).map(MockPageStream::new)
+                streams.stream().map(COSBase::getCOSObject).filter(s -> s instanceof COSStream)
+                        .map(COSStream.class::cast).map(MockPageStream::new)
                         .forEach(streamsCopy::add);
                 copy.getCOSObject().setItem(COSName.CONTENTS, streamsCopy);
             }
