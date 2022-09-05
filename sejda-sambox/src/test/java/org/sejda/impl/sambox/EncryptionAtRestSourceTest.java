@@ -17,27 +17,31 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.customInputAsFileSource;
+import static org.sejda.tests.TestUtils.customNonPdfInput;
+import static org.sejda.tests.TestUtils.customNonPdfInputAsFileSource;
 import static org.sejda.tests.TestUtils.encryptedAtRest;
 
 public class EncryptionAtRestSourceTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void pdfFileSource() throws IOException, TaskIOException {
-        PdfFileSource encrypted = encryptedAtRest(customInputAsFileSource("/pdf/test-pdf.pdf"));
+        PdfFileSource encrypted = encryptedAtRest(customInputAsFileSource("pdf/test-pdf.pdf"));
         PDDocumentHandler doc = new DefaultPdfSourceOpener().open(encrypted);
         assertEquals(doc.getNumberOfPages(), 11);
     }
 
     @Test
     public void pdfStreamSource() throws IOException, TaskIOException {
-        PdfStreamSource encrypted = encryptedAtRest(customInput("/pdf/test-pdf.pdf"));
+        PdfStreamSource encrypted = encryptedAtRest(customInput("pdf/test-pdf.pdf"));
         PDDocumentHandler doc = new DefaultPdfSourceOpener().open(encrypted);
         assertEquals(doc.getNumberOfPages(), 11);
     }
 
     @Test
     public void streamSource() throws IOException {
-        StreamSource encrypted = encryptedAtRest(customNonPdfInput("/image/large.jpg"));
+        StreamSource encrypted = encryptedAtRest(customNonPdfInput("image/large.jpg"));
 
         BufferedImage image = ImageIO.read(encrypted.getSeekableSource().asNewInputStream());
         assertEquals(image.getWidth(), 5760);
@@ -45,7 +49,7 @@ public class EncryptionAtRestSourceTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void fileSource() throws IOException {
-        FileSource encrypted = encryptedAtRest(customNonPdfInputAsFileSource("/image/large.jpg"));
+        FileSource encrypted = encryptedAtRest(customNonPdfInputAsFileSource("image/large.jpg"));
 
         BufferedImage image = ImageIO.read(encrypted.getSeekableSource().asNewInputStream());
         assertEquals(image.getWidth(), 5760);

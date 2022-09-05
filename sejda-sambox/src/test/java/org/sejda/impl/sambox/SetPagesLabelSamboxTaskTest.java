@@ -35,6 +35,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.shortInput;
 
 /**
  * @author Andrea Vacondio

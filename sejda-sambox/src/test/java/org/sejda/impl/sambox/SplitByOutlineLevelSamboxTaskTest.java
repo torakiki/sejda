@@ -31,6 +31,7 @@ import java.io.IOException;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.tests.TestUtils.customInput;
 
 public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutlineLevelParameters> {
 
@@ -39,7 +40,7 @@ public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutli
         parameters.setMatchingTitleRegEx(regEx);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("/pdf/bigger_outline_test.pdf"));
+        parameters.addSource(customInput("pdf/bigger_outline_test.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         return parameters;
@@ -84,7 +85,7 @@ public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutli
     public void testSameBookmarkName() throws IOException {
         SplitByOutlineLevelParameters parameters = setUpParameters(1, null);
         parameters.removeAllSources();
-        parameters.addSource(customInput("/pdf/same_bookmarks_name.pdf"));
+        parameters.addSource(customInput("pdf/same_bookmarks_name.pdf"));
         parameters.setOutputPrefix("[BOOKMARK_NAME]");
         execute(parameters);
         testContext.assertTaskCompleted();

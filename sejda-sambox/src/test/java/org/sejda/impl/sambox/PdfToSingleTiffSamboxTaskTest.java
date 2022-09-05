@@ -37,6 +37,7 @@ import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customEncryptedInput;
 
 /**
  * @author Andrea Vacondio
@@ -54,7 +55,7 @@ public class PdfToSingleTiffSamboxTaskTest extends BaseTaskTest<PdfToSingleTiffP
 
     private void setCommonParams(AbstractPdfToImageParameters parameters) {
         parameters.setResolutionInDpi(96);
-        parameters.setSource(customEncryptedInput("/pdf/enc_test_test_file.pdf", "test"));
+        parameters.setSource(customEncryptedInput("pdf/enc_test_test_file.pdf", "test"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
     }
 

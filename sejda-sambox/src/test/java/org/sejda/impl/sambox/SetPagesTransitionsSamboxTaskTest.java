@@ -35,6 +35,7 @@ import org.sejda.tests.tasks.BaseTaskTest;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.sejda.tests.TestUtils.shortInput;
 
 /**
  * @author Andrea Vacondio

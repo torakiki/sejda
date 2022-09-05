@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+import static org.sejda.tests.TestUtils.shortInput;
+
 /**
  * @author Andrea Vacondio
  */

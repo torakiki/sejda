@@ -18,7 +18,6 @@
  */
 package org.sejda.tests.tasks;
 
-import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,11 +25,6 @@ import org.sejda.commons.util.IOUtils;
 import org.sejda.core.context.SejdaConfiguration;
 import org.sejda.core.service.DefaultTaskExecutionService;
 import org.sejda.model.exception.TaskException;
-import org.sejda.model.exception.TaskIOException;
-import org.sejda.model.input.FileSource;
-import org.sejda.model.input.PdfFileSource;
-import org.sejda.model.input.PdfStreamSource;
-import org.sejda.model.input.StreamSource;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.cos.COSName;
@@ -39,20 +33,13 @@ import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.sejda.tests.TestUtils;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.sejda.commons.util.RequireUtils.requireNotBlank;
 
 /**
  * @author Andrea Vacondio
@@ -87,117 +74,6 @@ public abstract class BaseTaskTest<T extends TaskParameters> implements Testable
     @AfterEach
     public void closeContext() {
         IOUtils.closeQuietly(testContext);
-    }
-
-    public static PdfStreamSource shortInput() {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/short-test-file.pdf"),
-                "short-test-file.pdf");
-    }
-
-    public static PdfStreamSource regularInput() {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/test-pdf.pdf"),
-                "test-file.pdf");
-    }
-
-    public static PdfStreamSource mediumInput() {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/medium_test.pdf"),
-                "medium-test-file.pdf");
-    }
-
-    public static PdfStreamSource largeInput() {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/large_test.pdf"),
-                "large-test-file.pdf");
-    }
-
-    public static PdfStreamSource largeOutlineInput() {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream("/pdf/large_outline.pdf"),
-                "large-outline-test-file.pdf");
-    }
-
-    public static PdfStreamSource encryptedInput() {
-        return PdfStreamSource.newInstanceWithPassword(
-                BaseTaskTest.class.getResourceAsStream("/pdf/encrypted_AES128_user_pwd.pdf"), "encrypted-test-file.pdf",
-                "test");
-    }
-
-    public static PdfStreamSource formInput() {
-        return PdfStreamSource.newInstanceNoPassword(
-                BaseTaskTest.class.getResourceAsStream("/pdf/forms/two_pages_form.pdf"), "test-form.pdf");
-    }
-
-    public static PdfStreamSource stronglyEncryptedInput() {
-        return PdfStreamSource.newInstanceWithPassword(
-                BaseTaskTest.class.getResourceAsStream("/pdf/encrypted_AES256_user_pwd.pdf"),
-                "strongly-encrypted-test-file.pdf", "test");
-    }
-
-    public static PdfStreamSource customInput(String path) {
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream(path),
-                randomAlphanumeric(16) + ".pdf");
-    }
-
-    public static PdfFileSource customInputAsFileSource(String path) {
-        String filename = new File(path).getName();
-        return customInputAsFileSource(path, filename);
-    }
-
-    public static PdfFileSource customInputAsFileSource(String path, String filename) {
-        InputStream in = BaseTaskTest.class.getResourceAsStream(path);
-        return PdfFileSource.newInstanceNoPassword(streamToTmpFile(in, filename));
-    }
-
-    public static PdfStreamSource customInput(String path, String name) {
-        requireNotBlank(name, "Name cannot be blank");
-        return PdfStreamSource.newInstanceNoPassword(BaseTaskTest.class.getResourceAsStream(path), name);
-    }
-
-    public static PdfFileSource customInput(PDDocument doc, String name) {
-        try {
-            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(name);
-            doc.writeTo(tmp);
-            return PdfFileSource.newInstanceNoPassword(tmp);
-        } catch (TaskIOException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static PdfStreamSource customEncryptedInput(String path, String password) {
-        return PdfStreamSource.newInstanceWithPassword(BaseTaskTest.class.getResourceAsStream(path),
-                randomAlphanumeric(16) + ".pdf", password);
-    }
-
-    public static StreamSource customNonPdfInput(String path) {
-        String extension = FilenameUtils.getExtension(path);
-        String filename = new File(path).getName();
-        return customNonPdfInput(path, filename);
-    }
-
-    public static StreamSource customNonPdfInput(String path, String filename) {
-        return StreamSource.newInstance(BaseTaskTest.class.getResourceAsStream(path), filename);
-    }
-
-    public static FileSource customNonPdfInputAsFileSource(String path) {
-        String filename = new File(path).getName();
-        return customNonPdfInputAsFileSource(path, filename);
-    }
-
-    public static FileSource customNonPdfInputAsFileSource(String path, String filename) {
-        InputStream in = BaseTaskTest.class.getResourceAsStream(path);
-        return FileSource.newInstance(streamToTmpFile(in, filename));
-    }
-
-    public static File streamToTmpFile(InputStream in, String filename) {
-        try {
-            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(filename);
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
-            IOUtils.copy(in, out);
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(in);
-            return tmp;
-        } catch (IOException | TaskIOException ex) {
-            throw new RuntimeException(ex);
-        }
-
     }
 
     public static void assertPageText(PDPage page, String text) {

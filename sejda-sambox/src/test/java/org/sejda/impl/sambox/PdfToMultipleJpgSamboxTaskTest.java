@@ -27,6 +27,8 @@ import org.sejda.tests.tasks.MultipleImageConversionTaskTest;
 
 import java.io.IOException;
 
+import static org.sejda.tests.TestUtils.shortInput;
+
 public class PdfToMultipleJpgSamboxTaskTest extends MultipleImageConversionTaskTest<PdfToJpegParameters> {
 
     @Override

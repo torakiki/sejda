@@ -24,7 +24,6 @@ import org.sejda.model.exception.TaskWrongPasswordException;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.util.IOUtils;
-import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInputAsFileSource;
 
 /**
  * @author Andrea Vacondio
@@ -105,7 +105,7 @@ public class DefaultPdfSourceOpenerTest {
 
     @Test
     public void openDocumentTwice_fileSource() throws TaskIOException, IOException {
-        PdfFileSource source = BaseTaskTest.customInputAsFileSource("/pdf/test_file.pdf");
+        PdfFileSource source = customInputAsFileSource("pdf/test_file.pdf");
         try(PDDocumentHandler handler = new DefaultPdfSourceOpener().open(source)) {
             assertNotNull(handler.getUnderlyingPDDocument());
         }

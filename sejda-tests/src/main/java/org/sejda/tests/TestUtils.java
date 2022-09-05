@@ -22,11 +22,13 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.apache.commons.io.FilenameUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.commons.util.StringUtils;
 import org.sejda.model.encryption.CipherBasedEncryptionAtRest;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
+import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.FileSource;
 import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.input.PdfStreamSource;
@@ -48,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.awt.Rectangle;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -67,6 +70,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -76,6 +80,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
 import static org.sejda.commons.util.StringUtils.normalizeLineEndings;
 
 /**
@@ -377,6 +382,118 @@ public final class TestUtils {
             return cipher;
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static PdfStreamSource shortInput() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/short-test-file.pdf"),
+                "short-test-file.pdf");
+    }
+
+    public static PdfStreamSource regularInput() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/test-pdf.pdf"),
+                "test-file.pdf");
+    }
+
+    public static PdfStreamSource mediumInput() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/medium_test.pdf"),
+                "medium-test-file.pdf");
+    }
+
+    public static PdfStreamSource largeInput() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/large_test.pdf"),
+                "large-test-file.pdf");
+    }
+
+    public static PdfStreamSource largeOutlineInput() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/large_outline.pdf"),
+                "large-outline-test-file.pdf");
+    }
+
+    public static PdfStreamSource encryptedInput() {
+        return PdfStreamSource.newInstanceWithPassword(
+                TestUtils.class.getResourceAsStream("/pdf/encrypted_AES128_user_pwd.pdf"), "encrypted-test-file.pdf",
+                "test");
+    }
+
+    public static PdfStreamSource formInput() {
+        return PdfStreamSource.newInstanceNoPassword(
+                TestUtils.class.getResourceAsStream("/pdf/forms/two_pages_form.pdf"), "test-form.pdf");
+    }
+
+    public static PdfStreamSource stronglyEncryptedInput() {
+        return PdfStreamSource.newInstanceWithPassword(
+                TestUtils.class.getResourceAsStream("/pdf/encrypted_AES256_user_pwd.pdf"),
+                "strongly-encrypted-test-file.pdf", "test");
+    }
+
+    public static PdfStreamSource customInput(String path) {
+        return customInput(path, randomAlphanumeric(16) + ".pdf");
+    }
+
+    public static PdfStreamSource customInput(String path, String name) {
+        requireNotBlank(name, "Name cannot be blank");
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getClassLoader().getResourceAsStream(path), name);
+    }
+
+    public static PdfFileSource customInputAsFileSource(String path) {
+        String filename = new File(path).getName();
+        return customInputAsFileSource(path, filename);
+    }
+
+    public static PdfFileSource customInputAsFileSource(String path, String filename) {
+        requireNotBlank(filename, "Name cannot be blank");
+        return PdfFileSource.newInstanceNoPassword(
+                streamToTmpFile(TestUtils.class.getClassLoader().getResourceAsStream(path), filename));
+    }
+
+    public static PdfFileSource customInput(PDDocument doc, String name) {
+        try {
+            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(name);
+            doc.writeTo(tmp);
+            return PdfFileSource.newInstanceNoPassword(tmp);
+        } catch (TaskIOException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static PdfStreamSource customEncryptedInput(String path, String password) {
+        return PdfStreamSource.newInstanceWithPassword(TestUtils.class.getClassLoader().getResourceAsStream(path),
+                randomAlphanumeric(16) + ".pdf", password);
+    }
+
+    public static StreamSource customNonPdfInput(String path) {
+        String extension = FilenameUtils.getExtension(path);
+        String filename = new File(path).getName();
+        return customNonPdfInput(path, filename);
+    }
+
+    public static StreamSource customNonPdfInput(String path, String filename) {
+        requireNotBlank(filename, "Name cannot be blank");
+        return StreamSource.newInstance(TestUtils.class.getClassLoader().getResourceAsStream(path), filename);
+    }
+
+    public static FileSource customNonPdfInputAsFileSource(String path) {
+        String filename = new File(path).getName();
+        return customNonPdfInputAsFileSource(path, filename);
+    }
+
+    public static FileSource customNonPdfInputAsFileSource(String path, String filename) {
+        requireNotBlank(filename, "Name cannot be blank");
+        return FileSource.newInstance(
+                streamToTmpFile(TestUtils.class.getClassLoader().getResourceAsStream(path), filename));
+    }
+
+    public static File streamToTmpFile(InputStream in, String filename) {
+        try {
+            File tmp = org.sejda.model.util.IOUtils.createTemporaryBufferWithName(filename);
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(tmp));
+            IOUtils.copy(in, out);
+            IOUtils.closeQuietly(out);
+            IOUtils.closeQuietly(in);
+            return tmp;
+        } catch (IOException | TaskIOException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

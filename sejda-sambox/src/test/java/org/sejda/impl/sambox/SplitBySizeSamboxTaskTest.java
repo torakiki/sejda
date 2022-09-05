@@ -31,6 +31,9 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.regularInput;
 
 /**
  * @author Andrea Vacondio
@@ -75,7 +78,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("/pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -95,7 +98,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
         parameters.setCompress(true);
         parameters.setOptimizationPolicy(OptimizationPolicy.NO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("/pdf/shared_resource_dic_with_2_imgs.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         execute(parameters);

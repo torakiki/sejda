@@ -37,6 +37,12 @@ import java.io.IOException;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.encryptedInput;
+import static org.sejda.tests.TestUtils.largeInput;
+import static org.sejda.tests.TestUtils.largeOutlineInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * @author Andrea Vacondio
@@ -130,7 +136,7 @@ public class AlternateMixSamboxTaskTest extends BaseTaskTest<AlternateMixMultipl
     public void repeatForeverExplicitlyMarkedInputs() throws IOException {
         AlternateMixMultipleInputParameters params = new AlternateMixMultipleInputParameters();
         params.addInput(new PdfMixInput(shortInput()));
-        params.addInput(new PdfMixInput(customInput("/pdf/one_page.pdf")));
+        params.addInput(new PdfMixInput(customInput("pdf/one_page.pdf")));
 
         for (PdfMixInput input : params.getInputList()) {
             input.setRepeatForever(true);

@@ -27,14 +27,16 @@ import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.io.IOException;
 
+import static org.sejda.tests.TestUtils.customInput;
+
 public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlineParameters> {
 
     private ExtractByOutlineParameters setUpParameters(int level) {
-        return setUpParameters(level, "/pdf/extract_by_outline_sample.pdf", null);
+        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", null);
     }
 
     private ExtractByOutlineParameters setUpParameters(int level, String regEx) {
-        return setUpParameters(level, "/pdf/extract_by_outline_sample.pdf", regEx);
+        return setUpParameters(level, "pdf/extract_by_outline_sample.pdf", regEx);
     }
 
     private ExtractByOutlineParameters setUpParameters(int level, String sourceFile, String regEx) {
@@ -82,7 +84,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
     @Test
     public void testBatchFilesWithConflictingOutputFiles() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(2);
-        parameters.addSource(customInput("/pdf/extract_by_outline_sample.pdf", "file2.pdf"));
+        parameters.addSource(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf"));
         parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -129,7 +131,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
 
     @Test
     public void testIncludingPageAfterOff() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
         testContext.assertOutputContainsFilenames("1_Employee One.pdf", "3_Employee Three.pdf", "2_Employee Two.pdf");
@@ -139,7 +141,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
 
     @Test
     public void testIncludingPageAfterOn() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
         parameters.setIncludePageAfter(true);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -151,7 +153,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
     @Test
     public void atRestEncryptionTest() throws IOException {
         ExtractByOutlineParameters parameters = setUpParameters(2);
-        parameters.addSource(TestUtils.encryptedAtRest(customInput("/pdf/extract_by_outline_sample.pdf", "file2.pdf")));
+        parameters.addSource(TestUtils.encryptedAtRest(customInput("pdf/extract_by_outline_sample.pdf", "file2.pdf")));
         parameters.setOutputPrefix("[BASENAME]_[FILENUMBER]_[BOOKMARK_NAME_STRICT]");
 
         testContext.directoryOutputTo(parameters);
@@ -162,7 +164,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
 
     @Test
     public void specificResultFilenames() throws IOException {
-        ExtractByOutlineParameters parameters = setUpParameters(1, "/pdf/payslip_with_bookmarks.pdf", null);
+        ExtractByOutlineParameters parameters = setUpParameters(1, "pdf/payslip_with_bookmarks.pdf", null);
         testContext.directoryOutputTo(parameters);
         parameters.addSpecificResultFilename("one");
         parameters.addSpecificResultFilename("two");

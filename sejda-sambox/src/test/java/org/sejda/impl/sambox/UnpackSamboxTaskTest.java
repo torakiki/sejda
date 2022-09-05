@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.sejda.tests.TestUtils.customInput;
 
 /**
  * @author Andrea Vacondio
@@ -44,12 +45,12 @@ public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
 
     @Test
     public void unpackAnnotations() throws IOException {
-        executeTest("/pdf/attachments_as_annots.pdf");
+        executeTest("pdf/attachments_as_annots.pdf");
     }
 
     @Test
     public void unpackNamedTree() throws IOException {
-        executeTest("/pdf/attachments_as_named_tree.pdf");
+        executeTest("pdf/attachments_as_named_tree.pdf");
     }
 
     public void executeTest(String filename) throws IOException {

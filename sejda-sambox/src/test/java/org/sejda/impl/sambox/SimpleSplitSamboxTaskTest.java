@@ -38,6 +38,10 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * @author Andrea Vacondio
@@ -130,7 +134,7 @@ public class SimpleSplitSamboxTaskTest extends BaseTaskTest<SimpleSplitParameter
         parameters = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
-        parameters.addSource(customInput("/pdf/shared_res_form_extgs_softmask.pdf"));
+        parameters.addSource(customInput("pdf/shared_res_form_extgs_softmask.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.setOutputPrefix("[FILENUMBER]-chuck");
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);

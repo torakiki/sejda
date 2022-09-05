@@ -41,6 +41,11 @@ import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.io.IOException;
 
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.regularInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
+
 /**
  * @author Andrea Vacondio
  */

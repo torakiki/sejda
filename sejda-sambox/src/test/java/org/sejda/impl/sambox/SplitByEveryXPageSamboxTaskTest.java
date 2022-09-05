@@ -31,6 +31,10 @@ import java.io.IOException;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.largeOutlineInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * @author Andrea Vacondio
@@ -70,7 +74,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("/pdf/shared_resource_dic_w_images.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -84,7 +88,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("/pdf/shared_xobjects_dics.pdf"));
+        parameters.addSource(customInput("pdf/shared_xobjects_dics.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);
@@ -98,7 +102,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         parameters.setCompress(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput("/pdf/shared_fonts.pdf"));
+        parameters.addSource(customInput("pdf/shared_fonts.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         testContext.directoryOutputTo(parameters);
         execute(parameters);

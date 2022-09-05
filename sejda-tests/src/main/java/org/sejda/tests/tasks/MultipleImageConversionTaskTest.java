@@ -36,6 +36,11 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.encryptedInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.regularInput;
+import static org.sejda.tests.TestUtils.shortInput;
 
 /**
  * @author Andrea Vacondio
@@ -58,7 +63,7 @@ public abstract class MultipleImageConversionTaskTest<T extends AbstractPdfToMul
     public void testExecuteStreamToMultipleImage() throws IOException {
         AbstractPdfToMultipleImageParameters parameters = getMultipleImageParametersWithoutSource(
                 ImageColorType.GRAY_SCALE);
-        parameters.addSource(customInput("/pdf/test_jpg.pdf"));
+        parameters.addSource(customInput("pdf/test_jpg.pdf"));
         doExecute(parameters, 1);
     }
 

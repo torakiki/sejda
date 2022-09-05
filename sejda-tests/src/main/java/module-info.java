@@ -35,6 +35,7 @@ module org.sejda.tests {
     requires org.hamcrest;
 
     exports org.sejda.tests;
+    exports org.sejda.tests.tasks;
     opens pdf;
     opens pdf.forms;
     opens image;

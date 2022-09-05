@@ -69,7 +69,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.sejda.tests.TestUtils.assertPageLabelIndexesAre;
 import static org.sejda.tests.TestUtils.assertPageLabelRangeIs;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.customNonPdfInput;
 import static org.sejda.tests.TestUtils.encryptedAtRest;
+import static org.sejda.tests.TestUtils.largeInput;
+import static org.sejda.tests.TestUtils.largeOutlineInput;
+import static org.sejda.tests.TestUtils.regularInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * @author Andrea Vacondio
@@ -109,7 +116,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     private List<PdfMergeInput> getInput() {
         List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(regularInput()));
-        input.add(new PdfMergeInput(customInput("/pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf")));
+        input.add(new PdfMergeInput(customInput("pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf")));
         return input;
     }
 
@@ -131,7 +138,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllRetainingOutlineTocNames() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         doExecuteMergeAll(false, 19, parameters);
     }
@@ -140,7 +147,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeAllRetainingOutlineTocNamesWhenNamesAreVeryLong() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
         String longFilename = "This is a file that has a very long name and should not be truncated so that the version is visible at the end (but when applied to the footer the name should be truncated not to cover the page number) v7";
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf", longFilename + ".pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", longFilename + ".pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         parameters.setFilenameFooter(true);
         doExecuteMergeAll(false, 19, parameters);
@@ -158,7 +165,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/rotated_pages.pdf", "name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/rotated_pages.pdf", "name.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -170,7 +177,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllRetainingOutlineTocTitles() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         doExecuteMergeAll(false, 19, parameters);
     }
@@ -178,7 +185,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllRetainingOutlineTocNamesUTF() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf", "αυτό είναι ένα τεστ.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "αυτό είναι ένα τεστ.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         doExecuteMergeAll(false, 19, parameters);
     }
@@ -186,8 +193,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllRetainingOutlineTocNamesUTFThaiAndHindi() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf", "นี่คือการทดสอบ.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf", "यह एक परीक्षण है.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "นี่คือการทดสอบ.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "यह एक परीक्षण है.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         parameters.setFilenameFooter(true);
         doExecuteMergeAll(false, 23, parameters);
@@ -196,7 +203,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllTocNamesNoFont() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/with_meta.pdf", "հայերէն.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "հայերէն.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         doExecuteMergeAll(false, 18, parameters);
     }
@@ -254,7 +261,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeAllFields() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
         testContext.pdfOutputTo(parameters);
@@ -268,8 +275,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void testExecuteMergeFieldsWithDots() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form_with_dot_partial_name.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form_with_dot_partial_name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form_with_dot_partial_name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form_with_dot_partial_name.pdf")));
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
 
@@ -289,8 +296,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void testExecuteMergeFieldsWithSameNameDifferentKinds() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/form_field_checkbox.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/form_field_text.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/form_field_checkbox.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/form_field_text.pdf")));
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
 
         testContext.pdfOutputTo(parameters);
@@ -309,7 +316,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeDiscardForms() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
@@ -323,7 +330,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeFlattenForms() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
 
         parameters.setOutlinePolicy(OutlinePolicy.DISCARD);
         parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
@@ -337,7 +344,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeFlattenFormsWithUnicodeValues() throws IOException {
         MergeParameters parameters = setUpParameters(
-                Collections.singletonList(new PdfMergeInput(customInput("/pdf/forms/simple_form_unicode_values.pdf"))));
+                Collections.singletonList(new PdfMergeInput(customInput("pdf/forms/simple_form_unicode_values.pdf"))));
 
         parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
         testContext.pdfOutputTo(parameters);
@@ -356,7 +363,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             input.addPageRange(new PageRange(80, 90));
         }
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
         doExecuteMergeRanges(parameters);
     }
 
@@ -369,7 +376,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             input.addPageRange(new PageRange(80, 90));
         }
         parameters.setAcroFormPolicy(AcroFormPolicy.DISCARD);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/simple_form.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/simple_form.pdf")));
         doExecuteMergeRanges(parameters);
     }
 
@@ -416,7 +423,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void testExecuteMergeRangesWithFlattenForms() throws IOException {
         List<PdfMergeInput> inputs = new ArrayList<>();
-        inputs.add(new PdfMergeInput(customInput("/pdf/forms/simple_form_with_values.pdf")));
+        inputs.add(new PdfMergeInput(customInput("pdf/forms/simple_form_with_values.pdf")));
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setAcroFormPolicy(AcroFormPolicy.FLATTEN);
         testContext.pdfOutputTo(parameters);
@@ -436,8 +443,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeFieldsWithSameNamesDifferentValues() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/test_form_one.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/test_form_two.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_two.pdf")));
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
 
         testContext.pdfOutputTo(parameters);
@@ -460,8 +467,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeFieldsWithSameNamesSameValues() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/test_form_one.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/forms/test_form_one.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/test_form_one.pdf")));
         parameters.setAcroFormPolicy(AcroFormPolicy.MERGE);
 
         testContext.pdfOutputTo(parameters);
@@ -486,7 +493,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setCompress(false);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/missing_page_ref.pdf", "name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskFailed().assertFailedSource("name.pdf");
@@ -500,7 +507,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setLenient(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/missing_page_ref.pdf", "name.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
         testContext.pdfOutputTo(parameters);
         execute(parameters);
         testContext.assertTaskCompleted();
@@ -515,7 +522,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
             MergeParameters parameters = new MergeParameters();
             parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-            parameters.addInput(new PdfMergeInput(customInput("/pdf/missing_page_ref.pdf", "name.pdf")));
+            parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
             testContext.pdfOutputTo(parameters);
             assertThrows(PageNotFoundException.class, () -> execute(parameters));
             testContext.assertTaskFailed().assertFailedSource("name.pdf");
@@ -528,11 +535,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void normalizePageSizes_FirstPagePortrait() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A4Portrait.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A3Landscape.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A3Portrait.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/landscape_by_rotation.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/potrait_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
         parameters.setNormalizePageSizes(true);
 
         testContext.pdfOutputTo(parameters);
@@ -557,11 +564,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void normalizePageSizes_FirstPageLandscape() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A3Landscape.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A4Portrait.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A3Portrait.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/landscape_by_rotation.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/potrait_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
         parameters.setNormalizePageSizes(true);
 
         testContext.pdfOutputTo(parameters);
@@ -586,8 +593,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void normalizePageSizes_AllLandscape() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/A3Landscape.pdf")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
         parameters.setNormalizePageSizes(true);
 
         testContext.pdfOutputTo(parameters);
@@ -632,7 +639,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void pageFooterAndTocwithDocTitles() throws IOException {
         List<PdfMergeInput> input = new ArrayList<>();
         input.add(new PdfMergeInput(regularInput()));
-        input.add(new PdfMergeInput(customInput("/pdf/test_file.pdf", "my_file.pdf")));
+        input.add(new PdfMergeInput(customInput("pdf/test_file.pdf", "my_file.pdf")));
         MergeParameters parameters = setUpParameters(input);
         parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         parameters.setFilenameFooter(true);
@@ -670,13 +677,13 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void mergeImagesAndPdfs() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/test-pdf.pdf")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/large.jpg")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.tiff")));
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/test-pdf.pdf")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/large.jpg")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.tiff")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -691,11 +698,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
 
-        ImageMergeInput image = new ImageMergeInput(customNonPdfInput("/image/draft.png"));
+        ImageMergeInput image = new ImageMergeInput(customNonPdfInput("image/draft.png"));
         image.setShouldPageSizeMatchImageSize(true);
 
         parameters.addInput(image);
-        parameters.addInput(new PdfMergeInput(customInput("/pdf/test-pdf.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -708,9 +715,9 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void mergeImagesWithTocAndFooter() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/large.jpg", "large.jpg")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.tiff", "draft.tiff")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/large.jpg", "large.jpg")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.tiff", "draft.tiff")));
 
         parameters.setTableOfContentsPolicy(ToCPolicy.DOC_TITLES);
         parameters.setFilenameFooter(true);
@@ -732,8 +739,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void mergeImagesWithWrongFileExtension() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/large.jpg", "large.png")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.jpeg")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/large.jpg", "large.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.jpeg")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -747,8 +754,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/corrupt.png", "corrupt.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/corrupt.png", "corrupt.png")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -763,7 +770,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(false);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        ImageMergeInput input1 = new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png"));
+        ImageMergeInput input1 = new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png"));
         input1.setPageSize(null);
         parameters.addInput(input1);
 
@@ -777,8 +784,8 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = new MergeParameters();
         parameters.setLenient(true);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
-        parameters.addInput(new ImageMergeInput(customNonPdfInput("/image/corrupt.png", "corrupt.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/corrupt.png", "corrupt.png")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -871,7 +878,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
         inputs.add(new PdfMergeInput(regularInput())); // 11 pages
         inputs.add(new PdfMergeInput(
-                customInput("/pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf"))); // 3 pages
+                customInput("pdf/attachments_as_annots.pdf", "attachments_as_annots.pdf"))); // 3 pages
 
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
@@ -906,7 +913,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void withoutRotations() throws IOException {
         List<MergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
-        inputs.add(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
+        inputs.add(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
 
         MergeParameters parameters = setUpParameters(inputs);
 
@@ -929,7 +936,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void withRotations() throws IOException {
         List<MergeInput> inputs = new ArrayList<>();
         inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
-        inputs.add(new ImageMergeInput(customNonPdfInput("/image/draft.png", "draft.png")));
+        inputs.add(new ImageMergeInput(customNonPdfInput("image/draft.png", "draft.png")));
 
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setRotations(Arrays.asList(Rotation.DEGREES_90, Rotation.DEGREES_180));
@@ -953,9 +960,9 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void atRestEncryptionTest() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("/image/draft.png"))));
-        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("/image/draft.tiff"))));
-        parameters.addInput(new PdfMergeInput(encryptedAtRest(customInput("/pdf/test-pdf.pdf"))));
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.png"))));
+        parameters.addInput(new ImageMergeInput(encryptedAtRest(customNonPdfInput("image/draft.tiff"))));
+        parameters.addInput(new PdfMergeInput(encryptedAtRest(customInput("pdf/test-pdf.pdf"))));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -978,7 +985,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
         List<PdfMergeInput> inputs = new ArrayList<>(entries.size());
         for (String entry : entries) {
-            inputs.add(new PdfMergeInput(customInput("/pdf/one_page.pdf", entry + ".pdf"))); // 1 page
+            inputs.add(new PdfMergeInput(customInput("pdf/one_page.pdf", entry + ".pdf"))); // 1 page
         }
 
         MergeParameters parameters = setUpParameters(inputs);

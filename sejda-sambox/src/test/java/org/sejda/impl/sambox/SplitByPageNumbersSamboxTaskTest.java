@@ -37,6 +37,12 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.encryptedInput;
+import static org.sejda.tests.TestUtils.largeOutlineInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesParameters> {
     private SplitByPagesParameters parameters;
@@ -59,7 +65,7 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
     @Test
     public void burstOptimizeImages() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("/pdf/shared_resource_dic_w_images.pdf"));
+        parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         execute(parameters);
@@ -70,7 +76,7 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
     @Test
     public void burstOptimizeFonts() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("/pdf/shared_fonts.pdf"));
+        parameters.addSource(customInput("pdf/shared_fonts.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.addPage(1);
         parameters.addPage(2);
@@ -235,7 +241,7 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
     @Test
     public void sharedResourcesAreNotPurged() throws IOException {
         setUpParameters();
-        parameters.addSource(customInput("/pdf/pages-shared-res1-forms-not-shared.pdf"));
+        parameters.addSource(customInput("pdf/pages-shared-res1-forms-not-shared.pdf"));
         parameters.setOptimizationPolicy(OptimizationPolicy.YES);
         parameters.addPage(1);
         execute(parameters);
