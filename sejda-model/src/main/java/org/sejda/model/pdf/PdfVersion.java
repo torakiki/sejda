@@ -20,17 +20,17 @@
  */
 package org.sejda.model.pdf;
 
+import org.sejda.model.FriendlyNamed;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
-
-import org.sejda.model.FriendlyNamed;
 
 /**
  * pdf versions
  * 
  * @author Andrea Vacondio
- * 
+ *
  */
 public enum PdfVersion implements FriendlyNamed {
 
@@ -41,7 +41,8 @@ public enum PdfVersion implements FriendlyNamed {
     VERSION_1_4(1.4d, "%PDF-1.4"),
     VERSION_1_5(1.5d, "%PDF-1.5"),
     VERSION_1_6(1.6d, "%PDF-1.6"),
-    VERSION_1_7(1.7d, "%PDF-1.7");
+    VERSION_1_7(1.7d, "%PDF-1.7"),
+    VERSION_2_0(2.0d, "%PDF-2.0");
 
     private final double version;
     private final String versionHeader;

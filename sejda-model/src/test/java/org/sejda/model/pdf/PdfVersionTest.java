@@ -19,12 +19,12 @@
  */
 package org.sejda.model.pdf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import org.junit.jupiter.api.Test;
 import org.sejda.model.pdf.viewerpreference.PdfBooleanPreference;
 import org.sejda.model.pdf.viewerpreference.PdfDuplex;
 import org.sejda.model.pdf.viewerpreference.PdfPageMode;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Andrea Vacondio
@@ -34,7 +34,7 @@ public class PdfVersionTest {
 
     @Test
     public void testGetMaxPdfVersion() {
-        assertEquals(PdfVersion.VERSION_1_7, PdfVersion.getMax(PdfVersion.values()));
+        assertEquals(PdfVersion.VERSION_2_0, PdfVersion.getMax(PdfVersion.values()));
     }
 
     @Test
