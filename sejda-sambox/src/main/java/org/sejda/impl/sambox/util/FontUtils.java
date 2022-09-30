@@ -115,7 +115,7 @@ public final class FontUtils {
      */
     public static PDFont fontOrFallback(String text, PDFont font, PDDocument document) {
         if (!canDisplay(text, font)) {
-            PDFont fallback = findFontFor(document, text);
+            PDFont fallback = findFontFor(document, text, isBold(font));
             String fallbackName = fallback == null ? null : fallback.getName();
             LOG.debug("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(),
                     fallbackName);
@@ -159,20 +159,31 @@ public final class FontUtils {
         }
     }
 
+    public static final PDFont findFontFor(PDDocument document, String text) {
+        return findFontFor(document, text, false);
+    }
+
     /**
      * @param document
      * @param text
      * @return a font capable of displaying the given string or null
      */
-    public static final PDFont findFontFor(PDDocument document, String text) {
+    public static final PDFont findFontFor(PDDocument document, String text, boolean bold) {
+        PDFont firstPartialMatch = null;
         for (FontResource font : TYPE0FONTS) {
             PDFont loaded = loadFont(document, font);
             if (canDisplay(text, loaded)) {
+                firstPartialMatch = loaded;
                 LOG.debug("Found suitable font {} to display '{}'", loaded, text);
-                return loaded;
+
+                // match on style? great, return it
+                // otherwise continue and fallback to this font if no exact style match is found in the end 
+                if(isBold(loaded) == bold) {
+                    return loaded;    
+                }
             }
         }
-        return null;
+        return firstPartialMatch;
     }
 
     /**

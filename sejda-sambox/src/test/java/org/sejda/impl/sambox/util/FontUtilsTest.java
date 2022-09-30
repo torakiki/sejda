@@ -94,7 +94,15 @@ public class FontUtilsTest {
 
     private PDFont findFontFor(String s) {
         try {
-            return FontUtils.findFontFor(new PDDocument(), s);
+            return FontUtils.findFontFor(new PDDocument(), s, false);
+        } finally {
+            FontUtils.clearLoadedFontCache();
+        }
+    }
+
+    private PDFont findBoldFontFor(String s) {
+        try {
+            return FontUtils.findFontFor(new PDDocument(), s, true);
         } finally {
             FontUtils.clearLoadedFontCache();
         }
@@ -109,32 +117,45 @@ public class FontUtilsTest {
 
     @Test
     public void testFindFontFor() {
-        assertNotNull(findFontFor("ทดสอบ")); // thai
-        assertNotNull(findFontFor("αυτό είναι ένα τεστ")); // greek
-        assertNotNull(findFontFor("വീട്")); // malayalam
-        assertNotNull(findFontFor("मानक")); // hindi
-        assertNotNull(findFontFor("జ")); // telugu
-        assertNotNull(findFontFor("উ")); // bengali
-        assertNotNull(findFontFor("עברית")); // hebrew
-        assertNotNull(findFontFor("latin ąćęłńóśźż")); // latin
-        assertNotNull(findFontFor("\uFFFD \u2997")); // symbols
-        assertNotNull(findFontFor("Newlines\nare\r\nignored")); // newlines
-        assertNotNull(findFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ ")); // symbols
-        assertNotNull(findFontFor("ភាសាខ្មែរ")); // khmer
-        assertNotNull(findFontFor("ጩ")); // ethiopic
-        assertNotNull(findFontFor("پنجابی, ਪੰਜਾਬੀ")); // punjabi
-        assertNotNull(findFontFor("தமிழ்")); // tamil
-        assertNotNull(findFontFor("ગુજરાતી")); // gujarati
-        assertNotNull(findFontFor("န\u103Aမာဘာသာ")); // myanmar
-        assertNotNull(findFontFor("සිංහල")); // sinhalese
-        assertNotNull(findFontFor("ᠮᠣᠩᠭᠣᠯ")); // mongolian
-        assertNotNull(findFontFor("ಕನ್ನಡ")); // kannada
-        assertNotNull(findFontFor("ଓଡ଼ିଆ ଭାଷା")); // oryia
-        assertNotNull(findFontFor("ކުންފުނި")); // thaana
+        assertFindFontFor("ทดสอบ"); // thai
+        assertFindFontFor("αυτό είναι ένα τεστ"); // greek
+        assertFindFontFor("വീട്"); // malayalam
+        assertFindFontFor("मानक"); // hindi
+        assertFindFontFor("జ"); // telugu
+        assertFindFontFor("উ"); // bengali
+        assertFindFontFor("עברית"); // hebrew
+        assertFindFontFor("latin ąćęłńóśźż"); // latin
+        assertFindFontFor("\uFFFD \u2997"); // symbols
+        assertFindFontFor("Newlines\nare\r\nignored"); // newlines
+        assertFindFontFor("\u2984 \u2583 \u2738 ☗⦄✸▃ "); // symbols
+        assertFindFontFor("ភាសាខ្មែរ"); // khmer
+        assertFindFontFor("ጩ"); // ethiopic
+        assertFindFontFor("پنجابی, ਪੰਜਾਬੀ"); // punjabi
+        assertFindFontFor("தமிழ்"); // tamil
+        assertFindFontFor("ગુજરાતી"); // gujarati
+        assertFindFontFor("န\u103Aမာဘာသာ"); // myanmar
+        assertFindFontFor("සිංහල"); // sinhalese
+        assertFindFontFor("ᠮᠣᠩᠭᠣᠯ"); // mongolian
+        assertFindFontFor("ಕನ್ನಡ"); // kannada
+        assertFindFontFor("ଓଡ଼ିଆ ଭାଷା"); // oryia
+        assertFindFontFor("ކުންފުނި"); // thaana
 
         // TODO: find a way to merge the armenian font into the big merged font with all others
         // so forms can be filled with latin/armenian mixed values
-        // assertNotNull(findFontFor("Latin mixed with հայերէն"));
+        // assertFindFontFor("Latin mixed with հայերէն");
+    }
+    
+    private void assertFindFontFor(String s) {
+        assertNotNull(findFontFor(s));
+        assertNotNull(findBoldFontFor(s));
+    }
+
+    @Test
+    public void testFindFontForBold() {
+        // has bold version, bold is returned
+        assertThat(findBoldFontFor("latin ąćęłńóśźż").getName(), is("NotoSans-Bold"));
+        // has no bold version, regular is returned
+        assertThat(findBoldFontFor("עברית").getName(), is("NotoSans"));
     }
 
     @Test
