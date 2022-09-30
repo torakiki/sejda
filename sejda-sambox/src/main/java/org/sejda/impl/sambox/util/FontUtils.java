@@ -299,11 +299,19 @@ public final class FontUtils {
     }
 
     public static boolean isBold(PDFont font) {
+        if(font.getName() == null) {
+            return false;
+        }
+        
         String lowercasedName = font.getName().toLowerCase();
         return lowercasedName.contains("bold");
     }
 
     public static boolean isItalic(PDFont font) {
+        if(font.getName() == null) {
+            return false;
+        }
+        
         String lowercasedName = font.getName().toLowerCase();
         return lowercasedName.contains("italic") || lowercasedName.contains("oblique");
     }
