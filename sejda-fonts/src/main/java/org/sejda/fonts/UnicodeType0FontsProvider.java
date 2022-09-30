@@ -32,7 +32,7 @@ public class UnicodeType0FontsProvider implements Type0FontsProvider {
 
     @Override
     public List<FontResource> getFonts() {
-        return List.of(UnicodeType0Font.NOTO_SANS_MERGED_REGULAR);
+        return List.of(UnicodeType0Font.NOTO_SANS_MERGED_REGULAR, UnicodeType0Font.NOTO_SANS_BOLD);
     }
 
 }
