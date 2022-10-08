@@ -18,7 +18,9 @@
  */
 package org.sejda.tests.tasks;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Assertions;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.Sejda;
@@ -41,6 +43,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumentOutline;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineItem;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDOutlineNode;
+import org.sejda.tests.PixelCompareUtils;
 import org.sejda.tests.TestListenerFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -623,5 +626,31 @@ public class TaskTestContext implements Closeable {
 
     public File getFileOutput() {
         return fileOutput;
+    }
+
+    public void assertSimilar(String resourcePath) {
+        //debug(FilenameUtils.getName(resourcePath));
+        this.forPdfOutput(actual -> new PixelCompareUtils().assertSimilar(actual, resourcePath));
+    }
+
+    public void assertSimilar(String resourcePath, double similarityThreshold) {
+        //debug(FilenameUtils.getName(resourcePath));
+        this.forPdfOutput(actual -> new PixelCompareUtils(similarityThreshold).assertSimilar(actual, resourcePath));
+    }
+
+    public void debug(String filename) {
+        try {
+            this.forEachRawOutput(path -> {
+                try {
+                    File dest = new File(SystemUtils.getJavaIoTmpDir(), filename);
+                    FileUtils.copyFile(path.toFile(), dest);
+                    System.out.println(dest);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

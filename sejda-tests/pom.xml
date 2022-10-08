@@ -75,5 +75,15 @@
 			<artifactId>sambox</artifactId>
 			<version>${sambox.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>${thumbnailator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.romankh3</groupId>
+			<artifactId>image-comparison</artifactId>
+			<version>${image-comparison.version}</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -343,6 +343,7 @@
 		<twelvemonkeys.version>3.8.3</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.17</thumbnailator.version>
+		<image-comparison.version>4.4.0</image-comparison.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
