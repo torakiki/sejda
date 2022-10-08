@@ -7,411 +7,443 @@
 [INFO] sejda core                                                         [jar]
 [INFO] Sejda docs                                                         [pom]
 [INFO] sejda fonts                                                        [jar]
+[INFO] sejda tests                                                        [jar]
 [INFO] sejda image writers                                                [jar]
 [INFO] sejda sambox                                                       [jar]
 [INFO] sejda conversion                                                   [jar]
 [INFO] sejda distribution                                                 [pom]
 [INFO] 
 [INFO] -----------------------< org.sejda:sejda-parent >-----------------------
-[INFO] Building sejda 4.2.12-SNAPSHOT                                     [1/9]
+[INFO] Building sejda 5.0.0.M3-SNAPSHOT                                  [1/10]
 [INFO] --------------------------------[ pom ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-parent ---
-[INFO] org.sejda:sejda-parent:pom:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] org.sejda:sejda-parent:pom:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  +- org.sejda:sejda-io:jar:2.1.1:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] -----------------------< org.sejda:sejda-model >------------------------
-[INFO] Building sejda model 4.2.12-SNAPSHOT                               [2/9]
+[INFO] Building sejda model 5.0.0.M3-SNAPSHOT                            [2/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-model ---
-[INFO] org.sejda:sejda-model:jar:4.2.12-SNAPSHOT
+[INFO] org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT
 [INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] +- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] +- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] +- org.hibernate:hibernate-validator:jar:4.2.0.Final:test
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] +- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:test
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:test
+[INFO] |  \- com.fasterxml:classmate:jar:1.5.1:test
+[INFO] +- org.glassfish:jakarta.el:jar:4.0.2:test
+[INFO] |  \- jakarta.el:jakarta.el-api:jar:4.0.0:test
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] ------------------------< org.sejda:sejda-core >------------------------
-[INFO] Building sejda core 4.2.12-SNAPSHOT                                [3/9]
+[INFO] Building sejda core 5.0.0.M3-SNAPSHOT                             [3/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-core ---
-[INFO] org.sejda:sejda-core:jar:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
-[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
+[INFO] org.sejda:sejda-core:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  \- org.sejda:sejda-io:jar:3.0.0.M1:compile
 [INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] +- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] +- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
-[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:compile
+[INFO] |  \- com.fasterxml:classmate:jar:1.5.1:compile
+[INFO] +- org.glassfish:jakarta.el:jar:4.0.2:compile
+[INFO] |  \- jakarta.el:jakarta.el-api:jar:4.0.0:compile
+[INFO] +- org.sejda:sambox:jar:3.0.0.M3:test
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:2.0.0:test
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.26:test
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] ------------------------< org.sejda:sejda-docs >------------------------
-[INFO] Building Sejda docs 4.2.12-SNAPSHOT                                [4/9]
+[INFO] Building Sejda docs 5.0.0.M3-SNAPSHOT                             [4/10]
 [INFO] --------------------------------[ pom ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-docs ---
-[INFO] org.sejda:sejda-docs:pom:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] org.sejda:sejda-docs:pom:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  +- org.sejda:sejda-io:jar:2.1.1:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] -----------------------< org.sejda:sejda-fonts >------------------------
-[INFO] Building sejda fonts 4.2.12-SNAPSHOT                               [5/9]
+[INFO] Building sejda fonts 5.0.0.M3-SNAPSHOT                            [5/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-fonts ---
-[INFO] org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] org.sejda:sejda-fonts:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
 [INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  +- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
+[INFO] 
+[INFO] -----------------------< org.sejda:sejda-tests >------------------------
+[INFO] Building sejda tests 5.0.0.M3-SNAPSHOT                            [6/10]
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-tests ---
+[INFO] org.sejda:sejda-tests:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
+[INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
+[INFO] |  \- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] +- org.sejda:sejda-core:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] +- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:compile
+[INFO] |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:compile
+[INFO] |  \- com.fasterxml:classmate:jar:1.5.1:compile
+[INFO] +- org.glassfish:jakarta.el:jar:4.0.2:compile
+[INFO] |  \- jakarta.el:jakarta.el-api:jar:4.0.0:compile
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:compile
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:compile
+[INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:compile
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:compile
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:compile
+[INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:compile
+[INFO] +- org.hamcrest:hamcrest-core:jar:2.2:compile
+[INFO] |  \- org.hamcrest:hamcrest:jar:2.2:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:compile
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:compile
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:compile
+[INFO] |  \- org.objenesis:objenesis:jar:3.2:runtime
+[INFO] +- org.sejda:sambox:jar:3.0.0.M3:compile
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:2.0.0:compile
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.26:compile
+[INFO] +- net.coobird:thumbnailator:jar:0.4.17:compile
+[INFO] +- com.github.romankh3:image-comparison:jar:4.4.0:compile
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] -------------------< org.sejda:sejda-image-writers >--------------------
-[INFO] Building sejda image writers 4.2.12-SNAPSHOT                       [6/9]
+[INFO] Building sejda image writers 5.0.0.M3-SNAPSHOT                    [7/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-image-writers ---
-[INFO] org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
+[INFO] org.sejda:sejda-image-writers:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
 [INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
-[INFO] |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
-[INFO] +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
-[INFO] +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
-[INFO] +- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
+[INFO] |  +- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.common:common-lang:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.common:common-io:jar:3.8.3:compile
+[INFO] |  \- com.twelvemonkeys.common:common-image:jar:3.8.3:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.3:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.3:compile
+[INFO] +- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.3:compile
 [INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] +- org.sejda:sejda-tests:jar:5.0.0.M3-SNAPSHOT:test
+[INFO] |  +- org.sejda:sejda-core:jar:5.0.0.M3-SNAPSHOT:test
+[INFO] |  +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:test
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:test
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.5.1:test
+[INFO] |  +- org.glassfish:jakarta.el:jar:4.0.2:test
+[INFO] |  |  \- jakarta.el:jakarta.el-api:jar:4.0.0:test
+[INFO] |  +- org.sejda:sambox:jar:3.0.0.M3:test
+[INFO] |  |  +- org.slf4j:jcl-over-slf4j:jar:2.0.0:test
+[INFO] |  |  \- org.apache.pdfbox:fontbox:jar:2.0.26:test
+[INFO] |  +- net.coobird:thumbnailator:jar:0.4.17:test
+[INFO] |  \- com.github.romankh3:image-comparison:jar:4.4.0:test
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] -----------------------< org.sejda:sejda-sambox >-----------------------
-[INFO] Building sejda sambox 4.2.12-SNAPSHOT                              [7/9]
+[INFO] Building sejda sambox 5.0.0.M3-SNAPSHOT                           [8/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-sambox ---
-[INFO] org.sejda:sejda-sambox:jar:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-core:test-jar:tests:4.2.12-SNAPSHOT:test
-[INFO] |  +- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] |  \- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
-[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
-[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] +- org.sejda:sejda-core:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- org.sejda:sambox:jar:2.3.4:compile
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:compile
-[INFO] +- org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
-[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
-[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
-[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
-[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
-[INFO] +- org.bouncycastle:bcmail-jdk15on:jar:1.70:compile
-[INFO] |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
-[INFO] |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
-[INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
-[INFO] +- com.drewnoakes:metadata-extractor:jar:2.16.0:compile
+[INFO] org.sejda:sejda-sambox:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-core:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] |  +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.5.1:compile
+[INFO] |  \- org.glassfish:jakarta.el:jar:4.0.2:compile
+[INFO] |     \- jakarta.el:jakarta.el-api:jar:4.0.0:compile
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  \- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] +- org.sejda:sejda-fonts:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] +- org.sejda:sambox:jar:3.0.0.M3:compile
+[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.26:compile
+[INFO] +- org.sejda:sejda-image-writers:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.3:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.3:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.3:compile
+[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.3:compile
+[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.3:compile
+[INFO] +- org.bouncycastle:bcmail-jdk18on:jar:1.71:compile
+[INFO] |  +- org.bouncycastle:bcutil-jdk18on:jar:1.71:compile
+[INFO] |  \- org.bouncycastle:bcpkix-jdk18on:jar:1.71:compile
+[INFO] +- org.bouncycastle:bcprov-jdk18on:jar:1.71:compile
+[INFO] +- com.drewnoakes:metadata-extractor:jar:2.18.0:compile
 [INFO] |  \- com.adobe.xmp:xmpcore:jar:6.1.11:compile
 [INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] +- net.coobird:thumbnailator:jar:0.4.15:compile
-[INFO] +- org.slf4j:jcl-over-slf4j:jar:1.7.32:test
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] +- net.coobird:thumbnailator:jar:0.4.17:compile
+[INFO] +- org.slf4j:jcl-over-slf4j:jar:2.0.0:test
+[INFO] +- org.sejda:sejda-tests:jar:5.0.0.M3-SNAPSHOT:test
+[INFO] |  \- com.github.romankh3:image-comparison:jar:4.4.0:test
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] ---------------------< org.sejda:sejda-conversion >---------------------
-[INFO] Building sejda conversion 4.2.12-SNAPSHOT                          [8/9]
+[INFO] Building sejda conversion 5.0.0.M3-SNAPSHOT                       [9/10]
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-conversion ---
-[INFO] org.sejda:sejda-conversion:jar:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
+[INFO] org.sejda:sejda-conversion:jar:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
 [INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] |  +- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] |  \- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] +- org.sejda:sejda-model:test-jar:tests:4.2.12-SNAPSHOT:test
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  +- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] |  \- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] 
 [INFO] --------------------< org.sejda:sejda-distribution >--------------------
-[INFO] Building sejda distribution 4.2.12-SNAPSHOT                        [9/9]
+[INFO] Building sejda distribution 5.0.0.M3-SNAPSHOT                    [10/10]
 [INFO] --------------------------------[ pom ]---------------------------------
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ sejda-distribution ---
-[INFO] org.sejda:sejda-distribution:pom:4.2.12-SNAPSHOT
-[INFO] +- org.sejda:sejda-core:jar:4.2.12-SNAPSHOT:compile
+[INFO] org.sejda:sejda-distribution:pom:5.0.0.M3-SNAPSHOT
+[INFO] +- org.sejda:sejda-core:jar:5.0.0.M3-SNAPSHOT:compile
 [INFO] |  +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] |  +- commons-io:commons-io:jar:2.11.0:compile
-[INFO] |  +- javax.validation:validation-api:jar:1.0.0.GA:compile
-[INFO] |  \- org.hibernate:hibernate-validator:jar:4.2.0.Final:compile
-[INFO] +- org.sejda:sejda-sambox:jar:4.2.12-SNAPSHOT:compile
-[INFO] |  +- org.bouncycastle:bcmail-jdk15on:jar:1.70:compile
-[INFO] |  |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
-[INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
-[INFO] |  +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
-[INFO] |  +- com.drewnoakes:metadata-extractor:jar:2.16.0:compile
+[INFO] |  +- jakarta.validation:jakarta.validation-api:jar:3.0.2:compile
+[INFO] |  +- org.hibernate.validator:hibernate-validator:jar:7.0.5.Final:compile
+[INFO] |  |  +- org.jboss.logging:jboss-logging:jar:3.4.1.Final:compile
+[INFO] |  |  \- com.fasterxml:classmate:jar:1.5.1:compile
+[INFO] |  \- org.glassfish:jakarta.el:jar:4.0.2:compile
+[INFO] |     \- jakarta.el:jakarta.el-api:jar:4.0.0:compile
+[INFO] +- org.sejda:sejda-sambox:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  +- org.sejda:sambox:jar:3.0.0.M3:compile
+[INFO] |  |  +- org.slf4j:jcl-over-slf4j:jar:2.0.0:compile
+[INFO] |  |  \- org.apache.pdfbox:fontbox:jar:2.0.26:compile
+[INFO] |  +- org.bouncycastle:bcmail-jdk18on:jar:1.71:compile
+[INFO] |  |  +- org.bouncycastle:bcutil-jdk18on:jar:1.71:compile
+[INFO] |  |  \- org.bouncycastle:bcpkix-jdk18on:jar:1.71:compile
+[INFO] |  +- org.bouncycastle:bcprov-jdk18on:jar:1.71:compile
+[INFO] |  +- com.drewnoakes:metadata-extractor:jar:2.18.0:compile
 [INFO] |  |  \- com.adobe.xmp:xmpcore:jar:6.1.11:compile
-[INFO] |  \- net.coobird:thumbnailator:jar:0.4.15:compile
-[INFO] +- org.sejda:sejda-image-writers:jar:4.2.12-SNAPSHOT:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.0:compile
-[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.0:compile
-[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.0:compile
-[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.0:compile
-[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.0:compile
-[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.0:compile
-[INFO] +- org.sejda:sejda-conversion:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- org.sejda:sejda-model:jar:4.2.12-SNAPSHOT:compile
-[INFO] |  \- org.sejda:sejda-io:jar:2.1.3:compile
-[INFO] +- org.sejda:sejda-fonts:jar:4.2.12-SNAPSHOT:compile
-[INFO] +- org.sejda:sejda-commons:jar:1.1.7:compile
-[INFO] +- org.slf4j:slf4j-api:jar:1.7.32:compile
-[INFO] +- org.mockito:mockito-core:jar:4.1.0:test
-[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.1:test
-[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.1:test
+[INFO] |  \- net.coobird:thumbnailator:jar:0.4.17:compile
+[INFO] +- org.sejda:sejda-image-writers:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.8.3:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-lang:jar:3.8.3:compile
+[INFO] |  |  +- com.twelvemonkeys.common:common-io:jar:3.8.3:compile
+[INFO] |  |  \- com.twelvemonkeys.common:common-image:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.8.3:compile
+[INFO] |  +- com.twelvemonkeys.imageio:imageio-tiff:jar:3.8.3:compile
+[INFO] |  \- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.8.3:compile
+[INFO] +- org.sejda:sejda-conversion:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-model:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] |  \- org.sejda:sejda-io:jar:3.0.0.M1:compile
+[INFO] +- org.sejda:sejda-fonts:jar:5.0.0.M3-SNAPSHOT:compile
+[INFO] +- org.sejda:sejda-commons:jar:2.0.0:compile
+[INFO] +- org.slf4j:slf4j-api:jar:2.0.0:compile
+[INFO] +- org.mockito:mockito-core:jar:4.7.0:test
+[INFO] |  +- net.bytebuddy:byte-buddy:jar:1.12.13:test
+[INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.12.13:test
 [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
-[INFO] +- org.sejda:sambox:jar:2.3.4:test
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.30:test
-[INFO] |  \- org.apache.pdfbox:fontbox:jar:2.0.18:test
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.9:test
-[INFO] |  \- ch.qos.logback:logback-core:jar:1.2.9:test
-[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.8.2:test
-[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.8.2:test
+[INFO] +- ch.qos.logback:logback-classic:jar:1.4.0:test
+[INFO] |  \- ch.qos.logback:logback-core:jar:1.4.0:test
+[INFO] +- org.junit.jupiter:junit-jupiter-engine:jar:5.9.0:test
+[INFO] |  +- org.junit.platform:junit-platform-engine:jar:1.9.0:test
 [INFO] |  |  +- org.opentest4j:opentest4j:jar:1.2.0:test
-[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.8.2:test
-[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.8.2:test
+[INFO] |  |  \- org.junit.platform:junit-platform-commons:jar:1.9.0:test
+[INFO] |  +- org.junit.jupiter:junit-jupiter-api:jar:5.9.0:test
 [INFO] |  \- org.apiguardian:apiguardian-api:jar:1.1.2:test
-[INFO] +- org.junit.vintage:junit-vintage-engine:jar:5.8.2:test
-[INFO] |  \- junit:junit:jar:4.13.2:test
 [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
 [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
-[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.22.0:test
-[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.22.0:test
-[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.22.0:test
-[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.22.0:test
-[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.22.0:test
+[INFO] \- com.tngtech.archunit:archunit-junit5:jar:0.23.1:test
+[INFO]    +- com.tngtech.archunit:archunit-junit5-api:jar:0.23.1:test
+[INFO]    |  \- com.tngtech.archunit:archunit:jar:0.23.1:test
+[INFO]    \- com.tngtech.archunit:archunit-junit5-engine:jar:0.23.1:test
+[INFO]       \- com.tngtech.archunit:archunit-junit5-engine-api:jar:0.23.1:test
 [INFO] ------------------------------------------------------------------------
-[INFO] Reactor Summary for sejda 4.2.12-SNAPSHOT:
+[INFO] Reactor Summary for sejda 5.0.0.M3-SNAPSHOT:
 [INFO] 
-[INFO] sejda .............................................. SUCCESS [  0.394 s]
-[INFO] sejda model ........................................ SUCCESS [  0.043 s]
-[INFO] sejda core ......................................... SUCCESS [  0.024 s]
-[INFO] Sejda docs ......................................... SUCCESS [  0.014 s]
-[INFO] sejda fonts ........................................ SUCCESS [  0.017 s]
-[INFO] sejda image writers ................................ SUCCESS [  0.029 s]
-[INFO] sejda sambox ....................................... SUCCESS [  0.032 s]
-[INFO] sejda conversion ................................... SUCCESS [  0.016 s]
-[INFO] sejda distribution ................................. SUCCESS [  0.027 s]
+[INFO] sejda .............................................. SUCCESS [  0.461 s]
+[INFO] sejda model ........................................ SUCCESS [  0.073 s]
+[INFO] sejda core ......................................... SUCCESS [  0.036 s]
+[INFO] Sejda docs ......................................... SUCCESS [  0.017 s]
+[INFO] sejda fonts ........................................ SUCCESS [  0.020 s]
+[INFO] sejda tests ........................................ SUCCESS [  0.028 s]
+[INFO] sejda image writers ................................ SUCCESS [  0.041 s]
+[INFO] sejda sambox ....................................... SUCCESS [  0.039 s]
+[INFO] sejda conversion ................................... SUCCESS [  0.021 s]
+[INFO] sejda distribution ................................. SUCCESS [  0.032 s]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  0.822 s
-[INFO] Finished at: 2022-02-08T08:57:30+01:00
+[INFO] Total time:  1.014 s
+[INFO] Finished at: 2022-10-08T10:45:57+02:00
 [INFO] ------------------------------------------------------------------------
