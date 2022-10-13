@@ -37,10 +37,7 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
-import org.sejda.sambox.pdmodel.font.FontMappers;
-import org.sejda.sambox.pdmodel.font.FontMapping;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.font.*;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
 import java.awt.Color;
@@ -369,6 +366,8 @@ public class FontUtilsTest {
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
         List<String> result = FontUtils.resolveTextFragments("FRIDA", font);
         assertThat(result, is(Arrays.asList("F", "RIDA")));
+
+        FontUtils.assertEncodeDecodeSame(font, "FRIDA");
     }
 
     @Test
@@ -376,10 +375,24 @@ public class FontUtilsTest {
         PDDocument doc = getTestDoc("pdf/font-with-vector-font.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
 
+        FontUtils.assertEncodeDecodeSame(font, "31 days");
         assertThat(FontUtils.canDisplaySpace(font), is(true));
         
         List<TextWithFont> result = FontUtils.resolveFonts("31 days", font, doc);
         assertThat(result.get(0).getText(), is("31 days"));
         assertThat(result.get(0).getFont(), is(font));
+    }
+
+    @Test
+    public void fontBrokenCannotDisplayText() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/cidtype2_font.pdf");
+        PDType0Font font = (PDType0Font)doc.getPage(0).getResources().getFont(COSName.getPDFName("F2"));
+        
+        assertThat(font.getName(), is("CAAAAA+Verdana"));
+        assertTrue(font.getDescendantFont() instanceof PDCIDFontType2);
+
+        assertThat(FontUtils.canDisplay("999", font), is(false));
+        assertThat(FontUtils.canDisplaySpace(font), is(false));
+        assertThat(FontUtils.areEncodeDecodeSame(font, "9999"), is(false));
     }
 }

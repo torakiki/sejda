@@ -16,6 +16,8 @@
  */
 package org.sejda.core.support.util;
 
+import java.text.Normalizer;
+
 import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT;
 import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING;
 import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE;
@@ -59,5 +61,9 @@ public final class StringUtils {
         }
 
         return false;
+    }
+    
+    public static boolean equalsNormalized(String s1, String s2) {
+        return Normalizer.normalize(s1, Normalizer.Form.NFKC).equals(Normalizer.normalize(s2, Normalizer.Form.NFKC));
     }
 }

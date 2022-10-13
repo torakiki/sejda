@@ -216,11 +216,22 @@ public final class FontUtils {
 
     public static boolean canDisplaySpace(PDFont font) {
         try {
+            String text = " ";
+            
             // try encode
-            font.encode(" ");
+            font.encode(text);
 
             // see if width is non zero
-            return font.getStringWidth(" ") > 0;
+            if(font.getStringWidth(text) <= 0) {
+                return false;
+            }
+
+            // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
+            if(!areEncodeDecodeSame(font, text)){
+                return false;
+            }
+            
+            return true;
         } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
             // Nope
         }
@@ -261,6 +272,11 @@ public final class FontUtils {
                         return false;
                     }
                 }
+            }
+            
+            // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
+            if(!areEncodeDecodeSame(font, text)){
+                return false;
             }
 
             return true;
@@ -631,5 +647,35 @@ public final class FontUtils {
         }
 
         return result;
+    }
+
+    public static boolean areEncodeDecodeSame(PDFont font, String text) throws IOException {
+        String decoded = decode(font, font.encode(text));
+        // japanese requires normalization
+        // see https://stackoverflow.com/questions/45447843/testing-equality-for-visually-identical-characters-with-different-utf-8-encoding
+        boolean result = org.sejda.core.support.util.StringUtils.equalsNormalized(text, decoded);
+        if(!result) {
+            LOG.info("Font " + font.getName() + " cannot encode/decode text: '" + text + "', decoded was: '" + 
+                    decoded +"' " + org.sejda.commons.util.StringUtils.asUnicodes(text) + " " +
+                    org.sejda.commons.util.StringUtils.asUnicodes(decoded));
+        }
+        return result;
+    }
+    
+    public static void assertEncodeDecodeSame(PDFont font, String text) throws IOException {
+        if(!areEncodeDecodeSame(font, text)) {
+            throw new IllegalStateException("Font " + font.getName() + " cannot encode/decode text: " + text);
+        }
+    }
+    
+    public static String decode(PDFont font, byte[] bytes) throws IOException {
+        InputStream in = new ByteArrayInputStream(bytes);
+        StringBuilder result = new StringBuilder();
+        while (in.available() > 0) {
+            int code = font.readCode(in);
+            result.append(font.toUnicode(code));
+        }
+        
+        return result.toString();
     }
 }
