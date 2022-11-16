@@ -148,6 +148,7 @@ public final class FontUtils {
         loadedFontCache.remove(document);
     }
 
+    public static final String REMARK_FROM_SEJDA_FONT_RESOURCE = "FromSejdaFontResource";
     public static PDFont loadFont(PDDocument document, FontResource font) {
         if (!loadedFontCache.containsKey(document)) {
             loadedFontCache.put(document, new HashMap<>());
@@ -160,6 +161,9 @@ public final class FontUtils {
 
         try (InputStream in = font.getFontStream()) {
             PDType0Font loaded = PDType0Font.load(document, in);
+            // mark this font as loaded from a sejda font resource
+            loaded.getTransientMetadata().put(REMARK_FROM_SEJDA_FONT_RESOURCE, "true");
+            
             LOG.trace("Loaded font {}", loaded.getName());
             docCache.put(font.getResource(), loaded);
             return loaded;
@@ -273,10 +277,13 @@ public final class FontUtils {
                     }
                 }
             }
-            
+
             // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
-            if(!areEncodeDecodeSame(font, text)){
-                return false;
+            // fonts loaded from sejda font resources are trusted
+            if(!"true".equals(font.getTransientMetadata().get(REMARK_FROM_SEJDA_FONT_RESOURCE))) {
+                if (!areEncodeDecodeSame(font, text)) {
+                    return false;
+                }
             }
 
             return true;
