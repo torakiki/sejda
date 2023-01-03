@@ -28,7 +28,7 @@ module org.sejda.impl.sambox {
     requires org.apache.fontbox;
     requires org.sejda.core.writer;
     requires org.slf4j;
-    requires thumbnailator;
+    requires net.coobird.thumbnailator;
 
     requires transitive java.desktop;
     requires transitive org.sejda.commons;

@@ -33,7 +33,7 @@ module org.sejda.tests {
     requires org.apache.commons.lang3;
     requires org.apache.commons.io;
     requires org.hamcrest;
-    requires thumbnailator;
+    requires net.coobird.thumbnailator;
     requires com.github.romankh3.image.comparison;
 
     exports org.sejda.tests;

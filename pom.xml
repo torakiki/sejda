@@ -212,7 +212,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -222,7 +222,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>3.0.0-M6</version>
+					<version>3.0.0-M7</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -257,7 +257,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.sonatype.plugins</groupId>
@@ -273,7 +273,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.4.0</version>
+					<version>3.4.1</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -327,22 +327,22 @@
 	<properties>
 		<sejda.commons.version>2.0.0</sejda.commons.version>
 		<junit.version>5.9.1</junit.version>
-		<slf4j.version>2.0.3</slf4j.version>
+		<slf4j.version>2.0.5</slf4j.version>
 		<commons.lang.version>3.12.0</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
-		<mockito.version>4.8.0</mockito.version>
-		<logback.version>1.4.4</logback.version>
-		<archunit.version>1.0.0</archunit.version>
+		<mockito.version>4.11.0</mockito.version>
+		<logback.version>1.4.5</logback.version>
+		<archunit.version>1.0.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<sambox.version>3.0.0.M6</sambox.version>
 		<sejda.io.version>3.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.72</bouncycastle.version>
-		<twelvemonkeys.version>3.9.3</twelvemonkeys.version>
+		<twelvemonkeys.version>3.9.4</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
-		<thumbnailator.version>0.4.18</thumbnailator.version>
+		<thumbnailator.version>0.4.19</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
