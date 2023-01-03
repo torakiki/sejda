@@ -56,15 +56,14 @@ import static org.sejda.model.scale.Margins.inchesToPoints;
 
 /**
  * Component capable of scaling pages or pages content
- * 
+ *
  * @author Andrea Vacondio
  * @author Eduard Weissmann
- *
  */
 public class PdfScaler {
     private static final Logger LOG = LoggerFactory.getLogger(PdfScaler.class);
 
-    private ScaleType type;
+    private final ScaleType type;
 
     public PdfScaler(ScaleType type) {
         requireNotNullArg(type, "Scale type cannot be null");
@@ -75,7 +74,7 @@ public class PdfScaler {
      * Resizes all pages in the doc to match the size of the first page Eg: a doc with first 2 pages A4 and next ones A5 will be changed to all pages are A4
      */
     public void scalePages(PDDocument doc) throws TaskIOException {
-        PDPage firstPage = doc.getPage(0);
+        var firstPage = doc.getPage(0);
         PDRectangle targetBox = firstPage.getCropBox().rotate(firstPage.getRotation());
         scalePages(doc, doc.getPages(), targetBox);
     }
@@ -92,13 +91,6 @@ public class PdfScaler {
         }
     }
 
-    public void changePageSize(PDDocument doc, Iterable<PDPage> pages, PDRectangle desiredPageSize)
-            throws TaskIOException {
-        for (PDPage page : pages) {
-            changePageSize(doc, page, desiredPageSize);
-        }
-    }
-
     public void scale(PDDocument doc, double scale) throws TaskIOException {
         scale(doc, doc.getPages(), scale);
     }
@@ -111,56 +103,6 @@ public class PdfScaler {
         if (scale != 1) {
             doScale(doc, pages, scale);
         }
-    }
-
-    public void changePageSize(PDDocument doc, PDPage page, PDRectangle desiredPageSize) throws TaskIOException {
-        PDRectangle currentPageSize = page.getCropBox().rotate(page.getRotation());
-        LOG.debug("Current page size: {}", currentPageSize);
-        LOG.debug("Desired page size: {}", desiredPageSize);
-
-        // first we scale the page to fit the new desired size
-        double scale = getScalingFactorMatchWidthOrHeight(desiredPageSize, currentPageSize);
-        doScale(doc, Collections.singletonList(page), scale);
-
-        // if the aspect ratio for the current size and new desired size are the same -> we are done
-        // otherwise, we need to add margins to reach the desired size
-
-        PDRectangle scaledPageSize = page.getCropBox().rotate(page.getRotation());
-        // LOG.debug("Scaled by {}", scale);
-
-        PDRectangle normalizedScaledPageSize = scaledPageSize;
-        boolean mismatchingOrientation = isLandscape(scaledPageSize) != isLandscape(desiredPageSize);
-        if (mismatchingOrientation) {
-            normalizedScaledPageSize = scaledPageSize.rotate();
-        }
-
-        // LOG.debug("Scaled page size: {}", normalizedScaledPageSize);
-        // LOG.debug("Desired page size: {}", desiredPageSize);
-
-        double widthDiff = desiredPageSize.getWidth() - normalizedScaledPageSize.getWidth();
-        double heightDiff = desiredPageSize.getHeight() - normalizedScaledPageSize.getHeight();
-
-        // LOG.debug("Differences are widthDiff: {} heightDiff: {}", widthDiff, heightDiff);
-
-        if (widthDiff < 1)
-            widthDiff = 0;
-        if (heightDiff < 1)
-            heightDiff = 0;
-
-        if (widthDiff > 0 || heightDiff > 0) {
-            // Margins are in inches, not points
-            double top = Margins.pointsToInches(heightDiff) / 2;
-            double left = Margins.pointsToInches(widthDiff) / 2;
-            Margins margins = new Margins(top, left, top, left);
-            if (mismatchingOrientation) {
-                margins = margins.rotate();
-            }
-            margin(doc, Collections.singleton(page), margins);
-        }
-
-        // PDRectangle finalPageSize = page.getCropBox().rotate(page.getRotation());
-        // LOG.debug("Final page size: {}", finalPageSize);
-        // LOG.debug("Desired page size: {}", desiredPageSize);
     }
 
     private void doScale(PDDocument doc, Iterable<PDPage> pages, double scale) throws TaskIOException {
@@ -246,16 +188,16 @@ public class PdfScaler {
             Set<COSDictionary> processedAnnots = new HashSet<>();
             for (PDPage page : pages) {
                 try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.PREPEND, true)) {
-                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margins)
-                            .rotate(-page.getRotation()));
-                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margins)
-                            .rotate(-page.getRotation()));
+                    page.setCropBox(addMargins(page.getCropBox().rotate(page.getRotation()), margins).rotate(
+                            -page.getRotation()));
+                    page.setMediaBox(addMargins(page.getMediaBox().rotate(page.getRotation()), margins).rotate(
+                            -page.getRotation()));
                     ofNullable(page.getBleedBoxRaw()).ifPresent(r -> page.setBleedBox(
                             addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
-                    ofNullable(page.getTrimBoxRaw()).ifPresent(r -> page
-                            .setTrimBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
-                    ofNullable(page.getArtBoxRaw()).ifPresent(r -> page
-                            .setArtBox(addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getTrimBoxRaw()).ifPresent(r -> page.setTrimBox(
+                            addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
+                    ofNullable(page.getArtBoxRaw()).ifPresent(r -> page.setArtBox(
+                            addMargins(r.rotate(page.getRotation()), margins).rotate(-page.getRotation())));
 
                     Matrix matrix = new Matrix(AffineTransform.getTranslateInstance(inchesToPoints(margins.left),
                             inchesToPoints(margins.bottom)));
@@ -296,8 +238,9 @@ public class PdfScaler {
             page.setBleedBox(cropBox);
             page.setTrimBox(cropBox);
         } else {
-            page.setBleedBox(new PDRectangle(page.getBleedBox()
-                    .transform(getMatrix(scale, page.getCropBox(), page.getBleedBox())).getBounds2D()));
+            page.setBleedBox(new PDRectangle(
+                    page.getBleedBox().transform(getMatrix(scale, page.getCropBox(), page.getBleedBox()))
+                            .getBounds2D()));
             page.setTrimBox(new PDRectangle(
                     page.getTrimBox().transform(getMatrix(scale, page.getCropBox(), page.getTrimBox())).getBounds2D()));
         }
@@ -339,27 +282,8 @@ public class PdfScaler {
         return targetBox.getHeight() / pageBox.getWidth();
     }
 
-    /**
-     * Calculates the factor that pageBox can be scaled with to fit targetBox without overflow. Ensures both height and width will not overflow targetBox.
-     */
-    private double getScalingFactorMatchWidthOrHeight(PDRectangle targetBox, PDRectangle pageBox) {
-        // if the boxes have different orientations
-        // we want to normalize first rotating the target 90 and then calculate scaling factors
-        // so landscape is scaled to a landscape
-        PDRectangle normalizedOrientationTargetBox = targetBox;
-        if (isLandscape(targetBox) != isLandscape(pageBox)) {
-            normalizedOrientationTargetBox = targetBox.rotate();
-        }
-
-        float widthFactor = normalizedOrientationTargetBox.getWidth() / pageBox.getWidth();
-        float heightFactor = normalizedOrientationTargetBox.getHeight() / pageBox.getHeight();
-
-        float factor = Math.min(widthFactor, heightFactor);
-        // LOG.debug("Factor: {} for normalizedOrientationTargetBox: {} pageBox: {}", factor, normalizedOrientationTargetBox, pageBox);
-        return factor;
-    }
-
-    private boolean isLandscape(PDRectangle box) {
+    public static boolean isLandscape(PDRectangle box) {
         return box.getWidth() > box.getHeight();
     }
+
 }
