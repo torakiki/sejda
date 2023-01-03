@@ -21,7 +21,6 @@ package org.sejda.impl.sambox;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.LookupTable;
-import org.sejda.model.util.IOUtils;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.AcroFormsMerger;
@@ -44,6 +43,7 @@ import org.sejda.model.scale.ScaleType;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.model.toc.ToCPolicy;
+import org.sejda.model.util.IOUtils;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
@@ -167,31 +167,29 @@ public class MergeTask extends BaseTask<MergeParameters> {
                                 tocText = ofNullable(
                                         sourceDocumentHandler.getUnderlyingPDDocument().getDocumentInformation()).map(
                                                 PDDocumentInformation::getTitle).filter(StringUtils::isNotBlank)
-                                                .orElse(sourceBaseName);
+                                        .orElse(sourceBaseName);
                             }
                             tocCreator.appendItem(tocText, pagesCounter, importedPage);
                         }
                     }
 
-                    boolean isPlacedAfterToc = true;
-                    if (parameters.isFirstInputCoverTitle() && inputsCounter == 1) {
-                        // the toc will be added after the cover/title pages
-                        isPlacedAfterToc = false;
-                    }
+                    // the toc will be added after the cover/title pages
+                    boolean isPlacedAfterToc = !parameters.isFirstInputCoverTitle() || inputsCounter != 1;
 
                     // we can determine the correct final page numbers only after the ToC has been generated
                     // otherwise we don't know how many pages the ToC consists of
                     // queue up footer writer items for after ToC generation
-                    footerWriterEntries.add(new FooterWriterEntry(importedPage, sourceBaseName, pagesCounter, isPlacedAfterToc));
-                    
+                    footerWriterEntries.add(
+                            new FooterWriterEntry(importedPage, sourceBaseName, pagesCounter, isPlacedAfterToc));
+
                     LOG.trace("Added imported page");
                 } catch (PageNotFoundException e) {
                     executionContext().assertTaskIsLenient(e);
-                    notifyEvent(executionContext().notifiableTaskMetadata())
-                            .taskWarning(String.format("Page %d was skipped, could not be processed", currentPage), e);
+                    notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                            String.format("Page %d was skipped, could not be processed", currentPage), e);
                 }
             }
-            
+
             outlineMerger.updateOutline(sourceDocumentHandler.getUnderlyingPDDocument(), input.getSource().getName(),
                     pagesLookup);
 
@@ -224,11 +222,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
             destinationDocument.setDocumentAcroForm(f);
         });
 
-        if (parameters.isNormalizePageSizes()) {
-            LOG.debug("Normalizing page widths to match width of first page");
-            // Do this before generating TOC, so the first page is from content.
-            new PdfScaler(ScaleType.PAGE).scalePages(destinationDocument.getUnderlyingPDDocument());
-        }
+        // Do this before generating TOC, so the first page is from content.
+        new PdfScaler(ScaleType.PAGE).scalePages(destinationDocument.getUnderlyingPDDocument(),
+                parameters.getPageNormalizationPolicy());
 
         int tocNumberOfPages = 0;
         if (tocCreator.hasToc()) {
@@ -238,13 +234,13 @@ public class MergeTask extends BaseTask<MergeParameters> {
                 int beforePageNumber = parameters.isFirstInputCoverTitle() ? firstInputNumberOfPages : 0;
                 tocNumberOfPages = tocCreator.addToC(beforePageNumber);
             } catch (TaskException e) {
-                notifyEvent(executionContext().notifiableTaskMetadata())
-                        .taskWarning("Unable to create the Table of Contents", e);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                        "Unable to create the Table of Contents", e);
             }
         }
-        
+
         LOG.debug("Writing page footers");
-        for(FooterWriterEntry entry: footerWriterEntries) {
+        for (FooterWriterEntry entry : footerWriterEntries) {
             long finalPageNumber = entry.isPlacedAfterToc ? entry.pageNumber + tocNumberOfPages : entry.pageNumber;
             this.footerWriter.addFooter(entry.page, entry.fileName, finalPageNumber);
         }
@@ -276,18 +272,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         closeResources();
         outputWriter = null;
     }
-    
-    private static class FooterWriterEntry {
-        final PDPage page; 
-        final String fileName; 
-        final long pageNumber;
-        final boolean isPlacedAfterToc;
 
-        public FooterWriterEntry(PDPage page, String fileName, long pageNumber, boolean isPlacedAfterToc) {
-            this.page = page;
-            this.fileName = fileName;
-            this.pageNumber = pageNumber;
-            this.isPlacedAfterToc = isPlacedAfterToc;
-        }
+    private record FooterWriterEntry(PDPage page, String fileName, long pageNumber, boolean isPlacedAfterToc) {
     }
 }

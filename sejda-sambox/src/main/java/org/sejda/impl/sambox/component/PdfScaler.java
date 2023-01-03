@@ -22,6 +22,7 @@ package org.sejda.impl.sambox.component;
 
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.scale.Margins;
+import org.sejda.model.scale.PageNormalizationPolicy;
 import org.sejda.model.scale.ScaleType;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
@@ -71,23 +72,44 @@ public class PdfScaler {
     }
 
     /**
-     * Resizes all pages in the doc to match the size of the first page Eg: a doc with first 2 pages A4 and next ones A5 will be changed to all pages are A4
+     * @deprecated use {@link PdfScaler#scalePages(PDDocument, PageNormalizationPolicy)}
      */
+    @Deprecated
     public void scalePages(PDDocument doc) throws TaskIOException {
-        var firstPage = doc.getPage(0);
-        PDRectangle targetBox = firstPage.getCropBox().rotate(firstPage.getRotation());
-        scalePages(doc, doc.getPages(), targetBox);
+        scalePages(doc, PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
     }
 
     /**
-     * Changes the size of the given pages so they all match the target width The pages are scaled, so the aspect ratio is preserved.
+     * @deprecated use {@link PdfScaler#scalePages(PDDocument, Iterable, PDRectangle, PageNormalizationPolicy)}
      */
     public void scalePages(PDDocument doc, Iterable<PDPage> pages, PDRectangle targetBox) throws TaskIOException {
-        for (PDPage page : pages) {
-            PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
-            double scale = getScalingFactorMatchWidth(targetBox, cropBox);
-            LOG.debug("Scaling page from {} to {}, factor of {}", cropBox, targetBox, scale);
-            scale(doc, page, scale);
+        scalePages(doc, pages, targetBox, PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
+    }
+
+    /**
+     * Scales all pages in the doc based on the given {@link PageNormalizationPolicy}
+     */
+    public void scalePages(PDDocument doc, PageNormalizationPolicy pageNormalization) throws TaskIOException {
+        if (PageNormalizationPolicy.NONE != pageNormalization) {
+            var firstPage = doc.getPage(0);
+            PDRectangle targetBox = firstPage.getCropBox().rotate(firstPage.getRotation());
+            scalePages(doc, doc.getPages(), targetBox, pageNormalization);
+        }
+    }
+
+    /**
+     * Scales all the given pages based on the given {@link PageNormalizationPolicy}
+     */
+    public void scalePages(PDDocument doc, Iterable<PDPage> pages, PDRectangle targetBox,
+            PageNormalizationPolicy pageNormalization) throws TaskIOException {
+        if (PageNormalizationPolicy.NONE != pageNormalization) {
+            LOG.debug("Normalizing pages with policy {}", pageNormalization);
+            for (PDPage page : pages) {
+                PDRectangle cropBox = page.getCropBox().rotate(page.getRotation());
+                double scale = getScalingFactor(targetBox, cropBox, pageNormalization);
+                LOG.debug("Scaling page from {} to {}, factor of {}", cropBox, targetBox, scale);
+                scale(doc, page, scale);
+            }
         }
     }
 
@@ -268,18 +290,26 @@ public class PdfScaler {
     }
 
     /**
-     * Calculates the factor that pageBox can be scaled with to fit targetBox's **width** without overflow. For some pages this could mean that pageBox scaled will be taller than
+     * Calculates the scaling factor for pageBox to fit targetBox based on the pageNormalization policy
      * the targetBox.
      */
-    private double getScalingFactorMatchWidth(PDRectangle targetBox, PDRectangle pageBox) {
-        // if both target and page boxes have same orientation (landscape, portrait)
-        // the scaling factor is targetWidth / pageWidth
-        if (isLandscape(targetBox) == isLandscape(pageBox)) {
-            return targetBox.getWidth() / pageBox.getWidth();
-        }
-        // the boxes have different orientations
-        // the page should be scaled to match the target box height
-        return targetBox.getHeight() / pageBox.getWidth();
+    private double getScalingFactor(PDRectangle targetBox, PDRectangle pageBox,
+            PageNormalizationPolicy pageNormalization) {
+        return switch (pageNormalization) {
+            case NONE -> 1;
+            case SAME_WIDTH -> targetBox.getWidth() / pageBox.getWidth();
+            case SAME_WIDTH_ORIENTATION_BASED -> {
+                // if both target and page boxes have same orientation (landscape, portrait)
+                // the scaling factor is targetWidth / pageWidth
+                if (isLandscape(targetBox) == isLandscape(pageBox)) {
+                    yield targetBox.getWidth() / pageBox.getWidth();
+                }
+                // the boxes have different orientations
+                // the page should be scaled to match the target box height
+                yield targetBox.getHeight() / pageBox.getWidth();
+            }
+        };
+
     }
 
     public static boolean isLandscape(PDRectangle box) {

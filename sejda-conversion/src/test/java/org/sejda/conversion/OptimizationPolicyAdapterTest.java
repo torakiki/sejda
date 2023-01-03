@@ -20,19 +20,20 @@ package org.sejda.conversion;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.SejdaRuntimeException;
+import org.sejda.model.optimization.OptimizationPolicy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Andrea Vacondio
- *
  */
 public class OptimizationPolicyAdapterTest {
     @Test
     public void testAdapt() {
-        new OptimizationPolicyAdapter("yes").getEnumValue();
-        new OptimizationPolicyAdapter("no").getEnumValue();
-        new OptimizationPolicyAdapter("auto").getEnumValue();
+        assertEquals(OptimizationPolicy.YES, new OptimizationPolicyAdapter("yes").getEnumValue());
+        assertEquals(OptimizationPolicy.NO, new OptimizationPolicyAdapter("no").getEnumValue());
+        assertEquals(OptimizationPolicy.AUTO, new OptimizationPolicyAdapter("auto").getEnumValue());
     }
 
     @Test

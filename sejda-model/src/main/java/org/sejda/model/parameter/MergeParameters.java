@@ -1,7 +1,7 @@
 /*
  * Created on 11/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.rotation.Rotation;
+import org.sejda.model.scale.PageNormalizationPolicy;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.model.validation.constraint.SingleOutputAllowedExtensions;
 
@@ -38,9 +39,8 @@ import static java.util.Optional.ofNullable;
 
 /**
  * Parameter class for a merge task containing a collection of input to be merged.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 @SingleOutputAllowedExtensions
 public class MergeParameters extends BaseMergeParameters<MergeInput> {
@@ -55,8 +55,8 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
     private boolean filenameFooter = false;
-    /* Makes all pages same width as the first page */
-    private boolean normalizePageSizes = false;
+    //policy to use to normalize pages size
+    private PageNormalizationPolicy pageNormalizationPolicy = PageNormalizationPolicy.NONE;
     private boolean firstInputCoverTitle = false;
 
     @Valid
@@ -94,7 +94,7 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
 
     /**
      * The policy that the merge task should use when handling the outline tree (bookmarks)
-     * 
+     *
      * @param outlinePolicy
      */
     public void setOutlinePolicy(OutlinePolicy outlinePolicy) {
@@ -117,12 +117,26 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
         this.filenameFooter = filenameFooter;
     }
 
+    @Deprecated
+    //use getPageNormalizationPolicy
     public boolean isNormalizePageSizes() {
-        return normalizePageSizes;
+        return this.pageNormalizationPolicy == PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED;
     }
 
+    @Deprecated
+    //use setPageNormalizationPolicy
     public void setNormalizePageSizes(boolean normalizePageSizes) {
-        this.normalizePageSizes = normalizePageSizes;
+        this.pageNormalizationPolicy = (normalizePageSizes) ?
+                PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED :
+                PageNormalizationPolicy.NONE;
+    }
+
+    public PageNormalizationPolicy getPageNormalizationPolicy() {
+        return pageNormalizationPolicy;
+    }
+
+    public void setPageNormalizationPolicy(PageNormalizationPolicy pageNormalizationPolicy) {
+        this.pageNormalizationPolicy = pageNormalizationPolicy;
     }
 
     public CatalogPageLabelsPolicy getCatalogPageLabelsPolicy() {
@@ -150,7 +164,7 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
     }
 
     public Rotation getRotation(int index) {
-        if(index >= rotations.size()) {
+        if (index >= rotations.size()) {
             return Rotation.DEGREES_0;
         }
 
@@ -159,11 +173,9 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(acroFormPolicy)
-                .append(blankPageIfOdd).append(outlinePolicy).append(tocPolicy).append(filenameFooter)
-                .append(normalizePageSizes).append(catalogPageLabelsPolicy).append(firstInputCoverTitle)
-                .append(rotations)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(acroFormPolicy).append(blankPageIfOdd)
+                .append(outlinePolicy).append(tocPolicy).append(filenameFooter).append(pageNormalizationPolicy)
+                .append(catalogPageLabelsPolicy).append(firstInputCoverTitle).append(rotations).toHashCode();
     }
 
     @Override
@@ -174,14 +186,12 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
         if (!(other instanceof MergeParameters params)) {
             return false;
         }
-        return new EqualsBuilder().appendSuper(super.equals(other))
-                .append(acroFormPolicy, params.getAcroFormPolicy()).append(blankPageIfOdd, params.isBlankPageIfOdd())
-                .append(outlinePolicy, params.getOutlinePolicy()).append(tocPolicy, params.getTableOfContentsPolicy())
-                .append(filenameFooter, params.isFilenameFooter())
-                .append(normalizePageSizes, params.isNormalizePageSizes())
+        return new EqualsBuilder().appendSuper(super.equals(other)).append(acroFormPolicy, params.getAcroFormPolicy())
+                .append(blankPageIfOdd, params.isBlankPageIfOdd()).append(outlinePolicy, params.getOutlinePolicy())
+                .append(tocPolicy, params.getTableOfContentsPolicy()).append(filenameFooter, params.isFilenameFooter())
+                .append(pageNormalizationPolicy, params.getPageNormalizationPolicy())
                 .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
-                .append(firstInputCoverTitle, params.firstInputCoverTitle)
-                .append(rotations, params.rotations)
+                .append(firstInputCoverTitle, params.firstInputCoverTitle).append(rotations, params.rotations)
                 .isEquals();
     }
 }

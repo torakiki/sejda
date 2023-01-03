@@ -37,6 +37,7 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.rotation.Rotation;
+import org.sejda.model.scale.PageNormalizationPolicy;
 import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -540,7 +541,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
-        parameters.setNormalizePageSizes(true);
+        parameters.setPageNormalizationPolicy(PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -569,7 +570,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
-        parameters.setNormalizePageSizes(true);
+        parameters.setPageNormalizationPolicy(PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -595,7 +596,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
-        parameters.setNormalizePageSizes(true);
+        parameters.setPageNormalizationPolicy(PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
@@ -929,6 +930,63 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             assertEquals(d.getPage(3).getRotation(), 0);
 
             assertEquals(d.getPage(4).getRotation(), 0);
+        });
+    }
+
+    @Test
+    public void sameWidthNormalizationFirstPagePortrait() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
+        parameters.setPageNormalizationPolicy(PageNormalizationPolicy.SAME_WIDTH);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            assertEquals(595, widthOfCropBox(d.getPage(0)), 1);
+
+            assertEquals(420, heightOfCropBox(d.getPage(1)), 1);
+            assertEquals(595, widthOfCropBox(d.getPage(1)), 1);
+
+            assertEquals(595, widthOfCropBox(d.getPage(2)), 1);
+
+            assertEquals(595, widthOfCropBox(d.getPage(3)), 1);
+            assertEquals(595, widthOfCropBox(d.getPage(4)), 1);
+        });
+    }
+
+    @Test
+    public void sameWidthNormalizationFirstPageLandscape() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Landscape.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A4Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/A3Portrait.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/landscape_by_rotation.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/potrait_by_rotation.pdf")));
+        parameters.setPageNormalizationPolicy(PageNormalizationPolicy.SAME_WIDTH);
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(5).forEachPdfOutput(d -> {
+            assertEquals(1190, widthOfCropBox(d.getPage(0)), 1);
+
+            // landscape should be handled in a special case
+            assertEquals(1684, heightOfCropBox(d.getPage(1)), 1);
+            assertEquals(1190, widthOfCropBox(d.getPage(1)), 1);
+
+            assertEquals(1190, widthOfCropBox(d.getPage(2)), 1);
+
+            assertEquals(1190, widthOfCropBox(d.getPage(3)), 1);
+            assertEquals(1190, widthOfCropBox(d.getPage(4)), 1);
         });
     }
 
