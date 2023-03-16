@@ -146,6 +146,7 @@ public class OutputWriterHelperTest {
         OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
         assertEquals(2, dest.toFile().list().length);
         assertEquals(1, context.notifiableTaskMetadata().taskOutput().size());
+        assertEquals(1, context.notifiableTaskMetadata().skippedOutput().size());
     }
 
     @Test
@@ -183,6 +184,8 @@ public class OutputWriterHelperTest {
         files.put("2_of_[TOTAL_FILESNUMBER].pdf", Files.createTempFile(dest, "Chuck", "Norris").toFile());
         OutputWriterHelper.moveToDirectory(files, dest.toFile(), ExistingOutputPolicy.SKIP, context);
         assertEquals(2, dest.toFile().list().length);
+        assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
+        assertEquals(0, context.notifiableTaskMetadata().skippedOutput().size());
         assertEquals(2, context.notifiableTaskMetadata().taskOutput().size());
         assertEquals("1_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(0).getName());
         assertEquals("2_of_2.pdf", context.notifiableTaskMetadata().taskOutput().get(1).getName());

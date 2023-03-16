@@ -51,6 +51,7 @@ public class NotifiableTaskMetadata implements Serializable {
     private UUID taskIdentifier;
     private String qualifiedName;
     private List<File> taskOutput = new ArrayList<>();
+    private List<File> skippedOutput = new ArrayList<>();
     private String currentSource;
 
     private NotifiableTaskMetadata() {
@@ -83,6 +84,12 @@ public class NotifiableTaskMetadata implements Serializable {
         }
     }
 
+    public void addSkippedOutput(File skipped) {
+        if (nonNull(skipped)) {
+            skippedOutput.add(skipped);
+        }
+    }
+
     public void setCurrentSource(TaskSource<?> source) {
         this.currentSource = source.getName();
     }
@@ -100,6 +107,13 @@ public class NotifiableTaskMetadata implements Serializable {
      */
     public List<File> taskOutput() {
         return Collections.unmodifiableList(taskOutput);
+    }
+
+    /**
+     * @return the list of output files that where skipped because already existing (depending on the {@link org.sejda.model.output.ExistingOutputPolicy})
+     */
+    public List<File> skippedOutput() {
+        return Collections.unmodifiableList(skippedOutput);
     }
 
     @Override

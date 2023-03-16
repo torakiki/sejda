@@ -2,7 +2,7 @@
  * Created on 19/giu/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -41,10 +41,10 @@ import java.util.zip.ZipOutputStream;
 
 import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.sejda.model.util.IOUtils.findNewNameThatDoesNotExist;
-import static org.sejda.model.util.IOUtils.shortenFilename;
 import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
 import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
+import static org.sejda.model.util.IOUtils.findNewNameThatDoesNotExist;
+import static org.sejda.model.util.IOUtils.shortenFilename;
 
 /**
  * Utility class responsible for writing the input files to the output destination
@@ -147,6 +147,7 @@ final class OutputWriterHelper {
                 executionContext.notifiableTaskMetadata().addTaskOutput(newNamedOutput);
                 break;
             case SKIP:
+                executionContext.notifiableTaskMetadata().addSkippedOutput(output);
                 LOG.info("Skipping already existing output file {}", output);
                 break;
             default:
@@ -207,7 +208,7 @@ final class OutputWriterHelper {
 
     /**
      * Copies the contents of the file to the specified outputstream, without zipping or applying any other changes.
-     * 
+     *
      * @param file
      * @param out
      * @throws IOException
