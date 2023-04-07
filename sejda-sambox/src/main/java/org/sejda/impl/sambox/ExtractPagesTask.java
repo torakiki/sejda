@@ -117,10 +117,7 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                 }
             }
 
-            if (executionContext().outputDocumentsCounter() == 0) {
-                throw new TaskException("The task didn't generate any output file");
-            }
-
+            executionContext().assertHasOutputDocuments("The task didn't generate any output file");
             closeQuietly(sourceDocumentHandler);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(++currentStep).outOf(totalSteps);
         }

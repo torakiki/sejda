@@ -18,18 +18,19 @@
  */
 package org.sejda.model.task;
 
-import static java.util.Objects.isNull;
-
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.parameter.base.TaskParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Objects.isNull;
+
 /**
  * Mutable context holding a task execution
- * 
+ *
  * @author Andrea Vacondio
  */
 public class TaskExecutionContext {
@@ -82,7 +83,7 @@ public class TaskExecutionContext {
     }
 
     /**
-     * 
+     *
      * @param e
      *            the exception the lenient task can recover from
      * @throws TaskNonLenientExecutionException
@@ -94,7 +95,7 @@ public class TaskExecutionContext {
     }
 
     /**
-     * 
+     *
      * @param message
      *            the error the lenient task can recover from
      * @throws TaskNonLenientExecutionException
@@ -102,6 +103,16 @@ public class TaskExecutionContext {
     public void assertTaskIsLenient(String message) throws TaskNonLenientExecutionException {
         if (!lenient) {
             throw new TaskNonLenientExecutionException(message);
+        }
+    }
+
+    /**
+     * @param message the error message if no output documents have been created
+     * @throws TaskExecutionException
+     */
+    public void assertHasOutputDocuments(String message) throws TaskExecutionException {
+        if (outputDocumentsCounter <= 0) {
+            throw new TaskExecutionException(message);
         }
     }
 }
