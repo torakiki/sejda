@@ -34,7 +34,7 @@ import static java.util.Optional.ofNullable;
  * @author Andrea Vacondio
  */
 public class BasenamePrefixProcessor implements PrefixProcessor {
-    private Pattern pattern = Pattern.compile("\\[BASENAME]");
+    private final Pattern pattern = Pattern.compile("\\[BASENAME]");
 
     @Override
     public void accept(PrefixTransformationContext context) {

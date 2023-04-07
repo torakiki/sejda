@@ -39,7 +39,7 @@ import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
  */
 public final class NameGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(NameGenerator.class);
-    private String prefix;
+    private final String prefix;
 
     private NameGenerator(String prefix) {
         this.prefix = StringUtils.defaultString(prefix);

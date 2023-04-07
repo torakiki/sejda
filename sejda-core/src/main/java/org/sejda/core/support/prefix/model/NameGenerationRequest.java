@@ -43,7 +43,7 @@ public final class NameGenerationRequest {
     private static final String TEXT_KEY = "text";
     private static final String PAGE_KEY = "page";
     private static final String FILENUMBER_KEY = "fileNumber";
-    private Map<String, Object> values = new HashMap<>();
+    private final Map<String, Object> values = new HashMap<>();
 
     private NameGenerationRequest(String extension) {
         requireNotBlank(extension, "Extension cannot be blank");
