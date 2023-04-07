@@ -2,7 +2,7 @@
  * Created on 29/giu/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,25 +20,21 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import java.util.function.Consumer;
 
 /**
- * A Processor takes a prefix string and applies the transformation it's designed for. Please consider that we currently reuse instances across multiple parameters execution
- * therefor implementations have to be stateless to avoid unexpected behavior.
- * 
+ * A Processor takes a {@link PrefixTransformationContext} and, if necessary, updates the context applying the transformation it's designed for.
+ *
  * @author Andrea Vacondio
  */
-@FunctionalInterface
-interface PrefixProcessor {
+public interface PrefixProcessor extends Consumer<PrefixTransformationContext> {
 
     /**
-     * Process the input prefix String based on the input request returning the processed String
-     * 
-     * @param inputPrefix
-     *            input prefix String
-     * @param request
-     *            name generation request. It can be null, the processor should handle it without throwing a NullPointerException.
-     * @return the post processed inputPrefix
+     * @return an int representing the order in which the processor should be applied. The lower the number the earlier the processor will be applied.
      */
-    String process(String inputPrefix, NameGenerationRequest request);
+    default int order() {
+        return 0;
+    }
 }

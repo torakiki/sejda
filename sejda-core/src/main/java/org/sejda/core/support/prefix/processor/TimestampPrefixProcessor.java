@@ -2,7 +2,7 @@
  * Created on 01/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,27 +20,27 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
 
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
- * Process the input prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.
- * 
+ * A {@link PrefixProcessor} that updates the context current prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.
+ *
  * @author Andrea Vacondio
- * 
  */
-class TimestampPrefixProcessor implements PrefixProcessor {
+public class TimestampPrefixProcessor implements PrefixProcessor {
 
-    private static final String TIMESTAMP_REPLACE_RGX = "\\[TIMESTAMP\\]";
-    private static final String DATE_PATTERN = "yyyyMMdd_HHmmssSS";
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssSS");
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = inputPrefix;
-        String timestamp = new SimpleDateFormat(DATE_PATTERN).format(new Date());
-        return retVal.replaceAll(TIMESTAMP_REPLACE_RGX, timestamp);
+    public void accept(PrefixTransformationContext context) {
+        if (context.currentPrefix().contains("[TIMESTAMP]")) {
+            context.uniqueNames(true);
+            context.currentPrefix(
+                    context.currentPrefix().replace("[TIMESTAMP]", FORMATTER.format(ZonedDateTime.now())));
+        }
     }
 
 }

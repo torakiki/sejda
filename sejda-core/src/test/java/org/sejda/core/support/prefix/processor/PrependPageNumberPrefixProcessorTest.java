@@ -18,30 +18,44 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * @author Andrea Vacondio
- *
  */
 public class PrependPageNumberPrefixProcessorTest {
     private PrependPageNumberPrefixProcessor victim = new PrependPageNumberPrefixProcessor();
 
     @Test
     public void positive() {
-        assertEquals("34_prefix_", victim.process("prefix_", nameRequest().page(34)));
+        var context = new PrefixTransformationContext("prefix_", nameRequest().page(34));
+        victim.accept(context);
+        assertEquals("34_prefix_", context.currentPrefix());
     }
 
     @Test
     public void nullRequest() {
-        assertEquals("prefix_", victim.process("prefix_", null));
+        var context = new PrefixTransformationContext("prefix_", null);
+        victim.accept(context);
+        assertEquals("prefix_", context.currentPrefix());
     }
 
     @Test
     public void noPage() {
-        assertEquals("prefix_", victim.process("prefix_", nameRequest()));
+        var context = new PrefixTransformationContext("prefix_", nameRequest());
+        victim.accept(context);
+        assertEquals("prefix_", context.currentPrefix());
+    }
+
+    @Test
+    public void alreadyUnique() {
+        var context = new PrefixTransformationContext("prefix_", nameRequest().page(34));
+        context.uniqueNames(true);
+        victim.accept(context);
+        assertEquals("prefix_", context.currentPrefix());
     }
 }

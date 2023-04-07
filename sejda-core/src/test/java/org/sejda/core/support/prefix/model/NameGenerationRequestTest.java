@@ -21,7 +21,10 @@ package org.sejda.core.support.prefix.model;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * @author Andrea Vacondio
@@ -31,11 +34,42 @@ public class NameGenerationRequestTest {
 
     @Test
     public void blankExtension() {
-        assertThrows(IllegalArgumentException.class, () -> NameGenerationRequest.nameRequest(""));
+        assertThrows(IllegalArgumentException.class, () -> nameRequest(""));
     }
 
     @Test
     public void nullExtension() {
-        assertThrows(IllegalArgumentException.class, () -> NameGenerationRequest.nameRequest(null));
+        assertThrows(IllegalArgumentException.class, () -> nameRequest(null));
+    }
+
+    @Test
+    public void testGetValueReturnsNullWhenKeyNotFound() {
+        assertNull(nameRequest().getValue("nonexistent_key", Integer.class));
+    }
+
+    @Test
+    public void testGetValueReturnsNullWhenValueIsNotOfGivenType() {
+        NameGenerationRequest victim = nameRequest();
+        victim.setValue("key", "value");
+        assertNull(victim.getValue("key", Integer.class));
+    }
+
+    @Test
+    public void testGetValueReturnsValueWhenKeyAndTypeMatch() {
+        NameGenerationRequest victim = nameRequest();
+        victim.setValue("key", 42);
+        assertEquals(42, victim.getValue("key", Integer.class));
+    }
+
+    @Test
+    public void testSetValueAllowsNullValues() {
+        NameGenerationRequest victim = nameRequest();
+        victim.setValue("key", null);
+        assertNull(victim.getValue("key", Object.class));
+    }
+
+    @Test
+    public void testSetValueThrowsIllegalArgumentExceptionWhenKeyIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> nameRequest().setValue(null, "value"));
     }
 }

@@ -20,10 +20,11 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import org.junit.jupiter.api.Test;
 
 /**
  * Test case for BasenamePrefixProcessor
@@ -37,40 +38,42 @@ public class BasenamePrefixProcessorTest extends BasePrefixProcessorTest {
 
     @Test
     public void nullName() {
-        String prefix = "prefix_[BASENAME]";
-        assertEquals(prefix, victim.process(prefix, nameRequest()));
+        var prefix = "prefix_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest());
+        victim.accept(context);
+        assertEquals(prefix, context.currentPrefix());
     }
 
     @Test
     public void testComplexProcess() {
-        String prefix = "prefix_[BASENAME]";
-        String originalName = "name";
-        String expected = "prefix_name";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+        var prefix = "prefix_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().originalName("name"));
+        victim.accept(context);
+        assertEquals("prefix_name", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessStripExtension() {
-        String prefix = "prefix_[BASENAME]";
-        String originalName = "name.pdf";
-        String expected = "prefix_name";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+        var prefix = "prefix_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().originalName("name.pdf"));
+        victim.accept(context);
+        assertEquals("prefix_name", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessStripExtensionOneCharName() {
-        String prefix = "prefix_[BASENAME]";
-        String originalName = "x.pdf";
-        String expected = "prefix_x";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+        var prefix = "prefix_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().originalName("x.pdf"));
+        victim.accept(context);
+        assertEquals("prefix_x", context.currentPrefix());
     }
 
     @Test
     public void testUnescapedRegexInBasename() {
-        String prefix = "[BASENAME]";
-        String originalName = "x$5.pdf";
-        String expected = "x$5";
-        assertEquals(expected, victim.process(prefix, nameRequest().originalName(originalName)));
+        var prefix = "[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().originalName("x$5.pdf"));
+        victim.accept(context);
+        assertEquals("x$5", context.currentPrefix());
     }
 
     @Override

@@ -1,7 +1,7 @@
 /*
  * Created on 24/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,23 +19,26 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Simple prefix processor that append the extension to the input prefix. name.
- * 
+ * A {@link PrefixProcessor} that updates the context current prefix adding the extension of the request.
+ *
  * @author Andrea Vacondio
- * 
  */
-class AppendExtensionPrefixProcessor implements PrefixProcessor {
+public class AppendExtensionPrefixProcessor implements PrefixProcessor {
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        if (request != null && StringUtils.isNotBlank(request.getExtension())) {
-            return String.format("%s.%s", inputPrefix, request.getExtension());
-        }
-        return inputPrefix;
+    public void accept(PrefixTransformationContext context) {
+        ofNullable(context.request()).map(NameGenerationRequest::getExtension)
+                .map(e -> String.format("%s.%s", context.currentPrefix(), e)).ifPresent(context::currentPrefix);
     }
 
+    @Override
+    public int order() {
+        return 1000;
+    }
 }

@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,16 +20,16 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * Test unit for {@link BookmarkPrefixProcessor}
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class BookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
 
@@ -42,32 +42,34 @@ public class BookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
 
     @Test
     public void nullBookmarks() {
-        String prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
-        assertEquals(prefix, victim.process(prefix, nameRequest()));
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest());
+        victim.accept(context);
+        assertEquals(prefix, context.currentPrefix());
     }
 
     @Test
     public void testComplexProcess() {
-        String prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
-        String bookmark = "book";
-        String expected = "prefix_book_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book"));
+        victim.accept(context);
+        assertEquals("prefix_book_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessInvalidChars() {
-        String prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
-        String bookmark = "book<>?";
-        String expected = "prefix_book_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book<>?"));
+        victim.accept(context);
+        assertEquals("prefix_book_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testUnescapedRegexGroup() {
-        String prefix = "[BOOKMARK_NAME]";
-        String bookmark = "book$5";
-        String expected = "book$5";
-        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+        var prefix = "[BOOKMARK_NAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book$5"));
+        victim.accept(context);
+        assertEquals("book$5", context.currentPrefix());
     }
 
 }

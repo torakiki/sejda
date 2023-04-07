@@ -1,6 +1,7 @@
+package org.sejda.core.support.prefix.processor;
 /*
- * Created on 03 mag 2017
- * Copyright 2017 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Created on 06/04/23
+ * Copyright 2023 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -16,30 +17,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.core.support.prefix.processor;
 
-import org.sejda.core.support.prefix.model.NameGenerationRequest;
 import org.sejda.core.support.prefix.model.PrefixTransformationContext;
-
-import static java.util.Optional.ofNullable;
+import org.sejda.model.util.IOUtils;
 
 /**
- * A {@link PrefixProcessor} that prepends the page number to the current prefix if the current status doesn't guarantee unique names.
+ * A {@link PrefixProcessor} that converts the current prefix to a safe filename
  *
  * @author Andrea Vacondio
  */
-public class PrependPageNumberPrefixProcessor implements PrefixProcessor {
+public class ToSafeFilenamePrefixProcessor implements PrefixProcessor {
 
     @Override
     public void accept(PrefixTransformationContext context) {
-        if (!context.uniqueNames()) {
-            ofNullable(context.request()).map(NameGenerationRequest::getPage)
-                    .map(p -> String.format("%d_%s", p, context.currentPrefix())).ifPresent(context::currentPrefix);
-        }
+        context.currentPrefix(IOUtils.toSafeFilename(context.currentPrefix()));
     }
 
     @Override
     public int order() {
-        return 200;
+        return Integer.MAX_VALUE;
     }
 }

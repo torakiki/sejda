@@ -2,7 +2,7 @@
  * Created on 01/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,30 +22,35 @@ package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Process the input prefix replacing all the [CURRENTPAGE] or [CURRENTPAGE##] or [CURRENTPAGE##11] or [CURRENTPAGE] occurrences with the input current page number (formatted with
+ * A {@link PrefixProcessor} replacing all the [CURRENTPAGE] or [CURRENTPAGE##] or [CURRENTPAGE##11] or [CURRENTPAGE11] occurrences with the input current page number (formatted with
  * the given pattern identified by the number of # and incremented by the starting number if found). Ex:
  * <p>
  * <b>[CURRENTPAGE]_BLA_[CURRENTPAGE####]_LAB</b> and given page number <b>2</b> will produce <b>2_BLA_0002_LAB</b>
  * </p>
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-class CurrentPagePrefixProcessor extends NumberPrefixProcessor {
+public class CurrentPagePrefixProcessor extends NumberPrefixProcessor implements PrefixProcessor {
 
-    CurrentPagePrefixProcessor() {
+    public CurrentPagePrefixProcessor() {
         super("CURRENTPAGE");
     }
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = "";
-        if (request != null && request.getPage() != null) {
-            retVal = findAndReplace(inputPrefix, request.getPage());
+    public void accept(PrefixTransformationContext context) {
+        if (pattern.matcher(context.currentPrefix()).find()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getPage)
+                    .map(p -> findAndReplace(context.currentPrefix(), p)).filter(StringUtils::isNotBlank)
+                    .ifPresent(s -> {
+                        context.uniqueNames(true);
+                        context.currentPrefix(s);
+                    });
         }
-        return StringUtils.isBlank(retVal) ? inputPrefix : retVal;
     }
 
 }

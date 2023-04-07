@@ -19,11 +19,12 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+import org.sejda.model.SejdaFileExtensions;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import org.junit.jupiter.api.Test;
-import org.sejda.model.SejdaFileExtensions;
 
 /**
  * @author Andrea Vacondio
@@ -35,22 +36,23 @@ public class AppendExtensionPrefixProcessorTest {
 
     @Test
     public void testProcess() {
-        String prefix = "blabla";
-        String expected = "blabla.pdf";
-        assertEquals(expected, victim.process(prefix, nameRequest()));
+        var context = new PrefixTransformationContext("blabla", nameRequest());
+        victim.accept(context);
+        assertEquals("blabla.pdf", context.currentPrefix());
     }
 
     @Test
     public void testProcessNonDefaultExtension() {
-        String prefix = "blabla";
-        String expected = "blabla.txt";
-        assertEquals(expected, victim.process(prefix, nameRequest(SejdaFileExtensions.TXT_EXTENSION)));
+        var context = new PrefixTransformationContext("blabla", nameRequest(SejdaFileExtensions.TXT_EXTENSION));
+        victim.accept(context);
+        assertEquals("blabla.txt", context.currentPrefix());
     }
 
     @Test
     public void testProcessNullRequest() {
-        String prefix = "blabla";
-        assertEquals(prefix, victim.process(prefix, null));
+        var context = new PrefixTransformationContext("blabla", null);
+        victim.accept(context);
+        assertEquals("blabla.pdf", context.currentPrefix());
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 07/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,36 +21,40 @@ package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Base class for a prefix processor replacing a prefix name with a bookmark value. A regexp can be specified to tell the processor which characters have to be removed from the
- * bookmark value (typically those non valid in a file name).
- * 
+ * bookmark value (typically those not valid in a file name).
+ *
  * @author Andrea Vacondio
- * 
  */
 class BaseBookmarkPrefixProcessor implements PrefixProcessor {
 
-    private String prefixNameRegex;
-    private String toBeReplacedRegex;
+    private final Pattern pattern;
+    private final String invalidCharsRegexp;
 
-    BaseBookmarkPrefixProcessor(String prefixNameRegex, String toBeReplacedRegex) {
-        this.prefixNameRegex = prefixNameRegex;
-        this.toBeReplacedRegex = toBeReplacedRegex;
+    BaseBookmarkPrefixProcessor(String prefixNameRegex, String invalidCharsRegexp) {
+        this.pattern = Pattern.compile(prefixNameRegex);
+        this.invalidCharsRegexp = invalidCharsRegexp;
     }
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = inputPrefix;
-        if (request != null && StringUtils.isNotBlank(request.getBookmark())) {
-            String bookmarkName = request.getBookmark().replaceAll(toBeReplacedRegex, "");
-            if (StringUtils.isNotBlank(bookmarkName)) {
-                return retVal.replaceAll(prefixNameRegex, Matcher.quoteReplacement(bookmarkName));
-            }
+    public void accept(PrefixTransformationContext context) {
+        var matcher = pattern.matcher(context.currentPrefix());
+        if (matcher.find()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getBookmark)
+                    .map(b -> b.replaceAll(invalidCharsRegexp, "")).map(Matcher::quoteReplacement)
+                    .filter(StringUtils::isNotBlank).ifPresent(r -> {
+                        context.uniqueNames(true);
+                        context.currentPrefix(matcher.replaceAll(r));
+                    });
         }
-        return retVal;
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 07/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * @author Andrea Vacondio
- * 
  */
 public class StrictBookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
     private StrictBookmarkPrefixProcessor victim = new StrictBookmarkPrefixProcessor();
@@ -38,23 +38,25 @@ public class StrictBookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
 
     @Test
     public void nullBookmarks() {
-        String prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
-        assertEquals(prefix, victim.process(prefix, nameRequest()));
+        var prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest());
+        victim.accept(context);
+        assertEquals(prefix, context.currentPrefix());
     }
 
     @Test
     public void testComplexProcess() {
-        String prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
-        String bookmark = "book name here ";
-        String expected = "prefix_book name here_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+        var prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book name here"));
+        victim.accept(context);
+        assertEquals("prefix_book name here_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessInvalidChars() {
-        String prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
-        String bookmark = "book<>?$ç°";
-        String expected = "prefix_book_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().bookmark(bookmark)));
+        var prefix = "prefix_[BOOKMARK_NAME_STRICT]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book<>?$ç°"));
+        victim.accept(context);
+        assertEquals("prefix_book_[BASENAME]", context.currentPrefix());
     }
 }

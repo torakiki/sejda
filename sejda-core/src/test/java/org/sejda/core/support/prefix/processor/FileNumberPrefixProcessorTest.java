@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,21 +20,21 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * Test unit for the {@link NumberPrefixProcessor}
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
 
-    private NumberPrefixProcessor victim = new FileNumberPrefixProcessor();
-    private Integer fileNumber = Integer.valueOf("5");
+    private FileNumberPrefixProcessor victim = new FileNumberPrefixProcessor();
+    private int fileNumber = 5;
 
     @Override
     public PrefixProcessor getProcessor() {
@@ -43,70 +43,81 @@ public class FileNumberPrefixProcessorTest extends BasePrefixProcessorTest {
 
     @Test
     public void nullFileNumber() {
-        String prefix = "prefix_[FILENUMBER]_[BASENAME]";
-        assertEquals(prefix, victim.process(prefix, nameRequest()));
+        var prefix = "prefix_[FILENUMBER]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest());
+        victim.accept(context);
+        assertEquals(prefix, context.currentPrefix());
     }
 
     @Test
     public void testComplexProcess() {
-        String prefix = "prefix_[FILENUMBER]_[BASENAME]";
-        String expected = "prefix_5_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_5_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessStartingPage() {
-        String prefix = "prefix_[FILENUMBER12]_[BASENAME]";
-        String expected = "prefix_17_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
-    }
-
-    @Test
-    public void testComplexProcessWithPatter() {
-        String prefix = "prefix_[FILENUMBER###]_[BASENAME]";
-        String expected = "prefix_005_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER12]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_17_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessWithPatterStartingPage() {
-        String prefix = "prefix_[FILENUMBER###10]_[BASENAME]";
-        String expected = "prefix_015_[BASENAME]";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER###10]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_015_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testComplexProcessWithPatter() {
+        var prefix = "prefix_[FILENUMBER###]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_005_[BASENAME]", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessDouble() {
-        String prefix = "prefix_[FILENUMBER]_[FILENUMBER]";
-        String expected = "prefix_5_5";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER]_[FILENUMBER]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_5_5", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessDoubleSinglePattern() {
-        String prefix = "prefix_[FILENUMBER###]_[FILENUMBER]";
-        String expected = "prefix_005_5";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER###]_[FILENUMBER]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_005_5", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessDoubleSinglePatternStartingPage() {
-        String prefix = "prefix_[FILENUMBER###23]_[FILENUMBER32]";
-        String expected = "prefix_028_37";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER###23]_[FILENUMBER32]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_028_37", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessDoubleSinglePatternNegativeStartingPage() {
-        String prefix = "prefix_[FILENUMBER###-23]_[FILENUMBER-2]";
-        String expected = "prefix_-018_3";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER###-23]_[FILENUMBER-5]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_-018_0", context.currentPrefix());
     }
 
     @Test
     public void testComplexProcessDoubleDoublePattern() {
-        String prefix = "prefix_[FILENUMBER###]_[FILENUMBER##]";
-        String expected = "prefix_005_05";
-        assertEquals(expected, victim.process(prefix, nameRequest().fileNumber(fileNumber)));
+        var prefix = "prefix_[FILENUMBER###]_[FILENUMBER##]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().fileNumber(fileNumber));
+        victim.accept(context);
+        assertEquals("prefix_005_05", context.currentPrefix());
     }
 }

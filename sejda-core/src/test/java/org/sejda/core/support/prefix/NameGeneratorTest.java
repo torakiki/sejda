@@ -40,8 +40,7 @@ public class NameGeneratorTest {
         String prefix = "BLA_[CURRENTPAGE###]_[BASENAME]";
         String originalName = "Original";
         String expected = "BLA_002_Original.pdf";
-        assertEquals(expected,
-                nameGenerator(prefix).generate(nameRequest().page(Integer.parseInt("2")).originalName(originalName)));
+        assertEquals(expected, nameGenerator(prefix).generate(nameRequest().page(2).originalName(originalName)));
     }
 
     @Test

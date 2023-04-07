@@ -2,7 +2,7 @@
  * Created on 01/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,32 @@
 package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.sejda.model.util.IOUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+import org.sejda.model.util.IOUtils;
+
+import java.util.regex.Pattern;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Process the input prefix replacing all the [TEXT] occurrences with the area text specified in the name generation request.
- * 
+ * A {@link PrefixProcessor} replacing all the [TEXT] occurrences with the area text specified in the name generation request.
  */
-class TextPrefixProcessor implements PrefixProcessor {
+public class TextPrefixProcessor implements PrefixProcessor {
+
+    private Pattern pattern = Pattern.compile("\\[TEXT]");
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        return StringUtils.replace(inputPrefix, "[TEXT]", IOUtils.toStrictFilename(request.getText()));
+    public void accept(PrefixTransformationContext context) {
+        if (pattern.matcher(context.currentPrefix()).find()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getText).map(IOUtils::toStrictFilename)
+                    .filter(StringUtils::isNotBlank).map(o -> context.currentPrefix().replace("[TEXT]", o))
+                    .ifPresent(t -> {
+                        context.currentPrefix(t);
+                        context.uniqueNames(true);
+                    });
+        }
+
     }
 
 }

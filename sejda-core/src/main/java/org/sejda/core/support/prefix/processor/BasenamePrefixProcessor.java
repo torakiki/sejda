@@ -2,7 +2,7 @@
  * Created on 01/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,25 +20,28 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import java.util.regex.Pattern;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Process the input prefix replacing all the [BASENAME] occurrences with the input original file name if any.
- * 
+ * A {@link PrefixProcessor} that updates the context current prefix replacing all the [BASENAME] occurrences with the input original file name if any.
+ *
  * @author Andrea Vacondio
- * 
  */
-class BasenamePrefixProcessor implements PrefixProcessor {
+public class BasenamePrefixProcessor implements PrefixProcessor {
+    private Pattern pattern = Pattern.compile("\\[BASENAME]");
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        if (nonNull(request) && isNotBlank(request.getOriginalName())) {
-            return inputPrefix.replace("[BASENAME]", request.getOriginalName());
+    public void accept(PrefixTransformationContext context) {
+        if (pattern.matcher(context.currentPrefix()).find()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getOriginalName).filter(StringUtils::isNotBlank)
+                    .map(o -> context.currentPrefix().replace("[BASENAME]", o)).ifPresent(context::currentPrefix);
         }
-        return inputPrefix;
     }
 
 }
