@@ -26,7 +26,6 @@ import org.sejda.core.support.prefix.processor.PrefixProcessor;
 import org.sejda.core.support.prefix.processor.PrependPageNumberPrefixProcessor;
 import org.sejda.core.support.prefix.processor.PrependPrefixProcessor;
 import org.sejda.core.support.prefix.processor.StrictBookmarkPrefixProcessor;
-import org.sejda.core.support.prefix.processor.TextPrefixProcessor;
 import org.sejda.core.support.prefix.processor.TimestampPrefixProcessor;
 import org.sejda.core.support.prefix.processor.ToSafeFilenamePrefixProcessor;
 
@@ -56,5 +55,5 @@ module org.sejda.core {
     exports org.sejda.core.notification.dsl;
     exports org.sejda.core.context;
 
-    provides PrefixProcessor with BasenamePrefixProcessor, CurrentPagePrefixProcessor, FileNumberPrefixProcessor, TimestampPrefixProcessor, BookmarkPrefixProcessor, StrictBookmarkPrefixProcessor, TextPrefixProcessor, PrependPageNumberPrefixProcessor, PrependPrefixProcessor, AppendExtensionPrefixProcessor, ToSafeFilenamePrefixProcessor;
+    provides PrefixProcessor with BasenamePrefixProcessor, CurrentPagePrefixProcessor, FileNumberPrefixProcessor, TimestampPrefixProcessor, BookmarkPrefixProcessor, StrictBookmarkPrefixProcessor, PrependPageNumberPrefixProcessor, PrependPrefixProcessor, AppendExtensionPrefixProcessor, ToSafeFilenamePrefixProcessor;
 }

@@ -3,7 +3,6 @@ org.sejda.core.support.prefix.processor.BookmarkPrefixProcessor
 org.sejda.core.support.prefix.processor.CurrentPagePrefixProcessor
 org.sejda.core.support.prefix.processor.FileNumberPrefixProcessor
 org.sejda.core.support.prefix.processor.StrictBookmarkPrefixProcessor
-org.sejda.core.support.prefix.processor.TextPrefixProcessor
 org.sejda.core.support.prefix.processor.TimestampPrefixProcessor
 org.sejda.core.support.prefix.processor.PrependPageNumberPrefixProcessor
 org.sejda.core.support.prefix.processor.PrependPrefixProcessor
