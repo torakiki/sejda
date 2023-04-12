@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,9 +29,9 @@ import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequ
 
 /**
  * Test unit for the NameGenerator
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 public class NameGeneratorTest {
 
@@ -78,34 +78,32 @@ public class NameGeneratorTest {
 
     @Test
     public void testNullRequest() {
-        String prefix = "BLA_";
-        assertThrows(IllegalArgumentException.class, () -> nameGenerator(prefix).generate(null));
+        assertThrows(IllegalArgumentException.class, () -> nameGenerator("BLA_").generate(null));
     }
 
     @Test
     public void testInvalidCharacters() {
-        String generatedFilename = nameGenerator("Invalid_\\").generate(nameRequest("pdf"));
-        assertEquals(generatedFilename, "Invalid_.pdf");
+        var generatedFilename = nameGenerator("Invalid_\\").generate(nameRequest("pdf"));
+        assertEquals("Invalid_.pdf", generatedFilename);
     }
 
     @Test
     public void testDollarSignInFilename() {
-        String generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]")
-                .generate(nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
-        assertEquals(generatedFilename, "99-My file 6-04-2015 $1234-56.pdf");
+        var generatedFilename = nameGenerator("[CURRENTPAGE]-[BASENAME]").generate(
+                nameRequest("pdf").page(99).originalName("My file 6-04-2015 $1234-56"));
+        assertEquals("99-My file 6-04-2015 $1234-56.pdf", generatedFilename);
     }
 
     @Test
     public void testSuffix() {
-        String generatedFilename = nameGenerator("[BASENAME]_suffix")
-                .generate(nameRequest("pdf").originalName("My file"));
-        assertEquals(generatedFilename, "My file_suffix.pdf");
+        var generatedFilename = nameGenerator("[BASENAME]_suffix").generate(nameRequest("pdf").originalName("My file"));
+        assertEquals("My file_suffix.pdf", generatedFilename);
     }
 
     @Test
     public void testPrefixSuffix() {
-        String generatedFilename = nameGenerator("prefix_[BASENAME]_suffix")
-                .generate(nameRequest("pdf").originalName("My file"));
-        assertEquals(generatedFilename, "prefix_My file_suffix.pdf");
+        var generatedFilename = nameGenerator("prefix_[BASENAME]_suffix").generate(
+                nameRequest("pdf").originalName("My file"));
+        assertEquals("prefix_My file_suffix.pdf", generatedFilename);
     }
 }
