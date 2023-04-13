@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,33 +20,47 @@
  */
 package org.sejda.core.support.prefix.processor;
 
+import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
-import org.junit.jupiter.api.Test;
-
 /**
  * Test unit for the {@link PrependPrefixProcessor}
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public class PrependPrefixProcessorTest {
 
     private PrependPrefixProcessor victim = new PrependPrefixProcessor();
-
     @Test
     public void positive() {
-        assertEquals("prefix_name", victim.process("prefix_", nameRequest().originalName("name")));
+        var context = new PrefixTransformationContext("prefix_", nameRequest().originalName("name"));
+        victim.accept(context);
+        assertEquals("prefix_name", context.currentPrefix());
     }
 
     @Test
     public void nullRequest() {
-        assertEquals("prefix_", victim.process("prefix_", null));
+        var context = new PrefixTransformationContext("prefix_", null);
+        victim.accept(context);
+        assertEquals("prefix_", context.currentPrefix());
     }
 
     @Test
     public void noName() {
-        assertEquals("prefix_", victim.process("prefix_", nameRequest()));
+        var context = new PrefixTransformationContext("prefix_", nameRequest());
+        victim.accept(context);
+        assertEquals("prefix_", context.currentPrefix());
     }
+
+    @Test
+    public void alreadyUnique() {
+        var context = new PrefixTransformationContext("prefix_", nameRequest().originalName("name"));
+        context.currentPrefix("transformed_prefix");
+        victim.accept(context);
+        assertEquals("transformed_prefix", context.currentPrefix());
+    }
+
 }

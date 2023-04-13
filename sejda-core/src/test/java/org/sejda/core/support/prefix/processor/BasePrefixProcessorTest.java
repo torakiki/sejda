@@ -20,10 +20,11 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
 import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
  * @author Andrea Vacondio
@@ -36,12 +37,16 @@ public abstract class BasePrefixProcessorTest {
      */
     @Test
     public void testEmptyRequestSimplePrefix() {
-        assertEquals("prefix", getProcessor().process("prefix", nameRequest()));
+        var context = new PrefixTransformationContext("prefix", nameRequest());
+        getProcessor().accept(context);
+        assertTrue(context.noTransformationApplied());
     }
 
     @Test
     public void nullRequest() {
-        assertEquals("prefix_", getProcessor().process("prefix_", null));
+        var context = new PrefixTransformationContext("prefix", null);
+        getProcessor().accept(context);
+        assertTrue(context.noTransformationApplied());
     }
 
     abstract PrefixProcessor getProcessor();

@@ -21,15 +21,14 @@
 package org.sejda.core.support.prefix.processor;
 
 /**
- * Process the input prefix replacing all the [BOOKMARK_NAME] occurrences with the input bookmark name if any. A small set of possibly invalid characters is trimmed from the the
+ * A {@link PrefixProcessor} replacing all the [BOOKMARK_NAME] occurrences with the input bookmark name if any. A small set of possibly invalid characters is trimmed from the the
  * bookmark value.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-class BookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
+public class BookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
 
-    private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME\\]";
+    private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME]";
     private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|]";
 
     public BookmarkPrefixProcessor() {

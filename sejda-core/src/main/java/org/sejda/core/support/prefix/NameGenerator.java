@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,28 +20,29 @@
  */
 package org.sejda.core.support.prefix;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.sejda.core.support.prefix.processor.PrefixTypesChain;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+import org.sejda.core.support.prefix.processor.PrefixProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
+import java.util.Comparator;
+import java.util.ServiceLoader;
+
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 /**
  * Component used to generate the output name for a manipulation given the input prefix (if any);
- * 
+ *
  * @author Andrea Vacondio
  */
 public final class NameGenerator {
-
-    private String prefix;
-    private PrefixTypesChain prefixTypesChain;
+    private static final Logger LOG = LoggerFactory.getLogger(NameGenerator.class);
+    private final String prefix;
 
     private NameGenerator(String prefix) {
         this.prefix = StringUtils.defaultString(prefix);
-        this.prefixTypesChain = new PrefixTypesChain(prefix);
     }
 
     /**
@@ -53,15 +54,20 @@ public final class NameGenerator {
     }
 
     /**
-     * @param request
-     *            parameters used to generate the name. It cannot be null.
+     * @param request parameters used to generate the name. It cannot be null.
      * @return generates a new name from the given request
      */
     public String generate(NameGenerationRequest request) {
-        if (request == null) {
-            throw new IllegalArgumentException("Unable to generate a name for a null request.");
-        }
-        return prefixTypesChain.process(prefix, request);
-    }
+        requireNotNullArg(request, "Unable to generate a name for a null request");
+        var context = new PrefixTransformationContext(prefix, request);
+        LOG.trace("Starting processing prefix: '{}'", context.currentPrefix());
+        ServiceLoader.load(PrefixProcessor.class).stream().map(ServiceLoader.Provider::get)
+                .sorted(Comparator.comparingInt(PrefixProcessor::order)).forEachOrdered(prefixProcessor -> {
+                    prefixProcessor.accept(context);
+                    LOG.trace("Prefix processed with {}, new value: '{}'", prefixProcessor.getClass().getSimpleName(),
+                            context.currentPrefix());
 
+                });
+        return context.currentPrefix();
+    }
 }

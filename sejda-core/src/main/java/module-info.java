@@ -16,10 +16,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import org.sejda.core.support.prefix.processor.AppendExtensionPrefixProcessor;
+import org.sejda.core.support.prefix.processor.BasenamePrefixProcessor;
+import org.sejda.core.support.prefix.processor.BookmarkPrefixProcessor;
+import org.sejda.core.support.prefix.processor.CurrentPagePrefixProcessor;
+import org.sejda.core.support.prefix.processor.FileNumberPrefixProcessor;
+import org.sejda.core.support.prefix.processor.PrefixProcessor;
+import org.sejda.core.support.prefix.processor.PrependPageNumberPrefixProcessor;
+import org.sejda.core.support.prefix.processor.PrependPrefixProcessor;
+import org.sejda.core.support.prefix.processor.StrictBookmarkPrefixProcessor;
+import org.sejda.core.support.prefix.processor.TimestampPrefixProcessor;
+import org.sejda.core.support.prefix.processor.ToSafeFilenamePrefixProcessor;
+
 /**
  * @author Andrea Vacondio
  */
 module org.sejda.core {
+    uses PrefixProcessor;
     requires java.xml;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
@@ -40,4 +54,6 @@ module org.sejda.core {
     exports org.sejda.core.support.util;
     exports org.sejda.core.notification.dsl;
     exports org.sejda.core.context;
+
+    provides PrefixProcessor with BasenamePrefixProcessor, CurrentPagePrefixProcessor, FileNumberPrefixProcessor, TimestampPrefixProcessor, BookmarkPrefixProcessor, StrictBookmarkPrefixProcessor, PrependPageNumberPrefixProcessor, PrependPrefixProcessor, AppendExtensionPrefixProcessor, ToSafeFilenamePrefixProcessor;
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 20/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,34 @@ package org.sejda.core.support.prefix.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Process the input prefix replacing all the [FILENUMBER] or [FILENUMBER##] or [FILENUMBER##11] or [FILENUMBER11] occurrences with the input current page number (formatted with
+ * A {@link PrefixProcessor} replacing all the [FILENUMBER] or [FILENUMBER##] or [FILENUMBER##11] or [FILENUMBER11] occurrences with the input current page number (formatted with
  * the given pattern identified by the number of # and incremented by the starting number if found). Ex:
  * <p>
  * <b>[FILENUMBER]_BLA_[FILENUMBER####]_LAB</b> and given file number <b>2</b> will produce <b>2_BLA_0002_LAB</b>
  * </p>
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-class FileNumberPrefixProcessor extends NumberPrefixProcessor {
+public class FileNumberPrefixProcessor extends NumberPrefixProcessor implements PrefixProcessor {
 
-    FileNumberPrefixProcessor() {
+    public FileNumberPrefixProcessor() {
         super("FILENUMBER");
     }
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        String retVal = "";
-        if (request != null && request.getFileNumber() != null) {
-            retVal = findAndReplace(inputPrefix, request.getFileNumber());
+    public void accept(PrefixTransformationContext context) {
+        if (pattern.matcher(context.currentPrefix()).find()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getFileNumber)
+                    .map(p -> findAndReplace(context.currentPrefix(), p)).filter(StringUtils::isNotBlank)
+                    .ifPresent(s -> {
+                        context.uniqueNames(true);
+                        context.currentPrefix(s);
+                    });
         }
-        return StringUtils.isBlank(retVal) ? inputPrefix : retVal;
     }
 }

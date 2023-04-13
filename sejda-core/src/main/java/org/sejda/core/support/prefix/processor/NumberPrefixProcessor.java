@@ -20,16 +20,18 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import java.text.DecimalFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
+
 /**
- * Abstract prefix processor with number formatting capabilities and skeletal implementation for number based {@link PrefixProcessor}. Provides help method to handle "####" like
+ * Abstract prefix processor with number formatting capabilities and skeletal implementation for number based {@link PrefixProcessor}. Provides help methods to handle "####" like
  * strings as pattern. Process the input prefix replacing all the [PREFIX] or [PREFIX##] or [PREFIX##11] or [PREFIX11] occurrences with the input number (formatted with the given
  * pattern identified by the number of # and incremented by the starting number if found where starting number can be negative).
  * <p>
@@ -38,18 +40,15 @@ import org.slf4j.LoggerFactory;
  * </p>
  * <b>[FILENUMBER-3]_BLA_LAB_[FILENUMBER####100]</b> and given file number <b>2</b> will produce <b>-1_BLA_002_LAB_0102</b>
  * </p>
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
-abstract class NumberPrefixProcessor implements PrefixProcessor {
+abstract class NumberPrefixProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(NumberPrefixProcessor.class);
-    private final Pattern pattern;
+    protected final Pattern pattern;
 
     NumberPrefixProcessor(String prefix) {
-        if (StringUtils.isBlank(prefix)) {
-            throw new IllegalArgumentException("Prefix cannot be blank");
-        }
+        requireNotBlank(prefix, "Prefix cannot be blank");
         pattern = Pattern.compile(String.format("\\[%s(#*)(-?[0-9]*)\\]", prefix));
     }
 
@@ -61,7 +60,7 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      * @return the processed string if a match is found. An empty string if no match is found.
      */
     protected String findAndReplace(String inputString, Integer num) {
-        StringBuilder sb = new StringBuilder();
+        var sb = new StringBuilder();
         Matcher m = pattern.matcher(inputString);
         while (m.find()) {
             String replacement = getReplacement(m.group(1), m.group(2), num);
@@ -72,9 +71,6 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
     }
 
     /**
-     * @param numberPatter
-     * @param startingNumber
-     * @param num
      * @return the string the processor will use to perform replacement
      */
     private String getReplacement(String numberPatter, String startingNumber, Integer num) {
@@ -103,17 +99,14 @@ abstract class NumberPrefixProcessor implements PrefixProcessor {
      * @return the {@link DecimalFormat} with the applied pattern
      */
     private DecimalFormat formatter(String numberPattern) {
-        DecimalFormat retVal = new DecimalFormat();
         try {
             if (StringUtils.isNotBlank(numberPattern)) {
-                retVal.applyPattern(numberPattern.replaceAll("#", "0"));
-                return retVal;
+                return new DecimalFormat(numberPattern.replaceAll("#", "0"));
             }
         } catch (IllegalArgumentException iae) {
             LOG.error(String.format("Error applying pattern %s", numberPattern), iae);
         }
-        retVal.applyPattern("00000");
-        return retVal;
+        return new DecimalFormat("00000");
     }
 
 }

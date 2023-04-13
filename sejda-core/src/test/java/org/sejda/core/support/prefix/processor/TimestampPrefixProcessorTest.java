@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,13 @@
 package org.sejda.core.support.prefix.processor;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
 
 /**
- * Test unit for {@link TimestampPrefixProcessor}
  * @author Andrea Vacondio
- *
  */
 public class TimestampPrefixProcessorTest extends BasePrefixProcessorTest {
 
@@ -38,11 +37,13 @@ public class TimestampPrefixProcessorTest extends BasePrefixProcessorTest {
     public PrefixProcessor getProcessor() {
         return victim;
     }
-   
+
     @Test
     public void testComplexProcess() {
-        String prefix = "prefix_[TIMESTAMP]_[BASENAME]";
-        assertNotEquals(prefix, victim.process(prefix, nameRequest()));
+        var prefix = "prefix_[TIMESTAMP]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest());
+        victim.accept(context);
+        assertNotEquals(prefix, context.currentPrefix());
     }
 
 }

@@ -2,7 +2,7 @@
  * Created on 03/lug/2010
  *
  * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,25 +20,30 @@
  */
 package org.sejda.core.support.prefix.processor;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
+import org.apache.commons.lang3.StringUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
+import org.sejda.core.support.prefix.model.PrefixTransformationContext;
+
+import static java.util.Optional.ofNullable;
 
 /**
- * Simple prefix processor that prepend the input prefix to the original name.
- * 
+ * A {@link PrefixProcessor} that updates the context current prefix prepending the input prefix to the original name
+ * if no other transformation has been applied to the prefix.
+ *
  * @author Andrea Vacondio
- * 
  */
-class PrependPrefixProcessor implements PrefixProcessor {
+public class PrependPrefixProcessor implements PrefixProcessor {
 
     @Override
-    public String process(String inputPrefix, NameGenerationRequest request) {
-        if (nonNull(request) && isNotBlank(request.getOriginalName())) {
-            return inputPrefix + request.getOriginalName();
+    public void accept(PrefixTransformationContext context) {
+        if (context.noTransformationApplied()) {
+            ofNullable(context.request()).map(NameGenerationRequest::getOriginalName).filter(StringUtils::isNotBlank)
+                    .map(e -> String.format("%s%s", context.currentPrefix(), e)).ifPresent(context::currentPrefix);
         }
-        return inputPrefix;
     }
 
+    @Override
+    public int order() {
+        return 100;
+    }
 }
