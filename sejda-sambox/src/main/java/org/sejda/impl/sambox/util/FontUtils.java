@@ -173,7 +173,7 @@ public final class FontUtils {
         }
     }
 
-    public static final PDFont findFontFor(PDDocument document, String text) {
+    public static PDFont findFontFor(PDDocument document, String text) {
         return findFontFor(document, text, false);
     }
 
@@ -182,7 +182,7 @@ public final class FontUtils {
      * @param text
      * @return a font capable of displaying the given string or null
      */
-    public static final PDFont findFontFor(PDDocument document, String text, boolean bold) {
+    public static PDFont findFontFor(PDDocument document, String text, boolean bold) {
         PDFont firstPartialMatch = null;
         for (FontResource font : TYPE0FONTS) {
             PDFont loaded = loadFont(document, font);
@@ -192,7 +192,7 @@ public final class FontUtils {
 
                 // match on style? great, return it
                 // otherwise continue and fallback to this font if no exact style match is found in the end 
-                if(isBold(loaded) == bold) {
+                if (isBold(loaded) == bold) {
                     return loaded;    
                 }
             }
@@ -223,7 +223,7 @@ public final class FontUtils {
             String text = " ";
             
             // try encode
-            font.encode(text);
+            var encoded = font.encode(text);
 
             // see if width is non zero
             if(font.getStringWidth(text) <= 0) {
@@ -231,11 +231,7 @@ public final class FontUtils {
             }
 
             // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
-            if(!areEncodeDecodeSame(font, text)){
-                return false;
-            }
-            
-            return true;
+            return areEncodeDecodeSame(font, text, encoded);
         } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
             // Nope
         }
@@ -243,7 +239,7 @@ public final class FontUtils {
     }
 
     /**
-     * Returns true if the given font can display the given text. IMPORTANT: Ignores all whitespace in text.
+     * @return true if the given font can display the given text. IMPORTANT: Ignores all whitespace in text.
      */
     public static boolean canDisplay(String text, PDFont font) {
         return canDisplayString(removeWhitespace(text), font);
@@ -259,14 +255,13 @@ public final class FontUtils {
             // remove all whitespace characters and check only if those can be written using the font
             byte[] encoded = font.encode(text);
 
-            if (font instanceof PDVectorFont) {
+            if (font instanceof PDVectorFont vectorFont) {
                 InputStream in = new ByteArrayInputStream(encoded);
                 while (in.available() > 0) {
                     int code = font.readCode(in);
 
                     // LOG.debug("Read codePoint {}", code);
 
-                    PDVectorFont vectorFont = (PDVectorFont) font;
                     GeneralPath path = vectorFont.getPath(code);
                     // if(path != null) {
                     // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
@@ -281,9 +276,7 @@ public final class FontUtils {
             // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
             // fonts loaded from sejda font resources are trusted
             if(!"true".equals(font.getTransientMetadata().get(REMARK_FROM_SEJDA_FONT_RESOURCE))) {
-                if (!areEncodeDecodeSame(font, text)) {
-                    return false;
-                }
+                return areEncodeDecodeSame(font, text, encoded);
             }
 
             return true;
@@ -657,24 +650,28 @@ public final class FontUtils {
     }
 
     public static boolean areEncodeDecodeSame(PDFont font, String text) throws IOException {
-        String decoded = decode(font, font.encode(text));
+        return areEncodeDecodeSame(font, text, font.encode(text));
+    }
+
+    private static boolean areEncodeDecodeSame(PDFont font, String text, byte[] encoded) throws IOException {
+        String decoded = decode(font, encoded);
         // japanese requires normalization
         // see https://stackoverflow.com/questions/45447843/testing-equality-for-visually-identical-characters-with-different-utf-8-encoding
         boolean result = org.sejda.core.support.util.StringUtils.equalsNormalized(text, decoded);
-        if(!result) {
-            LOG.info("Font " + font.getName() + " cannot encode/decode text: '" + text + "', decoded was: '" + 
-                    decoded +"' " + org.sejda.commons.util.StringUtils.asUnicodes(text) + " " +
-                    org.sejda.commons.util.StringUtils.asUnicodes(decoded));
+        if (!result) {
+            LOG.info("Font " + font.getName() + " cannot encode/decode text: '" + text + "', decoded was: '" + decoded
+                    + "' " + org.sejda.commons.util.StringUtils.asUnicodes(text) + " "
+                    + org.sejda.commons.util.StringUtils.asUnicodes(decoded));
         }
         return result;
     }
-    
+
     public static void assertEncodeDecodeSame(PDFont font, String text) throws IOException {
-        if(!areEncodeDecodeSame(font, text)) {
+        if (!areEncodeDecodeSame(font, text)) {
             throw new IllegalStateException("Font " + font.getName() + " cannot encode/decode text: " + text);
         }
     }
-    
+
     public static String decode(PDFont font, byte[] bytes) throws IOException {
         InputStream in = new ByteArrayInputStream(bytes);
         StringBuilder result = new StringBuilder();
