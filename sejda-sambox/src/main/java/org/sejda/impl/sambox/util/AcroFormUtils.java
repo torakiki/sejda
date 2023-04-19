@@ -18,19 +18,24 @@
  */
 package org.sejda.impl.sambox.util;
 
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
+import org.sejda.sambox.pdmodel.interactive.form.PDVariableText;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
+import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 /**
  * Utility methods related to acroforms
- * 
+ *
  * @author Andrea Vacondio
  */
 public final class AcroFormUtils {
@@ -87,9 +92,26 @@ public final class AcroFormUtils {
 
     private static void mergeResourceDictionaryValue(final COSDictionary formResources, COSDictionary value,
             COSName currentKey) {
-        COSDictionary currentItem = ofNullable(formResources.getDictionaryObject(currentKey, COSDictionary.class))
-                .orElseGet(COSDictionary::new);
+        COSDictionary currentItem = ofNullable(
+                formResources.getDictionaryObject(currentKey, COSDictionary.class)).orElseGet(COSDictionary::new);
         currentItem.mergeWithoutOverwriting(value);
         formResources.setItem(currentKey, currentItem);
+    }
+
+    /**
+     * Makes sure the string can be displayed using appearances font or a fallback one
+     *
+     * @throws IOException
+     */
+    public static void ensureValueCanBeDisplayed(PDVariableText field, PDDocument document) throws IOException {
+        String value = field.getValueAsString();
+        if (!FontUtils.canDisplay(value, field.getAppearanceFont())) {
+            PDFont fallbackFont = FontUtils.findFontFor(document, value);
+            field.setAppearanceOverrideFont(fallbackFont);
+            // we updated the field, let's generate a new appearance
+            field.applyChange();
+            LOG.debug("Form field can't render (in appearances) it's value '{}', will use font {} for better support",
+                    value, fallbackFont);
+        }
     }
 }

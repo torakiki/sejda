@@ -18,6 +18,37 @@
  */
 package org.sejda.impl.sambox.component;
 
+import org.sejda.commons.LookupTable;
+import org.sejda.impl.sambox.util.AcroFormUtils;
+import org.sejda.model.pdf.form.AcroFormPolicy;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
+import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
+import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
+import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
+import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
+import org.sejda.sambox.pdmodel.interactive.form.PDVariableText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.empty;
@@ -27,6 +58,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.impl.sambox.component.SignatureClipper.clipSignature;
+import static org.sejda.impl.sambox.util.AcroFormUtils.ensureValueCanBeDisplayed;
 import static org.sejda.sambox.cos.COSName.A;
 import static org.sejda.sambox.cos.COSName.AF;
 import static org.sejda.sambox.cos.COSName.AP;
@@ -71,32 +103,6 @@ import static org.sejda.sambox.cos.COSName.TU;
 import static org.sejda.sambox.cos.COSName.TYPE;
 import static org.sejda.sambox.cos.COSName.V;
 import static org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory.createField;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-
-import org.sejda.commons.LookupTable;
-import org.sejda.impl.sambox.util.AcroFormUtils;
-import org.sejda.impl.sambox.util.FontUtils;
-import org.sejda.model.pdf.form.AcroFormPolicy;
-import org.sejda.sambox.cos.COSArray;
-import org.sejda.sambox.cos.COSDictionary;
-import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.pdmodel.PDDocument;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
-import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
-import org.sejda.sambox.pdmodel.interactive.form.PDField;
-import org.sejda.sambox.pdmodel.interactive.form.PDFieldFactory;
-import org.sejda.sambox.pdmodel.interactive.form.PDNonTerminalField;
-import org.sejda.sambox.pdmodel.interactive.form.PDTerminalField;
-import org.sejda.sambox.pdmodel.interactive.form.PDVariableText;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component providing methods to merge multiple acroforms together using different strategies.
@@ -237,7 +243,7 @@ public class AcroFormsMerger {
     public void mergeForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup) {
         if (nonNull(originalForm)) {
             if (originalForm.hasXFA()) {
-                LOG.warn("The AcroForm has XFA resurces which will be ignored");
+                LOG.warn("The AcroForm has XFA resources which will be ignored");
             }
             LOG.debug("Merging acroforms with policy {}", policy);
             switch (policy) {
@@ -375,30 +381,13 @@ public class AcroFormsMerger {
             for (PDField field : form.getFieldTree()) {
                 fields.add(field);
 
-                if (field instanceof PDVariableText) {
-                    ensureValueCanBeDisplayed((PDVariableText) field);
+                if (field instanceof PDVariableText variableText) {
+                    ensureValueCanBeDisplayed(variableText, form.getDocument());
                 }
             }
             form.flatten(fields, form.isNeedAppearances());
         } catch (IOException | UnsupportedOperationException ex) {
             LOG.warn("Failed to flatten form", ex);
-        }
-    }
-
-    /**
-     * Makes sure the string can be displayed using appearances font
-     * 
-     * @throws IOException
-     */
-    private void ensureValueCanBeDisplayed(PDVariableText field) throws IOException {
-        String value = field.getValueAsString();
-        if (!FontUtils.canDisplay(value, field.getAppearanceFont())) {
-            PDFont fallbackFont = FontUtils.findFontFor(form.getDocument(), value);
-            field.setAppearanceOverrideFont(fallbackFont);
-            // we updated the field, let's generate a new appearance
-            field.applyChange();
-            LOG.debug("Form field can't render (in appearances) it's value '{}', will use font {} for better support",
-                    value, fallbackFont);
         }
     }
 
