@@ -1,7 +1,7 @@
 /*
  * Created on 27/gen/2014
  * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,11 @@
 package org.sejda.conversion;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -28,13 +32,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * @author Andrea Vacondio
- * 
  */
-public class CsvFileSourceListParserTest extends BaseFileSourceListParserTest {
+public class CsvFileSourceListParserTest {
     private final CsvFileSourceListParser victim = new CsvFileSourceListParser();
 
     @Test
-    public void parseFileNames() {
+    public void parseFileNames(@TempDir Path folder) throws IOException {
+        var csvFile = folder.resolve("merge-list.csv");
+        Files.copy(getClass().getClassLoader().getResourceAsStream("merge-list.csv"), csvFile);
         List<String> result = victim.parseFileNames(csvFile.toFile());
         assertThat(result, hasItem("/another/second.pdf"));
         assertThat(result, hasItem("/my/path/first.pdf"));

@@ -21,8 +21,12 @@ package org.sejda.conversion;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.sejda.conversion.exception.ConversionException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
@@ -31,16 +35,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  * Tests for {@link XmlFileSourceListParser}
- * 
+ *
  * @author Eduard Weissmann
- * 
  */
-public class XmlFileSourceListParserTest extends BaseFileSourceListParserTest {
+public class XmlFileSourceListParserTest {
 
     private final XmlFileSourceListParser victim = new XmlFileSourceListParser();
 
     @Test
-    public void parseFileNames() {
+    public void parseFileNames(@TempDir Path folder) throws IOException {
+        var xmlFile = folder.resolve("merge-filelist-config.xml");
+        Files.copy(getClass().getClassLoader().getResourceAsStream("merge-filelist-config.xml"), xmlFile);
         List<String> result = victim.parseFileNames(xmlFile.toFile());
         assertThat(result, hasItem("/tmp/pdf/inputFile.pdf"));
         assertThat(result, hasItem("/tmp/pdf/inputFile2.pdf:test"));
@@ -56,7 +61,8 @@ public class XmlFileSourceListParserTest extends BaseFileSourceListParserTest {
     }
 
     @Test
-    public void testNegative() {
+    public void testNegative(@TempDir Path folder) throws IOException {
+        var emptyFile = Files.createTempFile(folder, "empty", ".txt");
         Assertions.assertThrows(ConversionException.class, () -> victim.parseFileNames(emptyFile.toFile()));
     }
 }
