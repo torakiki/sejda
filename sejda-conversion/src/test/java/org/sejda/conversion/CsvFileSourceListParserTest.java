@@ -19,6 +19,7 @@
  */
 package org.sejda.conversion;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -43,5 +44,11 @@ public class CsvFileSourceListParserTest {
         List<String> result = victim.parseFileNames(csvFile.toFile());
         assertThat(result, hasItem("/another/second.pdf"));
         assertThat(result, hasItem("/my/path/first.pdf"));
+    }
+
+    @Test
+    public void testNegative(@TempDir Path folder) throws IOException {
+        var emptyFile = Files.createTempFile(folder, "empty", ".txt");
+        assertThat(victim.parseFileNames(emptyFile.toFile()), Matchers.empty());
     }
 }

@@ -1,7 +1,7 @@
 /*
  * Created on Sep 3, 2011
  * Copyright 2010 by Eduard Weissmann (edi.weissmann@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 package org.sejda.conversion;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.sejda.commons.util.NumericalSortFilenameComparator;
 import org.sejda.conversion.exception.ConversionException;
@@ -41,9 +40,9 @@ import javax.xml.xpath.XPathException;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -196,22 +195,15 @@ class CsvFileSourceListParser extends AbstractPdfInputFilesSource {
         try {
             return doParseFileNames(file);
         } catch (Exception e) {
-            LOG.error("Can't extract filesnames", e);
+            LOG.error("Can't extract filenames", e);
             throw new ConversionException(
                     "Can't extract filenames from '" + file.getName() + "'. Reason:" + e.getMessage(), e);
         }
     }
 
     protected List<String> doParseFileNames(File file) throws IOException {
-        List<String> resultingFileNames = new ArrayList<>();
-
-        List<String> lines = IOUtils.readLines(new FileInputStream(file), Charset.defaultCharset());
-        for (String eachLine : lines) {
-            String[] splitLine = StringUtils.split(eachLine.toString(), ",");
-            resultingFileNames.addAll(Arrays.asList(splitLine));
-        }
-
-        return resultingFileNames;
+        return Files.readAllLines(file.toPath(), Charset.defaultCharset()).stream().map(line -> line.split(","))
+                .flatMap(Arrays::stream).collect(toList());
     }
 }
 
