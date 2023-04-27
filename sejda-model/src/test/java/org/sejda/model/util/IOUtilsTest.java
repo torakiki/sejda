@@ -125,6 +125,16 @@ public class IOUtilsTest {
     }
 
     @Test
+    public void testCreateBufferFileIllegalChar() throws TaskIOException, IOException {
+        var file = new File(folder.toString(), "chuck?.pdf");
+        FileTaskOutput out = new FileTaskOutput(file);
+        File tmp = IOUtils.createTemporaryBuffer(out);
+        assertTrue(tmp.exists());
+        assertTrue(tmp.isFile());
+        assertEquals(SystemUtils.getJavaIoTmpDir().getAbsolutePath(), tmp.getParent());
+    }
+
+    @Test
     public void testCreateBufferFileOutNonExistingParentExists() throws TaskIOException, IOException {
         var dir = Files.createTempDirectory(folder, null).toFile();
         var out = new FileTaskOutput(new File(dir.getAbsolutePath(), "I dont exist"));

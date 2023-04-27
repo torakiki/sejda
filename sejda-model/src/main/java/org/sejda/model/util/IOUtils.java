@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -80,8 +81,9 @@ public final class IOUtils {
             File buffer = tmpFile(bufferLocationFinder.bufferLocation).toFile();
             buffer.deleteOnExit();
             return buffer;
-        } catch (TaskOutputVisitException | IOException e) {
+        } catch (TaskOutputVisitException | IOException | InvalidPathException e) {
             // sometimes the above fails, eg: java.nio.file.AccessDeniedException: C:\\Users\\edi\\OneDrive\\Docs\\.sejdaTmp123124312312312.tmp
+            // or java.nio.file.InvalidPathException on Windows if the TaskOutput path has invalid characters (ex: this?that.pdf)
             // so try again this time in the temp dir
             try {
                 return createTemporaryBuffer();
