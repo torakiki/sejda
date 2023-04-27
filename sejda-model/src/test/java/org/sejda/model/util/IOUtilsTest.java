@@ -22,6 +22,8 @@ package org.sejda.model.util;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.sejda.model.exception.TaskIOException;
@@ -125,7 +127,8 @@ public class IOUtilsTest {
     }
 
     @Test
-    public void testCreateBufferFileIllegalChar() throws TaskIOException, IOException {
+    @EnabledOnOs(OS.WINDOWS)
+    public void testCreateBufferFileIllegalChar() throws TaskIOException {
         var file = new File(folder.toString(), "chuck?.pdf");
         FileTaskOutput out = new FileTaskOutput(file);
         File tmp = IOUtils.createTemporaryBuffer(out);
