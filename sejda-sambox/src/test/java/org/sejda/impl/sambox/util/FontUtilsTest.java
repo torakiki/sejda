@@ -37,7 +37,12 @@ import org.sejda.sambox.input.PDFParser;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
-import org.sejda.sambox.pdmodel.font.*;
+import org.sejda.sambox.pdmodel.font.FontMappers;
+import org.sejda.sambox.pdmodel.font.FontMapping;
+import org.sejda.sambox.pdmodel.font.PDCIDFontType2;
+import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 
 import java.awt.Color;
@@ -73,7 +78,7 @@ public class FontUtilsTest {
     private static PDFont HELVETICA = FontUtils.HELVETICA;
 
     @Test
-    public void testGetStandardType1Fontg() {
+    public void testGetStandardType1Font() {
         assertEquals(PDType1Font.COURIER, getStandardType1Font(StandardType1Font.CURIER));
         assertEquals(PDType1Font.COURIER_BOLD, getStandardType1Font(StandardType1Font.CURIER_BOLD));
         assertEquals(PDType1Font.COURIER_BOLD_OBLIQUE, getStandardType1Font(StandardType1Font.CURIER_BOLD_OBLIQUE));

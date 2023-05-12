@@ -309,7 +309,7 @@ public final class FontUtils {
                 }
             }
         } catch (IOException e) {
-            LOG.warn("An error occured while calculating the highest glyph bbox", e);
+            LOG.warn("An error occurred while calculating the highest glyph bbox", e);
         }
         return maxHeight;
     }
