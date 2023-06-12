@@ -55,10 +55,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -497,6 +494,10 @@ public class TaskTestContext implements Closeable {
     Throwable taskFailureCause = null;
     String failedSource;
     List<String> taskWarnings = new ArrayList<>();
+    
+    public List<String> getTaskWarnings() {
+        return Collections.unmodifiableList(taskWarnings);
+    }
 
     private TestListenerFactory.TestListenerStart startListener = TestListenerFactory.newStartListener();
 
