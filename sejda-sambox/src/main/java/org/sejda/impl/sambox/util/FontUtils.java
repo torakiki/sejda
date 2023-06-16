@@ -20,25 +20,20 @@ package org.sejda.impl.sambox.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
+import org.sejda.commons.util.IOUtils;
 import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
 import org.sejda.model.pdf.font.FontResource;
 import org.sejda.model.pdf.font.Type0FontsProvider;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.font.FontMappers;
-import org.sejda.sambox.pdmodel.font.FontMapping;
-import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
-import org.sejda.sambox.pdmodel.font.PDSimpleFont;
-import org.sejda.sambox.pdmodel.font.PDType0Font;
-import org.sejda.sambox.pdmodel.font.PDType1Font;
-import org.sejda.sambox.pdmodel.font.PDType3CharProc;
-import org.sejda.sambox.pdmodel.font.PDType3Font;
-import org.sejda.sambox.pdmodel.font.PDVectorFont;
+import org.sejda.sambox.pdmodel.font.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +41,7 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.isNull;
@@ -254,6 +239,15 @@ public final class FontUtils {
         try {
             // remove all whitespace characters and check only if those can be written using the font
             byte[] encoded = font.encode(text);
+            int[] cid2gid = null;
+            
+            if(font instanceof PDType0Font type0Font) {
+                try {
+                    cid2gid = readCIDToGIDMap(type0Font.getDescendantFont());
+                } catch (Exception e){
+                    LOG.warn("Exception reading CIDToGIDMap: " + e.getMessage());
+                }
+            }
 
             if (font instanceof PDVectorFont vectorFont) {
                 InputStream in = new ByteArrayInputStream(encoded);
@@ -270,6 +264,10 @@ public final class FontUtils {
                     if (path == null || path.getBounds2D().getWidth() == 0) {
                         return false;
                     }
+                    
+                    if (cid2gid != null && code < cid2gid.length && cid2gid[code] == 0) {
+                        return false;
+                    }
                 }
             }
 
@@ -284,6 +282,32 @@ public final class FontUtils {
             // LOG.debug("Cannot display text with font", e);
         }
         return false;
+    }
+
+    private static int[] readCIDToGIDMap(PDCIDFont font) throws IOException
+    {
+        int[] cid2gid = null;
+        COSDictionary dict = font.getCOSObject();
+        COSBase map = dict.getDictionaryObject(COSName.CID_TO_GID_MAP);
+        if (map instanceof COSStream)
+        {
+            COSStream stream = (COSStream) map;
+
+            InputStream in = stream.getUnfilteredStream();
+            byte[] mapAsBytes = IOUtils.toByteArray(in);
+            IOUtils.closeQuietly(in);
+            
+            int numberOfInts = mapAsBytes.length / 2;
+            cid2gid = new int[numberOfInts];
+            int offset = 0;
+            for (int index = 0; index < numberOfInts; index++)
+            {
+                int gid = (mapAsBytes[offset] & 0xff) << 8 | mapAsBytes[offset + 1] & 0xff;
+                cid2gid[index] = gid;
+                offset += 2;
+            }
+        }
+        return cid2gid;
     }
 
     public static double calculateBBoxHeight(String text, PDFont font) {

@@ -400,4 +400,18 @@ public class FontUtilsTest {
         assertThat(FontUtils.canDisplaySpace(font), is(false));
         assertThat(FontUtils.areEncodeDecodeSame(font, "9999"), is(false));
     }
+
+    @Test
+    public void subsetFont() throws TaskIOException, IOException {
+        PDDocument doc = getTestDoc("pdf/sample_docusign_doc.pdf");
+
+        PDResources res = doc.getPage(0).getResources();
+        PDFormXObject form = (PDFormXObject) res.getXObject(COSName.getPDFName("X1"));
+        PDResources formRes = form.getResources();
+        PDFont font = formRes.getFont(COSName.getPDFName("Tall_F"));
+        assertThat(font.getName(), is("TCATHG+ArialMT"));
+
+        assertThat(FontUtils.canDisplay("XYZ", font), is(false));
+        assertThat(FontUtils.canDisplay("123", font), is(true));
+    }
 }
