@@ -165,6 +165,8 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
 
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
+        Date now = new Date();
+        
         execute(parameters);
 
         testContext.assertTaskCompleted();
@@ -183,7 +185,7 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 // exact second might be different
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
                 dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String nowUptoMinute = dateFormat.format(new Date());
+                String nowUptoMinute = dateFormat.format(now);
 
                 assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
 
