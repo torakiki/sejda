@@ -33,6 +33,7 @@ import org.sejda.sambox.pdmodel.font.PDFont;
 import org.sejda.sambox.pdmodel.graphics.color.PDColor;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
+import org.sejda.sambox.util.BidiUtils;
 import org.sejda.sambox.util.Matrix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,8 @@ public class PageTextWriter {
 
         try {
             String label = StringUtils.normalizeWhitespace(rawLabel);
+            label = BidiUtils.visualToLogical(org.sejda.core.support.util.StringUtils.shapeArabicIf(label));
+            
             List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
             float stringWidth = 0.0f;
             for (TextWithFont stringAndFont : resolvedStringsToFonts) {
@@ -109,6 +112,7 @@ public class PageTextWriter {
             RenderingMode renderingMode, boolean fauxItalic) throws TaskIOException {
 
         String label = StringUtils.normalizeWhitespace(rawLabel);
+        label = org.sejda.core.support.util.StringUtils.shapeArabicIf(label);
 
         List<TextWithFont> resolvedStringsToFonts = FontUtils.resolveFonts(label, font, document);
         int offset = 0;

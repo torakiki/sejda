@@ -26,6 +26,8 @@ import org.sejda.impl.sambox.component.PageTextWriter;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.impl.sambox.component.TextWithFont;
 import org.sejda.io.SeekableSources;
+import org.sejda.model.HorizontalAlign;
+import org.sejda.model.VerticalAlign;
 import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -178,16 +180,31 @@ public class FontUtilsTest {
         for (String str : strings) {
             PDDocument doc = new PDDocument();
             PDPage page = new PDPage();
-            new PageTextWriter(doc).write(page, new Point(10, 10), str,
-                    getStandardType1Font(StandardType1Font.HELVETICA), 10.0d, Color.BLACK);
+            
+            PDFont font = getStandardType1Font(StandardType1Font.HELVETICA); 
+            
+            // position
+            new PageTextWriter(doc).write(page, new Point(10, 10), str, font, 10.0d, Color.BLACK);
+            
+            // footer
+            new PageTextWriter(doc).write(page, HorizontalAlign.LEFT, VerticalAlign.TOP, str, font, 10.0d, Color.BLACK);
+            
             doc.addPage(page);
+            
             try (PDDocumentHandler handler = new PDDocumentHandler(doc)) {
                 File tmp = IOUtils.createTemporaryBuffer();
                 handler.savePDDocument(tmp, NoEncryptionAtRest.INSTANCE);
 
                 PDDocument doc2 = PDFParser.parse(SeekableSources.seekableSourceFrom(tmp));
+                
+                // position
                 String text = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),
-                        new Rectangle(0, 0, 1000, 1000));
+                        new Rectangle(0, 0, 1000, 200));
+                assertEquals(noWhitespace(str), noWhitespace(text));
+                
+                // footer
+                String text2 = new PdfTextExtractorByArea().extractTextFromArea(doc2.getPage(0),
+                        new Rectangle(200, 0, 1000, 1000));
                 assertEquals(noWhitespace(str), noWhitespace(text));
             }
         }

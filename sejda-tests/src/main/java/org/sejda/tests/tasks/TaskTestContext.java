@@ -629,6 +629,11 @@ public class TaskTestContext implements Closeable {
         return fileOutput;
     }
 
+    public void assertSimilar(String filename, String resourcePath) throws IOException {
+        //debug(FilenameUtils.getName(resourcePath));
+        this.forPdfOutput(filename, actual -> new PixelCompareUtils().assertSimilar(actual, resourcePath));
+    }
+
     public void assertSimilar(String resourcePath) {
         //debug(FilenameUtils.getName(resourcePath));
         this.forPdfOutput(actual -> new PixelCompareUtils().assertSimilar(actual, resourcePath));
@@ -637,6 +642,11 @@ public class TaskTestContext implements Closeable {
     public void assertSimilar(String resourcePath, double similarityThreshold) {
         //debug(FilenameUtils.getName(resourcePath));
         this.forPdfOutput(actual -> new PixelCompareUtils(similarityThreshold).assertSimilar(actual, resourcePath));
+    }
+
+    public void assertSimilar(String filename, String resourcePath, double similarityThreshold) throws IOException {
+        //debug(FilenameUtils.getName(resourcePath));
+        this.forPdfOutput(filename, actual -> new PixelCompareUtils(similarityThreshold).assertSimilar(actual, resourcePath));
     }
 
     public void debug(String filename) {

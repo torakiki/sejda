@@ -344,6 +344,7 @@
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.19</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
+		<icu4j.version>71.1</icu4j.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -401,6 +402,11 @@
 				<groupId>org.glassfish</groupId>
 				<artifactId>jakarta.el</artifactId>
 				<version>${jakarta-el.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ibm.icu</groupId>
+				<artifactId>icu4j</artifactId>
+				<version>${icu4j.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -560,50 +560,57 @@ public final class FontUtils {
 
         // we want to keep the insertion order
         List<TextWithFont> result = new ArrayList<>();
-        Iterator<Integer> codePointIterator = visualToLogical(label).codePoints().iterator();
-        while (codePointIterator.hasNext()) {
-            int codePoint = codePointIterator.next();
+        
+        // splitting text into words breaks arabic cursive writing
+        if (org.sejda.core.support.util.StringUtils.isRtl(label)) {
+            PDFont f = fontOrFallback(label, font, document);
+            result.add(new TextWithFont(label, f));
+        } else {
+            Iterator<Integer> codePointIterator = label.codePoints().iterator();
+            while (codePointIterator.hasNext()) {
+                int codePoint = codePointIterator.next();
 
-            String s = new String(Character.toChars(codePoint));
+                String s = new String(Character.toChars(codePoint));
 
-            PDFont f = fontOrFallback(s, font, document);
-            if (s.equals(" ")) {
-                // we want space to be a separate text item
-                // because some fonts are missing the space glyph
-                // so we'll handle it separate from the other chars
+                PDFont f = fontOrFallback(s, font, document);
+                if (s.equals(" ")) {
+                    // we want space to be a separate text item
+                    // because some fonts are missing the space glyph
+                    // so we'll handle it separate from the other chars
 
-                // some fonts don't have glyphs for space.
-                // figure out if that's the case and switch to a standard font as fallback
-                if (!FontUtils.canDisplaySpace(f)) {
-                    f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
-                }
+                    // some fonts don't have glyphs for space.
+                    // figure out if that's the case and switch to a standard font as fallback
+                    if (!FontUtils.canDisplaySpace(f)) {
+                        f = FontUtils.getStandardType1Font(StandardType1Font.HELVETICA);
+                    }
 
-                if (f != currentFont) {
-                    // end current string, before space
+                    if (f != currentFont) {
+                        // end current string, before space
+                        if (currentString.length() > 0) {
+                            result.add(new TextWithFont(currentString.toString(), currentFont));
+                        }
+
+                        // add space
+                        result.add(new TextWithFont(" ", f));
+                        currentString = new StringBuilder();
+                        currentFont = f;
+                    } else {
+                        currentString.append(s);
+                    }
+                } else if (currentFont == f) {
+                    currentString.append(s);
+                } else {
                     if (currentString.length() > 0) {
                         result.add(new TextWithFont(currentString.toString(), currentFont));
                     }
 
-                    // add space
-                    result.add(new TextWithFont(" ", f));
-                    currentString = new StringBuilder();
+                    currentString = new StringBuilder(s);
                     currentFont = f;
-                } else {
-                    currentString.append(s);
                 }
-            } else if (currentFont == f) {
-                currentString.append(s);
-            } else {
-                if (currentString.length() > 0) {
-                    result.add(new TextWithFont(currentString.toString(), currentFont));
-                }
-
-                currentString = new StringBuilder(s);
-                currentFont = f;
             }
-        }
 
-        result.add(new TextWithFont(currentString.toString(), currentFont));
+            result.add(new TextWithFont(currentString.toString(), currentFont));            
+        }
 
         for (TextWithFont each : result) {
             LOG.trace("Will write '{}' with {}", each.getText(), each.getFont());
@@ -618,6 +625,12 @@ public final class FontUtils {
     public static List<String> resolveTextFragments(String input, PDFont font) {
         List<String> result = new ArrayList<>();
         List<Integer> current = new ArrayList<>();
+
+        // splitting text breaks arabic cursive writing
+        if(org.sejda.core.support.util.StringUtils.isRtl(input)) {
+            result.add(input);
+            return result;
+        }
         
         for(int codePoint: input.codePoints().toArray()){
             try {

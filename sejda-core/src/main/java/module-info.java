@@ -39,6 +39,7 @@ module org.sejda.core {
     requires org.apache.commons.lang3;
     requires org.sejda.commons;
     requires org.slf4j;
+    requires com.ibm.icu;
 
     requires transitive jakarta.validation;
     requires transitive org.sejda.model;

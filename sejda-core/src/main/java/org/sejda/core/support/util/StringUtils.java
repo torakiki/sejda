@@ -18,13 +18,9 @@ package org.sejda.core.support.util;
 
 import java.text.Normalizer;
 
-import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT;
-import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING;
-import static java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE;
-import static java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT;
-import static java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC;
-import static java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING;
-import static java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE;
+import com.ibm.icu.text.ArabicShaping;
+import com.ibm.icu.text.ArabicShapingException;
+import com.ibm.icu.text.Bidi;
 
 public final class StringUtils {
     private StringUtils() {
@@ -43,27 +39,28 @@ public final class StringUtils {
             return false;
         }
 
-        for (int i = 0, n = string.length(); i < n; ++i) {
-            byte d = Character.getDirectionality(string.charAt(i));
-
-            switch (d) {
-            case DIRECTIONALITY_RIGHT_TO_LEFT:
-            case DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC:
-            case DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING:
-            case DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE:
-                return true;
-
-            case DIRECTIONALITY_LEFT_TO_RIGHT:
-            case DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING:
-            case DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE:
-                return false;
-            }
-        }
-
-        return false;
+        java.text.Bidi bidi = new java.text.Bidi(string, java.text.Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+        return bidi.isMixed() || bidi.isRightToLeft();
     }
     
     public static boolean equalsNormalized(String s1, String s2) {
         return Normalizer.normalize(s1, Normalizer.Form.NFKC).equals(Normalizer.normalize(s2, Normalizer.Form.NFKC));
+    }
+
+    public static String shapeArabicIf(String s) {
+        if(isRtl(s)){
+            return shapeArabic(s);
+        }
+        
+        return s;
+    }
+    public static String shapeArabic(String s) {
+        try {
+            Bidi bidi = new Bidi((new ArabicShaping(ArabicShaping.LETTERS_SHAPE)).shape(s), 127);
+            bidi.setReorderingMode(0);
+            return bidi.writeReordered(2);
+        } catch (ArabicShapingException ex) {
+            return s;
+        }
     }
 }

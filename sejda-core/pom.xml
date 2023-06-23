@@ -79,6 +79,10 @@
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+        </dependency>
         <!-- exclude this in your POM if your validation is turned off in your configuration or your validation is configured to not use EL based message interpolation
         https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/#non-el-message-interpolator-->
         <dependency>
