@@ -142,9 +142,11 @@ public final class IOUtils {
         for (int counter = 0; counter < TEMP_DIR_ATTEMPTS; counter++) {
             File tempDir = new File(baseDir, baseName + counter);
             if (tempDir.mkdir()) {
+                tempDir.deleteOnExit();
                 return tempDir;
             }
         }
+        
         throw new IllegalStateException(
                 "Failed to create directory within " + TEMP_DIR_ATTEMPTS + " attempts (tried " + baseName + "0 to "
                         + baseName + (TEMP_DIR_ATTEMPTS - 1) + ')');
