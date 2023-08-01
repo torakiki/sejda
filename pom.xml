@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>sejda</name>
 	<version>5.0.6-SNAPSHOT</version>
-	<description>An extendible and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
+	<description>An extendable and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
 		<name>sejda</name>
@@ -247,7 +247,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -326,23 +326,23 @@
 
 	<properties>
 		<sejda.commons.version>2.0.0</sejda.commons.version>
-		<junit.version>5.9.3</junit.version>
+		<junit.version>5.10.0</junit.version>
 		<slf4j.version>2.0.7</slf4j.version>
 		<commons.lang.version>3.12.0</commons.lang.version>
 		<commons.io.version>2.11.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
-		<mockito.version>5.3.1</mockito.version>
+		<mockito.version>5.4.0</mockito.version>
 		<logback.version>1.4.8</logback.version>
 		<archunit.version>1.0.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
-		<sambox.version>3.0.1</sambox.version>
+		<sambox.version>3.0.3</sambox.version>
 		<sejda.io.version>3.0.1</sejda.io.version>
-		<bouncycastle.version>1.73</bouncycastle.version>
+		<bouncycastle.version>1.76</bouncycastle.version>
 		<twelvemonkeys.version>3.9.4</twelvemonkeys.version>
 		<metadata-extractor.version>2.18.0</metadata-extractor.version>
-		<thumbnailator.version>0.4.19</thumbnailator.version>
+		<thumbnailator.version>0.4.20</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
 		<icu4j.version>71.1</icu4j.version>
 		<!-- so that build is not platform dependent via encoding -->
