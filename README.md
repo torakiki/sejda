@@ -1,6 +1,6 @@
 Sejda SDK (https://www.sejda.org)
 =====
-[![Build Status](https://travis-ci.org/torakiki/sejda.png)](https://travis-ci.org/torakiki/sejda)
+![Build Status](https://github.com/torakiki/sejda/actions/workflows/maven.yml/badge.svg)
 [![License](https://img.shields.io/badge/license-AGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0.html)
 
 Sejda SDK is a task oriented PDF editor SDK library written in Java.
