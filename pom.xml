@@ -328,12 +328,12 @@
 		<sejda.commons.version>2.0.0</sejda.commons.version>
 		<junit.version>5.10.0</junit.version>
 		<slf4j.version>2.0.7</slf4j.version>
-		<commons.lang.version>3.12.0</commons.lang.version>
-		<commons.io.version>2.11.0</commons.io.version>
+		<commons.lang.version>3.13.0</commons.lang.version>
+		<commons.io.version>2.13.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>5.4.0</mockito.version>
-		<logback.version>1.4.8</logback.version>
-		<archunit.version>1.0.1</archunit.version>
+		<logback.version>1.4.11</logback.version>
+		<archunit.version>1.1.0</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
