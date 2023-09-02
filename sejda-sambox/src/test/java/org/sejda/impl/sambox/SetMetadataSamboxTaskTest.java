@@ -182,12 +182,7 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
                 assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
 
-                // exact second might be different
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-                String nowUptoMinute = dateFormat.format(now);
-
-                assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
+                assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

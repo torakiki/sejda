@@ -226,9 +226,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
             // TODO: update title, description
 
-            Calendar nowCalendar = Calendar.getInstance();
-            nowCalendar.setTime(new Date());
-            setDate("//*[name()='xmp:MetadataDate']", document, nowCalendar);
+            Calendar metadataDate = metadata.getModificationDate();
+            setDate("//*[name()='xmp:MetadataDate']", document, metadataDate);
 
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
