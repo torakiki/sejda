@@ -184,7 +184,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         }
     }
     
-    private void createOrUpdateDateNode(String tagName, Document document, Calendar calendar) throws XPathExpressionException {
+    private void updateDateNode(String tagName, Document document, Calendar calendar) throws XPathExpressionException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -192,10 +192,10 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         if(calendar != null) {
             value = dateFormat.format(calendar.getTime());
         }
-        createOrUpdateTextNode(tagName, document, value);
+        updateTextNode(tagName, document, value);
     }
     
-    private void createOrUpdateTextNode(String tagName, Document document, String value) throws XPathExpressionException {
+    private void updateTextNode(String tagName, Document document, String value) throws XPathExpressionException {
         XPath xPath = newXPathFactory().newXPath();
         Node node = (Node) xPath.compile("//*[name()='" + tagName + "']").evaluate(document, XPathConstants.NODE);
         if(value == null) {
@@ -204,15 +204,6 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
         if(node != null) {
             node.setTextContent(value);
-        } else {
-            Node parent = (Node) xPath.compile("//*[name()='rdf:Description']").evaluate(document, XPathConstants.NODE);
-            if(parent != null) {
-                node = document.createElement(tagName);
-                node.setTextContent(value);
-                parent.appendChild(node);
-            } else {
-                throw new RuntimeException("Could not add or update node: " + tagName);
-            }
         }
     }
 
@@ -277,17 +268,17 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
             deleteAttr("//*[@MetadataDate]", "xmp:MetadataDate", document);
             
             // update metadata
-            createOrUpdateDateNode("xmp:CreateDate", document, metadata.getCreationDate());
-            createOrUpdateDateNode("xmp:ModifyDate", document, metadata.getModificationDate());
+            updateDateNode("xmp:CreateDate", document, metadata.getCreationDate());
+            updateDateNode("xmp:ModifyDate", document, metadata.getModificationDate());
 
-            createOrUpdateTextNode("pdf:Producer", document, metadata.getProducer());
-            createOrUpdateTextNode("xmp:CreatorTool", document, metadata.getCreator());
-            createOrUpdateTextNode("pdf:Keywords", document, metadata.getKeywords());
+            updateTextNode("pdf:Producer", document, metadata.getProducer());
+            updateTextNode("xmp:CreatorTool", document, metadata.getCreator());
+            updateTextNode("pdf:Keywords", document, metadata.getKeywords());
 
             // TODO: update title, description
 
             Calendar metadataDate = metadata.getModificationDate();
-            createOrUpdateDateNode("xmp:MetadataDate", document, metadataDate);
+            updateDateNode("xmp:MetadataDate", document, metadataDate);
 
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();

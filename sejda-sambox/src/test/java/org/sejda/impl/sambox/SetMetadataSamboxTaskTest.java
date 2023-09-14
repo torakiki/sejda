@@ -185,6 +185,10 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         assertEquals(expected, getNodeValue(xmlDoc, "//*[name()='" + nodeName +"']"));
     }
 
+    private void assertNullNode(Document xmlDoc, String nodeName) throws XPathExpressionException {
+        assertNull(getNodeValue(xmlDoc, "//*[name()='" + nodeName +"']"));
+    }
+
     @Test
     public void updatedXmpMetadata() throws IOException {
         setUpParams(stronglyEncryptedInput());
@@ -235,6 +239,7 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 DocumentBuilder b = f.newDocumentBuilder();
                 Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
 
+                // existing attributes are removed
                 assertNullAttrValue(xmlDoc, "xmp:CreateDate");
                 assertNullAttrValue(xmlDoc, "xmp:ModifyDate");
 
@@ -244,13 +249,14 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
 
                 assertNullAttrValue(xmlDoc, "xmp:MetadataDate");
 
-                assertNodeEquals("2015-08-14T07:03:48+0000", xmlDoc, "xmp:CreateDate");
-                assertNodeEquals("2017-08-14T07:03:48+0000", xmlDoc, "xmp:ModifyDate");
-                assertNodeEquals("test_keywords", xmlDoc, "pdf:Keywords");
-                assertNodeEquals("test_producer", xmlDoc, "pdf:Producer");
-                assertNodeEquals("test_creator", xmlDoc, "xmp:CreatorTool");
+                // new node values are not created
+                assertNullNode(xmlDoc, "xmp:CreateDate");
+                assertNullNode(xmlDoc, "xmp:ModifyDate");
+                assertNullNode(xmlDoc, "pdf:Keywords");
+                assertNullNode(xmlDoc, "pdf:Producer");
+                assertNullNode(xmlDoc, "xmp:CreatorTool");
 
-                assertNodeEquals("2017-08-14T07:03:48+0000", xmlDoc, "xmp:MetadataDate");
+                assertNullNode(xmlDoc, "xmp:MetadataDate");
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
