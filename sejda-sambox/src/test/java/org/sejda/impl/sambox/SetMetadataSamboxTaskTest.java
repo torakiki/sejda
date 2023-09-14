@@ -40,19 +40,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.TimeZone;
-import java.util.function.Consumer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.sejda.tests.TestUtils.mediumInput;
-import static org.sejda.tests.TestUtils.shortInput;
-import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
+import static org.sejda.tests.TestUtils.*;
 
 /**
  * set metadata task test for the pdfbox implementation
@@ -156,6 +149,41 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
             return null;
         }
     }
+    
+    @Test
+    public void xmpMetadataInvalidXML() throws IOException {
+        setUpParams(customInput("pdf/xmp_metadata_invalid_xml.pdf"));
+        parameters.put(PdfMetadataFields.CREATOR, "test_creator");
+        parameters.put("Producer", "test_producer");
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertTaskWarning("Some metadata elements could not be updated");
+    }
+
+    private String getNodeAttrValue(Document xmlDoc, String attrName) throws XPathExpressionException {
+        String tagName = attrName.split(":")[1];
+        String path = "//*[@" + tagName + "]";
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        Node node = (Node) xPath.compile(path).evaluate(xmlDoc, XPathConstants.NODE);
+        if (node != null) {
+            return node.getAttributes().getNamedItem(attrName).getNodeValue();
+        } else {
+            return null;
+        }
+    }
+    
+    private void assertNullAttrValue(Document xmlDoc, String attrName) throws XPathExpressionException {
+        assertNull(getNodeAttrValue(xmlDoc, attrName));
+    }
+    
+    private void assertNodeEquals(String expected, Document xmlDoc, String nodeName) throws XPathExpressionException {
+        assertEquals(expected, getNodeValue(xmlDoc, "//*[name()='" + nodeName +"']"));
+    }
 
     @Test
     public void updatedXmpMetadata() throws IOException {
@@ -165,7 +193,6 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
 
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
-        Date now = new Date();
         
         execute(parameters);
 
@@ -189,6 +216,47 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
             }
         });
     }
+    
+    @Test
+    public void xmpMetadataMissingNamespaceAndWithAttributesInsteadofNodes() throws IOException {
+        setUpParams(customInput("pdf/xmp_metadata_missing_namespace.pdf"));
+        parameters.put(PdfMetadataFields.CREATOR, "test_creator");
+        parameters.put("Producer", "test_producer");
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+
+                assertNullAttrValue(xmlDoc, "xmp:CreateDate");
+                assertNullAttrValue(xmlDoc, "xmp:ModifyDate");
+
+                assertNullAttrValue(xmlDoc, "pdf:Keywords");
+                assertNullAttrValue(xmlDoc, "pdf:Producer");
+                assertNullAttrValue(xmlDoc, "xmp:CreatorTool");
+
+                assertNullAttrValue(xmlDoc, "xmp:MetadataDate");
+
+                assertNodeEquals("2015-08-14T07:03:48+0000", xmlDoc, "xmp:CreateDate");
+                assertNodeEquals("2017-08-14T07:03:48+0000", xmlDoc, "xmp:ModifyDate");
+                assertNodeEquals("test_keywords", xmlDoc, "pdf:Keywords");
+                assertNodeEquals("test_producer", xmlDoc, "pdf:Producer");
+                assertNodeEquals("test_creator", xmlDoc, "xmp:CreatorTool");
+
+                assertNodeEquals("2017-08-14T07:03:48+0000", xmlDoc, "xmp:MetadataDate");
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
     @Test
     public void updatedXmpMetadataRemoveFields() throws IOException {
@@ -206,8 +274,8 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 DocumentBuilder b = f.newDocumentBuilder();
                 Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
 
-                assertEquals("", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
-                assertEquals("", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                assertNodeEquals("", xmlDoc, "xmp:ModifyDate");
+                assertNodeEquals("", xmlDoc, "pdf:Producer");
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

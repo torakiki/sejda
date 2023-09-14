@@ -53,13 +53,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
@@ -139,7 +136,18 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
                     if (catalog.getMetadata() != null) {
                         LOG.debug("Document has XMP metadata stream");
-                        updateXmpMetadata(catalog, actualMeta);
+                        
+                        try {
+                            updateXmpMetadata(catalog, actualMeta);
+                        } catch (RuntimeException ex) {
+                            if(exceptionStackContains("Namespace for prefix 'xmp' has not been declared", ex)) {
+                                // try to fix the metadata and retry
+                                fixMissingXmpNamespace(catalog);
+                                updateXmpMetadata(catalog, actualMeta);
+                            } else {
+                                throw ex;
+                            }
+                        }
                     }
                 });
 
@@ -176,28 +184,69 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         }
     }
     
-    private void setDate(String path, Document document, Calendar calendar) throws XPathExpressionException {
+    private void createOrUpdateDateNode(String tagName, Document document, Calendar calendar) throws XPathExpressionException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        String value = "";
+        if(calendar != null) {
+            value = dateFormat.format(calendar.getTime());
+        }
+        createOrUpdateTextNode(tagName, document, value);
+    }
+    
+    private void createOrUpdateTextNode(String tagName, Document document, String value) throws XPathExpressionException {
+        XPath xPath = newXPathFactory().newXPath();
+        Node node = (Node) xPath.compile("//*[name()='" + tagName + "']").evaluate(document, XPathConstants.NODE);
+        if(value == null) {
+            value = "";
+        }
+
+        if(node != null) {
+            node.setTextContent(value);
+        } else {
+            Node parent = (Node) xPath.compile("//*[name()='rdf:Description']").evaluate(document, XPathConstants.NODE);
+            if(parent != null) {
+                node = document.createElement(tagName);
+                node.setTextContent(value);
+                parent.appendChild(node);
+            } else {
+                throw new RuntimeException("Could not add or update node: " + tagName);
+            }
+        }
+    }
+
+    private boolean exceptionStackContains(String msg, Throwable ex) {
+        if (ex != null && ex.getMessage() != null && ex.getMessage().contains(msg)){
+            return true;
+        }
+
+        if (ex != null && ex.getCause() != null) {
+            return exceptionStackContains(msg, ex.getCause());
+        }
+
+        return false;
+    }
+
+    private void deleteAttr(String path, String attrName, Document document) throws XPathExpressionException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         XPath xPath = newXPathFactory().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
         if(node != null) {
-            String value = "";
-            if(calendar != null) {
-                value = dateFormat.format(calendar.getTime());
-            }
-            node.setTextContent(value);
+            node.getAttributes().removeNamedItem(attrName);
         }
     }
+    
+    private void fixMissingXmpNamespace(PDDocumentCatalog catalog) throws IOException {
+        try(InputStream is = catalog.getMetadata().createInputStream()) {
+            String metadataAsString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            if (!metadataAsString.contains("xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"")) {
+                LOG.warn("Metadata seems to be missing xmlns:xmp namespace definition, adding it");
+                metadataAsString = metadataAsString.replaceAll("<rdf:Description", "<rdf:Description xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"");
 
-    private void setText(String path, Document document, String value) throws XPathExpressionException {
-        XPath xPath = newXPathFactory().newXPath();
-        Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
-        if(node != null) {
-            if(value == null) {
-                value = "";
-            }
-            node.setTextContent(value);
+                catalog.setMetadata(new PDMetadata(new ByteArrayInputStream(metadataAsString.getBytes(StandardCharsets.UTF_8))));
+            } 
         }
     }
     
@@ -217,17 +266,28 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
             DocumentBuilder b = f.newDocumentBuilder();
             Document document = b.parse(catalog.getMetadata().createInputStream());
 
-            setDate("//*[name()='xmp:CreateDate']", document, metadata.getCreationDate());
-            setDate("//*[name()='xmp:ModifyDate']", document, metadata.getModificationDate());
+            // handle scenario where these are attributes on the rdf:Description element, instead of nodes inside it
+            deleteAttr("//*[@CreateDate]", "xmp:CreateDate", document);
+            deleteAttr("//*[@ModifyDate]", "xmp:ModifyDate", document);
 
-            setText("//*[name()='pdf:Producer']", document, metadata.getProducer());
-            setText("//*[name()='xmp:CreatorTool']", document, metadata.getCreator());
-            setText("//*[name()='pdf:Keywords']", document, metadata.getKeywords());
+            deleteAttr("//*[@Producer]", "pdf:Producer", document);
+            deleteAttr("//*[@CreatorTool]", "xmp:CreatorTool", document);
+            deleteAttr("//*[@Keywords]", "pdf:Keywords", document);
+
+            deleteAttr("//*[@MetadataDate]", "xmp:MetadataDate", document);
+            
+            // update metadata
+            createOrUpdateDateNode("xmp:CreateDate", document, metadata.getCreationDate());
+            createOrUpdateDateNode("xmp:ModifyDate", document, metadata.getModificationDate());
+
+            createOrUpdateTextNode("pdf:Producer", document, metadata.getProducer());
+            createOrUpdateTextNode("xmp:CreatorTool", document, metadata.getCreator());
+            createOrUpdateTextNode("pdf:Keywords", document, metadata.getKeywords());
 
             // TODO: update title, description
 
             Calendar metadataDate = metadata.getModificationDate();
-            setDate("//*[name()='xmp:MetadataDate']", document, metadataDate);
+            createOrUpdateDateNode("xmp:MetadataDate", document, metadataDate);
 
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -245,9 +305,10 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
             String updatedXml = writer.getBuffer().toString();
             catalog.setMetadata(new PDMetadata(new ByteArrayInputStream(updatedXml.getBytes(StandardCharsets.UTF_8))));
-
+            
         } catch (SAXParseException ex) {
             LOG.warn("Failed to parse XMP metadata, skipping update", ex);
+            notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning("Some metadata elements could not be updated");
         } catch (Exception ex) {
             throw new RuntimeException("Failed to update XMP metadata", ex);    
         }
