@@ -171,10 +171,14 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(xmlDoc, XPathConstants.NODE);
         if (node != null) {
-            return node.getAttributes().getNamedItem(attrName).getNodeValue();
-        } else {
-            return null;
+            Node attr = node.getAttributes().getNamedItem(attrName);
+            if(attr != null){
+                return attr.getNodeValue();    
+            }
+            
         }
+
+        return null;
     }
     
     private void assertNullAttrValue(Document xmlDoc, String attrName) throws XPathExpressionException {

@@ -220,11 +220,9 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
 
     private void deleteAttr(String path, String attrName, Document document) throws XPathExpressionException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         XPath xPath = newXPathFactory().newXPath();
         Node node = (Node) xPath.compile(path).evaluate(document, XPathConstants.NODE);
-        if(node != null) {
+        if(node != null && node.getAttributes().getNamedItem(attrName) != null) {
             node.getAttributes().removeNamedItem(attrName);
         }
     }
