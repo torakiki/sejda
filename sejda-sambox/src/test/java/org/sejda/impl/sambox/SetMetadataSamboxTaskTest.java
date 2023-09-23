@@ -40,9 +40,13 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.sejda.tests.TestUtils.*;
@@ -202,6 +206,8 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);
         
+        Date now = new Date();
+        
         execute(parameters);
 
         testContext.assertTaskCompleted();
@@ -217,7 +223,12 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
                 assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
 
-                assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"));
+                // exact second might be different
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+                String nowUptoMinute = dateFormat.format(now);
+
+                assertThat(getNodeValue(xmlDoc, "//*[name()='xmp:MetadataDate']"), startsWith(nowUptoMinute));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

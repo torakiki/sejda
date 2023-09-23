@@ -57,6 +57,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
@@ -275,8 +276,9 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
 
             // TODO: update title, description
 
-            Calendar metadataDate = metadata.getModificationDate();
-            updateDateNode("xmp:MetadataDate", document, metadataDate);
+            Calendar nowCalendar = Calendar.getInstance();
+            nowCalendar.setTime(new Date());
+            updateDateNode("xmp:MetadataDate", document, nowCalendar);
 
             // write the DOM object to the file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
