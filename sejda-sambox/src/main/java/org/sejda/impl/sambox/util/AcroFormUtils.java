@@ -105,8 +105,9 @@ public final class AcroFormUtils {
      */
     public static void ensureValueCanBeDisplayed(PDVariableText field, PDDocument document) throws IOException {
         String value = field.getValueAsString();
-        if (!FontUtils.canDisplay(value, field.getAppearanceFont())) {
-            PDFont fallbackFont = FontUtils.findFontFor(document, value);
+        PDFont originalFont = field.getAppearanceFont();
+        if (!FontUtils.canDisplay(value, originalFont)) {
+            PDFont fallbackFont = FontUtils.findFontFor(document, value, false, originalFont);
             field.setAppearanceOverrideFont(fallbackFont);
             // we updated the field, let's generate a new appearance
             field.applyChange();

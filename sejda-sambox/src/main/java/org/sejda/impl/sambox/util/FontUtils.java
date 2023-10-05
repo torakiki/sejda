@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.fontbox.ttf.TrueTypeFont;
 import org.sejda.commons.util.IOUtils;
 import org.sejda.impl.sambox.component.TextWithFont;
+import org.sejda.impl.sambox.component.font.FallbackFontsProvider;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.UnsupportedTextException;
 import org.sejda.model.pdf.StandardType1Font;
@@ -43,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -94,6 +96,9 @@ public final class FontUtils {
                 .flatMap(p -> p.getFonts().stream()).sorted(Comparator.comparingInt(FontResource::priority))
                 .toArray(FontResource[]::new);
     }
+    
+    public static final List<FallbackFontsProvider> FALLBACK_FONTS_PROVIDERS = stream(ServiceLoader.load(FallbackFontsProvider.class).spliterator(), false)
+            .sorted(Comparator.comparingInt(FallbackFontsProvider::getPriority)).collect(Collectors.toList());
 
     /**
      * Mapping between Sejda and PDFBox standard type 1 fonts implementation
@@ -110,7 +115,7 @@ public final class FontUtils {
      */
     public static PDFont fontOrFallback(String text, PDFont font, PDDocument document) {
         if (!canDisplay(text, font)) {
-            PDFont fallback = findFontFor(document, text, isBold(font));
+            PDFont fallback = findFontFor(document, text, isBold(font), font);
             String fallbackName = fallback == null ? null : fallback.getName();
             LOG.debug("Text '{}' cannot be written with font {}, using fallback {}", text, font.getName(),
                     fallbackName);
@@ -159,7 +164,7 @@ public final class FontUtils {
     }
 
     public static PDFont findFontFor(PDDocument document, String text) {
-        return findFontFor(document, text, false);
+        return findFontFor(document, text, false, null);
     }
 
     /**
@@ -167,7 +172,16 @@ public final class FontUtils {
      * @param text
      * @return a font capable of displaying the given string or null
      */
-    public static PDFont findFontFor(PDDocument document, String text, boolean bold) {
+    public static PDFont findFontFor(PDDocument document, String text, boolean bold, PDFont originalFont) {
+        // ask the fallback font providers first
+        for(FallbackFontsProvider provider: FALLBACK_FONTS_PROVIDERS) {
+            PDFont fallback = provider.findFallbackFont(originalFont, document, text, bold);
+            if(fallback != null) {
+                LOG.debug("Found suitable font {} to display '{}', via provider {}", fallback.getName(), text, provider.getClass().getName());
+                return fallback;
+            }
+        }
+
         PDFont firstPartialMatch = null;
         for (FontResource font : TYPE0FONTS) {
             PDFont loaded = loadFont(document, font);

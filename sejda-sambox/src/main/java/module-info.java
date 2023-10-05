@@ -46,4 +46,5 @@ module org.sejda.impl.sambox {
     exports org.sejda.impl.sambox.util;
     
     uses org.sejda.model.pdf.font.Type0FontsProvider;
+    uses org.sejda.impl.sambox.component.font.FallbackFontsProvider;
 }

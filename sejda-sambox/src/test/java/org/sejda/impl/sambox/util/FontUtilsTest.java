@@ -100,7 +100,7 @@ public class FontUtilsTest {
 
     private PDFont findFontFor(String s) {
         try {
-            return FontUtils.findFontFor(new PDDocument(), s, false);
+            return FontUtils.findFontFor(new PDDocument(), s, false, null);
         } finally {
             FontUtils.clearLoadedFontCache();
         }
@@ -108,7 +108,7 @@ public class FontUtilsTest {
 
     private PDFont findBoldFontFor(String s) {
         try {
-            return FontUtils.findFontFor(new PDDocument(), s, true);
+            return FontUtils.findFontFor(new PDDocument(), s, true, null);
         } finally {
             FontUtils.clearLoadedFontCache();
         }
