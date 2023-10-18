@@ -145,6 +145,8 @@ public class FontUtilsTest {
         assertFindFontFor("ಕನ್ನಡ"); // kannada
         assertFindFontFor("ଓଡ଼ିଆ ଭାଷା"); // oryia
         assertFindFontFor("ކުންފުނި"); // thaana
+        assertFindFontFor("حبيبات"); // arabic
+        assertFindFontFor("صباح الخير!"); // arabic with latin
 
         // TODO: find a way to merge the armenian font into the big merged font with all others
         // so forms can be filled with latin/armenian mixed values
@@ -152,16 +154,44 @@ public class FontUtilsTest {
     }
     
     private void assertFindFontFor(String s) {
-        assertNotNull(findFontFor(s));
+        assertEquals(findFontFor(s).getName(), "NotoSans");
         assertNotNull(findBoldFontFor(s));
+    }
+    
+    private void assertFindBoldFontIsNotoSansBold(String s) {
+        assertThat("For text: " + s, findBoldFontFor(s).getName(), is("NotoSans-Bold"));
     }
 
     @Test
     public void testFindFontForBold() {
         // has bold version, bold is returned
-        assertThat(findBoldFontFor("latin ąćęłńóśźż").getName(), is("NotoSans-Bold"));
-        // has no bold version, regular is returned
-        assertThat(findBoldFontFor("עברית").getName(), is("NotoSans"));
+        assertFindBoldFontIsNotoSansBold("ทดสอบ"); // thai
+        assertFindBoldFontIsNotoSansBold("αυτό είναι ένα τεστ"); // greek
+        assertFindBoldFontIsNotoSansBold("വീട്"); // malayalam
+        assertFindBoldFontIsNotoSansBold("मानक"); // hindi
+        assertFindBoldFontIsNotoSansBold("జ"); // telugu
+        assertFindBoldFontIsNotoSansBold("উ"); // bengali
+        assertFindBoldFontIsNotoSansBold("עברית"); // hebrew
+        assertFindBoldFontIsNotoSansBold("latin ąćęłńóśźż"); // latin
+        //assertFindBoldFontIsNotoSansBold("\uFFFD \u2997"); // symbols
+        assertFindBoldFontIsNotoSansBold("Newlines\nare\r\nignored"); // newlines
+        //assertFindBoldFontIsNotoSansBold("\u2984 \u2583 \u2738 ☗⦄✸▃ "); // symbols
+        assertFindBoldFontIsNotoSansBold("ភាសាខ្មែរ"); // khmer
+        assertFindBoldFontIsNotoSansBold("ጩ"); // ethiopic
+        assertFindBoldFontIsNotoSansBold("پنجابی, ਪੰਜਾਬੀ"); // punjabi
+        assertFindBoldFontIsNotoSansBold("தமிழ்"); // tamil
+        assertFindBoldFontIsNotoSansBold("ગુજરાતી"); // gujarati
+        assertFindBoldFontIsNotoSansBold("န\u103Aမာဘာသာ"); // myanmar
+        assertFindBoldFontIsNotoSansBold("සිංහල"); // sinhalese
+        //assertFindBoldFontIsNotoSansBold("ᠮᠣᠩᠭᠣᠯ"); // mongolian
+        assertFindBoldFontIsNotoSansBold("ಕನ್ನಡ"); // kannada
+        assertFindBoldFontIsNotoSansBold("ଓଡ଼ିଆ ଭାଷା"); // oryia
+        assertFindBoldFontIsNotoSansBold("ކުންފުނި"); // thaana
+        assertFindBoldFontIsNotoSansBold("حبيبات"); // arabic
+
+        // TODO: find a way to merge the armenian font into the big merged font with all others
+        // so forms can be filled with latin/armenian mixed values
+        // assertFindBoldFontIsNotoSansBold("Latin mixed with հայերէն");
     }
 
     @Test
@@ -345,8 +375,8 @@ public class FontUtilsTest {
     @Test
     public void removingUnsupportedCharacters() {
         PDDocument doc = new PDDocument();
-        String str = FontUtils.removeUnsupportedCharacters("ͷ͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
-        assertThat(str, is("͵ Text here SǦͻǦʹͻ4 and here"));
+        String str = FontUtils.removeUnsupportedCharacters("ͷհայերէն͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
+        assertThat(str, is("ͷ͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here"));
     }
 
     @Test

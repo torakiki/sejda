@@ -22,6 +22,7 @@ import org.sejda.model.pdf.font.FontResource;
 
 public enum UnicodeType0Font implements FontResource {
     NOTO_SANS_MERGED_REGULAR("/fonts/sans/NotoSansMerged-Regular.ttf"),
+    NOTO_SANS_MERGED_BOLD("/fonts/sans/NotoSansMerged-Bold.ttf"),
     NOTO_SANS_BOLD("/fonts/sans/NotoSans-Bold.ttf");
 
     private final String resource;
