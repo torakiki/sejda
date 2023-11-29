@@ -332,7 +332,7 @@
 		<commons.io.version>2.13.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>5.6.0</mockito.version>
-		<logback.version>1.4.11</logback.version>
+		<logback.version>1.4.12</logback.version>
 		<archunit.version>1.1.0</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
