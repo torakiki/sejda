@@ -30,16 +30,13 @@ import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionJavaScript;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationText;
+import org.sejda.sambox.pdmodel.interactive.annotation.*;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
+import org.sejda.sambox.pdmodel.interactive.form.PDAcroForm;
+import org.sejda.sambox.pdmodel.interactive.form.PDField;
+import org.sejda.sambox.pdmodel.interactive.form.PDTextField;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -138,6 +135,8 @@ public class AnnotationsDistillerTest {
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
         LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+
+        // TODO: review this test; the annotation should be present in the merged result, even if /P is inconsistent
         assertEquals(0, newPage.getAnnotations().size());
         assertTrue(annotationsLookup.isEmpty());
     }
@@ -154,6 +153,8 @@ public class AnnotationsDistillerTest {
         PDDocument doc = new PDDocument();
         doc.addPage(oldPage);
         LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+
+        // TODO: review this test; the fist annotation should be present in the merged result, even if /P is inconsistent
         assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
     }
 
@@ -397,5 +398,23 @@ public class AnnotationsDistillerTest {
         new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
         assertEquals(oldPage.getAnnotations().size(), newPage.getAnnotations().size());
         assertEquals(secondOld.getAnnotations().size(), secondNew.getAnnotations().size());
+    }
+
+    @Test
+    public void dontRemoveFormFieldsWhenMergingIfWidgetPageDifferentThanActualDisplayPage() {
+        PDDocument doc = new PDDocument();
+        PDAcroForm form = new PDAcroForm(doc);
+        PDField field = new PDTextField(form);
+        field.setPartialName("first_name");
+        PDAnnotationWidget annotation = new PDAnnotationWidget(field.getCOSObject());
+        // widget page is different than the actual parent page (where the widget is displayed)
+        annotation.setPage(new PDPage());
+        List<PDAnnotation> annotations = List.of(annotation);
+        oldPage.setAnnotations(annotations);
+
+        doc.addPage(oldPage);
+        LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
+        assertFalse(annotationsLookup.isEmpty());
+        assertEquals(1, newPage.getAnnotations().size());
     }
 }

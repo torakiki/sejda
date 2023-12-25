@@ -1031,6 +1031,24 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void missingFormFields() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        
+        parameters.addInput(new PdfMergeInput(customInput("pdf/sample_form_invalid_widget_page.pdf")));
+        parameters.addInput(new PdfMergeInput(regularInput()));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertNoTaskWarnings();
+        testContext.forEachPdfOutput(doc -> assertEquals(1, doc.getPage(0).getAnnotations().size()));
+    }
+
+    @Test
     public void withLargeTocItemsThatWrapAndGenerateMultipleTocPages() throws IOException {
         List<String> entries = new ArrayList<>();
         for (int i = 1; i <= 26; i++) {

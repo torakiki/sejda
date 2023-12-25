@@ -32,10 +32,7 @@ import org.sejda.commons.LookupTable;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
-import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
+import org.sejda.sambox.pdmodel.interactive.annotation.*;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.slf4j.Logger;
@@ -80,6 +77,16 @@ public final class AnnotationsDistiller {
                     if (nonNull(mapped)) {
                         keptAnnotations.add(mapped);
                     } else {
+                        // handle the scenario where the annotation page != actual render page
+                        // TODO: for safety, applying this only to form widgets for now
+                        if(annotation instanceof PDAnnotationWidget) {
+                            PDPage annotationPage = annotation.getPage();
+                            if (annotationPage != null && !annotationPage.equals(page)) {
+                                // inconsistent annotation, this creates problems
+                                annotation.setPage(page);
+                            }
+                        }
+                        
                         if (annotation instanceof PDAnnotationLink) {
                             processLinkAnnotation(relevantPages, keptAnnotations, (PDAnnotationLink) annotation);
                         } else {
