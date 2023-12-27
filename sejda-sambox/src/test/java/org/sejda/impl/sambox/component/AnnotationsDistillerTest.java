@@ -136,9 +136,8 @@ public class AnnotationsDistillerTest {
         doc.addPage(oldPage);
         LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
 
-        // TODO: review this test; the annotation should be present in the merged result, even if /P is inconsistent
-        assertEquals(0, newPage.getAnnotations().size());
-        assertTrue(annotationsLookup.isEmpty());
+        assertEquals(1, newPage.getAnnotations().size());
+        assertFalse(annotationsLookup.isEmpty());
     }
 
     @Test
@@ -154,8 +153,8 @@ public class AnnotationsDistillerTest {
         doc.addPage(oldPage);
         LookupTable<PDAnnotation> annotationsLookup = new AnnotationsDistiller(doc).retainRelevantAnnotations(lookup);
 
-        // TODO: review this test; the fist annotation should be present in the merged result, even if /P is inconsistent
-        assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(0));
+        assertEquals(annotationsLookup.lookup(annotation), newPage.getAnnotations().get(0));
+        assertEquals(annotationsLookup.lookup(annotation2), newPage.getAnnotations().get(1));
     }
 
     @Test

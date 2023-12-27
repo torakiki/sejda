@@ -78,19 +78,21 @@ public final class AnnotationsDistiller {
                         keptAnnotations.add(mapped);
                     } else {
                         // handle the scenario where the annotation page != actual render page
-                        // TODO: for safety, applying this only to form widgets for now
-                        if(annotation instanceof PDAnnotationWidget) {
-                            PDPage annotationPage = annotation.getPage();
-                            if (annotationPage != null && !annotationPage.equals(page)) {
-                                // inconsistent annotation, this creates problems
+                        PDPage annotationPage = annotation.getPage();
+                        if (annotationPage != null && !annotationPage.equals(page)) {
+                            // inconsistent annotation, this creates problems; let's fix it
+                            if(COSName.SCREEN.equals(annotation.getSubtype())) {
                                 annotation.setPage(page);
+                            } else {
+                                annotation.setPage(null);
                             }
                         }
                         
+                        
                         if (annotation instanceof PDAnnotationLink) {
-                            processLinkAnnotation(relevantPages, keptAnnotations, (PDAnnotationLink) annotation);
+                            processLinkAnnotation(relevantPages, keptAnnotations, (PDAnnotationLink) annotation, page);
                         } else {
-                            processNonLinkAnnotation(relevantPages, keptAnnotations, annotation);
+                            processNonLinkAnnotation(relevantPages, keptAnnotations, annotation, page);
                         }
                     }
                 }
@@ -103,13 +105,13 @@ public final class AnnotationsDistiller {
     }
 
     private void processLinkAnnotation(LookupTable<PDPage> relevantPages, Set<PDAnnotation> keptAnnotations,
-            PDAnnotationLink annotation) throws IOException {
+            PDAnnotationLink annotation, PDPage p) throws IOException {
         PDPageDestination destination = getDestinationFrom(annotation);
         if (nonNull(destination)) {
             PDPage destPage = relevantPages.lookup(destination.getPage());
             if (nonNull(destPage)) {
                 // relevant page dest
-                PDAnnotationLink duplicate = (PDAnnotationLink) duplicate(annotation, relevantPages);
+                PDAnnotationLink duplicate = (PDAnnotationLink) duplicate(annotation, p, relevantPages);
                 duplicate.getCOSObject().removeItem(COSName.A);
                 PDPageDestination newDestination = (PDPageDestination) PDDestination
                         .create(destination.getCOSObject().duplicate());
@@ -121,15 +123,14 @@ public final class AnnotationsDistiller {
             }
         } else {
             // not a page dest
-            keptAnnotations.add(duplicate(annotation, relevantPages));
+            keptAnnotations.add(duplicate(annotation, p, relevantPages));
         }
     }
 
     private void processNonLinkAnnotation(LookupTable<PDPage> relevantPages, Set<PDAnnotation> keptAnnotations,
-            PDAnnotation annotation) {
-        PDPage p = annotation.getPage();
+            PDAnnotation annotation, PDPage p) {
         if (isNull(p) || relevantPages.hasLookupFor(p)) {
-            PDAnnotation duplicate = duplicate(annotation, relevantPages);
+            PDAnnotation duplicate = duplicate(annotation, p, relevantPages);
             if (duplicate instanceof PDAnnotationMarkup) {
                 PDAnnotationPopup popup = ((PDAnnotationMarkup) duplicate).getPopup();
                 if (nonNull(popup)) {
@@ -137,7 +138,7 @@ public final class AnnotationsDistiller {
                     if (COSName.POPUP.equals(subtype)) {
                         PDAnnotationPopup popupDuplicate = ofNullable(
                                 (PDAnnotationPopup) annotationsLookup.lookup(popup))
-                                        .orElseGet(() -> (PDAnnotationPopup) duplicate(popup, relevantPages));
+                                        .orElseGet(() -> (PDAnnotationPopup) duplicate(popup, p, relevantPages));
                         ((PDAnnotationMarkup) duplicate).setPopup(popupDuplicate);
                         if (nonNull(popupDuplicate.getParent())) {
                             popupDuplicate.setParent((PDAnnotationMarkup) duplicate);
@@ -154,8 +155,7 @@ public final class AnnotationsDistiller {
         }
     }
 
-    private PDAnnotation duplicate(PDAnnotation annotation, LookupTable<PDPage> relevantPages) {
-        PDPage p = annotation.getPage();
+    private PDAnnotation duplicate(PDAnnotation annotation, PDPage p, LookupTable<PDPage> relevantPages) {
         PDAnnotation duplicate = PDAnnotation.createAnnotation(annotation.getCOSObject().duplicate());
         if (nonNull(p)) {
             duplicate.setPage(relevantPages.lookup(p));
