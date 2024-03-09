@@ -124,6 +124,7 @@ public class MultiplePdfSourceMultipleOutputParameters extends MultiplePdfSource
                         }
                         return n;
                     })
+                    .map(IOUtils::shortenFilename)
                     .orElse(null);
         }
         return null;

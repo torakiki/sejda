@@ -19,6 +19,7 @@
  */
 package org.sejda.impl.sambox;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
@@ -236,6 +237,24 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
         testContext.assertOutputContainsFilenames("pathtosomewhere.pdf", "`&aaa.pdf", "3_medium-test-file.pdf");
+    }
+
+    @Test
+    public void specificResultFilenames_tooLong() throws IOException {
+        setUpParameters();
+        parameters.addSource(mediumInput());
+        parameters.addPage(1);
+        parameters.addPage(2);
+
+        String longfilename = StringUtils.repeat("abcde012345", 200) + ".pdf";
+        parameters.addSpecificResultFilename(longfilename);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(3);
+        testContext.assertOutputContainsFilenames("abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde0123.pdf", 
+                "2_medium-test-file.pdf", "3_medium-test-file.pdf");
     }
 
     @Test
