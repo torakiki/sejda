@@ -36,6 +36,8 @@ import java.io.IOException;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.sejda.tests.TestUtils.customInput;
@@ -253,8 +255,14 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
 
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
-        testContext.assertOutputContainsFilenames("abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde0123.pdf", 
-                "2_medium-test-file.pdf", "3_medium-test-file.pdf");
+
+        if (IS_OS_WINDOWS || IS_OS_MAC) {
+            testContext.assertOutputContainsFilenames("abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde0123.pdf",
+                    "2_medium-test-file.pdf", "3_medium-test-file.pdf");
+        } else {
+            testContext.assertOutputContainsFilenames("abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012345abcde012.pdf",
+                    "2_medium-test-file.pdf", "3_medium-test-file.pdf");
+        }
     }
 
     @Test
