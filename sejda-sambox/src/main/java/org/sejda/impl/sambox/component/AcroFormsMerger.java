@@ -249,14 +249,14 @@ public class AcroFormsMerger {
             switch (policy) {
             case MERGE_RENAMING_EXISTING_FIELDS:
                 updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
-                        createRenamingNonTerminalField);
+                        createRenamingNonTerminalField, false);
                 break;
             case MERGE:
-                updateForm(originalForm, annotationsLookup, createOrReuseTerminalField, createOrReuseNonTerminalField);
+                updateForm(originalForm, annotationsLookup, createOrReuseTerminalField, createOrReuseNonTerminalField, true);
                 break;
             case FLATTEN:
                 updateForm(originalForm, annotationsLookup, createRenamingTerminalField,
-                        createRenamingNonTerminalField);
+                        createRenamingNonTerminalField, false);
                 flatten();
                 break;
             default:
@@ -286,7 +286,7 @@ public class AcroFormsMerger {
 
     private void updateForm(PDAcroForm originalForm, LookupTable<PDAnnotation> annotationsLookup,
             BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> getTerminalField,
-            BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField) {
+            BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField, boolean shouldRemoveFieldKeysFromWidgets) {
         AcroFormUtils.mergeDefaults(originalForm, form);
         LookupTable<PDField> fieldsLookup = new LookupTable<>();
         Set<PDAnnotationWidget> allRelevantWidgets = annotationsLookup.keys().stream()
@@ -297,7 +297,7 @@ public class AcroFormsMerger {
         // every widget we meet is removed from the allRelevantWidgets so we can identify widgets not referenced by the originalForm
         originalForm.getFieldTree().stream().forEach(
                 f -> mergeField(f, annotationsLookup, getTerminalField, createNonTerminalField, fieldsLookup,
-                        of(allRelevantWidgets::remove)));
+                        of(allRelevantWidgets::remove), shouldRemoveFieldKeysFromWidgets));
         // keep track of the root fields
         originalForm.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
 
@@ -316,7 +316,7 @@ public class AcroFormsMerger {
             });
 
             dummy.getFieldTree().stream().forEach(f -> mergeField(f, annotationsLookup, getTerminalField,
-                    createNonTerminalField, fieldsLookup, empty()));
+                    createNonTerminalField, fieldsLookup, empty(), shouldRemoveFieldKeysFromWidgets));
             // keep track of the root fields
             dummy.getFields().stream().map(fieldsLookup::lookup).filter(Objects::nonNull).forEach(rootFields::add);
         }
@@ -329,7 +329,7 @@ public class AcroFormsMerger {
     private void mergeField(PDField field, LookupTable<PDAnnotation> annotationsLookup,
             BiFunction<PDTerminalField, LookupTable<PDField>, PDTerminalField> getTerminalField,
             BiConsumer<PDField, LookupTable<PDField>> createNonTerminalField, LookupTable<PDField> fieldsLookup,
-            Optional<Consumer<PDAnnotationWidget>> onProcessedWidget) {
+            Optional<Consumer<PDAnnotationWidget>> onProcessedWidget, boolean shouldRemoveFieldKeysFromWidgets) {
         if (!field.isTerminal()) {
             createNonTerminalField.accept(field, fieldsLookup);
         } else {
@@ -337,7 +337,13 @@ public class AcroFormsMerger {
             if (!relevantWidgets.isEmpty()) {
                 PDTerminalField terminalField = getTerminalField.apply((PDTerminalField) field, fieldsLookup);
                 if (nonNull(terminalField)) {
-                    removeFieldKeysFromWidgets(relevantWidgets);
+                    // removal is no longer performed for MERGE_RENAMING or FLATTEN policies
+                    // we currently only perform this removal when policy is MERGE (backwards compatibility)
+                    // TODO: review if this removal should be peformed for the MERGE policy
+                    if(shouldRemoveFieldKeysFromWidgets) {
+                        removeFieldKeysFromWidgets(relevantWidgets);
+                    }
+                    
                     for (PDAnnotationWidget widget : relevantWidgets) {
                         terminalField.addWidgetIfMissing(widget);
                         onProcessedWidget.ifPresent(c -> field.getWidgets().forEach(c));

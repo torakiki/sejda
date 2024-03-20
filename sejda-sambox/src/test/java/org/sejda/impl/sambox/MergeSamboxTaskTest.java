@@ -40,12 +40,15 @@ import org.sejda.model.rotation.Rotation;
 import org.sejda.model.scale.PageNormalizationPolicy;
 import org.sejda.model.task.Task;
 import org.sejda.model.toc.ToCPolicy;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PageNotFoundException;
 import org.sejda.sambox.pdmodel.common.PDPageLabelRange;
 import org.sejda.sambox.pdmodel.common.PDPageLabels;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.sejda.sambox.text.PDFTextStripperByArea;
 import org.sejda.tests.DocBuilder;
@@ -1088,8 +1091,28 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
             assertFooterHasText(d.getPage(27), "Attachment 26 - Sample file name - shorter 28");
         });
     }
+    
+    @Test
+    public void form_field_loses_formatting_in_Mac_Preview() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/forms/form_field_centered_text.pdf")));
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
 
-    private float widthOfCropBox(PDPage page) {
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertPages(1).forEachPdfOutput(d -> {
+            PDPage page = d.getPage(0);
+            PDAnnotation annotation = page.getAnnotations().get(0);
+            PDAnnotationWidget widget = (PDAnnotationWidget) annotation;
+            assertEquals(1, widget.getCOSObject().getInt(COSName.Q));
+            assertEquals("/Helv 8 Tf 0.718 0.11 0.11 rg", widget.getCOSObject().getString(COSName.DA));
+        });
+    }
+
+            private float widthOfCropBox(PDPage page) {
         return page.getCropBox().rotate(page.getRotation()).getWidth();
     }
 
