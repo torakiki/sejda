@@ -47,7 +47,7 @@ public class ExtractByOutlineTask extends BaseTask<ExtractByOutlineParameters> {
     public void before(ExtractByOutlineParameters parameters, TaskExecutionContext executionContext)
             throws TaskException {
         super.before(parameters, executionContext);
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
     }
 
     @Override

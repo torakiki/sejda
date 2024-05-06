@@ -51,7 +51,7 @@ public class PdfAlternateMixer extends PDDocumentHandler {
         setCreatorOnPDDocument();
         for (PdfMixInput input : inputs) {
             executionContext.notifiableTaskMetadata().setCurrentSource(input.getSource());
-            mixFragments.add(PdfMixFragment.newInstance(input));
+            mixFragments.add(PdfMixFragment.newInstance(input, executionContext));
         }
         
         int maxNumberOfPages = 0;

@@ -50,7 +50,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
     private static final Logger LOG = LoggerFactory.getLogger(PdfToSingleImageTask.class);
 
     private SingleOutputWriter outputWriter;
-    private PdfSourceOpener<PDDocumentHandler> sourceOpener = new DefaultPdfSourceOpener();
+    private PdfSourceOpener<PDDocumentHandler> sourceOpener = null;
     private PDDocumentHandler documentHandler = null;
 
     @Override
@@ -60,6 +60,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
             throw new TaskExecutionException("Selected ImageWriter doesn't support multiple images in the same file");
         }
         outputWriter = newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
+        sourceOpener = new DefaultPdfSourceOpener(executionContext);
     }
 
     @Override

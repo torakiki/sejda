@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An DSL class that can be used to notify all the global and local listeners about an event. All the listeners registered on the {@link GlobalNotificationContext} and on the
@@ -48,6 +50,8 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     private BigDecimal percentage = BigDecimal.ZERO;
     private NotifiableTaskMetadata taskMetadata;
+    
+    private Set<String> warnings = new HashSet<>();
 
     private ApplicationEventsNotifier(NotifiableTaskMetadata taskMetadata) {
         this.taskMetadata = taskMetadata;
@@ -89,6 +93,16 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     public void taskWarning(String warning) {
         LOG.warn(warning);
         notifyListeners(new TaskExecutionWarningEvent(warning, taskMetadata));
+        warnings.add(warning);
+    }
+
+    @Override
+    public void taskWarningOnce(String warning) {
+        if(warnings.contains(warning)){
+            return;
+        }
+        
+        taskWarning(warning);
     }
 
     @Override

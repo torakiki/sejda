@@ -94,7 +94,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
     public void before(MergeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getInputList().size();
-        sourceOpener = new DefaultPdfSourceOpener();
+        sourceOpener = new DefaultPdfSourceOpener(executionContext);
         outputWriter = OutputWriters.newSingleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
         outlineMerger = new OutlineMerger(parameters.getOutlinePolicy());
     }

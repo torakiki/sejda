@@ -54,7 +54,7 @@ public class SplitBySizeTask extends BaseTask<SplitBySizeParameters> {
     public void before(SplitBySizeParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
     }
 
     @Override

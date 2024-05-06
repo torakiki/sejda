@@ -23,6 +23,7 @@ import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.input.PdfStreamSource;
+import org.sejda.model.task.TaskExecutionContext;
 
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -37,12 +38,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Andrea Vacondio
  */
 public class PdfMixFragmentTest {
+    
+    private TaskExecutionContext executionContext = null;
 
     @Test
     public void nextPage() throws TaskIOException, TaskPermissionsException, IOException {
         try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(
                 PdfStreamSource.newInstanceNoPassword(
-                        getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")))) {
+                        getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")), executionContext)) {
             assertTrue(victim.hasNextPage());
             assertThat(
                     new PdfTextExtractorByArea().extractTextFromArea(victim.nextPage(), new Rectangle(54, 56, 60, 21))
@@ -58,7 +61,7 @@ public class PdfMixFragmentTest {
     @Test
     public void numberOfPages() throws TaskIOException, TaskPermissionsException, IOException {
         try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf")), executionContext)) {
             assertEquals(2, victim.getNumberOfPages());
         }
     }
@@ -66,7 +69,7 @@ public class PdfMixFragmentTest {
     @Test
     public void step() throws TaskIOException, TaskPermissionsException, IOException {
         try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 2))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 2), executionContext)) {
             assertEquals(2, victim.getStep());
         }
     }
@@ -74,7 +77,7 @@ public class PdfMixFragmentTest {
     @Test
     public void reverse() throws TaskIOException, TaskPermissionsException, IOException {
         try (PdfMixFragment victim = PdfMixFragment.newInstance(new PdfMixInput(PdfStreamSource.newInstanceNoPassword(
-                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 1))) {
+                getClass().getClassLoader().getResourceAsStream("pdf/2_pages.pdf"), "test.pdf"), true, 1), executionContext)) {
             assertTrue(victim.hasNextPage());
             assertThat(
                     new PdfTextExtractorByArea().extractTextFromArea(victim.nextPage(), new Rectangle(54, 56, 60, 21))

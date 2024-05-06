@@ -57,13 +57,14 @@ public class PdfToMultipleImageTask<T extends AbstractPdfToMultipleImageParamete
     private static final Logger LOG = LoggerFactory.getLogger(PdfToMultipleImageTask.class);
 
     private MultipleOutputWriter outputWriter;
-    private PdfSourceOpener<PDDocumentHandler> sourceOpener = new DefaultPdfSourceOpener();
+    private PdfSourceOpener<PDDocumentHandler> sourceOpener;
     private PDDocumentHandler documentHandler = null;
 
     @Override
     public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         outputWriter = newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
+        sourceOpener = new DefaultPdfSourceOpener(executionContext);
     }
 
     @Override

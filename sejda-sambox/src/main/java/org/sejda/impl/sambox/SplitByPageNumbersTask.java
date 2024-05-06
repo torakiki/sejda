@@ -55,7 +55,7 @@ public class SplitByPageNumbersTask<T extends AbstractSplitByPageParameters> ext
     public void before(T parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
     }
 
     @Override

@@ -1112,6 +1112,24 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         });
     }
 
+    @Test
+    public void document_with_parse_errors() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test_parse_errors.pdf", "test_parse_errors1.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test_parse_errors.pdf", "test_parse_errors2.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/test_file.pdf")));
+
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.assertTaskWarnings(Arrays.asList(
+                "Errors were detected when reading document: test_parse_errors1.pdf. Please verify the results carefully.", 
+                "Errors were detected when reading document: test_parse_errors2.pdf. Please verify the results carefully."
+        ));
+    }
+
             private float widthOfCropBox(PDPage page) {
         return page.getCropBox().rotate(page.getRotation()).getWidth();
     }

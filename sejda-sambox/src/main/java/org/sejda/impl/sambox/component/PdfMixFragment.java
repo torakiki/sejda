@@ -24,6 +24,7 @@ import org.sejda.model.exception.TaskPermissionsException;
 import org.sejda.model.input.PdfMixInput;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.pdf.encryption.PdfAccessPermission;
+import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,10 +127,10 @@ class PdfMixFragment implements Closeable {
      * @throws TaskIOException
      * @throws TaskPermissionsException
      */
-    public static PdfMixFragment newInstance(PdfMixInput input) throws TaskIOException, TaskPermissionsException {
+    public static PdfMixFragment newInstance(PdfMixInput input, TaskExecutionContext executionContext) throws TaskIOException, TaskPermissionsException {
         LOG.debug("Opening input {} with step {} and reverse {}", input.getSource(), input.getStep(),
                 input.isReverse());
-        PDDocumentHandler documentHandler = input.getSource().open(new DefaultPdfSourceOpener());
+        PDDocumentHandler documentHandler = input.getSource().open(new DefaultPdfSourceOpener(executionContext));
         documentHandler.getPermissions().ensurePermission(PdfAccessPermission.ASSEMBLE);
         return new PdfMixFragment(input, documentHandler);
     }

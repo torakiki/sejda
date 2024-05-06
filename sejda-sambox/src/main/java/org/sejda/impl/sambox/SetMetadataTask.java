@@ -86,7 +86,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     @Override
     public void before(SetMetadataParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 

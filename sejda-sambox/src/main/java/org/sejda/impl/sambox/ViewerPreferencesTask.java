@@ -71,7 +71,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 

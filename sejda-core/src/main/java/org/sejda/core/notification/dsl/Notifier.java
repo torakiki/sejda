@@ -60,6 +60,14 @@ public interface Notifier {
     void taskWarning(String warning);
 
     /**
+     * Notifies about a task without repeating the message
+     *
+     * @param warning
+     *            warning warning message
+     */
+    void taskWarningOnce(String warning);
+
+    /**
      * Notifies about a task warning
      * 
      * @param warning

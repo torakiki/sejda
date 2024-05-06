@@ -70,7 +70,7 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
     public void before(AddBackPagesParameters parameters, TaskExecutionContext executionContext) throws TaskException {
         super.before(parameters, executionContext);
         totalSteps = parameters.getSourceList().size();
-        documentLoader = new DefaultPdfSourceOpener();
+        documentLoader = new DefaultPdfSourceOpener(executionContext);
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
     }
 
