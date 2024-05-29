@@ -207,7 +207,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.7.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -217,7 +217,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.2.3</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -227,17 +227,17 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.11.0</version>
+					<version>3.13.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.3.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.1.2</version>
+					<version>3.2.5</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -247,7 +247,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-clean-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.3.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -326,22 +326,22 @@
 
 	<properties>
 		<sejda.commons.version>2.0.0</sejda.commons.version>
-		<junit.version>5.10.0</junit.version>
-		<slf4j.version>2.0.9</slf4j.version>
-		<commons.lang.version>3.13.0</commons.lang.version>
-		<commons.io.version>2.13.0</commons.io.version>
+		<junit.version>5.10.2</junit.version>
+		<slf4j.version>2.0.12</slf4j.version>
+		<commons.lang.version>3.14.0</commons.lang.version>
+		<commons.io.version>2.16.1</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
-		<mockito.version>5.6.0</mockito.version>
-		<logback.version>1.4.12</logback.version>
-		<archunit.version>1.1.0</archunit.version>
+		<mockito.version>5.11.0</mockito.version>
+		<logback.version>1.5.4</logback.version>
+		<archunit.version>1.2.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<sambox.version>3.0.10</sambox.version>
 		<sejda.io.version>3.0.1</sejda.io.version>
-		<bouncycastle.version>1.76</bouncycastle.version>
-		<twelvemonkeys.version>3.9.4</twelvemonkeys.version>
-		<metadata-extractor.version>2.18.0</metadata-extractor.version>
+		<bouncycastle.version>1.78.1</bouncycastle.version>
+		<twelvemonkeys.version>3.10.1</twelvemonkeys.version>
+		<metadata-extractor.version>2.19.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.20</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
 		<icu4j.version>71.1</icu4j.version>
