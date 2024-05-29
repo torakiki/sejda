@@ -42,11 +42,12 @@ public class DefaultPdfSourceOpener implements PdfSourceOpener<PDDocumentHandler
 
     private static final String WRONG_PWD_MESSAGE = "Unable to open '%s' due to a wrong password.";
     private static final String ERROR_MESSAGE = "An error occurred opening the source: %s.";
-
     private static final String WARNING_PARSE_ERRORS_MESSAGE = "Errors were detected when reading document: %s. Please verify the results carefully.";
     
     private final TaskExecutionContext taskExecutionContext;
 
+    @Deprecated
+    //use the constructor with the TaskExecutionContext instead
     public DefaultPdfSourceOpener() {
         this.taskExecutionContext = null;
     }
