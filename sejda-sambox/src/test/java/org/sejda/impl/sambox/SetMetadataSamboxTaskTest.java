@@ -235,6 +235,33 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
             }
         });
     }
+
+    @Test
+    public void invalidXmlChars_updatedXmpMetadata() throws IOException {
+        setUpParams(stronglyEncryptedInput());
+        parameters.put(PdfMetadataFields.CREATOR, "test_creator\u0000");
+        parameters.put("Producer", "test_\u0000producer");
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+
+                assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     
     @Test
     public void xmpMetadataMissingNamespaceAndWithAttributesInsteadofNodes() throws IOException {

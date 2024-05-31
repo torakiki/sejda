@@ -204,7 +204,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         }
 
         if(node != null) {
-            node.setTextContent(value);
+            String sanitized = value.replaceAll("\u0000", "");
+            node.setTextContent(sanitized);
         }
     }
 
