@@ -45,6 +45,7 @@ open module org.sejda.model {
     exports org.sejda.model.parameter.edit;
     exports org.sejda.model.parameter.image;
     exports org.sejda.model.pdf;
+    exports org.sejda.model.pdfa;
     exports org.sejda.model.pdf.encryption;
     exports org.sejda.model.pdf.font;
     exports org.sejda.model.pdf.form;

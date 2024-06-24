@@ -1,0 +1,50 @@
+package org.sejda.impl.sambox.component.pdfa;
+/*
+ * Created on 29/05/24
+ * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
+ * This file is part of Sejda.
+ *
+ * Sejda is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Sejda is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.PDDocument;
+
+import static java.util.Objects.nonNull;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+
+/**
+ * Rule 6.1.13 of ISO 19005-1: Optional content.
+ *
+ * @author Andrea Vacondio
+ */
+public class NoOCProperties extends BaseRule<PDDocument, TaskException> {
+
+    public NoOCProperties(ConversionContext conversionContext) {
+        super(conversionContext);
+    }
+
+    @Override
+    public void accept(PDDocument document) throws TaskExecutionException {
+        if (nonNull(document.getDocumentCatalog().getCOSObject().getDictionaryObject(COSName.OCPROPERTIES))) {
+            conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                    "The document catalog dictionary shall not contain a key with the name OCProperties"));
+            document.getDocumentCatalog().getCOSObject().removeItem(COSName.OCPROPERTIES);
+            notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
+                    "Removed OCProperties key from the document catalog");
+        }
+    }
+}

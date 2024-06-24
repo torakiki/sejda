@@ -24,8 +24,8 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.sejda.model.util.IOUtils;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
+import org.sejda.model.util.IOUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +36,7 @@ import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 
 /**
- * Provides a skeletal implementation for parameter classes having multiple pdf source as input and generating multiple output files. The output can be a file for scenarios where a
+ * Provides a skeletal implementation for parameter classes having multiple pdf source as input and generating multiple output files. The output can be a file for scenarios where
  * the task produces one output file (eg: rotate on a single input)
  * 
  * @author Andrea Vacondio

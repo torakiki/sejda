@@ -83,7 +83,6 @@ public class TaskExecutionContext {
     }
 
     /**
-     *
      * @param e
      *            the exception the lenient task can recover from
      * @throws TaskNonLenientExecutionException
@@ -95,7 +94,6 @@ public class TaskExecutionContext {
     }
 
     /**
-     *
      * @param message
      *            the error the lenient task can recover from
      * @throws TaskNonLenientExecutionException

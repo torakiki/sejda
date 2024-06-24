@@ -49,9 +49,8 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationEventsNotifier.class);
 
     private BigDecimal percentage = BigDecimal.ZERO;
-    private NotifiableTaskMetadata taskMetadata;
-    
-    private Set<String> warnings = new HashSet<>();
+    private final NotifiableTaskMetadata taskMetadata;
+    private final Set<String> warnings = new HashSet<>();
 
     private ApplicationEventsNotifier(NotifiableTaskMetadata taskMetadata) {
         this.taskMetadata = taskMetadata;
@@ -98,11 +97,9 @@ public final class ApplicationEventsNotifier implements Notifier, OngoingNotific
 
     @Override
     public void taskWarningOnce(String warning) {
-        if(warnings.contains(warning)){
-            return;
+        if (!warnings.contains(warning)) {
+            taskWarning(warning);
         }
-        
-        taskWarning(warning);
     }
 
     @Override

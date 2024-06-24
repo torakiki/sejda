@@ -18,11 +18,11 @@
  */
 package org.sejda.model.parameter;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.pdf.page.PageRange;
+
+import java.util.Collection;
+import java.util.Set;
 
 public interface ExcludedPagesSelection {
 
@@ -41,8 +41,7 @@ public interface ExcludedPagesSelection {
     }
 
     /**
-     * @param upperLimit
-     *            the number of pages of the document (upper limit).
+     * @param upperLimit the number of pages of the document (upper limit).
      * @return the set of excluded pages.
      */
     default Set<Integer> getExcludedPages(int upperLimit) {
