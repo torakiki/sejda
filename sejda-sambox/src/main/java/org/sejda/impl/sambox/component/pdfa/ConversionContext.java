@@ -18,11 +18,18 @@ package org.sejda.impl.sambox.component.pdfa;
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.ConvertToPDFAParameters;
 import org.sejda.model.pdfa.InvalidElementPolicy;
 import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
 
 import java.util.function.Supplier;
+
+import static java.util.Objects.nonNull;
+import static java.util.Optional.of;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
  * @author Andrea Vacondio
@@ -51,5 +58,59 @@ public class ConversionContext {
         if (parameters.invalidElementPolicy() == InvalidElementPolicy.FAIL) {
             throw exceptionSupplier.get();
         }
+    }
+
+    /**
+     * Sanitize a dictionary making sure it doesn't contain values for the given keys.
+     *
+     * @param dictionaryDescription description used in the exception message, Ex: "Catalog", "Widget annotation"
+     * @throws TaskExecutionException if the dictionary contains forbidden keys and the parameters policy is {@link InvalidElementPolicy#FAIL}
+     */
+    void maybeRemoveForbiddenKeys(COSDictionary dictionary, String dictionaryDescription, COSName... keys)
+            throws TaskExecutionException {
+        if (nonNull(dictionary)) {
+            for (COSName key : keys) {
+                if (dictionary.containsKey(key)) {
+                    maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                            dictionaryDescription + " dictionary shall not include a " + key + " entry"));
+                    dictionary.removeItem(key);
+                    notifyEvent(notifiableMetadata()).taskWarning(
+                            "Removed " + key + " key from " + dictionaryDescription + " dictionary");
+                }
+            }
+        }
+    }
+
+    void maybeRemoveForbiddenAction(COSDictionary dictionary, String dictionaryDescription, COSName key)
+            throws TaskExecutionException {
+        if (nonNull(dictionary)) {
+            var action = dictionary.getDictionaryObject(key, COSDictionary.class);
+            if (nonNull(action)) {
+                var type = of(action).map(a -> a.getCOSName(COSName.S)).map(COSName::getName).orElse("UNKNOWN");
+                if (!parameters().conformanceLevel().allowedActionTypes().contains(type)) {
+                    maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                            dictionaryDescription + " dictionary shall not include an action of type " + type));
+                    dictionary.removeItem(key);
+                    notifyEvent(notifiableMetadata()).taskWarning(
+                            "Removed " + key + " key from " + dictionaryDescription + " dictionary");
+                } else {
+                    if ("Named".equals(type)) {
+                        var name = of(action).map(a -> a.getCOSName(COSName.N)).map(COSName::getName).orElse("UNKNOWN");
+                        if (!parameters().conformanceLevel().allowedNamedActions().contains(name)) {
+                            maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                                    dictionaryDescription + " dictionary shall not include an named action with name "
+                                            + name));
+                            dictionary.removeItem(key);
+                            notifyEvent(notifiableMetadata()).taskWarning(
+                                    "Removed " + key + " key from " + dictionaryDescription + " dictionary");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public ConvertToPDFAParameters parameters() {
+        return parameters;
     }
 }

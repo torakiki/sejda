@@ -47,7 +47,7 @@ class NoEmbeddedFilesTest {
     @Test
     void shouldRemoveEmbeddedFilesKey() throws TaskExecutionException {
         var params = new ConvertToPDFAParameters(InvalidElementPolicy.FIX, ConformanceLevel.PDFA_1B);
-        var victim = new NoEmbeddedFiles(new ConversionContext(params, NotifiableTaskMetadata.NULL));
+        var victim = new NoEmbeddedFilesDocumentRule(new ConversionContext(params, NotifiableTaskMetadata.NULL));
         var names = new COSDictionary();
         var embeddedFiles = new COSDictionary();
         names.setItem(COSName.EMBEDDED_FILES, embeddedFiles);
@@ -58,10 +58,10 @@ class NoEmbeddedFilesTest {
     }
 
     @Test
-    void failPolicy() throws TaskExecutionException {
+    void failPolicy() {
 
         var params = new ConvertToPDFAParameters(InvalidElementPolicy.FAIL, ConformanceLevel.PDFA_1B);
-        var victim = new NoEmbeddedFiles(new ConversionContext(params, NotifiableTaskMetadata.NULL));
+        var victim = new NoEmbeddedFilesDocumentRule(new ConversionContext(params, NotifiableTaskMetadata.NULL));
         var names = new COSDictionary();
         var embeddedFiles = new COSDictionary();
         names.setItem(COSName.EMBEDDED_FILES, embeddedFiles);
@@ -74,7 +74,7 @@ class NoEmbeddedFilesTest {
     @Test
     void nullNamesItemIsHandled() throws TaskExecutionException {
         var params = new ConvertToPDFAParameters(InvalidElementPolicy.FIX, ConformanceLevel.PDFA_1B);
-        var victim = new NoEmbeddedFiles(new ConversionContext(params, NotifiableTaskMetadata.NULL));
+        var victim = new NoEmbeddedFilesDocumentRule(new ConversionContext(params, NotifiableTaskMetadata.NULL));
 
         victim.accept(document);
     }
@@ -83,7 +83,7 @@ class NoEmbeddedFilesTest {
     void nullEmbeddedFilesItemIsHandled() throws TaskExecutionException {
 
         var params = new ConvertToPDFAParameters(InvalidElementPolicy.FIX, ConformanceLevel.PDFA_1B);
-        var victim = new NoEmbeddedFiles(new ConversionContext(params, NotifiableTaskMetadata.NULL));
+        var victim = new NoEmbeddedFilesDocumentRule(new ConversionContext(params, NotifiableTaskMetadata.NULL));
         var names = new COSDictionary();
         document.getDocumentCatalog().setNames(new PDDocumentNameDictionary(names));
 

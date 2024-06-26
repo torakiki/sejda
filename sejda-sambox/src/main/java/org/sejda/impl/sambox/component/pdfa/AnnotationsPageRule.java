@@ -23,15 +23,14 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 
-import java.util.Set;
-
 import static java.util.Objects.nonNull;
 import static java.util.Optional.of;
+import static org.sejda.commons.util.RequireUtils.require;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.sambox.cos.COSName.getPDFName;
 
 /**
  * Rule 6.5.2 of ISO 19005-1: Annotation types not defined in PDF Reference shall not be permitted.
@@ -39,15 +38,9 @@ import static org.sejda.sambox.cos.COSName.getPDFName;
  *
  * @author Andrea Vacondio
  */
-public class AnnotationsRule extends BaseRule<PDPage, TaskException> {
+public class AnnotationsPageRule extends BaseRule<PDPage, TaskException> {
 
-    private static final Set<COSName> ALLOWED = Set.of(getPDFName("Text"), getPDFName("Link"), getPDFName("FreeText"),
-            getPDFName("Line"), getPDFName("Square"), getPDFName("Circle"), getPDFName("Highlight"),
-            getPDFName("Underline"), getPDFName("Squiggly"), getPDFName("StrikeOut"), getPDFName("Stamp"),
-            getPDFName("Ink"), getPDFName("Popup"), getPDFName("Widget"), getPDFName("PrinterMark"),
-            getPDFName("TrapNet"));
-
-    public AnnotationsRule(ConversionContext conversionContext) {
+    public AnnotationsPageRule(ConversionContext conversionContext) {
         super(conversionContext);
     }
 
@@ -59,19 +52,22 @@ public class AnnotationsRule extends BaseRule<PDPage, TaskException> {
         if (nonNull(annotations)) {
             for (int i = 0; i < annotations.size(); i++) {
                 var annotation = annotations.getObject(i, COSDictionary.class);
-                var subtype = of(annotation).map(a -> a.getCOSName(COSName.SUBTYPE))
-                        .orElseGet(() -> getPDFName("UNKNOWN"));
-                if (ALLOWED.contains(subtype)) {
+                var subtype = of(annotation).map(a -> a.getCOSName(COSName.SUBTYPE)).map(COSName::getName)
+                        .orElse("UNKNOWN");
+                if (conversionContext().parameters().conformanceLevel().allowedAnnotationTypes().contains(subtype)) {
                     sanitizeCAValue(annotation);
                     sanitizeFlag(annotation, PDAnnotation.FLAG_PRINTED, true);
                     sanitizeFlag(annotation, PDAnnotation.FLAG_HIDDEN, false);
                     sanitizeFlag(annotation, PDAnnotation.FLAG_INVISIBLE, false);
                     sanitizeFlag(annotation, PDAnnotation.FLAG_NO_VIEW, false);
                     //Text annotations should set the NoZoom and NoRotate flag bits of the F key to 1
-                    if (subtype.equals(getPDFName("Text"))) {
+                    if (subtype.equals("Text")) {
                         sanitizeFlag(annotation, PDAnnotation.FLAG_NO_ZOOM, true);
                         sanitizeFlag(annotation, PDAnnotation.FLAG_NO_ROTATE, true);
                     }
+                    sanitizeAppearance(annotation);
+                    sanitizeAdditionalActions(annotation);
+                    conversionContext().maybeRemoveForbiddenAction(annotation, "Annotation", COSName.A);
                     newAnnotations.add(annotation);
                 } else {
                     conversionContext().maybeFailOnInvalidElement(
@@ -105,6 +101,36 @@ public class AnnotationsRule extends BaseRule<PDPage, TaskException> {
             annotation.setFlag(COSName.F, flag, expected);
             notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
                     "Modified annotation flag " + flag + " to " + expected);
+        }
+    }
+
+    private void sanitizeAppearance(COSDictionary annotation) throws TaskExecutionException {
+        var appearanceDictionary = annotation.getDictionaryObject(COSName.AP, COSDictionary.class);
+        if (nonNull(appearanceDictionary)) {
+            var normalAppearance = appearanceDictionary.getDictionaryObject(COSName.N);
+            if (COSName.WIDGET.equals(annotation.getCOSName(COSName.SUBTYPE)) && COSName.BTN.equals(
+                    annotation.getCOSName(COSName.FT)) && !(normalAppearance instanceof COSDictionary)) {
+                throw new TaskExecutionException(
+                        "Appearance of widget annotations of Btn type shall have a N of type dictionary");
+            } else {
+                require(normalAppearance instanceof COSStream,
+                        () -> new TaskExecutionException("Appearance of annotations shall have a N of type stream"));
+            }
+            if (appearanceDictionary.keySet().size() > 1) {
+                conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                        "Found an annotation with multiple values in its AP dictionary"));
+                COSDictionary newAppearanceDictionary = new COSDictionary();
+                newAppearanceDictionary.setItem(COSName.N, normalAppearance);
+                annotation.setItem(COSName.AP, newAppearanceDictionary);
+                notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
+                        "Modified appearance to include only the N key");
+            }
+        }
+    }
+
+    private void sanitizeAdditionalActions(COSDictionary annotation) throws TaskExecutionException {
+        if (COSName.WIDGET.equals(annotation.getCOSName(COSName.SUBTYPE))) {
+            conversionContext().maybeRemoveForbiddenKeys(annotation, "Widget", COSName.AA, COSName.A);
         }
     }
 }

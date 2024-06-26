@@ -1,6 +1,6 @@
 package org.sejda.impl.sambox.component.pdfa;
 /*
- * Created on 30/05/24
+ * Created on 25/06/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
@@ -23,28 +23,25 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 
-import static java.util.Objects.nonNull;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-
 /**
- * Rule 6.6.2 of ISO 19005-1: Trigger events.
+ * Rule 6.6.1 of ISO 19005-1: Some actions types and named actions are not permitted.
  *
  * @author Andrea Vacondio
  */
-public class NoAAEntry extends BaseRule<PDDocument, TaskException> {
+public class ActionsDocumentRule extends BaseRule<PDDocument, TaskException> {
 
-    public NoAAEntry(ConversionContext conversionContext) {
+    public ActionsDocumentRule(ConversionContext conversionContext) {
         super(conversionContext);
     }
 
     @Override
     public void accept(PDDocument document) throws TaskExecutionException {
-        if (nonNull(document.getDocumentCatalog().getCOSObject().getDictionaryObject(COSName.AA))) {
-            conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
-                    "The document catalog dictionary shall not include an AA entry for an additional-actions dictionary"));
-            document.getDocumentCatalog().getCOSObject().removeItem(COSName.AA);
-            notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
-                    "Removed AA key from the document catalog");
+
+        conversionContext().maybeRemoveForbiddenAction(document.getDocumentCatalog().getCOSObject(), "Catalog",
+                COSName.OPEN_ACTION);
+        for (var item : document.getDocumentCatalog().getDocumentOutline().nodes()) {
+            conversionContext().maybeRemoveForbiddenAction(item.getCOSObject(), "Outline item", COSName.A);
         }
     }
+
 }

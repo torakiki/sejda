@@ -18,11 +18,42 @@ package org.sejda.model.pdfa;
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.util.Set;
+
 /**
  * Conformance levels for PDF/A
  *
  * @author Andrea Vacondio
  */
 public enum ConformanceLevel {
-    PDFA_1B;
+
+    PDFA_1B {
+        @Override
+        public Set<String> allowedAnnotationTypes() {
+            return Set.of("Text", "Link", "FreeText", "Line", "Square", "Circle", "Highlight", "Underline", "Squiggly",
+                    "StrikeOut", "Stamp", "Ink", "Popup", "Widget", "PrinterMark", "TrapNet");
+        }
+
+        @Override
+        public Set<String> allowedActionTypes() {
+            return Set.of("GoTo", "GoToR", "Thread", "URI", "Named");
+        }
+    };
+
+    /**
+     * @return the allowed annotations types for the conformance level
+     */
+    public abstract Set<String> allowedAnnotationTypes();
+
+    /**
+     * @return the allowed action types for the conformance level
+     */
+    public abstract Set<String> allowedActionTypes();
+
+    /**
+     * @return the allowed values for a named action
+     */
+    public Set<String> allowedNamedActions() {
+        return Set.of("NextPage", "PrevPage", "FirstPage", "LastPage");
+    }
 }

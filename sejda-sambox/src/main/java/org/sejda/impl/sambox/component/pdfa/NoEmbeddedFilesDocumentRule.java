@@ -32,9 +32,9 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
  *
  * @author Andrea Vacondio
  */
-public class NoEmbeddedFiles extends BaseRule<PDDocument, TaskException> {
+public class NoEmbeddedFilesDocumentRule extends BaseRule<PDDocument, TaskException> {
 
-    public NoEmbeddedFiles(ConversionContext conversionContext) {
+    public NoEmbeddedFilesDocumentRule(ConversionContext conversionContext) {
         super(conversionContext);
     }
 

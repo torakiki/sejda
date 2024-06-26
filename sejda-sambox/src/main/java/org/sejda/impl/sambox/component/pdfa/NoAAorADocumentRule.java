@@ -1,6 +1,6 @@
 package org.sejda.impl.sambox.component.pdfa;
 /*
- * Created on 29/05/24
+ * Created on 24/06/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
@@ -22,29 +22,25 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
-
-import static java.util.Objects.nonNull;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import org.sejda.sambox.pdmodel.interactive.form.PDField;
 
 /**
- * Rule 6.1.13 of ISO 19005-1: Optional content.
+ * Rule 6.9 and 6.6.2 of ISO 19005-1: No AA or A in form fields and widgets. No AA in Catalog.
  *
  * @author Andrea Vacondio
  */
-public class NoOCProperties extends BaseRule<PDDocument, TaskException> {
+public class NoAAorADocumentRule extends BaseRule<PDDocument, TaskException> {
 
-    public NoOCProperties(ConversionContext conversionContext) {
+    public NoAAorADocumentRule(ConversionContext conversionContext) {
         super(conversionContext);
     }
 
     @Override
     public void accept(PDDocument document) throws TaskExecutionException {
-        if (nonNull(document.getDocumentCatalog().getCOSObject().getDictionaryObject(COSName.OCPROPERTIES))) {
-            conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
-                    "The document catalog dictionary shall not contain a key with the name OCProperties"));
-            document.getDocumentCatalog().getCOSObject().removeItem(COSName.OCPROPERTIES);
-            notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
-                    "Removed OCProperties key from the document catalog");
+        conversionContext().maybeRemoveForbiddenKeys(document.getDocumentCatalog().getCOSObject(), "Catalog",
+                COSName.AA);
+        for (PDField field : document.getDocumentCatalog().getAcroForm().getFieldTree()) {
+            conversionContext().maybeRemoveForbiddenKeys(field.getCOSObject(), "Form field", COSName.A, COSName.AA);
         }
     }
 }
