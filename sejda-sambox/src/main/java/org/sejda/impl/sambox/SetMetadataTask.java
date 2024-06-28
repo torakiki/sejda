@@ -141,9 +141,10 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                         try {
                             updateXmpMetadata(catalog, actualMeta);
                         } catch (RuntimeException ex) {
-                            if(exceptionStackContains("Namespace for prefix 'xmp' has not been declared", ex)) {
+                            if(exceptionStackContains("Namespace for prefix 'xmp' has not been declared", ex) ||
+                                    exceptionStackContains("Namespace for prefix 'rdf' has not been declared", ex)) {
                                 // try to fix the metadata and retry
-                                fixMissingXmpNamespace(catalog);
+                                fixMissingXmpOrRdfNamespace(catalog);
                                 updateXmpMetadata(catalog, actualMeta);
                             } else {
                                 throw ex;
@@ -229,18 +230,27 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
         }
     }
     
-    private void fixMissingXmpNamespace(PDDocumentCatalog catalog) throws IOException {
+    private void fixMissingXmpOrRdfNamespace(PDDocumentCatalog catalog) throws IOException {
         try(InputStream is = catalog.getMetadata().createInputStream()) {
             String metadataAsString = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            String metadataAsStringOriginal = metadataAsString;
+            
             if (!metadataAsString.contains("xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"")) {
                 LOG.warn("Metadata seems to be missing xmlns:xmp namespace definition, adding it");
                 metadataAsString = metadataAsString.replaceAll("<rdf:Description", "<rdf:Description xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\"");
-
+            }
+            
+            if (!metadataAsString.contains("xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"")) {
+                LOG.warn("Metadata seems to be missing xmlns:rdf namespace definition, adding it");
+                metadataAsString = metadataAsString.replaceAll("<rdf:RDF", "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">");
+            }
+            
+            if(!metadataAsStringOriginal.equals(metadataAsString)){
                 catalog.setMetadata(new PDMetadata(new ByteArrayInputStream(metadataAsString.getBytes(StandardCharsets.UTF_8))));
-            } 
+            }
         }
     }
-    
+
     private void updateXmpMetadata(PDDocumentCatalog catalog, PDDocumentInformation metadata) {
         try {
             DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
