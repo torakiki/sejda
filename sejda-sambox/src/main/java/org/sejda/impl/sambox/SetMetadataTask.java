@@ -28,6 +28,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDDocumentInformation;
@@ -53,7 +54,11 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathFactoryConfigurationException;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -103,6 +108,8 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                 executionContext().notifiableTaskMetadata().setCurrentSource(source);
 
                 documentHandler = source.open(documentLoader);
+                //we don't want SAMBox to generate xmp stream
+                documentHandler.removeWriteOption(WriteOption.UPSERT_DOCUMENT_METADATA_STREAM);
                 documentHandler.setUpdateProducerModifiedDate(parameters.isUpdateProducerModifiedDate());
                 if (parameters.isUpdateProducerModifiedDate()) {
                     documentHandler.setCreatorOnPDDocument();

@@ -21,7 +21,9 @@ package org.sejda.model.parameter;
 import jakarta.validation.constraints.NotNull;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.pdfa.ConformanceLevel;
+import org.sejda.model.pdfa.ICCProfile;
 import org.sejda.model.pdfa.InvalidElementPolicy;
+import org.sejda.model.pdfa.OutputIntent;
 
 /**
  * @author Andrea Vacondio
@@ -32,6 +34,12 @@ public class ConvertToPDFAParameters extends MultiplePdfSourceMultipleOutputPara
     private final InvalidElementPolicy invalidElementPolicy;
     @NotNull
     private final ConformanceLevel conformanceLevel;
+    @NotNull
+    private OutputIntent outputIntent;
+    private boolean forceOutputIntentReplacement = false;
+    private ICCProfile defaultRGBProfile;
+    private ICCProfile deviceCMYKProfile;
+    private ICCProfile deviceGrayProfile;
 
     public ConvertToPDFAParameters(InvalidElementPolicy invalidElementPolicy, ConformanceLevel conformanceLevel) {
         this.invalidElementPolicy = invalidElementPolicy;
@@ -44,5 +52,21 @@ public class ConvertToPDFAParameters extends MultiplePdfSourceMultipleOutputPara
 
     public ConformanceLevel conformanceLevel() {
         return conformanceLevel;
+    }
+
+    public void setForceOutputIntentReplacement(boolean forceOutputIntentReplacement) {
+        this.forceOutputIntentReplacement = forceOutputIntentReplacement;
+    }
+
+    public void setOutputIntent(OutputIntent outputIntent) {
+        this.outputIntent = outputIntent;
+    }
+
+    public OutputIntent getOutputIntent() {
+        return outputIntent;
+    }
+
+    public boolean isForceOutputIntentReplacement() {
+        return forceOutputIntentReplacement;
     }
 }

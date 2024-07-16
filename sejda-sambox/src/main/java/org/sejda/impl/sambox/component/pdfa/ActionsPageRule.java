@@ -1,4 +1,3 @@
-package org.sejda.impl.sambox.component.pdfa;
 /*
  * Created on 25/06/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
@@ -17,6 +16,7 @@ package org.sejda.impl.sambox.component.pdfa;
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.model.exception.TaskException;
 import org.sejda.sambox.cos.COSDictionary;

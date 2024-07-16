@@ -1,4 +1,3 @@
-package org.sejda.impl.sambox.component.pdfa;
 /*
  * Created on 21/06/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
@@ -17,6 +16,7 @@ package org.sejda.impl.sambox.component.pdfa;
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
@@ -39,6 +39,14 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
  * @author Andrea Vacondio
  */
 public class AnnotationsPageRule extends BaseRule<PDPage, TaskException> {
+
+    // From tn0002_color_in_pdfa-1_2008-03-141
+    // If PDF annotations specify colors in a C or IC entry (e.g. border
+    //color for a link annotation) these colors are always specified in the DeviceRGB
+    //color space; PDF 1.4 does not support device-independent color specifications
+    //for annotations. Therefore, if the document contains colorized annotations an
+    //RGB output intent is required
+    private boolean forceRGBIntentOnBorderOrLinkColor;
 
     public AnnotationsPageRule(ConversionContext conversionContext) {
         super(conversionContext);
@@ -68,6 +76,10 @@ public class AnnotationsPageRule extends BaseRule<PDPage, TaskException> {
                     sanitizeAppearance(annotation);
                     sanitizeAdditionalActions(annotation);
                     conversionContext().maybeRemoveForbiddenAction(annotation, "Annotation", COSName.A);
+                    if (!conversionContext().hasCorICAnnotationKey()) {
+                        conversionContext().hasCorICAnnotationKey(
+                                annotation.containsKey(COSName.C) || annotation.containsKey(COSName.IC));
+                    }
                     newAnnotations.add(annotation);
                 } else {
                     conversionContext().maybeFailOnInvalidElement(

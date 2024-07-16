@@ -40,9 +40,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 import java.util.zip.DeflaterInputStream;
 
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
@@ -126,7 +126,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     public void encryptable(boolean encryptable) {
-        // do nothing, it can be encrypted
+        // do nothing, it can't be encrypted
     }
 
     @Override
@@ -167,7 +167,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     /**
      * a {@link ReadOnlyFilteredCOSStream} from an existing {@link COSStream}
-     * 
+     *
      * @param existing
      * @return the created instance
      * @throws IOException
@@ -181,9 +181,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     /**
      * a {@link ReadOnlyFilteredCOSStream} that represents an xobject JPEG image
-     * 
-     * @param imageFile
-     *            the image file
+     *
+     * @param imageFile        the image file
      * @param width
      * @param height
      * @param bitsPerComponent
@@ -195,27 +194,25 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
             int bitsPerComponent, PDColorSpace colorSpace) {
         requireNotNullArg(imageFile, "input file cannot be null");
         requireNotNullArg(colorSpace, "color space cannot be null");
-        COSDictionary dictionary = new COSDictionary();
-        dictionary.setItem(COSName.TYPE, COSName.XOBJECT);
-        dictionary.setItem(COSName.SUBTYPE, COSName.IMAGE);
+        COSDictionary dictionary = COSDictionary.of(COSName.TYPE, COSName.XOBJECT, COSName.SUBTYPE, COSName.IMAGE);
         dictionary.setItem(COSName.FILTER, COSName.DCT_DECODE);
         dictionary.setInt(COSName.BITS_PER_COMPONENT, bitsPerComponent);
         dictionary.setInt(COSName.HEIGHT, height);
         dictionary.setInt(COSName.WIDTH, width);
-        of(colorSpace).map(PDColorSpace::getCOSObject).ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
+        Optional.of(colorSpace).map(PDColorSpace::getCOSObject)
+                .ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
         return new ReadOnlyFilteredCOSStream(dictionary, () -> new FileInputStream(imageFile), imageFile.length());
     }
 
     /**
      * a {@link ReadOnlyFilteredCOSStream} representing an embedded file stream
-     * 
+     *
      * @param source
      * @return the created instance
      * @throws TaskIOException
      */
     public static final ReadOnlyFilteredCOSStream readOnlyEmbeddedFile(Source<?> source) throws TaskIOException {
-        COSDictionary dictionary = new COSDictionary();
-        dictionary.setItem(COSName.FILTER, COSName.FLATE_DECODE);
+        COSDictionary dictionary = COSDictionary.of(COSName.FILTER, COSName.FLATE_DECODE);
         return source.dispatch(new SourceDispatcher<>() {
 
             @Override

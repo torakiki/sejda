@@ -1,4 +1,3 @@
-package org.sejda.impl.sambox.component.pdfa;
 /*
  * Created on 29/05/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
@@ -17,18 +16,22 @@ package org.sejda.impl.sambox.component.pdfa;
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.ConvertToPDFAParameters;
 import org.sejda.model.pdfa.InvalidElementPolicy;
+import org.sejda.model.pdfa.OutputIntent;
 import org.sejda.model.task.NotifiableTaskMetadata;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.of;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
@@ -38,6 +41,8 @@ public class ConversionContext {
 
     private final ConvertToPDFAParameters parameters;
     private final NotifiableTaskMetadata notifiableMetadata;
+    private OutputIntent outputIntent;
+    private boolean hasCorICAnnotationKey = false;
 
     public ConversionContext(ConvertToPDFAParameters parameters, NotifiableTaskMetadata notifiableMetadata) {
         this.parameters = parameters;
@@ -68,10 +73,21 @@ public class ConversionContext {
      */
     void maybeRemoveForbiddenKeys(COSDictionary dictionary, String dictionaryDescription, COSName... keys)
             throws TaskExecutionException {
+        maybeRemoveForbiddenKeys(dictionary, dictionaryDescription, TaskExecutionException::new, keys);
+    }
+
+    /**
+     * Sanitize a dictionary making sure it doesn't contain values for the given keys.
+     *
+     * @param dictionaryDescription description used in the exception message, Ex: "Catalog", "Widget annotation"
+     * @throws Exception if the dictionary contains forbidden keys and the parameters policy is {@link InvalidElementPolicy#FAIL}
+     */
+    <T extends Exception> void maybeRemoveForbiddenKeys(COSDictionary dictionary, String dictionaryDescription,
+            Function<String, T> exceptionSupplier, COSName... keys) throws T {
         if (nonNull(dictionary)) {
             for (COSName key : keys) {
                 if (dictionary.containsKey(key)) {
-                    maybeFailOnInvalidElement(() -> new TaskExecutionException(
+                    maybeFailOnInvalidElement(() -> exceptionSupplier.apply(
                             dictionaryDescription + " dictionary shall not include a " + key + " entry"));
                     dictionary.removeItem(key);
                     notifyEvent(notifiableMetadata()).taskWarning(
@@ -112,5 +128,25 @@ public class ConversionContext {
 
     public ConvertToPDFAParameters parameters() {
         return parameters;
+    }
+
+    public OutputIntent outputIntent() {
+        return this.outputIntent;
+    }
+
+    public void outputIntent(OutputIntent outputIntent) {
+        requireNotNullArg(outputIntent, "Output intent cannot be null");
+        this.outputIntent = outputIntent;
+    }
+
+    public boolean hasCorICAnnotationKey() {
+        return hasCorICAnnotationKey;
+    }
+
+    /**
+     * sets whether the document has annotations with the /C or /IC key
+     */
+    public void hasCorICAnnotationKey(boolean hasCorICAnnotationKey) {
+        this.hasCorICAnnotationKey = hasCorICAnnotationKey;
     }
 }

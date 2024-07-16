@@ -1,5 +1,6 @@
+package org.sejda.model.pdfa;
 /*
- * Created on 21/06/24
+ * Created on 10/07/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
@@ -16,25 +17,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.sejda.impl.sambox.component.pdfa;
-
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
 /**
- * Base class for user-defined {@link Rule} with conversion context.
- *
  * @author Andrea Vacondio
  */
-abstract class BaseRule<T, E extends Exception> implements Rule<T, E> {
-
-    private final ConversionContext conversionContext;
-
-    public BaseRule(ConversionContext conversionContext) {
-        requireNotNullArg(conversionContext, "Conversion context cannot be null");
-        this.conversionContext = conversionContext;
+public class DefaultRGBOutputIntent implements OutputIntent {
+    @Override
+    public ICCProfile profile() {
+        return new SRGB2014();
     }
 
-    public ConversionContext conversionContext() {
-        return conversionContext;
+    @Override
+    public String info() {
+        return "sRGB v2";
+    }
+
+    @Override
+    public String registryName() {
+        return "http://www.color.org";
+    }
+
+    @Override
+    public String outputConditionIdentifier() {
+        return "sRGB IEC61966-2.1";
+    }
+
+    @Override
+    public String outputCondition() {
+        return "IEC 61966-2-1";
     }
 }

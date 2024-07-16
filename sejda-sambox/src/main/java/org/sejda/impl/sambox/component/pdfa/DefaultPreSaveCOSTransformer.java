@@ -1,4 +1,3 @@
-package org.sejda.impl.sambox.component.pdfa;
 /*
  * Created on 19/06/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
@@ -17,6 +16,7 @@ package org.sejda.impl.sambox.component.pdfa;
  * You should have received a copy of the GNU Affero General Public License
  * along with Sejda.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.sejda.impl.sambox.component.pdfa;
 
 import org.apache.commons.lang3.function.FailableConsumer;
 import org.sejda.sambox.cos.COSDictionary;
@@ -26,9 +26,11 @@ import org.sejda.sambox.output.PreSaveCOSTransformer;
 import java.io.IOException;
 
 /**
+ * A {@link PreSaveCOSTransformer} that allows to transform {@link COSStream} and {@link COSDictionary} composing multiple consumers.
+ *
  * @author Andrea Vacondio
  */
-public class PDFA1BTransformer implements PreSaveCOSTransformer {
+public class DefaultPreSaveCOSTransformer implements PreSaveCOSTransformer {
 
     private FailableConsumer<COSDictionary, IOException> dictionaryConsumer = t -> {
     };
@@ -36,14 +38,14 @@ public class PDFA1BTransformer implements PreSaveCOSTransformer {
     };
 
     /**
-     * Adds a consumer to the COSObjectsPreProcessor to be applied to a {@link COSDictionary}.
+     * Adds a consumer to the PreSaveCOSTransformer to be applied to a {@link COSDictionary}.
      */
     public void addDictionaryConsumer(FailableConsumer<COSDictionary, IOException> consumer) {
         dictionaryConsumer = dictionaryConsumer.andThen(consumer);
     }
 
     /**
-     * Adds a consumer to the COSObjectsPreProcessor to be applied to a {@link COSStream}.
+     * Adds a consumer to the PreSaveCOSTransformer to be applied to a {@link COSStream}.
      */
     public void addStreamConsumer(FailableConsumer<COSStream, IOException> consumer) {
         streamConsumer = streamConsumer.andThen(consumer);

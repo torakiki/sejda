@@ -38,6 +38,11 @@ public enum ConformanceLevel {
         public Set<String> allowedActionTypes() {
             return Set.of("GoTo", "GoToR", "Thread", "URI", "Named");
         }
+
+        @Override
+        public String specVersion() {
+            return "1.4";
+        }
     };
 
     /**
@@ -51,9 +56,21 @@ public enum ConformanceLevel {
     public abstract Set<String> allowedActionTypes();
 
     /**
+     * @return the specification version required for this conformance level
+     */
+    public abstract String specVersion();
+
+    /**
      * @return the allowed values for a named action
      */
     public Set<String> allowedNamedActions() {
         return Set.of("NextPage", "PrevPage", "FirstPage", "LastPage");
+    }
+
+    /**
+     * @return the allowed values for a named action
+     */
+    public Set<String> allowedRenderingIntents() {
+        return Set.of("RelativeColorimetric", "AbsoluteColorimetric", "Perceptual", "Saturation");
     }
 }

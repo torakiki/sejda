@@ -1,5 +1,5 @@
 /*
- * Created on 21/06/24
+ * Created on 02/07/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
@@ -18,23 +18,29 @@
  */
 package org.sejda.impl.sambox.component.pdfa;
 
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.COSStream;
+
+import java.io.IOException;
+
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
- * Base class for user-defined {@link Rule} with conversion context.
+ * Rule 6.7.8 of ISO 19005-1: Valid extension schemas
  *
  * @author Andrea Vacondio
  */
-abstract class BaseRule<T, E extends Exception> implements Rule<T, E> {
+public class XMPStreamRule extends BaseCOSObjectRule<COSStream> {
 
-    private final ConversionContext conversionContext;
-
-    public BaseRule(ConversionContext conversionContext) {
-        requireNotNullArg(conversionContext, "Conversion context cannot be null");
-        this.conversionContext = conversionContext;
+    public XMPStreamRule(ConversionContext conversionContext) {
+        super(conversionContext);
     }
 
-    public ConversionContext conversionContext() {
-        return conversionContext;
+    @Override
+    public void accept(COSStream stream) throws IOException {
+        if (COSName.METADATA.equals(stream.getCOSName(COSName.TYPE))) {
+            notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
+                    "Validation of XMP extension schemas not yet implemented");
+        }
     }
 }

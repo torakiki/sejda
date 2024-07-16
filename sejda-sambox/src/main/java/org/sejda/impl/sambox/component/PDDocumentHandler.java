@@ -18,21 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
-import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
-
-import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.sejda.core.Sejda;
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.impl.sambox.util.PageLabelUtils;
@@ -48,6 +33,7 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.encryption.StandardSecurity;
+import org.sejda.sambox.output.PreSaveCOSTransformer;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
@@ -65,6 +51,21 @@ import org.sejda.sambox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.image.BufferedImage;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageLayout;
+import static org.sejda.impl.sambox.util.ViewerPreferencesUtils.getPageMode;
+
 /**
  * Wrapper over a {@link PDDocument}.
  *
@@ -78,9 +79,10 @@ public class PDDocumentHandler implements Closeable {
     private static final WriteOption[] COMPRESSED_OPTS = new WriteOption[] { WriteOption.COMPRESS_STREAMS,
             WriteOption.OBJECT_STREAMS, WriteOption.XREF_STREAM };
 
-    private PDDocument document;
-    private PDDocumentAccessPermission permissions;
-    private Set<WriteOption> writeOptions = new HashSet<>();
+    private final PDDocument document;
+    private final PDDocumentAccessPermission permissions;
+    private final Set<WriteOption> writeOptions = new HashSet<>(Set.of(WriteOption.UPSERT_DOCUMENT_METADATA_STREAM));
+    private PreSaveCOSTransformer transformer;
     private boolean updateProducerModifiedDate = true;
 
     /**
@@ -125,8 +127,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Set the document information on the underlying {@link PDDocument}
-     *
-     * @param info
      */
     public void setDocumentInformation(PDDocumentInformation info) {
         document.setDocumentInformation(info);
@@ -147,8 +147,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page layout on the underlying {@link PDDocument}.
-     *
-     * @param layout
      */
     public void setPageLayoutOnDocument(PdfPageLayout layout) {
         setPageLayout(getPageLayout(layout));
@@ -157,8 +155,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the given page mode on the underlying {@link PDDocument}.
-     *
-     * @param mode
      */
     public void setPageModeOnDocument(PdfPageMode mode) {
         setPageMode(getPageMode(mode));
@@ -167,8 +163,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the page labels on the underlying {@link PDDocument}.
-     *
-     * @param labels
      */
     public void setPageLabelsOnDocument(Map<Integer, PdfPageLabel> labels) {
         document.getDocumentCatalog().setPageLabels(PageLabelUtils.getLabels(labels, getNumberOfPages()));
@@ -177,8 +171,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Sets the version on the underlying {@link PDDocument}.
-     *
-     * @param version
      */
     public void setVersionOnPDDocument(PdfVersion version) {
         if (version != null) {
@@ -189,8 +181,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Adds the given {@link WriteOption}s to be used when the document is saved
-     *
-     * @param opts
      */
     public void addWriteOption(WriteOption... opts) {
         this.writeOptions.addAll(Arrays.asList(opts));
@@ -198,8 +188,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Removes the given {@link WriteOption}s to be used when the document is saved
-     *
-     * @param opts
      */
     public void removeWriteOption(WriteOption... opts) {
         for (WriteOption opt : opts) {
@@ -246,9 +234,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} to the given file.
-     *
-     * @param file
-     * @throws TaskException
      */
     public void savePDDocument(File file, EncryptionAtRestPolicy encryptionAtRestSecurity) throws TaskException {
         savePDDocument(file, null, encryptionAtRestSecurity);
@@ -256,10 +241,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Saves the underlying {@link PDDocument} to the given file and using the given standard security.
-     *
-     * @param file
-     * @param security
-     * @throws TaskException
      */
     public void savePDDocument(File file, StandardSecurity security, EncryptionAtRestPolicy encryptionAtRestSecurity)
             throws TaskException {
@@ -271,12 +252,13 @@ public class PDDocumentHandler implements Closeable {
                 this.addWriteOption(WriteOption.NO_METADATA_PRODUCER_MODIFIED_DATE_UPDATE);
             }
 
+            LOG.trace("Saving document to {} using options {}", file, writeOptions);
             if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
-                LOG.trace("Saving document to {} using options {}", file, writeOptions);
-                document.writeTo(file, security, writeOptions.toArray(WriteOption[]::new));
+                document.withPreSaveTransformer(transformer)
+                        .writeTo(file, security, writeOptions.toArray(WriteOption[]::new));
             } else {
-                LOG.trace("Saving document to {} using options {}", file, writeOptions);
-                document.writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
+                document.withPreSaveTransformer(transformer)
+                        .writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
                         writeOptions.toArray(WriteOption[]::new));
             }
         } catch (IOException e) {
@@ -299,7 +281,6 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Creates a copy of the given page and adds it to the underlying {@link PDDocument}
      *
-     * @param page
      * @return The newly created page
      */
     public PDPage importPage(PDPage page) {
@@ -319,7 +300,6 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Adds the given page to the underlying {@link PDDocument}
      *
-     * @param page
      * @return the page
      */
     public PDPage addPage(PDPage page) {
@@ -329,8 +309,6 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Removes the given page to the underlying {@link PDDocument}
-     *
-     * @param pageNumber
      */
     public void removePage(int pageNumber) {
         document.removePage(pageNumber - 1);
@@ -452,5 +430,9 @@ public class PDDocumentHandler implements Closeable {
 
     public void setUpdateProducerModifiedDate(boolean updateProducerModifiedDate) {
         this.updateProducerModifiedDate = updateProducerModifiedDate;
+    }
+
+    public void setTransformer(PreSaveCOSTransformer transformer) {
+        this.transformer = transformer;
     }
 }

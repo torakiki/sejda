@@ -1,5 +1,5 @@
 /*
- * Created on 21/06/24
+ * Created on 03/07/24
  * Copyright 2024 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
@@ -18,23 +18,23 @@
  */
 package org.sejda.impl.sambox.component.pdfa;
 
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import org.sejda.model.exception.TaskException;
+import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.sambox.pdmodel.PDDocument;
 
 /**
- * Base class for user-defined {@link Rule} with conversion context.
+ * Rule setting the required version of the PDF
  *
  * @author Andrea Vacondio
  */
-abstract class BaseRule<T, E extends Exception> implements Rule<T, E> {
+public class SpecVersionDocumentRule extends BaseRule<PDDocument, TaskException> {
 
-    private final ConversionContext conversionContext;
-
-    public BaseRule(ConversionContext conversionContext) {
-        requireNotNullArg(conversionContext, "Conversion context cannot be null");
-        this.conversionContext = conversionContext;
+    public SpecVersionDocumentRule(ConversionContext conversionContext) {
+        super(conversionContext);
     }
 
-    public ConversionContext conversionContext() {
-        return conversionContext;
+    @Override
+    public void accept(PDDocument document) throws TaskExecutionException {
+        document.getDocument().setHeaderVersion(conversionContext().parameters().conformanceLevel().specVersion());
     }
 }

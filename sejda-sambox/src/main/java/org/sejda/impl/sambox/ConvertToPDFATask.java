@@ -22,11 +22,14 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.pdfa.ConversionContext;
+import org.sejda.impl.sambox.component.pdfa.Rules;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.parameter.ConvertToPDFAParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.sambox.pdmodel.PDPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,9 +73,21 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
             LOG.debug("Opening {}", source);
             executionContext().notifiableTaskMetadata().setCurrentSource(source);
             documentHandler = source.open(documentLoader);
+            documentHandler.setCreatorOnPDDocument();
 
             File tmpFile = createTemporaryBuffer(parameters.getOutput());
             LOG.debug("Created output on temporary buffer {}", tmpFile);
+
+            var context = new ConversionContext(parameters, executionContext().notifiableTaskMetadata());
+            Rules.documentRules(context).accept(documentHandler.getUnderlyingPDDocument());
+            var pageRules = Rules.pageRules(context);
+            for (PDPage page : documentHandler.getPages()) {
+                pageRules.accept(page);
+            }
+
+            documentHandler.setTransformer(Rules.preSaveCOSTransformer(context));
+            documentHandler.setCompress(parameters.isCompress());
+            documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
 
             String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
                     () -> nameGenerator(parameters.getOutputPrefix()).generate(
@@ -82,6 +97,10 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
             closeQuietly(documentHandler);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
+
+        executionContext().notifiableTaskMetadata().clearCurrentSource();
+        parameters.getOutput().accept(outputWriter);
+        LOG.debug("Input documents optimized and written to {}", parameters.getOutput());
     }
 
     @Override
