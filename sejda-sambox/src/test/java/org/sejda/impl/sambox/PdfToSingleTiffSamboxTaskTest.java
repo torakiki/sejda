@@ -26,17 +26,20 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.image.AbstractPdfToImageParameters;
 import org.sejda.model.parameter.image.AbstractPdfToSingleImageParameters;
 import org.sejda.model.parameter.image.PdfToSingleTiffParameters;
+import org.sejda.model.pdf.page.PageRange;
 import org.sejda.model.task.Task;
 import org.sejda.tests.tasks.BaseTaskTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Iterator;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sejda.tests.TestUtils.customEncryptedInput;
 
 /**
@@ -73,6 +76,27 @@ public class PdfToSingleTiffSamboxTaskTest extends BaseTaskTest<PdfToSingleTiffP
             } catch (Exception e) {
                 LOG.error("Test failed", e);
                 fail();
+            }
+        });
+    }
+
+    @Test
+    public void testPageRangeSingleTiff() throws IOException {
+        AbstractPdfToSingleImageParameters parameters = getSingleTiffParams();
+        parameters.addPageRange(new PageRange(1, 2));
+        testContext.fileOutputTo(parameters, ".tiff");
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.forRawOutput(p -> {
+            try {
+                ImageInputStream iis = ImageIO.createImageInputStream(p.toFile());
+                Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+                ImageReader reader = readers.next();
+                reader.setInput(iis, true);
+                int pageCount = reader.getNumImages(true);
+                assertEquals(2, pageCount);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
     }
