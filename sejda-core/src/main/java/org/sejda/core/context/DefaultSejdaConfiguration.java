@@ -109,6 +109,14 @@ public final class DefaultSejdaConfiguration implements SejdaConfiguration {
     }
 
     @Override
+    public Class<? extends Task> getTaskClass(TaskParameters parameters) throws TaskException {
+        var parametersClass = parameters.getClass();
+        return Optional.ofNullable(tasksRegistry.getTask(parametersClass)).orElseThrow(
+                () -> new TaskNotFoundException(
+                        String.format("Unable to find a Task class able to execute %s", parametersClass)));
+    }
+
+    @Override
     public boolean isValidation() {
         return validation;
     }
