@@ -45,22 +45,18 @@ public final class Rules {
 
     public static FailableConsumer<PDPage, TaskException> pageRules(ConversionContext context) {
         return switch (context.parameters().conformanceLevel()) {
-            case PDFA_1B -> new ActionsPageRule(context).andThen(new AnnotationsPageRule(context))
-                    .andThen(new AnnotationsColorPageRule(context));
+            case PDFA_1B -> new NoTransparencyGroupPageRule(context).andThen(new AnnotationsPageRule(context))
+                    .andThen(new AnnotationsColorPageRule(context)).andThen(new ActionsPageRule(context));
         };
     }
 
     public static PreSaveCOSTransformer preSaveCOSTransformer(ConversionContext context) {
         return switch (context.parameters().conformanceLevel()) {
-            case PDFA_1B -> {
-                var transformer = new DefaultPreSaveCOSTransformer();
-                transformer.addStreamConsumer(new NoDLStreamRule(context));
-                transformer.addStreamConsumer(new NoFileSpecificationStreamRule(context));
-                transformer.addStreamConsumer(new NoLZWCompressionStreamRule(context));
-                transformer.addStreamConsumer(new XMPStreamRule(context));
-                transformer.addDictionaryConsumer(new NoEFDictionaryRule(context));
-                yield transformer;
-            }
+            case PDFA_1B -> new DefaultPreSaveCOSTransformer().withStreamRule(new NoDLStreamRule(context))
+                    .withStreamRule(new NoFileSpecificationStreamRule(context))
+                    .withStreamRule(new NoLZWCompressionStreamRule(context)).withStreamRule(new XMPStreamRule(context))
+                    .withStreamRule(new NoTransparencyGroupStreamRule(context))
+                    .withDictionaryRule(new NoEFDictionaryRule(context));
         };
     }
 }

@@ -18,19 +18,29 @@
  */
 package org.sejda.impl.sambox.component.pdfa;
 
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.parameter.ConvertToPDFAParameters;
+import org.sejda.model.pdfa.CompactCGATSTR001;
+import org.sejda.model.pdfa.ICCProfile;
 import org.sejda.model.pdfa.InvalidElementPolicy;
 import org.sejda.model.pdfa.OutputIntent;
+import org.sejda.model.pdfa.SRGB2014;
 import org.sejda.model.task.NotifiableTaskMetadata;
+import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
 
+import java.io.IOException;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.zip.DeflaterInputStream;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
@@ -43,10 +53,22 @@ public class ConversionContext {
     private final NotifiableTaskMetadata notifiableMetadata;
     private OutputIntent outputIntent;
     private boolean hasCorICAnnotationKey = false;
+    private final COSArray defaultCMYK;
+    private final COSArray defaultRGB;
 
     public ConversionContext(ConvertToPDFAParameters parameters, NotifiableTaskMetadata notifiableMetadata) {
         this.parameters = parameters;
         this.notifiableMetadata = notifiableMetadata;
+        defaultCMYK = new COSArray(COSName.ICCBASED, new ReadOnlyFilteredCOSStream(
+                COSDictionary.of(COSName.FILTER, COSName.FLATE_DECODE, COSName.N, COSInteger.get(4), COSName.ALTERNATE,
+                        COSName.DEVICECMYK), () -> new DeflaterInputStream(
+                ofNullable(parameters.getDeviceCMYKProfile()).map(ICCProfile::profileData)
+                        .orElseGet(() -> new CompactCGATSTR001().profileData())), -1));
+        defaultRGB = new COSArray(COSName.ICCBASED, new ReadOnlyFilteredCOSStream(
+                COSDictionary.of(COSName.FILTER, COSName.FLATE_DECODE, COSName.N, COSInteger.get(3), COSName.ALTERNATE,
+                        COSName.DEVICERGB), () -> new DeflaterInputStream(
+                ofNullable(parameters.getDefaultRGBProfile()).map(ICCProfile::profileData)
+                        .orElseGet(() -> new SRGB2014().profileData())), -1));
     }
 
     public NotifiableTaskMetadata notifiableMetadata() {
@@ -126,6 +148,38 @@ public class ConversionContext {
         }
     }
 
+    /**
+     * If necessary, it adds a default color space to the input color space resources (COSName.COLORSPACE branch of the resource dictionary)
+     */
+    void maybeAddDefaultColorSpaceFor(COSBase colorSpace, COSDictionary csResources) throws IOException {
+        //TODO detect cycles
+        //TODO shadings in resources can have color space
+        //only the Device color spaces are defined as a COSName, all the others are COSArray
+        if (COSName.DEVICECMYK.equals(colorSpace) && outputIntent().profile().components() == 3) {
+            //add default for device cmyk
+            csResources.computeIfAbsent(COSName.DEFAULT_CMYK, k -> defaultCMYK(), COSArray.class);
+        }
+        if (COSName.DEVICERGB.equals(colorSpace) && outputIntent().profile().components() == 4) {
+            //add default for device rgb
+            csResources.computeIfAbsent(COSName.DEFAULT_RGB, k -> defaultRGB(), COSArray.class);
+        }
+        if (colorSpace instanceof COSArray array && !array.isEmpty()) {
+            if (array.getObject(0) instanceof COSName name) {
+                if (COSName.SEPARATION.equals(name) && array.size() > 2) {
+                    maybeAddDefaultColorSpaceFor(array.getObject(2), csResources);
+                }
+                if (COSName.INDEX.equals(name) && array.size() > 1) {
+                    maybeAddDefaultColorSpaceFor(array.getObject(1), csResources);
+                }
+                if (COSName.DEVICEN.equals(name) && array.size() > 2) {
+                    ofNullable(array.getObject(1, COSArray.class)).filter(a -> a.size() > 8).orElseThrow(
+                            () -> new IOException("Maximum number of colorants in DeviceN colorspace is 8"));
+                    maybeAddDefaultColorSpaceFor(array.getObject(2), csResources);
+                }
+            }
+        }
+    }
+
     public ConvertToPDFAParameters parameters() {
         return parameters;
     }
@@ -141,6 +195,14 @@ public class ConversionContext {
 
     public boolean hasCorICAnnotationKey() {
         return hasCorICAnnotationKey;
+    }
+
+    public COSArray defaultRGB() {
+        return defaultRGB;
+    }
+
+    public COSArray defaultCMYK() {
+        return defaultCMYK;
     }
 
     /**

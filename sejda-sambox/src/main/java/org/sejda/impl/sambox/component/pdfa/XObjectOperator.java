@@ -28,21 +28,30 @@ import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnly;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
+import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.getColorSpaceFromAWT;
 
 /**
+ * Operator on xobjects that covers some of the constraints in chapter 6.2 of ISO 19005-1.
+ *
  * @author Andrea Vacondio
  */
 public class XObjectOperator extends PdfAContentStreamOperator {
+
     private static final Logger LOG = LoggerFactory.getLogger(XObjectOperator.class);
 
     @Override
@@ -67,18 +76,20 @@ public class XObjectOperator extends PdfAContentStreamOperator {
         if (!(stream instanceof ReadOnlyFilteredCOSStream)) {
             // always mark as hit, otherwise will get removed by ResourceDictionaryCleaner
             hit(objectName, stream);
-            String subtype = stream.getNameAsString(COSName.SUBTYPE);
+            var subtype = stream.getCOSName(COSName.SUBTYPE);
             LOG.trace("Hit image with name {} and type {}", objectName.getName(), subtype);
-            if (COSName.IMAGE.getName().equals(subtype)) {
-                if (stream.hasFilter(COSName.JPX_DECODE)) {
-                    //convert to jpg
-                }
+            if (COSName.IMAGE.equals(subtype)) {
                 conversionContext().maybeRemoveForbiddenKeys(stream, "XObject", IOException::new,
                         COSName.getPDFName("Alternates"), COSName.getPDFName("OPI"));
                 sanitizeInterpolateValue(stream);
                 sanitizeIntentValue(stream);
-                //TODO cechk ColorSpace for device ones and possible update the resources with Default color spaces
-            } else if (COSName.FORM.getName().equals(subtype)) {
+                //JPEG2000 and SMASK are not allowed in PDFa/1b
+                if (stream.hasFilter(COSName.JPX_DECODE) || nonNull(stream.getDictionaryObject(COSName.SMASK))) {
+
+                    //convert to jpg
+                }
+                conversionContext().maybeAddDefaultColorSpaceFor(stream.getDictionaryObject(COSName.CS), csResources());
+            } else if (COSName.FORM.equals(subtype)) {
                 //A form XObject dictionary shall not contain any of the following:
                 //* the OPI key;
                 //* the Subtype2 key with a value of PS;
@@ -86,11 +97,11 @@ public class XObjectOperator extends PdfAContentStreamOperator {
                 //* reference XObject
                 conversionContext().maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                         COSName.getPDFName("Ref"), COSName.getPDFName("OPI"), COSName.PS);
-                if ("PS".equals(stream.getNameAsString(COSName.getPDFName("Subtype2")))) {
+                if (COSName.PS.equals(stream.getCOSName(COSName.getPDFName("Subtype2")))) {
                     conversionContext().maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                             COSName.getPDFName("Subtype2"));
                 }
-                PDXObject xobject = PDXObject.createXObject(stream.getCOSObject(), getContext().getResources());
+                PDXObject xobject = PDXObject.createXObject(stream, getContext().getResources());
                 getContext().showForm((PDFormXObject) xobject);
             } else {
                 throw new IOException("Found image of invalid subtype " + subtype);
@@ -133,17 +144,32 @@ public class XObjectOperator extends PdfAContentStreamOperator {
     private void hit(COSName objectName, COSStream xObject) throws IOException {
         COSDictionary xobjects = xobjectResources();
         if (!(xobjects.getItem(objectName) instanceof ReadOnlyFilteredCOSStream)) {
-            xobjects.setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(xObject));
+            xobjects.setItem(objectName, readOnly(xObject));
         }
     }
 
     private COSDictionary xobjectResources() {
-        COSDictionary resources = getContext().getResources().getCOSObject();
-        return ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).orElseGet(() -> {
-            COSDictionary ret = new COSDictionary();
-            resources.setItem(COSName.XOBJECT, ret);
-            return ret;
-        });
+        return getContext().getResources().getCOSObject()
+                .computeIfAbsent(COSName.XOBJECT, k -> new COSDictionary(), COSDictionary.class);
+    }
+
+    private COSDictionary csResources() {
+        return getContext().getResources().getCOSObject()
+                .computeIfAbsent(COSName.COLORSPACE, k -> new COSDictionary(), COSDictionary.class);
+    }
+
+    private static ReadOnlyFilteredCOSStream createFromJpegFile(File file, PDImageXObject original) throws IOException {
+        // read image
+        var awtImage = ImageIO.read(file);
+        requireIOCondition(nonNull(awtImage), "Cannot read image");
+        if (awtImage.getColorModel().hasAlpha()) {
+            throw new UnsupportedOperationException("alpha channel not implemented");
+        }
+        ReadOnlyFilteredCOSStream stream = ReadOnlyFilteredCOSStream.readOnlyJpegImage(file, awtImage.getWidth(),
+                awtImage.getHeight(), awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
+        stream.setItem(COSName.OC, original.getCOSObject().getDictionaryObject(COSName.OC));
+        stream.setItem(COSName.STRUCT_PARENT, original.getCOSObject().getDictionaryObject(COSName.STRUCT_PARENT));
+        return stream;
     }
 
     @Override

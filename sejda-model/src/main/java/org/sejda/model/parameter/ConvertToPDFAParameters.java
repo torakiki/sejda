@@ -39,7 +39,6 @@ public class ConvertToPDFAParameters extends MultiplePdfSourceMultipleOutputPara
     private boolean forceOutputIntentReplacement = false;
     private ICCProfile defaultRGBProfile;
     private ICCProfile deviceCMYKProfile;
-    private ICCProfile deviceGrayProfile;
 
     public ConvertToPDFAParameters(InvalidElementPolicy invalidElementPolicy, ConformanceLevel conformanceLevel) {
         this.invalidElementPolicy = invalidElementPolicy;
@@ -68,5 +67,21 @@ public class ConvertToPDFAParameters extends MultiplePdfSourceMultipleOutputPara
 
     public boolean isForceOutputIntentReplacement() {
         return forceOutputIntentReplacement;
+    }
+
+    public ICCProfile getDefaultRGBProfile() {
+        return defaultRGBProfile;
+    }
+
+    public ICCProfile getDeviceCMYKProfile() {
+        return deviceCMYKProfile;
+    }
+
+    public void setDefaultRGBProfile(ICCProfile defaultRGBProfile) {
+        this.defaultRGBProfile = defaultRGBProfile;
+    }
+
+    public void setDeviceCMYKProfile(ICCProfile deviceCMYKProfile) {
+        this.deviceCMYKProfile = deviceCMYKProfile;
     }
 }

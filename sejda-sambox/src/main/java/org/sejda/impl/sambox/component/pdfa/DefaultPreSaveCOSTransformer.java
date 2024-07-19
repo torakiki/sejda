@@ -40,15 +40,17 @@ public class DefaultPreSaveCOSTransformer implements PreSaveCOSTransformer {
     /**
      * Adds a consumer to the PreSaveCOSTransformer to be applied to a {@link COSDictionary}.
      */
-    public void addDictionaryConsumer(FailableConsumer<COSDictionary, IOException> consumer) {
+    public DefaultPreSaveCOSTransformer withDictionaryRule(FailableConsumer<COSDictionary, IOException> consumer) {
         dictionaryConsumer = dictionaryConsumer.andThen(consumer);
+        return this;
     }
 
     /**
      * Adds a consumer to the PreSaveCOSTransformer to be applied to a {@link COSStream}.
      */
-    public void addStreamConsumer(FailableConsumer<COSStream, IOException> consumer) {
+    public DefaultPreSaveCOSTransformer withStreamRule(FailableConsumer<COSStream, IOException> consumer) {
         streamConsumer = streamConsumer.andThen(consumer);
+        return this;
     }
 
     @Override

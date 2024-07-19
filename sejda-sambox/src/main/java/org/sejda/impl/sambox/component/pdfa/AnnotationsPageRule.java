@@ -131,9 +131,7 @@ public class AnnotationsPageRule extends BaseRule<PDPage, TaskException> {
             if (appearanceDictionary.keySet().size() > 1) {
                 conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
                         "Found an annotation with multiple values in its AP dictionary"));
-                COSDictionary newAppearanceDictionary = new COSDictionary();
-                newAppearanceDictionary.setItem(COSName.N, normalAppearance);
-                annotation.setItem(COSName.AP, newAppearanceDictionary);
+                annotation.setItem(COSName.AP, COSDictionary.of(COSName.N, normalAppearance));
                 notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
                         "Modified appearance to include only the N key");
             }
