@@ -33,7 +33,7 @@ import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -93,7 +93,13 @@ public class ReadOnlyFilteredCOSStreamTest {
     @Test
     public void readOnlyJpegImageNullFile() {
         assertThrows(IllegalArgumentException.class,
-                () -> ReadOnlyFilteredCOSStream.readOnlyJpegImage(null, 10, 10, 1, mock(PDColorSpace.class)));
+                () -> ReadOnlyFilteredCOSStream.readOnlyJpegImage((File) null, 10, 10, 1, mock(PDColorSpace.class)));
+    }
+
+    @Test
+    public void readOnlyJpegImageNullPath() {
+        assertThrows(IllegalArgumentException.class,
+                () -> ReadOnlyFilteredCOSStream.readOnlyJpegImage((Path) null, 10, 10, 1, mock(PDColorSpace.class)));
     }
 
     @Test

@@ -153,8 +153,7 @@ public class ConversionContext {
      */
     void maybeAddDefaultColorSpaceFor(COSBase colorSpace, COSDictionary csResources) throws IOException {
         //TODO detect cycles
-        //TODO shadings in resources can have color space
-        //only the Device color spaces are defined as a COSName, all the others are COSArray
+        //only the Device and Pattern color spaces are defined as a COSName, all the others are COSArray
         if (COSName.DEVICECMYK.equals(colorSpace) && outputIntent().profile().components() == 3) {
             //add default for device cmyk
             csResources.computeIfAbsent(COSName.DEFAULT_CMYK, k -> defaultCMYK(), COSArray.class);
@@ -176,7 +175,20 @@ public class ConversionContext {
                             () -> new IOException("Maximum number of colorants in DeviceN colorspace is 8"));
                     maybeAddDefaultColorSpaceFor(array.getObject(2), csResources);
                 }
+                if (COSName.PATTERN.equals(name) && array.size() > 1) {
+                    maybeAddDefaultColorSpaceFor(array.getObject(1), csResources);
+                }
             }
+        }
+    }
+
+    void sanitizeRenderingIntents(COSDictionary dictionary) throws IOException {
+        var intent = dictionary.getNameAsString(COSName.INTENT);
+        if (nonNull(intent) && !parameters().conformanceLevel().allowedRenderingIntents().contains(intent)) {
+            maybeFailOnInvalidElement(() -> new IOException("Found invalid rendering intent value " + intent));
+            dictionary.setItem(COSName.INTENT, COSName.RELATIVE_COLORIMETRIC);
+            notifyEvent(notifiableMetadata()).taskWarning(
+                    "Invalid rendering intent set to " + COSName.RELATIVE_COLORIMETRIC.getName());
         }
     }
 

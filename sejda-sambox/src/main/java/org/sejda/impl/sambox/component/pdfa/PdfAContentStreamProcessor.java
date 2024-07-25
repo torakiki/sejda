@@ -18,7 +18,7 @@
  */
 package org.sejda.impl.sambox.component.pdfa;
 
-import org.sejda.impl.sambox.component.ContentStreamProcessor;
+import org.sejda.impl.sambox.component.FailableContentStreamProcessor;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter.SetGraphicState;
 import org.sejda.sambox.contentstream.operator.state.Concatenate;
 import org.sejda.sambox.contentstream.operator.state.Restore;
@@ -30,7 +30,7 @@ import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 /**
  * @author Andrea Vacondio
  */
-public class PdfAContentStreamProcessor extends ContentStreamProcessor {
+public class PdfAContentStreamProcessor extends FailableContentStreamProcessor {
 
     private final ConversionContext context;
 

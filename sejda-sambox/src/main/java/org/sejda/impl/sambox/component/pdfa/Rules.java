@@ -24,6 +24,17 @@ import org.sejda.sambox.output.PreSaveCOSTransformer;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
+import java.io.IOException;
+
+import static org.sejda.impl.sambox.component.pdfa.BaseSetColorSpace.nonStrokingColorspace;
+import static org.sejda.impl.sambox.component.pdfa.BaseSetColorSpace.strokingColorspace;
+import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.nonStrokingCMYK;
+import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.nonStrokingRGB;
+import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.strokingCMYK;
+import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.strokingRGB;
+import static org.sejda.impl.sambox.component.pdfa.TilingPatternSetColor.tilingPatternSetNonStrokingColor;
+import static org.sejda.impl.sambox.component.pdfa.TilingPatternSetColor.tilingPatternSetStrokingColor;
+
 /**
  * @author Andrea Vacondio
  */
@@ -57,6 +68,27 @@ public final class Rules {
                     .withStreamRule(new NoLZWCompressionStreamRule(context)).withStreamRule(new XMPStreamRule(context))
                     .withStreamRule(new NoTransparencyGroupStreamRule(context))
                     .withDictionaryRule(new NoEFDictionaryRule(context));
+        };
+    }
+
+    public static FailableConsumer<PDPage, IOException> contentStreamRules(ConversionContext context) {
+        return switch (context.parameters().conformanceLevel()) {
+            case PDFA_1B -> {
+                var csProcessor = new PdfAContentStreamProcessor(context);
+                csProcessor.addOptimizationOperator(new XObjectOperator());
+                csProcessor.addOptimizationOperator(strokingRGB());
+                csProcessor.addOptimizationOperator(nonStrokingRGB());
+                csProcessor.addOptimizationOperator(strokingCMYK());
+                csProcessor.addOptimizationOperator(nonStrokingCMYK());
+                csProcessor.addOptimizationOperator(strokingColorspace());
+                csProcessor.addOptimizationOperator(nonStrokingColorspace());
+                csProcessor.addOptimizationOperator(new SetRenderingIntent());
+                csProcessor.addOperator(tilingPatternSetStrokingColor());
+                csProcessor.addOperator(tilingPatternSetNonStrokingColor());
+                csProcessor.addOperator(new PostScriptOperator());
+                csProcessor.addOptimizationOperator(new InlineImageOperator());
+                yield csProcessor;
+            }
         };
     }
 }

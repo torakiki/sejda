@@ -33,16 +33,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.io.File;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.DELETE_ON_CLOSE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnly;
+import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyJpegImage;
+import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyPngImage;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
+import static org.sejda.sambox.pdmodel.graphics.PDXObject.createXObject;
 import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.getColorSpaceFromAWT;
 
 /**
@@ -66,15 +75,13 @@ public class XObjectOperator extends PdfAContentStreamOperator {
                     .getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).map(
                             d -> d.getDictionaryObject(objectName, COSStream.class))
                     .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
-            //TODO hit to avoid processing the same multiple times
-            //jpeg2000 convert
-
+            processStream(objectName, existing);
         }
     }
 
     private void processStream(COSName objectName, COSStream stream) throws IOException {
         if (!(stream instanceof ReadOnlyFilteredCOSStream)) {
-            // always mark as hit, otherwise will get removed by ResourceDictionaryCleaner
+            // always mark as hit
             hit(objectName, stream);
             var subtype = stream.getCOSName(COSName.SUBTYPE);
             LOG.trace("Hit image with name {} and type {}", objectName.getName(), subtype);
@@ -82,11 +89,16 @@ public class XObjectOperator extends PdfAContentStreamOperator {
                 conversionContext().maybeRemoveForbiddenKeys(stream, "XObject", IOException::new,
                         COSName.getPDFName("Alternates"), COSName.getPDFName("OPI"));
                 sanitizeInterpolateValue(stream);
-                sanitizeIntentValue(stream);
-                //JPEG2000 and SMASK are not allowed in PDFa/1b
+                conversionContext().sanitizeRenderingIntents(stream);
+                //JPEG2000 and SMASK are not allowed in PDFa/1b so we convert to jpg
                 if (stream.hasFilter(COSName.JPX_DECODE) || nonNull(stream.getDictionaryObject(COSName.SMASK))) {
-
-                    //convert to jpg
+                    conversionContext().maybeFailOnInvalidElement(
+                            () -> new IOException("Found an JPEG2000 image or an image with SMASK"));
+                    //TODO make sure we don't compress the same image multiple times
+                    PDImageXObject image = (PDImageXObject) createXObject(stream, getContext().getResources());
+                    replaceHitXObject(objectName, createFromXObjectImage(image));
+                    notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
+                            "Image was converted to a supported type");
                 }
                 conversionContext().maybeAddDefaultColorSpaceFor(stream.getDictionaryObject(COSName.CS), csResources());
             } else if (COSName.FORM.equals(subtype)) {
@@ -101,7 +113,7 @@ public class XObjectOperator extends PdfAContentStreamOperator {
                     conversionContext().maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                             COSName.getPDFName("Subtype2"));
                 }
-                PDXObject xobject = PDXObject.createXObject(stream, getContext().getResources());
+                PDXObject xobject = createXObject(stream, getContext().getResources());
                 getContext().showForm((PDFormXObject) xobject);
             } else {
                 throw new IOException("Found image of invalid subtype " + subtype);
@@ -112,18 +124,6 @@ public class XObjectOperator extends PdfAContentStreamOperator {
             stream.unDecode();
             LOG.trace("Used memory: {} Mb",
                     (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000);
-        }
-    }
-
-    private void sanitizeIntentValue(COSStream stream) throws IOException {
-        var intent = stream.getNameAsString(COSName.INTENT);
-        if (nonNull(intent) && !conversionContext().parameters().conformanceLevel().allowedRenderingIntents()
-                .contains(intent)) {
-            conversionContext().maybeFailOnInvalidElement(
-                    () -> new IOException("Found image with invalid intent value " + intent));
-            stream.setItem(COSName.INTENT, COSName.RELATIVE_COLORIMETRIC);
-            notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
-                    "Invalid image intent set to " + COSName.RELATIVE_COLORIMETRIC.getName());
         }
     }
 
@@ -158,17 +158,39 @@ public class XObjectOperator extends PdfAContentStreamOperator {
                 .computeIfAbsent(COSName.COLORSPACE, k -> new COSDictionary(), COSDictionary.class);
     }
 
-    private static ReadOnlyFilteredCOSStream createFromJpegFile(File file, PDImageXObject original) throws IOException {
-        // read image
-        var awtImage = ImageIO.read(file);
-        requireIOCondition(nonNull(awtImage), "Cannot read image");
-        if (awtImage.getColorModel().hasAlpha()) {
-            throw new UnsupportedOperationException("alpha channel not implemented");
+    private ReadOnlyFilteredCOSStream createFromXObjectImage(PDImageXObject image) throws IOException {
+        BufferedImage bufferedImage = image.getImage();
+        var tmpFile = Files.createTempFile("tempImage", ".tmp");
+        try (var out = Files.newOutputStream(tmpFile, DELETE_ON_CLOSE, CREATE, TRUNCATE_EXISTING, WRITE)) {
+            if (bufferedImage.getColorModel().hasAlpha()) {
+                ImageIO.write(bufferedImage, "PNG", out);
+                return createFromPngFile(tmpFile, image);
+            }
+            ImageIO.write(bufferedImage, "JPEG", out);
+            return createFromJpegFile(tmpFile, image);
+        } finally {
+            bufferedImage.flush();
         }
-        ReadOnlyFilteredCOSStream stream = ReadOnlyFilteredCOSStream.readOnlyJpegImage(file, awtImage.getWidth(),
-                awtImage.getHeight(), awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
+
+    }
+
+    private static ReadOnlyFilteredCOSStream createFromPngFile(Path file, PDImageXObject original) throws IOException {
+        // read image
+        var awtImage = ImageIO.read(file.toFile());
+        requireIOCondition(nonNull(awtImage), "Cannot read image");
+        var stream = readOnlyPngImage(file, awtImage.getWidth(), awtImage.getHeight(),
+                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
         stream.setItem(COSName.OC, original.getCOSObject().getDictionaryObject(COSName.OC));
-        stream.setItem(COSName.STRUCT_PARENT, original.getCOSObject().getDictionaryObject(COSName.STRUCT_PARENT));
+        return stream;
+    }
+
+    private static ReadOnlyFilteredCOSStream createFromJpegFile(Path file, PDImageXObject original) throws IOException {
+        // read image
+        var awtImage = ImageIO.read(file.toFile());
+        requireIOCondition(nonNull(awtImage), "Cannot read image");
+        var stream = readOnlyJpegImage(file, awtImage.getWidth(), awtImage.getHeight(),
+                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
+        stream.setItem(COSName.OC, original.getCOSObject().getDictionaryObject(COSName.OC));
         return stream;
     }
 

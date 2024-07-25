@@ -39,8 +39,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.GregorianCalendar;
-import java.util.Optional;
 import java.util.zip.DeflaterInputStream;
 
 import static java.util.Optional.ofNullable;
@@ -180,21 +181,47 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     /**
      * a {@link ReadOnlyFilteredCOSStream} that represents an xobject JPEG image
      *
-     * @param imageFile        the image file
+     * @param imageFile the image file
      * @return the created instance
      */
     public static ReadOnlyFilteredCOSStream readOnlyJpegImage(File imageFile, int width, int height,
             int bitsPerComponent, PDColorSpace colorSpace) {
         requireNotNullArg(imageFile, "input file cannot be null");
-        requireNotNullArg(colorSpace, "color space cannot be null");
-        COSDictionary dictionary = COSDictionary.of(COSName.TYPE, COSName.XOBJECT, COSName.SUBTYPE, COSName.IMAGE);
+        var dictionary = imageDictionary(width, height, bitsPerComponent, colorSpace);
         dictionary.setItem(COSName.FILTER, COSName.DCT_DECODE);
+        return new ReadOnlyFilteredCOSStream(dictionary, () -> new FileInputStream(imageFile), imageFile.length());
+    }
+
+    public static ReadOnlyFilteredCOSStream readOnlyJpegImage(Path imageFile, int width, int height,
+            int bitsPerComponent, PDColorSpace colorSpace) {
+        requireNotNullArg(imageFile, "input file cannot be null");
+        return readOnlyJpegImage(imageFile.toFile(), width, height, bitsPerComponent, colorSpace);
+    }
+
+    public static ReadOnlyFilteredCOSStream readOnlyPngImage(Path imageFile, int width, int height,
+            int bitsPerComponent, PDColorSpace colorSpace) {
+        requireNotNullArg(imageFile, "input file cannot be null");
+        var dictionary = imageDictionary(width, height, bitsPerComponent, colorSpace);
+        dictionary.setItem(COSName.FILTER, COSName.FLATE_DECODE);
+        return new ReadOnlyFilteredCOSStream(dictionary, () -> new DeflaterInputStream(Files.newInputStream(imageFile)),
+                -1);
+    }
+
+    public static ReadOnlyFilteredCOSStream readOnlyPngImage(File imageFile, int width, int height,
+            int bitsPerComponent, PDColorSpace colorSpace) {
+        requireNotNullArg(imageFile, "input file cannot be null");
+        return readOnlyPngImage(imageFile.toPath(), width, height, bitsPerComponent, colorSpace);
+    }
+
+    private static COSDictionary imageDictionary(int width, int height, int bitsPerComponent, PDColorSpace colorSpace) {
+        requireNotNullArg(colorSpace, "color space cannot be null");
+        var dictionary = COSDictionary.of(COSName.TYPE, COSName.XOBJECT, COSName.SUBTYPE, COSName.IMAGE,
+                COSName.COLORSPACE, colorSpace.getCOSObject());
+        dictionary.setItem(COSName.FILTER, COSName.FLATE_DECODE);
         dictionary.setInt(COSName.BITS_PER_COMPONENT, bitsPerComponent);
         dictionary.setInt(COSName.HEIGHT, height);
         dictionary.setInt(COSName.WIDTH, width);
-        Optional.of(colorSpace).map(PDColorSpace::getCOSObject)
-                .ifPresent(cs -> dictionary.setItem(COSName.COLORSPACE, cs));
-        return new ReadOnlyFilteredCOSStream(dictionary, () -> new FileInputStream(imageFile), imageFile.length());
+        return dictionary;
     }
 
     /**

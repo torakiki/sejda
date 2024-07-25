@@ -18,22 +18,6 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static java.util.Objects.nonNull;
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.RequireUtils.require;
-import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
-import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_SIZE;
-import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.sejda.impl.sambox.component.ContentStreamProcessor;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
@@ -59,6 +43,21 @@ import org.sejda.sambox.pdmodel.graphics.pattern.PDTilingPattern;
 import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.require;
+import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
+import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_SIZE;
+import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
 
 /**
  * Component that parses the page content steam and the page annotations appearance stream, wraps any image xobject (type xobject, subtype image) found in an instance of
@@ -96,9 +95,8 @@ public class ResourcesHitter extends ContentStreamProcessor {
                 COSBase existing = xobjects.map(d -> d.getDictionaryObject(objectName))
                         .orElseThrow(() -> new MissingResourceException("Missing XObject: " + objectName.getName()));
 
-                if (existing instanceof COSStream) {
-                    if (!(existing instanceof ReadOnlyFilteredCOSStream)) {
-                        COSStream imageStream = (COSStream) existing;
+                if (existing instanceof COSStream imageStream) {
+                    if (!(imageStream instanceof ReadOnlyFilteredCOSStream)) {
                         LOG.trace("Hit image with name {}", objectName.getName());
                         // we wrap the existing so we can identify it later as "in use" and already processed
                         xobjects.get().setItem(objectName, ReadOnlyFilteredCOSStream.readOnly(imageStream));
