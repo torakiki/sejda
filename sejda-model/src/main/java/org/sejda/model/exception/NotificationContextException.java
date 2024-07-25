@@ -1,7 +1,7 @@
 /*
  * Created on 24/apr/2010
  *
- * Copyright 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2010 Sober Lemur S.r.l. and Sejda BV.
  * 
  * This file is part of the Sejda source code
  *

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="filecomment_context" deleted="false" description="Comment for created Java files" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.filecomment" name="filecomment">/*
  * Created on ${date}
- * Copyright 2019 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify

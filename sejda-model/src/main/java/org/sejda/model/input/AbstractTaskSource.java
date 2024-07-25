@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  *
  * This file is part of the Sejda source code
  *

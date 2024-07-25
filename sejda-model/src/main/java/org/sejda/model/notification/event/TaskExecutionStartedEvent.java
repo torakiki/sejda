@@ -1,6 +1,6 @@
 /*
  * Created on 25/jun/2011
- * Copyright (C) 2010 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright (C) 2010 Sober Lemur S.r.l. and Sejda BV.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

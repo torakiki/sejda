@@ -1,6 +1,6 @@
 /*
  * Created on 23 ago 2019
- * Copyright 2019 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -18,11 +18,10 @@
  */
 package org.sejda.fonts;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.sejda.model.pdf.font.FontResource;
 import org.sejda.model.pdf.font.Type0FontsProvider;
+
+import java.util.List;
 
 /**
  * @author Andrea Vacondio

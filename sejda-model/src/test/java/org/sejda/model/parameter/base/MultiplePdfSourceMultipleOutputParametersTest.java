@@ -1,6 +1,6 @@
 /*
  * Created on 1 ott 2020
- * Copyright 2019 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 package org.sejda.model.parameter.base;
 
 import org.junit.jupiter.api.Test;
-import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.TestUtils;
+import org.sejda.model.output.SingleOrMultipleTaskOutput;
 
 import java.util.Arrays;
 

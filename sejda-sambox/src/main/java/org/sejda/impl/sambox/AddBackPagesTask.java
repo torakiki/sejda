@@ -1,6 +1,6 @@
 /*
  * Created on 20 gen 2016
- * Copyright 2019 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  *
  * This file is part of Sejda.
  *

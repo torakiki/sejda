@@ -1,6 +1,6 @@
 /* 
  * This file is part of the Sejda source code
- * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2015 Sober Lemur S.r.l. and Sejda BV.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as 

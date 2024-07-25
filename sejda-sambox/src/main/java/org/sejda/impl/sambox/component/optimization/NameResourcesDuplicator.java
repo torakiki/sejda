@@ -1,6 +1,6 @@
 /*
  * Created on 24 feb 2021
- * Copyright 2019 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2019 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -18,14 +18,14 @@
  */
 package org.sejda.impl.sambox.component.optimization;
 
-import static java.util.Optional.ofNullable;
-
-import java.util.function.Consumer;
-
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.PDResources;
+
+import java.util.function.Consumer;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * Component that duplicates parts of the page resource dictionary that are relevant for the hit and clean process. The idea is that we want to hit and clean a resource dictionary

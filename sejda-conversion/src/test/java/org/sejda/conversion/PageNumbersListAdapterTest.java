@@ -1,6 +1,6 @@
 /*
  * Created on 09/giu/2014
- * Copyright 2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2014 Sober Lemur S.r.l. and Sejda BV.
  * 
  * This file is part of the Sejda source code
  *

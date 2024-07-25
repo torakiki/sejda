@@ -1,6 +1,6 @@
 /*
  * Created on Jul 1, 2011
- * Copyright 2011 by Eduard Weissmann (edi.weissmann@gmail.com).
+ * Copyright 2011 Sober Lemur S.r.l. and Sejda BV
  * 
  * This file is part of the Sejda source code
  *

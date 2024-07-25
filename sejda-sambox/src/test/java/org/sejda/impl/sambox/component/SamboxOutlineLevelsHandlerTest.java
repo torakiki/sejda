@@ -1,7 +1,7 @@
 /* 
  * This file is part of the Sejda source code
  * Created on 11/mar/2015
- * Copyright 2013-2014 by Andrea Vacondio (andrea.vacondio@gmail.com).
+ * Copyright 2013-2014 Sober Lemur S.r.l. and Sejda BV.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as 

@@ -1,6 +1,6 @@
 /*
  * Created on 5 Oct 2023
- * Copyright 2023 Sober Lemur S.a.s. di Vacondio Andrea and Sejda BV
+ * Copyright 2023 Sober Lemur S.r.l. and Sejda BV
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
