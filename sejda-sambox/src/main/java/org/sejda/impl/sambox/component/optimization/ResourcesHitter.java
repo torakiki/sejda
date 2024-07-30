@@ -151,12 +151,8 @@ public class ResourcesHitter extends ContentStreamProcessor {
                     if (fontDictionary.hasId()) {
                         LOG.trace("Hit font with name {} id {}", fontName.getName(), fontDictionary.id());
                         // we wrap reuse the InUseDictionary if we hit it before
-                        fonts.get().setItem(fontName,
-                                ofNullable(hitFontsById.get(fontDictionary.id())).orElseGet(() -> {
-                                    InUseDictionary font = new InUseDictionary(fontDictionary);
-                                    hitFontsById.put(fontDictionary.id(), font);
-                                    return font;
-                                }));
+                        fonts.get().setItem(fontName, hitFontsById.computeIfAbsent(fontDictionary.id(),
+                                (k) -> new InUseDictionary(fontDictionary)));
                     } else {
                         // not even sure we can have a font that's not an indirect ref (so without id), anyway better safe then sorry
                         LOG.trace("Hit font with name {}", fontName.getName());
@@ -218,12 +214,9 @@ public class ResourcesHitter extends ContentStreamProcessor {
                         // we wrap the existing so we can identify it later as "in use" and already processed
                         if (gsDictionary.hasId()) {
                             LOG.trace("Hit ExtGState with name {} id {}", gsName.getName(), gsDictionary.id());
-                            // we wrap reuse the InUseFont if we hit it before
-                            states.get().setItem(gsName, ofNullable(hitGSById.get(gsDictionary.id())).orElseGet(() -> {
-                                InUseDictionary gs = new InUseDictionary(gsDictionary);
-                                hitGSById.put(gsDictionary.id(), gs);
-                                return gs;
-                            }));
+                            // we wrap reuse the InUseDictionary if we hit it before
+                            states.get().setItem(gsName, hitGSById.computeIfAbsent(gsDictionary.id(),
+                                    (k) -> new InUseDictionary(gsDictionary)));
                         } else {
                             // not an indirect ref (so without id)
                             LOG.trace("Hit ExtGState with name {}", gsName.getName());
