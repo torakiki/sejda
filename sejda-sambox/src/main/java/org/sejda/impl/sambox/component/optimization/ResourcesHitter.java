@@ -22,10 +22,7 @@ import org.sejda.impl.sambox.component.ContentStreamProcessor;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
-import org.sejda.sambox.contentstream.operator.OperatorName;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
-import org.sejda.sambox.contentstream.operator.color.SetNonStrokingColorSpace;
-import org.sejda.sambox.contentstream.operator.color.SetStrokingColorSpace;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
@@ -35,11 +32,8 @@ import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.font.PDType3CharProc;
 import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
-import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
-import org.sejda.sambox.pdmodel.graphics.color.PDPattern;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.sambox.pdmodel.graphics.form.PDTransparencyGroup;
-import org.sejda.sambox.pdmodel.graphics.pattern.PDTilingPattern;
 import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +49,8 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.require;
+import static org.sejda.impl.sambox.component.optimization.TilingPatternSetColor.tilingPatternSetNonStrokingColor;
+import static org.sejda.impl.sambox.component.optimization.TilingPatternSetColor.tilingPatternSetStrokingColor;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
 import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_SIZE;
 import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
@@ -74,10 +70,8 @@ public class ResourcesHitter extends ContentStreamProcessor {
         addOperator(new XObjectHitterOperator());
         addOperator(new FontsHitterOperator());
         addOperator(new SetGraphicState());
-        addOperator(new SetNonStrokingColorSpace());
-        addOperator(new SetStrokingColorSpace());
-        addOperator(new TilingPatternHitterSetStrokingColor(OperatorName.STROKING_COLOR_N));
-        addOperator(new TilingPatternHitterSetNonStrokingColor(OperatorName.NON_STROKING_COLOR_N));
+        addOperator(tilingPatternSetNonStrokingColor());
+        addOperator(tilingPatternSetStrokingColor());
     }
 
     public static class XObjectHitterOperator extends OperatorProcessor {
@@ -245,71 +239,6 @@ public class ResourcesHitter extends ContentStreamProcessor {
         @Override
         public String getName() {
             return SET_GRAPHICS_STATE_PARAMS;
-        }
-    }
-
-    /**
-     * Set Color operator that considers only tiling pattern colors and processes the corresponding pattern color space stream
-     * 
-     * @author Andrea Vacondio
-     */
-    abstract static class BaseTilingPatternHitterSetColor extends OperatorProcessor {
-
-        private final String name;
-
-        BaseTilingPatternHitterSetColor(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public void process(Operator operator, List<COSBase> arguments) throws IOException {
-            if (nonNull(arguments) && !arguments.isEmpty()) {
-                PDColorSpace colorSpace = this.colorSpace();
-                if (colorSpace instanceof PDPattern) {
-                    COSBase base = arguments.get(arguments.size() - 1);
-                    if (base instanceof COSName patternName) {
-                        COSStream pattern = ofNullable(getContext().getResources()).map(
-                                        r -> r.getCOSObject().getDictionaryObject(COSName.PATTERN, COSDictionary.class))
-                                .map(d -> d.getDictionaryObject(patternName, COSStream.class)).orElse(null);
-                        // it's a pattern and it's a stream, it should be a tiling pattern, type == 1
-                        if (nonNull(pattern) && pattern.getInt(COSName.PATTERN_TYPE) == 1) {
-                            LOG.trace("Hit tiling pattern with name {}", patternName.getName());
-                            getContext().processStream(new PDTilingPattern(pattern));
-                        }
-                    }
-                }
-            }
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        abstract PDColorSpace colorSpace();
-    }
-
-    public static class TilingPatternHitterSetStrokingColor extends BaseTilingPatternHitterSetColor {
-
-        public TilingPatternHitterSetStrokingColor(String name) {
-            super(name);
-        }
-
-        @Override
-        PDColorSpace colorSpace() {
-            return this.getContext().getGraphicsState().getStrokingColorSpace();
-        }
-    }
-
-    public static class TilingPatternHitterSetNonStrokingColor extends BaseTilingPatternHitterSetColor {
-
-        public TilingPatternHitterSetNonStrokingColor(String name) {
-            super(name);
-        }
-
-        @Override
-        PDColorSpace colorSpace() {
-            return this.getContext().getGraphicsState().getNonStrokingColorSpace();
         }
     }
 }
