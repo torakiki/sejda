@@ -35,9 +35,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -50,22 +50,26 @@ public class ResourcesHitterTest {
     public void testAccept() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/draw_w_transparency.pdf")))) {
-            document.getPages().forEach(victim::accept);
+            document.getPages().forEach(victim);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
-            assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                    COSName.getPDFName("x5")).getCOSObject() instanceof ReadOnlyFilteredCOSStream);
-            assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                    COSName.getPDFName("x7")).getCOSObject() instanceof ReadOnlyFilteredCOSStream);
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    pageRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("x5")).getCOSObject());
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    pageRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("x7")).getCOSObject());
             PDFormXObject form = (PDFormXObject) page.getResources().getXObject(COSName.getPDFName("x7"));
             COSDictionary formRes = form.getResources().getCOSObject();
-            assertTrue(((COSDictionary) formRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                            COSName.getPDFName("x10")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    formRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("x10")).getCOSObject(),
                     "Hitter should discover forms nested in form xobjects");
             PDFormXObject nestedForm = (PDFormXObject) form.getResources().getXObject(COSName.getPDFName("x10"));
             COSDictionary nestedFormRes = nestedForm.getResources().getCOSObject();
-            assertTrue(((COSDictionary) nestedFormRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                            COSName.getPDFName("x17")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    nestedFormRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("x17")).getCOSObject(),
                     "Hitter should discover images nested in form xobjects");
         }
     }
@@ -81,20 +85,24 @@ public class ResourcesHitterTest {
             assertEquals(1, appearence.size());
             COSDictionary normalAppRes = appearence.get(0).getNormalAppearance().getAppearanceStream().getResources()
                     .getCOSObject();
-            assertTrue(((COSDictionary) normalAppRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                            COSName.getPDFName("X0")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    normalAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("X0")).getCOSObject(),
                     "Hitter should discover images in appearance streams resource dictionarlies");
-            assertTrue(((COSDictionary) normalAppRes.getDictionaryObject(COSName.XOBJECT)).getDictionaryObject(
-                            COSName.getPDFName("X1")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    normalAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("X1")).getCOSObject(),
                     "Hitter should discover images in appearance streams resource dictionarlies");
 
             COSDictionary downAppRes = appearence.get(0).getDownAppearance().getAppearanceStream().getResources()
                     .getCOSObject();
-            assertTrue(downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
-                            .getDictionaryObject(COSName.getPDFName("X0")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("X0")).getCOSObject(),
                     "Hitter should discover images in appearance streams resource dictionarlies");
-            assertTrue(downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
-                            .getDictionaryObject(COSName.getPDFName("X1")).getCOSObject() instanceof ReadOnlyFilteredCOSStream,
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    downAppRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("X1")).getCOSObject(),
                     "Hitter should discover images in appearance streams resource dictionarlies");
         }
     }
@@ -103,11 +111,11 @@ public class ResourcesHitterTest {
     public void testType3() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/type3.pdf")))) {
-            document.getPages().forEach(victim::accept);
+            document.getPages().forEach(victim);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
-            assertTrue(((COSDictionary) pageRes.getDictionaryObject(COSName.FONT)).getDictionaryObject(
-                    COSName.getPDFName("A")).getCOSObject() instanceof InUseDictionary);
+            assertInstanceOf(InUseDictionary.class, pageRes.getDictionaryObject(COSName.FONT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("A")).getCOSObject());
         }
     }
 
@@ -115,12 +123,12 @@ public class ResourcesHitterTest {
     public void testTilingPattern() throws Exception {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/pattern_shared_res.pdf")))) {
-            document.getPages().forEach(victim::accept);
+            document.getPages().forEach(victim);
             PDPage page = document.getPage(0);
             COSDictionary pageRes = page.getResources().getCOSObject();
-            assertTrue(pageRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
-                    .getDictionaryObject(COSName.getPDFName("Im1"))
-                    .getCOSObject() instanceof ReadOnlyFilteredCOSStream);
+            assertInstanceOf(ReadOnlyFilteredCOSStream.class,
+                    pageRes.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                            .getDictionaryObject(COSName.getPDFName("Im1")).getCOSObject());
         }
     }
 
@@ -136,7 +144,7 @@ public class ResourcesHitterTest {
     public void sameFontSameInUseFontInstance() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/multiple_res_dic_sharing_same_font.pdf")))) {
-            document.getPages().forEach(victim::accept);
+            document.getPages().forEach(victim);
             PDPage page0 = document.getPage(0);
             InUseDictionary page0Font = page0.getResources().getCOSObject()
                     .getDictionaryObject(COSName.FONT, COSDictionary.class)
@@ -153,7 +161,7 @@ public class ResourcesHitterTest {
     public void unusedExtgstateAreNotHit() throws IOException {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_pages_res_unused_extgstate.pdf")))) {
-            document.getPages().forEach(victim::accept);
+            document.getPages().forEach(victim);
             PDPage page0 = document.getPage(0);
 
             assertNotNull(

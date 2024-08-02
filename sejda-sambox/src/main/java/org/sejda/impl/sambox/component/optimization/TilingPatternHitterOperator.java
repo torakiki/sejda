@@ -43,26 +43,28 @@ import static org.sejda.sambox.contentstream.operator.OperatorName.STROKING_COLO
 /**
  * Set color operator that detects if the color set is a tiling pattern and in case process its stream.
  * This operator doesn't use the colorspaces in the context graphic state so that we don't need to set them in the graphic state.
- * Setting the colorpsace with the cs and CS operator may involve colospace parsing and caching so we try to avoid it.
+ * Setting the colorspace with the cs and CS operator may involve colorspace parsing and caching, so we try to avoid it.
  *
  * @author Andrea Vacondio
  */
-public class TilingPatternSetColor extends OperatorProcessor {
+public class TilingPatternHitterOperator extends OperatorProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TilingPatternSetColor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TilingPatternHitterOperator.class);
 
-    private final Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById = new HashMap<>();
+    private final Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById;
 
     private final String name;
 
-    TilingPatternSetColor(String name) {
+    public TilingPatternHitterOperator(String name,
+            Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById) {
         this.name = name;
+        this.hitPatternsById = ofNullable(hitPatternsById).orElseGet(HashMap::new);
     }
 
     @Override
     public void process(Operator operator, List<COSBase> arguments) throws IOException {
-        //it's an array with at least 2 elements and the last is a name, it's a Pattern [c1... cn name]
-        if (nonNull(arguments) && arguments.size() > 1 && arguments.getLast() instanceof COSName patternName) {
+        //If the last element is a Name, it should be a Pattern, either pattername or [c1... cn pattername]
+        if (nonNull(arguments) && arguments.getLast() instanceof COSName patternName) {
             var patterns = ofNullable(getContext().getResources()).map(
                     r -> r.getCOSObject().getDictionaryObject(COSName.PATTERN, COSDictionary.class));
             var pattern = patterns.map(d -> d.getDictionaryObject(patternName, COSStream.class)).orElse(null);
@@ -96,11 +98,13 @@ public class TilingPatternSetColor extends OperatorProcessor {
         return name;
     }
 
-    static OperatorProcessor tilingPatternSetStrokingColor() {
-        return new TilingPatternSetColor(STROKING_COLOR_N);
+    public static OperatorProcessor tilingPatternSetStrokingColor(
+            Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById) {
+        return new TilingPatternHitterOperator(STROKING_COLOR_N, hitPatternsById);
     }
 
-    static OperatorProcessor tilingPatternSetNonStrokingColor() {
-        return new TilingPatternSetColor(NON_STROKING_COLOR_N);
+    public static OperatorProcessor tilingPatternSetNonStrokingColor(
+            Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById) {
+        return new TilingPatternHitterOperator(NON_STROKING_COLOR_N, hitPatternsById);
     }
 }

@@ -49,8 +49,8 @@ import java.util.Optional;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.require;
-import static org.sejda.impl.sambox.component.optimization.TilingPatternSetColor.tilingPatternSetNonStrokingColor;
-import static org.sejda.impl.sambox.component.optimization.TilingPatternSetColor.tilingPatternSetStrokingColor;
+import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetNonStrokingColor;
+import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetStrokingColor;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
 import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_SIZE;
 import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
@@ -59,7 +59,7 @@ import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_
  * Component that parses the page content steam and the page annotations appearance stream, wraps any image xobject (type xobject, subtype image) found in an instance of
  * {@link ReadOnlyFilteredCOSStream}, every font and every extended graphic state in an instance of {@link InUseDictionary} and puts them back into the resource dictionary. It's
  * later easy to identify xobjects, fonts and extgstate in use by the page/s and what can be discarded.
- * 
+ *
  * @author Andrea Vacondio
  */
 public class ResourcesHitter extends ContentStreamProcessor {
@@ -70,8 +70,10 @@ public class ResourcesHitter extends ContentStreamProcessor {
         addOperator(new XObjectHitterOperator());
         addOperator(new FontsHitterOperator());
         addOperator(new SetGraphicState());
-        addOperator(tilingPatternSetNonStrokingColor());
-        addOperator(tilingPatternSetStrokingColor());
+        //use the same map for stroking and not stroking
+        Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById = new HashMap<>();
+        addOperator(tilingPatternSetNonStrokingColor(hitPatternsById));
+        addOperator(tilingPatternSetStrokingColor(hitPatternsById));
     }
 
     public static class XObjectHitterOperator extends OperatorProcessor {
@@ -118,7 +120,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
     /**
      * Tf operator that wraps a font dictionary with an {@link InUseDictionary} and puts it back to the resource dictionary so that we can later identify fonts that are actually
      * used
-     * 
+     *
      * @author Andrea Vacondio
      */
     public static class FontsHitterOperator extends OperatorProcessor {
@@ -127,49 +129,56 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
-            if (operands.size() < 2) {
-                throw new MissingOperandException(operator, operands);
-            }
-            COSBase operand = operands.get(0);
-            if (operand instanceof COSName fontName) {
+
+            require(operands.size() > 1, () -> new MissingOperandException(operator, operands));
+
+            if (operands.getFirst() instanceof COSName fontName) {
                 Optional<COSDictionary> fonts = ofNullable(getContext().getResources()).map(
                         r -> r.getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class));
 
-                COSDictionary fontDictionary = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
+                var fontDictionary = fonts.map(d -> d.getDictionaryObject(fontName, COSDictionary.class))
                         .orElseThrow(() -> new MissingResourceException(
                                 "Font resource '" + fontName.getName() + "' missing or unexpected type"));
 
                 if (!(fontDictionary instanceof InUseDictionary)) {
-
                     // we wrap the existing so we can identify it later as "in use" and already processed
+                    var hitFont = new InUseDictionary(fontDictionary);
+
                     if (fontDictionary.hasId()) {
                         LOG.trace("Hit font with name {} id {}", fontName.getName(), fontDictionary.id());
-                        // we wrap reuse the InUseDictionary if we hit it before
-                        fonts.get().setItem(fontName, hitFontsById.computeIfAbsent(fontDictionary.id(),
-                                (k) -> new InUseDictionary(fontDictionary)));
-                    } else {
-                        // not even sure we can have a font that's not an indirect ref (so without id), anyway better safe then sorry
-                        LOG.trace("Hit font with name {}", fontName.getName());
-                        fonts.get().setItem(fontName, new InUseDictionary(fontDictionary));
-                    }
-
-                    // type 3 fonts glyphs are content stream and they may refer to named resource.
-                    // If the font resource dictionary is not present the page resource dictionary is used instead AND
-                    // we cannot exclude the font resource is an indirect ref to the page resource dictionary
-                    // => so we have to make sure those resource are hit
-                    if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))) {
-                        PDType3Font font = new PDType3Font(fontDictionary);
-                        Collection<COSBase> glyphStreams = ofNullable(
-                                fontDictionary.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class)).map(
-                                COSDictionary::getValues).filter(v -> !v.isEmpty()).orElseGet(Collections::emptyList);
-                        List<PDType3CharProc> pdStreams = glyphStreams.stream().map(COSBase::getCOSObject)
-                                .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
-                                .map(s -> new PDType3CharProc(font, s)).toList();
-                        LOG.trace("Found type3 font {} with {} streams to parse", fontName.getName(), pdStreams.size());
-                        for (PDType3CharProc glyph : pdStreams) {
-                            getContext().processStream(glyph);
+                        var existingHit = hitFontsById.putIfAbsent(fontDictionary.id(), hitFont);
+                        if (nonNull(existingHit)) {
+                            //we already hit the font in another resource dictionary
+                            fonts.get().setItem(fontName, existingHit);
+                        } else {
+                            fonts.get().setItem(fontName, hitFont);
+                            maybeProcessType3Stream(fontName, fontDictionary);
                         }
+                    } else {
+                        LOG.trace("Hit font with name {}", fontName.getName());
+                        fonts.get().setItem(fontName, hitFont);
+                        maybeProcessType3Stream(fontName, fontDictionary);
                     }
+                }
+            }
+        }
+
+        private void maybeProcessType3Stream(COSName fontName, COSDictionary fontDictionary) throws IOException {
+            // type 3 fonts glyphs are content stream and they may refer to named resource.
+            // If the font resource dictionary is not present the page resource dictionary is used instead AND
+            // we cannot exclude the font resource is an indirect ref to the page resource dictionary
+            // => so we have to make sure those resource are hit
+            if (COSName.TYPE3.equals(fontDictionary.getCOSName(COSName.SUBTYPE))) {
+                PDType3Font font = new PDType3Font(fontDictionary);
+                Collection<COSBase> glyphStreams = ofNullable(
+                        fontDictionary.getDictionaryObject(COSName.CHAR_PROCS, COSDictionary.class)).map(
+                        COSDictionary::getValues).filter(v -> !v.isEmpty()).orElseGet(Collections::emptyList);
+                List<PDType3CharProc> pdStreams = glyphStreams.stream().map(COSBase::getCOSObject)
+                        .filter(s -> s instanceof COSStream).map(s -> (COSStream) s)
+                        .map(s -> new PDType3CharProc(font, s)).toList();
+                LOG.trace("Found type3 font {} with {} streams to parse", fontName.getName(), pdStreams.size());
+                for (PDType3CharProc glyph : pdStreams) {
+                    getContext().processStream(glyph);
                 }
             }
         }
@@ -204,34 +213,46 @@ public class ResourcesHitter extends ContentStreamProcessor {
                 if (nonNull(gsDictionary)) {
 
                     new PDExtendedGraphicsState(gsDictionary).copyIntoGraphicsState(getContext().getGraphicsState());
+
                     if (!(gsDictionary instanceof InUseDictionary)) {
                         // we wrap the existing so we can identify it later as "in use" and already processed
+                        var hitGs = new InUseDictionary(gsDictionary);
+
                         if (gsDictionary.hasId()) {
                             LOG.trace("Hit ExtGState with name {} id {}", gsName.getName(), gsDictionary.id());
-                            // we wrap reuse the InUseDictionary if we hit it before
-                            states.get().setItem(gsName, hitGSById.computeIfAbsent(gsDictionary.id(),
-                                    (k) -> new InUseDictionary(gsDictionary)));
+                            var existingHit = hitGSById.putIfAbsent(gsDictionary.id(), hitGs);
+                            if (nonNull(existingHit)) {
+                                //we already hit the graphic state in another resource dictionary
+                                states.get().setItem(gsName, existingHit);
+                            } else {
+                                states.get().setItem(gsName, hitGs);
+                                maybeProcessSoftMaskStream(gsName, gsDictionary);
+                            }
                         } else {
                             // not an indirect ref (so without id)
                             LOG.trace("Hit ExtGState with name {}", gsName.getName());
-                            states.get().setItem(gsName, new InUseDictionary(gsDictionary));
-                        }
-
-                        // ExtGState can contain a softmask dictionary in the form of a transparency group XObject. If present we process its stream to hit used resources
-                        Optional<COSStream> softMask = ofNullable(
-                                gsDictionary.getDictionaryObject(COSName.SMASK, COSDictionary.class))
-                                        .map(d -> d.getDictionaryObject(COSName.G, COSStream.class))
-                                        .filter(s -> COSName.FORM.getName().equals(s.getNameAsString(COSName.SUBTYPE)));
-                        if (softMask.isPresent()) {
-                            PDXObject xobject = PDXObject.createXObject(softMask.get(), getContext().getResources());
-                            // should always be transparency
-                            if (xobject instanceof PDTransparencyGroup) {
-                                getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
-                            } else if (xobject instanceof PDFormXObject) {
-                                getContext().showForm((PDFormXObject) xobject);
-                            }
+                            states.get().setItem(gsName, hitGs);
+                            maybeProcessSoftMaskStream(gsName, gsDictionary);
                         }
                     }
+                }
+            }
+        }
+
+        private void maybeProcessSoftMaskStream(COSName gsName, COSDictionary gsDictionary) throws IOException {
+            // ExtGState can contain a softmask dictionary in the form of a transparency group XObject. If present we process its stream to hit used resources
+            Optional<COSStream> softMask = ofNullable(
+                    gsDictionary.getDictionaryObject(COSName.SMASK, COSDictionary.class)).map(
+                            d -> d.getDictionaryObject(COSName.G, COSStream.class))
+                    .filter(s -> COSName.FORM.getName().equals(s.getNameAsString(COSName.SUBTYPE)));
+            if (softMask.isPresent()) {
+                LOG.trace("Found softmask {} in ExtGState to parse", gsName.getName());
+                PDXObject xobject = PDXObject.createXObject(softMask.get(), getContext().getResources());
+                // should always be transparency
+                if (xobject instanceof PDTransparencyGroup) {
+                    getContext().showTransparencyGroup((PDTransparencyGroup) xobject);
+                } else if (xobject instanceof PDFormXObject) {
+                    getContext().showForm((PDFormXObject) xobject);
                 }
             }
         }
