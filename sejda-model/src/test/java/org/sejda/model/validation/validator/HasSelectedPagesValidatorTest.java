@@ -1,7 +1,7 @@
 /*
  * Created on 02/ott/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -19,26 +19,20 @@
  */
 package org.sejda.model.validation.validator;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
 import org.junit.jupiter.api.Test;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Andrea Vacondio
- * 
  */
 public class HasSelectedPagesValidatorTest {
     private HasSelectedPagesValidator victim = new HasSelectedPagesValidator();
-    private ExtractPagesParameters params = mock(ExtractPagesParameters.class);
-    private PageRange range = new PageRange(10);
 
     @Test
     public void testNull() {
@@ -46,29 +40,28 @@ public class HasSelectedPagesValidatorTest {
     }
 
     @Test
-    public void testHasDefault() {
-        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.EVEN_PAGES);
+    public void testHasPredefined() {
+        var params = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
-    public void testHasTransitions() {
-        when(params.getPredefinedSetOfPages()).thenReturn(null);
-        when(params.getPageSelection()).thenReturn(Collections.singleton(range));
+    public void testHasPageSelection() {
+        var params = new ExtractPagesParameters();
+        params.addPageRange(PagesSelection.LAST_PAGE);
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
     public void testHasBoth() {
-        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.EVEN_PAGES);
-        when(params.getPageSelection()).thenReturn(Collections.singleton(range));
+        var params = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
+        params.addPageRange(new PageRange(20));
         assertTrue(victim.isValid(params, null));
     }
 
     @Test
     public void testHasNone() {
-        when(params.getPredefinedSetOfPages()).thenReturn(PredefinedSetOfPages.NONE);
-        when(params.getPageSelection()).thenReturn(Collections.EMPTY_SET);
+        var params = new ExtractPagesParameters();
         assertFalse(victim.isValid(params, null));
     }
 }

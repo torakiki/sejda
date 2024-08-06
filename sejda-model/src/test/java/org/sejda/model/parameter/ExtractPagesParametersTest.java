@@ -51,10 +51,10 @@ public class ExtractPagesParametersTest {
     @Test
     public void testGetPageSelection() {
         ExtractPagesParameters victim = new ExtractPagesParameters(PredefinedSetOfPages.EVEN_PAGES);
-        assertTrue(victim.getPageSelection().isEmpty());
+        assertFalse(victim.hasPageSelection());
         ExtractPagesParameters victim2 = new ExtractPagesParameters();
         victim2.addPageRange(new PageRange(12));
-        assertFalse(victim2.getPageSelection().isEmpty());
+        assertTrue(victim2.hasPageSelection());
     }
 
     @Test
@@ -105,5 +105,11 @@ public class ExtractPagesParametersTest {
         victim.setInvertSelection(true);
         victim.addPageRange(new PageRange(1, 5));
         assertEquals(0, victim.getPagesSets(5).size());
+    }
+
+    @Test
+    public void nullSafeConstructor() {
+        var victim = new ExtractPagesParameters(null);
+        assertEquals(PredefinedSetOfPages.NONE, victim.getPredefinedSetOfPages());
     }
 }
