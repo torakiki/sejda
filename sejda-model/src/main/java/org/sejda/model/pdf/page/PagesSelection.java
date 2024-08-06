@@ -1,7 +1,7 @@
 /*
  * Created on 26/ago/2011
  * Copyright 2011 by Andrea Vacondio (andrea.vacondio@gmail.com).
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,18 +23,20 @@ import java.util.Set;
 
 /**
  * Specify a set of selected pages.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 public interface PagesSelection {
 
     /**
-     * 
-     * @param totalNumberOfPage
-     *            the number of pages of the document (upper limit).
+     * A page selection representing the last page of the document
+     */
+    PagesSelection LAST_PAGE = Set::of;
+
+    /**
+     * @param totalNumberOfPage the number of pages of the document (upper limit).
      * @return the selected set of pages. No constraint is imposed on the predictability of the iteration order but implementors may explicitly state if grant predictable iteration
-     *         order.
+     * order.
      */
     Set<Integer> getPages(int totalNumberOfPage);
 }
