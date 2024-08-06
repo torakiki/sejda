@@ -20,10 +20,15 @@ package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.impl.sambox.component.FailableContentStreamProcessor;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter.SetGraphicState;
+import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.state.Concatenate;
 import org.sejda.sambox.contentstream.operator.state.Restore;
 import org.sejda.sambox.contentstream.operator.state.Save;
 import org.sejda.sambox.contentstream.operator.state.SetMatrix;
+import org.sejda.sambox.cos.COSBase;
+
+import java.io.IOException;
+import java.util.List;
 
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
@@ -52,5 +57,10 @@ public class PdfAContentStreamProcessor extends FailableContentStreamProcessor {
     final boolean addOptimizationOperatorIfAbsent(PdfAContentStreamOperator op) {
         op.setConversionContext(context);
         return addOperatorIfAbsent(op);
+    }
+
+    @Override
+    protected void unsupportedOperator(Operator operator, List<COSBase> operands) throws IOException {
+        //TODO make sure there are valid operators only, according to PDFA spec
     }
 }

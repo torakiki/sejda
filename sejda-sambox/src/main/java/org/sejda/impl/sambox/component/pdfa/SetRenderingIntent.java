@@ -27,6 +27,8 @@ import org.sejda.sambox.cos.COSName;
 import java.io.IOException;
 import java.util.List;
 
+import static org.sejda.commons.util.RequireUtils.require;
+
 /**
  * Rule 6.2.10 of ISO 19005-1: Use of the ri operator shall conform to the rules of 6.2.9.
  *
@@ -36,9 +38,9 @@ public class SetRenderingIntent extends PdfAContentStreamOperator {
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
-        if (operands.isEmpty()) {
-            throw new MissingOperandException(operator, operands);
-        }
+
+        require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
         COSBase operand = operands.get(0);
         if (operand instanceof COSName riName) {
             if (!conversionContext().parameters().conformanceLevel().allowedRenderingIntents()

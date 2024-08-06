@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
@@ -77,27 +78,34 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
 
             File tmpFile = createTemporaryBuffer(parameters.getOutput());
             LOG.debug("Created output on temporary buffer {}", tmpFile);
+            try {
+                var context = new ConversionContext(parameters, executionContext().notifiableTaskMetadata());
+                Rules.documentRules(context).accept(documentHandler.getUnderlyingPDDocument());
+                var pageRules = Rules.pageRules(context);
+                var contentStream = Rules.contentStreamRules(context);
+                for (PDPage page : documentHandler.getPages()) {
+                    pageRules.accept(page);
+                    contentStream.accept(page);
+                }
 
-            var context = new ConversionContext(parameters, executionContext().notifiableTaskMetadata());
-            Rules.documentRules(context).accept(documentHandler.getUnderlyingPDDocument());
-            var pageRules = Rules.pageRules(context);
-            for (PDPage page : documentHandler.getPages()) {
-                pageRules.accept(page);
+                documentHandler.setTransformer(Rules.preSaveCOSTransformer(context));
+                documentHandler.setCompress(parameters.isCompress());
+                documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
+
+                String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
+                        () -> nameGenerator(parameters.getOutputPrefix()).generate(
+                                nameRequest().originalName(source.getName()).fileNumber(fileNumber)));
+
+                outputWriter.addOutput(file(tmpFile).name(outName));
+            } catch (TaskException | IOException e) {
+                executionContext().assertTaskIsLenient(e);
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning("Conversion failed", e);
             }
 
-            documentHandler.setTransformer(Rules.preSaveCOSTransformer(context));
-            documentHandler.setCompress(parameters.isCompress());
-            documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
-
-            String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
-                    () -> nameGenerator(parameters.getOutputPrefix()).generate(
-                            nameRequest().originalName(source.getName()).fileNumber(fileNumber)));
-
-            outputWriter.addOutput(file(tmpFile).name(outName));
             closeQuietly(documentHandler);
             notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(fileNumber).outOf(totalSteps);
         }
-
+        //TODO task fails if no output
         executionContext().notifiableTaskMetadata().clearCurrentSource();
         parameters.getOutput().accept(outputWriter);
         LOG.debug("Input documents optimized and written to {}", parameters.getOutput());

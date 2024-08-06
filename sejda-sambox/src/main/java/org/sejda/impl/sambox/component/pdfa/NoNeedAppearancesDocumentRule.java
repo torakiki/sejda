@@ -25,6 +25,7 @@ import org.sejda.sambox.pdmodel.PDDocument;
 
 import java.io.IOException;
 
+import static java.util.Objects.nonNull;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 
 /**
@@ -41,7 +42,7 @@ public class NoNeedAppearancesDocumentRule extends BaseRule<PDDocument, TaskExce
     @Override
     public void accept(PDDocument document) throws TaskException {
         var form = document.getDocumentCatalog().getAcroForm();
-        if (form.isNeedAppearances()) {
+        if (nonNull(form) && form.isNeedAppearances()) {
             conversionContext().maybeFailOnInvalidElement(() -> new TaskExecutionException(
                     "The NeedAppearances flag of the interactive form dictionary shall either not be present or shall be false"));
             try {

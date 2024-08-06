@@ -110,10 +110,10 @@ public class ConversionContext {
             for (COSName key : keys) {
                 if (dictionary.containsKey(key)) {
                     maybeFailOnInvalidElement(() -> exceptionSupplier.apply(
-                            dictionaryDescription + " dictionary shall not include a " + key + " entry"));
+                            dictionaryDescription + " dictionary shall not include a " + key.getName() + " entry"));
                     dictionary.removeItem(key);
                     notifyEvent(notifiableMetadata()).taskWarning(
-                            "Removed " + key + " key from " + dictionaryDescription + " dictionary");
+                            "Removed " + key.getName() + " key from " + dictionaryDescription + " dictionary");
                 }
             }
         }

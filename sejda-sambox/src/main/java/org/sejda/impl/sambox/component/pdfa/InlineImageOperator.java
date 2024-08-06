@@ -24,8 +24,6 @@ import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -37,8 +35,6 @@ import static org.sejda.commons.util.RequireUtils.requireIOCondition;
  * @author Andrea Vacondio
  */
 public class InlineImageOperator extends PdfAContentStreamOperator {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InlineImageOperator.class);
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.require;
 
 /**
  * @author Andrea Vacondio
@@ -45,9 +46,8 @@ class BaseSetColorSpace extends PdfAContentStreamOperator {
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
 
-        if (operands.isEmpty()) {
-            throw new MissingOperandException(operator, operands);
-        }
+        require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
         COSBase operand = operands.getFirst();
         if (operand instanceof COSName objectName) {
             COSBase cs = ofNullable(csResources().getDictionaryObject(objectName)).orElseThrow(

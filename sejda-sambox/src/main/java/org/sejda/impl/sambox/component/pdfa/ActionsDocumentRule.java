@@ -23,6 +23,8 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 
+import static java.util.Objects.nonNull;
+
 /**
  * Rule 6.6.1 of ISO 19005-1: Some actions types and named actions are not permitted.
  *
@@ -39,8 +41,11 @@ public class ActionsDocumentRule extends BaseRule<PDDocument, TaskException> {
 
         conversionContext().maybeRemoveForbiddenAction(document.getDocumentCatalog().getCOSObject(), "Catalog",
                 COSName.OPEN_ACTION);
-        for (var item : document.getDocumentCatalog().getDocumentOutline().nodes()) {
-            conversionContext().maybeRemoveForbiddenAction(item.getCOSObject(), "Outline item", COSName.A);
+        var outline = document.getDocumentCatalog().getDocumentOutline();
+        if (nonNull(outline)) {
+            for (var item : outline.nodes()) {
+                conversionContext().maybeRemoveForbiddenAction(item.getCOSObject(), "Outline item", COSName.A);
+            }
         }
     }
 

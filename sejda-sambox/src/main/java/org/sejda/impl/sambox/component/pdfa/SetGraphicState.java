@@ -21,54 +21,45 @@ package org.sejda.impl.sambox.component.pdfa;
 import org.sejda.impl.sambox.component.optimization.InUseDictionary;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
+import org.sejda.sambox.contentstream.operator.OperatorProcessor;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.MissingResourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.require;
 import static org.sejda.sambox.contentstream.operator.OperatorName.SET_GRAPHICS_STATE_PARAMS;
 
 /**
  * @author Andrea Vacondio
  */
-public class SetGraphicState extends PdfAContentStreamOperator {
+public class SetGraphicState extends OperatorProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ShadingFill.class);
+    private final ConversionContext conversionContext;
+
+    public SetGraphicState(ConversionContext conversionContext) {
+        this.conversionContext = conversionContext;
+    }
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
-        if (operands.isEmpty()) {
-            throw new MissingOperandException(operator, operands);
-        }
+
+        require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
         COSBase operand = operands.get(0);
         if (operand instanceof COSName gsName) {
-            COSDictionary extGState = ofNullable(
-                    gsResources().getDictionaryObject(gsName, COSDictionary.class)).orElseThrow(
-                    () -> new MissingResourceException("Missing ExtGState dictionary: " + gsName.getName()));
+            COSDictionary extGState = ofNullable(getContext().getResources()).map(
+                            r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
+                    .map(d -> d.getDictionaryObject(gsName, COSDictionary.class)).orElseThrow(
+                            () -> new MissingResourceException("Missing ExtGState dictionary: " + gsName.getName()));
             if (!(extGState instanceof InUseDictionary)) {
-                new ExtGStateSanitizer(conversionContext()).sanitizeExtGState(extGState);
-                hit(gsName, extGState);
-                LOG.trace("Hit Ext Graphic State with name {}", gsName.getName());
+                new ExtGStateSanitizer(conversionContext).sanitizeExtGState(extGState);
             }
         }
-    }
-
-    private void hit(COSName objectName, COSDictionary extGState) throws IOException {
-        COSDictionary extGStates = gsResources();
-        if (!(extGStates.getItem(objectName) instanceof InUseDictionary)) {
-            extGStates.setItem(objectName, new InUseDictionary(extGState));
-        }
-    }
-
-    private COSDictionary gsResources() {
-        return getContext().getResources().getCOSObject()
-                .computeIfAbsent(COSName.EXT_G_STATE, k -> new COSDictionary(), COSDictionary.class);
     }
 
     @Override

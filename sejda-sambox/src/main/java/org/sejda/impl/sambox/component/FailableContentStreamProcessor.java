@@ -34,6 +34,8 @@ import java.util.List;
 import static java.util.Optional.ofNullable;
 
 /**
+ * Component that parses the page content steam and the page annotations appearance streams
+ *
  * @author Andrea Vacondio
  */
 public class FailableContentStreamProcessor extends PDFStreamEngine implements FailableConsumer<PDPage, IOException> {

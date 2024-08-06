@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
+import org.sejda.model.image.ImageType;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.cos.COSBase;
@@ -34,17 +35,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.DELETE_ON_CLOSE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.RequireUtils.require;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnly;
@@ -65,9 +62,9 @@ public class XObjectOperator extends PdfAContentStreamOperator {
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
-        if (operands.isEmpty()) {
-            throw new MissingOperandException(operator, operands);
-        }
+
+        require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
         COSBase operand = operands.get(0);
         if (operand instanceof COSName objectName) {
 
@@ -160,23 +157,23 @@ public class XObjectOperator extends PdfAContentStreamOperator {
 
     private ReadOnlyFilteredCOSStream createFromXObjectImage(PDImageXObject image) throws IOException {
         BufferedImage bufferedImage = image.getImage();
-        var tmpFile = Files.createTempFile("tempImage", ".tmp");
-        try (var out = Files.newOutputStream(tmpFile, DELETE_ON_CLOSE, CREATE, TRUNCATE_EXISTING, WRITE)) {
-            if (bufferedImage.getColorModel().hasAlpha()) {
-                ImageIO.write(bufferedImage, "PNG", out);
+        var type = bufferedImage.getColorModel().hasAlpha() ? ImageType.PNG : ImageType.JPEG;
+        var tmpFile = File.createTempFile("tempImage", "." + type.getExtension());
+        tmpFile.deleteOnExit();
+        ImageIO.write(bufferedImage, type.getExtension(), tmpFile);
+        try {
+            if (ImageType.PNG.equals(type)) {
                 return createFromPngFile(tmpFile, image);
             }
-            ImageIO.write(bufferedImage, "JPEG", out);
             return createFromJpegFile(tmpFile, image);
         } finally {
             bufferedImage.flush();
         }
-
     }
 
-    private static ReadOnlyFilteredCOSStream createFromPngFile(Path file, PDImageXObject original) throws IOException {
+    private static ReadOnlyFilteredCOSStream createFromPngFile(File file, PDImageXObject original) throws IOException {
         // read image
-        var awtImage = ImageIO.read(file.toFile());
+        var awtImage = ImageIO.read(file);
         requireIOCondition(nonNull(awtImage), "Cannot read image");
         var stream = readOnlyPngImage(file, awtImage.getWidth(), awtImage.getHeight(),
                 awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
@@ -184,9 +181,9 @@ public class XObjectOperator extends PdfAContentStreamOperator {
         return stream;
     }
 
-    private static ReadOnlyFilteredCOSStream createFromJpegFile(Path file, PDImageXObject original) throws IOException {
+    private static ReadOnlyFilteredCOSStream createFromJpegFile(File file, PDImageXObject original) throws IOException {
         // read image
-        var awtImage = ImageIO.read(file.toFile());
+        var awtImage = ImageIO.read(file);
         requireIOCondition(nonNull(awtImage), "Cannot read image");
         var stream = readOnlyJpegImage(file, awtImage.getWidth(), awtImage.getHeight(),
                 awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));

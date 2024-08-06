@@ -25,7 +25,6 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDPage;
 
 import static java.util.Objects.nonNull;
-import static org.sejda.commons.util.RequireUtils.require;
 
 /**
  * Rule 6.4 and 6.6.2 of ISO 19005-1, TECHNICAL CORRIGENDUM 2: A Group object with an S key with a value of Transparency shall not be included in a page dictionary
@@ -41,9 +40,10 @@ public class NoTransparencyGroupPageRule extends BaseRule<PDPage, TaskException>
     @Override
     public void accept(PDPage page) throws TaskException {
         var group = page.getCOSObject().getDictionaryObject(COSName.GROUP, COSDictionary.class);
-        if (nonNull(group)) {
-            require(!COSName.TRANSPARENCY.equals(group.getCOSName(COSName.S)), () -> new TaskExecutionException(
-                    "A Group object with an S key with a value of Transparency shall not be included in a page dictionary"));
+        if (nonNull(group) && COSName.TRANSPARENCY.equals(group.getCOSName(COSName.S))) {
+            conversionContext().maybeRemoveForbiddenKeys(page.getCOSObject(), "page", s -> new TaskExecutionException(
+                            "A Group object with an S key with a value of Transparency shall not be included in a page dictionary"),
+                    COSName.GROUP);
         }
     }
 }

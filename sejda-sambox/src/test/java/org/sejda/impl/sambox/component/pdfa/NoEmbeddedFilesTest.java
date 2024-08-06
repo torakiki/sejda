@@ -68,7 +68,7 @@ class NoEmbeddedFilesTest {
         document.getDocumentCatalog().setNames(new PDDocumentNameDictionary(names));
 
         var e = assertThrows(TaskExecutionException.class, () -> victim.accept(document));
-        assertThat(e.getMessage(), stringContainsInOrder("shall not contain the EmbeddedFiles"));
+        assertThat(e.getMessage(), stringContainsInOrder("shall not include a EmbeddedFiles entry"));
     }
 
     @Test

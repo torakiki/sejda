@@ -25,7 +25,6 @@ import org.sejda.sambox.cos.COSStream;
 import java.io.IOException;
 
 import static java.util.Objects.nonNull;
-import static org.sejda.commons.util.RequireUtils.require;
 
 /**
  * Rule 6.4 of ISO 19005-1: A Group object with an S key with a value of Transparency shall not be included in a form XObject.
@@ -43,9 +42,10 @@ public class NoTransparencyGroupStreamRule extends BaseCOSObjectRule<COSStream> 
         if (COSName.XOBJECT.equals(stream.getCOSName(COSName.TYPE)) && COSName.FORM.equals(
                 stream.getCOSName(COSName.SUBTYPE))) {
             var group = stream.getDictionaryObject(COSName.GROUP, COSDictionary.class);
-            if (nonNull(group)) {
-                require(!COSName.TRANSPARENCY.equals(group.getCOSName(COSName.S)), () -> new IOException(
-                        "A Group object with an S key with a value of Transparency shall not be included in a form XObject"));
+            if (nonNull(group) && COSName.TRANSPARENCY.equals(group.getCOSName(COSName.S))) {
+                conversionContext().maybeRemoveForbiddenKeys(stream, "stream", s -> new IOException(
+                                "A Group object with an S key with a value of Transparency shall not be included in a form XObject"),
+                        COSName.GROUP);
             }
         }
     }

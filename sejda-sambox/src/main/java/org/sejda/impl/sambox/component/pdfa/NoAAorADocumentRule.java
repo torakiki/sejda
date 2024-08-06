@@ -24,6 +24,8 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.interactive.form.PDField;
 
+import static java.util.Objects.nonNull;
+
 /**
  * Rule 6.9 and 6.6.2 of ISO 19005-1: No AA or A in form fields and widgets. No AA in Catalog.
  *
@@ -39,8 +41,11 @@ public class NoAAorADocumentRule extends BaseRule<PDDocument, TaskException> {
     public void accept(PDDocument document) throws TaskExecutionException {
         conversionContext().maybeRemoveForbiddenKeys(document.getDocumentCatalog().getCOSObject(), "Catalog",
                 COSName.AA);
-        for (PDField field : document.getDocumentCatalog().getAcroForm().getFieldTree()) {
-            conversionContext().maybeRemoveForbiddenKeys(field.getCOSObject(), "Form field", COSName.A, COSName.AA);
+        var form = document.getDocumentCatalog().getAcroForm();
+        if (nonNull(form)) {
+            for (PDField field : form.getFieldTree()) {
+                conversionContext().maybeRemoveForbiddenKeys(field.getCOSObject(), "Form field", COSName.A, COSName.AA);
+            }
         }
     }
 }
