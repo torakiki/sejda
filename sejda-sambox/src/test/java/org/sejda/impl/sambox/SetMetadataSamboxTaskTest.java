@@ -43,13 +43,17 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.sejda.tests.TestUtils.*;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * set metadata task test for the pdfbox implementation
@@ -308,6 +312,7 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
 
     @Test
     public void xmpMetadataMissingNamespace_rdf() throws IOException {
+        Locale.setDefault(Locale.US);
         setUpParams(customInput("pdf/xmp_metadata_missing_rdf_namespace.pdf"));
         String random = Long.toString(System.currentTimeMillis());
         String producer = "test_producer_" + random;
