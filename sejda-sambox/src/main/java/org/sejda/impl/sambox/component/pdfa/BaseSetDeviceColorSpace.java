@@ -26,7 +26,9 @@ import org.sejda.sambox.cos.COSName;
 import java.io.IOException;
 import java.util.List;
 
+import static org.sejda.sambox.contentstream.operator.OperatorName.NON_STROKING_CMYK;
 import static org.sejda.sambox.contentstream.operator.OperatorName.NON_STROKING_RGB;
+import static org.sejda.sambox.contentstream.operator.OperatorName.STROKING_COLOR_CMYK;
 import static org.sejda.sambox.contentstream.operator.OperatorName.STROKING_COLOR_RGB;
 
 /**
@@ -67,10 +69,10 @@ class BaseSetDeviceColorSpace extends PdfAContentStreamOperator {
     }
 
     static PdfAContentStreamOperator strokingCMYK() {
-        return new BaseSetDeviceColorSpace(COSName.DEVICECMYK, STROKING_COLOR_RGB);
+        return new BaseSetDeviceColorSpace(COSName.DEVICECMYK, STROKING_COLOR_CMYK);
     }
 
     static PdfAContentStreamOperator nonStrokingCMYK() {
-        return new BaseSetDeviceColorSpace(COSName.DEVICECMYK, NON_STROKING_RGB);
+        return new BaseSetDeviceColorSpace(COSName.DEVICECMYK, NON_STROKING_CMYK);
     }
 }
