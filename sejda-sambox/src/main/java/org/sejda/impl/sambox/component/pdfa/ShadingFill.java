@@ -49,8 +49,7 @@ public class ShadingFill extends PdfAContentStreamOperator {
         if (operands.isEmpty()) {
             throw new MissingOperandException(operator, operands);
         }
-        COSBase operand = operands.get(0);
-        if (operand instanceof COSName objectName) {
+        if (operands.getFirst() instanceof COSName objectName) {
             COSDictionary shading = ofNullable(
                     shadingResources().getDictionaryObject(objectName, COSDictionary.class)).orElseThrow(
                     () -> new MissingResourceException("Missing shading dictionary: " + objectName.getName()));

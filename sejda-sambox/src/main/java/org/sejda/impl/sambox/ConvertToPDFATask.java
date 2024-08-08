@@ -22,6 +22,7 @@ import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.impl.sambox.component.DefaultPdfSourceOpener;
 import org.sejda.impl.sambox.component.PDDocumentHandler;
+import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
 import org.sejda.impl.sambox.component.pdfa.ConversionContext;
 import org.sejda.impl.sambox.component.pdfa.Rules;
 import org.sejda.model.exception.TaskException;
@@ -56,7 +57,8 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
     private int totalSteps;
     private DefaultPdfSourceOpener documentLoader;
     private MultipleOutputWriter outputWriter;
-    private PDDocumentHandler documentHandler = null;
+    private PDDocumentHandler documentHandler;
+    private ResourceDictionaryCleaner resourceCleaner;
 
     @Override
     public void before(ConvertToPDFAParameters parameters, TaskExecutionContext executionContext) throws TaskException {
@@ -64,6 +66,7 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
         totalSteps = parameters.getSourceList().size();
         documentLoader = new DefaultPdfSourceOpener(executionContext);
         outputWriter = OutputWriters.newMultipleOutputWriter(parameters.getExistingOutputPolicy(), executionContext);
+        resourceCleaner = new ResourceDictionaryCleaner();
     }
 
     @Override
@@ -87,6 +90,7 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
                     pageRules.accept(page);
                     contentStream.accept(page);
                 }
+                resourceCleaner.accept(documentHandler.getUnderlyingPDDocument());
 
                 documentHandler.setTransformer(Rules.preSaveCOSTransformer(context));
                 documentHandler.setCompress(parameters.isCompress());

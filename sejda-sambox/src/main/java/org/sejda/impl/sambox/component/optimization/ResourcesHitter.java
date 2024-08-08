@@ -79,11 +79,10 @@ public class ResourcesHitter extends ContentStreamProcessor {
     public static class XObjectHitterOperator extends OperatorProcessor {
         @Override
         public void process(Operator operator, List<COSBase> operands) throws IOException {
-            if (operands.isEmpty()) {
-                throw new MissingOperandException(operator, operands);
-            }
-            COSBase operand = operands.get(0);
-            if (operand instanceof COSName objectName) {
+
+            require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
+
+            if (operands.getFirst() instanceof COSName objectName) {
 
                 Optional<COSDictionary> xobjects = ofNullable(getContext().getResources()).map(
                         r -> r.getCOSObject().getDictionaryObject(COSName.XOBJECT, COSDictionary.class));
@@ -198,8 +197,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
 
             require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
 
-            COSBase operand = operands.get(0);
-            if (operand instanceof COSName gsName) {
+            if (operands.getFirst() instanceof COSName gsName) {
 
                 Optional<COSDictionary> states = ofNullable(getContext().getResources()).map(
                         r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class));

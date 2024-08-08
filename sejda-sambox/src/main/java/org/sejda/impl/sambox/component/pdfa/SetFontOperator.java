@@ -21,18 +21,16 @@ package org.sejda.impl.sambox.component.pdfa;
 import org.sejda.impl.sambox.component.optimization.InUseDictionary;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
+import org.sejda.sambox.contentstream.operator.OperatorProcessor;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
-import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.font.PDFontFactory;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.require;
@@ -42,16 +40,19 @@ import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_
 /**
  * @author Andrea Vacondio
  */
-public class SetFontOperator extends PdfAContentStreamOperator {
+public class SetFontOperator extends OperatorProcessor {
 
-    private final Map<IndirectCOSObjectIdentifier, InUseDictionary> hitFontsById = new HashMap<>();
+    private final ConversionContext conversionContext;
+
+    public SetFontOperator(ConversionContext conversionContext) {
+        this.conversionContext = conversionContext;
+    }
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
         require(operands.size() > 1, () -> new MissingOperandException(operator, operands));
 
-        COSBase operand = operands.get(0);
-        if (operand instanceof COSName fontName) {
+        if (operands.getFirst() instanceof COSName fontName) {
             COSDictionary fontDictionary = ofNullable(
                     fontResources().getDictionaryObject(fontName, COSDictionary.class)).orElseThrow(
                     () -> new MissingResourceException("Missing font dictionary: " + fontName.getName()));

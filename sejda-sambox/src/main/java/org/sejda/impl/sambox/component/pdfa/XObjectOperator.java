@@ -22,6 +22,7 @@ import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.model.image.ImageType;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
+import org.sejda.sambox.contentstream.operator.OperatorProcessor;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -56,17 +58,22 @@ import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.getColorSpaceF
  *
  * @author Andrea Vacondio
  */
-public class XObjectOperator extends PdfAContentStreamOperator {
+public class XObjectOperator extends OperatorProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(XObjectOperator.class);
+
+    private final ConversionContext conversionContext;
+
+    public XObjectOperator(ConversionContext conversionContext) {
+        this.conversionContext = conversionContext;
+    }
 
     @Override
     public void process(Operator operator, List<COSBase> operands) throws IOException {
 
         require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
 
-        COSBase operand = operands.get(0);
-        if (operand instanceof COSName objectName) {
+        if (operands.getFirst() instanceof COSName objectName) {
 
             COSStream existing = ofNullable(getContext().getResources().getCOSObject()
                     .getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).map(
@@ -83,31 +90,31 @@ public class XObjectOperator extends PdfAContentStreamOperator {
             var subtype = stream.getCOSName(COSName.SUBTYPE);
             LOG.trace("Hit image with name {} and type {}", objectName.getName(), subtype);
             if (COSName.IMAGE.equals(subtype)) {
-                conversionContext().maybeRemoveForbiddenKeys(stream, "XObject", IOException::new,
+                conversionContext.maybeRemoveForbiddenKeys(stream, "XObject", IOException::new,
                         COSName.getPDFName("Alternates"), COSName.getPDFName("OPI"));
                 sanitizeInterpolateValue(stream);
-                conversionContext().sanitizeRenderingIntents(stream);
+                conversionContext.sanitizeRenderingIntents(stream);
                 //JPEG2000 and SMASK are not allowed in PDFa/1b so we convert to jpg
                 if (stream.hasFilter(COSName.JPX_DECODE) || nonNull(stream.getDictionaryObject(COSName.SMASK))) {
-                    conversionContext().maybeFailOnInvalidElement(
+                    conversionContext.maybeFailOnInvalidElement(
                             () -> new IOException("Found an JPEG2000 image or an image with SMASK"));
                     //TODO make sure we don't compress the same image multiple times
                     PDImageXObject image = (PDImageXObject) createXObject(stream, getContext().getResources());
                     replaceHitXObject(objectName, createFromXObjectImage(image));
-                    notifyEvent(conversionContext().notifiableMetadata()).taskWarning(
+                    notifyEvent(conversionContext.notifiableMetadata()).taskWarning(
                             "Image was converted to a supported type");
                 }
-                conversionContext().maybeAddDefaultColorSpaceFor(stream.getDictionaryObject(COSName.CS), csResources());
+                conversionContext.maybeAddDefaultColorSpaceFor(stream.getDictionaryObject(COSName.CS), csResources());
             } else if (COSName.FORM.equals(subtype)) {
                 //A form XObject dictionary shall not contain any of the following:
                 //* the OPI key;
                 //* the Subtype2 key with a value of PS;
                 //* the PS key;
                 //* reference XObject
-                conversionContext().maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
+                conversionContext.maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                         COSName.getPDFName("Ref"), COSName.getPDFName("OPI"), COSName.PS);
                 if (COSName.PS.equals(stream.getCOSName(COSName.getPDFName("Subtype2")))) {
-                    conversionContext().maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
+                    conversionContext.maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                             COSName.getPDFName("Subtype2"));
                 }
                 PDXObject xobject = createXObject(stream, getContext().getResources());
@@ -119,18 +126,16 @@ public class XObjectOperator extends PdfAContentStreamOperator {
             // free up resources used by the underlying COSStream which stores both the filtered and unfiltered bytes[] and DecodeResult potentially creating a large memory
             // footprint
             stream.unDecode();
-            LOG.trace("Used memory: {} Mb",
-                    (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000);
         }
     }
 
     private void sanitizeInterpolateValue(COSDictionary image) throws IOException {
         boolean interpolate = image.getBoolean(COSName.INTERPOLATE, false);
         if (interpolate) {
-            conversionContext().maybeFailOnInvalidElement(
+            conversionContext.maybeFailOnInvalidElement(
                     () -> new IOException("Found an image with interpolate value true"));
             image.setBoolean(COSName.INTERPOLATE, false);
-            notifyEvent(conversionContext().notifiableMetadata()).taskWarning("Image interpolate value set to false");
+            notifyEvent(conversionContext.notifiableMetadata()).taskWarning("Image interpolate value set to false");
         }
     }
 
@@ -157,12 +162,14 @@ public class XObjectOperator extends PdfAContentStreamOperator {
 
     private ReadOnlyFilteredCOSStream createFromXObjectImage(PDImageXObject image) throws IOException {
         BufferedImage bufferedImage = image.getImage();
-        var type = bufferedImage.getColorModel().hasAlpha() ? ImageType.PNG : ImageType.JPEG;
+        var type =
+                bufferedImage.getColorModel().getTransparency() != Transparency.OPAQUE ? ImageType.PNG : ImageType.JPEG;
         var tmpFile = File.createTempFile("tempImage", "." + type.getExtension());
         tmpFile.deleteOnExit();
         ImageIO.write(bufferedImage, type.getExtension(), tmpFile);
         try {
             if (ImageType.PNG.equals(type)) {
+                //   var converted = LosslessFactory.createFromImage(bufferedImage);
                 return createFromPngFile(tmpFile, image);
             }
             return createFromJpegFile(tmpFile, image);

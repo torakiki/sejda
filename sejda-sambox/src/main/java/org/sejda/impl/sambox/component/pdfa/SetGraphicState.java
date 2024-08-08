@@ -50,8 +50,7 @@ public class SetGraphicState extends OperatorProcessor {
 
         require(!operands.isEmpty(), () -> new MissingOperandException(operator, operands));
 
-        COSBase operand = operands.get(0);
-        if (operand instanceof COSName gsName) {
+        if (operands.getFirst() instanceof COSName gsName) {
             COSDictionary extGState = ofNullable(getContext().getResources()).map(
                             r -> r.getCOSObject().getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class))
                     .map(d -> d.getDictionaryObject(gsName, COSDictionary.class)).orElseThrow(
