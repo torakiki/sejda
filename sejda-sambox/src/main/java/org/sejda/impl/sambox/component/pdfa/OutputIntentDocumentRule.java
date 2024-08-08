@@ -24,6 +24,7 @@ import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.pdfa.DefaultRGBOutputIntent;
 import org.sejda.model.pdfa.ICCProfile;
 import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -99,7 +100,8 @@ public class OutputIntentDocumentRule extends BaseRule<PDDocument, TaskException
                         "Replacing user output intent with the default RGB one. An RGB profile is required");
             }
 
-            var destOutputIntent = new ReadOnlyFilteredCOSStream(of(COSName.FILTER, COSName.FLATE_DECODE),
+            var destOutputIntent = new ReadOnlyFilteredCOSStream(of(COSName.FILTER, COSName.FLATE_DECODE, COSName.N,
+                    COSInteger.get(conversionContext().outputIntent().profile().components())),
                     () -> new DeflaterInputStream(conversionContext().outputIntent().profile().profileData()), -1);
             var outputIntent = of(COSName.TYPE, COSName.OUTPUT_INTENT, COSName.S, COSName.GTS_PDFA1,
                     COSName.DEST_OUTPUT_PROFILE, destOutputIntent);
