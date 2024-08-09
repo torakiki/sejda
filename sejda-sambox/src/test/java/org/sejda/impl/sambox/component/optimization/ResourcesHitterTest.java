@@ -38,8 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ResourcesHitterTest {
@@ -176,4 +179,13 @@ public class ResourcesHitterTest {
         }
     }
 
+    @Test
+    public void sameSmaskMultipleExtGStateProcessedOnce() throws IOException {
+        var hitter = spy(victim);
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/same_extgstate_multiple_res.pdf")))) {
+            document.getPages().forEach(hitter);
+            verify(hitter).showTransparencyGroup(any());
+        }
+    }
 }
