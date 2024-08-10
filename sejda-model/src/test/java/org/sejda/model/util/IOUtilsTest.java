@@ -19,6 +19,7 @@
  */
 package org.sejda.model.util;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
@@ -289,5 +290,19 @@ public class IOUtilsTest {
     public void testNulls() {
         assertEquals("", IOUtils.toSafeFilename(null));
         assertEquals("", IOUtils.toStrictFilename(null));
+    }
+
+    @Test
+    public void testFindNewNameThatDoesNotExist_longFilenames() throws Exception {
+        var originalFilename = IOUtils.shortenFilename(largeFilename);
+        var file = Files.createFile(folder.resolve(originalFilename)).toFile();
+        var basename = FilenameUtils.getBaseName(originalFilename);
+        
+        var expectedName = basename.substring(0, basename.length() - 3) + "(1).pdf";
+        assertEquals(expectedName, IOUtils.findNewNameThatDoesNotExist(file).getName());
+        Files.createFile(folder.resolve(expectedName));
+
+        var expectedName2 = basename.substring(0, basename.length() - 3) + "(2).pdf";
+        assertEquals(expectedName2, IOUtils.findNewNameThatDoesNotExist(file).getName());
     }
 }
