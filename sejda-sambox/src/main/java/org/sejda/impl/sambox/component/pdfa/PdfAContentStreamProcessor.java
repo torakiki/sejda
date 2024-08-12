@@ -19,7 +19,6 @@
 package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.impl.sambox.component.FailableContentStreamProcessor;
-import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.state.Concatenate;
 import org.sejda.sambox.contentstream.operator.state.Restore;
@@ -27,18 +26,13 @@ import org.sejda.sambox.contentstream.operator.state.Save;
 import org.sejda.sambox.contentstream.operator.state.SetMatrix;
 import org.sejda.sambox.contentstream.operator.text.SetTextRenderingMode;
 import org.sejda.sambox.cos.COSBase;
-import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
-import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetNonStrokingColor;
-import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetStrokingColor;
 
 /**
  * @author Andrea Vacondio
@@ -61,10 +55,6 @@ public class PdfAContentStreamProcessor extends FailableContentStreamProcessor {
         addOperator(new Restore());
         addOperator(new SetMatrix());
         addOperator(new SetTextRenderingMode());
-        //use the same map for stroking and not stroking
-        Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById = new HashMap<>();
-        addOperator(tilingPatternSetStrokingColor(hitPatternsById));
-        addOperator(tilingPatternSetNonStrokingColor(hitPatternsById));
     }
 
     final void addConversionOperator(PdfAContentStreamOperator op) {

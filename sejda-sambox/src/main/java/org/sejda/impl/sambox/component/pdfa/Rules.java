@@ -19,20 +19,28 @@
 package org.sejda.impl.sambox.component.pdfa;
 
 import org.apache.commons.lang3.function.FailableConsumer;
+import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.output.PreSaveCOSTransformer;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetNonStrokingColor;
+import static org.sejda.impl.sambox.component.optimization.TilingPatternHitterOperator.tilingPatternSetStrokingColor;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetColorSpace.nonStrokingColorspace;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetColorSpace.strokingColorspace;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.nonStrokingCMYK;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.nonStrokingRGB;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.strokingCMYK;
 import static org.sejda.impl.sambox.component.pdfa.BaseSetDeviceColorSpace.strokingRGB;
+import static org.sejda.impl.sambox.component.pdfa.ShadingPatternSetColor.shadingPatternSetNonStrokingColor;
+import static org.sejda.impl.sambox.component.pdfa.ShadingPatternSetColor.shadingPatternSetStrokingColor;
 
 /**
  * @author Andrea Vacondio
@@ -87,6 +95,12 @@ public final class Rules {
                 csProcessor.addOperator(
                         new SetFontOperator(context).andThen(new ResourcesHitter.FontsHitterOperator()));
                 csProcessor.addOperator(new SetGraphicState(context).andThen(new ResourcesHitter.SetGraphicState()));
+                //use the same map for stroking and not stroking
+                Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById = new HashMap<>();
+                csProcessor.addOperator(tilingPatternSetStrokingColor(hitPatternsById).andThen(
+                        shadingPatternSetStrokingColor(context)));
+                csProcessor.addOperator(tilingPatternSetNonStrokingColor(hitPatternsById).andThen(
+                        shadingPatternSetNonStrokingColor(context)));
                 yield csProcessor;
             }
         };

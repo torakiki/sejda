@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -59,10 +58,6 @@ public class ShadingFill extends PdfAContentStreamOperator {
                 LOG.trace("Hit shading with name {}", objectName.getName());
                 conversionContext().maybeAddDefaultColorSpaceFor(shading.getDictionaryObject(COSName.CS),
                         csResources());
-                var extGState = shading.getDictionaryObject(COSName.EXT_G_STATE, COSDictionary.class);
-                if (nonNull(extGState)) {
-                    new ExtGStateSanitizer(conversionContext()).sanitizeExtGState(extGState);
-                }
             }
         }
     }
