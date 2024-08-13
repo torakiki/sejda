@@ -19,7 +19,6 @@
 package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
-import org.sejda.model.image.ImageType;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
@@ -35,10 +34,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import static java.util.Objects.nonNull;
@@ -48,7 +47,6 @@ import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnly;
 import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyJpegImage;
-import static org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream.readOnlyPngImage;
 import static org.sejda.sambox.contentstream.operator.OperatorName.DRAW_OBJECT;
 import static org.sejda.sambox.pdmodel.graphics.PDXObject.createXObject;
 import static org.sejda.sambox.pdmodel.graphics.image.JPEGFactory.getColorSpaceFromAWT;
@@ -94,8 +92,14 @@ public class XObjectOperator extends OperatorProcessor {
                         COSName.getPDFName("Alternates"), COSName.getPDFName("OPI"));
                 sanitizeInterpolateValue(stream);
                 conversionContext.sanitizeRenderingIntents(stream);
-                //JPEG2000 and SMASK are not allowed in PDFa/1b so we convert to jpg
-                if (stream.hasFilter(COSName.JPX_DECODE) || nonNull(stream.getDictionaryObject(COSName.SMASK))) {
+                var smask = stream.getDictionaryObject(COSName.SMASK);
+                // SMASK is not allowed in PDFA/1
+                if (nonNull(smask) && !COSName.NONE.equals(smask)) {
+                    //other tools are smarter here
+                    conversionContext.maybeRemoveForbiddenKeys(stream, "XObject", IOException::new, COSName.SMASK);
+                }
+                // JPEG2000 is not allowed in PDFA/1 so we convert to jpg
+                if (stream.hasFilter(COSName.JPX_DECODE)) {
                     conversionContext.maybeFailOnInvalidElement(
                             () -> new IOException("Found an JPEG2000 image or an image with SMASK"));
                     //TODO make sure we don't compress the same image multiple times
@@ -162,30 +166,11 @@ public class XObjectOperator extends OperatorProcessor {
 
     private ReadOnlyFilteredCOSStream createFromXObjectImage(PDImageXObject image) throws IOException {
         BufferedImage bufferedImage = image.getImage();
-        var type =
-                bufferedImage.getColorModel().getTransparency() != Transparency.OPAQUE ? ImageType.PNG : ImageType.JPEG;
-        var tmpFile = File.createTempFile("tempImage", "." + type.getExtension());
+        var tmpFile = File.createTempFile("tempImage", ".jpg");
         tmpFile.deleteOnExit();
-        ImageIO.write(bufferedImage, type.getExtension(), tmpFile);
-        try {
-            if (ImageType.PNG.equals(type)) {
-                //   var converted = LosslessFactory.createFromImage(bufferedImage);
-                return createFromPngFile(tmpFile, image);
-            }
-            return createFromJpegFile(tmpFile, image);
-        } finally {
-            bufferedImage.flush();
-        }
-    }
-
-    private static ReadOnlyFilteredCOSStream createFromPngFile(File file, PDImageXObject original) throws IOException {
-        // read image
-        var awtImage = ImageIO.read(file);
-        requireIOCondition(nonNull(awtImage), "Cannot read image");
-        var stream = readOnlyPngImage(file, awtImage.getWidth(), awtImage.getHeight(),
-                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
-        stream.setItem(COSName.OC, original.getCOSObject().getDictionaryObject(COSName.OC));
-        return stream;
+        ImageIO.write(bufferedImage, "jpg", tmpFile);
+        bufferedImage.flush();
+        return createFromJpegFile(tmpFile, image);
     }
 
     private static ReadOnlyFilteredCOSStream createFromJpegFile(File file, PDImageXObject original) throws IOException {
@@ -193,7 +178,8 @@ public class XObjectOperator extends OperatorProcessor {
         var awtImage = ImageIO.read(file);
         requireIOCondition(nonNull(awtImage), "Cannot read image");
         var stream = readOnlyJpegImage(file, awtImage.getWidth(), awtImage.getHeight(),
-                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage));
+                awtImage.getColorModel().getComponentSize(0), getColorSpaceFromAWT(awtImage),
+                StandardOpenOption.DELETE_ON_CLOSE);
         stream.setItem(COSName.OC, original.getCOSObject().getDictionaryObject(COSName.OC));
         return stream;
     }
