@@ -23,10 +23,19 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.commons.collection.NullSafeSet;
 import org.sejda.model.image.ImageColorType;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.SingleOutputTaskParameters;
+import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PageRangeSelection;
+import org.sejda.model.pdf.page.PagesSelection;
+import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.ValidSingleOutput;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Base class for a parameter meant to convert an existing pdf source to a single image of a specified type. The type must support multiple images into one image file.
@@ -36,7 +45,7 @@ import org.sejda.model.validation.constraint.ValidSingleOutput;
  */
 @ValidSingleOutput
 public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToImageParameters
-        implements SingleOutputTaskParameters {
+        implements PageRangeSelection, PagesSelection, SingleOutputTaskParameters {
 
     AbstractPdfToSingleImageParameters(ImageColorType outputImageColorType) {
         super(outputImageColorType);
@@ -56,9 +65,48 @@ public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToIm
         this.output = output;
     }
 
+    @Valid
+    private final Set<PageRange> pageSelection = new NullSafeSet<>();
+
+    public void addPageRange(PageRange range) {
+        pageSelection.add(range);
+    }
+
+    public void addAllPageRanges(Collection<PageRange> ranges) {
+        pageSelection.addAll(ranges);
+    }
+
+    /**
+     * @return an unmodifiable view of the pageSelection
+     */
+    @Override
+    public Set<PageRange> getPageSelection() {
+        return Collections.unmodifiableSet(pageSelection);
+    }
+
+    /**
+     * @param upperLimit
+     *            the number of pages of the document (upper limit).
+     * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
+     *         case of all pages.
+     * @see org.sejda.model.pdf.page.PagesSelection#getPages(int)
+     */
+    @Override
+    public Set<Integer> getPages(int upperLimit) {
+        if (pageSelection.isEmpty()) {
+            return PredefinedSetOfPages.ALL_PAGES.getPages(upperLimit);
+        }
+
+        Set<Integer> retSet = new NullSafeSet<>();
+        for (PageRange range : getPageSelection()) {
+            retSet.addAll(range.getPages(upperLimit));
+        }
+        return retSet;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(output).append(pageSelection).toHashCode();
     }
 
     @Override
@@ -69,7 +117,10 @@ public abstract class AbstractPdfToSingleImageParameters extends AbstractPdfToIm
         if (!(other instanceof AbstractPdfToSingleImageParameters parameter)) {
             return false;
         }
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(output, parameter.getOutput()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(output, parameter.getOutput())
+                .append(pageSelection, parameter.getPageSelection())
+                .isEquals();
     }
 
 }

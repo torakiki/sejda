@@ -29,38 +29,37 @@ import org.sejda.model.parameter.base.DiscardableOutlineTaskParameters;
 import org.sejda.model.parameter.base.MultiplePdfSourceMultipleOutputParameters;
 import org.sejda.model.parameter.base.OptimizableOutputTaskParameters;
 import org.sejda.model.pdf.page.PageRange;
-import org.sejda.model.pdf.page.PageRangeSelection;
 import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.validation.constraint.HasSelectedPages;
 import org.sejda.model.validation.constraint.NotAllowed;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Optional.ofNullable;
+
 /**
  * Parameter class for an Extract pages task. Allow to specify a predefined set of pages to extract (odd, even) or a set of page ranges but not both. Page ranges are validated to
  * make sure that there is no intersection.
- * 
+ *
  * @author Andrea Vacondio
- * 
  */
 @HasSelectedPages
-public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParameters implements PageRangeSelection,
-        PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
+public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParameters
+        implements PagesSelection, OptimizableOutputTaskParameters, DiscardableOutlineTaskParameters {
 
     @NotNull
     private OptimizationPolicy optimizationPolicy = OptimizationPolicy.NO;
     private boolean discardOutline = false;
     @NotNull
     @NotAllowed(disallow = { PredefinedSetOfPages.ALL_PAGES })
-    private PredefinedSetOfPages predefinedSetOfPages;
+    private final PredefinedSetOfPages predefinedSetOfPages;
     @Valid
-    private final Set<PageRange> pageSelection = new NullSafeSet<>();
+    private final Set<PagesSelection> pageSelection = new NullSafeSet<>();
     private boolean invertSelection = false;
     private boolean separateFileForEachRange = false;
 
@@ -73,14 +72,12 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
 
     /**
      * Creates an instance using a predefined set of pages to extract.
-     * 
-     * @param predefinedSetOfPages
      */
     public ExtractPagesParameters(PredefinedSetOfPages predefinedSetOfPages) {
-        this.predefinedSetOfPages = predefinedSetOfPages;
+        this.predefinedSetOfPages = ofNullable(predefinedSetOfPages).orElse(PredefinedSetOfPages.NONE);
     }
 
-    public void addPageRange(PageRange range) {
+    public void addPageRange(PagesSelection range) {
         pageSelection.add(range);
     }
 
@@ -93,18 +90,17 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
     }
 
     /**
-     * @return an unmodifiable view of the pageSelection
+     * @return true if there is some page selection. There is no guarantee about the validity of the selection
+     * (Ex. the selection is for page 30 and the input document has only 20 pages)
      */
-    @Override
-    public Set<PageRange> getPageSelection() {
-        return Collections.unmodifiableSet(pageSelection);
+    public boolean hasPageSelection() {
+        return !pageSelection.isEmpty();
     }
 
     /**
-     * @param upperLimit
-     *            the number of pages of the document (upper limit).
+     * @param upperLimit the number of pages of the document (upper limit).
      * @return the selected set of pages. Iteration ordering is predictable, it is the order in which elements were inserted into the {@link PageRange} set or the natural order in
-     *         case of {@link PredefinedSetOfPages}.
+     * case of {@link PredefinedSetOfPages}.
      * @see PagesSelection#getPages(int)
      */
     @Override
@@ -113,7 +109,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
         if (predefinedSetOfPages != PredefinedSetOfPages.NONE) {
             pages = predefinedSetOfPages.getPages(upperLimit);
         } else {
-            for (PageRange range : pageSelection) {
+            for (PagesSelection range : pageSelection) {
                 pages.addAll(range.getPages(upperLimit));
             }
         }
@@ -133,9 +129,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
     }
 
     /**
-     * 
-     * @param upperLimit
-     *            the number of pages of the document (upper limit).
+     * @param upperLimit the number of pages of the document (upper limit).
      * @return a list of sets of pages. Each set represents an extraction set that generates an output PDF file.
      */
     public List<Set<Integer>> getPagesSets(int upperLimit) {
@@ -159,7 +153,7 @@ public class ExtractPagesParameters extends MultiplePdfSourceMultipleOutputParam
                     pages.add(currentRange);
                 }
             } else {
-                for (PageRange range : pageSelection) {
+                for (PagesSelection range : pageSelection) {
                     pages.add(range.getPages(upperLimit));
                 }
             }

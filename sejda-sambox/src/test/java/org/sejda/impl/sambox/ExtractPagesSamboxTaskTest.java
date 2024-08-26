@@ -27,6 +27,7 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.page.PageRange;
+import org.sejda.model.pdf.page.PagesSelection;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
 import org.sejda.model.task.Task;
 import org.sejda.sambox.cos.COSDictionary;
@@ -326,6 +327,21 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(1)
                 .assertTaskWarning("No page has been selected for extraction from: one_page.pdf");
+    }
+
+    @Test
+    public void extractLastPage() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(PagesSelection.LAST_PAGE);
+        parameters.addSource(customInput("pdf/test-pdf.pdf", "test-pdf.pdf"));
+        parameters.addSource(customInput("pdf/one_page.pdf", "one_page.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setOutputPrefix("[FILENUMBER]_[BASENAME]");
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).assertPages("1_test-pdf.pdf", 1).assertPages("2_one_page.pdf", 1);
     }
 
     @Test

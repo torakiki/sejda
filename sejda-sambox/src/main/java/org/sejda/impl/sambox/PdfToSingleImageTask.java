@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Set;
 
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -74,11 +75,17 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
         executionContext().notifiableTaskMetadata().setCurrentSource(parameters.getSource());
         documentHandler = parameters.getSource().open(sourceOpener);
 
-        int numberOfPages = documentHandler.getNumberOfPages();
+        Set<Integer> requestedPages = parameters.getPages(documentHandler.getNumberOfPages());
+
+        int numberOfPages = requestedPages.size();
         LOG.trace("Found {} pages", numberOfPages);
 
+        int currentStep = 0;
+        int totalSteps = numberOfPages;
+
         getWriter().openDestination(tmpFile, parameters);
-        for (int page = 1; page <= numberOfPages; page++) {
+        for (int page : requestedPages) {
+            currentStep++;
             LOG.trace("Converting page {}", page);
             try {
                 BufferedImage pageImage = documentHandler.renderImage(page, parameters.getResolutionInDpi(),
@@ -90,7 +97,7 @@ public class PdfToSingleImageTask<T extends AbstractPdfToSingleImageParameters> 
                         .taskWarning(String.format("Page %d was skipped, could not be converted", page), e);
             }
 
-            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(page + 1).outOf(numberOfPages);
+            notifyEvent(executionContext().notifiableTaskMetadata()).stepsCompleted(currentStep).outOf(totalSteps);
         }
         getWriter().closeDestination();
         executionContext().notifiableTaskMetadata().clearCurrentSource();

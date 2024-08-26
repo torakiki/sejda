@@ -35,7 +35,7 @@ public class HasSelectedPagesValidator implements ConstraintValidator<HasSelecte
     @Override
     public boolean isValid(ExtractPagesParameters value, ConstraintValidatorContext context) {
         if (value != null) {
-            return value.getPredefinedSetOfPages() != PredefinedSetOfPages.NONE || !value.getPageSelection().isEmpty();
+            return value.getPredefinedSetOfPages() != PredefinedSetOfPages.NONE || value.hasPageSelection();
         }
         return true;
     }

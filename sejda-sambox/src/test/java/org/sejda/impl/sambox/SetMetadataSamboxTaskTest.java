@@ -43,13 +43,17 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.sejda.tests.TestUtils.*;
+import static org.sejda.tests.TestUtils.customInput;
+import static org.sejda.tests.TestUtils.mediumInput;
+import static org.sejda.tests.TestUtils.shortInput;
+import static org.sejda.tests.TestUtils.stronglyEncryptedInput;
 
 /**
  * set metadata task test for the pdfbox implementation
@@ -235,10 +239,37 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
             }
         });
     }
+
+    @Test
+    public void invalidXmlChars_updatedXmpMetadata() throws IOException {
+        setUpParams(stronglyEncryptedInput());
+        parameters.put(PdfMetadataFields.CREATOR, "test_creator\u0000");
+        parameters.put("Producer", "test_\u0000producer");
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+
+                assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
+                assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
     
     @Test
     public void xmpMetadataMissingNamespaceAndWithAttributesInsteadofNodes() throws IOException {
-        setUpParams(customInput("pdf/xmp_metadata_missing_namespace.pdf"));
+        setUpParams(customInput("pdf/xmp_metadata_missing_xmp_namespace.pdf"));
         parameters.put(PdfMetadataFields.CREATOR, "test_creator");
         parameters.put("Producer", "test_producer");
 
@@ -272,6 +303,37 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 assertNullNode(xmlDoc, "xmp:CreatorTool");
 
                 assertNullNode(xmlDoc, "xmp:MetadataDate");
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void xmpMetadataMissingNamespace_rdf() throws IOException {
+        Locale.setDefault(Locale.US);
+        setUpParams(customInput("pdf/xmp_metadata_missing_rdf_namespace.pdf"));
+        String random = Long.toString(System.currentTimeMillis());
+        String producer = "test_producer_" + random;
+        String creator = "test_creator_" + random;
+        
+        parameters.put(PdfMetadataFields.CREATOR, creator);
+        parameters.put("Producer", producer);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.directoryOutputTo(parameters);
+
+        execute(parameters);
+
+        testContext.assertTaskCompleted();
+        testContext.forEachPdfOutput(document -> {
+            try {
+                DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+                DocumentBuilder b = f.newDocumentBuilder();
+                Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
+
+                assertEquals(producer, getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
 
             } catch (Exception e) {
                 throw new RuntimeException(e);

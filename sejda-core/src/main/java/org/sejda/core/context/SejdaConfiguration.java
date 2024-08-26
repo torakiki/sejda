@@ -42,6 +42,15 @@ public interface SejdaConfiguration {
     Task<? extends TaskParameters> getTask(TaskParameters parameters) throws TaskException;
 
     /**
+     * Similar to getTask() but it doesn't instantiante it
+     *
+     * @param parameters Input parameters you want to search a task for.
+     * @return the most suitable {@link Task} instance for the input parameters class.
+     * @throws TaskException if no task able to execute the input parameters class is found, or if an error occur while reflective instantiating the {@link Task}.
+     */
+    Class<? extends Task> getTaskClass(TaskParameters parameters) throws TaskException;
+
+    /**
      * @return true if validation should be performed on parameters instance during the task execution or false if incoming parameters instances are already validate externally.
      */
     boolean isValidation();
