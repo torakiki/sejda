@@ -161,6 +161,14 @@ public final class IOUtils {
 
         do {
             String newName = String.format("%s(%d).%s", basename, count, extension);
+            
+            // ensure new filename is not too long with the added suffix
+            if(isFilenameTooLong(newName)) {
+                String extra = String.format("(%d)", count);
+                String newBasename = basename.substring(0, basename.length() - extra.length());
+                newName = String.format("%s(%d).%s", newBasename, count, extension);
+            }
+            
             newNamedOutput = new File(output.getParent(), newName);
             count++;
         } while (count < maxTries && newNamedOutput.exists());
@@ -172,6 +180,10 @@ public final class IOUtils {
         }
 
         return newNamedOutput;
+    }
+    
+    private static boolean isFilenameTooLong(String name) {
+        return !name.equals(shortenFilename(name));
     }
 
     public static String shortenFilename(String name) {
