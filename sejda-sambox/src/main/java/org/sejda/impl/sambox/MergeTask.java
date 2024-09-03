@@ -169,6 +169,9 @@ public class MergeTask extends BaseTask<MergeParameters> {
                                                 PDDocumentInformation::getTitle).filter(StringUtils::isNotBlank)
                                         .orElse(sourceBaseName);
                             }
+                            if(tocText == null || tocText.isBlank()){
+                                tocText = "Untitled " + inputsCounter;
+                            }
                             tocCreator.appendItem(tocText, pagesCounter, importedPage);
                         }
                     }
