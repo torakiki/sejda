@@ -39,9 +39,15 @@ import org.sejda.sambox.pdmodel.graphics.image.PDImageXObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -61,73 +67,84 @@ public class ImagesToPdfDocumentConverter {
         this.imageWriter = new PageImageWriter(documentHandler.getUnderlyingPDDocument());
     }
 
-    public PDDocumentHandler addPage(Source<?> source) throws TaskException {
-        return addPage(source, null, PageOrientation.AUTO, 0);    
+    public List<PDPage> addPages(Source<?> source) throws TaskException {
+        return addPages(source, null, PageOrientation.AUTO, 0);    
     }
     
-    public PDDocumentHandler addPage(Source<?> source, PDRectangle pageSize, PageOrientation pageOrientation, 
+    public List<PDPage> addPages(Source<?> source, PDRectangle pageSize, PageOrientation pageOrientation, 
                                      float marginInches) throws TaskException {
         beforeImage(source);
+        List<PDPage> results = new LinkedList<>();
         try {
-            PDImageXObject image = PageImageWriter.toPDXImageObject(source);
-            PDRectangle mediaBox = pageSize;
-            if (mediaBox == null) {
-                mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
+            
+            int numberOfImages = 1;
+            if(supportsMultiPageImage(source)) {
+                numberOfImages = getImagePageCount(source);
             }
+                
+            for(int imageNumber = 0; imageNumber < numberOfImages; imageNumber++) {
 
-            if (pageOrientation == PageOrientation.LANDSCAPE) {
-                mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
-            } else if (pageOrientation == PageOrientation.AUTO) {
-                if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
-                    LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
-                            image.getHeight());
-                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                PDImageXObject image = PageImageWriter.toPDXImageObject(source, imageNumber);
+                PDRectangle mediaBox = pageSize;
+                if (mediaBox == null) {
+                    mediaBox = new PDRectangle(image.getWidth(), image.getHeight());
                 }
+
+                if (pageOrientation == PageOrientation.LANDSCAPE) {
+                    mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                } else if (pageOrientation == PageOrientation.AUTO) {
+                    if (image.getWidth() > image.getHeight() && image.getWidth() > mediaBox.getWidth()) {
+                        LOG.debug("Switching to landscape, image dimensions are {}x{}", image.getWidth(),
+                                image.getHeight());
+                        mediaBox = new PDRectangle(mediaBox.getHeight(), mediaBox.getWidth());
+                    }
+                }
+
+                PDPage page = documentHandler.addBlankPage(mediaBox);
+                results.add(page);
+
+                // full page (scaled down only)
+                float width = image.getWidth();
+                float height = image.getHeight();
+
+                if (width > mediaBox.getWidth()) {
+                    int targetWidth = (int) mediaBox.getWidth();
+                    LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
+
+                    float ratio = width / targetWidth;
+                    width = targetWidth;
+                    height = Math.round(height / ratio);
+                }
+
+                if (height > mediaBox.getHeight()) {
+                    int targetHeight = (int) mediaBox.getHeight();
+                    LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
+
+                    float ratio = height / targetHeight;
+                    height = targetHeight;
+                    width = Math.round(width / ratio);
+                }
+
+                if (marginInches > 0) {
+                    float newWidth = width - marginInches * 72;
+                    float newHeight = height * newWidth / width;
+                    width = newWidth;
+                    height = newHeight;
+                }
+
+                // centered on page
+                float x = (mediaBox.getWidth() - width) / 2;
+                float y = ((int) mediaBox.getHeight() - height) / 2;
+
+                imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
+
+                afterImage(image);
             }
-
-            PDPage page = documentHandler.addBlankPage(mediaBox);
-
-            // full page (scaled down only)
-            float width = image.getWidth();
-            float height = image.getHeight();
-
-            if (width > mediaBox.getWidth()) {
-                int targetWidth = (int) mediaBox.getWidth();
-                LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
-
-                float ratio = width / targetWidth;
-                width = targetWidth;
-                height = Math.round(height / ratio);
-            }
-
-            if (height > mediaBox.getHeight()) {
-                int targetHeight = (int) mediaBox.getHeight();
-                LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
-
-                float ratio = height / targetHeight;
-                height = targetHeight;
-                width = Math.round(width / ratio);
-            }
-
-            if (marginInches > 0) {
-                float newWidth = width - marginInches * 72;
-                float newHeight = height * newWidth / width;
-                width = newWidth;
-                height = newHeight;
-            }
-
-            // centered on page
-            float x = (mediaBox.getWidth() - width) / 2;
-            float y = ((int) mediaBox.getHeight() - height) / 2;
-
-            imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
-
-            afterImage(image);
         } catch (TaskIOException e) {
             failedImage(source, e);
         }
         
-        return this.documentHandler;
+        return results;
     }
 
     public void beforeImage(Source<?> source) throws TaskException {
@@ -140,6 +157,10 @@ public class ImagesToPdfDocumentConverter {
 
     public void failedImage(Source<?> source, TaskIOException e) throws TaskException {
         throw e;
+    }
+    
+    public boolean supportsMultiPageImage(Source<?> source) {
+        return true;
     }
 
     public static void convertImageMergeInputToPdf(BaseMergeParameters<MergeInput> parameters,
@@ -183,7 +204,8 @@ public class ImagesToPdfDocumentConverter {
             pageSize = null;
         }
 
-        PDDocumentHandler converted = converter.addPage(image.getSource(), pageSize, image.getPageOrientation(), 0);
+        converter.addPages(image.getSource(), pageSize, image.getPageOrientation(), 0);
+        PDDocumentHandler converted = converter.getDocumentHandler();
         String basename = FilenameUtils.getBaseName(image.getSource().getName());
         String filename = String.format("%s.pdf", basename);
         File convertedTmpFile = createTemporaryBufferWithName(filename);
@@ -195,6 +217,28 @@ public class ImagesToPdfDocumentConverter {
         PdfMergeInput input = new PdfMergeInput(PdfFileSource.newInstanceNoPassword(convertedTmpFile));
         input.getSource().setEncryptionAtRestPolicy(encryptionAtRestPolicy);
         return input;
+    }
+
+    public static int getImagePageCount(Source<?> source) {
+        try {
+            try (ImageInputStream is = ImageIO.createImageInputStream(source.getSeekableSource().asNewInputStream())) {
+                Iterator<ImageReader> readers = ImageIO.getImageReaders(is);
+
+                if (readers.hasNext()) {
+                    ImageReader reader = readers.next();
+                    reader.setInput(is);
+                    try {
+                        return reader.getNumImages(true);
+                    } finally {
+                        reader.dispose();
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            LOG.warn("Could not determine image page count: {}", source.getName(), ex);
+        }
+
+        return 1;
     }
 
     public PDDocumentHandler getDocumentHandler() {

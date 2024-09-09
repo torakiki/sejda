@@ -14,7 +14,8 @@ public class ImagesToPdfDocumentConverterTest {
     public void imageWithExifRotation() throws TaskException {
         FileSource source = customNonPdfInputAsFileSource("image/with_exif_orientation.JPG");
         ImagesToPdfDocumentConverter converter = new ImagesToPdfDocumentConverter();
-        PDDocumentHandler d = converter.addPage(source);
+        converter.addPages(source);
+        PDDocumentHandler d = converter.getDocumentHandler();
         new PixelCompareUtils().assertSimilar(d.getUnderlyingPDDocument(), "pdf/with_exif_orientation.pdf");
     }
 }

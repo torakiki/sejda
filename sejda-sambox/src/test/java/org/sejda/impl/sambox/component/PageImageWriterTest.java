@@ -34,9 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.sejda.tests.TestUtils.customNonPdfInput;
-import static org.sejda.tests.TestUtils.customNonPdfInputAsFileSource;
-import static org.sejda.tests.TestUtils.encryptedAtRest;
+import static org.sejda.tests.TestUtils.*;
 
 public class PageImageWriterTest {
 
@@ -49,7 +47,7 @@ public class PageImageWriterTest {
         assertThat(result.getWidth(), is(5760));
 
         assertTrue(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                customNonPdfInput("image/large.jpg").getSource()), "Original bytes should be used");
+                customNonPdfInputAsStreamSource("image/large.jpg").getSource()), "Original bytes should be used");
     }
 
     @Test
@@ -88,7 +86,7 @@ public class PageImageWriterTest {
         assertThat(result.getWidth(), is(1400));
 
         assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/cmyk.jpg").getSource()),
+                        customNonPdfInputAsStreamSource("image/cmyk.jpg").getSource()),
                 "Original bytes should not be used; the image should be converted from CMYK to RGB");
     }
 
@@ -100,7 +98,7 @@ public class PageImageWriterTest {
         assertThat(result.getWidth(), is(1400));
 
         assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/cmyk.jpg").getSource()),
+                        customNonPdfInputAsStreamSource("image/cmyk.jpg").getSource()),
                 "Original bytes should not be used; the image should be converted from CMYK to RGB");
     }
 
@@ -110,7 +108,7 @@ public class PageImageWriterTest {
         assertThat(result.getColorSpace(), is(PDDeviceRGB.INSTANCE));
 
         assertFalse(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                        customNonPdfInput("image/icc_profile_gray.png").getSource()),
+                        customNonPdfInputAsStreamSource("image/icc_profile_gray.png").getSource()),
                 "Original bytes should not be used; the image should be converted from ICC Gray to RGB");
     }
 
@@ -122,7 +120,7 @@ public class PageImageWriterTest {
         assertThat(result.getHeight(), is(3840));
 
         assertTrue(IOUtils.contentEquals(result.getCOSObject().getFilteredStream(),
-                customNonPdfInput("image/large.jpg").getSource()), "Decrypted bytes should be used");
+                customNonPdfInputAsStreamSource("image/large.jpg").getSource()), "Decrypted bytes should be used");
     }
 
     @Test

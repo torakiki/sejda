@@ -337,7 +337,7 @@
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>2.2</hamcrest.version>
-		<sambox.version>3.0.10</sambox.version>
+		<sambox.version>3.0.14</sambox.version>
 		<sejda.io.version>3.0.1</sejda.io.version>
 		<bouncycastle.version>1.78.1</bouncycastle.version>
 		<twelvemonkeys.version>3.10.1</twelvemonkeys.version>
