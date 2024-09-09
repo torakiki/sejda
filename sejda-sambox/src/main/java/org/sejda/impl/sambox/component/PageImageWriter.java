@@ -112,56 +112,70 @@ public class PageImageWriter {
     }
 
     public static PDImageXObject toPDXImageObject(Source<?> source) throws TaskIOException {
+        return toPDXImageObject(source, 0);
+    }
+
+    public static PDImageXObject toPDXImageObject(Source<?> source, int number) throws TaskIOException {
         try {
-            return createFromSeekableSource(source.getSeekableSource(), source.getName());
+            return createFromSeekableSource(source.getSeekableSource(), source.getName(), number);
         } catch (Exception e) {
-            throw new TaskIOException("An error occurred creating PDImageXObject from file source: " + source.getName(),
-                    e);
+            String message = "An error occurred creating PDImageXObject from file source: " + source.getName();
+            if(number > 0) {
+                message += " and number: " + number;
+            }
+            throw new TaskIOException(message, e);
         }
     }
 
     public static PDImageXObject createFromSeekableSource(SeekableSource original, String name)
             throws TaskIOException, IOException {
+        return createFromSeekableSource(original, name, 0);
+    }
+
+    public static PDImageXObject createFromSeekableSource(SeekableSource original, String name, int number)
+            throws TaskIOException, IOException {
         SeekableSource source = original;
 
-        Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source, name);
-        if (maybeConvertedFile.isPresent()) {
-            source = maybeConvertedFile.get();
-        }
+        if(number == 0) {
+            Optional<SeekableSource> maybeConvertedFile = convertExifRotatedIf(source, name);
+            if (maybeConvertedFile.isPresent()) {
+                source = maybeConvertedFile.get();
+            }
 
-        maybeConvertedFile = convertCMYKJpegIf(source, name);
-        if (maybeConvertedFile.isPresent()) {
-            source = maybeConvertedFile.get();
-        }
+            maybeConvertedFile = convertCMYKJpegIf(source, name);
+            if (maybeConvertedFile.isPresent()) {
+                source = maybeConvertedFile.get();
+            }
 
-        maybeConvertedFile = convertICCGrayPngIf(source, name);
-        if (maybeConvertedFile.isPresent()) {
-            source = maybeConvertedFile.get();
+            maybeConvertedFile = convertICCGrayPngIf(source, name);
+            if (maybeConvertedFile.isPresent()) {
+                source = maybeConvertedFile.get();
+            }
         }
 
         try {
-            return PDImageXObject.createFromSeekableSource(source, name);
+            return PDImageXObject.createFromSeekableSource(source, name, number);
         } catch (UnsupportedTiffImageException e) {
             LOG.warn("Found unsupported TIFF compression, converting TIFF to JPEG: " + e.getMessage());
-
+            
             try {
-                return PDImageXObject.createFromSeekableSource(convertTiffToJpg(source), name);
+                return PDImageXObject.createFromSeekableSource(convertTiffToJpg(source, number), name);
             } catch (UnsupportedOperationException ex) {
                 if (ex.getMessage().contains("alpha channel")) {
                     LOG.warn("Found alpha channel image, JPEG compression failed, converting TIFF to PNG");
-                    return PDImageXObject.createFromSeekableSource(convertTiffToPng(source), name);
+                    return PDImageXObject.createFromSeekableSource(convertTiffToPng(source, number), name);
                 }
                 throw ex;
             }
         }
     }
 
-    public static SeekableSource convertTiffToJpg(SeekableSource source) throws IOException, TaskIOException {
-        return convertImageTo(source, "jpeg");
+    public static SeekableSource convertTiffToJpg(SeekableSource source, int number) throws IOException, TaskIOException {
+        return convertImageTo(source, number, "jpeg");
     }
 
-    public static SeekableSource convertTiffToPng(SeekableSource source) throws IOException, TaskIOException {
-        return convertImageTo(source, "png");
+    public static SeekableSource convertTiffToPng(SeekableSource source, int number) throws IOException, TaskIOException {
+        return convertImageTo(source, number, "png");
     }
 
     private static FileType getFileType(SeekableSource source) {
@@ -171,10 +185,31 @@ public class PageImageWriter {
             return null;
         }
     }
+    
+    // same as ImageIO.read() but allows reading a specific image from a multi-page image (eg: tiff)
+    public static BufferedImage read(SeekableSource source, int number) throws IOException {
+        BufferedImage image = null;
+        ImageInputStream is = ImageIO.createImageInputStream(source.asNewInputStream());
+        Iterator<ImageReader> readers = ImageIO.getImageReaders(is);
 
-    public static SeekableSource convertImageTo(SeekableSource source, String format)
+        if (readers.hasNext()) {
+            ImageReader reader = readers.next();
+            reader.setInput(is);
+
+            try {
+                image = reader.read(number);
+            } finally {
+                reader.dispose();
+                is.close();
+            }
+        }
+        
+        return image;
+    }
+
+    public static SeekableSource convertImageTo(SeekableSource source, int number, String format)
             throws IOException, TaskIOException {
-        BufferedImage image = ImageIO.read(source.asNewInputStream());
+        BufferedImage image = read(source, number);
         File tmpFile = IOUtils.createTemporaryBuffer("." + format);
         ImageOutputStream outputStream = new FileImageOutputStream(tmpFile);
 

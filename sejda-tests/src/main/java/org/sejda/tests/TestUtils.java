@@ -462,13 +462,23 @@ public final class TestUtils {
                 randomAlphanumeric(16) + ".pdf", password);
     }
 
-    public static StreamSource customNonPdfInput(String path) {
+    public static StreamSource customNonPdfInputAsStreamSource(String path) {
         String extension = FilenameUtils.getExtension(path);
         String filename = new File(path).getName();
-        return customNonPdfInput(path, filename);
+        return customNonPdfInputAsStreamSource(path, filename);
     }
 
-    public static StreamSource customNonPdfInput(String path, String filename) {
+    public static FileSource customNonPdfInput(String path) {
+        // default to file source, as stream sources have issues with reading the image multiple times
+        return customNonPdfInputAsFileSource(path);
+    }
+
+    public static FileSource customNonPdfInput(String path, String filename) {
+        // default to file source, as stream sources have issues with reading the image multiple times
+        return customNonPdfInputAsFileSource(path, filename);
+    }
+
+    public static StreamSource customNonPdfInputAsStreamSource(String path, String filename) {
         requireNotBlank(filename, "Name cannot be blank");
         return StreamSource.newInstance(TestUtils.class.getClassLoader().getResourceAsStream(path), filename);
     }

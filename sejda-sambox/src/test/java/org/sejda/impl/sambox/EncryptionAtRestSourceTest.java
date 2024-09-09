@@ -17,11 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.sejda.tests.TestUtils.customInput;
-import static org.sejda.tests.TestUtils.customInputAsFileSource;
-import static org.sejda.tests.TestUtils.customNonPdfInput;
-import static org.sejda.tests.TestUtils.customNonPdfInputAsFileSource;
-import static org.sejda.tests.TestUtils.encryptedAtRest;
+import static org.sejda.tests.TestUtils.*;
 
 public class EncryptionAtRestSourceTest extends BaseTaskTest<MergeParameters> {
 
@@ -41,7 +37,7 @@ public class EncryptionAtRestSourceTest extends BaseTaskTest<MergeParameters> {
 
     @Test
     public void streamSource() throws IOException {
-        StreamSource encrypted = encryptedAtRest(customNonPdfInput("image/large.jpg"));
+        StreamSource encrypted = encryptedAtRest(customNonPdfInputAsStreamSource("image/large.jpg"));
 
         BufferedImage image = ImageIO.read(encrypted.getSeekableSource().asNewInputStream());
         assertEquals(image.getWidth(), 5760);
