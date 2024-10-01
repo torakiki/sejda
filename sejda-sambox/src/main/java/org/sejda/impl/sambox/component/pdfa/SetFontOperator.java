@@ -47,6 +47,8 @@ import java.util.Set;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
+import static org.apache.fontbox.ttf.CmapTable.ENCODING_MAC_ROMAN;
+import static org.apache.fontbox.ttf.CmapTable.PLATFORM_MACINTOSH;
 import static org.sejda.commons.util.RequireUtils.require;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
@@ -84,11 +86,13 @@ public class SetFontOperator extends OperatorProcessor {
                         "Found a font dictionary without the required BaseFont name");
 
                 var font = PDFontFactory.createFont(fontDictionary, getContext().getResources().getResourceCache());
+                //Rule 6.3.4 of ISO 19005-1
                 requireIOCondition(
                         font.isEmbedded() || RenderingMode.NEITHER == getContext().getGraphicsState().getTextState()
                                 .getRenderingMode(), "The font " + fontName.getName() + " is not embedded");
                 validate(font, fontName.getName());
 
+                //XMP metadata 3.7.10
             }
 
         }
@@ -97,26 +101,28 @@ public class SetFontOperator extends OperatorProcessor {
     public void validate(PDFontLike font, String name) throws IOException {
         switch (font) {
         case PDType1Font type1 -> {
-            requireDescriptor(type1.getCOSObject());
-            validateWidthsArray(type1);
+            requireDescriptor(type1.getCOSObject(), name);
+            validateWidthsArray(type1, name);
         }
         case PDType3Font type3 -> {
-            validateWidthsArray(type3);
+            validateWidthsArray(type3, name);
         }
         case PDType0Font type0 -> {
             requireCompatibleCIDFontAndCMap(type0, name);
             validate(type0.getDescendantFont(), name);
+            requireEmbeddedCMaps(type0, name);
         }
         case PDTrueTypeFont ttf -> {
-            requireDescriptor(ttf.getCOSObject());
-            validateWidthsArray(ttf);
+            requireDescriptor(ttf.getCOSObject(), name);
+            validateWidthsArray(ttf, name);
+            validateEncoding(ttf, name);
         }
         case PDCIDFontType0 cidType0 -> {
-            requireDescriptor(cidType0.getCOSObject());
+            requireDescriptor(cidType0.getCOSObject(), name);
         }
         case PDCIDFontType2 cidType2 -> {
             validateCidToGidMap(cidType2, name);
-            requireDescriptor(cidType2.getCOSObject());
+            requireDescriptor(cidType2.getCOSObject(), name);
         }
         default -> {
             //noop
@@ -131,20 +137,21 @@ public class SetFontOperator extends OperatorProcessor {
         if (!COSName.IDENTITY_H.equals(encoding) && !COSName.IDENTITY_V.equals(encoding)) {
             var fontCIDSystemInfo = font.getDescendantFont().getCOSObject()
                     .getDictionaryObject(COSName.CIDSYSTEMINFO, COSDictionary.class);
-            requireIOCondition(nonNull(fontCIDSystemInfo), "CIDSystemInfo is required for type 0 fonts");
+            requireIOCondition(nonNull(fontCIDSystemInfo), "CIDSystemInfo is required for type 0 font " + name);
             if (encoding instanceof COSStream cmap) {
                 var cmapCIDSystemInfo = cmap.getDictionaryObject(COSName.CIDSYSTEMINFO, COSDictionary.class);
-                requireIOCondition(nonNull(cmapCIDSystemInfo), "CIDSystemInfo is required for type 0 font CMap");
+                requireIOCondition(nonNull(cmapCIDSystemInfo),
+                        "CIDSystemInfo is required for type 0 font'" + name + "' CMap");
                 var cmapRegistry = cmapCIDSystemInfo.getString(COSName.REGISTRY);
                 var cmapOrdering = cmapCIDSystemInfo.getString(COSName.ORDERING);
                 requireIOCondition(
                         nonNull(cmapRegistry) && cmapRegistry.equals(fontCIDSystemInfo.getString(COSName.REGISTRY)),
-                        "Registry string in CIDSystemInfo of the font and CMap are not equals");
+                        "Registry string in CIDSystemInfo of the font '" + name + "' and CMap are not equals");
                 requireIOCondition(
                         nonNull(cmapOrdering) && cmapOrdering.equals(fontCIDSystemInfo.getString(COSName.ORDERING)),
-                        "Ordering string in CIDSystemInfo of the font and CMap are not equals");
+                        "Ordering string in CIDSystemInfo of the font '" + name + "' and CMap are not equals");
             } else {
-                throw new IOException("Invalid encoding for type 0 font, expected Identity or Stream");
+                throw new IOException("Invalid encoding for type 0 font '" + name + "', expected Identity or Stream");
             }
         }
     }
@@ -156,7 +163,7 @@ public class SetFontOperator extends OperatorProcessor {
             COSBase map = font.getCOSObject().getDictionaryObject(COSName.CID_TO_GID_MAP);
             if (!(map instanceof COSStream) && !COSName.IDENTITY.equals(map)) {
                 conversionContext.maybeFailOnInvalidElement(
-                        () -> new IOException("Type 2 CIDFonts shall contain a CIDToGIDMap entry "));
+                        () -> new IOException("Type 2 CIDFonts shall contain a CIDToGIDMap entry"));
                 font.getCOSObject().setItem(COSName.CID_TO_GID_MAP, COSName.IDENTITY);
                 notifyEvent(conversionContext.notifiableMetadata()).taskWarning(
                         "Type 2 CIDFonts '" + name + "' CIDToGIDMap set to Identity");
@@ -164,9 +171,59 @@ public class SetFontOperator extends OperatorProcessor {
         }
     }
 
-    private void requireDescriptor(COSDictionary font) throws IOException {
+    //Rule 6.3.3.3 of ISO 19005-1
+    private void requireEmbeddedCMaps(PDType0Font font, String name) throws IOException {
+        var encoding = font.getCOSObject().getDictionaryObject(COSName.ENCODING);
+        //All CMaps used within a conforming file, except Identity-H and Identity-V
+        if (!COSName.IDENTITY_H.equals(encoding) && !COSName.IDENTITY_V.equals(encoding)) {
+            if (encoding instanceof COSStream cmap) {
+                var fontCMapVMode = font.getCMap().getWMode();
+                var encodingVMode = cmap.getInt(COSName.WMODE, 0);
+                if (encodingVMode != fontCMapVMode) {
+                    conversionContext.maybeFailOnInvalidElement(() -> new IOException(
+                            "WMode entry in the CMap dictionary for font '" + name
+                                    + "' is not the same as the value of WMode in the CMap file itself"));
+                    cmap.setInt(COSName.WMODE, fontCMapVMode);
+                    notifyEvent(conversionContext.notifiableMetadata()).taskWarning(
+                            "WMode entry in the CMap dictionary set to " + fontCMapVMode + " for font '" + name + "'");
+                }
+            } else {
+                throw new IOException("Invalid encoding for type 0 font '" + name + "', expected Identity or Stream");
+            }
+        }
+    }
+
+    //Rule 6.3.7 of ISO 19005-1
+    private void validateEncoding(PDTrueTypeFont ttf, String name) throws IOException {
+        var encoding = ttf.getCOSObject().getDictionaryObject(COSName.ENCODING);
+        if (ttf.isSymbolic()) {
+            conversionContext.maybeRemoveForbiddenKeys(ttf.getCOSObject(), "font", IOException::new, COSName.ENCODING);
+            var cmap = ttf.getTrueTypeFont().getCmap();
+            //If no Encoding entry is specified in the font dictionary, the “cmap” subtable with platform ID 1 and encoding 0 will be used
+            requireIOCondition(
+                    cmap.getCmaps().length == 1 && nonNull(cmap.getSubtable(PLATFORM_MACINTOSH, ENCODING_MAC_ROMAN)),
+                    "Font '" + name + "' programs' \"cmap\" tables shall contain exactly one encoding");
+        } else {
+            switch (encoding) {
+            case COSName encodingName -> requireIOCondition(
+                    COSName.WIN_ANSI_ENCODING.equals(encodingName) || COSName.MAC_ROMAN_ENCODING.equals(encodingName),
+                    "Font '" + name + "' has invalid encoding " + encoding);
+            case COSDictionary encodingDictionary -> {
+                conversionContext.maybeRemoveForbiddenKeys(encodingDictionary, "font " + name + " encoding",
+                        IOException::new, COSName.DIFFERENCES);
+                var baseEncoding = encodingDictionary.getDictionaryObject(COSName.BASE_ENCODING, COSName.class);
+                requireIOCondition(COSName.WIN_ANSI_ENCODING.equals(baseEncoding) || COSName.MAC_ROMAN_ENCODING.equals(
+                        baseEncoding), "Font '" + name + "' has invalid base encoding " + baseEncoding);
+            }
+            default -> throw new IOException("Invalid encoding type " + encoding + " for font " + name);
+
+            }
+        }
+    }
+
+    private void requireDescriptor(COSDictionary font, String name) throws IOException {
         var descriptor = font.getDictionaryObject(COSName.FONT_DESC, COSDictionary.class);
-        requireIOCondition(nonNull(descriptor), "Found a font dictionary with missing FontDescriptor dictionary");
+        requireIOCondition(nonNull(descriptor), "Font " + name + " has missing FontDescriptor dictionary");
         var streamSubtype = ofNullable(descriptor.getDictionaryObject(COSName.FONT_FILE3, COSStream.class)).map(
                 s -> s.getCOSName(COSName.SUBTYPE)).orElse(null);
         requireIOCondition(
@@ -175,20 +232,19 @@ public class SetFontOperator extends OperatorProcessor {
                 "Found a FontFile3 stream with invalid subtype " + streamSubtype);
     }
 
-    private void validateWidthsArray(PDFont font) throws IOException {
+    private void validateWidthsArray(PDFont font, String name) throws IOException {
         var fontDictionary = font.getCOSObject();
         requireIOCondition(
                 font.isStandard14() || nonNull(fontDictionary.getDictionaryObject(COSName.FIRST_CHAR, COSNumber.class)),
-                "Found a font dictionary with missing FirstChar");
+                "Font '" + name + "' has missing FirstChar");
         requireIOCondition(
                 font.isStandard14() || nonNull(fontDictionary.getDictionaryObject(COSName.LAST_CHAR, COSNumber.class)),
-                "Found a font dictionary with missing LastChar");
+                "Font '" + name + "' has missing LastChar");
         var widths = fontDictionary.getDictionaryObject(COSName.WIDTHS, COSArray.class);
-        requireIOCondition(font.isStandard14() || (nonNull(widths)),
-                "Found a font dictionary with missing Widths array");
+        requireIOCondition(font.isStandard14() || (nonNull(widths)), "Font '" + name + "' has missing Widths array");
         requireIOCondition(font.isStandard14() || widths.size() == (
                         fontDictionary.getInt(COSName.LAST_CHAR) - fontDictionary.getInt(COSName.FIRST_CHAR) + 1),
-                "Found a font dictionary with wrong size of the Widths array");
+                "Font '" + name + "' has wrong size of the Widths array");
     }
 
     private COSDictionary fontResources() {

@@ -73,7 +73,6 @@ public final class Rules {
             case PDFA_1B -> new DefaultPreSaveCOSTransformer().withStreamRule(new NoDLStreamRule(context))
                     .withStreamRule(new NoFileSpecificationStreamRule(context))
                     .withStreamRule(new NoLZWCompressionStreamRule(context)).withStreamRule(new XMPStreamRule(context))
-                    .withStreamRule(new NoTransparencyGroupStreamRule(context))
                     .withDictionaryRule(new NoEFDictionaryRule(context));
         };
     }

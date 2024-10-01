@@ -102,7 +102,7 @@ public class ConversionContext {
      * Sanitize a dictionary making sure it doesn't contain values for the given keys.
      *
      * @param dictionaryDescription description used in the exception message, Ex: "Catalog", "Widget annotation"
-     * @throws Exception if the dictionary contains forbidden keys and the parameters policy is {@link InvalidElementPolicy#FAIL}
+     * @throws T if the dictionary contains forbidden keys and the parameters policy is {@link InvalidElementPolicy#FAIL}
      */
     <T extends Exception> void maybeRemoveForbiddenKeys(COSDictionary dictionary, String dictionaryDescription,
             Function<String, T> exceptionSupplier, COSName... keys) throws T {

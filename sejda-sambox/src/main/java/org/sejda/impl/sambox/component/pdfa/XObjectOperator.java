@@ -83,8 +83,6 @@ public class XObjectOperator extends OperatorProcessor {
 
     private void processStream(COSName objectName, COSStream stream) throws IOException {
         if (!(stream instanceof ReadOnlyFilteredCOSStream)) {
-            // always mark as hit
-            hit(objectName, stream);
             var subtype = stream.getCOSName(COSName.SUBTYPE);
             LOG.trace("Hit image with name {} and type {}", objectName.getName(), subtype);
             if (COSName.IMAGE.equals(subtype)) {
@@ -98,6 +96,8 @@ public class XObjectOperator extends OperatorProcessor {
                     //other tools are smarter here
                     conversionContext.maybeRemoveForbiddenKeys(stream, "XObject", IOException::new, COSName.SMASK);
                 }
+                // always mark as hit
+                hit(objectName, stream);
                 // JPEG2000 is not allowed in PDFA/1 so we convert to jpg
                 if (stream.hasFilter(COSName.JPX_DECODE)) {
                     conversionContext.maybeFailOnInvalidElement(
@@ -108,6 +108,7 @@ public class XObjectOperator extends OperatorProcessor {
                     notifyEvent(conversionContext.notifiableMetadata()).taskWarning(
                             "Image was converted to a supported type");
                 }
+
                 conversionContext.maybeAddDefaultColorSpaceFor(stream.getDictionaryObject(COSName.CS), csResources());
             } else if (COSName.FORM.equals(subtype)) {
                 //A form XObject dictionary shall not contain any of the following:
@@ -121,7 +122,16 @@ public class XObjectOperator extends OperatorProcessor {
                     conversionContext.maybeRemoveForbiddenKeys(stream, "Form XObject", IOException::new,
                             COSName.getPDFName("Subtype2"));
                 }
+                //Rule 6.4 of ISO 19005-1: A Group object with an S key with a value of Transparency shall not be included in a form XObject.
+                var group = stream.getDictionaryObject(COSName.GROUP, COSDictionary.class);
+                if (nonNull(group) && COSName.TRANSPARENCY.equals(group.getCOSName(COSName.S))) {
+                    conversionContext.maybeRemoveForbiddenKeys(stream, "stream", s -> new IOException(
+                                    "A Group object with an S key with a value of Transparency shall not be included in a form XObject"),
+                            COSName.GROUP);
+                }
                 PDXObject xobject = createXObject(stream, getContext().getResources());
+                // always mark as hit
+                hit(objectName, stream);
                 getContext().showForm((PDFormXObject) xobject);
             } else {
                 throw new IOException("Found image of invalid subtype " + subtype);
