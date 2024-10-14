@@ -26,6 +26,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.SetMetadataParameters;
+import org.sejda.model.pdf.encryption.PdfAccessPermission;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -103,6 +104,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
                 executionContext().notifiableTaskMetadata().setCurrentSource(source);
 
                 documentHandler = source.open(documentLoader);
+                documentHandler.getPermissions().ensurePermission(PdfAccessPermission.MODIFY);
                 documentHandler.setUpdateProducerModifiedDate(parameters.isUpdateProducerModifiedDate());
                 if (parameters.isUpdateProducerModifiedDate()) {
                     documentHandler.setCreatorOnPDDocument();
