@@ -19,6 +19,7 @@
 package org.sejda.impl.sambox.component.pdfa;
 
 import org.sejda.impl.sambox.component.optimization.InUseDictionary;
+import org.sejda.model.pdfa.InvalidElementPolicy;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
 import org.sejda.sambox.contentstream.operator.Operator;
 import org.sejda.sambox.contentstream.operator.OperatorProcessor;
@@ -32,7 +33,6 @@ import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.font.PDCIDFontType0;
 import org.sejda.sambox.pdmodel.font.PDCIDFontType2;
 import org.sejda.sambox.pdmodel.font.PDFont;
-import org.sejda.sambox.pdmodel.font.PDFontFactory;
 import org.sejda.sambox.pdmodel.font.PDFontLike;
 import org.sejda.sambox.pdmodel.font.PDTrueTypeFont;
 import org.sejda.sambox.pdmodel.font.PDType0Font;
@@ -75,6 +75,10 @@ public class SetFontOperator extends OperatorProcessor {
             COSDictionary fontDictionary = ofNullable(
                     fontResources().getDictionaryObject(fontName, COSDictionary.class)).orElseThrow(
                     () -> new MissingResourceException("Missing font dictionary: " + fontName.getName()));
+
+            conversionContext.setCurrentFont(fontDictionary, fontName.getName(),
+                    getContext().getResources().getResourceCache());
+
             if (!(fontDictionary instanceof InUseDictionary)) {
                 //required in the spec
                 fontDictionary.setItem(COSName.TYPE, COSName.FONT);
@@ -85,16 +89,16 @@ public class SetFontOperator extends OperatorProcessor {
                         COSName.TYPE3.equals(subtype) || nonNull(fontDictionary.getCOSName(COSName.BASE_FONT)),
                         "Found a font dictionary without the required BaseFont name");
 
-                var font = PDFontFactory.createFont(fontDictionary, getContext().getResources().getResourceCache());
-                //Rule 6.3.4 of ISO 19005-1
-                requireIOCondition(
-                        font.isEmbedded() || RenderingMode.NEITHER == getContext().getGraphicsState().getTextState()
-                                .getRenderingMode(), "The font " + fontName.getName() + " is not embedded");
-                validate(font, fontName.getName());
+                validate(conversionContext.currentFont().font(), fontName.getName());
 
                 //XMP metadata 3.7.10
-            }
 
+            }
+            //Rule 6.3.4 of ISO 19005-1
+            //we need to validate this each time the font is set because the rendering mode might be different
+            requireIOCondition(conversionContext.currentFont().font().isEmbedded()
+                            || RenderingMode.NEITHER == getContext().getGraphicsState().getTextState().getRenderingMode(),
+                    "The font " + fontName.getName() + " is not embedded");
         }
     }
 
@@ -221,6 +225,13 @@ public class SetFontOperator extends OperatorProcessor {
         }
     }
 
+    /**
+     * Font must be conforming the PDF spec 1.4. table 5.22
+     *
+     * @param font
+     * @param name
+     * @throws IOException
+     */
     private void requireDescriptor(COSDictionary font, String name) throws IOException {
         var descriptor = font.getDictionaryObject(COSName.FONT_DESC, COSDictionary.class);
         requireIOCondition(nonNull(descriptor), "Font " + name + " has missing FontDescriptor dictionary");
@@ -232,19 +243,30 @@ public class SetFontOperator extends OperatorProcessor {
                 "Found a FontFile3 stream with invalid subtype " + streamSubtype);
     }
 
+    //TODO reorganize code in smaller classes
     private void validateWidthsArray(PDFont font, String name) throws IOException {
         var fontDictionary = font.getCOSObject();
-        requireIOCondition(
-                font.isStandard14() || nonNull(fontDictionary.getDictionaryObject(COSName.FIRST_CHAR, COSNumber.class)),
-                "Font '" + name + "' has missing FirstChar");
-        requireIOCondition(
-                font.isStandard14() || nonNull(fontDictionary.getDictionaryObject(COSName.LAST_CHAR, COSNumber.class)),
-                "Font '" + name + "' has missing LastChar");
+        //TABLE 5.8 PDF spec 1.4. FirstChar, LastChar and Widths are required except for Standard 14
+        //we require it for Standard 14 as well because we need to later validate the widths array
+        //we can make something more sophisticated later
+        var lastChar = fontDictionary.getDictionaryObject(COSName.LAST_CHAR, COSNumber.class);
+        var firstChar = fontDictionary.getDictionaryObject(COSName.FIRST_CHAR, COSNumber.class);
+        requireIOCondition(nonNull(firstChar), "Font '" + name + "' has missing FirstChar");
+        requireIOCondition(nonNull(lastChar), "Font '" + name + "' has missing LastChar");
+
+        var withsArrayExpectedLength = lastChar.intValue() - firstChar.intValue() + 1;
         var widths = fontDictionary.getDictionaryObject(COSName.WIDTHS, COSArray.class);
-        requireIOCondition(font.isStandard14() || (nonNull(widths)), "Font '" + name + "' has missing Widths array");
-        requireIOCondition(font.isStandard14() || widths.size() == (
-                        fontDictionary.getInt(COSName.LAST_CHAR) - fontDictionary.getInt(COSName.FIRST_CHAR) + 1),
-                "Font '" + name + "' has wrong size of the Widths array");
+
+        if (conversionContext.parameters().invalidElementPolicy() == InvalidElementPolicy.FAIL) {
+            requireIOCondition(nonNull(widths), "Font '" + name + "' has missing Widths array");
+            requireIOCondition(widths.size() == withsArrayExpectedLength,
+                    "Font '" + name + "' has wrong size of the Widths array");
+        } else {
+            //the widths array is incorrect
+            if (isNull(widths) || widths.size() != withsArrayExpectedLength) {
+                conversionContext.currentFont().wrongWidth(true);
+            }
+        }
     }
 
     private COSDictionary fontResources() {

@@ -91,6 +91,8 @@ public final class Rules {
                 csProcessor.addConversionOperator(nonStrokingColorspace());
                 csProcessor.addConversionOperator(new SetRenderingIntent());
                 csProcessor.addConversionOperator(new InlineImageOperator());
+                csProcessor.addConversionOperator(new ShowText());
+                csProcessor.addConversionOperator(new ShowTextAdjusted());
                 csProcessor.addOperator(
                         new SetFontOperator(context).andThen(new ResourcesHitter.FontsHitterOperator()));
                 csProcessor.addOperator(new SetGraphicState(context).andThen(new ResourcesHitter.SetGraphicState()));

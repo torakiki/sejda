@@ -32,12 +32,18 @@ import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
+import org.sejda.sambox.pdmodel.ResourceCache;
+import org.sejda.sambox.pdmodel.font.PDFontFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.zip.DeflaterInputStream;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -55,6 +61,8 @@ public class ConversionContext {
     private boolean hasCorICAnnotationKey = false;
     private final COSArray defaultCMYK;
     private final COSArray defaultRGB;
+    private final Map<IndirectCOSObjectIdentifier, PdfAFont> fonts = new HashMap<>();
+    private PdfAFont currentFont;
 
     public ConversionContext(ConvertToPDFAParameters parameters, NotifiableTaskMetadata notifiableMetadata) {
         this.parameters = parameters;
@@ -217,10 +225,39 @@ public class ConversionContext {
         return defaultCMYK;
     }
 
+    public void maybeFixFontsWidths() throws TaskExecutionException {
+        for (var pdfaFont : fonts.values()) {
+            if (pdfaFont.wrongWidth()) {
+                maybeFailOnInvalidElement(
+                        () -> new TaskExecutionException("Font " + pdfaFont.name() + " has inconsistent width"));
+                try {
+                    pdfaFont.regenerateFontWidths();
+                } catch (IOException e) {
+                    throw new TaskExecutionException("Unable to generate width values from font", e);
+                }
+            }
+        }
+    }
+
+    PdfAFont currentFont() {
+        return currentFont;
+    }
+
     /**
      * sets whether the document has annotations with the /C or /IC key
      */
     public void hasCorICAnnotationKey(boolean hasCorICAnnotationKey) {
         this.hasCorICAnnotationKey = hasCorICAnnotationKey;
+    }
+
+    public void setCurrentFont(COSDictionary fontDictionary, String fontName, ResourceCache resourceCache)
+            throws IOException {
+        if (fontDictionary.hasId()) {
+            if (isNull(fonts.get(fontDictionary.id()))) {
+                fonts.put(fontDictionary.id(),
+                        PdfAFont.getInstance(PDFontFactory.createFont(fontDictionary, resourceCache), fontName));
+            }
+            currentFont = fonts.get(fontDictionary.id());
+        }
     }
 }

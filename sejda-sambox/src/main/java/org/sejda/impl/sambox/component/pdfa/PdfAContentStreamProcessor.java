@@ -69,7 +69,7 @@ public class PdfAContentStreamProcessor extends FailableContentStreamProcessor {
 
     @Override
     protected void unsupportedOperator(Operator operator, List<COSBase> operands) throws IOException {
-        //this is valid for PDFA/1, make sure it's valid for other PDFA versions
+        //this is valid for PDF/A-1, make sure it's valid for other PDF/A versions
         requireIOCondition(VALID_OPERATORS.contains(operator.getName()),
                 "Operators not defined in the PDF Reference 1.4 are prohibited");
     }

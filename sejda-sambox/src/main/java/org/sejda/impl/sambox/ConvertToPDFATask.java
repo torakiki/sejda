@@ -43,6 +43,9 @@ import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEv
 import static org.sejda.core.support.io.model.FileOutput.file;
 import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
 import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.impl.sambox.component.pdfa.Rules.contentStreamRules;
+import static org.sejda.impl.sambox.component.pdfa.Rules.documentRules;
+import static org.sejda.impl.sambox.component.pdfa.Rules.pageRules;
 import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
@@ -83,13 +86,13 @@ public class ConvertToPDFATask extends BaseTask<ConvertToPDFAParameters> {
             LOG.debug("Created output on temporary buffer {}", tmpFile);
             try {
                 var context = new ConversionContext(parameters, executionContext().notifiableTaskMetadata());
-                Rules.documentRules(context).accept(documentHandler.getUnderlyingPDDocument());
-                var pageRules = Rules.pageRules(context);
-                var contentStream = Rules.contentStreamRules(context);
+                documentRules(context).accept(documentHandler.getUnderlyingPDDocument());
                 for (PDPage page : documentHandler.getPages()) {
-                    pageRules.accept(page);
-                    contentStream.accept(page);
+                    pageRules(context).accept(page);
+                    contentStreamRules(context).accept(page);
                 }
+
+                context.maybeFixFontsWidths();
                 resourceCleaner.accept(documentHandler.getUnderlyingPDDocument());
 
                 documentHandler.setTransformer(Rules.preSaveCOSTransformer(context));
