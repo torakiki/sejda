@@ -22,6 +22,7 @@ import org.apache.commons.lang3.function.FailableConsumer;
 import org.sejda.impl.sambox.component.ReadOnlyFilteredCOSStream;
 import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.exception.TaskException;
+import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
 import org.sejda.sambox.output.PreSaveCOSTransformer;
 import org.sejda.sambox.pdmodel.PDDocument;
@@ -73,7 +74,11 @@ public final class Rules {
             case PDFA_1B -> new DefaultPreSaveCOSTransformer().withStreamRule(new NoDLStreamRule(context))
                     .withStreamRule(new NoFileSpecificationStreamRule(context))
                     .withStreamRule(new NoLZWCompressionStreamRule(context)).withStreamRule(new XMPStreamRule(context))
-                    .withDictionaryRule(new NoEFDictionaryRule(context));
+                    .withDictionaryRule(new NoEFDictionaryRule(context)).withDictionaryRule((d) -> {
+                        if (COSName.FONT.equals(d.getCOSName(COSName.TYPE))) {
+                            System.out.println("Font");
+                        }
+                    });
         };
     }
 
@@ -93,8 +98,7 @@ public final class Rules {
                 csProcessor.addConversionOperator(new InlineImageOperator());
                 csProcessor.addConversionOperator(new ShowText());
                 csProcessor.addConversionOperator(new ShowTextAdjusted());
-                csProcessor.addOperator(
-                        new SetFontOperator(context).andThen(new ResourcesHitter.FontsHitterOperator()));
+                csProcessor.addOperator(new SetFontOperator(context));
                 csProcessor.addOperator(new SetGraphicState(context).andThen(new ResourcesHitter.SetGraphicState()));
                 //use the same map for stroking and not stroking
                 Map<IndirectCOSObjectIdentifier, ReadOnlyFilteredCOSStream> hitPatternsById = new HashMap<>();

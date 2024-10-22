@@ -33,7 +33,6 @@ import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSInteger;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.IndirectCOSObjectIdentifier;
-import org.sejda.sambox.pdmodel.ResourceCache;
 import org.sejda.sambox.pdmodel.font.PDFontFactory;
 
 import java.io.IOException;
@@ -250,14 +249,21 @@ public class ConversionContext {
         this.hasCorICAnnotationKey = hasCorICAnnotationKey;
     }
 
-    public void setCurrentFont(COSDictionary fontDictionary, String fontName, ResourceCache resourceCache)
+    /**
+     * @return the previous font
+     */
+    PdfAFont setCurrentFont(COSDictionary fontDictionary, String fontName)
             throws IOException {
         if (fontDictionary.hasId()) {
-            if (isNull(fonts.get(fontDictionary.id()))) {
-                fonts.put(fontDictionary.id(),
-                        PdfAFont.getInstance(PDFontFactory.createFont(fontDictionary, resourceCache), fontName));
+            var previousFont = fonts.get(fontDictionary.id());
+            if (isNull(previousFont)) {
+                currentFont = PdfAFont.getInstance(PDFontFactory.createFont(fontDictionary), fontName);
+                fonts.put(fontDictionary.id(), currentFont);
+            } else {
+                currentFont = previousFont;
             }
-            currentFont = fonts.get(fontDictionary.id());
+            return previousFont;
         }
+        return null;
     }
 }

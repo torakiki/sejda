@@ -18,11 +18,10 @@
  */
 package org.sejda.impl.sambox.component.pdfa;
 
-import org.sejda.impl.sambox.component.optimization.InUseDictionary;
+import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.pdfa.InvalidElementPolicy;
 import org.sejda.sambox.contentstream.operator.MissingOperandException;
-import org.sejda.sambox.contentstream.operator.Operator;
-import org.sejda.sambox.contentstream.operator.OperatorProcessor;
+import org.sejda.sambox.contentstream.operator.OperatorProcessorDecorator;
 import org.sejda.sambox.cos.COSArray;
 import org.sejda.sambox.cos.COSBase;
 import org.sejda.sambox.cos.COSDictionary;
@@ -41,7 +40,6 @@ import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.isNull;
@@ -57,49 +55,47 @@ import static org.sejda.sambox.contentstream.operator.OperatorName.SET_FONT_AND_
 /**
  * @author Andrea Vacondio
  */
-public class SetFontOperator extends OperatorProcessor {
+public class SetFontOperator extends OperatorProcessorDecorator {
 
     private static final Set<COSName> VALID_SUBTYPES = Set.of(COSName.TYPE0, COSName.TYPE1, COSName.MM_TYPE1,
             COSName.TYPE3, COSName.TRUE_TYPE, COSName.CID_FONT_TYPE0, COSName.CID_FONT_TYPE2);
     private final ConversionContext conversionContext;
 
     public SetFontOperator(ConversionContext conversionContext) {
+        super(new ResourcesHitter.FontsHitterOperator());
         this.conversionContext = conversionContext;
-    }
+        setConsumer((operator, operands) -> {
+            require(operands.size() > 1, () -> new MissingOperandException(operator, operands));
 
-    @Override
-    public void process(Operator operator, List<COSBase> operands) throws IOException {
-        require(operands.size() > 1, () -> new MissingOperandException(operator, operands));
+            if (operands.getFirst() instanceof COSName fontName) {
+                COSDictionary fontDictionary = ofNullable(
+                        fontResources().getDictionaryObject(fontName, COSDictionary.class)).orElseThrow(
+                        () -> new MissingResourceException("Missing font dictionary: " + fontName.getName()));
 
-        if (operands.getFirst() instanceof COSName fontName) {
-            COSDictionary fontDictionary = ofNullable(
-                    fontResources().getDictionaryObject(fontName, COSDictionary.class)).orElseThrow(
-                    () -> new MissingResourceException("Missing font dictionary: " + fontName.getName()));
+                //we run these validation only once, when we first meet the font
+                if (isNull(conversionContext.setCurrentFont(fontDictionary, fontName.getName()))) {
+                    //required in the spec
+                    fontDictionary.setItem(COSName.TYPE, COSName.FONT);
+                    var subtype = fontDictionary.getCOSName(COSName.SUBTYPE);
+                    requireIOCondition(VALID_SUBTYPES.contains(subtype),
+                            "Found a font dictionary with invalid subtype " + subtype);
+                    requireIOCondition(
+                            COSName.TYPE3.equals(subtype) || nonNull(fontDictionary.getCOSName(COSName.BASE_FONT)),
+                            "Found a font dictionary without the required BaseFont name");
 
-            conversionContext.setCurrentFont(fontDictionary, fontName.getName(),
-                    getContext().getResources().getResourceCache());
+                    validate(conversionContext.currentFont().font(), fontName.getName());
 
-            if (!(fontDictionary instanceof InUseDictionary)) {
-                //required in the spec
-                fontDictionary.setItem(COSName.TYPE, COSName.FONT);
-                var subtype = fontDictionary.getCOSName(COSName.SUBTYPE);
-                requireIOCondition(VALID_SUBTYPES.contains(subtype),
-                        "Found a font dictionary with invalid subtype " + subtype);
-                requireIOCondition(
-                        COSName.TYPE3.equals(subtype) || nonNull(fontDictionary.getCOSName(COSName.BASE_FONT)),
-                        "Found a font dictionary without the required BaseFont name");
+                    //XMP metadata 3.7.10
 
-                validate(conversionContext.currentFont().font(), fontName.getName());
-
-                //XMP metadata 3.7.10
-
+                }
+                //Rule 6.3.4 of ISO 19005-1
+                //we need to validate this each time the font is set because the rendering mode might be different
+                requireIOCondition(conversionContext.currentFont().font().isEmbedded()
+                                || RenderingMode.NEITHER == getContext().getGraphicsState().getTextState().getRenderingMode(),
+                        "The font " + fontName.getName() + " is not embedded");
             }
-            //Rule 6.3.4 of ISO 19005-1
-            //we need to validate this each time the font is set because the rendering mode might be different
-            requireIOCondition(conversionContext.currentFont().font().isEmbedded()
-                            || RenderingMode.NEITHER == getContext().getGraphicsState().getTextState().getRenderingMode(),
-                    "The font " + fontName.getName() + " is not embedded");
-        }
+        });
+
     }
 
     public void validate(PDFontLike font, String name) throws IOException {

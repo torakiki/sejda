@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static java.util.Optional.ofNullable;
 
@@ -39,16 +40,18 @@ class TrueTypePdfAFont extends PdfAFont {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrueTypePdfAFont.class);
 
+    private SortedSet<Integer> codes = new TreeSet<>();
+
     public TrueTypePdfAFont(PDTrueTypeFont font, String name) {
         super(font, name);
     }
 
     public void addString(COSString string) {
-        //if we don't already have found a glyph with invalid width
-        if (!wrongWidth()) {
-            var buffer = ByteBuffer.wrap(string.getBytes());
-            while (buffer.remaining() > 0 && !wrongWidth()) {
-                int code = Byte.toUnsignedInt(buffer.get());
+        var buffer = ByteBuffer.wrap(string.getBytes());
+        while (buffer.remaining() > 0) {
+            int code = Byte.toUnsignedInt(buffer.get());
+            //if we haven't already added the code, and we haven't already found a glyph with invalid width
+            if (codes.add(code) && !wrongWidth()) {
                 //we need to regenerate widths values if we don't have an explicit width or
                 // it differs from the one on the font (
                 wrongWidth(ofNullable(font().getExplicitWidth(code)).map(explicit -> {
@@ -66,13 +69,15 @@ class TrueTypePdfAFont extends PdfAFont {
     @Override
     void regenerateFontWidths() throws IOException {
         LOG.debug("Regenerating widths array for font '{}'", name());
-        List<Integer> widths = new ArrayList<>(256);
-        for (int code = 0; code <= 255; code++) {
-            widths.add(Math.round(font().getWidthFromFont(code)));
+        var firstChar = codes.first();
+        var lastChar = codes.last();
+        var widths = new ArrayList<>(lastChar - firstChar + 1);
+        for (int code = firstChar; code <= lastChar; code++) {
+            widths.add(code - firstChar, Math.round(font().getWidthFromFont(code)));
         }
 
-        font().getCOSObject().setInt(COSName.FIRST_CHAR, 0);
-        font().getCOSObject().setInt(COSName.LAST_CHAR, 255);
+        font().getCOSObject().setInt(COSName.FIRST_CHAR, firstChar);
+        font().getCOSObject().setInt(COSName.LAST_CHAR, lastChar);
         font().getCOSObject().setItem(COSName.WIDTHS, COSArrayList.converterToCOSArray(widths));
     }
 }
