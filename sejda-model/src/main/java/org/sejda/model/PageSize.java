@@ -121,6 +121,10 @@ public class PageSize {
         return new PageSize(widthInch * POINTS_PER_INCH, heightInch * POINTS_PER_INCH);
     }
 
+    public static PageSize fromMillimeters(float widthInch, float heightInch) {
+        return new PageSize(widthInch * POINTS_PER_MM, heightInch * POINTS_PER_MM);
+    }
+
     public String getName() {
         return name;
     }
