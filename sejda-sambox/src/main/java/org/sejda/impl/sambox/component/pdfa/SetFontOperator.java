@@ -223,10 +223,6 @@ public class SetFontOperator extends OperatorProcessorDecorator {
 
     /**
      * Font must be conforming the PDF spec 1.4. table 5.22
-     *
-     * @param font
-     * @param name
-     * @throws IOException
      */
     private void requireDescriptor(COSDictionary font, String name) throws IOException {
         var descriptor = font.getDictionaryObject(COSName.FONT_DESC, COSDictionary.class);
@@ -241,26 +237,30 @@ public class SetFontOperator extends OperatorProcessorDecorator {
 
     //TODO reorganize code in smaller classes
     private void validateWidthsArray(PDFont font, String name) throws IOException {
-        var fontDictionary = font.getCOSObject();
-        //TABLE 5.8 PDF spec 1.4. FirstChar, LastChar and Widths are required except for Standard 14
-        //we require it for Standard 14 as well because we need to later validate the widths array
-        //we can make something more sophisticated later
-        var lastChar = fontDictionary.getDictionaryObject(COSName.LAST_CHAR, COSNumber.class);
-        var firstChar = fontDictionary.getDictionaryObject(COSName.FIRST_CHAR, COSNumber.class);
-        requireIOCondition(nonNull(firstChar), "Font '" + name + "' has missing FirstChar");
-        requireIOCondition(nonNull(lastChar), "Font '" + name + "' has missing LastChar");
+        //we haven't already set the font to recreate widths
+        if (!conversionContext.currentFont().wrongWidth()) {
+            var fontDictionary = font.getCOSObject();
 
-        var withsArrayExpectedLength = lastChar.intValue() - firstChar.intValue() + 1;
-        var widths = fontDictionary.getDictionaryObject(COSName.WIDTHS, COSArray.class);
+            //TABLE 5.8 PDF spec 1.4. FirstChar, LastChar and Widths are required except for Standard 14
+            //we require it for Standard 14 as well because we need to later validate the widths array
+            //we can make something more sophisticated later
+            var lastChar = fontDictionary.getDictionaryObject(COSName.LAST_CHAR, COSNumber.class);
+            var firstChar = fontDictionary.getDictionaryObject(COSName.FIRST_CHAR, COSNumber.class);
+            var widths = fontDictionary.getDictionaryObject(COSName.WIDTHS, COSArray.class);
 
-        if (conversionContext.parameters().invalidElementPolicy() == InvalidElementPolicy.FAIL) {
-            requireIOCondition(nonNull(widths), "Font '" + name + "' has missing Widths array");
-            requireIOCondition(widths.size() == withsArrayExpectedLength,
-                    "Font '" + name + "' has wrong size of the Widths array");
-        } else {
-            //the widths array is incorrect
-            if (isNull(widths) || widths.size() != withsArrayExpectedLength) {
-                conversionContext.currentFont().wrongWidth(true);
+            if (conversionContext.parameters().invalidElementPolicy() == InvalidElementPolicy.FAIL) {
+                requireIOCondition(nonNull(widths), "Font '" + name + "' has missing Widths array");
+                requireIOCondition(nonNull(firstChar), "Font '" + name + "' has missing FirstChar");
+                requireIOCondition(nonNull(lastChar), "Font '" + name + "' has missing LastChar");
+
+                var withsArrayExpectedLength = lastChar.intValue() - firstChar.intValue() + 1;
+                requireIOCondition(widths.size() == withsArrayExpectedLength,
+                        "Font '" + name + "' has wrong size of the Widths array");
+            } else {
+                //the widths array is incorrect
+                conversionContext.currentFont().wrongWidth(
+                        isNull(firstChar) || isNull(lastChar) || isNull(widths) || widths.size() != (
+                                lastChar.intValue() - firstChar.intValue() + 1));
             }
         }
     }
