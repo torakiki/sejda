@@ -77,25 +77,25 @@ import static org.sejda.impl.sambox.util.TestUtils.getTestDoc;
  */
 public class FontUtilsTest {
 
-    private static PDFont HELVETICA = FontUtils.HELVETICA;
+    private static PDFont HELVETICA = PDType1Font.HELVETICA();
 
     @Test
     public void testGetStandardType1Font() {
-        assertEquals(PDType1Font.COURIER, getStandardType1Font(StandardType1Font.CURIER));
-        assertEquals(PDType1Font.COURIER_BOLD, getStandardType1Font(StandardType1Font.CURIER_BOLD));
-        assertEquals(PDType1Font.COURIER_BOLD_OBLIQUE, getStandardType1Font(StandardType1Font.CURIER_BOLD_OBLIQUE));
-        assertEquals(PDType1Font.COURIER_OBLIQUE, getStandardType1Font(StandardType1Font.CURIER_OBLIQUE));
-        assertEquals(PDType1Font.HELVETICA, getStandardType1Font(StandardType1Font.HELVETICA));
-        assertEquals(PDType1Font.HELVETICA_BOLD, getStandardType1Font(StandardType1Font.HELVETICA_BOLD));
-        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE,
+        assertEquals(PDType1Font.COURIER(), getStandardType1Font(StandardType1Font.CURIER));
+        assertEquals(PDType1Font.COURIER_BOLD(), getStandardType1Font(StandardType1Font.CURIER_BOLD));
+        assertEquals(PDType1Font.COURIER_BOLD_OBLIQUE(), getStandardType1Font(StandardType1Font.CURIER_BOLD_OBLIQUE));
+        assertEquals(PDType1Font.COURIER_OBLIQUE(), getStandardType1Font(StandardType1Font.CURIER_OBLIQUE));
+        assertEquals(PDType1Font.HELVETICA(), getStandardType1Font(StandardType1Font.HELVETICA));
+        assertEquals(PDType1Font.HELVETICA_BOLD(), getStandardType1Font(StandardType1Font.HELVETICA_BOLD));
+        assertEquals(PDType1Font.HELVETICA_BOLD_OBLIQUE(),
                 getStandardType1Font(StandardType1Font.HELVETICA_BOLD_OBLIQUE));
-        assertEquals(PDType1Font.HELVETICA_OBLIQUE, getStandardType1Font(StandardType1Font.HELVETICA_OBLIQUE));
-        assertEquals(PDType1Font.TIMES_BOLD, getStandardType1Font(StandardType1Font.TIMES_BOLD));
-        assertEquals(PDType1Font.TIMES_BOLD_ITALIC, getStandardType1Font(StandardType1Font.TIMES_BOLD_ITALIC));
-        assertEquals(PDType1Font.TIMES_ITALIC, getStandardType1Font(StandardType1Font.TIMES_ITALIC));
-        assertEquals(PDType1Font.TIMES_ROMAN, getStandardType1Font(StandardType1Font.TIMES_ROMAN));
-        assertEquals(PDType1Font.SYMBOL, getStandardType1Font(StandardType1Font.SYMBOL));
-        assertEquals(PDType1Font.ZAPF_DINGBATS, getStandardType1Font(StandardType1Font.ZAPFDINGBATS));
+        assertEquals(PDType1Font.HELVETICA_OBLIQUE(), getStandardType1Font(StandardType1Font.HELVETICA_OBLIQUE));
+        assertEquals(PDType1Font.TIMES_BOLD(), getStandardType1Font(StandardType1Font.TIMES_BOLD));
+        assertEquals(PDType1Font.TIMES_BOLD_ITALIC(), getStandardType1Font(StandardType1Font.TIMES_BOLD_ITALIC));
+        assertEquals(PDType1Font.TIMES_ITALIC(), getStandardType1Font(StandardType1Font.TIMES_ITALIC));
+        assertEquals(PDType1Font.TIMES_ROMAN(), getStandardType1Font(StandardType1Font.TIMES_ROMAN));
+        assertEquals(PDType1Font.SYMBOL(), getStandardType1Font(StandardType1Font.SYMBOL));
+        assertEquals(PDType1Font.ZAPF_DINGBATS(), getStandardType1Font(StandardType1Font.ZAPFDINGBATS));
     }
 
     private PDFont findFontFor(String s) {

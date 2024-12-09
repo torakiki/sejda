@@ -70,7 +70,7 @@ public class TableOfContentsCreator {
     private PDRectangle pageSize = null;
     private float fontSize = DEFAULT_FONT_SIZE;
     private float margin = DEFAULT_MARGIN;
-    private PDFont font = PDType1Font.HELVETICA;
+    private PDFont font = PDType1Font.HELVETICA();
     private float lineHeight;
     private MergeParameters params;
     private PageTextWriter writer;
