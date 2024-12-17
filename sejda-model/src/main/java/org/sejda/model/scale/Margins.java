@@ -26,10 +26,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * Margins in inches to be added to a PDF document
- * 
+ *
  * @author Andrea Vacondio
  */
 public class Margins {
+
+    public static final Margins ZERO = new Margins(0, 0);
+
     @PositiveOrZero
     public final double top;
     @PositiveOrZero
@@ -44,6 +47,10 @@ public class Margins {
         this.right = right;
         this.bottom = bottom;
         this.left = left;
+    }
+
+    public Margins(double topBottom, double rightLeft) {
+        this(topBottom, rightLeft, topBottom, rightLeft);
     }
 
     /**

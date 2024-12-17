@@ -40,4 +40,13 @@ public class MarginsTest {
         assertEquals(144, Margins.inchesToPoints(2), 0);
         assertEquals(100.8, Margins.inchesToPoints(1.4), 0);
     }
+
+    @Test
+    public void constructor() {
+        var victim = new Margins(2, 5);
+        assertEquals(2, victim.top);
+        assertEquals(2, victim.bottom);
+        assertEquals(5, victim.left);
+        assertEquals(5, victim.right);
+    }
 }
