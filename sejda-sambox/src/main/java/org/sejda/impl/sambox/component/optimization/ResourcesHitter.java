@@ -51,6 +51,7 @@ import org.sejda.sambox.pdmodel.MissingResourceException;
 import org.sejda.sambox.pdmodel.font.PDType3CharProc;
 import org.sejda.sambox.pdmodel.font.PDType3Font;
 import org.sejda.sambox.pdmodel.graphics.PDXObject;
+import org.sejda.sambox.pdmodel.graphics.color.PDColor;
 import org.sejda.sambox.pdmodel.graphics.color.PDColorSpace;
 import org.sejda.sambox.pdmodel.graphics.color.PDPattern;
 import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
@@ -274,6 +275,7 @@ public class ResourcesHitter extends ContentStreamProcessor {
         public void process(Operator operator, List<COSBase> arguments) throws IOException {
             if (nonNull(arguments) && !arguments.isEmpty()) {
                 PDColorSpace colorSpace = this.colorSpace();
+                PDColor color = this.color();
                 if (colorSpace instanceof PDPattern) {
                     COSBase base = arguments.get(arguments.size() - 1);
                     if (base instanceof COSName patternName) {
@@ -283,7 +285,8 @@ public class ResourcesHitter extends ContentStreamProcessor {
                         // it's a pattern and it's a stream, it should be a tiling pattern, type == 1
                         if (nonNull(pattern) && pattern.getInt(COSName.PATTERN_TYPE) == 1) {
                             LOG.trace("Hit tiling pattern with name {}", patternName.getName());
-                            getContext().processStream(new PDTilingPattern(pattern));
+                            PDTilingPattern tilingPattern = new PDTilingPattern(pattern);
+                            getContext().processTilingPattern(tilingPattern, color, colorSpace);
                         }
                     }
                 }
@@ -296,6 +299,8 @@ public class ResourcesHitter extends ContentStreamProcessor {
         }
 
         abstract PDColorSpace colorSpace();
+        
+        abstract PDColor color();
     }
 
     public static class TilingPatternHitterSetStrokingColor extends BaseTilingPatternHitterSetColor {
@@ -308,6 +313,11 @@ public class ResourcesHitter extends ContentStreamProcessor {
         PDColorSpace colorSpace() {
             return this.getContext().getGraphicsState().getStrokingColorSpace();
         }
+        
+        @Override
+        PDColor color() {
+            return this.getContext().getGraphicsState().getStrokingColor();
+        }
     }
 
     public static class TilingPatternHitterSetNonStrokingColor extends BaseTilingPatternHitterSetColor {
@@ -319,6 +329,11 @@ public class ResourcesHitter extends ContentStreamProcessor {
         @Override
         PDColorSpace colorSpace() {
             return this.getContext().getGraphicsState().getNonStrokingColorSpace();
+        }
+
+        @Override
+        PDColor color() {
+            return this.getContext().getGraphicsState().getNonStrokingColor();
         }
     }
 }
