@@ -82,12 +82,12 @@ public class TilingPatternHitterOperator extends OperatorProcessor {
                         patterns.get().setItem(patternName, existingHit);
                     } else {
                         patterns.get().setItem(patternName, hitPattern);
-                        getContext().processStream(new PDTilingPattern(pattern));
+                        getContext().processTilingPattern(new PDTilingPattern(pattern), null, null);
                     }
                 } else {
                     //Streams must be indirect (with id) so this is a new COSStream that was added, not something read from the document
                     patterns.get().setItem(patternName, hitPattern);
-                    getContext().processStream(new PDTilingPattern(pattern));
+                    getContext().processTilingPattern(new PDTilingPattern(pattern), null, null);
                 }
             }
         }

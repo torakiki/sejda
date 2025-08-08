@@ -46,7 +46,7 @@ public class FilenameFooterWriter {
     private PageTextWriter writer;
     private PDDocument document;
 
-    private static PDFont FONT = PDType1Font.HELVETICA;
+    private static PDFont FONT = PDType1Font.HELVETICA();
     private static double FONT_SIZE = 10;
 
     public FilenameFooterWriter(boolean addFooter, PDDocument document) {

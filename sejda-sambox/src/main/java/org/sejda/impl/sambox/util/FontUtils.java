@@ -66,29 +66,6 @@ public final class FontUtils {
         // hide
     }
 
-    private static final Map<StandardType1Font, PDType1Font> STANDARD_TYPE1_FONTS;
-
-    static {
-        Map<StandardType1Font, PDType1Font> fontsCache = new EnumMap<>(StandardType1Font.class);
-        fontsCache.put(StandardType1Font.CURIER, PDType1Font.COURIER);
-        fontsCache.put(StandardType1Font.CURIER_BOLD, PDType1Font.COURIER_BOLD);
-        fontsCache.put(StandardType1Font.CURIER_BOLD_OBLIQUE, PDType1Font.COURIER_BOLD_OBLIQUE);
-        fontsCache.put(StandardType1Font.CURIER_OBLIQUE, PDType1Font.COURIER_OBLIQUE);
-        fontsCache.put(StandardType1Font.HELVETICA, PDType1Font.HELVETICA);
-        fontsCache.put(StandardType1Font.HELVETICA_BOLD, PDType1Font.HELVETICA_BOLD);
-        fontsCache.put(StandardType1Font.HELVETICA_BOLD_OBLIQUE, PDType1Font.HELVETICA_BOLD_OBLIQUE);
-        fontsCache.put(StandardType1Font.HELVETICA_OBLIQUE, PDType1Font.HELVETICA_OBLIQUE);
-        fontsCache.put(StandardType1Font.SYMBOL, PDType1Font.SYMBOL);
-        fontsCache.put(StandardType1Font.ZAPFDINGBATS, PDType1Font.ZAPF_DINGBATS);
-        fontsCache.put(StandardType1Font.TIMES_BOLD, PDType1Font.TIMES_BOLD);
-        fontsCache.put(StandardType1Font.TIMES_BOLD_ITALIC, PDType1Font.TIMES_BOLD_ITALIC);
-        fontsCache.put(StandardType1Font.TIMES_ITALIC, PDType1Font.TIMES_ITALIC);
-        fontsCache.put(StandardType1Font.TIMES_ROMAN, PDType1Font.TIMES_ROMAN);
-        STANDARD_TYPE1_FONTS = Collections.unmodifiableMap(fontsCache);
-    }
-
-    public static PDFont HELVETICA = PDType1Font.HELVETICA;
-
     public static final FontResource[] TYPE0FONTS;
 
     static {
@@ -107,7 +84,22 @@ public final class FontUtils {
      * @return the PDFBox font.
      */
     public static PDType1Font getStandardType1Font(StandardType1Font st1Font) {
-        return STANDARD_TYPE1_FONTS.get(st1Font);
+        return switch (st1Font){
+            case TIMES_ROMAN -> PDType1Font.TIMES_ROMAN();
+            case TIMES_BOLD -> PDType1Font.TIMES_BOLD();
+            case TIMES_ITALIC -> PDType1Font.TIMES_ITALIC();
+            case TIMES_BOLD_ITALIC -> PDType1Font.TIMES_BOLD_ITALIC();
+            case HELVETICA -> PDType1Font.HELVETICA();
+            case HELVETICA_BOLD -> PDType1Font.HELVETICA_BOLD();
+            case HELVETICA_OBLIQUE -> PDType1Font.HELVETICA_OBLIQUE();
+            case HELVETICA_BOLD_OBLIQUE -> PDType1Font.HELVETICA_BOLD_OBLIQUE();
+            case CURIER -> PDType1Font.COURIER();
+            case CURIER_BOLD -> PDType1Font.COURIER_BOLD();
+            case CURIER_OBLIQUE -> PDType1Font.COURIER_OBLIQUE();
+            case CURIER_BOLD_OBLIQUE -> PDType1Font.COURIER_BOLD_OBLIQUE();
+            case SYMBOL -> PDType1Font.SYMBOL();
+            case ZAPFDINGBATS -> PDType1Font.ZAPF_DINGBATS();
+        };
     }
 
     /**
@@ -674,7 +666,7 @@ public final class FontUtils {
     }
 
     public static String replaceUnsupportedCharacters(String text, PDDocument doc, String replacement) {
-        List<TextWithFont> resolved = resolveFonts(text, HELVETICA, doc);
+        List<TextWithFont> resolved = resolveFonts(text, PDType1Font.HELVETICA(), doc);
         Set<String> unsupported = new HashSet<>();
         resolved.forEach(tf -> {
             if (tf.getFont() == null) {

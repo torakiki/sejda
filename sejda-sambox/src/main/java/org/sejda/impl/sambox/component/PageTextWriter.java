@@ -30,6 +30,7 @@ import org.sejda.sambox.pdmodel.PDPageContentStream;
 import org.sejda.sambox.pdmodel.PDPageContentStream.AppendMode;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
 import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
 import org.sejda.sambox.pdmodel.graphics.color.PDColor;
 import org.sejda.sambox.pdmodel.graphics.color.PDDeviceRGB;
 import org.sejda.sambox.pdmodel.graphics.state.RenderingMode;
@@ -264,6 +265,6 @@ public class PageTextWriter {
 
     public static void writeHeader(PDDocument doc, PDPage page, String text) throws TaskIOException {
         PageTextWriter writer = new PageTextWriter(doc);
-        writer.write(page, HorizontalAlign.CENTER, VerticalAlign.TOP, text, FontUtils.HELVETICA, 10d, Color.black);
+        writer.write(page, HorizontalAlign.CENTER, VerticalAlign.TOP, text, PDType1Font.HELVETICA(), 10d, Color.black);
     }
 }

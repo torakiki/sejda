@@ -186,4 +186,44 @@ public class OutlineDistillerTest {
             assertEquals(3, outlineChildCount);
         }
     }
+
+    @Test
+    public void infiniteLoopDeepLevel() {
+        PDPage page1 = new PDPage();
+        PDPage page2 = new PDPage();
+        PDDocument document = new PDDocument();
+        document.addPage(page1);
+        document.addPage(page2);
+        PDDocumentOutline outlines = new PDDocumentOutline();
+        
+        PDOutlineItem root = new PDOutlineItem();
+        root.setTitle("root");
+        root.setDestination(page1);
+        
+        PDOutlineItem child1 = new PDOutlineItem();
+        child1.setTitle("child1");
+        child1.setDestination(page2);
+
+        PDOutlineItem child2 = new PDOutlineItem();
+        child2.setTitle("child2");
+        child2.setDestination(page2);
+
+        child2.addFirst(root);
+        child1.addFirst(child2);
+        root.addFirst(child1);
+        outlines.addFirst(root);
+        
+        document.getDocumentCatalog().setDocumentOutline(outlines);
+        
+        mapping.addLookupEntry(document.getPage(0), new PDPage());
+        mapping.addLookupEntry(document.getPage(1), new PDPage());
+        
+        PDDocumentOutline outline = new PDDocumentOutline();
+        new OutlineDistiller(document).appendRelevantOutlineTo(outline, mapping);
+        assertTrue(outline.hasChildren());
+        assertEquals(1, outline.getOpenCount());
+        assertEquals("root", outline.getFirstChild().getTitle());
+        assertEquals("child1", outline.getFirstChild().getFirstChild().getTitle());
+        assertEquals("child2", outline.getFirstChild().getFirstChild().getFirstChild().getTitle());
+    }
 }

@@ -20,12 +20,14 @@ package org.sejda.model;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class PageSize {
 
-    private float width;
-    private float height;
-    private String name;
+    private final float width;
+    private final float height;
+    private final String name;
 
     /** user space units per inch */
     private static final float POINTS_PER_INCH = 72;
@@ -83,45 +85,72 @@ public class PageSize {
         return height;
     }
 
+    /**
+     * @return a new {@link PageSize} instance with dimensions rotated.
+     */
+    public PageSize rotate() {
+        return new PageSize(height, width);
+    }
+
+    public boolean isLandscape() {
+        return getWidth() > getHeight();
+    }
+
+    /**
+     * @return a new {@link PageSize} instance with dimensions rotated if the current instance
+     * is in landscape orientation, otherwise returns the current instance.
+     */
+    public PageSize toPortrait() {
+        if (isLandscape()) {
+            return rotate();
+        }
+        return this;
+    }
+
+    /**
+     * @return a new {@link PageSize} instance with dimensions rotated if the current instance
+     * is not in landscape orientation, otherwise returns the current instance.
+     */
+    public PageSize toLandscape() {
+        if (!isLandscape()) {
+            return rotate();
+        }
+        return this;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
 
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(other instanceof PageSize instance)) {
+            return false;
+        }
 
-        PageSize pageSize = (PageSize) o;
-
-        return new EqualsBuilder()
-                .append(width, pageSize.width)
-                .append(height, pageSize.height)
-                .isEquals();
+        return new EqualsBuilder().append(width, instance.width).append(height, instance.height).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
-                .append(width)
-                .append(height)
-                .toHashCode();
+        return new HashCodeBuilder(17, 37).append(width).append(height).toHashCode();
     }
 
     @Override
     public String toString() {
-        return "PageSize{" +
-                "widthInches=" + width +
-                ", heightInches=" + height +
-                '}';
-    }
-
-    public PageSize rotate() {
-        return new PageSize(height, width);
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("widthInches", width)
+                .append("heightInches", height).append("widthInches", width).append("height", height).toString();
     }
 
     public static PageSize fromInches(float widthInch, float heightInch) {
         return new PageSize(widthInch * POINTS_PER_INCH, heightInch * POINTS_PER_INCH);
     }
 
-    public String getName() {
-        return name;
+    public static PageSize fromMillimeters(float widthInch, float heightInch) {
+        return new PageSize(widthInch * POINTS_PER_MM, heightInch * POINTS_PER_MM);
     }
 }

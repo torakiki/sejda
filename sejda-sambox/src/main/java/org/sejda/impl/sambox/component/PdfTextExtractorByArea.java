@@ -83,6 +83,13 @@ public class PdfTextExtractorByArea {
         int pageWidth = (int) pageSize.getWidth();
         return new Rectangle(0, 0, pageWidth, GUESSTIMATE_HEADER_FOOTER_HEIGHT);
     }
+    
+    protected PDFTextStripperByArea createStripper() throws IOException {
+        PDFTextStripperByArea stripper = new PDFTextStripperByArea();
+        stripper.setSortByPosition(true);
+        
+        return stripper;
+    }
 
     /**
      * Extracts the text found in a specific page bound to a specific rectangle area Eg: extract footer text from a certain page
@@ -96,9 +103,7 @@ public class PdfTextExtractorByArea {
      */
     public String extractTextFromArea(PDPage page, Rectangle2D area) throws TaskIOException {
         try {
-            PDFTextStripperByArea stripper = new PDFTextStripperByArea();
-
-            stripper.setSortByPosition(true);
+            PDFTextStripperByArea stripper = createStripper();
             stripper.addRegion("area1", area);
             stripper.extractRegions(page);
 

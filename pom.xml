@@ -6,7 +6,7 @@
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>5.1.4-SNAPSHOT</version>
+	<version>5.1.14-SNAPSHOT</version>
 	<description>An extendable and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
@@ -32,7 +32,7 @@
 		<connection>scm:git:git@github.com:torakiki/sejda.git</connection>
 		<developerConnection>scm:git:git@github.com:torakiki/sejda.git</developerConnection>
 		<url>scm:git:git@github.com:torakiki/sejda.git</url>
-		<tag>v5.0.8</tag>
+		<tag>v5.1.5</tag>
 	</scm>
 
 	<developers>
@@ -72,7 +72,7 @@
 						<configuration>
 							<toolchains>
 								<jdk>
-									<version>21</version>
+									<version>17</version>
 								</jdk>
 							</toolchains>
 						</configuration>
@@ -84,6 +84,18 @@
 			<id>release</id>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-javadoc-plugin</artifactId>
@@ -135,13 +147,13 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>0.8.0</version>
 						<extensions>true</extensions>
 						<configuration>
-							<serverId>ossrh</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<publishingServerId>central</publishingServerId>
+							<autoPublish>true</autoPublish>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -162,6 +174,18 @@
 			</distributionManagement>
 			<build>
 				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-release-plugin</artifactId>
@@ -286,18 +310,6 @@
 					<release>21</release>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -314,13 +326,13 @@
 	</modules>
 
 	<distributionManagement>
-		<!--<snapshotRepository> -->
-		<!--<id>ossrh</id> -->
-		<!--<url>https://oss.sonatype.org/content/repositories/snapshots</url> -->
-		<!--</snapshotRepository> -->
+<!--		<snapshotRepository>-->
+<!--			<id>central</id>-->
+<!--			<url>https://central.sonatype.com/</url>-->
+<!--		</snapshotRepository>-->
 		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<id>central</id>
+			<url>https://central.sonatype.com/</url>
 		</repository>
 	</distributionManagement>
 
@@ -340,7 +352,7 @@
 		<sambox.version>4.0.0-SNAPSHOT</sambox.version>
 		<sejda.io.version>3.0.1</sejda.io.version>
 		<bouncycastle.version>1.81</bouncycastle.version>
-		<twelvemonkeys.version>3.11.0</twelvemonkeys.version>
+		<twelvemonkeys.version>3.12.0</twelvemonkeys.version>
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.20</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
@@ -442,7 +454,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-core</artifactId>
+			<artifactId>hamcrest</artifactId>
 			<version>${hamcrest.version}</version>
 			<scope>test</scope>
 		</dependency>

@@ -43,6 +43,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class ImagesToPdfDocumentConverter {
                 float height = image.getHeight();
 
                 if (width > mediaBox.getWidth()) {
-                    int targetWidth = (int) mediaBox.getWidth();
+                    float targetWidth = mediaBox.getWidth();
                     LOG.debug("Scaling image down to fit by width {} vs {}", width, targetWidth);
 
                     float ratio = width / targetWidth;
@@ -117,7 +118,7 @@ public class ImagesToPdfDocumentConverter {
                 }
 
                 if (height > mediaBox.getHeight()) {
-                    int targetHeight = (int) mediaBox.getHeight();
+                    float targetHeight = mediaBox.getHeight();
                     LOG.debug("Scaling image down to fit by height {} vs {}", height, targetHeight);
 
                     float ratio = height / targetHeight;
@@ -134,9 +135,9 @@ public class ImagesToPdfDocumentConverter {
 
                 // centered on page
                 float x = (mediaBox.getWidth() - width) / 2;
-                float y = ((int) mediaBox.getHeight() - height) / 2;
+                float y = (mediaBox.getHeight() - height) / 2;
 
-                imageWriter.append(page, image, new Point((int) x, (int) y), width, height, null, 0);
+                imageWriter.append(page, image, new Point2D.Float(x, y), width, height, null, 0);
 
                 afterImage(image);
             }

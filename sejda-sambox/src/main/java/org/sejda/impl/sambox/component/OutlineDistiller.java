@@ -25,9 +25,11 @@ import static org.sejda.impl.sambox.component.OutlineUtils.copyOutlineDictionary
 import static org.sejda.impl.sambox.component.OutlineUtils.resolvePageDestination;
 import static org.sejda.impl.sambox.component.OutlineUtils.toPageDestination;
 
-import java.util.Optional;
+import java.util.*;
 
 import org.sejda.commons.LookupTable;
+import org.sejda.sambox.cos.COSObjectKey;
+import org.sejda.sambox.cos.COSObjectable;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
@@ -64,22 +66,47 @@ public class OutlineDistiller {
         requireNonNull(to, "Unable to merge relevant outline items to a null outline.");
         if (!pagesLookup.isEmpty()) {
             ofNullable(document.getDocumentCatalog().getDocumentOutline()).ifPresent(outline -> {
-                for (PDOutlineItem child : outline.children()) {
-                    cloneNode(child, pagesLookup).ifPresent(to::addLast);
-                }
+                cloneOutline(outline, to, pagesLookup);
                 LOG.debug("Appended relevant outline items");
             });
         }
     }
+    
+    private String objIdOf(COSObjectable o) {
+        try {
+            COSObjectKey ident = o.getCOSObject().id().objectIdentifier;
+            String gen = ident.generation() == 0 ? "" : ident.generation() + "";
+            return ident.objectNumber() + "R" + gen;
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    private void cloneOutline(PDDocumentOutline from, PDOutlineNode to, LookupTable<PDPage> pagesLookup) {
+        // keep track of nodes already visited, to avoid infinite loops
+        Set<PDOutlineItem> alreadyVisited = new HashSet<>();
+        for (PDOutlineItem child : from.children()) {
+            cloneNode(child, pagesLookup, alreadyVisited).ifPresent(to::addLast);
+        }
+    }
 
-    private Optional<PDOutlineItem> cloneNode(PDOutlineItem node, LookupTable<PDPage> pagesLookup) {
+    private Optional<PDOutlineItem> cloneNode(PDOutlineItem node, LookupTable<PDPage> pagesLookup, Set<PDOutlineItem> alreadyVisited) {
+        String nodeObjId = objIdOf(node);
+        LOG.debug("Cloning node: " + nodeObjId + " " + node.getTitle() + " #" + node.hashCode());
+        
+        if(alreadyVisited.contains(node)) {
+            LOG.warn("Detected already visited node: " + nodeObjId + " " + node.getTitle() + " #" + node.hashCode() + ", skipping at cloning to avoid infinite loop");
+            return Optional.empty();
+        }
+        alreadyVisited.add(node);
+        
         if (node.hasChildren()) {
             final PDOutlineItem clone = new PDOutlineItem();
             for (PDOutlineItem current : node.children()) {
                 if (current.equals(node)) {
                     LOG.warn("Outline item has a child pointing to the parent, skipping at cloning");
                 } else {
-                    cloneNode(current, pagesLookup).ifPresent(clone::addLast);
+                    cloneNode(current, pagesLookup, alreadyVisited).ifPresent(clone::addLast);
                 }
             }
             Optional<PDPageDestination> pageDestination = toPageDestination(node, document.getDocumentCatalog());
