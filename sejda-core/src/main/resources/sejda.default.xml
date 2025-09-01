@@ -22,6 +22,5 @@
 		<task parameters="org.sejda.model.parameter.image.PdfToJpegParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
 		<task parameters="org.sejda.model.parameter.image.PdfToPngParameters" task="org.sejda.impl.sambox.PdfToMultipleImageTask"/>
 		<task parameters="org.sejda.model.parameter.AddBackPagesParameters" task="org.sejda.impl.sambox.AddBackPagesTask"/>
-		<task parameters="org.sejda.model.parameter.ConvertToPDFAParameters" task="org.sejda.impl.sambox.ConvertToPDFATask"/>
 	</tasks>
 </sejda>
