@@ -33,7 +33,7 @@ import org.sejda.model.pdf.viewerpreference.PdfPageMode;
 import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.encryption.StandardSecurity;
-import org.sejda.sambox.output.PreSaveCOSTransformer;
+import org.sejda.sambox.output.PreSaveCOSVisitor;
 import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDDocumentCatalog;
@@ -82,7 +82,7 @@ public class PDDocumentHandler implements Closeable {
     private final PDDocument document;
     private final PDDocumentAccessPermission permissions;
     private final Set<WriteOption> writeOptions = new HashSet<>(Set.of(WriteOption.UPSERT_DOCUMENT_METADATA_STREAM));
-    private PreSaveCOSTransformer transformer;
+    private PreSaveCOSVisitor preSaveVisitor;
     private boolean updateProducerModifiedDate = true;
 
     /**
@@ -254,10 +254,10 @@ public class PDDocumentHandler implements Closeable {
 
             LOG.trace("Saving document to {} using options {}", file, writeOptions);
             if (encryptionAtRestSecurity instanceof NoEncryptionAtRest) {
-                document.withPreSaveTransformer(transformer)
+                document.withPreSaveVisitor(preSaveVisitor)
                         .writeTo(file, security, writeOptions.toArray(WriteOption[]::new));
             } else {
-                document.withPreSaveTransformer(transformer)
+                document.withPreSaveVisitor(preSaveVisitor)
                         .writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
                         writeOptions.toArray(WriteOption[]::new));
             }
@@ -432,7 +432,7 @@ public class PDDocumentHandler implements Closeable {
         this.updateProducerModifiedDate = updateProducerModifiedDate;
     }
 
-    public void setTransformer(PreSaveCOSTransformer transformer) {
-        this.transformer = transformer;
+    public void setPreSaveVisitor(PreSaveCOSVisitor preSaveVisitor) {
+        this.preSaveVisitor = preSaveVisitor;
     }
 }
