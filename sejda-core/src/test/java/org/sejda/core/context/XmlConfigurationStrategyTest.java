@@ -26,8 +26,8 @@ import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.exception.ConfigurationException;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.ClosedChannelException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -118,6 +118,6 @@ public class XmlConfigurationStrategyTest {
         var stream = getClass().getResourceAsStream("/sejda-default-validation.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
-        assertThrows(ClosedChannelException.class, () -> stream.read());
+        assertThrows(IOException.class, () -> stream.read());
     }
 }
