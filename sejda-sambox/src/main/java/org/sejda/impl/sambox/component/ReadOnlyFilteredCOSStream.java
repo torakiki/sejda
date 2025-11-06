@@ -42,7 +42,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
-import java.util.GregorianCalendar;
+import java.time.Instant;
 import java.util.zip.DeflaterInputStream;
 
 import static java.util.Optional.ofNullable;
@@ -180,7 +180,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     }
 
     /**
-     * a {@link ReadOnlyFilteredCOSStream} that represents an xobject JPEG image
+     * a {@link ReadOnlyFilteredCOSStream} that represents a xObject JPEG image
      *
      * @param imageFile the image file
      * @return the created instance
@@ -191,6 +191,12 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         return readOnlyJpegImage(imageFile.toPath(), width, height, bitsPerComponent, colorSpace, options);
     }
 
+    /**
+     * a {@link ReadOnlyFilteredCOSStream} that represents a xObject JPEG image
+     *
+     * @param imageFile the image file
+     * @return the created instance
+     */
     public static ReadOnlyFilteredCOSStream readOnlyJpegImage(Path imageFile, int width, int height,
             int bitsPerComponent, PDColorSpace colorSpace, OpenOption... options) {
         requireNotNullArg(imageFile, "input file cannot be null");
@@ -201,7 +207,8 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
         dictionary.setInt(COSName.HEIGHT, height);
         dictionary.setInt(COSName.WIDTH, width);
         dictionary.setItem(COSName.FILTER, COSName.DCT_DECODE);
-        return new ReadOnlyFilteredCOSStream(dictionary, () -> Files.newInputStream(imageFile, options), -1);
+        return new ReadOnlyFilteredCOSStream(dictionary, () -> Files.newInputStream(imageFile, options),
+                imageFile.toFile().length());
     }
 
     /**
@@ -218,10 +225,10 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
                 try {
                     ReadOnlyFilteredCOSStream retVal = new ReadOnlyFilteredCOSStream(dictionary,
                             new DeflaterInputStream(new FileInputStream(source.getSource())), -1);
-                    retVal.setEmbeddedInt(COSName.PARAMS.getName(), COSName.SIZE, source.getSource().length());
-                    GregorianCalendar calendar = new GregorianCalendar();
-                    calendar.setTimeInMillis(source.getSource().lastModified());
-                    retVal.setEmbeddedDate(COSName.PARAMS.getName(), COSName.MOD_DATE, calendar);
+                    retVal.computeIfAbsent(COSName.PARAMS, _ -> new COSDictionary(), COSDictionary.class)
+                            .setLong(COSName.SIZE, source.getSource().length());
+                    retVal.computeIfAbsent(COSName.PARAMS, _ -> new COSDictionary(), COSDictionary.class)
+                            .setDate(COSName.MOD_DATE, Instant.ofEpochMilli(source.getSource().lastModified()));
                     return retVal;
                 } catch (FileNotFoundException e) {
                     throw new TaskIOException(e);

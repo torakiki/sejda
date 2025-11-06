@@ -18,20 +18,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Objects.nonNull;
-import static org.sejda.commons.util.RequireUtils.requireArg;
-import static org.sejda.commons.util.RequireUtils.requireNotBlank;
-import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
-import static org.sejda.impl.sambox.component.OutlineUtils.pageDestinationFor;
-
-import java.awt.Color;
-import java.awt.Point;
-import java.io.IOException;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-
 import org.sejda.impl.sambox.util.FontUtils;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
@@ -51,6 +37,21 @@ import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageXYZDestination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Color;
+import java.awt.Point;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Objects.nonNull;
+import static org.sejda.commons.util.RequireUtils.requireArg;
+import static org.sejda.commons.util.RequireUtils.requireNotBlank;
+import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
+import static org.sejda.impl.sambox.component.OutlineUtils.pageDestinationFor;
 
 /**
  * Component creating a table of content
@@ -175,6 +176,7 @@ public class TableOfContentsCreator {
                 float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth);
 
                 PDPage page = createPage(pages);
+                var annotations = new ArrayList<PDAnnotation>();
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                     while (!items.isEmpty() && row < maxRowsPerPage) {
                         // peek, don't poll. we don't know yet if the item will fit on this page
@@ -221,7 +223,8 @@ public class TableOfContentsCreator {
                             float height = lineHeight * lines.size() - 2 * spacing;
                             i.annotation.setRectangle(
                                     new PDRectangle(margin, y - spacing, pageSize().getWidth() - (2 * margin), height));
-                            page.getAnnotations().add(i.annotation);
+
+                            annotations.add(i.annotation);
 
                             // draw line between item text and page number
                             // chapter 1 _____________________ 12
@@ -238,6 +241,7 @@ public class TableOfContentsCreator {
                 } catch (IOException e) {
                     throw new TaskIOException("An error occurred while create the ToC", e);
                 }
+                page.setAnnotations(annotations);
             }
 
             if (params.isBlankPageIfOdd() && pages.size() % 2 == 1) {

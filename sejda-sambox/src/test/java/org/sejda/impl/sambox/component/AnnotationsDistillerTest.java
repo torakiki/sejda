@@ -30,7 +30,14 @@ import org.sejda.sambox.pdmodel.PDDocumentCatalog;
 import org.sejda.sambox.pdmodel.PDPage;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionJavaScript;
-import org.sejda.sambox.pdmodel.interactive.annotation.*;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLine;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationMarkup;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationPopup;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationSquareCircle;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationText;
+import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationWidget;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDNamedDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageDestination;
 import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDPageFitDestination;
@@ -39,6 +46,7 @@ import org.sejda.sambox.pdmodel.interactive.form.PDField;
 import org.sejda.sambox.pdmodel.interactive.form.PDTextField;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -363,7 +371,7 @@ public class AnnotationsDistillerTest {
         try (PDDocument doc = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             PDPage firstOrigin = doc.getPage(0);
-            List<PDAnnotation> annots = firstOrigin.getAnnotations();
+            List<PDAnnotation> annots = new ArrayList<>(firstOrigin.getAnnotations());
             Collections.reverse(annots);
             firstOrigin.setAnnotations(annots);
             PDPage firstNew = new PDPage();
