@@ -349,14 +349,14 @@
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
-		<sambox.version>3.0.28</sambox.version>
+		<sambox.version>3.0.31</sambox.version>
 		<sejda.io.version>3.0.1</sejda.io.version>
-		<bouncycastle.version>1.81</bouncycastle.version>
-		<twelvemonkeys.version>3.12.0</twelvemonkeys.version>
+		<bouncycastle.version>1.83</bouncycastle.version>
+		<twelvemonkeys.version>3.13.0</twelvemonkeys.version>
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.20</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
-		<icu4j.version>71.1</icu4j.version>
+		<icu4j.version>78.1</icu4j.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
