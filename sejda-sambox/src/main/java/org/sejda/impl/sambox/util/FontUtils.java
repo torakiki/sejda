@@ -34,7 +34,17 @@ import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.common.PDRectangle;
-import org.sejda.sambox.pdmodel.font.*;
+import org.sejda.sambox.pdmodel.font.FontMappers;
+import org.sejda.sambox.pdmodel.font.FontMapping;
+import org.sejda.sambox.pdmodel.font.PDCIDFont;
+import org.sejda.sambox.pdmodel.font.PDFont;
+import org.sejda.sambox.pdmodel.font.PDFontDescriptor;
+import org.sejda.sambox.pdmodel.font.PDSimpleFont;
+import org.sejda.sambox.pdmodel.font.PDType0Font;
+import org.sejda.sambox.pdmodel.font.PDType1Font;
+import org.sejda.sambox.pdmodel.font.PDType3CharProc;
+import org.sejda.sambox.pdmodel.font.PDType3Font;
+import org.sejda.sambox.pdmodel.font.PDVectorFont;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +52,15 @@ import java.awt.geom.GeneralPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -80,7 +98,6 @@ public final class FontUtils {
     /**
      * Mapping between Sejda and PDFBox standard type 1 fonts implementation
      *
-     * @param st1Font
      * @return the PDFBox font.
      */
     public static PDType1Font getStandardType1Font(StandardType1Font st1Font) {
@@ -120,7 +137,7 @@ public final class FontUtils {
     // has no auto-magical way to clear the cache when doc processing is done
     // if you use this in a long lived process, call the cache clear method to avoid leaking memory
     // if we get some issue we could consider something like com.twelvemonkeys.util.WeakWeakMap<K, V>
-    private static Map<PDDocument, Map<String, PDFont>> loadedFontCache = new HashMap<>();
+    private static final Map<PDDocument, Map<String, PDFont>> loadedFontCache = new HashMap<>();
 
     public static void clearLoadedFontCache() {
         loadedFontCache.clear();
@@ -160,8 +177,6 @@ public final class FontUtils {
     }
 
     /**
-     * @param document
-     * @param text
      * @return a font capable of displaying the given string or null
      */
     public static PDFont findFontFor(PDDocument document, String text, boolean bold, PDFont originalFont) {
@@ -192,7 +207,6 @@ public final class FontUtils {
     }
 
     /**
-     * @param text
      * @return true if given text contains only unicode whitespace characters
      */
     public static boolean isOnlyWhitespace(String text) {
@@ -202,7 +216,6 @@ public final class FontUtils {
     /**
      * Removes all unicode whitespace characters from the input string
      *
-     * @param text
      * @return the resulting string
      */
     public static String removeWhitespace(String text) {
@@ -237,55 +250,53 @@ public final class FontUtils {
     }
 
     private static boolean canDisplayString(String text, PDFont font) {
-        if (font == null)
-            return false;
+        if (nonNull(font)) {
+            // LOG.debug("Can display '{}' using {}?", text, font);
+            try {
+                // remove all whitespace characters and check only if those can be written using the font
+                byte[] encoded = font.encode(text);
+                int[] cid2gid = null;
 
-        // LOG.debug("Can display '{}' using {}?", text, font);
-
-        try {
-            // remove all whitespace characters and check only if those can be written using the font
-            byte[] encoded = font.encode(text);
-            int[] cid2gid = null;
-            
-            if(font instanceof PDType0Font type0Font) {
-                try {
-                    cid2gid = readCIDToGIDMap(type0Font.getDescendantFont());
-                } catch (Exception e){
-                    LOG.warn("Exception reading CIDToGIDMap: " + e.getMessage());
-                }
-            }
-
-            if (font instanceof PDVectorFont vectorFont) {
-                InputStream in = new ByteArrayInputStream(encoded);
-                while (in.available() > 0) {
-                    int code = font.readCode(in);
-
-                    // LOG.debug("Read codePoint {}", code);
-
-                    GeneralPath path = vectorFont.getPath(code);
-                    // if(path != null) {
-                    // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
-                    // }
-
-                    if (path == null || path.getBounds2D().getWidth() == 0) {
-                        return false;
-                    }
-                    
-                    if (cid2gid != null && code < cid2gid.length && cid2gid[code] == 0) {
-                        return false;
+                if (font instanceof PDType0Font type0Font) {
+                    try {
+                        cid2gid = readCIDToGIDMap(type0Font.getDescendantFont());
+                    } catch (Exception e) {
+                        LOG.warn("Exception reading CIDToGIDMap: " + e.getMessage());
                     }
                 }
-            }
 
-            // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
-            // fonts loaded from sejda font resources are trusted
-            if(!"true".equals(font.getTransientMetadata().get(REMARK_FROM_SEJDA_FONT_RESOURCE))) {
-                return areEncodeDecodeSame(font, text, encoded);
-            }
+                if (font instanceof PDVectorFont vectorFont) {
+                    InputStream in = new ByteArrayInputStream(encoded);
+                    while (in.available() > 0) {
+                        int code = font.readCode(in);
 
-            return true;
-        } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
-            // LOG.debug("Cannot display text with font", e);
+                        // LOG.debug("Read codePoint {}", code);
+
+                        GeneralPath path = vectorFont.getPath(code);
+                        // if(path != null) {
+                        // LOG.debug("GeneralPath is {} for '{}' (code = {}, font = {})", path.getBounds2D(), new String(Character.toChars(code)), code, font.getName());
+                        // }
+
+                        if (path == null || path.getBounds2D().getWidth() == 0) {
+                            return false;
+                        }
+
+                        if (cid2gid != null && code < cid2gid.length && cid2gid[code] == 0) {
+                            return false;
+                        }
+                    }
+                }
+
+                // make sure the displayed text is the same as the input, eg: no cmap gibberish issues
+                // fonts loaded from sejda font resources are trusted
+                if (!"true".equals(font.getTransientMetadata().get(REMARK_FROM_SEJDA_FONT_RESOURCE))) {
+                    return areEncodeDecodeSame(font, text, encoded);
+                }
+
+                return true;
+            } catch (IllegalArgumentException | IOException | UnsupportedOperationException | NullPointerException e) {
+                // LOG.debug("Cannot display text with font", e);
+            }
         }
         return false;
     }
@@ -295,10 +306,8 @@ public final class FontUtils {
         int[] cid2gid = null;
         COSDictionary dict = font.getCOSObject();
         COSBase map = dict.getDictionaryObject(COSName.CID_TO_GID_MAP);
-        if (map instanceof COSStream)
+        if (map instanceof COSStream stream)
         {
-            COSStream stream = (COSStream) map;
-
             InputStream in = stream.getUnfilteredStream();
             byte[] mapAsBytes = IOUtils.toByteArray(in);
             IOUtils.closeQuietly(in);
