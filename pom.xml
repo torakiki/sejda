@@ -356,7 +356,7 @@
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.20</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
-		<icu4j.version>78.1</icu4j.version>
+		<icu4j.version>78.2</icu4j.version>
 		<!-- so that build is not platform dependent via encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
