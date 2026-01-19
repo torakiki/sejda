@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: JDK ${{ matrix.java }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Set up JDK
         uses: actions/setup-java@v5
         with:
