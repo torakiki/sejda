@@ -338,7 +338,7 @@
 
 	<properties>
 		<sejda.commons.version>3.0.1</sejda.commons.version>
-		<junit.version>5.13.3</junit.version>
+		<junit.version>5.14.2</junit.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<commons.lang.version>3.20.0</commons.lang.version>
 		<commons.io.version>2.21.0</commons.io.version>
@@ -350,7 +350,7 @@
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>3.0.31</sambox.version>
-		<sejda.io.version>3.0.1</sejda.io.version>
+		<sejda.io.version>3.0.3</sejda.io.version>
 		<bouncycastle.version>1.83</bouncycastle.version>
 		<twelvemonkeys.version>3.13.0</twelvemonkeys.version>
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
