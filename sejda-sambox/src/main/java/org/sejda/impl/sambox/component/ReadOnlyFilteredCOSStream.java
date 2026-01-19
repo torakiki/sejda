@@ -45,7 +45,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.util.zip.DeflaterInputStream;
 
-import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.RequireUtils.requireIOCondition;
 import static org.sejda.commons.util.RequireUtils.requireNotNullArg;
 
@@ -60,16 +59,16 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
     private final long length;
     private final COSDictionary wrapped;
 
-    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream supplier, long length) {
-        this(existingDictionary, () -> supplier, length);
-        requireNotNullArg(supplier, "input stream cannot be null");
+    ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStream stream, long length) {
+        requireNotNullArg(stream, "input stream cannot be null");
+        this(existingDictionary, () -> stream, length);
     }
 
     public ReadOnlyFilteredCOSStream(COSDictionary existingDictionary, InputStreamSupplier<InputStream> supplier,
             long length) {
-        super(ofNullable(existingDictionary).orElseThrow(
-                () -> new IllegalArgumentException("wrapped dictionary cannot be null")));
         requireNotNullArg(supplier, "input stream provider cannot be null");
+        requireNotNullArg(existingDictionary, "wrapped dictionary cannot be null");
+        super(existingDictionary);
         this.supplier = supplier;
         this.length = length;
         this.wrapped = existingDictionary;
@@ -163,6 +162,7 @@ public class ReadOnlyFilteredCOSStream extends COSStream {
 
     @Override
     public void close() throws IOException {
+        //it's the writer that closes the stream once written
         //consistent with COSStream that once closed has COSStream::getFilteredStream returning an empty ByteArrayInputStream
         this.supplier = () -> new ByteArrayInputStream(new byte[0]);
     }
