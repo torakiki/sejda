@@ -342,7 +342,7 @@
 		<slf4j.version>2.0.17</slf4j.version>
 		<commons.lang.version>3.17.0</commons.lang.version>
 		<commons.io.version>2.21.0</commons.io.version>
-		<validation.api.version>3.0.2</validation.api.version>
+		<validation.api.version>3.1.1</validation.api.version>
 		<mockito.version>5.21.0</mockito.version>
 		<logback.version>1.5.25</logback.version>
 		<archunit.version>1.4.1</archunit.version>
