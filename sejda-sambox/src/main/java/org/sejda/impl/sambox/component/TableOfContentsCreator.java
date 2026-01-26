@@ -166,6 +166,8 @@ public class TableOfContentsCreator {
         
         int maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
         Deque<ToCItem> items = new LinkedList<>(this.items);
+        
+        int createdPages = 0;
          
         if (shouldGenerateToC()) {
             while (!items.isEmpty()) {
@@ -175,6 +177,13 @@ public class TableOfContentsCreator {
                 float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth);
 
                 PDPage page = createPage(pages);
+                
+                // detect infinite loops
+                createdPages++;
+                if(createdPages > 1000){
+                    throw new RuntimeException("ToC with too many pages");
+                }
+                
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                     while (!items.isEmpty() && row < maxRowsPerPage) {
                         // peek, don't poll. we don't know yet if the item will fit on this page
@@ -304,7 +313,7 @@ public class TableOfContentsCreator {
     }
 
     private void recalculateDimensions() {
-        float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
+        float scalingFactor = pageSize().getWidth() / PDRectangle.A4.getWidth();
 
         this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
         this.margin = scalingFactor * DEFAULT_MARGIN;
