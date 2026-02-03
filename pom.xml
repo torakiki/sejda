@@ -335,7 +335,7 @@
 		<mockito.version>5.21.0</mockito.version>
 		<logback.version>1.5.27</logback.version>
 		<archunit.version>1.4.1</archunit.version>
-		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
+		<hibernate-validator.version>9.1.0.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>3.0.31</sambox.version>
