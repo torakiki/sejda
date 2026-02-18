@@ -189,7 +189,7 @@ public class SetMetadataTask extends BaseTask<SetMetadataParameters> {
     }
     
     private void updateDateNode(String tagName, Document document, Calendar calendar) throws XPathExpressionException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
         dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         String value = "";

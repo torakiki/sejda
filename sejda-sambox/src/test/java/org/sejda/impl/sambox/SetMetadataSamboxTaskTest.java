@@ -226,8 +226,8 @@ public class SetMetadataSamboxTaskTest extends BaseTaskTest<SetMetadataParameter
                 DocumentBuilder b = f.newDocumentBuilder();
                 Document xmlDoc = b.parse(document.getDocumentCatalog().getMetadata().createInputStream());
 
-                assertEquals("2015-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
-                assertEquals("2017-08-14T07:03:48+0000", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
+                assertEquals("2015-08-14T07:03:48Z", getNodeValue(xmlDoc, "//*[name()='xmp:CreateDate']"));
+                assertEquals("2017-08-14T07:03:48Z", getNodeValue(xmlDoc, "//*[name()='xmp:ModifyDate']"));
                 assertEquals("test_keywords", getNodeValue(xmlDoc, "//*[name()='pdf:Keywords']"));
                 assertEquals("test_producer", getNodeValue(xmlDoc, "//*[name()='pdf:Producer']"));
                 assertEquals("test_creator", getNodeValue(xmlDoc, "//*[name()='xmp:CreatorTool']"));
