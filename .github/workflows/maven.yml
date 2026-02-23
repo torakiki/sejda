@@ -2,20 +2,20 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, v6_experiments ]
 
 jobs:
   build:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        java: ['21', '22']
+        java: ['25']
     runs-on: ${{ matrix.os }}
     name: JDK ${{ matrix.java }} on ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.2.0
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
