@@ -1,6 +1,6 @@
 /*
  * Created on 16 feb 2016
- * Copyright 2015 Sober Lemur S.r.l. and Sejda BV.
+ * Copyright 2015 by Andrea Vacondio (andrea.vacondio@gmail.com).
  * This file is part of Sejda.
  *
  * Sejda is free software: you can redistribute it and/or modify
@@ -167,7 +167,9 @@ public class TableOfContentsCreator {
         
         int maxRowsPerPage = (int) ((pageSize().getHeight() - (margin * 2) + lineHeight) / lineHeight);
         Deque<ToCItem> items = new LinkedList<>(this.items);
-         
+
+        int createdPages = 0;
+
         if (shouldGenerateToC()) {
             while (!items.isEmpty()) {
                 int row = 0;
@@ -176,6 +178,11 @@ public class TableOfContentsCreator {
                 float separatingLineEndingX = getSeparatingLineEndingX(separatorWidth);
 
                 PDPage page = createPage(pages);
+                // detect infinite loops
+                createdPages++;
+                if(createdPages > 1000){
+                    throw new RuntimeException("ToC with too many pages");
+                }
                 var annotations = new ArrayList<PDAnnotation>();
                 try (PDPageContentStream stream = new PDPageContentStream(document, page)) {
                     while (!items.isEmpty() && row < maxRowsPerPage) {
@@ -308,7 +315,7 @@ public class TableOfContentsCreator {
     }
 
     private void recalculateDimensions() {
-        float scalingFactor = pageSize().getHeight() / PDRectangle.A4.getHeight();
+        float scalingFactor = pageSize().getWidth() / PDRectangle.A4.getWidth();
 
         this.fontSize = scalingFactor * DEFAULT_FONT_SIZE;
         this.margin = scalingFactor * DEFAULT_MARGIN;

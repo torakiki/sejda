@@ -163,6 +163,22 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void correctRescalingDimensionsCalculationOneLongPage() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.addInput(new PdfMergeInput(customInput("pdf/one_long_page.pdf", 
+                "this is the title for the first document and it needs to be long enough to cause the bug")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(2);
+    }
+
+    @Test
     public void executeMergeRotatedTocPage() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
