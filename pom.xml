@@ -332,14 +332,14 @@
 		<commons.lang.version>3.20.0</commons.lang.version>
 		<commons.io.version>2.21.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
-		<mockito.version>5.21.0</mockito.version>
+		<mockito.version>5.22.0</mockito.version>
 		<logback.version>1.5.32</logback.version>
 		<archunit.version>1.4.1</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>4.0.0.M2</sambox.version>
-		<sejda.io.version>3.0.1</sejda.io.version>
+		<sejda.io.version>5.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.83</bouncycastle.version>
 		<twelvemonkeys.version>3.13.1</twelvemonkeys.version>
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
