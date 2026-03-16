@@ -657,13 +657,24 @@ public class TaskTestContext implements Closeable {
 
     public void debugTo(String destPath) {
         try {
-            this.forEachRawOutput(path -> {
-                try {
-                    FileUtils.copyFile(path.toFile(), new File(destPath));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            if(fileOutput.isDirectory()){
+                this.forEachRawOutput(path -> {
+                    try {
+                        FileUtils.copyFile(path.toFile(), new File(destPath));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });    
+            } else {
+                this.forRawOutput(path -> {
+                    try {
+                        FileUtils.copyFile(path.toFile(), new File(destPath));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
