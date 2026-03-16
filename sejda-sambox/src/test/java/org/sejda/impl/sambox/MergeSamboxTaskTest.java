@@ -179,6 +179,42 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void tocWhenFirstDocumentHasUnusablePageSizeRatio_smallHeight() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.addInput(new PdfMergeInput(customInput("pdf/small_height_odd_page_size_ratio.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            assertEquals(PDRectangle.A3.getWidth(), d.getPage(0).getMediaBox().getWidth(), 0.0);
+        });
+    }
+
+    @Test
+    public void tocWhenFirstDocumentHasUnusablePageSizeRatio_smallWidth() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.addInput(new PdfMergeInput(customInput("pdf/small_width_odd_page_size_ratio.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            assertEquals(PDRectangle.A6.getWidth(), d.getPage(0).getMediaBox().getWidth(), 0.0);
+        });
+    }
+
+    @Test
     public void executeMergeRotatedTocPage() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
