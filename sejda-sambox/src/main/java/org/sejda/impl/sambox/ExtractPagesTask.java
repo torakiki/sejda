@@ -81,8 +81,8 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
             Set<Integer> pages = parameters.getPages(sourceDocumentHandler.getNumberOfPages());
             if (pages == null || pages.isEmpty()) {
                 executionContext().assertTaskIsLenient(noPagesErrorMessage(source, parameters));
-                notifyEvent(executionContext().notifiableTaskMetadata())
-                        .taskWarning(noPagesErrorMessage(source, parameters));
+                notifyEvent(executionContext().notifiableTaskMetadata()).taskWarning(
+                        noPagesErrorMessage(source, parameters));
             } else {
                 LOG.debug("Extracting pages from {}, one file per range is '{}' ", source,
                         parameters.isSeparateFileForEachRange());
@@ -103,12 +103,12 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
 
                             LOG.trace("Extracting pages {}", pageSets);
                             extractor.retain(pageSets, executionContext());
-                            if (new OptimizationRuler(parameters.getOptimizationPolicy())
-                                    .apply(sourceDocumentHandler.getUnderlyingPDDocument())) {
+                            if (new OptimizationRuler(parameters.getOptimizationPolicy()).apply(
+                                    sourceDocumentHandler.getUnderlyingPDDocument())) {
                                 extractor.optimize();
                             }
                             extractor.setVersion(parameters.getVersion());
-                            extractor.setCompress(parameters.isCompress());
+                            extractor.setCompressionPolicy(parameters.compressionPolicy());
                             extractor.save(tmpFile, parameters.discardOutline(),
                                     parameters.getOutput().getEncryptionAtRestPolicy());
                             extractor.reset();

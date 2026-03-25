@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -52,7 +53,7 @@ public class SplitByPageNumbersSamboxTaskTest extends BaseTaskTest<SplitByPagesP
 
     private void setUpParameters() throws IOException {
         parameters = new SplitByPagesParameters();
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         testContext.directoryOutputTo(parameters);

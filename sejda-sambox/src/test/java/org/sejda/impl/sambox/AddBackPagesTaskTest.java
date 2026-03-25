@@ -20,6 +20,7 @@
 package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AddBackPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -52,7 +53,7 @@ public class AddBackPagesTaskTest extends BaseTaskTest<AddBackPagesParameters> {
     private void setUpParametersWithOutline() {
         parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(largeOutlineInput());
         parameters.setBackPagesSource(encryptedInput());
@@ -62,7 +63,7 @@ public class AddBackPagesTaskTest extends BaseTaskTest<AddBackPagesParameters> {
     private void setUpParametersWithForms() {
         parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/forms/two_pages_form.pdf"));
         parameters.setBackPagesSource(encryptedInput());
@@ -72,7 +73,7 @@ public class AddBackPagesTaskTest extends BaseTaskTest<AddBackPagesParameters> {
     private void setUpParametersBackPageToEveryPage() {
         parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
         parameters.setBackPagesSource(encryptedInput());
@@ -82,7 +83,7 @@ public class AddBackPagesTaskTest extends BaseTaskTest<AddBackPagesParameters> {
     private void setUpParametersMultipleEncryptedInput() {
         parameters = new AddBackPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(encryptedInput());
         parameters.addSource(stronglyEncryptedInput());

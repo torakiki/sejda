@@ -88,7 +88,7 @@ public class ViewerPreferencesTask extends BaseTask<ViewerPreferencesParameters>
             LOG.debug("Created output on temporary buffer {}", tmpFile);
 
             documentHandler.setVersionOnPDDocument(parameters.getVersion());
-            documentHandler.setCompress(parameters.isCompress());
+            documentHandler.setCompressionPolicy(parameters.compressionPolicy());
             documentHandler.setPageModeOnDocument(parameters.getPageMode());
             documentHandler.setPageLayoutOnDocument(parameters.getPageLayout());
 

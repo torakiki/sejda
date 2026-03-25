@@ -30,6 +30,7 @@ import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.notification.EventListener;
 import org.sejda.model.notification.event.TaskExecutionStartedEvent;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.FileTaskOutput;
 import org.sejda.model.output.SingleTaskOutput;
 import org.sejda.model.parameter.base.TaskParameters;
@@ -37,7 +38,6 @@ import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
 import org.sejda.model.task.TaskExecutionContext;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -84,7 +84,7 @@ public class DefaultTaskExecutionServiceTest {
     @Test
     public void testInvalidParameters() throws TaskException {
         parameters.setVersion(PdfVersion.VERSION_1_4);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         victim.execute(parameters);
         verify(task, never()).before(eq(parameters), any());
         verify(task, never()).after();

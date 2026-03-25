@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -45,7 +46,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void split() throws IOException {
         parameters = new SplitByEveryXPagesParameters(10);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(mediumInput());
@@ -58,7 +59,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitEnc() throws IOException {
         parameters = new SplitByEveryXPagesParameters(2);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(stronglyEncryptedInput());
@@ -71,7 +72,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitOptimizeShareResources() throws IOException {
         parameters = new SplitByEveryXPagesParameters(1);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(customInput("pdf/shared_resource_dic_w_images.pdf"));
@@ -85,7 +86,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitOptimizeSharedXObjects() throws IOException {
         parameters = new SplitByEveryXPagesParameters(1);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(customInput("pdf/shared_xobjects_dics.pdf"));
@@ -99,7 +100,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitOptimizeSharedFonts() throws IOException {
         parameters = new SplitByEveryXPagesParameters(1);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(customInput("pdf/shared_fonts.pdf"));
@@ -113,7 +114,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitWithOutline() throws IOException {
         parameters = new SplitByEveryXPagesParameters(3);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(largeOutlineInput());
@@ -127,7 +128,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void splitWithDiscardOutline() throws IOException {
         parameters = new SplitByEveryXPagesParameters(3);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(largeOutlineInput());
@@ -142,7 +143,7 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
     @Test
     public void specificResultFilenames() throws IOException {
         parameters = new SplitByEveryXPagesParameters(10);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         parameters.addSource(mediumInput());

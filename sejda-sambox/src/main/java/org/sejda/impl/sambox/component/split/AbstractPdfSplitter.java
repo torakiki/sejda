@@ -1,6 +1,6 @@
 /*
  * Copyright 2015 by Edi Weissmann (edi.weissmann@gmail.com)
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,15 +18,6 @@
  */
 package org.sejda.impl.sambox.component.split;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
-import static org.sejda.core.support.io.model.FileOutput.file;
-import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
-import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
-
-import java.io.File;
-
 import org.sejda.core.support.io.MultipleOutputWriter;
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.prefix.NameGenerator;
@@ -42,9 +33,18 @@ import org.sejda.sambox.pdmodel.PDDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.core.support.io.model.FileOutput.file;
+import static org.sejda.core.support.prefix.NameGenerator.nameGenerator;
+import static org.sejda.core.support.prefix.model.NameGenerationRequest.nameRequest;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
+
 /**
  * Abstract component providing a skeletal implementation of the split execution.
- * 
+ *
  * @author Andrea Vacondio
  * @param <T>
  *            the type of parameters the splitter needs to have all the information necessary to perform the split.
@@ -103,7 +103,7 @@ public abstract class AbstractPdfSplitter<T extends MultiplePdfSourceMultipleOut
                 if (nextOutputStrategy().isClosing(page) || page == totalPages) {
                     onClose(page);
                     extractor.setVersion(parameters.getVersion());
-                    extractor.setCompress(parameters.isCompress());
+                    extractor.setCompressionPolicy(parameters.compressionPolicy());
                     if (optimize) {
                         extractor.optimize();
                     }
@@ -128,7 +128,7 @@ public abstract class AbstractPdfSplitter<T extends MultiplePdfSourceMultipleOut
 
     /**
      * Called when an output document is going to be opened. Extending classes can plug some logic here.
-     * 
+     *
      * @param page
      *            the page number which is going to be added
      */
@@ -138,7 +138,7 @@ public abstract class AbstractPdfSplitter<T extends MultiplePdfSourceMultipleOut
 
     /**
      * Called when the given page is going to be added . Extending classes can plug some logic here.
-     * 
+     *
      * @param page
      *            the page number which is going to be added
      */
@@ -148,7 +148,7 @@ public abstract class AbstractPdfSplitter<T extends MultiplePdfSourceMultipleOut
 
     /**
      * Called when an output document is going to be closed. Extending classes can plug some logic here.
-     * 
+     *
      * @param page
      *            the last added page number
      */

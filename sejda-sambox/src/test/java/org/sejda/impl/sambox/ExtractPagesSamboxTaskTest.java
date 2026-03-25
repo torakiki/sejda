@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.exception.TaskNonLenientExecutionException;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -63,7 +64,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
     private void setUpParametersOddPages() {
         parameters = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
     }
@@ -71,7 +72,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
     private void setUpParametersEvenPagesEncrypted() {
         parameters = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(encryptedInput());
     }
@@ -79,7 +80,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
     private void setUpParametersToOptimize() {
         parameters = new ExtractPagesParameters(PredefinedSetOfPages.ODD_PAGES);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/shared_resource_dic_w_fonts.pdf"));
@@ -92,7 +93,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         parameters.addPageRange(firstRange);
         parameters.addPageRange(secondRange);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
     }
@@ -100,7 +101,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
     private void setUpParametersWithOutline() {
         parameters = new ExtractPagesParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addPageRange(new PageRange(1, 3));
@@ -114,7 +115,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         parameters.addPageRange(new PageRange(12, 18));
         parameters.addPageRange(new PageRange(20, 26));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.addSource(mediumInput());
     }
@@ -124,7 +125,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(range);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
     }
@@ -254,7 +255,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 2));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
         parameters.addSource(mediumInput());
@@ -272,7 +273,7 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
         parameters = new ExtractPagesParameters();
         parameters.addPageRange(new PageRange(1, 1));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(formInput());
 
@@ -402,8 +403,6 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
 
     /**
      * This is to test that a document going through the optimization process doesn't end up duplicating fonts if they are the same object ref in the original document
-     *
-     * @throws IOException
      */
     @Test
     public void optimizationReuseFontsDictionaries() throws IOException {

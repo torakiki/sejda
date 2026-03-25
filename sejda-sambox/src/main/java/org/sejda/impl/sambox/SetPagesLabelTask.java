@@ -77,7 +77,7 @@ public class SetPagesLabelTask extends BaseTask<SetPagesLabelParameters> {
 
         documentHandler.setCreatorOnPDDocument();
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
-        documentHandler.setCompress(parameters.isCompress());
+        documentHandler.setCompressionPolicy(parameters.compressionPolicy());
         documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 

@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetPagesLabelParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -46,7 +47,7 @@ public class SetPagesLabelSamboxTaskTest extends BaseTaskTest<SetPagesLabelParam
 
     private void setUpParameters() throws IOException {
         parameters = new SetPagesLabelParameters();
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.putLabel(1, PdfPageLabel.newInstanceWithoutLabel(PdfLabelNumberingStyle.LOWERCASE_ROMANS, 1));
         parameters.putLabel(3, PdfPageLabel.newInstanceWithLabel("Test", PdfLabelNumberingStyle.ARABIC, 1));

@@ -2,7 +2,7 @@
  * Created on 30/mag/2010
  *
  * Copyright 2010 Sober Lemur S.r.l. and Sejda BV.
- * 
+ *
  * This file is part of the Sejda source code
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,29 +20,52 @@
  */
 package org.sejda.model.parameter.base;
 
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.validation.constraint.ValidPdfVersion;
 
 /**
  * Abstract parameters implementation with attributes commonly used by all the parameters implementation having single or multiple pdf output as result of the task manipulation.
- * 
+ *
  * @author Andrea Vacondio
- * 
+ *
  */
 @ValidPdfVersion
 public abstract class AbstractPdfOutputParameters extends AbstractParameters {
 
-    private boolean compress = true;
+    @NotNull
+    private CompressionPolicy compressionPolicy = CompressionPolicy.COMPRESS;
     private PdfVersion version;
 
+    /**
+     * @deprecated use {@link #compressionPolicy()}
+     */
+    @Deprecated
     public boolean isCompress() {
-        return compress;
+        return CompressionPolicy.COMPRESS == compressionPolicy;
     }
 
+    /**
+     * @deprecated use {@link #setCompressionPolicy(CompressionPolicy)}
+     */
+    @Deprecated
     public void setCompress(boolean compress) {
-        this.compress = compress;
+        if (compress) {
+            this.compressionPolicy = CompressionPolicy.COMPRESS;
+        } else {
+            this.compressionPolicy = CompressionPolicy.NEUTRAL;
+        }
+    }
+
+    public void setCompressionPolicy(CompressionPolicy compressionPolicy) {
+        this.compressionPolicy = compressionPolicy;
+    }
+
+    public CompressionPolicy compressionPolicy() {
+        return compressionPolicy;
     }
 
     public PdfVersion getVersion() {
@@ -51,8 +74,6 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
 
     /**
      * Set the pdf version for the output document/s
-     * 
-     * @param version
      */
     public void setVersion(PdfVersion version) {
         this.version = version;
@@ -62,13 +83,16 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
      * @return the min output pdf version required by this parameter object depending on its attributes. Each extending class is responsible for the implementation of this method.
      */
     public PdfVersion getMinRequiredPdfVersion() {
-        return isCompress() ? PdfVersion.VERSION_1_5 : PdfVersion.VERSION_1_0;
+        if (compressionPolicy() == CompressionPolicy.COMPRESS) {
+            return PdfVersion.VERSION_1_5;
+        }
+        return PdfVersion.VERSION_1_0;
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(compress).append(version).append(getOutput())
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(compressionPolicy).append(version)
+                .append(getOutput()).toHashCode();
     }
 
     @Override
@@ -79,7 +103,8 @@ public abstract class AbstractPdfOutputParameters extends AbstractParameters {
         if (!(other instanceof AbstractPdfOutputParameters parameter)) {
             return false;
         }
-        return new EqualsBuilder().appendSuper(super.equals(other)).append(compress, parameter.isCompress())
-                .append(version, parameter.getVersion()).append(getOutput(), parameter.getOutput()).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(other))
+                .append(compressionPolicy, parameter.compressionPolicy()).append(version, parameter.getVersion())
+                .append(getOutput(), parameter.getOutput()).isEquals();
     }
 }

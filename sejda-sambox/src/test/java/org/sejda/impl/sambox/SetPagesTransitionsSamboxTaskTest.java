@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SetPagesTransitionParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -45,7 +46,7 @@ public class SetPagesTransitionsSamboxTaskTest extends BaseTaskTest<SetPagesTran
 
     private void setUpParameters() throws IOException {
         parameters = new SetPagesTransitionParameters();
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.putTransition(1, PdfPageTransition.newInstance(PdfPageTransitionStyle.BOX_OUTWARD, 1, 5));
         parameters.setSource(shortInput());
@@ -72,7 +73,7 @@ public class SetPagesTransitionsSamboxTaskTest extends BaseTaskTest<SetPagesTran
     public void testExecuteDefault() throws IOException {
         parameters = new SetPagesTransitionParameters(
                 PdfPageTransition.newInstance(PdfPageTransitionStyle.SPLIT_HORIZONTAL_INWARD, 1, 5));
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.putTransition(1, PdfPageTransition.newInstance(PdfPageTransitionStyle.BOX_OUTWARD, 1, 5));
         parameters.setSource(shortInput());

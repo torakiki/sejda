@@ -20,6 +20,7 @@
 package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByOutlineLevelParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -38,7 +39,7 @@ public class SplitByOutlineLevelSamboxTaskTest extends BaseTaskTest<SplitByOutli
     private SplitByOutlineLevelParameters setUpParameters(int level, String regEx) throws IOException {
         SplitByOutlineLevelParameters parameters = new SplitByOutlineLevelParameters(level);
         parameters.setMatchingTitleRegEx(regEx);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/bigger_outline_test.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

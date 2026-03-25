@@ -21,6 +21,7 @@ package org.sejda.impl.sambox;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SimpleSplitParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -52,7 +53,7 @@ public class SimpleSplitSamboxTaskTest extends BaseTaskTest<SimpleSplitParameter
 
     private void setUpParameters(PredefinedSetOfPages type) {
         parameters = new SimpleSplitParameters(type);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -132,7 +133,7 @@ public class SimpleSplitSamboxTaskTest extends BaseTaskTest<SimpleSplitParameter
     // make sure we don't loose the mask in case of shared pages resources and shared mask/forms resources, optimization triggered.
     public void noDataLoss() throws IOException {
         parameters = new SimpleSplitParameters(PredefinedSetOfPages.ALL_PAGES);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/shared_res_form_extgs_softmask.pdf"));
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);

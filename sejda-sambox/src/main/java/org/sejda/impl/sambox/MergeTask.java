@@ -109,7 +109,7 @@ public class MergeTask extends BaseTask<MergeParameters> {
         this.destinationDocument = new PDDocumentHandler();
         this.destinationDocument.setCreatorOnPDDocument();
         this.destinationDocument.setVersionOnPDDocument(parameters.getVersion());
-        this.destinationDocument.setCompress(parameters.isCompress());
+        this.destinationDocument.setCompressionPolicy(parameters.compressionPolicy());
         this.acroFormsMerger = new AcroFormsMerger(parameters.getAcroFormPolicy(),
                 this.destinationDocument.getUnderlyingPDDocument());
         this.tocCreator = new TableOfContentsCreator(parameters, this.destinationDocument.getUnderlyingPDDocument());

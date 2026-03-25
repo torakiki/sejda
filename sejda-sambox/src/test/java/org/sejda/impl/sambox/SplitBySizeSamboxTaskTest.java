@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -45,7 +46,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
     @Test
     public void testExecute() throws IOException {
         parameters = new SplitBySizeParameters(100000);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(mediumInput());
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -58,7 +59,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
     @Test
     public void batchMode() throws IOException {
         parameters = new SplitBySizeParameters(100000);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(mediumInput());
         parameters.addSource(regularInput());
@@ -75,7 +76,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
     @Test
     public void testExecuteOptimized() throws IOException {
         parameters = new SplitBySizeParameters(60000);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
@@ -95,7 +96,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
     @Test
     public void testExecuteNoOptimized() throws IOException {
         parameters = new SplitBySizeParameters(60000);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOptimizationPolicy(OptimizationPolicy.NO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput("pdf/shared_resource_dic_with_2_imgs.pdf"));
@@ -115,7 +116,7 @@ public class SplitBySizeSamboxTaskTest extends BaseTaskTest<SplitBySizeParameter
     @Test
     public void specificResultFilenames() throws IOException {
         parameters = new SplitBySizeParameters(100000);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOptimizationPolicy(OptimizationPolicy.AUTO);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(regularInput());

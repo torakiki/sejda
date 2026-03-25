@@ -20,17 +20,20 @@ package org.sejda.impl.sambox.component.split;
 
 import org.sejda.commons.util.IOUtils;
 import org.sejda.core.support.prefix.model.NameGenerationRequest;
-import org.sejda.impl.sambox.component.PagesExtractor;
 import org.sejda.model.exception.TaskExecutionException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.parameter.SplitBySizeParameters;
 import org.sejda.model.split.NextOutputStrategy;
 import org.sejda.sambox.output.ExistingPagesSizePredictor;
-import org.sejda.sambox.output.WriteOption;
 import org.sejda.sambox.pdmodel.PDDocument;
 
 import java.io.IOException;
 import java.util.function.Supplier;
+
+import static org.sejda.sambox.output.WriteOption.COMPRESS_STREAMS;
+import static org.sejda.sambox.output.WriteOption.OBJECT_STREAMS;
+import static org.sejda.sambox.output.WriteOption.UNCOMPRESS_STREAMS;
+import static org.sejda.sambox.output.WriteOption.XREF_STREAM;
 
 /**
  * Splitter implementation that tries to split a document at roughly a given size
@@ -38,9 +41,6 @@ import java.util.function.Supplier;
  * @author Andrea Vacondio
  */
 public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> {
-
-    private static final WriteOption[] COMPRESSED_OPTS = new WriteOption[] { WriteOption.COMPRESS_STREAMS,
-            WriteOption.XREF_STREAM };
 
     private static final int PDF_HEADER_SIZE = 15;
     // euristic trailer ID size
@@ -79,38 +79,30 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
     @Override
     protected void onClose(int page) {
         nextOutputStrategy.closePredictor();
-
-    }
-
-    @Override
-    protected PagesExtractor supplyPagesExtractor(PDDocument document) {
-        return new PagesExtractor(document) {
-            @Override
-            public void setCompress(boolean compress) {
-                if (compress) {
-                    destinationDocument().addWriteOption(COMPRESSED_OPTS);
-                } else {
-                    destinationDocument().removeWriteOption(COMPRESSED_OPTS);
-                }
-            }
-        };
     }
 
     static class OutputSizeStrategy implements NextOutputStrategy {
         private long sizeLimit;
         private PDDocument document;
         private ExistingPagesSizePredictor predictor;
-        private Supplier<ExistingPagesSizePredictor> predictorSupplier = ExistingPagesSizePredictor::instance;
+        private Supplier<ExistingPagesSizePredictor> predictorSupplier;
         private PageCopier copier;
 
         OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
             this.sizeLimit = parameters.getSizeToSplitAt();
             this.document = document;
             this.copier = new PageCopier(optimize);
-            if (parameters.isCompress()) {
-                predictorSupplier = () -> ExistingPagesSizePredictor.instance(WriteOption.COMPRESS_STREAMS,
-                        WriteOption.XREF_STREAM);
-            }
+            predictorSupplier = switch (parameters.compressionPolicy()) {
+                case COMPRESS ->
+                        () -> ExistingPagesSizePredictor.instance(COMPRESS_STREAMS, OBJECT_STREAMS, XREF_STREAM);
+                case UNCOMPRESS -> () -> ExistingPagesSizePredictor.instance(UNCOMPRESS_STREAMS);
+                case NEUTRAL -> {
+                    if (document.getDocument().getTrailer().isXrefStream()) {
+                        yield () -> ExistingPagesSizePredictor.instance(XREF_STREAM);
+                    }
+                    yield ExistingPagesSizePredictor::instance;
+                }
+            };
 
         }
 

@@ -20,11 +20,11 @@
 package org.sejda.model.parameter;
 
 import org.junit.jupiter.api.Test;
+import org.sejda.model.TestUtils;
 import org.sejda.model.input.PdfSource;
 import org.sejda.model.input.PdfStreamSource;
 import org.sejda.model.output.SingleOrMultipleTaskOutput;
 import org.sejda.model.pdf.page.PredefinedSetOfPages;
-import org.sejda.model.TestUtils;
 
 import java.io.InputStream;
 
@@ -46,10 +46,22 @@ public class SimpleSplitParametersTest {
     }
 
     @Test
-    public void testInvalidParameters() {
-        SimpleSplitParameters victim = new SimpleSplitParameters(null);
+    public void invalidMissingSetOfPages() {
+        var victim = new SimpleSplitParameters(null);
         SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
         victim.setOutput(output);
+        InputStream stream = mock(InputStream.class);
+        PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
+        victim.addSource(input);
+        TestUtils.assertInvalidParameters(victim);
+    }
+
+    @Test
+    public void testMissingCompressionPolicy() {
+        var victim = new SimpleSplitParameters(PredefinedSetOfPages.ODD_PAGES);
+        SingleOrMultipleTaskOutput output = mock(SingleOrMultipleTaskOutput.class);
+        victim.setOutput(output);
+        victim.setCompressionPolicy(null);
         InputStream stream = mock(InputStream.class);
         PdfSource<InputStream> input = PdfStreamSource.newInstanceNoPassword(stream, "name");
         victim.addSource(input);

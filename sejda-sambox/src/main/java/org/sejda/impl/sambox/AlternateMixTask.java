@@ -18,11 +18,6 @@
  */
 package org.sejda.impl.sambox;
 
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
-
-import java.io.File;
-
 import org.sejda.core.support.io.OutputWriters;
 import org.sejda.core.support.io.SingleOutputWriter;
 import org.sejda.impl.sambox.component.PdfAlternateMixer;
@@ -32,6 +27,11 @@ import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of the AlternateMix task performing the mix of two given {@link org.sejda.model.input.PdfMixInput}s.
@@ -59,7 +59,7 @@ public class AlternateMixTask extends BaseTask<AlternateMixMultipleInputParamete
         LOG.debug("Starting alternate mix of {} input documents", parameters.getInputList().size());
         mixer.mix(parameters.getInputList(), executionContext());
         mixer.setVersionOnPDDocument(parameters.getVersion());
-        mixer.setCompress(parameters.isCompress());
+        mixer.setCompressionPolicy(parameters.compressionPolicy());
 
         File tmpFile = createTemporaryBuffer(parameters.getOutput());
         outputWriter.taskOutput(tmpFile);

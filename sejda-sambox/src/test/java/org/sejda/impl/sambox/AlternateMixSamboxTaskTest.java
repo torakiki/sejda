@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.sejda.impl.sambox.component.PdfTextExtractorByArea;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.input.PdfMixInput;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.AlternateMixMultipleInputParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -51,7 +52,7 @@ public class AlternateMixSamboxTaskTest extends BaseTaskTest<AlternateMixMultipl
 
     private void setUpParameters(AlternateMixMultipleInputParameters parameters) {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_5);
     }
 

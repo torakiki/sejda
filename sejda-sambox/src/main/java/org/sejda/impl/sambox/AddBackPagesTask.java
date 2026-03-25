@@ -93,7 +93,7 @@ public class AddBackPagesTask extends BaseTask<AddBackPagesParameters> {
             this.destinationDocument = new PDDocumentHandler();
             this.destinationDocument.setCreatorOnPDDocument();
             this.destinationDocument.setVersionOnPDDocument(parameters.getVersion());
-            this.destinationDocument.setCompress(parameters.isCompress());
+            this.destinationDocument.setCompressionPolicy(parameters.compressionPolicy());
 
             LOG.debug("Opening {}", source);
             sourceDocumentHandler = source.open(documentLoader);

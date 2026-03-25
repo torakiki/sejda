@@ -40,11 +40,11 @@ import java.io.File;
 import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 import static org.sejda.impl.sambox.util.TransitionUtils.getTransition;
 import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDimension;
 import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionDirection;
 import static org.sejda.impl.sambox.util.TransitionUtils.initTransitionMotion;
+import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
 
 /**
  * SAMBox implementation of a task that applies pages transitions to an input document.
@@ -103,7 +103,7 @@ public class SetPagesTransitionTask extends BaseTask<SetPagesTransitionParameter
 
         documentHandler.setCreatorOnPDDocument();
         documentHandler.setVersionOnPDDocument(parameters.getVersion());
-        documentHandler.setCompress(parameters.isCompress());
+        documentHandler.setCompressionPolicy(parameters.compressionPolicy());
         documentHandler.savePDDocument(tmpFile, parameters.getOutput().getEncryptionAtRestPolicy());
         closeQuietly(documentHandler);
 

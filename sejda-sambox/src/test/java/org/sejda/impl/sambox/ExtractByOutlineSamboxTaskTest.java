@@ -18,6 +18,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
 import org.sejda.model.optimization.OptimizationPolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ExtractByOutlineParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -42,7 +43,7 @@ public class ExtractByOutlineSamboxTaskTest extends BaseTaskTest<ExtractByOutlin
     private ExtractByOutlineParameters setUpParameters(int level, String sourceFile, String regEx) {
         ExtractByOutlineParameters parameters = new ExtractByOutlineParameters(level);
         parameters.setMatchingTitleRegEx(regEx);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(customInput(sourceFile, "file1.pdf"));
         parameters.setOutputPrefix("[FILENUMBER]_[BOOKMARK_NAME_STRICT]");

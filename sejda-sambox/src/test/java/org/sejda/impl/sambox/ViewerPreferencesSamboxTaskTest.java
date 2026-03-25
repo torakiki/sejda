@@ -22,6 +22,7 @@ package org.sejda.impl.sambox;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.sejda.model.input.PdfSource;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.ViewerPreferencesParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -53,7 +54,7 @@ public class ViewerPreferencesSamboxTaskTest extends BaseTaskTest<ViewerPreferen
     private ViewerPreferencesParameters parameters = new ViewerPreferencesParameters();
 
     private void setUpParams(PdfSource<?> source) throws IOException {
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setVersion(PdfVersion.VERSION_1_7);
         parameters.setDirection(PdfDirection.LEFT_TO_RIGHT);
         parameters.setDuplex(PdfDuplex.SIMPLEX);

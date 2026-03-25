@@ -26,6 +26,7 @@ import org.sejda.model.encryption.NoEncryptionAtRest;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskIOException;
 import org.sejda.model.image.ImageColorType;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.label.PdfPageLabel;
 import org.sejda.model.pdf.viewerpreference.PdfPageLayout;
@@ -87,18 +88,16 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * Creates a new handler using the given document as underlying {@link PDDocument}.
-     *
-     * @param document
      */
     public PDDocumentHandler(PDDocument document) {
         if (document == null) {
             throw new IllegalArgumentException("PDDocument cannot be null.");
         }
 
-        if(Boolean.getBoolean(Sejda.PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME)) {
+        if (Boolean.getBoolean(Sejda.PERFORM_EAGER_ASSERTIONS_PROPERTY_NAME)) {
             document.assertNumberOfPagesIsAccurate();
         }
-        
+
         this.document = document;
         permissions = new PDDocumentAccessPermission(document);
     }
@@ -120,7 +119,7 @@ public class PDDocumentHandler implements Closeable {
      * set the creator on the underlying {@link PDDocument}
      */
     public void setCreatorOnPDDocument() {
-        if(!Sejda.CREATOR.isEmpty()) {
+        if (!Sejda.CREATOR.isEmpty()) {
             document.getDocumentInformation().setCreator(Sejda.CREATOR);
         }
     }
@@ -197,13 +196,33 @@ public class PDDocumentHandler implements Closeable {
 
     /**
      * sets or remove compression options to be used when the resulting document is written
+     * @deprecated use {@link #setCompressionPolicy(CompressionPolicy)}
      */
+    @Deprecated
     public void setCompress(boolean compress) {
         if (compress) {
             addWriteOption(COMPRESSED_OPTS);
         } else {
             removeWriteOption(COMPRESSED_OPTS);
         }
+    }
+
+    /**
+     * sets the compression policy to use when the resulting document is written
+     */
+    public void setCompressionPolicy(CompressionPolicy compressionPolicy) {
+        removeWriteOption(COMPRESSED_OPTS);
+        removeWriteOption(WriteOption.UNCOMPRESS_STREAMS, WriteOption.XREF_STREAM);
+        switch (compressionPolicy) {
+        case COMPRESS -> addWriteOption(COMPRESSED_OPTS);
+        case UNCOMPRESS -> addWriteOption(WriteOption.UNCOMPRESS_STREAMS);
+        case NEUTRAL -> {
+            if (document.getDocument().getTrailer().isXrefStream()) {
+                addWriteOption(WriteOption.XREF_STREAM);
+            }
+        }
+        }
+
     }
 
     /**
@@ -248,7 +267,7 @@ public class PDDocumentHandler implements Closeable {
             if (Boolean.getBoolean(SAMBOX_USE_ASYNC_WRITER)) {
                 this.addWriteOption(WriteOption.ASYNC_BODY_WRITE);
             }
-            if(!updateProducerModifiedDate) {
+            if (!updateProducerModifiedDate) {
                 this.addWriteOption(WriteOption.NO_METADATA_PRODUCER_MODIFIED_DATE_UPDATE);
             }
 
@@ -259,7 +278,7 @@ public class PDDocumentHandler implements Closeable {
             } else {
                 document.withPreSaveVisitor(preSaveVisitor)
                         .writeTo(encryptionAtRestSecurity.encrypt(new FileOutputStream(file)), security,
-                        writeOptions.toArray(WriteOption[]::new));
+                                writeOptions.toArray(WriteOption[]::new));
             }
         } catch (IOException e) {
             throw new TaskIOException("Unable to save to temporary file.", e);
@@ -317,8 +336,7 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Moves designated page to the end of the document.
      *
-     * @param oldPageNumber
-     *            1-based page number
+     * @param oldPageNumber 1-based page number
      */
     public void movePageToDocumentEnd(int oldPageNumber) {
         if (oldPageNumber == document.getNumberOfPages())
@@ -394,8 +412,7 @@ public class PDDocumentHandler implements Closeable {
     /**
      * Adds a blank page if the current total pages number is odd
      *
-     * @param mediaBox
-     *            media box size for the blank page
+     * @param mediaBox media box size for the blank page
      * @return the added page or null if no page has been added
      */
     public PDPage addBlankPageIfOdd(PDRectangle mediaBox) {

@@ -1,10 +1,10 @@
-/* 
+/*
  * This file is part of the Sejda source code
  * Copyright 2015 Sober Lemur S.r.l. and Sejda BV.
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as 
- * published by the Free Software Foundation, either version 3 of the 
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -17,16 +17,6 @@
  */
 package org.sejda.impl.sambox.component;
 
-import static java.util.Optional.ofNullable;
-import static org.sejda.commons.util.IOUtils.closeQuietly;
-import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
-import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
-
-import java.io.Closeable;
-import java.io.File;
-import java.util.Set;
-import java.util.function.Consumer;
-
 import org.sejda.commons.LookupTable;
 import org.sejda.impl.sambox.component.optimization.NameResourcesDuplicator;
 import org.sejda.impl.sambox.component.optimization.ResourceDictionaryCleaner;
@@ -34,6 +24,7 @@ import org.sejda.impl.sambox.component.optimization.ResourcesHitter;
 import org.sejda.model.encryption.EncryptionAtRestPolicy;
 import org.sejda.model.exception.TaskException;
 import org.sejda.model.exception.TaskExecutionException;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.pdf.form.AcroFormPolicy;
 import org.sejda.model.task.TaskExecutionContext;
@@ -45,9 +36,19 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.outline.PDDocumen
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
+import java.io.File;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import static java.util.Optional.ofNullable;
+import static org.sejda.commons.util.IOUtils.closeQuietly;
+import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
+import static org.sejda.impl.sambox.component.SignatureClipper.clipSignatures;
+
 /**
  * Component that retains pages from a given existing {@link PDDocument} and saves a new document containing retained pages and an outline that patches the new document.
- * 
+ *
  * @author Andrea Vacondio
  *
  */
@@ -89,8 +90,8 @@ public class PagesExtractor implements Closeable {
             LOG.trace("Imported page number {}", page);
         } catch (PageNotFoundException e) {
             executionContext.assertTaskIsLenient(e);
-            notifyEvent(executionContext.notifiableTaskMetadata())
-                    .taskWarning(String.format("Page %d was skipped, could not be processed", page), e);
+            notifyEvent(executionContext.notifiableTaskMetadata()).taskWarning(
+                    String.format("Page %d was skipped, could not be processed", page), e);
         }
     }
 
@@ -98,8 +99,16 @@ public class PagesExtractor implements Closeable {
         destinationDocument.setVersionOnPDDocument(version);
     }
 
+    /**
+     * @deprecated use {@link #setCompressionPolicy(CompressionPolicy)}
+     */
+    @Deprecated
     public void setCompress(boolean compress) {
         destinationDocument.setCompress(compress);
+    }
+
+    public void setCompressionPolicy(CompressionPolicy compressionPolicy) {
+        destinationDocument.setCompressionPolicy(compressionPolicy);
     }
 
     public void optimize() {

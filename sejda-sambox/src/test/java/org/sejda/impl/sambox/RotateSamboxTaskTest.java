@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.RotateParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -54,7 +55,7 @@ public class RotateSamboxTaskTest extends BaseTaskTest<RotateParameters> {
 
     private void setUpParametersWithVersionPrefixAndCompressionSpecified() {
         parameters = new RotateParameters(Rotation.DEGREES_180, PredefinedSetOfPages.ALL_PAGES);
-        parameters.setCompress(true);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
         parameters.setOutputPrefix("test_prefix_");
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.addSource(shortInput());

@@ -31,6 +31,7 @@ import org.sejda.model.input.MergeInput;
 import org.sejda.model.input.PdfMergeInput;
 import org.sejda.model.outline.CatalogPageLabelsPolicy;
 import org.sejda.model.outline.OutlinePolicy;
+import org.sejda.model.output.CompressionPolicy;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.MergeParameters;
 import org.sejda.model.pdf.PdfVersion;
@@ -94,7 +95,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     private MergeParameters setUpParameters(List<? extends MergeInput> input) {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(false);
+        parameters.setCompressionPolicy(CompressionPolicy.NEUTRAL);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         for (MergeInput current : input) {
             parameters.addInput(current);
@@ -182,7 +183,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeRotatedTocPage() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(false);
+        parameters.setCompressionPolicy(CompressionPolicy.NEUTRAL);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
         parameters.addInput(new PdfMergeInput(customInput("pdf/rotated_pages.pdf", "name.pdf")));
@@ -390,6 +391,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeRanges() throws IOException {
         MergeParameters parameters = setUpParameters(getInputWithOutline());
+        parameters.setCompressionPolicy(CompressionPolicy.UNCOMPRESS);
         for (PdfMergeInput input : parameters.getPdfInputList()) {
             input.addPageRange(new PageRange(3, 10));
             input.addPageRange(new PageRange(20, 23));
@@ -510,7 +512,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeMissingPageNonLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(false);
+        parameters.setCompressionPolicy(CompressionPolicy.NEUTRAL);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
         parameters.addInput(new PdfMergeInput(customInput("pdf/missing_page_ref.pdf", "name.pdf")));
@@ -523,7 +525,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     public void executeMergeMissingPageLenient() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.setCompress(false);
+        parameters.setCompressionPolicy(CompressionPolicy.NEUTRAL);
         parameters.setLenient(true);
         parameters.setVersion(PdfVersion.VERSION_1_6);
         parameters.setOutlinePolicy(OutlinePolicy.RETAIN);
@@ -728,7 +730,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.forEachPdfOutput(d -> assertEquals(d.getPage(0).getMediaBox().getWidth(), 248, 0.0));
+        testContext.forEachPdfOutput(d -> assertEquals(248, d.getPage(0).getMediaBox().getWidth(), 0.0));
     }
 
     @Test
@@ -966,12 +968,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
         testContext.assertTaskCompleted();
         testContext.assertPages(5).forEachPdfOutput(d -> {
-            assertEquals(d.getPage(0).getRotation(), 0);
-            assertEquals(d.getPage(1).getRotation(), 0);
-            assertEquals(d.getPage(2).getRotation(), 0);
-            assertEquals(d.getPage(3).getRotation(), 0);
-
-            assertEquals(d.getPage(4).getRotation(), 0);
+            assertEquals(0, d.getPage(0).getRotation());
+            assertEquals(0, d.getPage(1).getRotation());
+            assertEquals(0, d.getPage(2).getRotation());
+            assertEquals(0, d.getPage(3).getRotation());
+            assertEquals(0, d.getPage(4).getRotation());
         });
     }
 
@@ -1047,12 +1048,11 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
 
         testContext.assertTaskCompleted();
         testContext.assertPages(5).forEachPdfOutput(d -> {
-            assertEquals(d.getPage(0).getRotation(), 90);
-            assertEquals(d.getPage(1).getRotation(), 90);
-            assertEquals(d.getPage(2).getRotation(), 90);
-            assertEquals(d.getPage(3).getRotation(), 90);
-
-            assertEquals(d.getPage(4).getRotation(), 180);
+            assertEquals(90, d.getPage(0).getRotation());
+            assertEquals(90, d.getPage(1).getRotation());
+            assertEquals(90, d.getPage(2).getRotation());
+            assertEquals(90, d.getPage(3).getRotation());
+            assertEquals(180, d.getPage(4).getRotation());
         });
     }
 
@@ -1144,7 +1144,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         testContext.assertTaskCompleted();
         testContext.assertPages(1).forEachPdfOutput(d -> {
             PDPage page = d.getPage(0);
-            PDAnnotation annotation = page.getAnnotations().get(0);
+            PDAnnotation annotation = page.getAnnotations().getFirst();
             PDAnnotationWidget widget = (PDAnnotationWidget) annotation;
             assertEquals(1, widget.getCOSObject().getInt(COSName.Q));
             assertEquals("/Helv 8 Tf 0.718 0.11 0.11 rg", widget.getCOSObject().getString(COSName.DA));
