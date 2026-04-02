@@ -730,6 +730,39 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void pageFooterAndTocAndCoverTitle() throws IOException {
+        List<PdfMergeInput> inputs = new ArrayList<>(2);
+        inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
+        inputs.add(new PdfMergeInput(regularInput())); // 11 pages
+        
+        MergeParameters parameters = setUpParameters(inputs);
+        // this adds one extra page
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        
+        parameters.setFilenameFooter(true);
+        parameters.setFilenameFooterOnCoverTitle(false);
+        parameters.setFirstInputCoverTitle(true);
+        
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(16).forEachPdfOutput(d -> {
+            // cover document has no footer page numbers
+            assertFooterHasText(d.getPage(0), "");
+            assertFooterHasText(d.getPage(1), "");
+            assertFooterHasText(d.getPage(2), "");
+            assertFooterHasText(d.getPage(3), "");
+            
+            // ToC
+            assertFooterHasText(d.getPage(4), "");
+            
+            // the rest of the merge pages are numbered
+            assertFooterHasText(d.getPage(5), "test-file 6");
+            assertFooterHasText(d.getPage(15), "test-file 16");
+        });
+    }
+
+    @Test
     public void mergeImagesAndPdfs() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -962,6 +995,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         parameters.setFilenameFooter(true);
+        parameters.setFilenameFooterOnCoverTitle(true);
         parameters.setFirstInputCoverTitle(true);
 
         testContext.pdfOutputTo(parameters);

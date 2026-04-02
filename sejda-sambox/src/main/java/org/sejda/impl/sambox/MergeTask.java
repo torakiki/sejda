@@ -178,12 +178,20 @@ public class MergeTask extends BaseTask<MergeParameters> {
 
                     // the toc will be added after the cover/title pages
                     boolean isPlacedAfterToc = !parameters.isFirstInputCoverTitle() || inputsCounter != 1;
+                    
+                    // if this is a cover title we might not want footer writer entries at all on it
+                    boolean noFooterWriterEntry = !isPlacedAfterToc && parameters.isFirstInputCoverTitle() &&
+                            parameters.isFilenameFooter() && !parameters.isFilenameFooterOnCoverTitle();
 
-                    // we can determine the correct final page numbers only after the ToC has been generated
-                    // otherwise we don't know how many pages the ToC consists of
-                    // queue up footer writer items for after ToC generation
-                    footerWriterEntries.add(
-                            new FooterWriterEntry(importedPage, sourceBaseName, pagesCounter, isPlacedAfterToc));
+                    if (noFooterWriterEntry) {
+                        LOG.debug("Will not apply footer writer entry on cover/title document page ");
+                    } else {                        
+                        // we can determine the correct final page numbers only after the ToC has been generated
+                        // otherwise we don't know how many pages the ToC consists of
+                        // queue up footer writer items for after ToC generation
+                        footerWriterEntries.add(
+                                new FooterWriterEntry(importedPage, sourceBaseName, pagesCounter, isPlacedAfterToc));    
+                    }
 
                     LOG.trace("Added imported page");
                 } catch (PageNotFoundException e) {
