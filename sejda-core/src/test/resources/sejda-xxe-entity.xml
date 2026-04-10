@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sejda [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+<sejda validation="false">
+  <notification async="false"/>
+  <tasks>
+    <task parameters="org.sejda.core.service.TestTaskParameter" task="org.sejda.core.service.TestTask"/>
+  </tasks>
+</sejda>

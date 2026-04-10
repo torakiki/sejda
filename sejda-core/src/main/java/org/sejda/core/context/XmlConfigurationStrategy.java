@@ -90,6 +90,14 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private void initializeFromInputStream(InputStream input) throws ConfigurationException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setXIncludeAware(false);
+            factory.setExpandEntityReferences(false);
             initializeSchemaValidation(factory);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(input);
@@ -108,6 +116,8 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
     private void initializeSchemaValidation(DocumentBuilderFactory factory) throws SAXException {
         if (Boolean.getBoolean(Sejda.PERFORM_SCHEMA_VALIDATION_PROPERTY_NAME)) {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             factory.setSchema(schemaFactory.newSchema(new Source[] { new StreamSource(
                     Thread.currentThread().getContextClassLoader().getResourceAsStream(DEFAULT_SEJDA_CONFIG)) }));
@@ -169,9 +179,13 @@ final class XmlConfigurationStrategy implements ConfigurationStrategy {
             throws ConfigurationException {
         String attributeValue = nullSafeGetStringAttribute(node, attributeName);
         if (isNotBlank(attributeValue)) {
+            var trimmedValue = attributeValue.trim();
+            if (!trimmedValue.matches("^[a-zA-Z_$][a-zA-Z\\d_$]*(\\.[a-zA-Z_$][a-zA-Z\\d_$]*)*$")) {
+                throw new ConfigurationException(String.format("Invalid class name: '%s'", trimmedValue));
+            }
             Class<?> clazz;
             try {
-                clazz = Class.forName(attributeValue.trim());
+                clazz = Class.forName(trimmedValue);
             } catch (ClassNotFoundException e) {
                 throw new ConfigurationException(String.format("Unable to find the configured %s", attributeValue), e);
             }

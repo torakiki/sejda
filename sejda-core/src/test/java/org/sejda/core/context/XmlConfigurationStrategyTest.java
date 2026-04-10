@@ -25,12 +25,14 @@ import org.junit.jupiter.api.Test;
 import org.sejda.core.notification.strategy.AsyncNotificationStrategy;
 import org.sejda.core.notification.strategy.SyncNotificationStrategy;
 import org.sejda.model.exception.ConfigurationException;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -51,7 +53,7 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testPositiveConstuctor() throws ConfigurationException {
+    public void testPositiveConstructor() throws ConfigurationException {
         var stream = getClass().getResourceAsStream("/sejda-test.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
@@ -62,7 +64,7 @@ public class XmlConfigurationStrategyTest {
     }
 
     @Test
-    public void testNegativeConstuctorWrongTask() throws ConfigurationException {
+    public void testNegativeConstructorWrongTask() throws ConfigurationException {
         InputStream stream = getClass().getResourceAsStream("/failing-task-sejda-config.xml");
         when(provider.getConfigurationStream()).thenReturn(stream);
         var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
@@ -119,5 +121,21 @@ public class XmlConfigurationStrategyTest {
         when(provider.getConfigurationStream()).thenReturn(stream);
         XmlConfigurationStrategy victim = XmlConfigurationStrategy.newInstance(provider);
         assertThrows(IOException.class, () -> stream.read());
+    }
+
+    @Test
+    public void xxeEntityExpansionIsBlocked() throws ConfigurationException {
+        var stream = getClass().getResourceAsStream("/sejda-xxe-entity.xml");
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
+        assertInstanceOf(SAXException.class, e.getCause());
+    }
+
+    @Test
+    public void invalidClassNameCharactersAreRejected() throws ConfigurationException {
+        var stream = getClass().getResourceAsStream("/sejda-invalid-classname.xml");
+        when(provider.getConfigurationStream()).thenReturn(stream);
+        var e = assertThrows(ConfigurationException.class, () -> XmlConfigurationStrategy.newInstance(provider));
+        assertTrue(e.getMessage().contains("Invalid class name"));
     }
 }
