@@ -50,6 +50,7 @@ import static java.util.Optional.ofNullable;
 import static org.sejda.commons.util.IOUtils.closeQuietly;
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.model.util.IOUtils.createTemporaryBuffer;
+import static org.sejda.model.util.IOUtils.toSafeFilename;
 import static org.sejda.core.support.io.model.FileOutput.file;
 
 /**
@@ -119,7 +120,11 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
                     FileUtils.copyInputStreamToFile(is, tmpFile);
                     LOG.debug("Attachment '{}' unpacked to temporary buffer", file.getFilename());
                 }
-                outputWriter.addOutput(file(tmpFile).name(file.getFilename()));
+                var safeName = toSafeFilename(file.getFilename());
+                if (safeName.isBlank() || safeName.chars().allMatch(c -> c == '.')) {
+                    safeName = "attachment";
+                }
+                outputWriter.addOutput(file(tmpFile).name(safeName));
             } catch (IOException | TaskIOException ioe) {
                 LOG.error("Unable to extract file", ioe);
             }

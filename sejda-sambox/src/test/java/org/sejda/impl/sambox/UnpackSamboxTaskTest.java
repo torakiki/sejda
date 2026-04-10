@@ -20,18 +20,31 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.sejda.model.input.PdfFileSource;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
+import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
+import org.sejda.sambox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.sejda.tests.tasks.BaseTaskTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.sejda.tests.TestUtils.customInput;
 
 /**
@@ -60,6 +73,76 @@ public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         execute(parameters);
         assertEquals(1, out.list().length);
+    }
+
+    @Test
+    public void pathTraversalFilenameIsSanitized() throws IOException {
+        var filename = "../../evil.txt";
+        var tmpPdf = createPdfWithEmbeddedFile(filename);
+        var out = Files.createTempDirectory(folder, "sejda").toFile();
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.addSource(PdfFileSource.newInstanceNoPassword(tmpPdf));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        execute(parameters);
+
+        var outputFiles = out.listFiles();
+        assertNotNull(outputFiles);
+        assertEquals(1, outputFiles.length);
+        assertTrue(outputFiles[0].getCanonicalPath().startsWith(out.getCanonicalPath()));
+        assertFalse(outputFiles[0].getName().contains("/"));
+        assertFalse(outputFiles[0].getName().contains("\\"));
+    }
+
+    @Test
+    public void allSeparatorsFilenameStripsToBlankAndFallsBackToAttachment() throws IOException {
+        var filename = "///\\\\";
+        var tmpPdf = createPdfWithEmbeddedFile(filename);
+        var out = Files.createTempDirectory(folder, "sejda").toFile();
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.addSource(PdfFileSource.newInstanceNoPassword(tmpPdf));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        execute(parameters);
+
+        var outputFiles = out.listFiles();
+        assertNotNull(outputFiles);
+        assertEquals(1, outputFiles.length);
+        assertEquals("attachment", outputFiles[0].getName());
+    }
+
+    @Test
+    public void allDotsFilenameFallsBackToAttachment() throws IOException {
+        var filename = "...";
+        var tmpPdf = createPdfWithEmbeddedFile(filename);
+        var out = Files.createTempDirectory(folder, "sejda").toFile();
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.addSource(PdfFileSource.newInstanceNoPassword(tmpPdf));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        execute(parameters);
+
+        var outputFiles = out.listFiles();
+        assertNotNull(outputFiles);
+        assertEquals(1, outputFiles.length);
+        assertEquals("attachment", outputFiles[0].getName());
+    }
+
+    private File createPdfWithEmbeddedFile(String filename) throws IOException {
+        var fileSpec = new PDComplexFileSpecification(new COSDictionary());
+        fileSpec.setFile(filename);
+        fileSpec.setFileUnicode(filename);
+        var embeddedFile = new PDEmbeddedFile(new ByteArrayInputStream("content".getBytes()));
+        fileSpec.setEmbeddedFile(embeddedFile);
+        fileSpec.setEmbeddedFileUnicode(embeddedFile);
+        var tmpPdf = Files.createTempFile(folder, "test", ".pdf").toFile();
+        try (var doc = new PDDocument()) {
+            doc.addPage(new PDPage());
+            var efTree = new PDEmbeddedFilesNameTreeNode();
+            efTree.setNames(Map.of(filename, fileSpec));
+            var names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+            names.setEmbeddedFiles(efTree);
+            doc.getDocumentCatalog().setNames(names);
+            doc.writeTo(tmpPdf);
+        }
+        return tmpPdf;
     }
 
     @Override
