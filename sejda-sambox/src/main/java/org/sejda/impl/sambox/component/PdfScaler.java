@@ -82,6 +82,7 @@ public class PdfScaler {
     /**
      * @deprecated use {@link PdfScaler#scalePages(PDDocument, Iterable, PDRectangle, PageNormalizationPolicy)}
      */
+    @Deprecated
     public void scalePages(PDDocument doc, Iterable<PDPage> pages, PDRectangle targetBox) throws TaskIOException {
         scalePages(doc, pages, targetBox, PageNormalizationPolicy.SAME_WIDTH_ORIENTATION_BASED);
     }
