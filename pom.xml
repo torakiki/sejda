@@ -340,7 +340,7 @@
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>3.0.32</sambox.version>
 		<sejda.io.version>3.0.3</sejda.io.version>
-		<bouncycastle.version>1.83</bouncycastle.version>
+		<bouncycastle.version>1.84</bouncycastle.version>
 		<twelvemonkeys.version>3.13.0</twelvemonkeys.version>
 		<metadata-extractor.version>2.19.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.21</thumbnailator.version>
