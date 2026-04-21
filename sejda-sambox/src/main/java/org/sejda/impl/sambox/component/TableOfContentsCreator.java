@@ -310,8 +310,37 @@ public class TableOfContentsCreator {
     public void pageSizeIfNotSet(PDRectangle pageSize) {
         requireNotAlreadyGenerated();
         if (this.pageSize == null) {
-            this.pageSize = pageSize;
+            // we can't just use the first page size as a dimension for the ToC
+            // because it can be an image with a strange ratio (eg: very wide but not high)
+            // so we do the following: if the page size matches something standard (eg A4 or Letter), we use that
+            // otherwise we default to an A4 like ratio, trying to keep the width of the original page size
+            // but still clamping to A3/A6 to avoid huge pages
+            this.pageSize = toStandardPageSizeOrDefault(pageSize);
         }
+    }
+
+    private static PDRectangle toStandardPageSizeOrDefault(PDRectangle pageSize) {
+        if (pageSize == null) {
+            return PDRectangle.A4;
+        }
+
+        float width = Math.min(pageSize.getWidth(), pageSize.getHeight());
+        float height = Math.max(pageSize.getWidth(), pageSize.getHeight());
+        float ratio = width / height;
+
+        for (PDRectangle candidate : List.of(PDRectangle.A4, PDRectangle.LETTER)) {
+            float cw = Math.min(candidate.getWidth(), candidate.getHeight());
+            float ch = Math.max(candidate.getWidth(), candidate.getHeight());
+
+            if (Math.abs(ratio - (cw / ch)) <= 0.01f) {
+                return pageSize;
+            }
+        }
+
+        // Clamp width between A6 (too small/weird) and A3 (too large)
+        float tocWidth = Math.min(Math.max(pageSize.getWidth(), PDRectangle.A6.getWidth()), PDRectangle.A3.getWidth());
+        float a4Ratio = PDRectangle.A4.getWidth() / PDRectangle.A4.getHeight();
+        return new PDRectangle(tocWidth, tocWidth / a4Ratio);
     }
 
     private void recalculateDimensions() {

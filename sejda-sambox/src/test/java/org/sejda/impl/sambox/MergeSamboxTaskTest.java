@@ -180,6 +180,42 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void tocWhenFirstDocumentHasUnusablePageSizeRatio_smallHeight() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.addInput(new PdfMergeInput(customInput("pdf/small_height_odd_page_size_ratio.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            assertEquals(PDRectangle.A3.getWidth(), d.getPage(0).getMediaBox().getWidth(), 0.0);
+        });
+    }
+
+    @Test
+    public void tocWhenFirstDocumentHasUnusablePageSizeRatio_smallWidth() throws IOException {
+        MergeParameters parameters = new MergeParameters();
+        parameters.addInput(new PdfMergeInput(customInput("pdf/small_width_odd_page_size_ratio.pdf")));
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        parameters.setAcroFormPolicy(AcroFormPolicy.MERGE_RENAMING_EXISTING_FIELDS);
+        parameters.setOutlinePolicy(OutlinePolicy.ONE_ENTRY_EACH_DOC);
+
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+
+        testContext.forPdfOutput(d -> {
+            assertEquals(PDRectangle.A6.getWidth(), d.getPage(0).getMediaBox().getWidth(), 0.0);
+        });
+    }
+
+    @Test
     public void executeMergeRotatedTocPage() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -696,6 +732,39 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     }
 
     @Test
+    public void pageFooterAndTocAndCoverTitle() throws IOException {
+        List<PdfMergeInput> inputs = new ArrayList<>(2);
+        inputs.add(new PdfMergeInput(shortInput())); // 4 pages, cover/title doc
+        inputs.add(new PdfMergeInput(regularInput())); // 11 pages
+        
+        MergeParameters parameters = setUpParameters(inputs);
+        // this adds one extra page
+        parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
+        
+        parameters.setFilenameFooter(true);
+        parameters.setFilenameFooterOnCoverTitle(false);
+        parameters.setFirstInputCoverTitle(true);
+        
+        testContext.pdfOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertPages(16).forEachPdfOutput(d -> {
+            // cover document has no footer page numbers
+            assertFooterHasText(d.getPage(0), "");
+            assertFooterHasText(d.getPage(1), "");
+            assertFooterHasText(d.getPage(2), "");
+            assertFooterHasText(d.getPage(3), "");
+            
+            // ToC
+            assertFooterHasText(d.getPage(4), "");
+            
+            // the rest of the merge pages are numbered
+            assertFooterHasText(d.getPage(5), "test-file 6");
+            assertFooterHasText(d.getPage(15), "test-file 16");
+        });
+    }
+
+    @Test
     public void mergeImagesAndPdfs() throws IOException {
         MergeParameters parameters = new MergeParameters();
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
@@ -928,6 +997,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         MergeParameters parameters = setUpParameters(inputs);
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         parameters.setFilenameFooter(true);
+        parameters.setFilenameFooterOnCoverTitle(true);
         parameters.setFirstInputCoverTitle(true);
 
         testContext.pdfOutputTo(parameters);

@@ -55,6 +55,7 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
     @NotNull
     private ToCPolicy tocPolicy = ToCPolicy.NONE;
     private boolean filenameFooter = false;
+    private boolean filenameFooterOnCoverTitle = false;
     //policy to use to normalize pages size
     private PageNormalizationPolicy pageNormalizationPolicy = PageNormalizationPolicy.NONE;
     private boolean firstInputCoverTitle = false;
@@ -117,6 +118,14 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
         this.filenameFooter = filenameFooter;
     }
 
+    public boolean isFilenameFooterOnCoverTitle() {
+        return filenameFooterOnCoverTitle;
+    }
+    
+    public void setFilenameFooterOnCoverTitle(boolean filenameFooterOnCoverTitle) {
+        this.filenameFooterOnCoverTitle = filenameFooterOnCoverTitle;
+    }
+
     @Deprecated
     //use getPageNormalizationPolicy
     public boolean isNormalizePageSizes() {
@@ -175,6 +184,7 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(acroFormPolicy).append(blankPageIfOdd)
                 .append(outlinePolicy).append(tocPolicy).append(filenameFooter).append(pageNormalizationPolicy)
+                .append(filenameFooterOnCoverTitle)
                 .append(catalogPageLabelsPolicy).append(firstInputCoverTitle).append(rotations).toHashCode();
     }
 
@@ -189,6 +199,7 @@ public class MergeParameters extends BaseMergeParameters<MergeInput> {
         return new EqualsBuilder().appendSuper(super.equals(other)).append(acroFormPolicy, params.getAcroFormPolicy())
                 .append(blankPageIfOdd, params.isBlankPageIfOdd()).append(outlinePolicy, params.getOutlinePolicy())
                 .append(tocPolicy, params.getTableOfContentsPolicy()).append(filenameFooter, params.isFilenameFooter())
+                .append(filenameFooterOnCoverTitle, params.isFilenameFooterOnCoverTitle())
                 .append(pageNormalizationPolicy, params.getPageNormalizationPolicy())
                 .append(catalogPageLabelsPolicy, params.catalogPageLabelsPolicy)
                 .append(firstInputCoverTitle, params.firstInputCoverTitle).append(rotations, params.rotations)
