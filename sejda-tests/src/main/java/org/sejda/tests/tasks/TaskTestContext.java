@@ -433,8 +433,13 @@ public class TaskTestContext implements Closeable {
 
     private TestListenerFactory.TestListenerStart startListener = TestListenerFactory.newStartListener();
 
-    private EventListener<TaskExecutionWarningEvent> warningsListener = event -> taskWarnings.add(event.getWarning());
-
+    private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<>() {
+        @Override
+        public void onEvent(TaskExecutionWarningEvent event) {
+            taskWarnings.add(event.getWarning());
+        }
+    };
+    
     private EventListener<TaskExecutionFailedEvent> failureListener = new EventListener<>() {
         @Override
         public void onEvent(TaskExecutionFailedEvent event) {
