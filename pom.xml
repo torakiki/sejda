@@ -334,15 +334,15 @@
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>5.23.0</mockito.version>
 		<logback.version>1.5.32</logback.version>
-		<archunit.version>1.4.1</archunit.version>
+		<archunit.version>1.4.2</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>4.0.0.M3</sambox.version>
 		<sejda.io.version>5.0.0.M1</sejda.io.version>
-		<bouncycastle.version>1.83</bouncycastle.version>
+		<bouncycastle.version>1.84</bouncycastle.version>
 		<twelvemonkeys.version>3.13.1</twelvemonkeys.version>
-		<metadata-extractor.version>2.19.0</metadata-extractor.version>
+		<metadata-extractor.version>2.20.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.21</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
 		<icu4j.version>78.3</icu4j.version>

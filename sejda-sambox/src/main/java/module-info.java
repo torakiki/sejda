@@ -22,7 +22,7 @@
 module org.sejda.impl.sambox {
 
     requires java.xml;
-    requires metadata.extractor;
+    requires com.drew.metadata;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires org.apache.fontbox;
