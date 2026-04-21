@@ -99,10 +99,6 @@ public final class TestUtils {
 
     /**
      * Sets the given property to the given instance at the given value.
-     *
-     * @param instance
-     * @param propertyName
-     * @param propertyValue
      */
     public static void setProperty(Object instance, String propertyName, Object propertyValue) {
         Field field;
@@ -171,7 +167,7 @@ public final class TestUtils {
         assertNotEquals(null, eq1);
 
         // not instance of
-        assertNotEquals(eq1, NOT_INSTANCE_OF);
+        assertNotEquals(NOT_INSTANCE_OF, eq1);
 
         // reflexive
         assertEquals(eq1, eq1);
@@ -408,6 +404,11 @@ public final class TestUtils {
     public static PdfStreamSource largeOutlineInput() {
         return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/large_outline.pdf"),
                 "large-outline-test-file.pdf");
+    }
+
+    public static PdfStreamSource inputWithXMP() {
+        return PdfStreamSource.newInstanceNoPassword(TestUtils.class.getResourceAsStream("/pdf/test-with-xmp.pdf"),
+                "test-with-xmp.pdf");
     }
 
     public static PdfStreamSource encryptedInput() {

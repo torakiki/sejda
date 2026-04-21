@@ -55,7 +55,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -86,9 +90,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link FileTaskOutput}
-     *
-     * @param params
-     * @return
      */
     public TaskTestContext pdfOutputTo(SingleOutputTaskParameters params) throws IOException {
         this.fileOutput = File.createTempFile("SejdaTest", ".pdf");
@@ -99,11 +100,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link FileTaskOutput} on a file with the given extension
-     *
-     * @param params
-     * @param extension
-     * @return
-     * @throws IOException
      */
     public TaskTestContext fileOutputTo(SingleOutputTaskParameters params, String extension) throws IOException {
         this.fileOutput = File.createTempFile("SejdaTest", extension);
@@ -114,10 +110,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a {@link DirectoryTaskOutput}
-     *
-     * @param params
-     * @return
-     * @throws IOException
      */
     public TaskTestContext directoryOutputTo(MultipleOutputTaskParameters params) throws IOException {
         this.fileOutput = Files.createTempDirectory("SejdaTest").toFile();
@@ -128,9 +120,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a directory as {@link FileOrDirectoryTaskOutput}
-     *
-     * @param params
-     * @return
      */
     public TaskTestContext directoryOutputTo(SingleOrMultipleOutputTaskParameters params) throws IOException {
         this.fileOutput = Files.createTempDirectory("SejdaTest").toFile();
@@ -141,9 +130,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Initialize the given params with a pdf file as {@link FileOrDirectoryTaskOutput}
-     *
-     * @param params
-     * @return
      */
     public TaskTestContext pdfOutputTo(SingleOrMultipleOutputTaskParameters params) throws IOException {
         this.fileOutput = Files.createTempFile("SejdaTest", ".pdf").toFile();
@@ -154,8 +140,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the creator has been set to the info dictionary
-     *
-     * @return
      */
     public TaskTestContext assertCreator() {
         requirePDDocument();
@@ -165,8 +149,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the PDF version of the output is the given one
-     *
-     * @return
      */
     public TaskTestContext assertVersion(PdfVersion version) {
         requirePDDocument();
@@ -176,8 +158,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts the output document has that number of pages
-     *
-     * @return
      */
     public TaskTestContext assertPages(int expected) {
         requirePDDocument();
@@ -188,8 +168,6 @@ public class TaskTestContext implements Closeable {
     /**
      * asserts the output document with the given filename exists and has that number of pages. This assert will work only for multiple output task.
      *
-     * @return
-     * @throws IOException
      * @see this{@link #assertPages(int)}
      */
     public TaskTestContext assertPages(String filename, int expected) throws IOException {
@@ -215,8 +193,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert that the document has an acroform with some field in it
-     *
-     * @param hasForms
      */
     public TaskTestContext assertHasAcroforms(boolean hasForms) {
         requirePDDocument();
@@ -231,9 +207,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert the document outline contains an item with the given title
-     *
-     * @param title
-     * @return
      */
     public TaskTestContext assertOutlineContains(String title) {
         requirePDDocument();
@@ -247,9 +220,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * assert the document outline doesn't contain an item with the given title
-     *
-     * @param title
-     * @return
      */
     public TaskTestContext assertOutlineDoesntContain(String title) {
         requirePDDocument();
@@ -281,9 +251,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given number of output files, hidden files don't count
-     *
-     * @return
-     * @throws IOException
      */
     public TaskTestContext assertOutputSize(int size) throws IOException {
         if (size == 0) {
@@ -309,9 +276,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given number of output files, including hidden files (in case the task is expected to have some hidden leftover)
-     *
-     * @param size
-     * @return
      */
     public TaskTestContext assertOutputSizeIncludingHidden(int size) {
         if (size == 0) {
@@ -327,8 +291,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated no output
-     *
-     * @return
      */
     public TaskTestContext assertEmptyMultipleOutput() {
         assertNotNull(fileOutput);
@@ -340,9 +302,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * asserts that a multiple output task has generated the given file names
-     *
-     * @param filenames
-     * @return
      */
     public TaskTestContext assertOutputContainsFilenames(String... filenames) {
         requireMultipleOutputs();
@@ -354,10 +313,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to every generated output
-     *
-     * @param consumer
-     * @return
-     * @throws IOException
      */
     public TaskTestContext forEachPdfOutput(Consumer<PDDocument> consumer) throws IOException {
         if (nonNull(outputDocument)) {
@@ -378,10 +333,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to generated single output PDF document
-     *
-     * @param consumer
-     * @return
-     * @throws IOException
      */
     public TaskTestContext forPdfOutput(Consumer<PDDocument> consumer) {
         requirePDDocument();
@@ -391,10 +342,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to generated output PDF document with the given name
-     *
-     * @param consumer
-     * @return
-     * @throws IOException
      */
     public TaskTestContext forPdfOutput(String filename, Consumer<PDDocument> consumer) throws IOException {
         requireMultipleOutputs();
@@ -408,10 +355,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to every generated output
-     *
-     * @param consumer
-     * @return
-     * @throws IOException
      */
     public TaskTestContext forEachRawOutput(Consumer<Path> consumer) throws IOException {
         requireMultipleOutputs();
@@ -421,10 +364,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Applies the given consumer to a single generated output
-     *
-     * @param consumer
-     * @return
-     * @throws IOException
      */
     public TaskTestContext forRawOutput(Consumer<Path> consumer) {
         assertNotNull(fileOutput);
@@ -453,9 +392,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Asserts that the task has completed and generated some output. If a single output task, then the output is paresed and a {@link PDDocument} is returned
-     *
-     * @return
-     * @throws IOException
      */
     public PDDocument assertTaskCompleted() throws IOException {
         return this.assertTaskCompleted(null);
@@ -463,10 +399,6 @@ public class TaskTestContext implements Closeable {
 
     /**
      * Asserts that the task has completed and generated some output. If the task generated a single output, then the output is parsed and a {@link PDDocument} is returned
-     *
-     * @param password
-     * @return
-     * @throws IOException
      */
     public PDDocument assertTaskCompleted(String password) throws IOException {
         // First and foremost, check if the task failed.
@@ -501,12 +433,7 @@ public class TaskTestContext implements Closeable {
 
     private TestListenerFactory.TestListenerStart startListener = TestListenerFactory.newStartListener();
 
-    private EventListener<TaskExecutionWarningEvent> warningsListener = new EventListener<>() {
-        @Override
-        public void onEvent(TaskExecutionWarningEvent event) {
-            taskWarnings.add(event.getWarning());
-        }
-    };
+    private EventListener<TaskExecutionWarningEvent> warningsListener = event -> taskWarnings.add(event.getWarning());
 
     private EventListener<TaskExecutionFailedEvent> failureListener = new EventListener<>() {
         @Override
