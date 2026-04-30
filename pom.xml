@@ -39,7 +39,7 @@
 		<developer>
 			<id>torakiki</id>
 			<name>Andrea Vacondio</name>
-			<email>andrea.vacondio@gmail.com</email>
+			<email>andrea@soberlemur.com</email>
 		</developer>
 		<developer>
 			<id>ediweissmann</id>
@@ -330,7 +330,7 @@
 		<junit.version>5.14.3</junit.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<commons.lang.version>3.20.0</commons.lang.version>
-		<commons.io.version>2.21.0</commons.io.version>
+		<commons.io.version>2.22.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>5.23.0</mockito.version>
 		<logback.version>1.5.32</logback.version>
@@ -338,7 +338,7 @@
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
-		<sambox.version>4.0.0.M3</sambox.version>
+		<sambox.version>4.0.0.M4</sambox.version>
 		<sejda.io.version>5.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.84</bouncycastle.version>
 		<twelvemonkeys.version>3.13.1</twelvemonkeys.version>
