@@ -235,7 +235,7 @@ public class ImagesToPdfDocumentConverter {
                     }
                 }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOG.warn("Could not determine image page count: {}", source.getName(), ex);
         }
 
