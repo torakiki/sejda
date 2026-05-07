@@ -19,24 +19,6 @@
  */
 package org.sejda.model.util;
 
-import static java.util.Objects.nonNull;
-import static org.apache.commons.io.FilenameUtils.getBaseName;
-import static org.apache.commons.io.FilenameUtils.getExtension;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
-import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
-import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.sejda.model.exception.TaskIOException;
@@ -48,6 +30,24 @@ import org.sejda.model.output.TaskOutput;
 import org.sejda.model.output.TaskOutputDispatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static java.util.Objects.nonNull;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_MAC;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
+import static org.apache.commons.lang3.SystemUtils.JAVA_IO_TMPDIR;
 
 /**
  * Provides IO utility methods.
@@ -109,8 +109,8 @@ public final class IOUtils {
 
     public static File createTemporaryBuffer(String extension) throws TaskIOException {
         try {
-            File buffer = File.createTempFile(System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME),
-                    extension);
+            File buffer = Files.createTempFile(System.getProperty(TMP_BUFFER_PREFIX_PROPERTY_NAME, BUFFER_NAME),
+                    extension).toFile();
             buffer.deleteOnExit();
             return buffer;
         } catch (IOException e) {
