@@ -43,6 +43,7 @@ import static java.util.Optional.of;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.sejda.model.output.ExistingOutputPolicy.FAIL;
 import static org.sejda.model.output.ExistingOutputPolicy.SKIP;
+import static org.sejda.model.prefix.Prefix.TOTAL_FILESNUMBER;
 import static org.sejda.model.util.IOUtils.findNewNameThatDoesNotExist;
 import static org.sejda.model.util.IOUtils.shortenFilename;
 
@@ -177,7 +178,8 @@ final class OutputWriterHelper {
     }
 
     private static String finalName(String filename, int totalFilesNumber) {
-        return shortenFilename(filename.replace("[TOTAL_FILESNUMBER]", Integer.toString(totalFilesNumber)));
+        return shortenFilename(
+                filename.replace(TOTAL_FILESNUMBER.getFriendlyName(), Integer.toString(totalFilesNumber)));
     }
 
     /**

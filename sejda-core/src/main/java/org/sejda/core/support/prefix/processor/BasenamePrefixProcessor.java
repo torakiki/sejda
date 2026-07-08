@@ -27,6 +27,7 @@ import org.sejda.core.support.prefix.model.PrefixTransformationContext;
 import java.util.regex.Pattern;
 
 import static java.util.Optional.ofNullable;
+import static org.sejda.model.prefix.Prefix.BASENAME;
 
 /**
  * A {@link PrefixProcessor} that updates the context current prefix replacing all the [BASENAME] occurrences with the input original file name if any.
@@ -40,7 +41,8 @@ public class BasenamePrefixProcessor implements PrefixProcessor {
     public void accept(PrefixTransformationContext context) {
         if (pattern.matcher(context.currentPrefix()).find()) {
             ofNullable(context.request()).map(NameGenerationRequest::getOriginalName).filter(StringUtils::isNotBlank)
-                    .map(o -> context.currentPrefix().replace("[BASENAME]", o)).ifPresent(context::currentPrefix);
+                    .map(o -> context.currentPrefix().replace(BASENAME.getFriendlyName(), o))
+                    .ifPresent(context::currentPrefix);
         }
     }
 

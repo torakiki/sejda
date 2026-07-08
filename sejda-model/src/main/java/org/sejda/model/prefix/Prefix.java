@@ -34,7 +34,8 @@ public enum Prefix implements FriendlyNamed {
     CURRENTPAGE("[CURRENTPAGE]"),
     FILENUMBER("[FILENUMBER]"),
     BOOKMARK("[BOOKMARK_NAME]"),
-    BOOKMARK_STRICT("[BOOKMARK_NAME_STRICT]");
+    BOOKMARK_STRICT("[BOOKMARK_NAME_STRICT]"),
+    TOTAL_FILESNUMBER("[TOTAL_FILESNUMBER]");
 
     private final String name;
 

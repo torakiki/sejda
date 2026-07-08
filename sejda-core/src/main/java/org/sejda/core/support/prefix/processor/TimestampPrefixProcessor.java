@@ -25,6 +25,8 @@ import org.sejda.core.support.prefix.model.PrefixTransformationContext;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.sejda.model.prefix.Prefix.TIMESTAMP;
+
 /**
  * A {@link PrefixProcessor} that updates the context current prefix replacing all the [TIMESTAMP] occurrences with the current timestamp.
  *
@@ -36,10 +38,10 @@ public class TimestampPrefixProcessor implements PrefixProcessor {
 
     @Override
     public void accept(PrefixTransformationContext context) {
-        if (context.currentPrefix().contains("[TIMESTAMP]")) {
+        if (context.currentPrefix().contains(TIMESTAMP.getFriendlyName())) {
             context.uniqueNames(true);
-            context.currentPrefix(
-                    context.currentPrefix().replace("[TIMESTAMP]", FORMATTER.format(ZonedDateTime.now())));
+            context.currentPrefix(context.currentPrefix()
+                    .replace(TIMESTAMP.getFriendlyName(), FORMATTER.format(ZonedDateTime.now())));
         }
     }
 
