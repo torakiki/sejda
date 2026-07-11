@@ -108,6 +108,9 @@
 							</execution>
 						</executions>
 						<configuration>
+							<!-- Our javadoc toolchain is JDK 17, which rejects the no-fonts flag
+             the plugin adds when Maven itself runs on JDK 23 or newer -->
+							<disableNoFonts>true</disableNoFonts>
 							<additionalOptions>
 								<additionalOption>-Xdoclint:none</additionalOption>
 							</additionalOptions>
