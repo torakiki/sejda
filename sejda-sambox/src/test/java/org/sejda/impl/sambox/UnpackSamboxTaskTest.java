@@ -20,6 +20,7 @@ package org.sejda.impl.sambox;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.sejda.model.input.PdfSource;
 import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
@@ -56,18 +57,18 @@ public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
 
     @Test
     public void unpackAnnotations() throws IOException {
-        executeTest("pdf/attachments_as_annots.pdf");
+        executeTest(customInput("pdf/attachments_as_annots.pdf"));
     }
 
     @Test
     public void unpackNamedTree() throws IOException {
-        executeTest("pdf/attachments_as_named_tree.pdf");
+        executeTest(customInput("pdf/attachments_as_named_tree.pdf"));
     }
 
-    public void executeTest(String filename) throws IOException {
+    public void executeTest(PdfSource source) throws IOException {
         File out = Files.createTempDirectory(folder, "sejda").toFile();
         parameters = new UnpackParameters(new DirectoryTaskOutput(out));
-        parameters.addSource(customInput(filename));
+        parameters.addSource(source);
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         execute(parameters);
         assertEquals(1, out.list().length);
@@ -75,14 +76,10 @@ public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
 
     @Test
     public void unpackMustNotWriteOutsideOutputDirectory() throws IOException {
-        File out = Files.createTempDirectory(folder, "sejda").toFile();
         Path escapeTarget = folder.resolve("PWNED_regression.txt");
 
         String attachmentName = "../PWNED_regression.txt";
-        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
-        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
-        parameters.addSource(customInput(craftMaliciousPdf(attachmentName, "zip-slip-regression".getBytes(StandardCharsets.UTF_8)), "malicious.pdf"));
-        execute(parameters);
+        executeTest(customInput(craftMaliciousPdf(attachmentName, "zip-slip-regression".getBytes(StandardCharsets.UTF_8)), "malicious.pdf"));
 
         assertFalse(Files.exists(escapeTarget),
                 "Path traversal: attachment was written outside the output directory at "
