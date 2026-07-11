@@ -24,14 +24,25 @@ import org.sejda.model.output.DirectoryTaskOutput;
 import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.pdmodel.PDDocument;
+import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
+import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.common.filespecification.PDComplexFileSpecification;
+import org.sejda.sambox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.sejda.tests.tasks.BaseTaskTest;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.sejda.tests.TestUtils.customInput;
 
 /**
@@ -60,6 +71,46 @@ public class UnpackSamboxTaskTest extends BaseTaskTest<UnpackParameters> {
         parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
         execute(parameters);
         assertEquals(1, out.list().length);
+    }
+
+    @Test
+    public void unpackMustNotWriteOutsideOutputDirectory() throws IOException {
+        File out = Files.createTempDirectory(folder, "sejda").toFile();
+        Path escapeTarget = folder.resolve("PWNED_regression.txt");
+
+        String attachmentName = "../PWNED_regression.txt";
+        parameters = new UnpackParameters(new DirectoryTaskOutput(out));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addSource(customInput(craftMaliciousPdf(attachmentName, "zip-slip-regression".getBytes(StandardCharsets.UTF_8)), "malicious.pdf"));
+        execute(parameters);
+
+        assertFalse(Files.exists(escapeTarget),
+                "Path traversal: attachment was written outside the output directory at "
+                        + escapeTarget.toAbsolutePath());
+    }
+
+    private PDDocument craftMaliciousPdf(String attachmentName, byte[] payload) throws IOException {
+        PDDocument doc = new PDDocument();
+        doc.addPage(new PDPage());
+
+        PDEmbeddedFile embedded = new PDEmbeddedFile(new ByteArrayInputStream(payload));
+        embedded.setSize(payload.length);
+
+        PDComplexFileSpecification spec = new PDComplexFileSpecification(new COSDictionary());
+        spec.setFile(attachmentName);
+        spec.setFileUnicode(attachmentName);
+        spec.setEmbeddedFile(embedded);
+
+        PDEmbeddedFilesNameTreeNode efTree = new PDEmbeddedFilesNameTreeNode();
+        Map<String, PDComplexFileSpecification> names = new HashMap<>();
+        names.put("attachment", spec);
+        efTree.setNames(names);
+
+        PDDocumentNameDictionary nameDict = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+        nameDict.setEmbeddedFiles(efTree);
+        doc.getDocumentCatalog().setNames(nameDict);
+
+        return doc;
     }
 
     @Override

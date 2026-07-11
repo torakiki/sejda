@@ -30,6 +30,7 @@ import org.sejda.model.input.PdfSourceOpener;
 import org.sejda.model.parameter.UnpackParameters;
 import org.sejda.model.task.BaseTask;
 import org.sejda.model.task.TaskExecutionContext;
+import org.sejda.model.util.IOUtils;
 import org.sejda.sambox.pdmodel.PDDocumentNameDictionary;
 import org.sejda.sambox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.sejda.sambox.pdmodel.common.PDNameTreeNode;
@@ -119,7 +120,8 @@ public class UnpackTask extends BaseTask<UnpackParameters> {
                     FileUtils.copyInputStreamToFile(is, tmpFile);
                     LOG.debug("Attachment '{}' unpacked to temporary buffer", file.getFilename());
                 }
-                outputWriter.addOutput(file(tmpFile).name(file.getFilename()));
+                String safeFilename = IOUtils.toSafeFilename(file.getFilename());
+                outputWriter.addOutput(file(tmpFile).name(safeFilename));
             } catch (IOException | TaskIOException ioe) {
                 LOG.error("Unable to extract file", ioe);
             }
