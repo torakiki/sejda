@@ -220,6 +220,20 @@ public class ExtractPagesSamboxTaskTest extends BaseTaskTest<ExtractPagesParamet
     }
 
     @Test
+    public void extractPagesCanUseJustBasenameAsOutputPrefix() throws IOException {
+        parameters = new ExtractPagesParameters();
+        parameters.addPageRange(new PageRange(7, 9));
+        parameters.addSource(customInputAsFileSource("pdf/test-pdf.pdf"));
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.setOutputPrefix("[BASENAME]");
+
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(1).assertOutputContainsFilenames("test-pdf.pdf");
+    }
+
+    @Test
     public void extractOptimized() throws IOException {
         setUpParametersToOptimize();
         testContext.directoryOutputTo(parameters);

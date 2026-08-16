@@ -60,6 +60,11 @@ public final class NameGenerator {
     public String generate(NameGenerationRequest request) {
         requireNotNullArg(request, "Unable to generate a name for a null request");
         var context = new PrefixTransformationContext(prefix, request);
+        
+        if(request.isUniqueNamesGuaranteedExternally()){
+            context.uniqueNames(true);
+        }
+        
         LOG.trace("Starting processing prefix: '{}'", context.currentPrefix());
         ServiceLoader.load(PrefixProcessor.class).stream().map(ServiceLoader.Provider::get)
                 .sorted(Comparator.comparingInt(PrefixProcessor::order)).forEachOrdered(prefixProcessor -> {
