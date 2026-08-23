@@ -72,4 +72,94 @@ public class BookmarkPrefixProcessorTest extends BasePrefixProcessorTest {
         assertEquals("book$5", context.currentPrefix());
     }
 
+    @Test
+    public void testNewlineInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\nmark"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testCarriageReturnInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\rmark"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testCrLfInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\r\nmark"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testTabInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\tmark"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testNulCharInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\u0000mark"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testOtherControlCharsInBookmark() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        // vertical tab, form feed, escape, DEL
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("bo\u000Bok\u000Cma\u001Br\u007Fk"));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testPathSeparators() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book/mark\\name"));
+        victim.accept(context);
+        assertEquals("prefix_bookmarkname_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testLeadingTrailingWhitespace() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("  bookmark  "));
+        victim.accept(context);
+        assertEquals("prefix_bookmark_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testUnicodeBookmarkPreserved() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("bókmärk 日本語"));
+        victim.accept(context);
+        assertEquals("prefix_bókmärk 日本語_[BASENAME]", context.currentPrefix());
+    }
+
+    @Test
+    public void testBackslashReplacementLiteral() {
+        var prefix = "[BOOKMARK_NAME]";
+        var context = new PrefixTransformationContext(prefix, nameRequest().bookmark("book\\$1mark"));
+        victim.accept(context);
+        assertEquals("book$1mark", context.currentPrefix());
+    }
+
+    @Test
+    public void testFrenchAccentedCharsPreserved() {
+        var prefix = "prefix_[BOOKMARK_NAME]_[BASENAME]";
+        var context = new PrefixTransformationContext(prefix,
+                nameRequest().bookmark("Résumé de l'été à Noël, château être français où déjà cœur naïve garçon"));
+        victim.accept(context);
+        assertEquals("prefix_Résumé de l'été à Noël, château être français où déjà cœur naïve garçon_[BASENAME]",
+                context.currentPrefix());
+    }
 }

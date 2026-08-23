@@ -29,7 +29,7 @@ package org.sejda.core.support.prefix.processor;
 public class BookmarkPrefixProcessor extends BaseBookmarkPrefixProcessor {
 
     private static final String BOOKMARK_NAME_REPLACE_REGX = "\\[BOOKMARK_NAME]";
-    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|]";
+    private static final String INVALID_WIN_FILENAME_CHARS_REGEXP = "[\\\\/:*?\\\"<>|\\x00-\\x1F\\x7F]";
 
     public BookmarkPrefixProcessor() {
         super(BOOKMARK_NAME_REPLACE_REGX, INVALID_WIN_FILENAME_CHARS_REGEXP);
