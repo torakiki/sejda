@@ -41,15 +41,13 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.sejda.core.notification.dsl.ApplicationEventsNotifier.notifyEvent;
 import static org.sejda.model.util.IOUtils.createTemporaryBufferWithName;
@@ -220,26 +218,45 @@ public class ImagesToPdfDocumentConverter {
         return input;
     }
 
-    public static int getImagePageCount(Source<?> source) {
-        try {
-            try (ImageInputStream is = ImageIO.createImageInputStream(source.getSeekableSource().asNewInputStream())) {
-                Iterator<ImageReader> readers = ImageIO.getImageReaders(is);
+    private static final Set<String> MULTI_PAGE_MIME_TYPES = Set.of("image/tiff");
 
-                if (readers.hasNext()) {
-                    ImageReader reader = readers.next();
+    public static int getImagePageCount(Source<?> source) {
+        try (ImageInputStream is = ImageIO.createImageInputStream(source.getSeekableSource().asNewInputStream())) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(is);
+            if (readers.hasNext()) {
+                ImageReader reader = readers.next();
+                try {
                     reader.setInput(is);
-                    try {
+                    if (isMultiPageFormat(reader)) {
                         return reader.getNumImages(true);
-                    } finally {
-                        reader.dispose();
                     }
+                } finally {
+                    reader.dispose();
                 }
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             LOG.warn("Could not determine image page count: {}", source.getName(), ex);
         }
-
         return 1;
+    }
+
+    private static boolean isMultiPageFormat(ImageReader reader) {
+        ImageReaderSpi spi = reader.getOriginatingProvider();
+        if (spi != null && spi.getMIMETypes() != null) {
+            for (String mime : spi.getMIMETypes()) {
+                if (MULTI_PAGE_MIME_TYPES.contains(mime.toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        String formatName = "unknown";
+        try {
+            formatName = reader.getFormatName();
+        } catch (IOException e) {
+            // noop
+        }
+
+        return "tiff".equalsIgnoreCase(formatName) || "tif".equalsIgnoreCase(formatName);
     }
 
     public PDDocumentHandler getDocumentHandler() {

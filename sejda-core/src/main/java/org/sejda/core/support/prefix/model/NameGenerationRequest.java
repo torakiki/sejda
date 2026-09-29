@@ -44,6 +44,8 @@ public final class NameGenerationRequest {
     private static final String PAGE_KEY = "page";
     private static final String FILENUMBER_KEY = "fileNumber";
     private final Map<String, Object> values = new HashMap<>();
+    
+    private boolean isUniqueNamesGuaranteedExternally = false;
 
     private NameGenerationRequest(String extension) {
         requireNotBlank(extension, "Extension cannot be blank");
@@ -128,6 +130,11 @@ public final class NameGenerationRequest {
         return this;
     }
 
+    public NameGenerationRequest withUniqueNamesGuaranteedExternally(boolean isUniqueNamesGuaranteedExternally) {
+        this.isUniqueNamesGuaranteedExternally = isUniqueNamesGuaranteedExternally;
+        return this;
+    }
+
     public Integer getPage() {
         return getValue(PAGE_KEY, Integer.class);
     }
@@ -157,6 +164,10 @@ public final class NameGenerationRequest {
      */
     public <T> T getValue(String key, Class<T> type) {
         return ofNullable(values.get(key)).filter(type::isInstance).map(type::cast).orElse(null);
+    }
+
+    public boolean isUniqueNamesGuaranteedExternally() {
+        return isUniqueNamesGuaranteedExternally;
     }
 
     /**

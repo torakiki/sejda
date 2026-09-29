@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Optional.ofNullable;
@@ -87,7 +88,10 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                 LOG.debug("Extracting pages from {}, one file per range is '{}' ", source,
                         parameters.isSeparateFileForEachRange());
                 try (PagesExtractor extractor = new PagesExtractor(sourceDocumentHandler.getUnderlyingPDDocument())) {
-                    for (Set<Integer> pageSets : parameters.getPagesSets(sourceDocumentHandler.getNumberOfPages())) {
+                    List<Set<Integer>> listOfPageSets = parameters.getPagesSets(sourceDocumentHandler.getNumberOfPages());
+                    boolean singleOutputFile = listOfPageSets.size() == 1;
+                    
+                    for (Set<Integer> pageSets : listOfPageSets) {
                         if (!pageSets.isEmpty()) {
                             File tmpFile = createTemporaryBuffer(parameters.getOutput());
                             LOG.debug("Created output temporary buffer {}", tmpFile);
@@ -97,7 +101,9 @@ public class ExtractPagesTask extends BaseTask<ExtractPagesParameters> {
                             String outName = ofNullable(parameters.getSpecificResultFilename(fileNumber)).orElseGet(
                                     () -> nameGenerator(parameters.getOutputPrefix()).generate(
                                             nameRequest().originalName(source.getName()).fileNumber(fileNumber)
-                                                    .page(pageSets.iterator().next())));
+                                                    .page(pageSets.iterator().next())
+                                                    .withUniqueNamesGuaranteedExternally(singleOutputFile)
+                                    ));
 
                             outputWriter.addOutput(file(tmpFile).name(outName));
 
