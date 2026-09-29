@@ -6,7 +6,7 @@
 	<artifactId>sejda-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>sejda</name>
-	<version>v6.0.0.M7-SNAPSHOT</version>
+	<version>6.0.0.M7-SNAPSHOT</version>
 	<description>An extendable and configurable PDF manipulation layer library. A ready to use java library to perform PDF documents manipulation without having to deal with the low level API. Sejda offers many "ready to go" manipulations implemented using the SAMBox but it can be extended to use other implementations.</description>
 
 	<organization>
@@ -236,7 +236,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.5.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -251,7 +251,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.15.0</version>
+					<version>3.16.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -261,7 +261,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>3.5.6</version>
+					<version>3.6.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -276,12 +276,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-toolchains-plugin</artifactId>
-					<version>3.2.0</version>
+					<version>3.3.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
-					<version>3.1.4</version>
+					<version>3.2.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -328,19 +328,19 @@
 	<properties>
 		<sejda.commons.version>3.0.1</sejda.commons.version>
 		<junit.version>5.14.4</junit.version>
-		<slf4j.version>2.0.18</slf4j.version>
+		<slf4j.version>2.0.19</slf4j.version>
 		<commons.lang.version>3.20.0</commons.lang.version>
 		<commons.io.version>2.22.0</commons.io.version>
 		<validation.api.version>3.0.2</validation.api.version>
 		<mockito.version>5.23.0</mockito.version>
 		<logback.version>1.5.38</logback.version>
-		<archunit.version>1.4.2</archunit.version>
+		<archunit.version>1.5.0</archunit.version>
 		<hibernate-validator.version>7.0.5.Final</hibernate-validator.version>
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
-		<sambox.version>4.0.0.M7</sambox.version>
+		<sambox.version>4.0.0.M8</sambox.version>
 		<sejda.io.version>5.0.0.M1</sejda.io.version>
-		<bouncycastle.version>1.84</bouncycastle.version>
+		<bouncycastle.version>1.86</bouncycastle.version>
 		<twelvemonkeys.version>3.14.0</twelvemonkeys.version>
 		<metadata-extractor.version>2.21.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.21</thumbnailator.version>
