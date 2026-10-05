@@ -775,13 +775,14 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
         parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.tiff")));
         parameters.addInput(new PdfMergeInput(customInput("pdf/test-pdf.pdf")));
         parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.png")));
+        parameters.addInput(new ImageMergeInput(customNonPdfInput("image/draft.webp")));
 
         testContext.pdfOutputTo(parameters);
         execute(parameters);
 
         testContext.assertTaskCompleted();
-        testContext.assertPages(1 + 11 + 3 + 11 + 1)
-                .forEachPdfOutput(d -> assertEquals(Arrays.asList(1, 13, 14, 15, 27), getPagesContainingImages(d)));
+        testContext.assertPages(1 + 11 + 3 + 11 + 1 + 1)
+                .forEachPdfOutput(d -> assertEquals(Arrays.asList(1, 13, 14, 15, 27, 28), getPagesContainingImages(d)));
     }
 
     @Test

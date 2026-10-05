@@ -341,7 +341,7 @@
 		<sambox.version>4.0.0.M8</sambox.version>
 		<sejda.io.version>5.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.86</bouncycastle.version>
-		<twelvemonkeys.version>3.14.0</twelvemonkeys.version>
+		<twelvemonkeys.version>3.15.2</twelvemonkeys.version>
 		<metadata-extractor.version>2.21.0</metadata-extractor.version>
 		<thumbnailator.version>0.4.21</thumbnailator.version>
 		<image-comparison.version>4.4.0</image-comparison.version>
@@ -392,6 +392,11 @@
 			<dependency>
 				<groupId>com.twelvemonkeys.imageio</groupId>
 				<artifactId>imageio-jpeg</artifactId>
+				<version>${twelvemonkeys.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.twelvemonkeys.imageio</groupId>
+				<artifactId>imageio-webp</artifactId>
 				<version>${twelvemonkeys.version}</version>
 			</dependency>
 			<dependency>

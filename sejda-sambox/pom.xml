@@ -107,5 +107,10 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-webp</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
