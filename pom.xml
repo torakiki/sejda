@@ -164,7 +164,7 @@
 		</profile>
 
 		<profile>
-			<id>private-release</id>
+			<id>private-release-old</id>
 			<distributionManagement>
 				<snapshotRepository>
 					<id>sejda-pro-snapshot</id>
@@ -227,7 +227,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>private-gitlab-release</id>
+			<id>private-release</id>
 			<distributionManagement>
 				<snapshotRepository>
 					<id>gitlab-sejda</id>
