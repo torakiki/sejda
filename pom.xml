@@ -226,6 +226,69 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>private-gitlab-release</id>
+			<distributionManagement>
+				<snapshotRepository>
+					<id>gitlab-sejda</id>
+					<url>https://gitlab.com/api/v4/projects/sejda%2Fsejda/packages/maven</url>
+				</snapshotRepository>
+				<repository>
+					<id>gitlab-sejda</id>
+					<url>https://gitlab.com/api/v4/projects/sejda%2Fsejda/packages/maven</url>
+				</repository>
+			</distributionManagement>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.2</version>
+						<configuration>
+							<tagNameFormat>v@{project.version}</tagNameFormat>
+							<preparationGoals>clean install</preparationGoals>
+							<autoVersionSubmodules>true</autoVersionSubmodules>
+							<localCheckout>true</localCheckout>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>perform</goal>
+								</goals>
+								<configuration>
+									<dryRun>true</dryRun>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 
 	<build>
