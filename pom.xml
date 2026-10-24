@@ -339,7 +339,7 @@
 		<jakarta-el.version>4.0.2</jakarta-el.version>
 		<hamcrest.version>3.0</hamcrest.version>
 		<sambox.version>4.0.0.M8</sambox.version>
-		<sejda.io.version>5.0.0.M1</sejda.io.version>
+		<sejda.io.version>6.0.0.M1</sejda.io.version>
 		<bouncycastle.version>1.86</bouncycastle.version>
 		<twelvemonkeys.version>3.15.2</twelvemonkeys.version>
 		<metadata-extractor.version>2.21.0</metadata-extractor.version>
