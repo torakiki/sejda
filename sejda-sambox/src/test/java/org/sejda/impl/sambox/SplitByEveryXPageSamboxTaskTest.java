@@ -25,13 +25,18 @@ import org.sejda.model.output.ExistingOutputPolicy;
 import org.sejda.model.parameter.SplitByEveryXPagesParameters;
 import org.sejda.model.pdf.PdfVersion;
 import org.sejda.model.task.Task;
+import org.sejda.sambox.cos.COSDictionary;
+import org.sejda.sambox.cos.COSName;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
 import org.sejda.tests.tasks.BaseTaskTest;
 
 import java.io.IOException;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.sejda.tests.TestUtils.customInput;
 import static org.sejda.tests.TestUtils.largeOutlineInput;
 import static org.sejda.tests.TestUtils.mediumInput;
@@ -109,6 +114,32 @@ public class SplitByEveryXPageSamboxTaskTest extends BaseTaskTest<SplitByEveryXP
         execute(parameters);
         testContext.assertTaskCompleted();
         testContext.assertOutputSize(3);
+    }
+
+    @Test
+    public void splitOptimizeChangesSurviveObjectStreamReparse() throws IOException {
+        // the pages share a /Group (X) that is in the same object stream as the /Resources of the form XObject (Y)
+        // drawn by page 2. The optimization removes the unused F2 font from Y, writing the first output releases X
+        // and writing the second one resolves X again, parsing the object stream again. Form XObject /Resources should
+        // not go back to the original version.
+        parameters = new SplitByEveryXPagesParameters(1);
+        parameters.setCompressionPolicy(CompressionPolicy.COMPRESS);
+        parameters.setExistingOutputPolicy(ExistingOutputPolicy.OVERWRITE);
+        parameters.addSource(customInput("pdf/objstm_shared_group.pdf", "objstm_shared_group.pdf"));
+        parameters.setOptimizationPolicy(OptimizationPolicy.YES);
+        testContext.directoryOutputTo(parameters);
+        execute(parameters);
+        testContext.assertTaskCompleted();
+        testContext.assertOutputSize(2).forPdfOutput("2_objstm_shared_group.pdf", d -> {
+            try {
+                var form = (PDFormXObject) d.getPage(0).getResources().getXObject(COSName.getPDFName("Fm1"));
+                var fonts = form.getResources().getCOSObject().getDictionaryObject(COSName.FONT, COSDictionary.class);
+                assertTrue(fonts.containsKey(COSName.getPDFName("F1")));
+                assertFalse(fonts.containsKey(COSName.getPDFName("F2")));
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        });
     }
 
     @Test
