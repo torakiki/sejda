@@ -147,10 +147,9 @@ public class FontUtilsTest {
         assertFindFontFor("ކުންފުނި"); // thaana
         assertFindFontFor("حبيبات"); // arabic
         assertFindFontFor("صباح الخير!"); // arabic with latin
-
-        // TODO: find a way to merge the armenian font into the big merged font with all others
-        // so forms can be filled with latin/armenian mixed values
-        // assertFindFontFor("Latin mixed with հայերէն");
+        assertFindFontFor("Latin mixed with հայերէն"); // armenian
+        assertFindFontFor("Zaino 【WW + 15】 ż"); // CJKPunct
+        assertFindFontFor("Done ✓ → ★"); // symbols2
     }
     
     private void assertFindFontFor(String s) {
@@ -183,15 +182,12 @@ public class FontUtilsTest {
         assertFindBoldFontIsNotoSansBold("ગુજરાતી"); // gujarati
         assertFindBoldFontIsNotoSansBold("န\u103Aမာဘာသာ"); // myanmar
         assertFindBoldFontIsNotoSansBold("සිංහල"); // sinhalese
-        //assertFindBoldFontIsNotoSansBold("ᠮᠣᠩᠭᠣᠯ"); // mongolian
+        assertFindBoldFontIsNotoSansBold("ᠮᠣᠩᠭᠣᠯ"); // mongolian
         assertFindBoldFontIsNotoSansBold("ಕನ್ನಡ"); // kannada
         assertFindBoldFontIsNotoSansBold("ଓଡ଼ିଆ ଭାଷା"); // oryia
         assertFindBoldFontIsNotoSansBold("ކުންފުނި"); // thaana
         assertFindBoldFontIsNotoSansBold("حبيبات"); // arabic
-
-        // TODO: find a way to merge the armenian font into the big merged font with all others
-        // so forms can be filled with latin/armenian mixed values
-        // assertFindBoldFontIsNotoSansBold("Latin mixed with հայերէն");
+        assertFindBoldFontIsNotoSansBold("Latin mixed with հայերէն"); // armenian
     }
 
     @Test
@@ -375,7 +371,7 @@ public class FontUtilsTest {
     @Test
     public void removingUnsupportedCharacters() {
         PDDocument doc = new PDDocument();
-        String str = FontUtils.removeUnsupportedCharacters("ͷհայերէն͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
+        String str = FontUtils.removeUnsupportedCharacters("ͷབཀྲ་ཤིས་བདེ་ལེགས།͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here", doc);
         assertThat(str, is("ͷ͵ͲͲͲ Text here SǦͳͻǦʹͳͲͻ4 and here"));
     }
 
@@ -408,7 +404,7 @@ public class FontUtilsTest {
     public void wrappingLinesUnableToFindFont() {
         PDDocument doc = new PDDocument();
         assertThrows(UnsupportedTextException.class, () -> FontUtils.wrapLines(
-                "This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_հայերէն", HELVETICA, 10, 191,
+                "This_is_a_long_line_that_cannot_fit_on_a_single_line_and_could_be_wrapped_བཀྲ་ཤིས་བདེ་ལེགས།", HELVETICA, 10, 191,
                 doc));
     }
 
