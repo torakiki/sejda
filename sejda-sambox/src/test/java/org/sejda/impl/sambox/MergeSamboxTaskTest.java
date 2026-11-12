@@ -259,7 +259,7 @@ public class MergeSamboxTaskTest extends BaseTaskTest<MergeParameters> {
     @Test
     public void executeMergeAllTocNamesNoFont() throws IOException {
         MergeParameters parameters = setUpParameters(getInput());
-        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "հայերէն.pdf")));
+        parameters.addInput(new PdfMergeInput(customInput("pdf/with_meta.pdf", "བཀྲ་ཤིས་བདེ་ལེགས།.pdf")));
         parameters.setTableOfContentsPolicy(ToCPolicy.FILE_NAMES);
         doExecuteMergeAll(false, 18, parameters);
     }
