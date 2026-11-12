@@ -350,7 +350,7 @@ public class TableOfContentsCreatorTest {
     @Test
     public void tocItemsMultipleFontsButNotFound() {
         TableOfContentsCreator victim = newToCCreator();
-        victim.appendItem("Item multiple fonts հայերէն", 10, new PDPage());
+        victim.appendItem("Item multiple fonts བཀྲ་ཤིས་བདེ་ལེགས།", 10, new PDPage());
         victim.pageSizeIfNotSet(PDRectangle.A4);
         assertThrows(UnsupportedTextException.class, victim::addToC);
     }
